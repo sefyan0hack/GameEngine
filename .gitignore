@@ -23,6 +23,7 @@
 *.log
 # OS generated files #
 ######################
+.build/
 .build/*
 .vscode/*
 !.vscode/settings.json
