@@ -47,4 +47,4 @@
 
 //
 // remember macro 'SHADER' replace full path woth relative
-#define SHADER(str)  "C:/Users/sefyan/Documents/c_projects/test/Learn-Opengl/Shasers/"#str
+#define SHADER(str)  "../../Shasers/"#str
