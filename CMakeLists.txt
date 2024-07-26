@@ -50,4 +50,4 @@ else()
     set(CMAKE_CXX_FLAGS_DEBUG   "${REMOVE_WAR} -O0 -g3 -ggdb") ## Debug
 endif()
 add_executable(test  ${SOURCE})
-target_link_libraries(test glad  ${OPENGL_LIBRARIES} glfw3 glm )
+target_link_libraries(test glad  ${OPENGL_LIBRARIES}  glm )
