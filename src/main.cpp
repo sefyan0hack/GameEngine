@@ -14,7 +14,7 @@ int main() {
     VAO vao;
     VBO vbo(vertices, sizeof(vertices));
 
-    vao.VerAttrib(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
+    vao.SetLout(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
 
     Shader Tring(SHADER(Traingl));
 

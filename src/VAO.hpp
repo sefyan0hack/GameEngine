@@ -8,7 +8,7 @@ public:
 public:
     void Bind() const;
     void UnBind() const;
-    void VerAttrib(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer);
+    void SetLout(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer);
 private:
     GLuint Id;
 };
