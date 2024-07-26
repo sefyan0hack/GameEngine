@@ -101,7 +101,8 @@ void Shader::checkShaderCompileStatus(GLuint shader){
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success) {
         glGetShaderInfoLog(shader, 512, NULL, infoLog);
-        std::cerr << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
+        ERR("SHADER::COMPILATION_FAILED\n" << infoLog );
+        glDeleteShader(shader); // Don't leak the shader.
     }
 }
 
@@ -111,6 +112,8 @@ void Shader::checkProgramLinkStatus(GLuint program){
     glGetProgramiv(program, GL_LINK_STATUS, &success);
     if (!success) {
         glGetProgramInfoLog(program, 512, NULL, infoLog);
-        std::cerr << "ERROR::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+        ERR("PROGRAM::LINKING_FAILED\n" << infoLog);
+        // We don't need the program anymore.
+	    glDeleteProgram(program);
     }
 }
