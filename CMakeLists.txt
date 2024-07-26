@@ -34,8 +34,6 @@ find_package(OpenGL REQUIRED)
 # Add glad include directory
 include_directories("${PROJECT_SOURCE_DIR}/3party")
 
-link_directories(${CMAKE_SOURCE_DIR}/3party/glm/lib)
-
 # Add glad source file
 add_library(glad STATIC 3party/glad/glad.c)
 set_target_properties(glad PROPERTIES LINKER_LANGUAGE C)
@@ -50,4 +48,4 @@ else()
     set(CMAKE_CXX_FLAGS_DEBUG   "${REMOVE_WAR} -O0 -g3 -ggdb") ## Debug
 endif()
 add_executable(test  ${SOURCE})
-target_link_libraries(test glad  ${OPENGL_LIBRARIES}  glm )
+target_link_libraries(test glad  ${OPENGL_LIBRARIES})
