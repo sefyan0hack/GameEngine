@@ -10,37 +10,26 @@
 using namespace std;
 
 int main() {
-    Window & window = Window::InstanceWindow();
-    VAO vao;
-    VBO vbo(vertices, sizeof(vertices));
-
     vao.SetLout(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
-
-    Shader Tring(SHADER(Traingl));
-
     vbo.UnBind();
     vao.UnBind();
 
-    xL = glGetUniformLocation(Tring.GetProgram(),"u_offx");
-    yL = glGetUniformLocation(Tring.GetProgram(),"u_offy");
-    zL = glGetUniformLocation(Tring.GetProgram(),"u_offz");
     QueryPerformanceCounter(&start_count);
     QueryPerformanceFrequency(&freq);
 
     while (!window.ShouldWindowClose()) {
-        TextOutA(window.GetHDC(), 10, 10, std::to_string(fps.QuadPart).c_str(), 5);
         window.ProcessMessages();
         
-        glClearColor(0.f, 0.3f, 0.6f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
-        Tring.UseProgram();
-        vao.Bind();
-        glUniform1f(xL, xyz[0]);
-        glUniform1f(yL, xyz[1]);
-        glUniform1f(zL, xyz[2]);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        SwapBuffers(window.GetHDC());
-        // Sleep(1);
+        // glClearColor(0.f, 0.3f, 0.6f, 1.0f);
+        // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+        // Tring.UseProgram();
+        // vao.Bind();
+        // glUniform1f(xL, xyz[0]);
+        // glUniform1f(yL, xyz[1]);
+        // glUniform1f(zL, xyz[2]);
+        // glDrawArrays(GL_TRIANGLES, 0, 3);
+        // SwapBuffers(window.GetHDC());
+        Sleep(1);
 
         QueryPerformanceCounter(&end_count);
         counts.QuadPart = end_count.QuadPart - start_count.QuadPart;
@@ -54,16 +43,20 @@ void OnKeyDown(WPARAM Wpr, LPARAM Lpr){
     UNUSED(Lpr);
     switch(Wpr){
         case VK_LEFT:
-            xyz[0] -= 100.0f * 1/(GLfloat)fps.QuadPart;
+            xyz[0] -= 10.0f * 1/(GLfloat)fps.QuadPart;
+            LOG("L: "<<xyz[0]);
             break;
         case VK_UP:
-            xyz[1] += 100.0f * 1/(GLfloat)fps.QuadPart;
+            xyz[1] += 10.0f * 1/(GLfloat)fps.QuadPart;
+            LOG("U: "<<xyz[1]);
             break;
         case VK_DOWN:
-            xyz[1] -= 100.0f * 1/(GLfloat)fps.QuadPart;
+            xyz[1] -= 10.0f * 1/(GLfloat)fps.QuadPart;
+            LOG("D: "<<xyz[1]);
             break;
         case VK_RIGHT:
-            xyz[0] += 100.0f * 1/(GLfloat)fps.QuadPart;
+            xyz[0] += 10.0f * 1/(GLfloat)fps.QuadPart;
+            LOG("R: "<<xyz[0]);
             break;
     }
 }
