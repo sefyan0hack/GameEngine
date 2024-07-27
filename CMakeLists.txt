@@ -4,10 +4,11 @@ project(test LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 
+# if you have problem with not fouding compiler put path/to/compiler.exe
 # Specify the compiler
-SET(CMAKE_SYSTEM_NAME Windows)
-set(CMAKE_C_COMPILER C:/mingw-w64/mingw64/bin/gcc.exe)
-set(CMAKE_CXX_COMPILER C:/mingw-w64/mingw64/bin/g++.exe)
+# SET(CMAKE_SYSTEM_NAME Windows)
+# set(CMAKE_C_COMPILER C:/mingw-w64/mingw64/bin/gcc.exe)
+# set(CMAKE_CXX_COMPILER C:/mingw-w64/mingw64/bin/g++.exe)
 
 
 set(CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}" "${CMAKE_MODULE_PATH}")
@@ -22,6 +23,28 @@ set(SOURCE
 	src/VBO.cpp
 	)
 
+include(ProcessorCount)
+ProcessorCount(NUMBER_OF_PROCESSORS)
+if(NOT NUMBER_OF_PROCESSORS EQUAL 0)
+	set(MAKEFLAGS "-j${NUMBER_OF_PROCESSORS}")
+	set(ENV{MAKEFLAGS} "${MAKEFLAGS}")
+	MESSAGE(STATUS "Set MAKEFLAGS for MinGW Makefiles to ${MAKEFLAGS}")
+endif()
+
+
+MARK_AS_ADVANCED(MULTITHREADED_BUILD)
+SET(MULTITHREADED_BUILD ON CACHE BOOL "Parallel build with as many threads as possible!")
+if(MULTITHREADED_BUILD)
+    if(${CMAKE_GENERATOR} MATCHES "MinGW Makefiles")
+        # Use MAKEFLAGS to specify the number of jobs for parallel build
+        set(MAKEFLAGS "-j${NUMBER_OF_PROCESSORS}")
+        set(ENV{MAKEFLAGS} "${MAKEFLAGS}")
+        MESSAGE(STATUS "Set MAKEFLAGS for MinGW Makefiles to ${MAKEFLAGS}")
+    elseif(MSVC)
+        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+        MESSAGE(STATUS "Added parallel build arguments to CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+    endif()
+endif()
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
