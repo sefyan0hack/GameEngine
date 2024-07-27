@@ -18,21 +18,7 @@ LRESULT CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
     switch (msg)
     {
         case WM_KEYDOWN:{
-            switch (Wpr)
-            {
-            case VK_LEFT:
-                xyz[0] -= 100.0f * 1/(GLfloat)fps.QuadPart;
-                return 0;
-            case VK_UP:
-                xyz[1] += 100.0f * 1/(GLfloat)fps.QuadPart;
-                return 0;
-            case VK_DOWN:
-                xyz[1] -= 100.0f * 1/(GLfloat)fps.QuadPart;
-                return 0;
-            case VK_RIGHT:
-                xyz[0] += 100.0f * 1/(GLfloat)fps.QuadPart;
-                return 0;
-            }
+            OnKeyDown(Wpr, Lpr);
             return DefWindowProcA(Winhandle, msg, Wpr, Lpr);
         }
         case WM_CREATE:{

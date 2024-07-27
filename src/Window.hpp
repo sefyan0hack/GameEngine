@@ -5,7 +5,7 @@
 NO_WARNING_BEGIN
 #include <glad/glad.h>
 NO_WARNING_END
-
+extern void OnKeyDown(WPARAM flag,LPARAM key);
 class Window
 {
     private:

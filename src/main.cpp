@@ -49,3 +49,21 @@ int main() {
     }
     return 0;
 }
+
+void OnKeyDown(WPARAM Wpr, LPARAM Lpr){
+    UNUSED(Lpr);
+    switch(Wpr){
+        case VK_LEFT:
+            xyz[0] -= 100.0f * 1/(GLfloat)fps.QuadPart;
+            break;
+        case VK_UP:
+            xyz[1] += 100.0f * 1/(GLfloat)fps.QuadPart;
+            break;
+        case VK_DOWN:
+            xyz[1] -= 100.0f * 1/(GLfloat)fps.QuadPart;
+            break;
+        case VK_RIGHT:
+            xyz[0] += 100.0f * 1/(GLfloat)fps.QuadPart;
+            break;
+    }
+}
