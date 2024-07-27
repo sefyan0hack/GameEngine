@@ -19,6 +19,7 @@ LRESULT CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
     {
         case WM_KEYDOWN:{
             OnKeyDown(Wpr, Lpr);
+            goto repaint;
             return DefWindowProcA(Winhandle, msg, Wpr, Lpr);
         }
         case WM_CREATE:{
@@ -39,7 +40,6 @@ LRESULT CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
         case WM_SIZE:{
             m_Width  = LOWORD(Lpr);
             m_Height = HIWORD(Lpr);
-            
             return 0;
         }
         case WM_MOUSEMOVE:{
@@ -58,16 +58,18 @@ LRESULT CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
             return 0;
         }
         case WM_PAINT:{
+            repaint:
+            TextOutA(m_HDC, 10, 10, std::to_string(fps.QuadPart).c_str(), 5);
             glViewport(0, 0, m_Width, m_Height);
             glClearColor(0.f, 0.3f, 0.6f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            // glUniform1f(randFromShaderLoc, Rand_float);
-            
-            // // glUseProgram(shaderProgram);
-            // // glBindVertexArray(VAO);
-            // glDrawArrays(GL_TRIANGLES, 0, 3);
-            // SwapBuffers(m_HDC);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+            Tring.UseProgram();
+            vao.Bind();
+            glUniform1f(xL, xyz[0]);
+            glUniform1f(yL, xyz[1]);
+            glUniform1f(zL, xyz[2]);
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+            SwapBuffers(m_HDC);
             return DefWindowProcA(Winhandle, msg, Wpr, Lpr);
         }
     }
@@ -81,6 +83,7 @@ Window::Window()
 
 Window::~Window()
 {
+
     ReleaseDC(m_WindowHandle, m_HDC);
     UnregisterClassA(CLASS_NAME, m_Instance);
 }
@@ -101,7 +104,8 @@ void Window::ProcessMessages()
             return;
         }
         TranslateMessage(&Msg);
-        DispatchMessage(&Msg);
+        DispatchMessageA(&Msg);
+        // InvalidateRect(m_WindowHandle, nullptr, false);
     }
 }
 HINSTANCE Window::GetHINSTANCE() const{
@@ -265,7 +269,7 @@ void Window::_init_helper(){
         0,
         windclass.lpszClassName,
         "Main",
-        WS_OVERLAPPEDWINDOW | WS_VISIBLE ,
+        WS_OVERLAPPEDWINDOW,// | WS_VISIBLE ,
         CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
         nullptr, nullptr,
         m_Instance,
@@ -277,6 +281,7 @@ void Window::_init_helper(){
         return;
     }
     m_HDC = GetDC(m_WindowHandle);
+    ShowWindow(m_WindowHandle, SW_SHOW);
     UpdateWindow(m_WindowHandle);
 }
 
