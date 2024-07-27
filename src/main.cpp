@@ -21,6 +21,9 @@ int main() {
     vbo.UnBind();
     vao.UnBind();
 
+    xL = glGetUniformLocation(Tring.GetProgram(),"u_offx");
+    yL = glGetUniformLocation(Tring.GetProgram(),"u_offy");
+    zL = glGetUniformLocation(Tring.GetProgram(),"u_offz");
     QueryPerformanceCounter(&start_count);
     QueryPerformanceFrequency(&freq);
 
@@ -32,10 +35,12 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
         Tring.UseProgram();
         vao.Bind();
+        glUniform1f(xL, xyz[0]);
+        glUniform1f(yL, xyz[1]);
+        glUniform1f(zL, xyz[2]);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         SwapBuffers(window.GetHDC());
-
-        Sleep(1);
+        // Sleep(1);
 
         QueryPerformanceCounter(&end_count);
         counts.QuadPart = end_count.QuadPart - start_count.QuadPart;

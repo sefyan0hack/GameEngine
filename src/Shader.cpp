@@ -117,3 +117,6 @@ void Shader::checkProgramLinkStatus(GLuint program){
 	    glDeleteProgram(program);
     }
 }
+GLuint Shader::GetProgram() const{
+    return ProgramID;
+}

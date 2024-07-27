@@ -1,13 +1,12 @@
 #pragma once
 #include <string>
 class Renderer
-{
+{    
+    private:
+        Renderer();
+    public:
+        ~Renderer();
     
-private:
-    Renderer();
-public:
-    ~Renderer();
-
-public:
-    static Renderer& Instance() ;
+    public:
+        static Renderer& Instance() ;
 };

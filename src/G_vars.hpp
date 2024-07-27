@@ -14,7 +14,10 @@ inline GLfloat vertices[] = {
          0.5f, -0.5f, 0.0f,
          0.0f,  0.5f, 0.0f
     };
-
+inline GLint xL;
+inline GLint yL;
+inline GLint zL;
+inline GLfloat xyz[3] = {0.0f, 0.0f, 0.0f};
 
 //Debug Vars
 inline LPCSTR  CLASS_NAME  = "CustomClass";
