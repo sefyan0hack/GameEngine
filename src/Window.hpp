@@ -3,9 +3,12 @@
 #include <windows.h>
 #include <memory>
 #include "OpenGL.hpp"
+
 NO_WARNING_BEGIN
 #include <glad/glad.h>
 NO_WARNING_END
+
+#include "Keyboard.hpp"
 
 class Window
 {
@@ -53,7 +56,6 @@ class Window
         static LRESULT CALLBACK WinProcSetup2(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr);
         LRESULT CALLBACK WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr);
         void _init_helper(int Width, int Height, const char* Title);
-    
     private:
         HINSTANCE m_Instance;
         HWND m_WindowHandle;
@@ -62,6 +64,8 @@ class Window
         bool m_Visible;
 
         std::unique_ptr<OpenGL> m_OpenGl;
+    public:
+	    Keyboard kbd;
         
     public:
         inline static unsigned short S_WindowsCount = 0;

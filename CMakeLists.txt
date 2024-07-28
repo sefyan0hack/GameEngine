@@ -15,14 +15,14 @@ set(CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}" "${CMAKE_MODULE_PATH}")
 set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}" "${CMAKE_PREFIX_PATH}")
 
 set(SOURCE 
-	src/main.cpp
+    src/main.cpp
+    src/Keyboard.cpp
 	src/Window.cpp
 	src/Renderer.cpp
 	src/Shader.cpp
 	src/VAO.cpp
 	src/VBO.cpp
     src/OpenGL.cpp
-    src/Inputs.cpp
     src/APP.cpp
 	)
 

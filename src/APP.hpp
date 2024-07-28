@@ -12,8 +12,7 @@ public:
     virtual void Start() = 0;
     virtual void Update(float delta) = 0;
     virtual void Destroy() = 0;
-private:
-    Window m_Window;
 protected:
+    Window m_Window;
     LARGE_INTEGER start_count, end_count, counts, freq, fps;
 };

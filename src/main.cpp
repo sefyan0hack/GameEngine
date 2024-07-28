@@ -11,6 +11,8 @@ using namespace std;
 
 class Game : public APP
 {
+    private:
+        
 
 public:
     void Start() override{
@@ -18,7 +20,7 @@ public:
 
     }
     void Update(float delta) override{
-        LOG(delta);
+        LOG(delta << m_Window.kbd.KeyIsPressed('A'));
     }
     void Destroy()  override{
         LOG("Game destryed");

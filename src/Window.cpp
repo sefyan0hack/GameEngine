@@ -77,6 +77,27 @@ LRESULT CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
             m_Height = HIWORD(Lpr);
             return 0;
         }
+        /*********** KEYBOARD MESSAGES ***********/
+	    case WM_KEYDOWN:
+	    // syskey commands need to be handled to track ALT key (VK_MENU) and F10
+	    case WM_SYSKEYDOWN:
+	    	if( !(Lpr & 0x40000000) || kbd.AutorepeatIsEnabled() ) // filter autorepeat
+	    	{
+	    		kbd.OnKeyPressed( static_cast<unsigned char>(Wpr) );
+	    	}
+	    	break;
+	    case WM_KEYUP:
+	    case WM_SYSKEYUP:
+	    	kbd.OnKeyReleased( static_cast<unsigned char>(Wpr) );
+	    	break;
+	    case WM_CHAR:
+	    	kbd.OnChar( static_cast<unsigned char>(Wpr) );
+	    	break;
+	/*********** END KEYBOARD MESSAGES ***********/
+        case WM_KILLFOCUS:
+		    kbd.ClearState();
+		    break;
+
 
     }
     return DefWindowProcA(Winhandle, msg, Wpr, Lpr);
