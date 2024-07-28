@@ -7,26 +7,22 @@ void Shader::UseProgram() const{
     glUseProgram(ProgramID);
 }
 
-Shader::Shader(std::string _name): ProgramID(0), VertShaderID(0), fragShaderID(0), name(_name)
+Shader::Shader()
 {
     VertShaderID = glCreateShader(GL_VERTEX_SHADER);
     fragShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-
-    LoadSource();
-    Compile(VertShaderID);
-    Shader::checkShaderCompileStatus(VertShaderID);
-
-    Compile(fragShaderID);
-    Shader::checkShaderCompileStatus(fragShaderID);
-
     ProgramID = glCreateProgram();
-    glAttachShader(ProgramID, VertShaderID);
-    glAttachShader(ProgramID, fragShaderID);
-    Link();
-    Shader::checkProgramLinkStatus(ProgramID);
+}
 
-    glDeleteShader(VertShaderID);
-    glDeleteShader(fragShaderID);
+Shader::Shader(std::string _name) : ProgramID(0), VertShaderID(0), fragShaderID(0), name(_name)
+{
+    VertShaderID = glCreateShader(GL_VERTEX_SHADER);
+    fragShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+    ProgramID = glCreateProgram();
+    if(!name.empty()){
+        Load(name);
+    }
+        
 }
 
 Shader::~Shader()
@@ -119,4 +115,22 @@ void Shader::checkProgramLinkStatus(GLuint program){
 }
 GLuint Shader::GetProgram() const{
     return ProgramID;
+}
+
+void Shader::Load(std::string _name){
+    this->name =  _name;
+    LoadSource();
+    Compile(VertShaderID);
+    Shader::checkShaderCompileStatus(VertShaderID);
+
+    Compile(fragShaderID);
+    Shader::checkShaderCompileStatus(fragShaderID);
+
+    glAttachShader(ProgramID, VertShaderID);
+    glAttachShader(ProgramID, fragShaderID);
+    Link();
+    Shader::checkProgramLinkStatus(ProgramID);
+
+    glDeleteShader(VertShaderID);
+    glDeleteShader(fragShaderID);
 }

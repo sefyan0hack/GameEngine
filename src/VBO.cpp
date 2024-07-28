@@ -1,14 +1,18 @@
 #include <glad/glad.h>
 #include "VBO.hpp"
 
-VBO::VBO(GLfloat *vertices, GLuint size):Id(0) {
+VBO::VBO()
+{
     glGenBuffers(1, &Id);
-    Bind();
-    UpData(vertices, size);
 }
 
-void VBO::UpData(GLfloat *vertices, GLuint size){
-    glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+VBO::VBO(const std::vector<float> &vertices) : Id(0)
+{
+    glGenBuffers(1, &Id);
+}
+
+void VBO::UpData(const std::vector<float> &vertices){
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 }
 
 VBO::~VBO(){

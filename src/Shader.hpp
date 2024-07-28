@@ -2,9 +2,11 @@
 class Shader
 {
     public:
+        Shader() ;
         Shader(std::string _name);
         ~Shader();
     public:
+        void Load(std::string _name);
         void UseProgram() const ;
         GLuint GetProgram() const;
     

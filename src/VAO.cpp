@@ -3,15 +3,13 @@
 
 VAO::VAO():Id(0) {
     glGenVertexArrays(1, &Id);
-    Bind();
 }
 VAO::~VAO(){
     glDeleteVertexArrays(1, &Id);
 }
 void VAO::SetLout(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer){
-    glEnableVertexAttribArray(index);
-    Bind();
     glVertexAttribPointer(index, size, type, normalized, stride, pointer);
+    glEnableVertexAttribArray(index);
 }
 void VAO::Bind() const{
     glBindVertexArray(Id);

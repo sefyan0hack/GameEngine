@@ -1,13 +1,15 @@
 #pragma once
+#include <vector>
 class VBO
 {
     public:
-        VBO(GLfloat *vertices, GLuint size);
+        VBO();
+        VBO(const std::vector<float> &vertices);
         ~VBO();
     public:
         void Bind() const;
         void UnBind() const;
-        void UpData(GLfloat *vertices, GLuint size);
+        void UpData(const std::vector<float> &vertices);
     private:
         GLuint Id;
 };

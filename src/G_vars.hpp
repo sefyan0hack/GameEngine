@@ -5,7 +5,7 @@
 #include "VAO.hpp"
 #include "VBO.hpp"
 #include "Shader.hpp"
-
+#include <vector>
 NO_WARNING_BEGIN
 #include <glad/glad.h>
 NO_WARNING_END
@@ -14,7 +14,7 @@ NO_WARNING_END
 
 // OpenGl Vars
 
-// inline GLfloat vertices[] = {
+// inline  std::vector<float> vertices {
 //         -0.5f, -0.5f, 0.0f,
 //          0.5f, -0.5f, 0.0f,
 //          0.0f,  0.5f, 0.0f
@@ -29,4 +29,4 @@ NO_WARNING_END
 // inline GLfloat xyz[3] = {0.0f, 0.0f, 0.0f};
 
 // inline VAO vao;
-// inline VBO vbo(vertices, sizeof(vertices));
+// inline VBO vbo(vertices);
