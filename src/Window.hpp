@@ -1,7 +1,8 @@
 #pragma once
 #include "Global_H.hpp"
 #include <windows.h>
-
+#include <memory>
+#include "OpenGL.hpp"
 NO_WARNING_BEGIN
 #include <glad/glad.h>
 NO_WARNING_END
@@ -60,6 +61,8 @@ class Window
         int m_Width;
         int m_Height;
         bool m_Visible;
+
+        std::unique_ptr<OpenGL> m_OpenGl;
         
     public:
         inline static unsigned short S_WindowsCount = 0;

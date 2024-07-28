@@ -21,6 +21,8 @@ set(SOURCE
 	src/Shader.cpp
 	src/VAO.cpp
 	src/VBO.cpp
+    src/OpenGL.cpp
+    src/Inputs.cpp
 	)
 
 include(ProcessorCount)

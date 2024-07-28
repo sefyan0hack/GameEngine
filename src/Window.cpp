@@ -1,16 +1,5 @@
 #include "Window.hpp"
-#include <cassert>
-// #include <iostream>
 #include "Global_H.hpp"
-#include "G_vars.hpp"
-
-extern "C"{
-    typedef HGLRC WINAPI wglCreateContextAttribsARB_type(HDC hdc, HGLRC hShareContext, const int *attribList);
-    wglCreateContextAttribsARB_type *wglCreateContextAttribsARB;
-
-    typedef BOOL WINAPI wglChoosePixelFormatARB_type(HDC hdc, const int *piAttribIList, const FLOAT *pfAttribFList, UINT nMaxFormats, int *piFormats, UINT *nNumFormats);
-    wglChoosePixelFormatARB_type *wglChoosePixelFormatARB;
-}
 
 // Window class things///////////////////////////////////
 Window::WinClass &Window::WinClass::Instance()
@@ -101,6 +90,7 @@ Window::Window(int Width, int Height, const char* Title) : m_Instance( GetModule
 {
     _init_helper(Width, Height, Title);
     S_WindowsCount++;
+    m_OpenGl = std::make_unique<OpenGL>(m_WindowHandle);
 }
 
 Window::~Window()
