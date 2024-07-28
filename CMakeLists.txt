@@ -23,6 +23,7 @@ set(SOURCE
 	src/VBO.cpp
     src/OpenGL.cpp
     src/Inputs.cpp
+    src/APP.cpp
 	)
 
 include(ProcessorCount)

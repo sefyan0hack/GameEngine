@@ -12,11 +12,6 @@ NO_WARNING_END
 
 #define WM_FPS_PAINT (WM_USER + 1)
 
-//Debug Vars
-
-inline LARGE_INTEGER start_count, end_count, counts, freq, fps;
-inline Window window{ 640, 480, "Main"};
-
 // OpenGl Vars
 
 // inline GLfloat vertices[] = {
