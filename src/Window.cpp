@@ -95,7 +95,6 @@ Window::Window(int Width, int Height, const char* Title) : m_Instance( GetModule
 
 Window::~Window()
 {
-    ReleaseDC(m_WindowHandle, m_HDC);
     DestroyWindow(m_WindowHandle);
 }
 void Window::ProcessMessages()
@@ -108,9 +107,9 @@ void Window::ProcessMessages()
     }
 }
 
-
 void Window::_init_helper(int Width, int Height, const char* Title){
     WinClass::Instance();
+
     RECT WinRect;
 	WinRect.left = 100;
 	WinRect.right = Width + WinRect.left;
@@ -139,7 +138,6 @@ void Window::_init_helper(int Width, int Height, const char* Title){
         return;
     }
     
-    m_HDC = GetDC(m_WindowHandle);
     ShowWindow(m_WindowHandle, SW_SHOW);
     UpdateWindow(m_WindowHandle);
 }
@@ -152,10 +150,6 @@ HWND Window::GetHWND() const{
     return m_WindowHandle;
 }
 
-HDC Window::GetHDC() const{
-    return m_HDC;
-}
-
 int Window::GetWidth() const
 {
     return m_Width;
@@ -164,6 +158,10 @@ int Window::GetWidth() const
 int Window::GetHeight() const
 {
     return m_Height;
+}
+OpenGL* Window::GetGL() const
+{
+    return m_OpenGl.get();
 }
 bool Window::Visible() const
 {

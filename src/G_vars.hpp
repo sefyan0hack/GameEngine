@@ -16,8 +16,6 @@ NO_WARNING_END
 
 inline LARGE_INTEGER start_count, end_count, counts, freq, fps;
 inline Window window{ 640, 480, "Main"};
-inline Window window1{ 640, 480, "ain"};
-inline Window window2{ 999, 100, "ain"};
 
 // OpenGl Vars
 

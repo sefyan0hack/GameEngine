@@ -15,8 +15,10 @@ int WINAPI WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR LpCmdLine, 
     QueryPerformanceFrequency(&freq);
     while (Window::WindowsCount() != 0) {
         Window::ProcessMessages();
-        TextOutA(window.GetHDC(), 20, 20, std::to_string(fps.QuadPart).c_str(), 8);
-        SwapBuffers(window.GetHDC());
+        auto _hdc = window.GetGL()->GetHDC();
+        glClearColor(0.3f, 0.3f, 0.6f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        SwapBuffers(_hdc);
         Sleep(1);
         QueryPerformanceCounter(&end_count);
         counts.QuadPart = end_count.QuadPart - start_count.QuadPart;

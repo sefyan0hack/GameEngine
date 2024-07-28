@@ -5,19 +5,12 @@ NO_WARNING_BEGIN
 NO_WARNING_END
 
 extern "C"{
-    // typedef HGLRC WINAPI wglCreateContextAttribsARB_type(HDC hdc, HGLRC hShareContext, const int *attribList);
-    // wglCreateContextAttribsARB_type *wglCreateContextAttribsARB;
+    using wglCreateContextAttribsARB_type = HGLRC(WINAPI*)(HDC hdc, HGLRC hShareContext, const int *attribList);
+    wglCreateContextAttribsARB_type wglCreateContextAttribsARB = nullptr;
 
-    // typedef BOOL WINAPI wglChoosePixelFormatARB_type(HDC hdc, const int *piAttribIList, const FLOAT *pfAttribFList, UINT nMaxFormats, int *piFormats, UINT *nNumFormats);
-    // wglChoosePixelFormatARB_type *wglChoosePixelFormatARB;
-
-using wglCreateContextAttribsARB_type = HGLRC(WINAPI*)(HDC hdc, HGLRC hShareContext, const int *attribList);
-wglCreateContextAttribsARB_type wglCreateContextAttribsARB = nullptr;
-
-using wglChoosePixelFormatARB_type = BOOL(WINAPI*)(HDC hdc, const int *piAttribIList, const FLOAT *pfAttribFList, UINT nMaxFormats, int *piFormats, UINT *nNumFormats);
-wglChoosePixelFormatARB_type wglChoosePixelFormatARB = nullptr;
+    using wglChoosePixelFormatARB_type = BOOL(WINAPI*)(HDC hdc, const int *piAttribIList, const FLOAT *pfAttribFList, UINT nMaxFormats, int *piFormats, UINT *nNumFormats);
+    wglChoosePixelFormatARB_type wglChoosePixelFormatARB = nullptr;
 }
-
 
 void OpenGL::init_opengl_extensions()
 {
@@ -166,4 +159,9 @@ void OpenGL::init_opengl()
     LOG("GL Renderer : " << glGetString(GL_RENDERER));
 
     m_Context =  gl33_context;
+}
+
+HDC OpenGL::GetHDC() const
+{
+    return m_HDC;
 }

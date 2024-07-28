@@ -4,8 +4,11 @@ class OpenGL
 {
     public:
         OpenGL(HWND window);
+        OpenGL(const OpenGL&) = delete;
+        OpenGL operator = (const OpenGL&) = delete;
         ~OpenGL();
     public:
+        HDC GetHDC() const;
 
     private:
     void init_opengl();
