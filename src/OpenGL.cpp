@@ -3,7 +3,6 @@
 NO_WARNING_BEGIN
 #include <glad/glad.h>
 NO_WARNING_END
-
 extern "C"{
     using wglCreateContextAttribsARB_type = HGLRC(WINAPI*)(HDC hdc, HGLRC hShareContext, const int *attribList);
     wglCreateContextAttribsARB_type wglCreateContextAttribsARB = nullptr;
@@ -152,12 +151,16 @@ void OpenGL::init_opengl()
     if (!wglMakeCurrent(m_HDC, gl33_context)) {
         ERR("Failed to activate OpenGL 3.3 rendering context.");
     }
-    gladLoadGL();
+    
+    static bool on = false;
+    if(on == false){
+        gladLoadGL();
+        on = true;
+    }
     LOG("GL Version : " << glGetString(GL_VERSION));
     LOG("GLSL Version : " << glGetString(GL_SHADING_LANGUAGE_VERSION));
     LOG("GL Vendor : " << glGetString(GL_VENDOR));
     LOG("GL Renderer : " << glGetString(GL_RENDERER));
-
     m_Context =  gl33_context;
 }
 
