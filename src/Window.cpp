@@ -93,7 +93,98 @@ LRESULT CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
 	    case WM_CHAR:
 	    	kbd.OnChar( static_cast<unsigned char>(Wpr) );
 	    	break;
-	/*********** END KEYBOARD MESSAGES ***********/
+	    /*********** END KEYBOARD MESSAGES ***********/
+
+        /************* MOUSE MESSAGES ****************/
+	    case WM_MOUSEMOVE:
+	    {
+	    	const POINTS pt = MAKEPOINTS( Lpr );
+	    	mouse.OnMouseMove( pt.x,pt.y );
+			return 0;
+	    }
+	    case WM_LBUTTONDOWN:
+	    {
+	    	SetForegroundWindow( Winhandle );
+	    	const POINTS pt = MAKEPOINTS( Lpr );
+	    	mouse.OnLeftPressed( pt.x,pt.y );
+	    	break;
+	    }
+	    case WM_RBUTTONDOWN:
+	    {
+
+	    	const POINTS pt = MAKEPOINTS( Lpr );
+	    	mouse.OnRightPressed( pt.x,pt.y );
+	    	break;
+	    }
+	    case WM_LBUTTONUP:
+	    {
+	    	const POINTS pt = MAKEPOINTS( Lpr );
+	    	mouse.OnLeftReleased( pt.x,pt.y );
+	    	// release mouse if outside of window
+	    	if( pt.x < 0 || pt.x >= m_Width || pt.y < 0 || pt.y >= m_Height )
+	    	{
+	    		ReleaseCapture();
+	    		mouse.OnMouseLeave();
+	    	}
+	    	break;
+	    }
+	    case WM_RBUTTONUP:
+	    {
+	    	const POINTS pt = MAKEPOINTS( Lpr );
+	    	mouse.OnRightReleased( pt.x,pt.y );
+	    	// release mouse if outside of window
+	    	if( pt.x < 0 || pt.x >= m_Width || pt.y < 0 || pt.y >= m_Height )
+	    	{
+	    		ReleaseCapture();
+	    		mouse.OnMouseLeave();
+	    	}
+	    	break;
+	    }
+	    case WM_MOUSEWHEEL:
+	    {
+	    	const POINTS pt = MAKEPOINTS( Lpr );
+	    	const int delta = GET_WHEEL_DELTA_WPARAM( Wpr );
+	    	mouse.OnWheelDelta( pt.x,pt.y,delta );
+	    	break;
+	    }
+	    /************** END MOUSE MESSAGES **************/
+    
+	    /************** RAW MOUSE MESSAGES **************/
+	    case WM_INPUT:
+	    {
+	    	if( !mouse.RawEnabled() )
+	    	{
+	    		break;
+	    	}
+	    	UINT size;
+	    	// first get the size of the input data
+	    	if( GetRawInputData( reinterpret_cast<HRAWINPUT>(Lpr), RID_INPUT, nullptr, &size, sizeof( RAWINPUTHEADER ) ) == -1)
+	    	{
+	    		// bail msg processing if error
+	    		break;
+	    	}
+	    	rawBuffer.resize( size );
+	    	// read in the input data
+	    	if( GetRawInputData(
+	    		reinterpret_cast<HRAWINPUT>(Lpr),
+	    		RID_INPUT,
+	    		rawBuffer.data(),
+	    		&size,
+	    		sizeof( RAWINPUTHEADER ) ) != size )
+	    	{
+	    		// bail msg processing if error
+	    		break;
+	    	}
+	    	// process the raw input data
+	    	auto& ri = reinterpret_cast<const RAWINPUT&>(*rawBuffer.data());
+	    	if( ri.header.dwType == RIM_TYPEMOUSE &&
+	    		(ri.data.mouse.lLastX != 0 || ri.data.mouse.lLastY != 0) )
+	    	{
+	    		mouse.OnRawDelta( ri.data.mouse.lLastX,ri.data.mouse.lLastY );
+	    	}
+	    	break;
+	    }
+	    /************** END RAW MOUSE MESSAGES **************/
         case WM_KILLFOCUS:
 		    kbd.ClearState();
 		    break;
@@ -107,9 +198,9 @@ unsigned short Window::WindowsCount()
 {
     return S_WindowsCount;
 }
-Window::Window(int Width, int Height, const char* Title) : m_Instance( GetModuleHandleA( nullptr ) ), m_Visible(true)
+Window::Window(int m_Width, int m_Height, const char* Title) : m_Instance( GetModuleHandleA( nullptr ) ), m_Visible(true)
 {
-    _init_helper(Width, Height, Title);
+    _init_helper(m_Width, m_Height, Title);
     S_WindowsCount++;
     m_OpenGl = std::make_unique<OpenGL>(m_WindowHandle);
 }
@@ -128,14 +219,14 @@ void Window::ProcessMessages()
     }
 }
 
-void Window::_init_helper(int Width, int Height, const char* Title){
+void Window::_init_helper(int m_Width, int m_Height, const char* Title){
     WinClass::Instance();
 
     RECT WinRect;
 	WinRect.left = 100;
-	WinRect.right = Width + WinRect.left;
+	WinRect.right = m_Width + WinRect.left;
 	WinRect.top = 100;
-	WinRect.bottom = Height + WinRect.top;
+	WinRect.bottom = m_Height + WinRect.top;
 	if( AdjustWindowRect( &WinRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE ) == 0 )
 	{
 		ERR("Addjusting Win");
@@ -148,7 +239,7 @@ void Window::_init_helper(int Width, int Height, const char* Title){
         WinClass::Title(),
         Title,
         WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, CW_USEDEFAULT, m_Width, Height,
+        CW_USEDEFAULT, CW_USEDEFAULT, m_Width, m_Height,
         nullptr, nullptr,
         m_Instance,
         this

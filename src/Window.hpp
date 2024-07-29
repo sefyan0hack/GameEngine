@@ -2,6 +2,7 @@
 #include "Global_H.hpp"
 #include <windows.h>
 #include <memory>
+#include <vector>
 #include "OpenGL.hpp"
 
 NO_WARNING_BEGIN
@@ -9,6 +10,7 @@ NO_WARNING_BEGIN
 NO_WARNING_END
 
 #include "Keyboard.hpp"
+#include "Mouse.hpp"
 
 class Window
 {
@@ -62,10 +64,11 @@ class Window
         int m_Width;
         int m_Height;
         bool m_Visible;
-
+        std::vector<BYTE> rawBuffer;
         std::unique_ptr<OpenGL> m_OpenGl;
     public:
 	    Keyboard kbd;
+        Mouse mouse;
         
     public:
         inline static unsigned short S_WindowsCount = 0;
