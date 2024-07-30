@@ -117,6 +117,11 @@ GLuint Shader::GetProgram() const{
     return ProgramID;
 }
 
+GLuint Shader::GetUniformLocation(const char *name)
+{
+    return glGetUniformLocation(ProgramID, name);
+}
+
 void Shader::Load(std::string _name){
     this->name =  _name;
     LoadSource();

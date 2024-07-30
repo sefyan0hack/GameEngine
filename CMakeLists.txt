@@ -23,6 +23,8 @@ set(SOURCE
 	src/Shader.cpp
 	src/VAO.cpp
 	src/VBO.cpp
+    src/EBO.cpp
+    src/Mesh.cpp
     src/OpenGL.cpp
     src/APP.cpp
 	)

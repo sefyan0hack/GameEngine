@@ -1,4 +1,7 @@
 #pragma once
+NO_WARNING_BEGIN
+#include <glad/glad.h>
+NO_WARNING_END
 class Shader
 {
     public:
@@ -9,6 +12,7 @@ class Shader
         void Load(std::string _name);
         void UseProgram() const ;
         GLuint GetProgram() const;
+        GLuint GetUniformLocation(const char* name);
     
     private:
         void LoadSource();
