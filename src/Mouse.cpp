@@ -15,12 +15,6 @@ bool Mouse::RightIsPressed() const noexcept { return rightIsPressed; }
 
 void Mouse::Flush() noexcept { buffer = std::queue<Event>(); }
 
-void Mouse::EnableRaw() noexcept { rawEnabled = true; }
-
-void Mouse::DisableRaw() noexcept { rawEnabled = false; }
-
-bool Mouse::RawEnabled() const noexcept { return rawEnabled; }
-
 std::optional<Mouse::RawDelta> Mouse::ReadRawDelta() noexcept
 {
 	if( rawDeltaBuffer.empty() )

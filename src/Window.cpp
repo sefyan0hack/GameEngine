@@ -93,9 +93,9 @@ LRESULT CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
 	    case WM_CHAR:
 	    	kbd.OnChar( static_cast<unsigned char>(Wpr) );
 	    	break;
-	    /*********** END KEYBOARD MESSAGES ***********/
+	    ///////////// END KEYBOARD MESSAGES /////////////
 
-        /************* MOUSE MESSAGES ****************/
+        ///////////// MOUSE MESSAGES /////////////////
 	    case WM_MOUSEMOVE:
 	    {
 	    	const POINTS pt = MAKEPOINTS( Lpr );
@@ -147,20 +147,16 @@ LRESULT CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
 	    	mouse.OnWheelDelta( pt.x,pt.y,delta );
 	    	break;
 	    }
-	    /************** END MOUSE MESSAGES **************/
+	    ///////////////// END MOUSE MESSAGES /////////////////
     
-	    /************** RAW MOUSE MESSAGES **************/
+	    ///////////////// RAW MOUSE MESSAGES /////////////////
 	    case WM_INPUT:
 	    {
-	    	if( !mouse.RawEnabled() )
-	    	{
-	    		break;
-	    	}
 	    	UINT size;
 	    	// first get the size of the input data
-	    	if( GetRawInputData( reinterpret_cast<HRAWINPUT>(Lpr), RID_INPUT, nullptr, &size, sizeof( RAWINPUTHEADER ) ) == -1)
+	    	if( GetRawInputData( reinterpret_cast<HRAWINPUT>(Lpr), RID_INPUT, nullptr, &size, sizeof( RAWINPUTHEADER ) ) == (UINT)-1)
 	    	{
-	    		// bail msg processing if error
+	    		//my log error hire
 	    		break;
 	    	}
 	    	rawBuffer.resize( size );
@@ -172,7 +168,7 @@ LRESULT CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
 	    		&size,
 	    		sizeof( RAWINPUTHEADER ) ) != size )
 	    	{
-	    		// bail msg processing if error
+	    		//my log error hire
 	    		break;
 	    	}
 	    	// process the raw input data
@@ -184,7 +180,7 @@ LRESULT CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
 	    	}
 	    	break;
 	    }
-	    /************** END RAW MOUSE MESSAGES **************/
+	    ///////////////// END RAW MOUSE MESSAGES /////////////////
         case WM_KILLFOCUS:
 		    kbd.ClearState();
 		    break;
@@ -249,6 +245,16 @@ void Window::_init_helper(int m_Width, int m_Height, const char* Title){
         ERR("faild to creat Window code : " << GetLastError());
         return;
     }
+	// regester mouse raw data
+	RAWINPUTDEVICE _rid;
+	_rid.dwFlags = 0;
+	_rid.usUsagePage  = 0x01;
+	_rid.usUsage  = 0x02;
+	_rid.hwndTarget = nullptr;
+	if(RegisterRawInputDevices(&_rid, 1, sizeof(_rid)) == false){
+		ERR("Mouse row data not regesterd");
+	}
+
     
     ShowWindow(m_WindowHandle, SW_SHOW);
     UpdateWindow(m_WindowHandle);
