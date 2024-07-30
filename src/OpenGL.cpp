@@ -13,24 +13,14 @@ extern "C"{
 
 void OpenGL::init_opengl_extensions()
 {
-    static WNDCLASSA window_class {};
-    window_class.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-    window_class.lpfnWndProc = DefWindowProcA;
-    window_class.hInstance = GetModuleHandle(0);
-    window_class.lpszClassName = "Dummy_WGL_djuasiodwa";
-
-    if (!RegisterClassA(&window_class) && GetLastError() != ERROR_CLASS_ALREADY_EXISTS) {
-        ERR("Failed to register dummy OpenGL window.");
-    }
-
     HWND dummy_window = CreateWindowExA(
         0,
-        window_class.lpszClassName,
-        "Dummy OpenGL Window",
+        "STATIC",
+        "Dummy",
         0,
         CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
         0, 0,
-        window_class.hInstance,
+        NULL,
         0);
 
     if (!dummy_window) {

@@ -8,8 +8,8 @@ VAO::~VAO(){
     glDeleteVertexArrays(1, &Id);
 }
 void VAO::SetLout(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer){
-    glVertexAttribPointer(index, size, type, normalized, stride, pointer);
     glEnableVertexAttribArray(index);
+    glVertexAttribPointer(index, size, type, normalized, stride, pointer);
 }
 void VAO::Bind() const{
     glBindVertexArray(Id);

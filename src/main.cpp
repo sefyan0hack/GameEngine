@@ -12,18 +12,19 @@
 #include <glm/gtc/type_ptr.hpp>
 using namespace std;
 
+void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 class Game : public APP
 {
     private:
     std::vector<float> vertices {
-        -0.25, -0.25, -0.25, Rand_float, Rand_float, Rand_float, // Vertex 1
-        0.25, -0.25, -0.25,  Rand_float, Rand_float, Rand_float, // Vertex 2
-        -0.25, 0.25, -0.25,  Rand_float, Rand_float, Rand_float, // Vertex 3
-        0.25, 0.25, -0.25,   Rand_float, Rand_float, Rand_float, // Vertex 4
-        -0.25, -0.25, 0.25,  Rand_float, Rand_float, Rand_float, // Vertex 5
-        0.25, -0.25, 0.25,   Rand_float, Rand_float, Rand_float, // Vertex 6
-        -0.25, 0.25, 0.25,   Rand_float, Rand_float, Rand_float, // Vertex 7
-        0.25, 0.25, 0.25    ,Rand_float, Rand_float, Rand_float, // Vertex 8
+        -0.25, -0.25, -0.25, Rand_float, 0.0f, Rand_float, // Vertex 1
+        0.25, -0.25, -0.25,  Rand_float, 0.0f, Rand_float, // Vertex 2
+        -0.25, 0.25, -0.25,  Rand_float, 0.0f, Rand_float, // Vertex 3
+        0.25, 0.25, -0.25,   Rand_float, 0.0f, Rand_float, // Vertex 4
+        -0.25, -0.25, 0.25,  Rand_float, 0.0f, Rand_float, // Vertex 5
+        0.25, -0.25, 0.25,   Rand_float, 0.0f, Rand_float, // Vertex 6
+        -0.25, 0.25, 0.25,   Rand_float, 0.0f, Rand_float, // Vertex 7
+        0.25, 0.25, 0.25    ,Rand_float, 0.0f, Rand_float, // Vertex 8
         // -0.5f, -0.5f, 0.0f,
         //  0.5f, -0.5f, 0.0f,
         //  0.0f,  0.5f, 0.0f
@@ -80,7 +81,28 @@ public:
         m_Window.kbd.EnableAutorepeat();
     }
     void Update(float delta) override{
-        // glDrawArrays(GL_TRIANGLES, 0, 3);
+        auto op = m_Window.mouse.ReadRawDelta();
+        if(op){
+            auto d = op.value();
+
+            if(m_Window.mouse.LeftIsPressed()){
+                // Convert mouse delta to radians for rotation
+                float angleX = glm::radians((float)d.x);
+                float angleY = glm::radians((float)d.y);
+
+                // Rotation axis (could be changed based on your application's needs)
+                glm::vec3 axisX(1.0f, 0.0f, 0.0f); // Rotate around X-axis
+                glm::vec3 axisY(0.0f, 1.0f, 0.0f); // Rotate around Y-axis
+
+                // Apply rotation to the transformation matrix
+                trans = glm::rotate(trans, angleX, axisY);
+                trans = glm::rotate(trans, angleY, axisX);
+
+                // Send the updated transformation matrix to the shader
+                glUniformMatrix4fv(mLoc, 1, GL_FALSE, glm::value_ptr(trans));
+            }
+        }
+            
         glDrawElements(GL_TRIANGLES, ebo_indices.size(), GL_UNSIGNED_INT, 0);
 
        if( m_Window.kbd.KeyIsPressed('A') || m_Window.kbd.KeyIsPressed(VK_LEFT)){
@@ -98,9 +120,8 @@ public:
        }
        else if( m_Window.kbd.KeyIsPressed('S') || m_Window.kbd.KeyIsPressed(VK_DOWN) ){
             trans = glm::translate(trans, glm::vec3(0.0, -1.0 * delta, 0.0));
-            glUniformMatrix4fv(mLoc, 1, GL_FALSE, glm::value_ptr(trans));;
+            glUniformMatrix4fv(mLoc, 1, GL_FALSE, glm::value_ptr(trans));
        }
-
     }
     void Destroy()  override{
         vbo.UnBind();
