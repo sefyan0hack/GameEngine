@@ -8,7 +8,6 @@ class VBO
 {
     public:
         VBO();
-        VBO(const std::vector<float> &vertices);
         ~VBO();
     public:
         void Bind() const;

@@ -22,9 +22,9 @@ class Shader
         void checkProgramLinkStatus(GLuint program);
     
     private:
-        GLuint ProgramID;
-        GLuint VertShaderID;
-        GLuint fragShaderID;
+        const GLuint VertShaderID;
+        const GLuint fragShaderID;
+        const GLuint ProgramID;
     
         std::string name;
 };

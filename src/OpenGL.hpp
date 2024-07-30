@@ -16,7 +16,7 @@ class OpenGL
 
     private:
         HWND m_window;
-        HDC m_HDC;
+        const HDC m_HDC;
         HGLRC m_Context;
         enum {
             WGL_CONTEXT_MAJOR_VERSION_ARB    = 0x2091,
