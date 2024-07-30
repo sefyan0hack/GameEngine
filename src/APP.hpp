@@ -7,11 +7,12 @@ class APP
 public:
     APP();
     ~APP() = default;
-public:
-    virtual void Run();
-    virtual void Start() = 0;
+
+    void Run();
+
+protected:
     virtual void Update(float delta) = 0;
-    virtual void Destroy() = 0;
+
 protected:
     Window m_Window;
     LARGE_INTEGER start_count, end_count, counts, freq, fps;

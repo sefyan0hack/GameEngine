@@ -8,21 +8,17 @@ void Shader::UseProgram() const{
 }
 
 Shader::Shader()
-{
-    VertShaderID = glCreateShader(GL_VERTEX_SHADER);
-    fragShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-    ProgramID = glCreateProgram();
-}
+: VertShaderID(glCreateShader(GL_VERTEX_SHADER)), fragShaderID(glCreateShader(GL_FRAGMENT_SHADER)), ProgramID(glCreateProgram()), name("") {}
 
-Shader::Shader(std::string _name) : ProgramID(0), VertShaderID(0), fragShaderID(0), name(_name)
+Shader::Shader(std::string _name) 
+: VertShaderID(glCreateShader(GL_VERTEX_SHADER)), fragShaderID(glCreateShader(GL_FRAGMENT_SHADER)), ProgramID(glCreateProgram()), name(_name)
 {
-    VertShaderID = glCreateShader(GL_VERTEX_SHADER);
-    fragShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-    ProgramID = glCreateProgram();
     if(!name.empty()){
         Load(name);
     }
-        
+    else{
+        throw "no shader name brovided";
+    }
 }
 
 Shader::~Shader()

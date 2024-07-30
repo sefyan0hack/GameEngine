@@ -194,7 +194,8 @@ unsigned short Window::WindowsCount()
 {
     return S_WindowsCount;
 }
-Window::Window(int m_Width, int m_Height, const char* Title) : m_Instance( GetModuleHandleA( nullptr ) ), m_Visible(true)
+Window::Window(int m_Width, int m_Height, const char* Title) 
+: m_Instance( GetModuleHandleA( nullptr ) ), m_Visible(true)
 {
     _init_helper(m_Width, m_Height, Title);
     S_WindowsCount++;

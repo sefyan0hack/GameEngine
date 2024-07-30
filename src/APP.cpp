@@ -5,8 +5,6 @@ APP::APP(): m_Window(640, 480, "Main"), fps(LARGE_INTEGER{.QuadPart = 60}) {}
 
 void APP::Run()
 {
-    Start();
-
     QueryPerformanceCounter(&start_count);
     QueryPerformanceFrequency(&freq);
     while (Window::WindowsCount() != 0) {
@@ -25,6 +23,4 @@ void APP::Run()
         start_count = end_count;
         fps.QuadPart = freq.QuadPart / counts.QuadPart;
     }
-
-    Destroy();
 }

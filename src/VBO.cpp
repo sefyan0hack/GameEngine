@@ -1,7 +1,7 @@
 #include <glad/glad.h>
 #include "VBO.hpp"
 
-VBO::VBO()
+VBO::VBO() : Id(0)
 {
     glGenBuffers(1, &Id);
 }

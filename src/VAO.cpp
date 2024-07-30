@@ -1,7 +1,7 @@
 #include <glad/glad.h>
 #include "VAO.hpp"
 
-VAO::VAO():Id(0) {
+VAO::VAO(): Id(0) {
     glGenVertexArrays(1, &Id);
 }
 VAO::~VAO(){
