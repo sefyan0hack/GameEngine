@@ -14,15 +14,15 @@ class Game : public APP
 {
     
 private:
-    std::vector<float> vertices {
-        -0.25, -0.25, -0.25, 1.0f, 0.0f, 1.0f, // Vertex 1
-        0.25, -0.25, -0.25,  1.0f, 0.0f, 1.0f, // Vertex 2
-        -0.25, 0.25, -0.25,  1.0f, 0.0f, 1.0f, // Vertex 3
-        0.25, 0.25, -0.25,   1.0f, 0.0f, 0.0f, // Vertex 4
-        -0.25, -0.25, 0.25,  1.0f, 0.0f, 0.0f, // Vertex 5
-        0.25, -0.25, 0.25,   1.0f, 0.0f, 0.0f, // Vertex 6
-        -0.25, 0.25, 0.25,   1.0f, 0.0f, 1.0f, // Vertex 7
-        0.25, 0.25, 0.25    ,1.0f, 0.0f, 1.0f, // Vertex 8
+    std::vector<Vertex> vertices {
+        Vertex{ {-0.25, -0.25, -0.25 }/*, { 1.0f, 0.0f, 1.0f } */ }, // Vertex 1
+        Vertex{ {0.25, -0.25, -0.25  }/*, { 1.0f, 0.0f, 1.0f } */ }, // Vertex 2
+        Vertex{ {-0.25, 0.25, -0.25  }/*, { 1.0f, 0.0f, 1.0f } */ }, // Vertex 3
+        Vertex{ {0.25, 0.25, -0.25   }/*, { 1.0f, 0.0f, 0.0f } */ }, // Vertex 4
+        Vertex{ {-0.25, -0.25, 0.25  }/*, { 1.0f, 0.0f, 0.0f } */ }, // Vertex 5
+        Vertex{ {0.25, -0.25, 0.25   }/*, { 1.0f, 0.0f, 0.0f } */ }, // Vertex 6
+        Vertex{ {-0.25, 0.25, 0.25   }/*, { 1.0f, 0.0f, 1.0f } */ }, // Vertex 7
+        Vertex{ {0.25, 0.25, 0.25    }/*, { 1.0f, 0.0f, 1.0f } */ }, // Vertex 8
     };
     std::vector<GLuint> ebo_indices{
         // # Front face
@@ -45,26 +45,26 @@ private:
         1, 5, 4
     };
 
-    Mesh* cube;
+    Mesh cube;
     glm::mat4 trans;
     glm::mat4 pers ;
-    GLuint pLoc;
+    GLuint umat, pLoc;
+    Shader pshad;
 public: // init here 
     Game()
-    : cube(new Mesh(vertices, ebo_indices, SHADER(Traingl))), trans (glm::mat4(1.0f))
+    : cube({vertices, ebo_indices}), trans(glm::mat4(1.0f)), pshad(SHADER(Traingl))
     {
-        cube->Bind();
+        cube.setupMesh();
         trans = glm::rotate(trans, glm::radians(10.0f), glm::vec3(Rand_float, Rand_float, Rand_float));
-        glUniformMatrix4fv(cube->Getmat4Loc(), 1, GL_FALSE, glm::value_ptr(trans));
-        pLoc = cube->GetShaderProgram().GetUniformLocation("persp");
+        glUniformMatrix4fv(umat, 1, GL_FALSE, glm::value_ptr(trans));
+        umat = pshad.GetUniformLocation("u_mat");
+        pLoc = pshad.GetUniformLocation("persp");
         pers = glm::perspective(glm::radians(45.0f),(float)m_Window.GetWidth()/(float)m_Window.GetHeight(), 0.1f, 10.0f);
         glUniformMatrix4fv(pLoc, 1, GL_FALSE, glm::value_ptr(pers));
     }
 public:
 
     void Update(float delta) override {
-        pers = glm::perspective(glm::radians(45.0f), (float)m_Window.GetWidth()/(float)m_Window.GetHeight(), 0.1f, 10.0f);
-        glUniformMatrix4fv(pLoc, 1, GL_FALSE, glm::value_ptr(pers));
 
         auto op = m_Window.mouse.ReadRawDelta();
         if(op){
@@ -84,39 +84,38 @@ public:
                 trans = glm::rotate(trans, angleY, axisX * delta);
 
                 // Send the updated transformation matrix to the shader
-                glUniformMatrix4fv(cube->Getmat4Loc(), 1, GL_FALSE, glm::value_ptr(trans));
+                glUniformMatrix4fv(umat, 1, GL_FALSE, glm::value_ptr(trans));
             }
         }
             
-        glDrawElements(GL_TRIANGLES, ebo_indices.size(), GL_UNSIGNED_INT, 0);
+        cube.Draw(pshad);
 
        if( m_Window.kbd.KeyIsPressed('A') || m_Window.kbd.KeyIsPressed(VK_LEFT)){
             trans = glm::translate(trans, glm::vec3(-1.0 * delta, 0.0, 0.0));
-            glUniformMatrix4fv(cube->Getmat4Loc(), 1, GL_FALSE, glm::value_ptr(trans));
+            glUniformMatrix4fv(umat, 1, GL_FALSE, glm::value_ptr(trans));
 
        }else if( m_Window.kbd.KeyIsPressed('D') || m_Window.kbd.KeyIsPressed(VK_RIGHT) ){
             trans = glm::translate(trans, glm::vec3(1.0 * delta, 0.0, 0.0));
-            glUniformMatrix4fv(cube->Getmat4Loc(), 1, GL_FALSE, glm::value_ptr(trans));
+            glUniformMatrix4fv(umat, 1, GL_FALSE, glm::value_ptr(trans));
 
        }else if( m_Window.kbd.KeyIsPressed('W') || m_Window.kbd.KeyIsPressed(VK_UP)){
             trans = glm::translate(trans, glm::vec3(0.0, 1.0 * delta, 0.0));
-            glUniformMatrix4fv(cube->Getmat4Loc(), 1, GL_FALSE, glm::value_ptr(trans));
+            glUniformMatrix4fv(umat, 1, GL_FALSE, glm::value_ptr(trans));
 
        }
        else if( m_Window.kbd.KeyIsPressed('S') || m_Window.kbd.KeyIsPressed(VK_DOWN) ){
             trans = glm::translate(trans, glm::vec3(0.0, -1.0 * delta, 0.0));
-            glUniformMatrix4fv(cube->Getmat4Loc(), 1, GL_FALSE, glm::value_ptr(trans));
+            glUniformMatrix4fv(umat, 1, GL_FALSE, glm::value_ptr(trans));
 
        }else if( m_Window.kbd.KeyIsPressed(VK_SPACE) ){
-            trans = glm::translate(trans, glm::vec3(0.0, 0.0, -1.0 * delta));
-            glUniformMatrix4fv(cube->Getmat4Loc(), 1, GL_FALSE, glm::value_ptr(trans));
+            trans = glm::translate(trans, glm::vec3(0.0, 0.0, -1.0 * delta ));
+            glUniformMatrix4fv(umat, 1, GL_FALSE, glm::value_ptr(trans));
        }
 
     }
 
 public: // distroy hire
     ~Game(){
-        delete cube;
         LOG("Game destryed");
     }
 };

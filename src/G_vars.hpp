@@ -2,8 +2,6 @@
 #include "Global_H.hpp"
 #include <windows.h>
 #include "Renderer.hpp"
-#include "VAO.hpp"
-#include "VBO.hpp"
 #include "Shader.hpp"
 #include <vector>
 NO_WARNING_BEGIN

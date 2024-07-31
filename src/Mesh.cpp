@@ -1,41 +1,52 @@
 #include "Mesh.hpp"
+#include "Global_H.hpp"
+NO_WARNING_BEGIN
+#include <glad/glad.h>
+NO_WARNING_END
 
-Mesh::Mesh(std::vector<float> vertices, std::vector<GLuint> indices, std::string ShaderName)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices)
 {
-    m_specification.Bind(); // 1 - bind vao
-    m_buffer.Bind(); // 2 - bind vbo
-    m_buffer.UpData(vertices); // 3 - up data to vbo
-    // rmember the stride is grouing for VAO but the same for all attribs
-    m_specification.SetLout(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); // 4 - set attribs
-    m_specification.SetLout(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float))); // 4 - set attribs
-    // vbo.UnBind(); // 5 - unbind if you want  vbo  (not vao)
-    m_indices.Bind();
-    m_indices.UpData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
-    m_program.Load(ShaderName);
-    m_PosLoc = m_program.GetUniformLocation("u_mat");
+    this->Vertices = vertices;
+    this->Indices = indices;
+    // this->textures = textures;
+    setupMesh();
+}
+
+void Mesh::setupMesh()
+{
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+  
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+    glBufferData(GL_ARRAY_BUFFER, Vertices.size() * sizeof(Vertex), &Vertices[0], GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, Indices.size() * sizeof(unsigned int), &Indices[0], GL_STATIC_DRAW);
+
+    // vertex positions
+    glEnableVertexAttribArray(0);	
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+    // vertex normals
+    // glEnableVertexAttribArray(1);	
+    // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+    // vertex texture coords
+    // glEnableVertexAttribArray(2);	
+    // glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
+
+    glBindVertexArray(0);
+}
+
+void Mesh::Draw(Shader &shader) 
+{
+    shader.UseProgram();
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 }
 
 Mesh::~Mesh()
 {
-    m_specification.UnBind();
-    m_indices.UnBind();
-    m_buffer.UnBind();
-    m_PosLoc = 0;
-}
-
-void Mesh::Bind()
-{
-    m_specification.Bind();
-    m_indices.Bind();
-    m_program.UseProgram();
-}
-
-GLuint Mesh::Getmat4Loc() const
-{
-    return m_PosLoc;
-}
-
-Shader Mesh::GetShaderProgram() const
-{
-    return m_program;
 }

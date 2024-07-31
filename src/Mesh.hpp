@@ -1,23 +1,30 @@
 #pragma once
 #include <vector>
-#include "VAO.hpp"
-#include "VBO.hpp"
-#include "EBO.hpp"
+#include <string>
+#include <glm/glm.hpp>
 #include "Shader.hpp"
+struct Vertex
+{
+    glm::vec3 Position;
+    // glm::vec3 Normal;
+    // glm::vec2 TexCoords;
+};
+
+// struct Texture {
+//     unsigned int id;
+//     std::string type;
+// };
 
 class Mesh
 {
 public:
-    Mesh(std::vector<float> vertices, std::vector<GLuint> indices, std::string ShaderName);
+    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
     ~Mesh();
 public:
-    void Bind();
-    GLuint Getmat4Loc() const;
-    Shader GetShaderProgram() const;
+    void Draw(Shader &shader);
+    void setupMesh();
 private:
-    GLuint m_PosLoc;
-    VBO m_buffer;
-    VAO m_specification;
-    EBO m_indices;
-    Shader m_program;
+    unsigned int VAO,VBO, EBO;
+    std::vector<Vertex> Vertices;
+    std::vector<unsigned int> Indices;
 };

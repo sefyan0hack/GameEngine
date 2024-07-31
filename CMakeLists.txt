@@ -21,9 +21,6 @@ set(SOURCE
 	src/Window.cpp
 	src/Renderer.cpp
 	src/Shader.cpp
-	src/VAO.cpp
-	src/VBO.cpp
-    src/EBO.cpp
     src/Mesh.cpp
     src/OpenGL.cpp
     src/APP.cpp
