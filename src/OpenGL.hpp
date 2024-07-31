@@ -11,13 +11,13 @@ class OpenGL
         HDC GetHDC() const;
 
     private:
-    void init_opengl();
-    void init_opengl_extensions();
+    static void init_opengl();
+    static void init_opengl_extensions();
 
     private:
-        HWND m_window;
-        HDC m_HDC;
-        HGLRC m_Context;
+        inline static HWND m_MainWindow;
+        inline static HDC m_MainHDC;
+        inline static HGLRC m_Context;
         enum {
             WGL_CONTEXT_MAJOR_VERSION_ARB    = 0x2091,
             WGL_CONTEXT_MINOR_VERSION_ARB    = 0x2092,

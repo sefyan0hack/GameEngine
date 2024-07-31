@@ -269,6 +269,11 @@ HWND Window::GetHWND() const{
     return m_WindowHandle;
 }
 
+HDC Window::GetHDC() const
+{
+    return m_HDC;
+}
+
 int Window::GetWidth() const
 {
     return m_Width;

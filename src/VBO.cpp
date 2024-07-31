@@ -6,11 +6,6 @@ VBO::VBO() : Id(0)
     glGenBuffers(1, &Id);
 }
 
-VBO::VBO(const std::vector<float> &vertices) : Id(0)
-{
-    glGenBuffers(1, &Id);
-}
-
 void VBO::UpData(const std::vector<float> &vertices){
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 }

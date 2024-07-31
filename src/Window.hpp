@@ -45,6 +45,7 @@ class Window
     public:
         HINSTANCE GetHINSTANCE() const;
         HWND GetHWND() const;
+        HDC GetHDC() const;
         int GetWidth() const;
         int GetHeight() const;
         OpenGL* GetGL() const;
@@ -61,6 +62,7 @@ class Window
     private:
         HINSTANCE m_Instance;
         HWND m_WindowHandle;
+        HDC m_HDC;
         int m_Width;
         int m_Height;
         bool m_Visible;

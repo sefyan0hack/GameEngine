@@ -75,22 +75,27 @@ void OpenGL::init_opengl_extensions()
     }
 }
 
-OpenGL::OpenGL(HWND window): m_window(window), m_HDC(GetDC(window)) // check in fut if hwnd valid
+OpenGL::OpenGL(HWND window)
 {
-    init_opengl();
+    static bool once = false;
+    if(!once){
+        m_MainHDC = GetDC(window);
+        init_opengl();
+        once = true;
+    }
 }
 
 OpenGL::~OpenGL()
 {
     wglMakeCurrent(nullptr, nullptr);
-    ReleaseDC (m_window, m_HDC) ; 
+    ReleaseDC (m_MainWindow, m_MainHDC);
     wglDeleteContext(m_Context);
 }
 
 void OpenGL::init_opengl()
 {
 
-    if( m_HDC == nullptr){
+    if( m_MainHDC == nullptr){
         ERR("HDC not valid");
     }
     init_opengl_extensions();
@@ -109,19 +114,19 @@ void OpenGL::init_opengl()
 
     int pixel_format;
     UINT num_formats;
-    wglChoosePixelFormatARB(m_HDC, pixel_format_attribs, 0, 1, &pixel_format, &num_formats);
+    wglChoosePixelFormatARB(m_MainHDC, pixel_format_attribs, 0, 1, &pixel_format, &num_formats);
 
     if (!num_formats) {
         ERR("Failed to set the OpenGL 3.3 pixel format.");
     }
 
-    if (GetPixelFormat(m_HDC) != pixel_format) {
+    if (GetPixelFormat(m_MainHDC) != pixel_format) {
         PIXELFORMATDESCRIPTOR pfd;
-        if (!DescribePixelFormat(m_HDC, pixel_format, sizeof(pfd), &pfd)) {
+        if (!DescribePixelFormat(m_MainHDC, pixel_format, sizeof(pfd), &pfd)) {
             ERR("DescribePixelFormat failed.");
         }
 
-        if (!SetPixelFormat(m_HDC, pixel_format, &pfd)) {
+        if (!SetPixelFormat(m_MainHDC, pixel_format, &pfd)) {
             ERR("Failed to set the OpenGL 3.3 pixel format.");
         }
     }
@@ -133,12 +138,12 @@ void OpenGL::init_opengl()
         0,
     };
 
-    HGLRC gl33_context = wglCreateContextAttribsARB(m_HDC, 0, gl33_attribs);
+    HGLRC gl33_context = wglCreateContextAttribsARB(m_MainHDC, 0, gl33_attribs);
     if (!gl33_context) {
         ERR("Failed to create OpenGL 3.3 context.");
     }
 
-    if (!wglMakeCurrent(m_HDC, gl33_context)) {
+    if (!wglMakeCurrent(m_MainHDC, gl33_context)) {
         ERR("Failed to activate OpenGL 3.3 rendering context.");
     }
     
@@ -156,5 +161,5 @@ void OpenGL::init_opengl()
 
 HDC OpenGL::GetHDC() const
 {
-    return m_HDC;
+    return m_MainHDC;
 }
