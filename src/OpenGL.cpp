@@ -153,10 +153,18 @@ void OpenGL::init_opengl()
         on = true;
     }
     glEnable(GL_DEPTH_TEST);
+    // glEnable(GL_CULL_FACE);
+    glEnable(GL_CW);
+    glEnable(GL_BACK);
+
+    GLint max_texture_unit = 0;
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_texture_unit);
+    
     LOG("GL Version : " << glGetString(GL_VERSION));
     LOG("GLSL Version : " << glGetString(GL_SHADING_LANGUAGE_VERSION));
     LOG("GL Vendor : " << glGetString(GL_VENDOR));
     LOG("GL Renderer : " << glGetString(GL_RENDERER));
+    LOG("Max Texture Units : " << max_texture_unit);
     m_Context =  gl33_context;
 }
 
