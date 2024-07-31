@@ -41,7 +41,7 @@ void Mesh::setupMesh()
 
 void Mesh::Draw(Shader &shader) 
 {
-    shader.UseProgram();
+    shader.Use();
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);

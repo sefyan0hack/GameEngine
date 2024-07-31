@@ -48,7 +48,6 @@ private:
     Mesh cube;
     glm::mat4 trans;
     glm::mat4 pers ;
-    GLuint umat, pLoc;
     Shader pshad;
 public: // init here 
     Game()
@@ -56,16 +55,12 @@ public: // init here
     {
         cube.setupMesh();
         trans = glm::rotate(trans, glm::radians(10.0f), glm::vec3(Rand_float, Rand_float, Rand_float));
-        glUniformMatrix4fv(umat, 1, GL_FALSE, glm::value_ptr(trans));
-        umat = pshad.GetUniformLocation("u_mat");
-        pLoc = pshad.GetUniformLocation("persp");
         pers = glm::perspective(glm::radians(45.0f),(float)m_Window.GetWidth()/(float)m_Window.GetHeight(), 0.1f, 10.0f);
-        glUniformMatrix4fv(pLoc, 1, GL_FALSE, glm::value_ptr(pers));
+        pshad.SetUniform("persp", trans);
     }
 public:
 
     void Update(float delta) override {
-
         auto op = m_Window.mouse.ReadRawDelta();
         if(op){
             auto d = op.value();
@@ -84,32 +79,34 @@ public:
                 trans = glm::rotate(trans, angleY, axisX * delta);
 
                 // Send the updated transformation matrix to the shader
-                glUniformMatrix4fv(umat, 1, GL_FALSE, glm::value_ptr(trans));
+                pshad.SetUniform("u_mat", trans);
             }
         }
-            
+        pshad.SetUniform("persp", pers);
         cube.Draw(pshad);
 
        if( m_Window.kbd.KeyIsPressed('A') || m_Window.kbd.KeyIsPressed(VK_LEFT)){
             trans = glm::translate(trans, glm::vec3(-1.0 * delta, 0.0, 0.0));
-            glUniformMatrix4fv(umat, 1, GL_FALSE, glm::value_ptr(trans));
+            pshad.SetUniform("u_mat", trans);
+
 
        }else if( m_Window.kbd.KeyIsPressed('D') || m_Window.kbd.KeyIsPressed(VK_RIGHT) ){
             trans = glm::translate(trans, glm::vec3(1.0 * delta, 0.0, 0.0));
-            glUniformMatrix4fv(umat, 1, GL_FALSE, glm::value_ptr(trans));
+            pshad.SetUniform("u_mat", trans);
 
        }else if( m_Window.kbd.KeyIsPressed('W') || m_Window.kbd.KeyIsPressed(VK_UP)){
             trans = glm::translate(trans, glm::vec3(0.0, 1.0 * delta, 0.0));
-            glUniformMatrix4fv(umat, 1, GL_FALSE, glm::value_ptr(trans));
+            pshad.SetUniform("u_mat", trans);
 
        }
        else if( m_Window.kbd.KeyIsPressed('S') || m_Window.kbd.KeyIsPressed(VK_DOWN) ){
             trans = glm::translate(trans, glm::vec3(0.0, -1.0 * delta, 0.0));
-            glUniformMatrix4fv(umat, 1, GL_FALSE, glm::value_ptr(trans));
+            pshad.SetUniform("u_mat", trans);
 
        }else if( m_Window.kbd.KeyIsPressed(VK_SPACE) ){
             trans = glm::translate(trans, glm::vec3(0.0, 0.0, -1.0 * delta ));
-            glUniformMatrix4fv(umat, 1, GL_FALSE, glm::value_ptr(trans));
+            pshad.SetUniform("u_mat", trans);
+
        }
 
     }

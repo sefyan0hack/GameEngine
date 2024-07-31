@@ -2,16 +2,16 @@
 #include <string>
 #include "Global_H.hpp"
 #include "Shader.hpp"
-
-void Shader::UseProgram() const{
+#include <glm/glm.hpp>
+void Shader::Use() const{
     glUseProgram(ProgramID);
 }
 
 Shader::Shader()
-: VertShaderID(glCreateShader(GL_VERTEX_SHADER)), fragShaderID(glCreateShader(GL_FRAGMENT_SHADER)), ProgramID(glCreateProgram()), name("") {}
+: ProgramID(glCreateProgram()), name("") {}
 
 Shader::Shader(std::string _name) 
-: VertShaderID(glCreateShader(GL_VERTEX_SHADER)), fragShaderID(glCreateShader(GL_FRAGMENT_SHADER)), ProgramID(glCreateProgram()), name(_name)
+: ProgramID(glCreateProgram()), name(_name)
 {
     if(!name.empty()){
         Load(name);
@@ -26,7 +26,7 @@ Shader::~Shader()
     glDeleteProgram(ProgramID);
 }
 
-void Shader::LoadSource()
+void Shader::LoadSource(unsigned int VertShader, unsigned int fragShader)
 {
     if(name.empty()) ERR("name is empty");
 
@@ -71,10 +71,10 @@ void Shader::LoadSource()
     }
 
     const char* vertShaderSource = vert_data.c_str();
-    glShaderSource(VertShaderID, 1, &vertShaderSource, NULL);
+    glShaderSource(VertShader, 1, &vertShaderSource, NULL);
    
     const char* fragShaderSource = frag_data.c_str();
-    glShaderSource(fragShaderID, 1, &fragShaderSource, NULL);
+    glShaderSource(fragShader, 1, &fragShaderSource, NULL);
 }
 
 void Shader::Compile(GLuint shader)
@@ -115,13 +115,28 @@ GLuint Shader::GetProgram() const{
 
 GLuint Shader::GetUniformLocation(const char *name)
 {
-    UseProgram();
-    return glGetUniformLocation(ProgramID, name);
+    auto it = UniformLocations.find(name);
+    if (it != UniformLocations.end()) {
+        return it->second;
+    }
+    
+    Use();
+    // If not cached, query the location and cache it
+    GLint location = glGetUniformLocation(ProgramID, name);
+    if (location == -1) {
+        ERR("Warning: uniform '" << name << "' doesn't exist!");
+    }
+
+    UniformLocations[name] = location;
+    return location;
 }
 
 void Shader::Load(std::string _name){
     this->name =  _name;
-    LoadSource();
+    unsigned int VertShaderID = glCreateShader(GL_VERTEX_SHADER);
+    unsigned int fragShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+
+    LoadSource(VertShaderID, fragShaderID);
     Compile(VertShaderID);
     Shader::checkShaderCompileStatus(VertShaderID);
 
@@ -135,4 +150,72 @@ void Shader::Load(std::string _name){
 
     glDeleteShader(VertShaderID);
     glDeleteShader(fragShaderID);
+}
+///////
+template<>
+void Shader::SetUniform<GLint>(const std::string& name, GLint value) {
+    glUniform1i(GetUniformLocation(name.c_str()), value);
+}
+template<>
+void Shader::SetUniform<GLfloat>(const std::string& name, GLfloat value) {
+    glUniform1f(GetUniformLocation(name.c_str()), value);
+}
+template<>
+void Shader::SetUniform<GLuint>(const std::string& name, GLuint value) {
+    glUniform1ui(GetUniformLocation(name.c_str()), value);
+}
+//
+template<>
+void Shader::SetUniform<glm::mat2>(const std::string& name, glm::mat2 value) {
+    glUniformMatrix2fv(GetUniformLocation(name.c_str()), 1, GL_FALSE, &value[0][0]);
+}
+template<>
+void Shader::SetUniform<glm::mat3>(const std::string& name, glm::mat3 value) {
+    glUniformMatrix3fv(GetUniformLocation(name.c_str()), 1, GL_FALSE, &value[0][0]);
+}
+template<>
+void Shader::SetUniform<glm::mat4>(const std::string& name, glm::mat4 value) {
+    glUniformMatrix4fv(GetUniformLocation(name.c_str()), 1, GL_FALSE, &value[0][0]);
+}
+///////
+
+template<>
+void Shader::SetUniform<GLint>(const std::string& name, GLint value1, GLint value2) {
+    glUniform2i(GetUniformLocation(name.c_str()), value1, value2);
+}
+template<>
+void Shader::SetUniform<GLfloat>(const std::string& name, GLfloat value1, GLfloat value2) {
+    glUniform2f(GetUniformLocation(name.c_str()), value1, value2);
+}
+template<>
+void Shader::SetUniform<GLuint>(const std::string& name, GLuint value1, GLuint value2) {
+    glUniform2ui(GetUniformLocation(name.c_str()), value1, value2);
+}
+///////
+
+template<>
+void Shader::SetUniform<GLint>(const std::string& name, GLint value1, GLint value2, GLint value3) {
+    glUniform3i(GetUniformLocation(name.c_str()), value1, value2, value3);
+}
+template<>
+void Shader::SetUniform<GLfloat>(const std::string& name, GLfloat value1, GLfloat value2, GLfloat value3) {
+    glUniform3f(GetUniformLocation(name.c_str()), value1, value2, value3);
+}
+template<>
+void Shader::SetUniform<GLuint>(const std::string& name, GLuint value1, GLuint value2, GLuint value3) {
+    glUniform3ui(GetUniformLocation(name.c_str()), value1, value2, value3);
+}
+///////
+
+template<>
+void Shader::SetUniform<GLint>(const std::string& name, GLint value1, GLint value2, GLint value3, GLint value4) {
+    glUniform4i(GetUniformLocation(name.c_str()), value1, value2, value3, value4);
+}
+template<>
+void Shader::SetUniform<GLfloat>(const std::string& name, GLfloat value1, GLfloat value2, GLfloat value3, GLfloat value4) {
+    glUniform4f(GetUniformLocation(name.c_str()), value1, value2, value3, value4);
+}
+template<>
+void Shader::SetUniform<GLuint>(const std::string& name, GLuint value1, GLuint value2, GLuint value3, GLuint value4) {
+    glUniform4ui(GetUniformLocation(name.c_str()), value1, value2, value3, value4);
 }
