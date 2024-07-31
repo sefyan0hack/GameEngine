@@ -47,16 +47,25 @@ private:
 
     Mesh* cube;
     glm::mat4 trans;
-    
+    glm::mat4 pers ;
+    GLuint pLoc;
 public: // init here 
-    Game(): cube(new Mesh(vertices, ebo_indices, SHADER(Traingl))), trans (glm::mat4(1.0f)) {
+    Game()
+    : cube(new Mesh(vertices, ebo_indices, SHADER(Traingl))), trans (glm::mat4(1.0f))
+    {
+        cube->Bind();
         trans = glm::rotate(trans, glm::radians(10.0f), glm::vec3(Rand_float, Rand_float, Rand_float));
         glUniformMatrix4fv(cube->Getmat4Loc(), 1, GL_FALSE, glm::value_ptr(trans));
-        cube->Bind();
+        pLoc = cube->GetShaderProgram().GetUniformLocation("persp");
+        pers = glm::perspective(glm::radians(45.0f),(float)m_Window.GetWidth()/(float)m_Window.GetHeight(), 0.1f, 10.0f);
+        glUniformMatrix4fv(pLoc, 1, GL_FALSE, glm::value_ptr(pers));
     }
 public:
 
     void Update(float delta) override {
+        pers = glm::perspective(glm::radians(45.0f), (float)m_Window.GetWidth()/(float)m_Window.GetHeight(), 0.1f, 10.0f);
+        glUniformMatrix4fv(pLoc, 1, GL_FALSE, glm::value_ptr(pers));
+
         auto op = m_Window.mouse.ReadRawDelta();
         if(op){
             auto d = op.value();
@@ -96,6 +105,10 @@ public:
        }
        else if( m_Window.kbd.KeyIsPressed('S') || m_Window.kbd.KeyIsPressed(VK_DOWN) ){
             trans = glm::translate(trans, glm::vec3(0.0, -1.0 * delta, 0.0));
+            glUniformMatrix4fv(cube->Getmat4Loc(), 1, GL_FALSE, glm::value_ptr(trans));
+
+       }else if( m_Window.kbd.KeyIsPressed(VK_SPACE) ){
+            trans = glm::translate(trans, glm::vec3(0.0, 0.0, -1.0 * delta));
             glUniformMatrix4fv(cube->Getmat4Loc(), 1, GL_FALSE, glm::value_ptr(trans));
        }
 

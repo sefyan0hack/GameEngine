@@ -152,6 +152,7 @@ void OpenGL::init_opengl()
         gladLoadGL();
         on = true;
     }
+    glEnable(GL_DEPTH_TEST);
     LOG("GL Version : " << glGetString(GL_VERSION));
     LOG("GLSL Version : " << glGetString(GL_SHADING_LANGUAGE_VERSION));
     LOG("GL Vendor : " << glGetString(GL_VENDOR));

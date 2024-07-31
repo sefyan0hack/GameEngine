@@ -34,3 +34,8 @@ GLuint Mesh::Getmat4Loc() const
 {
     return m_PosLoc;
 }
+
+Shader Mesh::GetShaderProgram() const
+{
+    return m_program;
+}

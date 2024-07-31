@@ -7,7 +7,7 @@ Window::WinClass &Window::WinClass::Instance()
     static Window::WinClass ClassIns; 
     return ClassIns;
 }
-const char* Window::WinClass::Title(){
+const char* Window::WinClass::Name(){
     return m_Name;
 }
 Window::WinClass::WinClass(){
@@ -233,7 +233,7 @@ void Window::_init_helper(int m_Width, int m_Height, const char* Title){
 
     m_WindowHandle = CreateWindowExA(
         0,
-        WinClass::Title(),
+        WinClass::Name(),
         Title,
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, m_Width, m_Height,
@@ -255,7 +255,6 @@ void Window::_init_helper(int m_Width, int m_Height, const char* Title){
 	if(RegisterRawInputDevices(&_rid, 1, sizeof(_rid)) == false){
 		ERR("Mouse row data not regesterd");
 	}
-
     
     ShowWindow(m_WindowHandle, SW_SHOW);
     UpdateWindow(m_WindowHandle);

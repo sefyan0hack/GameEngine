@@ -26,7 +26,7 @@ class Window
         public:
             ~WinClass();
             static WinClass & Instance();
-            static const char* Title();
+            static const char* Name();
         private:
             inline static const char* m_Name = "singleton WINDOW CLASS";
             inline static WNDCLASSEXA m_Winclass = {};

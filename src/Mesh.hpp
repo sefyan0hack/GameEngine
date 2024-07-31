@@ -13,6 +13,7 @@ public:
 public:
     void Bind();
     GLuint Getmat4Loc() const;
+    Shader GetShaderProgram() const;
 private:
     GLuint m_PosLoc;
     VBO m_buffer;
