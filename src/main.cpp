@@ -17,16 +17,27 @@ class Game : public APP
 {
     
 private:
-    std::vector<Vertex> vertices {
+    std::vector<Vertex> CubeVert {
         // Vertex                       // Normal             // TexCord
-        Vertex{ { 0.5f,  0.5f,  0.5f }, { 1.0f, 0.0f, 1.0f }, { 0.0f, 0.0f }  }, // Vertex 1
-        Vertex{ {-0.5f,  0.5f, -0.5f }, { 1.0f, 0.0f, 1.0f }, { 0.0f, 1.0f }  }, // Vertex 2
-        Vertex{ {-0.5f,  0.5f,  0.5f }, { 1.0f, 0.0f, 1.0f }, { 1.0f, 0.0f }  }, // Vertex 3
-        Vertex{ { 0.5f, -0.5f, -0.5f }, { 1.0f, 0.0f, 0.0f }, { 1.0f, 1.0f }  }, // Vertex 4
-        Vertex{ {-0.5f, -0.5f, -0.5f }, { 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f }  }, // Vertex 5
-        Vertex{ { 0.5f,  0.5f, -0.5f }, { 1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f }  }, // Vertex 6
-        Vertex{ { 0.5f, -0.5f,  0.5f }, { 1.0f, 0.0f, 1.0f }, { 1.0f, 0.0f }  }, // Vertex 7
-        Vertex{ {-0.5f, -0.5f,  0.5f }, { 1.0f, 0.0f, 1.0f }, { 1.0f, 1.0f }  }, // Vertex 8
+        Vertex{ { 0.5f,  0.5f,  0.5f }, { 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f }  }, // Vertex 1
+        Vertex{ {-0.5f,  0.5f, -0.5f }, { 0.0f, 0.0f, 0.0f }, { 1.0f, 0.0f }  }, // Vertex 2
+        Vertex{ {-0.5f,  0.5f,  0.5f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f }  }, // Vertex 3
+        Vertex{ { 0.5f, -0.5f, -0.5f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f }  }, // Vertex 4
+        Vertex{ {-0.5f, -0.5f, -0.5f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f }  }, // Vertex 5
+        Vertex{ { 0.5f,  0.5f, -0.5f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f }  }, // Vertex 6
+        Vertex{ { 0.5f, -0.5f,  0.5f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f }  }, // Vertex 7
+        Vertex{ {-0.5f, -0.5f,  0.5f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f }  }, // Vertex 8
+    };
+    std::vector<Vertex> PlanVert {
+         // Vertex                       // Normal             // TexCord
+        Vertex{ { -1.0f, 0.0f,  1.0f  }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f }  }, // Vertex 1
+        Vertex{ { 1.0f, 0.0f,  1.0f  }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f }  }, // Vertex 2
+        Vertex{ { 1.0f, 0.0f, -1.0f  }, { 0.0f, 0.0f, 0.0f }, { 1.0f, 0.0f }  }, // Vertex 3
+        Vertex{ { -1.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f }  }, // Vertex 4
+    };
+    std::vector<GLuint>  PlanIndices = {
+        0, 1, 2, // First Triangle
+        0, 2, 3  // Second Triangle
     };
     std::vector<GLuint> indices {
         0, 1, 2,
@@ -43,15 +54,16 @@ private:
         0, 2, 7
     };
     Mesh cube;
+    Mesh Plane;
     glm::mat4 trans;
     glm::mat4 pers ;
     Shader pshad;
 public: // init here 
     Game()
-    : cube({vertices, indices}), trans(glm::mat4(1.0f)), pshad(SHADER(Traingl))
+    : cube({CubeVert, indices}), Plane({PlanVert, PlanIndices}), trans(glm::mat4(1.0f)), pshad(SHADER(Traingl))
     {
         cube.setupMesh();
-        trans = glm::rotate(trans, glm::radians(10.0f), glm::vec3(Rand_float, Rand_float, Rand_float));
+        Plane.setupMesh();
         pers = glm::perspective(glm::radians(45.0f),(float)m_Window.GetWidth()/(float)m_Window.GetHeight(), 0.1f, 10.0f);
         pshad.SetUniform("persp", trans);
         unsigned int texture;
@@ -83,28 +95,10 @@ public: // init here
 public:
 
     void Update(float delta) override {
-        auto op = m_Window.mouse.ReadRawDelta();
-        if(op){
-            auto d = op.value();
-
-            if(m_Window.mouse.LeftIsPressed()){
-                // Convert mouse delta to radians for rotation
-                float angleX = glm::radians((float)d.x);
-                float angleY = glm::radians((float)d.y);
-
-                // Rotation axis (could be changed based on your application's needs)
-                glm::vec3 axisX(1.0f, 0.0f, 0.0f); // Rotate around X-axis
-                glm::vec3 axisY(0.0f, 1.0f, 0.0f); // Rotate around Y-axis
-
-                // Apply rotation to the transformation matrix
-                trans = glm::rotate(trans, angleX, axisY * delta);
-                trans = glm::rotate(trans, angleY, axisX * delta);
-
-                // Send the updated transformation matrix to the shader
-                pshad.SetUniform("u_mat", trans);
-            }
-        }
+        pers = glm::perspective(glm::radians(45.0f),(float)m_Window.GetWidth()/(float)m_Window.GetHeight(), 0.1f, 10.0f);
         pshad.SetUniform("persp", pers);
+
+        Plane.Draw(pshad);
         cube.Draw(pshad);
 
        if( m_Window.kbd.KeyIsPressed('A') || m_Window.kbd.KeyIsPressed(VK_LEFT)){
@@ -129,6 +123,9 @@ public:
             trans = glm::translate(trans, glm::vec3(0.0, 0.0, -1.0 * delta ));
             pshad.SetUniform("u_mat", trans);
 
+       }else if(m_Window.kbd.KeyIsPressed('Z')){
+            trans = glm::scale(trans, glm::vec3(5.0, 0.0, 5.0));
+            pshad.SetUniform("u_mat", trans);
        }
 
     }
