@@ -28,7 +28,8 @@ void Camera::SetViewMat(glm::mat4 mat)
     ViewMat = mat;
     glm::mat4 invView = glm::inverse(mat);
     FrontDir = glm::normalize(-glm::vec3(invView[2]));
-    UpDir =  glm::normalize(glm::vec3(invView[1]));
+    //dont change its up of the wold space
+    // UpDir =  glm::normalize(glm::vec3(invView[1]));
 }
 
 void Camera::MoveFroward(float speed)

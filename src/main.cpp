@@ -102,7 +102,7 @@ public: // init here
 public:
 
     void Update(float delta) override {
-        float WidrhOverHeight = m_Window.GetWidth()/ m_Window.GetHeight();
+        float WidrhOverHeight = (float)m_Window.GetWidth()/ m_Window.GetHeight();
         Perspective = glm::perspective(glm::radians(45.0f), WidrhOverHeight, 0.1f, 100.0f);
         DefaultShader.SetUniform("Perspective", Perspective);
 
@@ -112,11 +112,11 @@ public:
         if(op){
             // glm::vec3 del = glm::vec3(op.value().x, op.value().y , 0) * 50.0f;
             LOG(op.value().x << " | " << op.value().y);
-        auto ret = glm::rotate(Cam.GetViewMat(),  glm::radians(1.0f) * delta * op.value().x, {0,1,0});
+        auto ret = glm::rotate(Cam.GetViewMat(),  glm::radians(6.0f) * delta * op.value().x, {0,1,0});
         DefaultShader.SetUniform("Camera", ret);
         Cam.SetViewMat(ret);
         
-        ret = glm::rotate(Cam.GetViewMat(),  glm::radians(1.0f) * delta * op.value().y, {1,0,0});
+        ret = glm::rotate(Cam.GetViewMat(),  glm::radians(6.0f) * delta * op.value().y, {1,0,0});
         DefaultShader.SetUniform("Camera", ret);
         Cam.SetViewMat(ret);
 
