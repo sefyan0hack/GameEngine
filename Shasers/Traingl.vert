@@ -6,10 +6,11 @@ layout (location = 2) in vec2 aTexCoord;
 
 out vec2 TexCoord;
 
-uniform mat4 u_mat;
-uniform mat4 persp;
+uniform mat4 Modle;
+uniform mat4 Perspective;
+uniform mat4 Camera;
 
 void main() {
-    gl_Position = persp * u_mat * vec4(aPos, 1.0);
+    gl_Position = Perspective * Camera * Modle * vec4(aPos, 1.0);
     TexCoord = aTexCoord;
 }

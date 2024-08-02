@@ -22,8 +22,10 @@ set(SOURCE
 	src/Renderer.cpp
 	src/Shader.cpp
     src/Mesh.cpp
+    src/Camera.cpp
     src/OpenGL.cpp
     src/APP.cpp
+    src/Utils.cpp
 	)
 
 include(ProcessorCount)

@@ -156,6 +156,7 @@ void OpenGL::init_opengl()
     // glEnable(GL_CULL_FACE);
     glEnable(GL_CW);
     glEnable(GL_BACK);
+    glEnable(GL_LINE_SMOOTH);
 
     GLint max_texture_unit = 0;
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_texture_unit);

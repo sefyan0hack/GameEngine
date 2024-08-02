@@ -7,9 +7,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
+#include "Camera.hpp"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
+
+#include "Utils.hpp"
 using namespace std;
 
 void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
@@ -53,19 +55,23 @@ private:
         2, 1, 4,
         0, 2, 7
     };
+    Camera Cam;
     Mesh cube;
     Mesh Plane;
-    glm::mat4 trans;
-    glm::mat4 pers ;
-    Shader pshad;
+    glm::mat4 Modle;
+    glm::mat4 Perspective ;
+    // glm::mat4 CameraMat;
+    Shader DefaultShader;
 public: // init here 
     Game()
-    : cube({CubeVert, indices}), Plane({PlanVert, PlanIndices}), trans(glm::mat4(1.0f)), pshad(SHADER(Traingl))
+    : cube({CubeVert, indices}), Plane({PlanVert, PlanIndices}), Modle(1.0f), DefaultShader(SHADER(Traingl))
     {
         cube.setupMesh();
         Plane.setupMesh();
-        pers = glm::perspective(glm::radians(45.0f),(float)m_Window.GetWidth()/(float)m_Window.GetHeight(), 0.1f, 10.0f);
-        pshad.SetUniform("persp", trans);
+        Perspective = glm::perspective(glm::radians(45.0f),(float)m_Window.GetWidth()/(float)m_Window.GetHeight(), 0.1f, 100.0f);
+        DefaultShader.SetUniform("Perspective", Perspective);
+        DefaultShader.SetUniform("Camera", Cam.GetViewMat());
+        DefaultShader.SetUniform("Modle", Modle);
         unsigned int texture;
         glGenTextures(1, &texture);
         glActiveTexture(GL_TEXTURE0);
@@ -89,45 +95,79 @@ public: // init here
             ERR("Failed to load Texture");
         }
         stbi_image_free(data);
-        pshad.Use();
-        pshad.SetUniform("ourTexture", 0);
+        DefaultShader.Use();
+        DefaultShader.SetUniform("ourTexture", 0);
+        
     }
 public:
 
     void Update(float delta) override {
-        pers = glm::perspective(glm::radians(45.0f),(float)m_Window.GetWidth()/(float)m_Window.GetHeight(), 0.1f, 10.0f);
-        pshad.SetUniform("persp", pers);
+        float WidrhOverHeight = m_Window.GetWidth()/ m_Window.GetHeight();
+        Perspective = glm::perspective(glm::radians(45.0f), WidrhOverHeight, 0.1f, 100.0f);
+        DefaultShader.SetUniform("Perspective", Perspective);
 
-        Plane.Draw(pshad);
-        cube.Draw(pshad);
+        Plane.Draw(DefaultShader);
+        cube.Draw(DefaultShader);
+        auto op = m_Window.mouse.ReadRawDelta();
+        if(op){
+            // glm::vec3 del = glm::vec3(op.value().x, op.value().y , 0) * 50.0f;
+            LOG(op.value().x << " | " << op.value().y);
+        auto ret = glm::rotate(Cam.GetViewMat(),  glm::radians(1.0f) * delta * op.value().x, {0,1,0});
+        DefaultShader.SetUniform("Camera", ret);
+        Cam.SetViewMat(ret);
+        
+        ret = glm::rotate(Cam.GetViewMat(),  glm::radians(1.0f) * delta * op.value().y, {1,0,0});
+        DefaultShader.SetUniform("Camera", ret);
+        Cam.SetViewMat(ret);
 
-       if( m_Window.kbd.KeyIsPressed('A') || m_Window.kbd.KeyIsPressed(VK_LEFT)){
-            trans = glm::translate(trans, glm::vec3(-1.0 * delta, 0.0, 0.0));
-            pshad.SetUniform("u_mat", trans);
+        // glm::vec2 MousePosClip = {MouseXFromWindowToOpengl(m_Window), MouseYFromWindowToOpengl(m_Window)};
+        // LOG(MousePosClip.x << ", " << MousePosClip.y);
+        }
+
+        if( m_Window.kbd.KeyIsPressed('W')){
+            Cam.MoveFroward(5.0f * delta);
+            DefaultShader.SetUniform("Camera", Cam.GetViewMat());
+       }
+        else if( m_Window.kbd.KeyIsPressed('S')){
+            Cam.MoveBackward(5.0f * delta);
+            DefaultShader.SetUniform("Camera", Cam.GetViewMat());
+       }
+       else if( m_Window.kbd.KeyIsPressed('A')){
+            Cam.MoveLeft(5.0f * delta);
+            DefaultShader.SetUniform("Camera", Cam.GetViewMat());
+       }
+       else if( m_Window.kbd.KeyIsPressed('D')){
+            Cam.MoveRight(5.0f * delta);
+            DefaultShader.SetUniform("Camera", Cam.GetViewMat());
+       }
+       else if( m_Window.kbd.KeyIsPressed('N') ){
+            Cam.MoveUP(5.0f * delta);
+            DefaultShader.SetUniform("Camera", Cam.GetViewMat());
+       }
+       else if( m_Window.kbd.KeyIsPressed('M') ){
+            Cam.MoveDown(5.0f * delta);
+            DefaultShader.SetUniform("Camera", Cam.GetViewMat());
+       }
+
+       if( m_Window.kbd.KeyIsPressed(VK_UP)){
+            Modle = glm::translate(Modle, {0, 1 * delta, 0});
+            DefaultShader.SetUniform("Modle", Modle);
+       }
+        else if(m_Window.kbd.KeyIsPressed(VK_DOWN) ){
+            Modle = glm::translate(Modle, {0, -1 * delta, 0});
+            DefaultShader.SetUniform("Modle", Modle);
+       }
+       else if( m_Window.kbd.KeyIsPressed(VK_LEFT) ){
+            Modle = glm::translate(Modle, {-1 * delta, 0, 0});
+            DefaultShader.SetUniform("Modle", Modle);
+       }
+       else if( m_Window.kbd.KeyIsPressed(VK_RIGHT) ){
+            Modle = glm::translate(Modle, {1 * delta, 0, 0});
+            DefaultShader.SetUniform("Modle", Modle);
 
 
-       }else if( m_Window.kbd.KeyIsPressed('D') || m_Window.kbd.KeyIsPressed(VK_RIGHT) ){
-            trans = glm::translate(trans, glm::vec3(1.0 * delta, 0.0, 0.0));
-            pshad.SetUniform("u_mat", trans);
-
-       }else if( m_Window.kbd.KeyIsPressed('W') || m_Window.kbd.KeyIsPressed(VK_UP)){
-            trans = glm::translate(trans, glm::vec3(0.0, 1.0 * delta, 0.0));
-            pshad.SetUniform("u_mat", trans);
 
        }
-       else if( m_Window.kbd.KeyIsPressed('S') || m_Window.kbd.KeyIsPressed(VK_DOWN) ){
-            trans = glm::translate(trans, glm::vec3(0.0, -1.0 * delta, 0.0));
-            pshad.SetUniform("u_mat", trans);
-
-       }else if( m_Window.kbd.KeyIsPressed(VK_SPACE) ){
-            trans = glm::translate(trans, glm::vec3(0.0, 0.0, -1.0 * delta ));
-            pshad.SetUniform("u_mat", trans);
-
-       }else if(m_Window.kbd.KeyIsPressed('Z')){
-            trans = glm::scale(trans, glm::vec3(5.0, 0.0, 5.0));
-            pshad.SetUniform("u_mat", trans);
-       }
-
     }
 
 public: // distroy hire
