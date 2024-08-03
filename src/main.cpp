@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include "Window.hpp"
 #include "Global_H.hpp"
 #include "G_vars.hpp"
@@ -31,8 +32,8 @@ private:
         Vertex{ {-0.5f, -0.5f,  0.5f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f }  }, // Vertex 8
     };
     std::vector<Vertex> PlanVert {
-         // Vertex                       // Normal             // TexCord
-        Vertex{ { -1.0f, 0.0f,  1.0f  }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f }  }, // Vertex 1
+        // Vertex                       // Normal             // TexCord
+        Vertex{ { -1.0f, 0.0f,  1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f }  }, // Vertex 1
         Vertex{ { 1.0f, 0.0f,  1.0f  }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f }  }, // Vertex 2
         Vertex{ { 1.0f, 0.0f, -1.0f  }, { 0.0f, 0.0f, 0.0f }, { 1.0f, 0.0f }  }, // Vertex 3
         Vertex{ { -1.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f }  }, // Vertex 4
@@ -56,18 +57,24 @@ private:
         0, 2, 7
     };
     Camera Cam;
+    vector<Mesh> Objects;
     Mesh cube;
     Mesh Plane;
     glm::mat4 Modle;
-    glm::mat4 Perspective ;
+    glm::mat4 Perspective;
     // glm::mat4 CameraMat;
     Shader DefaultShader;
-public: // init here 
+public: // init here
     Game()
-    : cube({CubeVert, indices}), Plane({PlanVert, PlanIndices}), Modle(1.0f), DefaultShader(SHADER(Traingl))
+    : Cam(m_Window.GetWidth(), m_Window.GetHeight()), cube({CubeVert, indices}), Plane({PlanVert, PlanIndices}), Modle(1.0f), DefaultShader(SHADER(Traingl))
     {
-        cube.setupMesh();
-        Plane.setupMesh();
+        Objects.push_back(cube);
+        Objects.push_back(Plane);
+
+        for(auto &obj: Objects){
+            obj.setupMesh();
+        }
+
         Perspective = glm::perspective(glm::radians(45.0f),(float)m_Window.GetWidth()/(float)m_Window.GetHeight(), 0.1f, 100.0f);
         DefaultShader.SetUniform("Perspective", Perspective);
         DefaultShader.SetUniform("Camera", Cam.GetViewMat());
@@ -106,12 +113,13 @@ public:
         Perspective = glm::perspective(glm::radians(45.0f), WidrhOverHeight, 0.1f, 100.0f);
         DefaultShader.SetUniform("Perspective", Perspective);
 
-        Plane.Draw(DefaultShader);
-        cube.Draw(DefaultShader);
+        //Drwaing
+        for(auto &obj: Objects){
+            obj.Draw(DefaultShader);
+        }
+
         auto op = m_Window.mouse.ReadRawDelta();
         if(op){
-            // glm::vec3 del = glm::vec3(op.value().x, op.value().y , 0) * 50.0f;
-            LOG(op.value().x << " | " << op.value().y);
         auto ret = glm::rotate(Cam.GetViewMat(),  glm::radians(6.0f) * delta * op.value().x, {0,1,0});
         DefaultShader.SetUniform("Camera", ret);
         Cam.SetViewMat(ret);
@@ -164,9 +172,6 @@ public:
        else if( m_Window.kbd.KeyIsPressed(VK_RIGHT) ){
             Modle = glm::translate(Modle, {1 * delta, 0, 0});
             DefaultShader.SetUniform("Modle", Modle);
-
-
-
        }
     }
 

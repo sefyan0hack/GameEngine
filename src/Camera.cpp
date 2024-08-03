@@ -7,9 +7,12 @@ NO_WARNING_BEGIN
 #include <glad/glad.h>
 NO_WARNING_END
 
-Camera::Camera() : Position({0.5, 0, 6}), FrontDir({0, 0, -1}), UpDir({ 0, 1, 0}), ViewMat(glm::lookAt(Position, Position + FrontDir, UpDir)){
-
-}
+Camera::Camera(int width, int height) 
+: Position({0.5, 0, 6}),
+  FrontDir({0, 0, -1}), 
+  UpDir({ 0, 1, 0}),
+  ViewMat(glm::lookAt(Position, Position + FrontDir, UpDir)), 
+  Width(width), Height(height){}
 Camera::~Camera() {}
 
 void Camera::UpdateMat()

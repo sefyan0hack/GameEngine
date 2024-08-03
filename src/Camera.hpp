@@ -6,7 +6,7 @@
 class Camera
 {
 public:
-    Camera();
+    Camera(int width, int height);
     ~Camera();
     void UpdateMat();
     glm::mat4 GetViewMat();
@@ -25,4 +25,7 @@ private:
     glm::vec3 UpDir;
 
     glm::mat4 ViewMat;
+    //
+    int Width, Height;
+    short speed;
 };
