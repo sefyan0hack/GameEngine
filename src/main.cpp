@@ -65,9 +65,11 @@ private:
     glm::mat4 Perspective;
     // glm::mat4 CameraMat;
     Shader DefaultShader;
+    float lastx, lasty;
 public: // init here
     Game()
-    : Cam(m_Window.GetWidth(), m_Window.GetHeight()), cubeMesh({cubeMeshVert, indices}), Modle(1.0f), DefaultShader(SHADER(Traingl))
+    : Cam(m_Window.GetWidth(), m_Window.GetHeight()), cubeMesh({cubeMeshVert, indices}), Modle(1.0f), DefaultShader(SHADER(Traingl)),
+      lastx((float)m_Window.GetWidth()/2), lasty((float)m_Window.GetHeight()/2)
     {
         for(size_t i = 0; i < 100; i ++){
             for(size_t j = 0; j < 100; j ++){
@@ -119,20 +121,20 @@ public:
         for(auto &obj: Objects){
             obj.Render();
         }
-
-        auto op = m_Window.mouse.ReadRawDelta();
-        if(op){
-        auto ret = glm::rotate(Cam.GetViewMat(),  glm::radians(6.0f) * delta * op.value().x, {0,1,0});
-        DefaultShader.SetUniform("Camera", ret);
-        Cam.SetViewMat(ret);
         
-        ret = glm::rotate(Cam.GetViewMat(),  glm::radians(6.0f) * delta * op.value().y, {1,0,0});
-        DefaultShader.SetUniform("Camera", ret);
-        Cam.SetViewMat(ret);
+        if (m_Window.mouse.IsEntered()){
+            lastx = m_Window.mouse.GetPosX();
+            lasty = m_Window.mouse.GetPosY();
+            LOG("yes it is");
+        }   
+        float xoff = m_Window.mouse.GetPosX() - lastx;
+        float yoff = lasty - m_Window.mouse.GetPosY();
+        lastx = m_Window.mouse.GetPosX();
+        lasty = m_Window.mouse.GetPosY();
 
-        // glm::vec2 MousePosClip = {MouseXFromWindowToOpengl(m_Window), MouseYFromWindowToOpengl(m_Window)};
-        // LOG(MousePosClip.x << ", " << MousePosClip.y);
-        }
+        
+        Cam.MoseMove(xoff, yoff);
+        DefaultShader.SetUniform("Camera", Cam.GetViewMat());
 
         if( m_Window.kbd.KeyIsPressed('W')){
             Cam.MoveFroward(5.0f * delta);

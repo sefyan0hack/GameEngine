@@ -43,6 +43,7 @@ public:
 	int GetPosX() const noexcept;
 	int GetPosY() const noexcept;
 	bool IsInWindow() const noexcept;
+	bool IsEntered() const noexcept;
 	bool LeftIsPressed() const noexcept;
 	bool RightIsPressed() const noexcept;
 	std::optional<Mouse::Event> Read() noexcept;
@@ -69,6 +70,7 @@ private:
 	bool leftIsPressed = false;
 	bool rightIsPressed = false;
 	bool isInWindow = false;
+	bool isEnterd = false;
 	int wheelDeltaCarry = 0;
 	std::queue<Event> buffer;
 	std::queue<RawDelta> rawDeltaBuffer;

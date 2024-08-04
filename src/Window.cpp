@@ -99,9 +99,29 @@ LRESULT CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
 	    case WM_MOUSEMOVE:
 	    {
 	    	const POINTS pt = MAKEPOINTS( Lpr );
-	    	mouse.OnMouseMove( pt.x,pt.y );
+			if( !mouse.IsInWindow() )
+			{
+				mouse.OnMouseEnter();
+			}
+			if( pt.x >= 0 && pt.x < m_Width && pt.y >= 0 && pt.y < m_Height )
+			{
+				mouse.OnMouseMove( pt.x, pt.y );
+				mouse.OnMouseEnter();
+			}
+			else{
+				mouse.OnMouseLeave();
+			}
 			return 0;
 	    }
+		case WM_MOUSEHOVER :{
+			mouse.isEnterd = true;
+			LOG("HOver");
+			return 0;
+		}
+		case WM_MOUSELEAVE :{
+			mouse.isEnterd = false;
+			return 0;
+		}
 	    case WM_LBUTTONDOWN:
 	    {
 	    	SetForegroundWindow( Winhandle );

@@ -11,6 +11,9 @@ public:
     void UpdateMat();
     glm::mat4 GetViewMat();
     void SetViewMat(glm::mat4 mat);
+    void SetFrontVector(glm::vec3 front) { FrontDir = front; }
+    void SetUpVector(glm::vec3 up) { FrontDir = up; }
+    void SetRightVector(glm::vec3 right) { RightDir = right; }
     void MoveFroward(float speed);
     void MoveBackward(float speed);
     void MoveUP(float speed);
@@ -18,14 +21,22 @@ public:
     void MoveRight(float speed);
     void MoveLeft(float speed);
     void EnableMSAA();
-
+    glm::vec3 GetPosition() const { return Position; }
+    glm::vec3 GetFrontDir() const { return FrontDir; }
+    glm::vec3 GetUpDir() const { return UpDir; }
+    glm::vec3 GetRightDir() const { return RightDir; }
+    
+    void UpdateVectors();
+    void MoseMove(float xoff, float yoff, bool islocked = true);
 private:
     glm::vec3 Position;
     glm::vec3 FrontDir;
     glm::vec3 UpDir;
+    glm::vec3 RightDir;
 
     glm::mat4 ViewMat;
     //
     int Width, Height;
-    short speed;
+    float sensitivity;
+    float yaw, pitch;
 };
