@@ -26,6 +26,7 @@ set(SOURCE
     src/OpenGL.cpp
     src/APP.cpp
     src/Utils.cpp
+    src/GameObject.cpp
 	)
 
 include(ProcessorCount)

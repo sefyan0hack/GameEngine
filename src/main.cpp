@@ -5,6 +5,7 @@
 #include "G_vars.hpp"
 #include "Mesh.hpp"
 #include "APP.hpp"
+#include "GameObject.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -20,7 +21,7 @@ class Game : public APP
 {
     
 private:
-    std::vector<Vertex> CubeVert {
+    std::vector<Vertex> cubeMeshVert {
         // Vertex                       // Normal             // TexCord
         Vertex{ { 0.5f,  0.5f,  0.5f }, { 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f }  }, // Vertex 1
         Vertex{ {-0.5f,  0.5f, -0.5f }, { 0.0f, 0.0f, 0.0f }, { 1.0f, 0.0f }  }, // Vertex 2
@@ -57,28 +58,29 @@ private:
         0, 2, 7
     };
     Camera Cam;
-    vector<Mesh> Objects;
-    Mesh cube;
-    Mesh Plane;
+    // vector<Mesh> Objects;
+    vector<GameObject> Objects;
+    Mesh cubeMesh;
     glm::mat4 Modle;
     glm::mat4 Perspective;
     // glm::mat4 CameraMat;
     Shader DefaultShader;
 public: // init here
     Game()
-    : Cam(m_Window.GetWidth(), m_Window.GetHeight()), cube({CubeVert, indices}), Plane({PlanVert, PlanIndices}), Modle(1.0f), DefaultShader(SHADER(Traingl))
+    : Cam(m_Window.GetWidth(), m_Window.GetHeight()), cubeMesh({cubeMeshVert, indices}), Modle(1.0f), DefaultShader(SHADER(Traingl))
     {
-        Objects.push_back(cube);
-        Objects.push_back(Plane);
-
-        for(auto &obj: Objects){
-            obj.setupMesh();
+        for(size_t i = 0; i < 100; i ++){
+            for(size_t j = 0; j < 100; j ++){
+                Objects.emplace_back(glm::vec3(i, 0, j), DefaultShader, cubeMesh);
+            }
         }
+
+        cubeMesh.setupMesh();
 
         Perspective = glm::perspective(glm::radians(45.0f),(float)m_Window.GetWidth()/(float)m_Window.GetHeight(), 0.1f, 100.0f);
         DefaultShader.SetUniform("Perspective", Perspective);
         DefaultShader.SetUniform("Camera", Cam.GetViewMat());
-        DefaultShader.SetUniform("Modle", Modle);
+        
         unsigned int texture;
         glGenTextures(1, &texture);
         glActiveTexture(GL_TEXTURE0);
@@ -115,7 +117,7 @@ public:
 
         //Drwaing
         for(auto &obj: Objects){
-            obj.Draw(DefaultShader);
+            obj.Render();
         }
 
         auto op = m_Window.mouse.ReadRawDelta();

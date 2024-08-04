@@ -153,7 +153,7 @@ void OpenGL::init_opengl()
         on = true;
     }
     glEnable(GL_DEPTH_TEST);
-    // glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     glEnable(GL_CW);
     glEnable(GL_BACK);
     glEnable(GL_LINE_SMOOTH);
