@@ -27,6 +27,7 @@ set(SOURCE
     src/APP.cpp
     src/Utils.cpp
     src/GameObject.cpp
+    src/Texture.cpp
 	)
 
 include(ProcessorCount)
@@ -67,6 +68,11 @@ include_directories("${PROJECT_SOURCE_DIR}/3party")
 add_library(glad STATIC 3party/glad/glad.c)
 set_target_properties(glad PROPERTIES LINKER_LANGUAGE C)
 
+# Add stb image source file
+add_library(stb_image STATIC 3party/stb/stb_image.c)
+set_target_properties(stb_image PROPERTIES LINKER_LANGUAGE C)
+
+
 # remove some warning
 set(REMOVE_WAR "-Wno-cast-function-type")
 if (MSVC)
@@ -77,4 +83,4 @@ else()
     set(CMAKE_CXX_FLAGS_DEBUG   "${REMOVE_WAR} -O0 -g3 -ggdb") ## Debug
 endif()
 add_executable(test  ${SOURCE})
-target_link_libraries(test glad  ${OPENGL_LIBRARIES})
+target_link_libraries(test glad stb_image  ${OPENGL_LIBRARIES})
