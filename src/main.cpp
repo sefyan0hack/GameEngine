@@ -10,7 +10,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "Camera.hpp"
-#define STB_IMAGE_IMPLEMENTATION
+#include "Texture.hpp"
 #include <stb/stb_image.h>
 
 #include "Utils.hpp"
@@ -71,9 +71,12 @@ public: // init here
     : Cam(m_Window.GetWidth(), m_Window.GetHeight()), cubeMesh({cubeMeshVert, indices}), Modle(1.0f), DefaultShader(SHADER(Traingl)),
       lastx((float)m_Window.GetWidth()/2), lasty((float)m_Window.GetHeight()/2)
     {
-        for(size_t i = 0; i < 100; i ++){
-            for(size_t j = 0; j < 100; j ++){
-                Objects.emplace_back(glm::vec3(i, 0, j), DefaultShader, cubeMesh);
+        for(size_t i = 0; i < 50; i ++){
+            for(size_t j = 0; j < 50; j ++){
+                for (size_t k = 0; k < rand() % 6; k ++)
+                {
+                    Objects.emplace_back(glm::vec3(i, k, j), DefaultShader, cubeMesh);
+                }
             }
         }
 
@@ -82,30 +85,9 @@ public: // init here
         Perspective = glm::perspective(glm::radians(45.0f),(float)m_Window.GetWidth()/(float)m_Window.GetHeight(), 0.1f, 100.0f);
         DefaultShader.SetUniform("Perspective", Perspective);
         DefaultShader.SetUniform("Camera", Cam.GetViewMat());
-        
-        unsigned int texture;
-        glGenTextures(1, &texture);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        int width, height, nrChannels;
-        stbi_set_flip_vertically_on_load(true);  
-        unsigned char *data = stbi_load("C:\\Users\\sefyan\\Documents\\c_projects\\test\\Learn-Opengl\\res\\brik.jpg", &width, &height, &nrChannels, 0); // if .png GL_RGBA
-        if (data)
-        {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-            glGenerateMipmap(GL_TEXTURE_2D);
-        }
-        else
-        {
-            ERR("Failed to load Texture");
-        }
-        stbi_image_free(data);
+        Texture brik ;
+        brik.Loud(TEXTURE(brik.jpg));
+        brik.BindByName(TEXTURE(brik.jpg));
         DefaultShader.Use();
         DefaultShader.SetUniform("ourTexture", 0);
         
@@ -125,39 +107,36 @@ public:
         if (m_Window.mouse.IsEntered()){
             lastx = m_Window.mouse.GetPosX();
             lasty = m_Window.mouse.GetPosY();
-            LOG("yes it is");
         }   
         float xoff = m_Window.mouse.GetPosX() - lastx;
         float yoff = lasty - m_Window.mouse.GetPosY();
         lastx = m_Window.mouse.GetPosX();
         lasty = m_Window.mouse.GetPosY();
-
-        
         Cam.MoseMove(xoff, yoff);
         DefaultShader.SetUniform("Camera", Cam.GetViewMat());
 
         if( m_Window.kbd.KeyIsPressed('W')){
-            Cam.MoveFroward(5.0f * delta);
+            Cam.MoveFroward(8.0f * delta);
             DefaultShader.SetUniform("Camera", Cam.GetViewMat());
        }
         else if( m_Window.kbd.KeyIsPressed('S')){
-            Cam.MoveBackward(5.0f * delta);
+            Cam.MoveBackward(8.0f * delta);
             DefaultShader.SetUniform("Camera", Cam.GetViewMat());
        }
        else if( m_Window.kbd.KeyIsPressed('A')){
-            Cam.MoveLeft(5.0f * delta);
+            Cam.MoveLeft(8.0f * delta);
             DefaultShader.SetUniform("Camera", Cam.GetViewMat());
        }
        else if( m_Window.kbd.KeyIsPressed('D')){
-            Cam.MoveRight(5.0f * delta);
+            Cam.MoveRight(8.0f * delta);
             DefaultShader.SetUniform("Camera", Cam.GetViewMat());
        }
        else if( m_Window.kbd.KeyIsPressed('N') ){
-            Cam.MoveUP(5.0f * delta);
+            Cam.MoveUP(8.0f * delta);
             DefaultShader.SetUniform("Camera", Cam.GetViewMat());
        }
        else if( m_Window.kbd.KeyIsPressed('M') ){
-            Cam.MoveDown(5.0f * delta);
+            Cam.MoveDown(8.0f * delta);
             DefaultShader.SetUniform("Camera", Cam.GetViewMat());
        }
 
@@ -177,6 +156,7 @@ public:
             Modle = glm::translate(Modle, {1 * delta, 0, 0});
             DefaultShader.SetUniform("Modle", Modle);
        }
+       LOG( "Fps : " << this->fps.QuadPart);
     }
 
 public: // distroy hire

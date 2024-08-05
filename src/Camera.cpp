@@ -8,7 +8,7 @@ NO_WARNING_BEGIN
 NO_WARNING_END
 
 Camera::Camera(int width, int height) 
-: Position({0.5, 0, 6}),
+: Position({0, 2, 0}),
   FrontDir({0, 0, -1}), 
   UpDir({ 0, 1, 0}),
   RightDir({1, 0, 0}),
@@ -42,51 +42,39 @@ void Camera::MoveFroward(float speed)
 {
     //negate Z 
     Position -= (-FrontDir * speed);
-    std::cout << "X : " << Position.x << "\n"
-              << "Y : " << Position.y << "\n"
-              << "Z : " << Position.z << "\n";
+    
 }
 
 void Camera::MoveBackward(float speed)
 {
     //negate Z 
     Position += (-FrontDir * speed);
-    std::cout << "X : " << Position.x << "\n"
-              << "Y : " << Position.y << "\n"
-              << "Z : " << Position.z << "\n";
+    
 }
 
 void Camera::MoveUP(float speed)
 {
     Position += (UpDir  * speed);
-    std::cout << "X : " << Position.x << "\n"
-              << "Y : " << Position.y << "\n"
-              << "Z : " << Position.z << "\n";
+    
 }
 void Camera::MoveDown(float speed)
 {
     Position -= (UpDir  * speed);
-    std::cout << "X : " << Position.x << "\n"
-              << "Y : " << Position.y << "\n"
-              << "Z : " << Position.z << "\n";
+    
 }
 
 void Camera::MoveRight(float speed)
 {
     auto c = glm::cross(FrontDir, UpDir);
     Position += (c  * speed);
-    std::cout << "X : " << Position.x << "\n"
-              << "Y : " << Position.y << "\n"
-              << "Z : " << Position.z << "\n";
+    
 }
 
 void Camera::MoveLeft(float speed)
 {
     auto c = glm::cross(FrontDir, UpDir);
     Position -= (c  * speed);
-    std::cout << "X : " << Position.x << "\n"
-              << "Y : " << Position.y << "\n"
-              << "Z : " << Position.z << "\n";
+    
 }
 
 void Camera::EnableMSAA()

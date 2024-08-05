@@ -48,3 +48,4 @@
 //
 // remember macro 'SHADER' replace full path woth relative
 #define SHADER(str)  "../../Shasers/"#str
+#define TEXTURE(str)  "../../res/"#str
