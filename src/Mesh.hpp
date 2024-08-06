@@ -22,7 +22,7 @@ public:
     ~Mesh();
 public:
     void Draw(Shader &shader);
-    void setupMesh();
+    void setupMesh(std::vector<glm::vec3> InsPos);
 private:
     unsigned int VAO, VBO, EBO;
     std::vector<Vertex> Vertices;

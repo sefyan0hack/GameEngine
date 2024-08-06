@@ -11,10 +11,10 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices)
     this->Vertices = vertices;
     this->Indices = indices;
     // this->textures = textures;
-    setupMesh();
+    // setupMesh(InsPos);
 }
 
-void Mesh::setupMesh()
+void Mesh::setupMesh(std::vector<glm::vec3> InsPos)
 {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -32,12 +32,21 @@ void Mesh::setupMesh()
     glEnableVertexAttribArray(0);	
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
     // vertex normals
-    glEnableVertexAttribArray(1);	
+    glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
     // vertex texture coords
-    glEnableVertexAttribArray(2);	
+    glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
 
+    
+    GLuint UBO;
+    glGenBuffers(1, &UBO);
+    glBindBuffer(GL_ARRAY_BUFFER, UBO);
+    glBufferData(GL_ARRAY_BUFFER, InsPos.size() * sizeof(glm::vec3), InsPos.data(), GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+    glVertexAttribDivisor(3, 1);
     glBindVertexArray(0);
 }
 
@@ -45,7 +54,8 @@ void Mesh::Draw(Shader &shader)
 {
     shader.Use();
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
+    // glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
+    glDrawElementsInstanced(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0, 500*500);
     glBindVertexArray(0);
 }
 
