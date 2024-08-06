@@ -4,17 +4,13 @@ NO_WARNING_BEGIN
 #include <glad/glad.h>
 NO_WARNING_END
 
-// #define STB_IMAGE_IMPLEMENTATION
-// #include <stb/stb_image.h>
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices)
 {
     this->Vertices = vertices;
     this->Indices = indices;
-    // this->textures = textures;
-    // setupMesh(InsPos);
 }
 
-void Mesh::setupMesh(std::vector<glm::vec3> InsPos)
+void Mesh::setupMesh()
 {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -38,24 +34,16 @@ void Mesh::setupMesh(std::vector<glm::vec3> InsPos)
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
 
-    
-    GLuint UBO;
-    glGenBuffers(1, &UBO);
-    glBindBuffer(GL_ARRAY_BUFFER, UBO);
-    glBufferData(GL_ARRAY_BUFFER, InsPos.size() * sizeof(glm::vec3), InsPos.data(), GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(3);
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
-    glVertexAttribDivisor(3, 1);
-    glBindVertexArray(0);
 }
 
-void Mesh::Draw(Shader &shader) 
+void Mesh::Draw(Shader &shader, size_t InstanceCount) 
 {
     shader.Use();
     glBindVertexArray(VAO);
-    // glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
-    glDrawElementsInstanced(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0, 500*500);
+    if(InstanceCount > 1)
+        glDrawElementsInstanced(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0, InstanceCount);
+    else
+        glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
 

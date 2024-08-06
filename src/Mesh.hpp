@@ -10,21 +10,17 @@ struct Vertex
     glm::vec2 TexCoords;
 };
 
-// struct Texture {
-//     unsigned int id;
-//     std::string type;
-// };
-
 class Mesh
 {
 public:
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
     ~Mesh();
 public:
-    void Draw(Shader &shader);
-    void setupMesh(std::vector<glm::vec3> InsPos);
-private:
+    void Draw(Shader &shader, size_t InstanceCount = 1);
+    void setupMesh();
+public:
     unsigned int VAO, VBO, EBO;
+private:
     std::vector<Vertex> Vertices;
     std::vector<unsigned int> Indices;
 };

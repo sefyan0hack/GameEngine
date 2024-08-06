@@ -70,27 +70,20 @@ public: // init here
     : Cam(m_Window.GetWidth(), m_Window.GetHeight(), m_Window.mouse.GetPos()), 
       cubeMesh({cubeMeshVert, indices}), Modle(1.0f), DefaultShader(SHADER(Traingl))
     {
-        // for(size_t i = 0; i < 50; i ++){
-        //     for(size_t j = 0; j < 50; j ++){
-        //         for (size_t k = 0; k < rand() % 6; k ++)
-        //         {
-        //             Objects.emplace_back(glm::vec3(i, k, j), DefaultShader, cubeMesh);
-        //         }
-        //     }
-        // }
-        
+        constexpr int Grids = 200;
         std::vector<glm::vec3> positions;
-        for(size_t i = 0; i < 3'000; i ++){
-            for(size_t j = 0; j < 3'000; j ++){
-                for (size_t k = 0; k < rand() % 10; k ++)
-                {
-                    positions.push_back(glm::vec3(i, k, j));
-                }
+
+        for(int i = -Grids; i < Grids; i ++){
+            for(int j = -Grids; j < Grids; j ++){
+                for(int k = 0; k < 1 + rand() % 5; k ++)
+                    positions.push_back(glm::vec3(i, k , j));
             }
         }
-        cubeMesh.setupMesh(positions);
+
         Objects.emplace_back(glm::vec3(0,0,0), DefaultShader, cubeMesh);
-        // cubeMesh.setupMesh();
+        for(auto &&Obj : Objects){
+            Obj.SetUp(positions);
+        }
 
         Perspective = glm::perspective(glm::radians(45.0f),(float)m_Window.GetWidth()/(float)m_Window.GetHeight(), 0.1f, 100.0f);
         DefaultShader.SetUniform("Perspective", Perspective);
@@ -113,6 +106,7 @@ public:
         for(auto &obj: Objects){
             obj.Render();
         }
+
         auto op = m_Window.mouse.ReadRawDelta();
         if(op)
             Cam.MoseMove(op.value().x, -op.value().y);

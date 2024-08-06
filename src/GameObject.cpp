@@ -1,7 +1,7 @@
 #include "GameObject.hpp"
 
 GameObject::GameObject(glm::vec3 position, Shader &program, Mesh mesh)
-: transform({position, {0,0,0}, {1,1,1}}), ModleMat(1.0f), program(&program), mesh(mesh)
+: transform({position, {0,0,0}, {1,1,1}}), ModleMat(1.0f), program(&program), mesh(mesh), InstanceCount(1)
 {   
     ModleMat = Transformation(transform);
 }
@@ -11,10 +11,28 @@ void GameObject::UpMatrix()
     program->SetUniform("Modle", ModleMat);
 }
 
+void GameObject::SetUp(std::vector<glm::vec3> InsPos)
+{
+    this->InstanceCount = InsPos.size();
+    this->InstancePos = InsPos;
+    mesh.setupMesh();
+    if(this->InstanceCount != 1){
+        GLuint UBO;
+        glGenBuffers(1, &UBO);
+        glBindBuffer(GL_ARRAY_BUFFER, UBO);
+        glBufferData(GL_ARRAY_BUFFER, InsPos.size() * sizeof(glm::vec3), InsPos.data(), GL_STATIC_DRAW);
+
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+        glVertexAttribDivisor(3, 1);
+        glBindVertexArray(0);
+    }
+}
+
 void GameObject::Render()
 {
     UpMatrix();
-    mesh.Draw(*program);
+    mesh.Draw(*program, this->InstanceCount);
 }
 
 Transform GameObject::GetTransform() const
