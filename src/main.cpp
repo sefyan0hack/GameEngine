@@ -65,22 +65,32 @@ private:
     glm::mat4 Perspective;
     // glm::mat4 CameraMat;
     Shader DefaultShader;
-    float lastx, lasty;
 public: // init here
     Game()
-    : Cam(m_Window.GetWidth(), m_Window.GetHeight()), cubeMesh({cubeMeshVert, indices}), Modle(1.0f), DefaultShader(SHADER(Traingl)),
-      lastx((float)m_Window.GetWidth()/2), lasty((float)m_Window.GetHeight()/2)
+    : Cam(m_Window.GetWidth(), m_Window.GetHeight(), m_Window.mouse.GetPos()), 
+      cubeMesh({cubeMeshVert, indices}), Modle(1.0f), DefaultShader(SHADER(Traingl))
     {
-        for(size_t i = 0; i < 50; i ++){
-            for(size_t j = 0; j < 50; j ++){
-                for (size_t k = 0; k < rand() % 6; k ++)
+        // for(size_t i = 0; i < 50; i ++){
+        //     for(size_t j = 0; j < 50; j ++){
+        //         for (size_t k = 0; k < rand() % 6; k ++)
+        //         {
+        //             Objects.emplace_back(glm::vec3(i, k, j), DefaultShader, cubeMesh);
+        //         }
+        //     }
+        // }
+        
+        std::vector<glm::vec3> positions;
+        for(size_t i = 0; i < 3'000; i ++){
+            for(size_t j = 0; j < 3'000; j ++){
+                for (size_t k = 0; k < rand() % 10; k ++)
                 {
-                    Objects.emplace_back(glm::vec3(i, k, j), DefaultShader, cubeMesh);
+                    positions.push_back(glm::vec3(i, k, j));
                 }
             }
         }
-
-        cubeMesh.setupMesh();
+        cubeMesh.setupMesh(positions);
+        Objects.emplace_back(glm::vec3(0,0,0), DefaultShader, cubeMesh);
+        // cubeMesh.setupMesh();
 
         Perspective = glm::perspective(glm::radians(45.0f),(float)m_Window.GetWidth()/(float)m_Window.GetHeight(), 0.1f, 100.0f);
         DefaultShader.SetUniform("Perspective", Perspective);
@@ -90,7 +100,7 @@ public: // init here
         brik.BindByName(TEXTURE(brik.jpg));
         DefaultShader.Use();
         DefaultShader.SetUniform("ourTexture", 0);
-        
+        m_Window.mouse.SetPos(m_Window.GetWidth()/2.0f, m_Window.GetHeight()/2.0f);
     }
 public:
 
@@ -103,40 +113,39 @@ public:
         for(auto &obj: Objects){
             obj.Render();
         }
+        auto op = m_Window.mouse.ReadRawDelta();
+        if(op)
+            Cam.MoseMove(op.value().x, -op.value().y);
+        m_Window.mouse.SetPos(m_Window.GetWidth()/2.0f, m_Window.GetHeight()/2.0f);
         
-        if (m_Window.mouse.IsEntered()){
-            lastx = m_Window.mouse.GetPosX();
-            lasty = m_Window.mouse.GetPosY();
-        }   
-        float xoff = m_Window.mouse.GetPosX() - lastx;
-        float yoff = lasty - m_Window.mouse.GetPosY();
-        lastx = m_Window.mouse.GetPosX();
-        lasty = m_Window.mouse.GetPosY();
-        Cam.MoseMove(xoff, yoff);
         DefaultShader.SetUniform("Camera", Cam.GetViewMat());
 
         if( m_Window.kbd.KeyIsPressed('W')){
-            Cam.MoveFroward(8.0f * delta);
+            float speed = 10.0f * delta;
+            if(m_Window.kbd.KeyIsPressed(VK_SHIFT))
+                speed *= 10;
+                
+            Cam.MoveFroward(speed);
             DefaultShader.SetUniform("Camera", Cam.GetViewMat());
        }
         else if( m_Window.kbd.KeyIsPressed('S')){
-            Cam.MoveBackward(8.0f * delta);
+            Cam.MoveBackward(10.0f * delta);
             DefaultShader.SetUniform("Camera", Cam.GetViewMat());
        }
        else if( m_Window.kbd.KeyIsPressed('A')){
-            Cam.MoveLeft(8.0f * delta);
+            Cam.MoveLeft(10.0f * delta);
             DefaultShader.SetUniform("Camera", Cam.GetViewMat());
        }
        else if( m_Window.kbd.KeyIsPressed('D')){
-            Cam.MoveRight(8.0f * delta);
+            Cam.MoveRight(10.0f * delta);
             DefaultShader.SetUniform("Camera", Cam.GetViewMat());
        }
        else if( m_Window.kbd.KeyIsPressed('N') ){
-            Cam.MoveUP(8.0f * delta);
+            Cam.MoveUP(10.0f * delta);
             DefaultShader.SetUniform("Camera", Cam.GetViewMat());
        }
        else if( m_Window.kbd.KeyIsPressed('M') ){
-            Cam.MoveDown(8.0f * delta);
+            Cam.MoveDown(10.0f * delta);
             DefaultShader.SetUniform("Camera", Cam.GetViewMat());
        }
 

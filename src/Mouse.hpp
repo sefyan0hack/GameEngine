@@ -42,6 +42,7 @@ public:
 	std::optional<RawDelta> ReadRawDelta() noexcept;
 	int GetPosX() const noexcept;
 	int GetPosY() const noexcept;
+	void SetPos(int x, int y);
 	bool IsInWindow() const noexcept;
 	bool IsEntered() const noexcept;
 	bool LeftIsPressed() const noexcept;

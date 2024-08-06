@@ -7,7 +7,9 @@ NO_WARNING_BEGIN
 #include <glad/glad.h>
 NO_WARNING_END
 
-Camera::Camera(int width, int height) 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/fast_trigonometry.hpp>
+Camera::Camera(int width, int height, std::pair<int, int> mouse) 
 : Position({0, 2, 0}),
   FrontDir({0, 0, -1}), 
   UpDir({ 0, 1, 0}),
@@ -15,7 +17,8 @@ Camera::Camera(int width, int height)
   ViewMat(glm::lookAt(Position, Position + FrontDir, UpDir)),
   Width(width), Height(height),
   sensitivity(0.1),
-  yaw(-90), pitch(0){}
+  yaw(-90), pitch(0),
+  OldMose({mouse.first, mouse.second}){}
 Camera::~Camera() {}
 
 void Camera::UpdateMat()
@@ -113,5 +116,15 @@ void Camera::MoseMove(float xoff, float yoff, bool islocked)
             this->pitch = -45;
     }
     UpdateVectors();
+    UpdateMat();
+}
+
+void Camera::MoseLook(int x, int y)
+{
+    glm::vec2 curentpos = {x,y};
+    glm::vec2 mouseDelta =  curentpos - OldMose;
+    LOG("MOUSE DELTA : (" << mouseDelta.x << ", " << mouseDelta.y << ")");
+    this->ViewMat = glm::rotate(this->ViewMat, glm::radians(mouseDelta.x * sensitivity), UpDir);
+    OldMose = curentpos;
     UpdateMat();
 }

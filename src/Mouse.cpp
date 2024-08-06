@@ -7,6 +7,12 @@ int Mouse::GetPosX() const noexcept { return x; }
 
 int Mouse::GetPosY() const noexcept { return y; }
 
+void Mouse::SetPos(int x, int y)
+{
+	SetCursor(nullptr);
+	SetCursorPos(x, y);
+}
+
 bool Mouse::IsInWindow() const noexcept { return isInWindow; }
 
 bool Mouse::IsEntered() const noexcept

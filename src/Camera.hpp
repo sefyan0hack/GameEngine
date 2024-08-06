@@ -6,7 +6,7 @@
 class Camera
 {
 public:
-    Camera(int width, int height);
+    Camera(int width, int height, std::pair<int, int> mouse);
     ~Camera();
     void UpdateMat();
     glm::mat4 GetViewMat();
@@ -28,6 +28,8 @@ public:
     
     void UpdateVectors();
     void MoseMove(float xoff, float yoff, bool islocked = true);
+    void MoseLook(int x, int y);
+
 private:
     glm::vec3 Position;
     glm::vec3 FrontDir;
@@ -39,4 +41,5 @@ private:
     int Width, Height;
     float sensitivity;
     float yaw, pitch;
+    glm::vec2 OldMose;
 };
