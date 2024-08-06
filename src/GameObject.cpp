@@ -16,7 +16,7 @@ void GameObject::SetUp(std::vector<glm::vec3> InsPos)
     this->InstanceCount = InsPos.size();
     this->InstancePos = InsPos;
     mesh.setupMesh();
-    if(this->InstanceCount != 1){
+    if(this->InstanceCount > 1){
         GLuint UBO;
         glGenBuffers(1, &UBO);
         glBindBuffer(GL_ARRAY_BUFFER, UBO);

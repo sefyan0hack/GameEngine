@@ -2,7 +2,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
+#include "Mouse.hpp"
 class Camera
 {
 public:
@@ -27,8 +27,7 @@ public:
     glm::vec3 GetRightDir() const { return RightDir; }
     
     void UpdateVectors();
-    void MoseMove(float xoff, float yoff, bool islocked = true);
-    void MoseLook(int x, int y);
+    void MoseMove(Mouse &mouse, bool islocked = true);
 
 private:
     glm::vec3 Position;

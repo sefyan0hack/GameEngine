@@ -75,11 +75,10 @@ public: // init here
 
         for(int i = -Grids; i < Grids; i ++){
             for(int j = -Grids; j < Grids; j ++){
-                for(int k = 0; k < 1 + rand() % 5; k ++)
-                    positions.push_back(glm::vec3(i, k , j));
+                for(int k = 0; k < 1 + rand() % 6; k ++)
+                    positions.emplace_back(i, k % 2 , j);
             }
         }
-
         Objects.emplace_back(glm::vec3(0,0,0), DefaultShader, cubeMesh);
         for(auto &&Obj : Objects){
             Obj.SetUp(positions);
@@ -107,9 +106,7 @@ public:
             obj.Render();
         }
 
-        auto op = m_Window.mouse.ReadRawDelta();
-        if(op)
-            Cam.MoseMove(op.value().x, -op.value().y);
+        Cam.MoseMove(m_Window.mouse);
         m_Window.mouse.SetPos(m_Window.GetWidth()/2.0f, m_Window.GetHeight()/2.0f);
         
         DefaultShader.SetUniform("Camera", Cam.GetViewMat());

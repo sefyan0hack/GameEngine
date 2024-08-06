@@ -102,8 +102,18 @@ void Camera::UpdateVectors()
     this->UpDir = glm::normalize(glm::cross(this->RightDir, this->FrontDir));
 }
 
-void Camera::MoseMove(float xoff, float yoff, bool islocked)
+void Camera::MoseMove(Mouse &mouse, bool islocked)
 {
+    auto op = mouse.ReadRawDelta();
+    float xoff;
+    float yoff;
+    if(op){
+        xoff = op.value().x;
+        yoff = -op.value().y;
+    }else{
+        xoff = 0;
+        yoff = 0;
+    }
     xoff *= this->sensitivity;
     yoff *= this->sensitivity;
     this->yaw += xoff;
@@ -116,15 +126,5 @@ void Camera::MoseMove(float xoff, float yoff, bool islocked)
             this->pitch = -45;
     }
     UpdateVectors();
-    UpdateMat();
-}
-
-void Camera::MoseLook(int x, int y)
-{
-    glm::vec2 curentpos = {x,y};
-    glm::vec2 mouseDelta =  curentpos - OldMose;
-    LOG("MOUSE DELTA : (" << mouseDelta.x << ", " << mouseDelta.y << ")");
-    this->ViewMat = glm::rotate(this->ViewMat, glm::radians(mouseDelta.x * sensitivity), UpDir);
-    OldMose = curentpos;
     UpdateMat();
 }
