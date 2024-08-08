@@ -4,6 +4,14 @@ GameObject::GameObject(glm::vec3 position, Shader &program, Mesh mesh)
 : transform({position, {0,0,0}, {1,1,1}}), ModleMat(1.0f), program(&program), mesh(mesh), InstanceCount(1)
 {   
     ModleMat = Transformation(transform);
+    UpMatrix();
+}
+
+GameObject::~GameObject()
+{
+    if (this->InstancePos){
+        delete [] this->InstancePos;
+    }
 }
 
 void GameObject::UpMatrix()
@@ -14,13 +22,13 @@ void GameObject::UpMatrix()
 void GameObject::SetUp(std::vector<glm::vec3> InsPos)
 {
     this->InstanceCount = InsPos.size();
-    this->InstancePos = InsPos;
+    this->InstancePos = InsPos.data();
     mesh.setupMesh();
     if(this->InstanceCount > 1){
         GLuint UBO;
         glGenBuffers(1, &UBO);
         glBindBuffer(GL_ARRAY_BUFFER, UBO);
-        glBufferData(GL_ARRAY_BUFFER, InsPos.size() * sizeof(glm::vec3), InsPos.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, this->InstanceCount * sizeof(glm::vec3), InstancePos, GL_STATIC_DRAW);
 
         glEnableVertexAttribArray(3);
         glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
@@ -28,10 +36,25 @@ void GameObject::SetUp(std::vector<glm::vec3> InsPos)
         glBindVertexArray(0);
     }
 }
+void GameObject::SetUp(glm::vec3 * InsPos, size_t size)
+{
+    this->InstanceCount = size;
+    this->InstancePos = InsPos;
+    mesh.setupMesh();
+    if(this->InstanceCount > 1){
+        GLuint UBO;
+        glGenBuffers(1, &UBO);
+        glBindBuffer(GL_ARRAY_BUFFER, UBO);
+        glBufferData(GL_ARRAY_BUFFER, this->InstanceCount * sizeof(glm::vec3), &this->InstancePos[0][0], GL_STATIC_DRAW);
 
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+        glVertexAttribDivisor(3, 1);
+        glBindVertexArray(0);
+    }
+}
 void GameObject::Render()
 {
-    UpMatrix();
     mesh.Draw(*program, this->InstanceCount);
 }
 

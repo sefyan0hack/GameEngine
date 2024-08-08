@@ -140,5 +140,5 @@ void Camera::MoseMove(bool islocked)
     UpdateMat();
     UpdatePersp();
     UpdateView();
-    m_Window->mouse.SetPos(m_Window->GetWidth()/2.0f, m_Window->GetHeight()/2.0f);
+    // m_Window->mouse.SetPos(m_Window->GetWidth()/2.0f, m_Window->GetHeight()/2.0f);
 }

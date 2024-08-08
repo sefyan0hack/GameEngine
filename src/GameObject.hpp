@@ -11,9 +11,11 @@ struct Transform {
 class GameObject {
 public:
     GameObject(glm::vec3 position, Shader &program, Mesh mesh);
-    ~GameObject() = default;
+    ~GameObject();
     void UpMatrix();
     void SetUp(std::vector<glm::vec3> InsPos);
+    void SetUp(glm::vec3 * InsPos, size_t size);
+
     void Render();
     void SetPosition(const glm::vec3 &pos);
     void SetScale(const glm::vec3 &Scale);
@@ -31,5 +33,5 @@ private:
     Shader* program;
     Mesh mesh;
     size_t InstanceCount;
-    std::vector<glm::vec3> InstancePos;
+    glm::vec3* InstancePos;
 };

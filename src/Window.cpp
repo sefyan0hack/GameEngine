@@ -125,21 +125,18 @@ LRESULT CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
 	    case WM_LBUTTONDOWN:
 	    {
 	    	SetForegroundWindow( Winhandle );
-	    	const POINTS pt = MAKEPOINTS( Lpr );
-	    	mouse.OnLeftPressed( pt.x,pt.y );
+	    	mouse.OnLeftPressed();
 	    	break;
 	    }
 	    case WM_RBUTTONDOWN:
 	    {
-
-	    	const POINTS pt = MAKEPOINTS( Lpr );
-	    	mouse.OnRightPressed( pt.x,pt.y );
+	    	mouse.OnRightPressed();
 	    	break;
 	    }
 	    case WM_LBUTTONUP:
 	    {
 	    	const POINTS pt = MAKEPOINTS( Lpr );
-	    	mouse.OnLeftReleased( pt.x,pt.y );
+	    	mouse.OnLeftReleased();
 	    	// release mouse if outside of window
 	    	if( pt.x < 0 || pt.x >= m_Width || pt.y < 0 || pt.y >= m_Height )
 	    	{
@@ -151,7 +148,7 @@ LRESULT CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
 	    case WM_RBUTTONUP:
 	    {
 	    	const POINTS pt = MAKEPOINTS( Lpr );
-	    	mouse.OnRightReleased( pt.x,pt.y );
+	    	mouse.OnRightReleased();
 	    	// release mouse if outside of window
 	    	if( pt.x < 0 || pt.x >= m_Width || pt.y < 0 || pt.y >= m_Height )
 	    	{
@@ -162,9 +159,8 @@ LRESULT CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
 	    }
 	    case WM_MOUSEWHEEL:
 	    {
-	    	const POINTS pt = MAKEPOINTS( Lpr );
 	    	const int delta = GET_WHEEL_DELTA_WPARAM( Wpr );
-	    	mouse.OnWheelDelta( pt.x,pt.y,delta );
+	    	mouse.OnWheelDelta(delta);
 	    	break;
 	    }
 	    ///////////////// END MOUSE MESSAGES /////////////////
