@@ -58,17 +58,14 @@ private:
         0, 2, 7
     };
     Camera Cam;
-    // vector<Mesh> Objects;
     vector<GameObject> Objects;
     Mesh cubeMesh;
     glm::mat4 Modle;
     glm::mat4 Perspective;
-    // glm::mat4 CameraMat;
     Shader DefaultShader;
 public: // init here
     Game()
-    : Cam(m_Window.GetWidth(), m_Window.GetHeight(), m_Window.mouse.GetPos()), 
-      cubeMesh({cubeMeshVert, indices}), Modle(1.0f), DefaultShader(SHADER(Traingl))
+    : Cam(m_Window, DefaultShader), cubeMesh({cubeMeshVert, indices}), Modle(1.0f), DefaultShader(SHADER(Traingl))
     {
         constexpr int Grids = 200;
         std::vector<glm::vec3> positions;
@@ -84,77 +81,42 @@ public: // init here
             Obj.SetUp(positions);
         }
 
-        Perspective = glm::perspective(glm::radians(45.0f),(float)m_Window.GetWidth()/(float)m_Window.GetHeight(), 0.1f, 100.0f);
-        DefaultShader.SetUniform("Perspective", Perspective);
-        DefaultShader.SetUniform("Camera", Cam.GetViewMat());
         Texture brik ;
         brik.Loud(TEXTURE(brik.jpg));
         brik.BindByName(TEXTURE(brik.jpg));
         DefaultShader.Use();
         DefaultShader.SetUniform("ourTexture", 0);
-        m_Window.mouse.SetPos(m_Window.GetWidth()/2.0f, m_Window.GetHeight()/2.0f);
     }
 public:
 
     void Update(float delta) override {
-        float WidrhOverHeight = (float)m_Window.GetWidth()/ m_Window.GetHeight();
-        Perspective = glm::perspective(glm::radians(45.0f), WidrhOverHeight, 0.1f, 100.0f);
-        DefaultShader.SetUniform("Perspective", Perspective);
-
         //Drwaing
         for(auto &obj: Objects){
             obj.Render();
         }
 
-        Cam.MoseMove(m_Window.mouse);
-        m_Window.mouse.SetPos(m_Window.GetWidth()/2.0f, m_Window.GetHeight()/2.0f);
-        
-        DefaultShader.SetUniform("Camera", Cam.GetViewMat());
-
+        Cam.MoseMove();
         if( m_Window.kbd.KeyIsPressed('W')){
             float speed = 10.0f * delta;
             if(m_Window.kbd.KeyIsPressed(VK_SHIFT))
                 speed *= 10;
                 
             Cam.MoveFroward(speed);
-            DefaultShader.SetUniform("Camera", Cam.GetViewMat());
        }
         else if( m_Window.kbd.KeyIsPressed('S')){
             Cam.MoveBackward(10.0f * delta);
-            DefaultShader.SetUniform("Camera", Cam.GetViewMat());
        }
        else if( m_Window.kbd.KeyIsPressed('A')){
             Cam.MoveLeft(10.0f * delta);
-            DefaultShader.SetUniform("Camera", Cam.GetViewMat());
        }
        else if( m_Window.kbd.KeyIsPressed('D')){
             Cam.MoveRight(10.0f * delta);
-            DefaultShader.SetUniform("Camera", Cam.GetViewMat());
        }
        else if( m_Window.kbd.KeyIsPressed('N') ){
             Cam.MoveUP(10.0f * delta);
-            DefaultShader.SetUniform("Camera", Cam.GetViewMat());
        }
        else if( m_Window.kbd.KeyIsPressed('M') ){
             Cam.MoveDown(10.0f * delta);
-            DefaultShader.SetUniform("Camera", Cam.GetViewMat());
-       }
-
-       if( m_Window.kbd.KeyIsPressed(VK_UP)){
-            Modle = glm::translate(Modle, {0, 1 * delta, 0});
-            DefaultShader.SetUniform("Modle", Modle);
-       }
-        else if(m_Window.kbd.KeyIsPressed(VK_DOWN) ){
-            Modle = glm::translate(Modle, {0, -1 * delta, 0});
-            DefaultShader.SetUniform("Modle", Modle);
-       }
-       else if( m_Window.kbd.KeyIsPressed(VK_LEFT) ){
-            Modle = glm::translate(Modle, {-1 * delta, 0, 0});
-            DefaultShader.SetUniform("Modle", Modle);
-       }
-       else if( m_Window.kbd.KeyIsPressed(VK_RIGHT) ){
-            Modle = glm::translate(Modle, {1 * delta, 0, 0});
-            DefaultShader.SetUniform("Modle", Modle);
        }
        LOG( "Fps : " << this->fps.QuadPart);
     }

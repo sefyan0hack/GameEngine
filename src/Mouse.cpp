@@ -9,7 +9,7 @@ int Mouse::GetPosY() const noexcept { return y; }
 
 void Mouse::SetPos(int x, int y)
 {
-	SetCursor(nullptr);
+	ShowCursor(false);
 	SetCursorPos(x, y);
 }
 

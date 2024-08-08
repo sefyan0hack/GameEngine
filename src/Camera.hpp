@@ -2,13 +2,17 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "Mouse.hpp"
+#include "Window.hpp"
+#include "Shader.hpp"
+
 class Camera
 {
 public:
-    Camera(int width, int height, std::pair<int, int> mouse);
+    Camera(Window &window, Shader& shader);
     ~Camera();
     void UpdateMat();
+    void UpdateView();
+    void UpdatePersp();
     glm::mat4 GetViewMat();
     void SetViewMat(glm::mat4 mat);
     void SetFrontVector(glm::vec3 front) { FrontDir = front; }
@@ -27,7 +31,7 @@ public:
     glm::vec3 GetRightDir() const { return RightDir; }
     
     void UpdateVectors();
-    void MoseMove(Mouse &mouse, bool islocked = true);
+    void MoseMove(bool islocked = true);
 
 private:
     glm::vec3 Position;
@@ -36,9 +40,10 @@ private:
     glm::vec3 RightDir;
 
     glm::mat4 ViewMat;
+    glm::mat4 PerspectiveMat;
     //
-    int Width, Height;
+    Window* m_Window;
     float sensitivity;
     float yaw, pitch;
-    glm::vec2 OldMose;
+    Shader* ProgramShader;
 };
