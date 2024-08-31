@@ -13,8 +13,8 @@ public:
     void UpdateMat();
     void UpdateView();
     void UpdatePersp();
-    glm::mat4 GetViewMat();
-    void SetViewMat(glm::mat4 mat);
+    glm::mat4 const & GetViewMat() const;
+    void SetViewMat(const glm::mat4 &mat);
     void SetFrontVector(glm::vec3 front) { FrontDir = front; }
     void SetUpVector(glm::vec3 up) { FrontDir = up; }
     void SetRightVector(glm::vec3 right) { RightDir = right; }

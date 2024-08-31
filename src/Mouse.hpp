@@ -34,7 +34,7 @@ public:
 		int y;
 	};
 public:
-    Mouse() = default;
+    Mouse();
 	Mouse( const Mouse& ) = delete;
 public:
 	Mouse& operator=( const Mouse& ) = delete;

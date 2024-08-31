@@ -3,7 +3,7 @@
 class OpenGL
 {
     public:
-        OpenGL(HWND window);
+        explicit OpenGL(HWND window);
         OpenGL(const OpenGL&) = delete;
         OpenGL operator = (const OpenGL&) = delete;
         ~OpenGL();

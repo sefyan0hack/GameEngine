@@ -36,14 +36,13 @@ void Camera::UpdatePersp()
     PerspectiveMat = glm::perspective(glm::radians(45.0f),(float)m_Window->GetWidth()/(float)m_Window->GetHeight(), 0.1f, 100.0f);
     ProgramShader->SetUniform("Perspective", PerspectiveMat);
 }
-
-glm::mat4 Camera::GetViewMat()
+// get const ref to View Matrix
+glm::mat4 const & Camera::GetViewMat() const
 {
-    UpdateMat();
     return ViewMat;
 }
 
-void Camera::SetViewMat(glm::mat4 mat)
+void Camera::SetViewMat(const glm::mat4 &mat)
 {
     ViewMat = mat;
     glm::mat4 invView = glm::inverse(mat);

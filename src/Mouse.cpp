@@ -1,7 +1,11 @@
 #include "Mouse.hpp"
 #include <windows.h>
 
-std::pair<int,int> Mouse::GetPos() const noexcept { return { x,y }; }
+Mouse::Mouse() : x(0), y(0)
+{
+}
+
+std::pair<int, int> Mouse::GetPos() const noexcept { return {x, y}; }
 
 int Mouse::GetPosX() const noexcept { return x; }
 

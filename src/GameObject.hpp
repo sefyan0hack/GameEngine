@@ -10,10 +10,10 @@ struct Transform {
 };
 class GameObject {
 public:
-    GameObject(glm::vec3 position, Shader &program, Mesh mesh);
+    GameObject(glm::vec3 position, const Shader &program, const Mesh &mesh);
     ~GameObject();
     void UpMatrix();
-    void SetUp(std::vector<glm::vec3> InsPos);
+    void SetUp(const std::vector<glm::vec3> &InsPos);
     void SetUp(glm::vec3 * InsPos, size_t size);
 
     void Render();
@@ -30,8 +30,8 @@ private:
     Transform transform;
     glm::mat4 ModleMat;
 
-    Shader* program;
-    Mesh mesh;
+    const Shader* program;
+    Mesh m_Mesh;
     size_t InstanceCount;
-    glm::vec3* InstancePos;
+    const glm::vec3* InstancePos;
 };

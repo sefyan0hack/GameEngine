@@ -4,7 +4,7 @@ NO_WARNING_BEGIN
 #include <glad/glad.h>
 NO_WARNING_END
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices)
+Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices): VAO(0), VBO(0), EBO(0)
 {
     this->Vertices = vertices;
     this->Indices = indices;
@@ -26,17 +26,17 @@ void Mesh::setupMesh()
 
     // vertex positions
     glEnableVertexAttribArray(0);	
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(0) );
     // vertex normals
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, Normal)) );
     // vertex texture coords
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, TexCoords)) );
 
 }
 
-void Mesh::Draw(Shader &shader, size_t InstanceCount) 
+void Mesh::Draw(const Shader &shader, size_t InstanceCount) 
 {
     shader.Use();
     glBindVertexArray(VAO);
