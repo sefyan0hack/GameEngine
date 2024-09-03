@@ -80,7 +80,7 @@ add_compile_options(/W4)
 else()
     add_compile_options(-Wall -Wextra -Wpedantic)
     set(CMAKE_CXX_FLAGS_RELEASE "${REMOVE_WAR} -Ofast -march=native") ## Optimize
-    set(CMAKE_CXX_FLAGS_DEBUG   "${REMOVE_WAR} -O0 -g3 -ggdb") ## Debug
+    set(CMAKE_CXX_FLAGS_DEBUG   "${REMOVE_WAR} -O0 -pg -g3 -ggdb") ## Debug
 endif()
 add_executable(test  ${SOURCE})
 target_link_libraries(test glad stb_image  ${OPENGL_LIBRARIES})

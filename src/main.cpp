@@ -50,7 +50,7 @@ public: // init here
     Game()
     : Cam(m_Window, DefaultShader), cubeMesh({cubeMeshVert, indices}), DefaultShader(SHADER(Traingl))
     {
-        constexpr int Grids = 400;
+        constexpr int Grids = 300;
         glm::vec3 *positions = new glm::vec3[Grids * Grids * 4];
         size_t index = 0;
         for(int i = -Grids; i < Grids; i ++){

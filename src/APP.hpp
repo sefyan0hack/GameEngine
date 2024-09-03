@@ -4,14 +4,14 @@
 
 class APP
 {
-public:
+protected:
     APP();
     ~APP() = default;
 
-    void Run();
 
-protected:
     virtual void Update(float delta) = 0;
+public:
+    void Run();
 
 protected:
     Window m_Window;

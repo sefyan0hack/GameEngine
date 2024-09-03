@@ -6,7 +6,7 @@ class Window;
 class Mouse
 {
     friend class Window;
-public:
+private:
     struct RawDelta
 	{
 		int x,y;

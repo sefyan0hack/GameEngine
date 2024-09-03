@@ -8,7 +8,7 @@ class Window;  // Forward declaration if necessary
 class Keyboard
 {
 	friend class Window;
-public:
+private:
 	class Event
 	{
 	public:
