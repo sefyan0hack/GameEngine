@@ -14,16 +14,16 @@ void Mesh::setupMesh()
 {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
   
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
     glBufferData(GL_ARRAY_BUFFER, Vertices.size() * sizeof(Vertex), Vertices.data(), GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, Indices.size() * sizeof(unsigned int), Indices.data(), GL_STATIC_DRAW);
-
+#ifdef USE_EBO
+        glGenBuffers(1, &EBO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, Indices.size() * sizeof(unsigned int), Indices.data(), GL_STATIC_DRAW);
+#endif
     // vertex positions
     glEnableVertexAttribArray(0);	
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(0) );
@@ -41,9 +41,19 @@ void Mesh::Draw(const Shader &shader, size_t InstanceCount)
     shader.Use();
     glBindVertexArray(VAO);
     if(InstanceCount > 1)
+#ifdef USE_EBO
         glDrawElementsInstanced(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0, InstanceCount);
+#else
+        glDrawArraysInstanced(GL_TRIANGLES, 0, Vertices.size(), InstanceCount);
+#endif
+
     else
+    
+#ifdef USE_EBO
         glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
+#else
+        glDrawArrays(GL_TRIANGLES, 0, Vertices.size());
+#endif
     glBindVertexArray(0);
 }
 

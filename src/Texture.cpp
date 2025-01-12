@@ -15,7 +15,7 @@ void Texture::Loud(const std::string &name, const int Type)
     unsigned char *data = stbi_load(name.c_str(), &width, &height, &nrChannels, 0); // if .png GL_RGBA
     if (data)
     {
-        glTexImage2D(Type, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(Type, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(Type);
 
         Textures.insert({name, texture + 1}); // for making 0 is nott valid place
