@@ -7,7 +7,8 @@ Window::WinClass &Window::WinClass::Instance()
     static Window::WinClass ClassIns; 
     return ClassIns;
 }
-const char* Window::WinClass::Name(){
+auto Window::WinClass::Name() -> const char*
+{
     return m_Name;
 }
 Window::WinClass::WinClass(){
@@ -35,7 +36,7 @@ Window::WinClass::~WinClass()
 }
 ///////////////////////////////////////////////////////////////////
 
-LRESULT Window::WinProcSetup(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)
+auto Window::WinProcSetup(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT
 {
     if (msg == WM_NCCREATE){
         const CREATESTRUCTW* WinptrStruct = reinterpret_cast<CREATESTRUCTW*>(Lpr);
@@ -48,13 +49,14 @@ LRESULT Window::WinProcSetup(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)
     return DefWindowProcA(Winhandle, msg, Wpr, Lpr);
 }
 
-LRESULT Window::WinProcSetup2(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)
+auto Window::WinProcSetup2(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT
 {
 	Window* const pWnd = reinterpret_cast<Window*>(GetWindowLongPtrA( Winhandle, GWLP_USERDATA ));
 
 	return pWnd->WinProcFun( Winhandle, msg, Wpr, Lpr );
 }
-LRESULT CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr){
+auto CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT
+{
     switch (msg)
     {
         case WM_CREATE:{
@@ -206,7 +208,7 @@ LRESULT CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
     return DefWindowProcA(Winhandle, msg, Wpr, Lpr);
 }
 
-unsigned short Window::WindowsCount()
+auto Window::WindowsCount() -> unsigned short
 {
     return S_WindowsCount;
 }
@@ -222,7 +224,7 @@ Window::~Window()
 {
     DestroyWindow(m_WindowHandle);
 }
-void Window::ProcessMessages()
+auto Window::ProcessMessages() -> void
 {
     MSG Msg = {};
     while (PeekMessageA(&Msg, nullptr, 0u, 0u, PM_REMOVE))
@@ -232,7 +234,8 @@ void Window::ProcessMessages()
     }
 }
 
-void Window::_init_helper(int m_Width, int m_Height, const char* Title){
+auto Window::_init_helper(int m_Width, int m_Height, const char* Title) -> void
+{
     WinClass::Instance();
 
     RECT WinRect;
@@ -276,33 +279,35 @@ void Window::_init_helper(int m_Width, int m_Height, const char* Title){
     UpdateWindow(m_WindowHandle);
 }
 
-HINSTANCE Window::GetHINSTANCE() const{
+auto Window::GetHINSTANCE() const -> HINSTANCE
+{
     return m_Instance;
 }
 
-HWND Window::GetHWND() const{
+auto Window::GetHWND() const -> HWND
+{
     return m_WindowHandle;
 }
 
-HDC Window::GetHDC() const
+auto Window::GetHDC() const -> HDC
 {
     return m_HDC;
 }
 
-int Window::GetWidth() const
+auto Window::GetWidth() const -> int
 {
     return m_Width;
 }
 
-int Window::GetHeight() const
+auto Window::GetHeight() const -> int
 {
     return m_Height;
 }
-OpenGL* Window::GetGL() const
+auto Window::GetGL() const -> OpenGL*
 {
     return m_OpenGl.get();
 }
-bool Window::Visible() const
+auto Window::Visible() const -> bool
 {
     return m_Visible;
 }

@@ -126,7 +126,7 @@ public: // init here
     }
 public:
 
-    void Update(float delta) override {
+    auto Update(float delta) -> void override {
         //Drwaing
         for(auto &obj: Objects){
             obj.Render();
@@ -176,7 +176,7 @@ public: // distroy hire
 };
 
 
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int ) {
+auto WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int ) -> int {
     Game my_game ;
     my_game.Run();
     return 0;

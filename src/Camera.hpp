@@ -10,28 +10,27 @@ class Camera
 public:
     Camera(Window &window, Shader& shader);
     ~Camera();
-    void UpdateMat();
-    void UpdateView();
-    void UpdatePersp();
-    glm::mat4 const & GetViewMat() const;
-    void SetViewMat(const glm::mat4 &mat);
-    void SetFrontVector(glm::vec3 front) { FrontDir = front; }
-    void SetUpVector(glm::vec3 up) { FrontDir = up; }
-    void SetRightVector(glm::vec3 right) { RightDir = right; }
-    void MoveFroward(float speed);
-    void MoveBackward(float speed);
-    void MoveUP(float speed);
-    void MoveDown(float speed);
-    void MoveRight(float speed);
-    void MoveLeft(float speed);
-    void EnableMSAA();
-    glm::vec3 GetPosition() const { return Position; }
-    glm::vec3 GetFrontDir() const { return FrontDir; }
-    glm::vec3 GetUpDir() const { return UpDir; }
-    glm::vec3 GetRightDir() const { return RightDir; }
-    
-    void UpdateVectors();
-    void MoseMove(bool islocked = true);
+    auto UpdateMat()                      -> void ;
+    auto UpdateView()                     -> void ;
+    auto UpdatePersp()                    -> void ;
+    auto SetViewMat(const glm::mat4 &mat) -> void ;
+    auto SetFrontVector(glm::vec3 front)  -> void ;
+    auto SetUpVector(glm::vec3 up)        -> void ;
+    auto SetRightVector(glm::vec3 right)  -> void ;
+    auto MoveFroward(float speed)         -> void ;
+    auto MoveBackward(float speed)        -> void ;
+    auto MoveUP(float speed)              -> void ;
+    auto MoveDown(float speed)            -> void ;
+    auto MoveRight(float speed)           -> void ;
+    auto MoveLeft(float speed)            -> void ;
+    auto EnableMSAA()                     -> void ;
+    auto UpdateVectors()                  -> void ;
+    auto MoseMove(bool islocked = true)   -> void ;
+    auto GetPosition() const              -> glm::vec3 ;
+    auto GetFrontDir() const              -> glm::vec3 ;
+    auto GetUpDir() const                 -> glm::vec3 ;
+    auto GetRightDir() const              -> glm::vec3 ;
+    auto GetViewMat() const               -> glm::mat4 const & ;
 
 private:
     glm::vec3 Position;

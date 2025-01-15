@@ -10,7 +10,7 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<unsigned int> 
     this->Indices = indices;
 }
 
-void Mesh::setupMesh()
+auto Mesh::setupMesh() -> void
 {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -36,7 +36,7 @@ void Mesh::setupMesh()
 
 }
 
-void Mesh::Draw(const Shader &shader, size_t InstanceCount) 
+auto Mesh::Draw(const Shader &shader, size_t InstanceCount) ->void
 {
     shader.Use();
     glBindVertexArray(VAO);

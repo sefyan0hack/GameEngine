@@ -26,7 +26,7 @@ Shader::~Shader()
     glDeleteProgram(ProgramID);
 }
 
-void Shader::LoadSource(unsigned int VertShader, unsigned int fragShader)
+auto Shader::LoadSource(unsigned int VertShader, unsigned int fragShader) -> void
 {
     if(name.empty()) ERR("name is empty");
 
@@ -77,17 +77,18 @@ void Shader::LoadSource(unsigned int VertShader, unsigned int fragShader)
     glShaderSource(fragShader, 1, &fragShaderSource, NULL);
 }
 
-void Shader::Compile(GLuint shader)
+auto Shader::Compile(GLuint shader) -> void
 {
     glCompileShader(shader);
 }
 
-void Shader::Link()
+auto Shader::Link() -> void
 {
     glLinkProgram(ProgramID);
 }
 
-void Shader::checkShaderCompileStatus(const GLuint &shader){
+auto Shader::checkShaderCompileStatus(const GLuint &shader) -> void
+{
     GLint success;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success) {
@@ -98,7 +99,8 @@ void Shader::checkShaderCompileStatus(const GLuint &shader){
     }
 }
 
-void Shader::checkProgramLinkStatus(const GLuint &program){
+auto Shader::checkProgramLinkStatus(const GLuint &program) -> void
+{
     GLint success;
     glGetProgramiv(program, GL_LINK_STATUS, &success);
     if (!success) {
@@ -109,11 +111,12 @@ void Shader::checkProgramLinkStatus(const GLuint &program){
 	    glDeleteProgram(program);
     }
 }
-GLuint Shader::GetProgram() const{
+auto Shader::GetProgram() const -> GLuint
+{
     return ProgramID;
 }
 
-GLuint Shader::GetUniformLocation(const char *name) const
+auto Shader::GetUniformLocation(const char *name) const -> GLuint
 {
     auto it = UniformLocations.find(name);
     if (it != UniformLocations.end()) {
@@ -131,7 +134,8 @@ GLuint Shader::GetUniformLocation(const char *name) const
     return location;
 }
 
-void Shader::Load(const std::string &_name){
+auto Shader::Load(const std::string &_name) -> void
+{
     this->name =  _name;
     unsigned int VertShaderID = glCreateShader(GL_VERTEX_SHADER);
     unsigned int fragShaderID = glCreateShader(GL_FRAGMENT_SHADER);
@@ -153,69 +157,84 @@ void Shader::Load(const std::string &_name){
 }
 ///////
 template<>
-void Shader::SetUniform<GLint>(const std::string& name, const GLint &value) const {
+auto Shader::SetUniform<GLint>(const std::string& name, const GLint &value) const -> void
+{
     glUniform1i(GetUniformLocation(name.c_str()), value);
 }
 template<>
-void Shader::SetUniform<GLfloat>(const std::string& name, const GLfloat &value) const {
+auto Shader::SetUniform<GLfloat>(const std::string& name, const GLfloat &value) const -> void
+{
     glUniform1f(GetUniformLocation(name.c_str()), value);
 }
 template<>
-void Shader::SetUniform<GLuint>(const std::string& name, const GLuint &value) const {
+auto Shader::SetUniform<GLuint>(const std::string& name, const GLuint &value) const -> void
+{
     glUniform1ui(GetUniformLocation(name.c_str()), value);
 }
 //
 template<>
-void Shader::SetUniform<glm::mat2>(const std::string& name, const glm::mat2 &value) const {
+auto Shader::SetUniform<glm::mat2>(const std::string& name, const glm::mat2 &value) const -> void
+{
     glUniformMatrix2fv(GetUniformLocation(name.c_str()), 1, GL_FALSE, &value[0][0]);
 }
 template<>
-void Shader::SetUniform<glm::mat3>(const std::string& name, const glm::mat3 &value) const {
+auto Shader::SetUniform<glm::mat3>(const std::string& name, const glm::mat3 &value) const -> void
+{
     glUniformMatrix3fv(GetUniformLocation(name.c_str()), 1, GL_FALSE, &value[0][0]);
 }
 template<>
-void Shader::SetUniform<glm::mat4>(const std::string& name, const glm::mat4 &value) const {
+auto Shader::SetUniform<glm::mat4>(const std::string& name, const glm::mat4 &value) const -> void
+{
     glUniformMatrix4fv(GetUniformLocation(name.c_str()), 1, GL_FALSE, &value[0][0]);
 }
 ///////
 
 template<>
-void Shader::SetUniform<GLint>(const std::string& name, const GLint &value1, const GLint &value2) const {
+auto Shader::SetUniform<GLint>(const std::string& name, const GLint &value1, const GLint &value2) const -> void
+{
     glUniform2i(GetUniformLocation(name.c_str()), value1, value2);
 }
 template<>
-void Shader::SetUniform<GLfloat>(const std::string& name, const GLfloat &value1, const GLfloat &value2) const {
+auto Shader::SetUniform<GLfloat>(const std::string& name, const GLfloat &value1, const GLfloat &value2) const -> void
+{
     glUniform2f(GetUniformLocation(name.c_str()), value1, value2);
 }
 template<>
-void Shader::SetUniform<GLuint>(const std::string& name, const GLuint &value1, const GLuint &value2) const {
+auto Shader::SetUniform<GLuint>(const std::string& name, const GLuint &value1, const GLuint &value2) const -> void
+{
     glUniform2ui(GetUniformLocation(name.c_str()), value1, value2);
 }
 ///////
 
 template<>
-void Shader::SetUniform<GLint>(const std::string& name, const GLint &value1, const GLint &value2, const GLint &value3) const {
+auto Shader::SetUniform<GLint>(const std::string& name, const GLint &value1, const GLint &value2, const GLint &value3) const -> void
+{
     glUniform3i(GetUniformLocation(name.c_str()), value1, value2, value3);
 }
 template<>
-void Shader::SetUniform<GLfloat>(const std::string& name, const GLfloat &value1, const GLfloat &value2, const GLfloat &value3) const {
+auto Shader::SetUniform<GLfloat>(const std::string& name, const GLfloat &value1, const GLfloat &value2, const GLfloat &value3) const -> void
+{
     glUniform3f(GetUniformLocation(name.c_str()), value1, value2, value3);
 }
 template<>
-void Shader::SetUniform<GLuint>(const std::string& name, const GLuint &value1, const GLuint &value2, const GLuint &value3) const {
+auto Shader::SetUniform<GLuint>(const std::string& name, const GLuint &value1, const GLuint &value2, const GLuint &value3) const -> void
+{
     glUniform3ui(GetUniformLocation(name.c_str()), value1, value2, value3);
 }
 ///////
 
 template<>
-void Shader::SetUniform<GLint>(const std::string& name, const GLint &value1, const GLint &value2, const GLint &value3, const GLint &value4) const {
+auto Shader::SetUniform<GLint>(const std::string& name, const GLint &value1, const GLint &value2, const GLint &value3, const GLint &value4) const -> void
+{
     glUniform4i(GetUniformLocation(name.c_str()), value1, value2, value3, value4);
 }
 template<>
-void Shader::SetUniform<GLfloat>(const std::string& name, const GLfloat &value1, const GLfloat &value2, const GLfloat &value3, const GLfloat &value4) const {
+auto Shader::SetUniform<GLfloat>(const std::string& name, const GLfloat &value1, const GLfloat &value2, const GLfloat &value3, const GLfloat &value4) const -> void
+{
     glUniform4f(GetUniformLocation(name.c_str()), value1, value2, value3, value4);
 }
 template<>
-void Shader::SetUniform<GLuint>(const std::string& name, const GLuint &value1, const GLuint &value2, const GLuint &value3, const GLuint &value4) const {
+auto Shader::SetUniform<GLuint>(const std::string& name, const GLuint &value1, const GLuint &value2, const GLuint &value3, const GLuint &value4) const -> void
+{
     glUniform4ui(GetUniformLocation(name.c_str()), value1, value2, value3, value4);
 }

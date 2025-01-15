@@ -11,7 +11,7 @@ extern "C"{
     wglChoosePixelFormatARB_type wglChoosePixelFormatARB = nullptr;
 }
 
-void OpenGL::init_opengl_extensions()
+auto OpenGL::init_opengl_extensions() -> void
 {
     HWND dummy_window = CreateWindowExA(
         0,
@@ -92,7 +92,7 @@ OpenGL::~OpenGL()
     wglDeleteContext(m_Context);
 }
 
-void OpenGL::init_opengl()
+auto OpenGL::init_opengl() -> void
 {
 
     if( m_MainHDC == nullptr){
@@ -169,7 +169,7 @@ void OpenGL::init_opengl()
     m_Context =  gl33_context;
 }
 
-HDC OpenGL::GetHDC() const
+auto OpenGL::GetHDC() const -> HDC
 {
     return m_MainHDC;
 }

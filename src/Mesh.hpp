@@ -16,8 +16,8 @@ public:
     Mesh(const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices);
     ~Mesh();
 public:
-    void Draw(const Shader &shader, size_t InstanceCount = 1);
-    void setupMesh();
+    auto Draw(const Shader &shader, size_t InstanceCount = 1)   -> void ;
+    auto setupMesh()                                            -> void ;
 public:
     unsigned int VAO, VBO, EBO;
 private:

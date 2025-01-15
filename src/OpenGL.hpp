@@ -5,14 +5,14 @@ class OpenGL
     public:
         explicit OpenGL(HWND window);
         OpenGL(const OpenGL&) = delete;
-        OpenGL operator = (const OpenGL&) = delete;
+        auto operator = (const OpenGL&) -> OpenGL = delete;
         ~OpenGL();
     public:
-        HDC GetHDC() const;
+        auto GetHDC() const -> HDC;
 
     private:
-    static void init_opengl();
-    static void init_opengl_extensions();
+    static auto init_opengl()             -> void ;
+    static auto init_opengl_extensions()  -> void ;
 
     private:
         inline static HWND m_MainWindow;

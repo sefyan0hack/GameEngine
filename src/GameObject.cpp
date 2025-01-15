@@ -14,12 +14,12 @@ GameObject::~GameObject()
     }
 }
 
-void GameObject::UpMatrix()
+auto GameObject::UpMatrix() -> void
 {
     program->SetUniform("Modle", ModleMat);
 }
 
-void GameObject::SetUp(const std::vector<glm::vec3> &InsPos)
+auto GameObject::SetUp(const std::vector<glm::vec3> &InsPos) -> void
 {
     this->InstanceCount = InsPos.size();
     this->InstancePos = InsPos.data();
@@ -36,7 +36,7 @@ void GameObject::SetUp(const std::vector<glm::vec3> &InsPos)
         glBindVertexArray(0);
     }
 }
-void GameObject::SetUp(glm::vec3 * InsPos, size_t size)
+auto GameObject::SetUp(glm::vec3 * InsPos, size_t size) -> void
 {
     this->InstanceCount = size;
     this->InstancePos = InsPos;
@@ -53,7 +53,7 @@ void GameObject::SetUp(glm::vec3 * InsPos, size_t size)
         glBindVertexArray(0);
     }
 }
-void GameObject::Render()
+auto GameObject::Render() -> void
 {
     m_Mesh.Draw(*program, this->InstanceCount);
 }
@@ -68,19 +68,19 @@ glm::mat4 GameObject::GetModleMatrix() const
     return ModleMat;
 }
 
-void GameObject::SetPosition(const glm::vec3 &pos)
+auto GameObject::SetPosition(const glm::vec3 &pos) -> void
 {
     transform.position = pos;
     ModleMat = glm::translate(ModleMat, transform.position);
 }
 
-void GameObject::SetScale(const glm::vec3 &Scale)
+auto GameObject::SetScale(const glm::vec3 &Scale) -> void
 {
     transform.scale = Scale;
     ModleMat = glm::scale(ModleMat, transform.scale);
 }
 
-void GameObject::Rotate(const float &x, const float &y, const float &z)
+auto GameObject::Rotate(const float &x, const float &y, const float &z) -> void
 {
     transform.rotation = {x, y, z};
     ModleMat = glm::rotate(ModleMat, glm::radians(x), glm::vec3(1, 0, 0));
@@ -88,7 +88,7 @@ void GameObject::Rotate(const float &x, const float &y, const float &z)
     ModleMat = glm::rotate(ModleMat, glm::radians(z), glm::vec3(0, 0, 1));
 }
 
-glm::mat4 GameObject::Transformation(const Transform &t)
+auto GameObject::Transformation(const Transform &t) -> glm::mat4
 {
     glm::mat4 transformation = glm::mat4(1.0f);
     // Apply translation

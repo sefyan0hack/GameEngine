@@ -12,19 +12,19 @@ class GameObject {
 public:
     GameObject(glm::vec3 position, const Shader &program, const Mesh &mesh);
     ~GameObject();
-    void UpMatrix();
-    void SetUp(const std::vector<glm::vec3> &InsPos);
-    void SetUp(glm::vec3 * InsPos, size_t size);
 
-    void Render();
-    void SetPosition(const glm::vec3 &pos);
-    void SetScale(const glm::vec3 &Scale);
-    void Rotate(const float &x, const float &y, const float &z);
-    Transform GetTransform() const;
-    glm::mat4 GetModleMatrix() const;
+    auto UpMatrix()                                             -> void ;
+    auto SetUp(const std::vector<glm::vec3> &InsPos)            -> void ;
+    auto SetUp(glm::vec3 * InsPos, size_t size)                 -> void ;
+    auto Render()                                               -> void ;
+    auto SetPosition(const glm::vec3 &pos)                      -> void ;
+    auto SetScale(const glm::vec3 &Scale)                       -> void ;
+    auto Rotate(const float &x, const float &y, const float &z) -> void ;
+    auto GetTransform() const                                   -> Transform ;
+    auto GetModleMatrix() const                                 -> glm::mat4 ;
 
 private:
-    glm::mat4 Transformation(const Transform &t);
+    auto Transformation(const Transform &t)                     -> glm::mat4 ;
 
 private:
     Transform transform;

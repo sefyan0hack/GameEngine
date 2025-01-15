@@ -8,10 +8,9 @@ protected:
     APP();
     ~APP() = default;
 
-
-    virtual void Update(float delta) = 0;
+    virtual auto Update(float delta) -> void = 0 ;
 public:
-    void Run();
+    auto Run() -> void ;
 
 protected:
     Window m_Window;

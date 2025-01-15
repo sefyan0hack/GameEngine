@@ -19,14 +19,14 @@ class Window
         private:
             WinClass();
             WinClass(const WinClass&) = delete;
-            WinClass operator = (const WinClass&) = delete;
-
             WinClass(WinClass&&) = delete;
-            WinClass operator = (WinClass&&) = delete;
+
+            auto operator = (const WinClass&) -> WinClass = delete ;
+            auto operator = (WinClass&&)      -> WinClass = delete ;
         public:
             ~WinClass();
-            static WinClass & Instance();
-            static const char* Name();
+            static auto Instance()  -> WinClass& ;
+            static auto Name()      -> const char* ;
         private:
             inline static const char* m_Name = "singleton WINDOW CLASS";
             inline static WNDCLASSEXA m_Winclass = {};
@@ -37,28 +37,27 @@ class Window
         Window(const Window&) = delete;
         Window(Window&&) = delete;
     
-        Window operator = (const Window &) = delete;
-        Window operator = (Window &&) = delete;
+        auto operator = (const Window &) -> Window = delete ;
+        auto operator = (Window &&)      -> Window = delete ;
     
         ~Window();
     
     public:
-        HINSTANCE GetHINSTANCE() const;
-        HWND GetHWND() const;
-        HDC GetHDC() const;
-        int GetWidth() const;
-        int GetHeight() const;
-        OpenGL* GetGL() const;
-        bool Visible() const;
-        static unsigned short WindowsCount();
+        auto GetHINSTANCE() const   -> HINSTANCE ;
+        auto GetHWND() const        -> HWND ;
+        auto GetHDC() const         -> HDC ;
+        auto GetWidth() const       -> int ;
+        auto GetHeight() const      -> int ;
+        auto GetGL() const          -> OpenGL* ;
+        auto Visible() const        -> bool ;
+        static auto WindowsCount()  -> unsigned short ;
+        static auto ProcessMessages() -> void ;
 
-    public:
-        static void ProcessMessages();
     private:
-        static LRESULT CALLBACK WinProcSetup(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr);
-        static LRESULT CALLBACK WinProcSetup2(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr);
-        LRESULT CALLBACK WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr);
-        void _init_helper(int Width, int Height, const char* Title);
+        static auto CALLBACK WinProcSetup(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)  -> LRESULT ;
+        static auto CALLBACK WinProcSetup2(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT ;
+        auto CALLBACK WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)           -> LRESULT ;
+        auto _init_helper(int Width, int Height, const char* Title)                          -> void ;
     private:
         HINSTANCE m_Instance;
         HWND m_WindowHandle;

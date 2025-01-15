@@ -8,5 +8,5 @@ class Renderer
         ~Renderer();
     
     public:
-        static Renderer& Instance() ;
+        static auto Instance() -> Renderer&;
 };

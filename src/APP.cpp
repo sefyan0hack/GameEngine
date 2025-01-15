@@ -3,7 +3,7 @@
 
 APP::APP(): m_Window(640, 480, "Main"), fps(LARGE_INTEGER{.QuadPart = 60}) {}
 
-void APP::Run()
+auto APP::Run() -> void
 {
     QueryPerformanceCounter(&start_count);
     QueryPerformanceFrequency(&freq);

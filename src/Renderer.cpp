@@ -6,7 +6,8 @@ Renderer::Renderer(){
 }
 Renderer::~Renderer(){
 }
-Renderer& Renderer::Instance(){
+auto Renderer::Instance() -> Renderer&
+{
     static Renderer InsRendere;
     return InsRendere;
 }

@@ -11,28 +11,28 @@ class Shader
         explicit Shader(const std::string &_name);
         ~Shader();
     public:
-        void Load(const std::string &_name);
-        void Use() const ;
-        GLuint GetProgram() const;
-        GLuint GetUniformLocation(const char* name) const;
+        auto Load(const std::string &_name)             -> void ;
+        auto Use() const                                -> void ;
+        auto GetProgram() const                         -> GLuint ;
+        auto GetUniformLocation(const char* name) const -> GLuint ;
         template<class T>
-        void SetUniform(const std::string &name, const T &value) const;
+        auto SetUniform(const std::string &name, const T &value) const -> void;
 
         template<class T>
-        void SetUniform(const std::string &name, const T& value1, const T& value2) const;
+        auto SetUniform(const std::string &name, const T& value1, const T& value2) const -> void;
 
         template<class T>
-        void SetUniform(const std::string &name, const T& value1, const T& value2, const T& value3) const;
+        auto SetUniform(const std::string &name, const T& value1, const T& value2, const T& value3) const -> void;
 
         template<class T>
-        void SetUniform(const std::string &name, const T& value1, const T& value2, const T& value3, const T& value4) const;
+        auto SetUniform(const std::string &name, const T& value1, const T& value2, const T& value3, const T& value4) const -> void;
 
     private:
-        void LoadSource(unsigned int VertShader, unsigned int fragShader);
-        void Compile(GLuint shader);
-        void Link();
-        void checkShaderCompileStatus(const GLuint &shader);
-        void checkProgramLinkStatus(const GLuint &program);
+        auto LoadSource(unsigned int VertShader, unsigned int fragShader)   -> void;
+        auto Compile(GLuint shader)                                         -> void;
+        auto Link()                                                         -> void;
+        auto checkShaderCompileStatus(const GLuint &shader)                 -> void;
+        auto checkProgramLinkStatus(const GLuint &program)                  -> void;
     
     private:
         const GLuint ProgramID;

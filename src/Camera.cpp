@@ -22,27 +22,27 @@ Camera::Camera(Window &window, Shader& shader)
 
 Camera::~Camera() {}
 
-void Camera::UpdateMat()
+auto Camera::UpdateMat() -> void
 {
     ViewMat = glm::lookAt(Position, Position + FrontDir, UpDir);
 }
 
-void Camera::UpdateView()
+auto Camera::UpdateView() -> void
 {
     ProgramShader->SetUniform("Camera", ViewMat);
 }
-void Camera::UpdatePersp()
+auto Camera::UpdatePersp() -> void
 {
     PerspectiveMat = glm::perspective(glm::radians(45.0f),(float)m_Window->GetWidth()/(float)m_Window->GetHeight(), 0.1f, 100.0f);
     ProgramShader->SetUniform("Perspective", PerspectiveMat);
 }
 // get const ref to View Matrix
-glm::mat4 const & Camera::GetViewMat() const
+auto Camera::GetViewMat() const -> glm::mat4 const &
 {
     return ViewMat;
 }
 
-void Camera::SetViewMat(const glm::mat4 &mat)
+auto Camera::SetViewMat(const glm::mat4 &mat) -> void
 {
     ViewMat = mat;
     glm::mat4 invView = glm::inverse(mat);
@@ -51,51 +51,51 @@ void Camera::SetViewMat(const glm::mat4 &mat)
     // UpDir =  glm::normalize(glm::vec3(invView[1]));
 }
 
-void Camera::MoveFroward(float speed)
+auto Camera::MoveFroward(float speed) -> void
 {
     //negate Z 
     Position -= (-FrontDir * speed);
     
 }
 
-void Camera::MoveBackward(float speed)
+auto Camera::MoveBackward(float speed) -> void
 {
     //negate Z 
     Position += (-FrontDir * speed);
     UpdateView();
 }
 
-void Camera::MoveUP(float speed)
+auto Camera::MoveUP(float speed) -> void
 {
     Position += (UpDir  * speed);
     UpdateView();
 }
-void Camera::MoveDown(float speed)
+auto Camera::MoveDown(float speed) -> void
 {
     Position -= (UpDir  * speed);
     UpdateView();
 }
 
-void Camera::MoveRight(float speed)
+auto Camera::MoveRight(float speed) -> void
 {
     auto c = glm::cross(FrontDir, UpDir);
     Position += (c  * speed);
     UpdateView();
 }
 
-void Camera::MoveLeft(float speed)
+auto Camera::MoveLeft(float speed) -> void
 {
     auto c = glm::cross(FrontDir, UpDir);
     Position -= (c  * speed);
     UpdateView();
 }
 
-void Camera::EnableMSAA()
+auto Camera::EnableMSAA() -> void
 {
     glEnable(GL_MULTISAMPLE);
 }
 
-void Camera::UpdateVectors()
+auto Camera::UpdateVectors() -> void
 {
     auto cosyaw  = cos(glm::radians(this->yaw));
     auto sinyaw  = sin(glm::radians(this->yaw));
@@ -112,7 +112,7 @@ void Camera::UpdateVectors()
     this->UpDir = glm::normalize(glm::cross(this->RightDir, this->FrontDir));
 }
 
-void Camera::MoseMove(bool islocked)
+auto Camera::MoseMove(bool islocked) -> void
 {
     auto op = m_Window->mouse.ReadRawDelta();
     float xoff;
@@ -141,3 +141,12 @@ void Camera::MoseMove(bool islocked)
     UpdateView();
     // m_Window->mouse.SetPos(m_Window->GetWidth()/2.0f, m_Window->GetHeight()/2.0f);
 }
+
+auto Camera::SetFrontVector(glm::vec3 front)  -> void { FrontDir = front; }
+auto Camera::SetUpVector(glm::vec3 up)        -> void { FrontDir = up; }
+auto Camera::SetRightVector(glm::vec3 right)  -> void { RightDir = right; }
+
+auto Camera::GetPosition() const -> glm::vec3 { return Position; }
+auto Camera::GetFrontDir() const -> glm::vec3 { return FrontDir; }
+auto Camera::GetUpDir() const    -> glm::vec3 { return UpDir; }
+auto Camera::GetRightDir() const -> glm::vec3 { return RightDir; }

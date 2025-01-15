@@ -15,9 +15,9 @@ private:
 		enum class Type { Press, Release };
 	public:
 		Event( Type type, unsigned char code ) noexcept;
-		bool IsPress() const noexcept;
-		bool IsRelease() const noexcept;
-		unsigned char GetCode() const noexcept;
+		auto IsPress() const noexcept 	-> bool ;
+		auto IsRelease() const noexcept -> bool ;
+		auto GetCode() const noexcept 	-> unsigned char;
     private:
 		Type type;
 		unsigned char code;
@@ -25,25 +25,25 @@ private:
 public:
 	Keyboard();
 	Keyboard( const Keyboard& ) = delete;
-	Keyboard& operator=( const Keyboard& ) = delete;
-	bool KeyIsPressed( unsigned char keycode ) const noexcept;
-	std::optional<Event> ReadKey() noexcept;
-	bool KeyIsEmpty() const noexcept;
-	void FlushKey() noexcept;
-	std::optional<char> ReadChar() noexcept;
-	bool CharIsEmpty() const noexcept;
-	void FlushChar() noexcept;
-	void Flush() noexcept;
-	void EnableAutorepeat() noexcept;
-	void DisableAutorepeat() noexcept;
-	bool AutorepeatIsEnabled() const noexcept;
+	auto operator=( const Keyboard& ) -> Keyboard& = delete;
+	auto ReadKey() noexcept 								 	-> std::optional<Event> ;
+	auto ReadChar() noexcept 								 	-> std::optional<char> ;
+	auto KeyIsPressed( unsigned char keycode ) const noexcept 	-> bool ;
+	auto KeyIsEmpty() const noexcept 						 	-> bool ;
+	auto FlushKey() noexcept 								 	-> void ;
+	auto CharIsEmpty() const noexcept 							-> bool ;
+	auto FlushChar() noexcept 									-> void ;
+	auto Flush() noexcept 										-> void ;
+	auto EnableAutorepeat() noexcept 							-> void ;
+	auto DisableAutorepeat() noexcept 							-> void ;
+	auto AutorepeatIsEnabled() const noexcept 					-> bool ;
 private:
-	void OnKeyPressed( unsigned char keycode ) noexcept;
-	void OnKeyReleased( unsigned char keycode ) noexcept;
-	void OnChar( char character ) noexcept;
-	void ClearState() noexcept;
+	auto OnKeyPressed( unsigned char keycode ) noexcept  		-> void ;
+	auto OnKeyReleased( unsigned char keycode ) noexcept 		-> void ;
+	auto OnChar( char character ) noexcept 						-> void ;
+	auto ClearState() noexcept 									-> void ;
 	template<typename T>
-	static void TrimBuffer( std::queue<T>& buffer ) noexcept;
+	static auto TrimBuffer( std::queue<T>& buffer ) noexcept	-> void;
 private:
 	static constexpr unsigned int nKeys = 256u;
 	static constexpr unsigned int bufferSize = 16u;
