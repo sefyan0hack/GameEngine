@@ -1,9 +1,10 @@
 #include "GameObject.hpp"
+#include "Shader.hpp"
 #include <string>
 GameObject::GameObject(glm::vec3 position, const Shader &program, const Mesh &mesh)
-: transform({position, {0,0,0}, {1,1,1}}), ModleMat(1.0f), program(&program), m_Mesh(mesh), InstanceCount(1), InstancePos(nullptr)
+: transform(Transform(position)), program(&program), m_Mesh(mesh), InstanceCount(1), InstancePos(nullptr)
 {   
-    ModleMat = Transformation(transform);
+    Transformation();
     UpMatrix();
 }
 
@@ -16,7 +17,7 @@ GameObject::~GameObject()
 
 auto GameObject::UpMatrix() -> void
 {
-    program->SetUniform("Modle", ModleMat);
+    program->SetUniform("Modle", Transformation());
 }
 
 auto GameObject::SetUp(const std::vector<glm::vec3> &InsPos) -> void
@@ -65,39 +66,35 @@ Transform GameObject::GetTransform() const
 
 glm::mat4 GameObject::GetModleMatrix() const
 {
-    return ModleMat;
+    return Transformation();
 }
 
 auto GameObject::SetPosition(const glm::vec3 &pos) -> void
 {
     transform.position = pos;
-    ModleMat = glm::translate(ModleMat, transform.position);
 }
 
 auto GameObject::SetScale(const glm::vec3 &Scale) -> void
 {
     transform.scale = Scale;
-    ModleMat = glm::scale(ModleMat, transform.scale);
 }
 
 auto GameObject::Rotate(const float &x, const float &y, const float &z) -> void
 {
     transform.rotation = {x, y, z};
-    ModleMat = glm::rotate(ModleMat, glm::radians(x), glm::vec3(1, 0, 0));
-    ModleMat = glm::rotate(ModleMat, glm::radians(y), glm::vec3(0, 1, 0));
-    ModleMat = glm::rotate(ModleMat, glm::radians(z), glm::vec3(0, 0, 1));
 }
 
-auto GameObject::Transformation(const Transform &t) -> glm::mat4
+auto GameObject::Transformation() const -> glm::mat4
 {
-    glm::mat4 transformation = glm::mat4(1.0f);
+    static auto transformation = glm::mat4(1.0f);
+    transformation = glm::mat4(1.0f);
+    auto t = transform;
     // Apply translation
     transformation = glm::translate(transformation, t.position);
     
     // Apply rotation (in radians)
-    transformation = glm::rotate(transformation, glm::radians(t.rotation.x), glm::vec3(1, 0, 0)); // Rotate around X
-    transformation = glm::rotate(transformation, glm::radians(t.rotation.y), glm::vec3(0, 1, 0)); // Rotate around Y
-    transformation = glm::rotate(transformation, glm::radians(t.rotation.z), glm::vec3(0, 0, 1)); // Rotate around Z
+    glm::quat rotation = glm::quat(glm::radians(glm::vec3(t.rotation.x, t.rotation.y, t.rotation.z)));
+    transformation = glm::mat4_cast(rotation) * transformation;
     
     // Apply scaling
     transformation = glm::scale(transformation, t.scale);

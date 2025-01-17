@@ -21,6 +21,7 @@ set(SOURCE
 	src/Window.cpp
 	src/Renderer.cpp
 	src/Shader.cpp
+	src/Transform.cpp
     src/Mesh.cpp
     src/Camera.cpp
     src/OpenGL.cpp
@@ -61,7 +62,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
 find_package(OpenGL REQUIRED)
 
 
-# Add glad include directory
+# Add include directorys
+include_directories("${PROJECT_SOURCE_DIR}/src")
 include_directories("${PROJECT_SOURCE_DIR}/3party")
 
 # Add glad source file

@@ -3,11 +3,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-struct Transform {
-    glm::vec3 position;
-    glm::vec3 rotation;
-    glm::vec3 scale;
-};
+#include "Transform.hpp"
+
+class Shader;
+
 class GameObject {
 public:
     GameObject(glm::vec3 position, const Shader &program, const Mesh &mesh);
@@ -24,12 +23,10 @@ public:
     auto GetModleMatrix() const                                 -> glm::mat4 ;
 
 private:
-    auto Transformation(const Transform &t)                     -> glm::mat4 ;
+    auto Transformation() const                                 -> glm::mat4 ;
 
 private:
     Transform transform;
-    glm::mat4 ModleMat;
-
     const Shader* program;
     Mesh m_Mesh;
     size_t InstanceCount;

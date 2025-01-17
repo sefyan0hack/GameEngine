@@ -1,9 +1,12 @@
 #include "Camera.hpp"
+#include "Window.hpp"
+#include "Shader.hpp"
 #include <iostream>
 #include <cmath>
 #include <ctime>
 #include "Global_H.hpp"  
 #include <glad/glad.h>
+
 NO_WARNING_END
 
 #define GLM_ENABLE_EXPERIMENTAL

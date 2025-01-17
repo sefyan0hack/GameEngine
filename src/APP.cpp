@@ -1,7 +1,7 @@
 #include "APP.hpp"
 #include "Window.hpp"
 
-APP::APP(): m_Window(640, 480, "Main"), fps(LARGE_INTEGER{.QuadPart = 60}) {}
+APP::APP(): m_Window(1180, 640, "Main"), fps(LARGE_INTEGER{.QuadPart = 60}) {}
 
 auto APP::Run() -> void
 {
