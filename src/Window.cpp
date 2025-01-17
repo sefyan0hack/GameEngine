@@ -1,5 +1,5 @@
-#include "Window.hpp"
-#include "Global_H.hpp"
+#include <core/Window.hpp>
+#include <core/Global_H.hpp>
 
 // Window class things///////////////////////////////////
 Window::WinClass &Window::WinClass::Instance()

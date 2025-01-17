@@ -1,5 +1,5 @@
-#include "APP.hpp"
-#include "Window.hpp"
+#include <core/APP.hpp>
+#include <core/Window.hpp>
 
 APP::APP(): m_Window(1180, 640, "Main"), fps(LARGE_INTEGER{.QuadPart = 60}) {}
 

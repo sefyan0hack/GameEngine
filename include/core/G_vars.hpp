@@ -1,8 +1,8 @@
 #pragma once
-#include "Global_H.hpp"
 #include <windows.h>
-#include "Renderer.hpp"
-#include "Shader.hpp"
+#include <core/Global_H.hpp>
+#include <core/Renderer.hpp>
+#include <core/Shader.hpp>
 #include <vector>
 NO_WARNING_BEGIN
 #include <glad/glad.h>

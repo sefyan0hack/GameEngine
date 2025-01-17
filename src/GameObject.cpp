@@ -1,5 +1,5 @@
-#include "GameObject.hpp"
-#include "Shader.hpp"
+#include <core/GameObject.hpp>
+#include <core/Shader.hpp>
 #include <string>
 GameObject::GameObject(glm::vec3 position, const Shader &program, const Mesh &mesh)
 : transform(Transform(position)), program(&program), m_Mesh(mesh), InstanceCount(1), InstancePos(nullptr)

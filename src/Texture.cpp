@@ -1,4 +1,4 @@
-#include "Texture.hpp"
+#include <core/Texture.hpp>
 
 auto Texture::Loud(const std::string &name, const int Type) -> void
 {

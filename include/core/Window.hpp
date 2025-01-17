@@ -1,16 +1,16 @@
 #pragma once
-#include "Global_H.hpp"
+#include <core/Global_H.hpp>
+#include <core/OpenGL.hpp>
 #include <windows.h>
 #include <memory>
 #include <vector>
-#include "OpenGL.hpp"
 
 NO_WARNING_BEGIN
 #include <glad/glad.h>
 NO_WARNING_END
 
-#include "Keyboard.hpp"
-#include "Mouse.hpp"
+#include <core/Keyboard.hpp>
+#include <core/Mouse.hpp>
 
 class Window
 {

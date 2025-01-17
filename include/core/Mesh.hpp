@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 #include <glm/glm.hpp>
-#include "Shader.hpp"
+#include <core/Shader.hpp>
 struct Vertex
 {
     glm::vec3 Position;

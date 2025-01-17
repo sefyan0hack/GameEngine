@@ -1,4 +1,4 @@
-#include "Keyboard.hpp"
+#include <core/Keyboard.hpp>
 // Event/////////////////////////////////////////////////
 Keyboard::Event::Event( Type type, unsigned char code ) noexcept
     			:

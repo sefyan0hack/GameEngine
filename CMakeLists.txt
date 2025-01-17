@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.30)
 
-project(test LANGUAGES C CXX)
+project(Engine LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 
@@ -63,8 +63,8 @@ find_package(OpenGL REQUIRED)
 
 
 # Add include directorys
-include_directories("${PROJECT_SOURCE_DIR}/src")
-include_directories("${PROJECT_SOURCE_DIR}/3party")
+include_directories("${CMAKE_SOURCE_DIR}/include")
+include_directories("${CMAKE_SOURCE_DIR}/3party")
 
 # Add glad source file
 add_library(glad STATIC 3party/glad/glad.c)
@@ -84,5 +84,5 @@ else()
     set(CMAKE_CXX_FLAGS_RELEASE "${REMOVE_WAR} -Ofast -march=native") ## Optimize
     set(CMAKE_CXX_FLAGS_DEBUG   "${REMOVE_WAR} -O0 -pg -g3 -ggdb") ## Debug
 endif()
-add_executable(test  ${SOURCE})
-target_link_libraries(test glad stb_image  ${OPENGL_LIBRARIES})
+add_executable(${PROJECT_NAME}  ${SOURCE})
+target_link_libraries(${PROJECT_NAME} glad stb_image  ${OPENGL_LIBRARIES})

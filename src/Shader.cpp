@@ -1,7 +1,7 @@
 #include <glad/glad.h>
 #include <string>
-#include "Global_H.hpp"
-#include "Shader.hpp"
+#include <core/Global_H.hpp>
+#include <core/Shader.hpp>
 #include <glm/glm.hpp>
 void Shader::Use() const{
     glUseProgram(ProgramID);

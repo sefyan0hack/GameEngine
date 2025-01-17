@@ -1,10 +1,10 @@
-#include "Camera.hpp"
-#include "Window.hpp"
-#include "Shader.hpp"
+#include <core/Camera.hpp>
+#include <core/Window.hpp>
+#include <core/Shader.hpp>
+#include <core/Global_H.hpp>
 #include <iostream>
 #include <cmath>
 #include <ctime>
-#include "Global_H.hpp"  
 #include <glad/glad.h>
 
 NO_WARNING_END

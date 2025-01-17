@@ -1,6 +1,6 @@
 #include <glad/glad.h>
-#include "Global_H.hpp"
-#include "Renderer.hpp"
+#include <core/Global_H.hpp>
+#include <core/Renderer.hpp>
 
 Renderer::Renderer(){
 }

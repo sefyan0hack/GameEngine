@@ -1,17 +1,17 @@
 #include <iostream>
 #include <vector>
-#include "Global_H.hpp"
-#include "G_vars.hpp"
-#include "Mesh.hpp"
-#include "APP.hpp"
-#include "GameObject.hpp"
-#include "Camera.hpp"
-#include "Texture.hpp"
+#include <core/Global_H.hpp>
+#include <core/G_vars.hpp>
+#include <core/Mesh.hpp>
+#include <core/APP.hpp>
+#include <core/GameObject.hpp>
+#include <core/Camera.hpp>
+#include <core/Texture.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Utils.hpp"
+#include <core/Utils.hpp>
 
 // #define USE_EBO
 

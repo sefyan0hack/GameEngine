@@ -1,5 +1,5 @@
 #pragma once
-#include "Global_H.hpp"
+#include <core/Global_H.hpp>
 #include <unordered_map>
 NO_WARNING_BEGIN
 #include <glad/glad.h>

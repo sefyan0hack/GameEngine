@@ -1,6 +1,6 @@
 #pragma once
 #include "windows.h"
-#include "Window.hpp"
+#include <core/Window.hpp>
 
 class APP
 {

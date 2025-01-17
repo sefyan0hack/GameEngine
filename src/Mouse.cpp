@@ -1,4 +1,4 @@
-#include "Mouse.hpp"
+#include <core/Mouse.hpp>
 #include <windows.h>
 
 Mouse::Mouse() : x(0), y(0)
