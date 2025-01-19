@@ -100,7 +100,6 @@ private:
         0, 2, 7
     };
     Camera Cam;
-    vector<GameObject> Objects;
     Mesh cubeMesh;
     Shader DefaultShader;
     Scene Scn;
@@ -136,7 +135,6 @@ public:
         //     obj.Render();
         // }
 
-        rndr.render();
 
         Cam.MoseMove();
         if( m_Window.kbd.KeyIsPressed('W')){
@@ -172,6 +170,7 @@ public:
             }
         }
        
+        rndr.render();
        LOG( "Fps : " << this->fps.QuadPart);
     }
 

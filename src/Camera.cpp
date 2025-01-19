@@ -19,7 +19,7 @@ Camera::Camera(Window &window, Shader& shader)
   RightDir({1, 0, 0}),
   ViewMat(glm::lookAt(Position, Position + FrontDir, UpDir)),
   m_Window(&window),
-  sensitivity(0.1),
+  sensitivity(0.11f),
   yaw(-90), pitch(0),
   ProgramShader(&shader){}
 
@@ -117,32 +117,24 @@ auto Camera::UpdateVectors() -> void
 
 auto Camera::MoseMove(bool islocked) -> void
 {
-    auto op = m_Window->mouse.ReadRawDelta();
-    float xoff;
-    float yoff;
-    if(op){
-        xoff = op.value().x;
-        yoff = -op.value().y;
-    }else{
-        xoff = 0;
-        yoff = 0;
+    constexpr float LIMIT_ANGLE = 45.0f;
+    
+    while (auto op = m_Window->mouse.ReadRawDelta()) {
+        float xoff = op->x * sensitivity;
+        float yoff = -op->y * sensitivity;
+        this->yaw += xoff;
+        this->pitch += yoff;
     }
-    xoff *= this->sensitivity;
-    yoff *= this->sensitivity;
-    this->yaw += xoff;
-    this->pitch += yoff;
-    if(islocked){
-        if(this->pitch > 45)
-            this->pitch = 45;
 
-        if(this->pitch < -45)
-            this->pitch = -45;
+    if(islocked){
+        this->pitch = std::clamp(this->pitch, -LIMIT_ANGLE, LIMIT_ANGLE);
     }
+
     UpdateVectors();
     UpdateMat();
     UpdatePersp();
     UpdateView();
-    // m_Window->mouse.SetPos(m_Window->GetWidth()/2.0f, m_Window->GetHeight()/2.0f);
+    m_Window->mouse.SetPos(m_Window->GetWidth()/2.0f, m_Window->GetHeight()/2.0f);
 }
 
 auto Camera::SetFrontVector(glm::vec3 front)  -> void { FrontDir = front; }
