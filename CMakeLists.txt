@@ -29,6 +29,7 @@ set(SOURCE
     src/Utils.cpp
     src/GameObject.cpp
     src/Texture.cpp
+    src/Scene.cpp
 	)
 
 include(ProcessorCount)

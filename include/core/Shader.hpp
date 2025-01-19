@@ -38,4 +38,6 @@ class Shader
         const GLuint ProgramID;
         std::string name;
         mutable std::unordered_map<std::string, GLuint> UniformLocations;
+        //need  shader handle
+        //need  shader type
 };
