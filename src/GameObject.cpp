@@ -2,7 +2,7 @@
 #include <core/Shader.hpp>
 #include <string>
 GameObject::GameObject(glm::vec3 position, const Shader &program, const Mesh &mesh)
-: transform(Transform(position)), program(&program), m_Mesh(mesh), InstanceCount(1), InstancePos(nullptr)
+: transform(Transform(position)), program(&program), m_Mesh(mesh)
 {   
     Transformation();
     UpMatrix();
@@ -10,9 +10,6 @@ GameObject::GameObject(glm::vec3 position, const Shader &program, const Mesh &me
 
 GameObject::~GameObject()
 {
-    if (this->InstancePos){
-        delete [] this->InstancePos;
-    }
 }
 
 auto GameObject::UpMatrix() -> void
@@ -20,16 +17,16 @@ auto GameObject::UpMatrix() -> void
     program->SetUniform("Modle", Transformation());
 }
 
-auto GameObject::SetUp(const std::vector<glm::vec3> &InsPos) -> void
+auto GameObject::SetUp(std::vector<glm::vec3> InsPos) -> void
 {
-    this->InstanceCount = InsPos.size();
-    this->InstancePos = InsPos.data();
+    InstancePos = std::move(InsPos);
+    auto size = InstancePos.size();
     m_Mesh.setupMesh();
-    if(this->InstanceCount > 1){
+    if(size > 1){
         GLuint UBO;
         glGenBuffers(1, &UBO);
         glBindBuffer(GL_ARRAY_BUFFER, UBO);
-        glBufferData(GL_ARRAY_BUFFER, this->InstanceCount * sizeof(glm::vec3), InstancePos, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, size * sizeof(glm::vec3), InstancePos.data(), GL_STATIC_DRAW);
 
         glEnableVertexAttribArray(3);
         glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
@@ -37,26 +34,16 @@ auto GameObject::SetUp(const std::vector<glm::vec3> &InsPos) -> void
         glBindVertexArray(0);
     }
 }
-auto GameObject::SetUp(glm::vec3 * InsPos, size_t size) -> void
-{
-    this->InstanceCount = size;
-    this->InstancePos = InsPos;
-    m_Mesh.setupMesh();
-    if(this->InstanceCount > 1){
-        GLuint UBO;
-        glGenBuffers(1, &UBO);
-        glBindBuffer(GL_ARRAY_BUFFER, UBO);
-        glBufferData(GL_ARRAY_BUFFER, this->InstanceCount * sizeof(glm::vec3), &this->InstancePos[0][0], GL_STATIC_DRAW);
 
-        glEnableVertexAttribArray(3);
-        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
-        glVertexAttribDivisor(3, 1);
-        glBindVertexArray(0);
-    }
-}
 auto GameObject::Render() -> void
 {
-    m_Mesh.Draw(*program, this->InstanceCount);
+    auto sizeIns = InstancePos.size();
+
+    if(sizeIns > 1){
+        m_Mesh.Draw(*program, InstancePos.size());
+    }else{
+        m_Mesh.Draw(*program, 1);
+    }
 }
 
 Transform GameObject::GetTransform() const

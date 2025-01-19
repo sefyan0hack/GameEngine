@@ -7,6 +7,8 @@
 #include <core/GameObject.hpp>
 #include <core/Camera.hpp>
 #include <core/Texture.hpp>
+#include <core/Scene.hpp>
+#include <core/Renderer.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -101,21 +103,23 @@ private:
     vector<GameObject> Objects;
     Mesh cubeMesh;
     Shader DefaultShader;
+    Scene Scn;
+    Renderer rndr;
 public: // init here
     Game()
-    : Cam(m_Window, DefaultShader), cubeMesh({cubeMeshVert, indices}), DefaultShader(SHADER(Traingl))
+    : Cam(m_Window, DefaultShader), cubeMesh({cubeMeshVert, indices}), DefaultShader(SHADER(Traingl)), rndr(Scn, Cam)
     {
         constexpr int Grids = 300;
-        glm::vec3 *positions = new glm::vec3[Grids * Grids * 4];
+        std::vector<glm::vec3> positions(Grids * Grids * 4);
         size_t index = 0;
         for(int i = -Grids; i < Grids; i ++){
             for(int j = -Grids; j < Grids; j ++)
                 positions[index++] = {i, 0, j};
         }
 
-        Objects.emplace_back(glm::vec3(0,0,0), DefaultShader, cubeMesh);
-        for(auto &&Obj : Objects){
-            Obj.SetUp(positions, Grids * Grids * 4);
+        Scn.add({glm::vec3(0,0,0), DefaultShader, cubeMesh});
+        for(auto &Obj : Scn.GetGameObjects()){
+            Obj.SetUp(positions);
         }
 
         Texture brik ;
@@ -128,9 +132,11 @@ public:
 
     auto Update(float delta) -> void override {
         //Drwaing
-        for(auto &obj: Objects){
-            obj.Render();
-        }
+        // for(auto &obj: Objects){
+        //     obj.Render();
+        // }
+
+        rndr.render();
 
         Cam.MoseMove();
         if( m_Window.kbd.KeyIsPressed('W')){

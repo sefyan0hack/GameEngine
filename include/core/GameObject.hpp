@@ -4,6 +4,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <core/Mesh.hpp>
 #include <core/Transform.hpp>
+#include <vector>
 
 class Shader;
 
@@ -13,8 +14,7 @@ public:
     ~GameObject();
 
     auto UpMatrix()                                             -> void ;
-    auto SetUp(const std::vector<glm::vec3> &InsPos)            -> void ;
-    auto SetUp(glm::vec3 * InsPos, size_t size)                 -> void ;
+    auto SetUp(std::vector<glm::vec3> InsPos)            -> void ;
     auto Render()                                               -> void ;
     auto SetPosition(const glm::vec3 &pos)                      -> void ;
     auto SetScale(const glm::vec3 &Scale)                       -> void ;
@@ -29,6 +29,5 @@ private:
     Transform transform;
     const Shader* program;
     Mesh m_Mesh;
-    size_t InstanceCount;
-    const glm::vec3* InstancePos;
+    std::vector<glm::vec3> InstancePos;
 };
