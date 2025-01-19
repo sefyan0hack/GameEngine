@@ -7,11 +7,12 @@ auto APP::Run() -> void
 {
     QueryPerformanceCounter(&start_count);
     QueryPerformanceFrequency(&freq);
+    glClearColor(0.2f, 0.21f, 0.22f, 1.0f);
+    
     while (Window::WindowsCount() != 0) {
         Window::ProcessMessages();
         auto _hdc = m_Window.GetGL()->GetHDC();
         glViewport(0, 0, m_Window.GetWidth(), m_Window.GetHeight());
-        glClearColor(0.2f, 0.21f, 0.22f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         Update(1/static_cast<float>(fps.QuadPart));
