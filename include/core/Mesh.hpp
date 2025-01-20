@@ -17,10 +17,7 @@ public:
     ~Mesh();
 public:
     auto Draw(const Shader &shader, size_t InstanceCount = 1)   -> void ;
-    auto setupMesh()                                            -> void ;
 public:
     unsigned int VAO, VBO, EBO;
-private:
-    std::vector<Vertex> Vertices;
-    std::vector<unsigned int> Indices;
+    GLuint vInSize;
 };

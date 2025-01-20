@@ -21,7 +21,7 @@ auto GameObject::SetUp(std::vector<glm::vec3> InsPos) -> void
 {
     InstancePos = std::move(InsPos);
     auto size = InstancePos.size();
-    m_Mesh.setupMesh();
+
     if(size > 1){
         GLuint UBO;
         glGenBuffers(1, &UBO);
@@ -86,4 +86,21 @@ auto GameObject::Transformation() const -> glm::mat4
     // Apply scaling
     transformation = glm::scale(transformation, t.scale);
     return transformation;
+}
+
+auto GameObject::GetMesh() const -> const Mesh &
+{
+    return m_Mesh;
+}
+auto GameObject::GetInstancePos() const -> const std::vector<glm::vec3> &
+{
+    return InstancePos;
+}
+
+auto GameObject::GetShader() const -> const Shader &
+{
+    if(program)
+        return *program;
+
+    ERR("shader program is null");
 }

@@ -99,14 +99,14 @@ private:
         2, 1, 4,
         0, 2, 7
     };
+    Shader DefaultShader;
     Camera Cam;
     Mesh cubeMesh;
-    Shader DefaultShader;
     Scene Scn;
     Renderer rndr;
 public: // init here
     Game()
-    : Cam(m_Window, DefaultShader), cubeMesh({cubeMeshVert, indices}), DefaultShader(SHADER(Traingl)), rndr(Scn, Cam)
+    : DefaultShader(SHADER(Traingl)), Cam(m_Window, DefaultShader), cubeMesh({cubeMeshVert, indices}), rndr(Scn, Cam)
     {
         constexpr int Grids = 300;
         std::vector<glm::vec3> positions(Grids * Grids * 4);

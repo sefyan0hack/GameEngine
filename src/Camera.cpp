@@ -145,3 +145,11 @@ auto Camera::GetPosition() const -> glm::vec3 { return Position; }
 auto Camera::GetFrontDir() const -> glm::vec3 { return FrontDir; }
 auto Camera::GetUpDir() const    -> glm::vec3 { return UpDir; }
 auto Camera::GetRightDir() const -> glm::vec3 { return RightDir; }
+
+auto Camera::GetShader() const -> const Shader &
+{
+    if(ProgramShader)
+        return *ProgramShader;
+    
+    ERR("Shader is null");
+}

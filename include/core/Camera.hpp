@@ -32,6 +32,7 @@ public:
     auto GetUpDir() const                 -> glm::vec3 ;
     auto GetRightDir() const              -> glm::vec3 ;
     auto GetViewMat() const               -> glm::mat4 const & ;
+    auto GetShader() const               -> const Shader& ;
 
 private:
     glm::vec3 Position;
