@@ -36,7 +36,13 @@ auto Camera::UpdateView() -> void
 }
 auto Camera::UpdatePersp() -> void
 {
-    PerspectiveMat = glm::perspective(glm::radians(45.0f),(float)m_Window->GetWidth()/(float)m_Window->GetHeight(), 0.1f, 100.0f);
+    auto height = m_Window->GetHeight();
+    
+    auto aspect_ = height > 0 ? static_cast<float>(m_Window->GetWidth()) / height : 1.0f;
+    auto fov_ = glm::radians(45.0f);
+    auto near_ = 0.1f;
+    auto far_ = 100.0f;
+    PerspectiveMat = glm::perspective(fov_, aspect_, near_, far_);
     ProgramShader->SetUniform("Perspective", PerspectiveMat);
 }
 // get const ref to View Matrix
