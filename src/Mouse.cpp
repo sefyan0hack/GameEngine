@@ -21,7 +21,6 @@ auto Mouse::GetPosY() const noexcept -> int
 
 auto Mouse::SetPos(int x, int y) -> void
 {
-	ShowCursor(false);
 	SetCursorPos(x, y);
 }
 

@@ -37,7 +37,7 @@ auto Camera::UpdateView() -> void
 auto Camera::UpdatePersp() -> void
 {
     auto height = m_Window->GetHeight();
-    
+
     auto aspect_ = height > 0 ? static_cast<float>(m_Window->GetWidth()) / height : 1.0f;
     auto fov_ = glm::radians(45.0f);
     auto near_ = 0.1f;
@@ -140,7 +140,22 @@ auto Camera::MoseMove(bool islocked) -> void
     UpdateMat();
     UpdatePersp();
     UpdateView();
-    m_Window->mouse.SetPos(m_Window->GetWidth()/2.0f, m_Window->GetHeight()/2.0f);
+
+    static auto on = false;
+    static auto lastState = false;
+
+    auto currentState = m_Window->kbd.KeyIsPressed('L');
+    if (currentState && !lastState) {
+        on = !on;
+    }
+    lastState = currentState;
+
+    if(on){
+        m_Window->mouse.SetPos(m_Window->GetWidth()/2, m_Window->GetHeight()/2);
+        ShowCursor(false);
+    }else{
+        ShowCursor(true);
+    }
 }
 
 auto Camera::SetFrontVector(glm::vec3 front)  -> void { FrontDir = front; }
