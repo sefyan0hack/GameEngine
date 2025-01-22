@@ -4,7 +4,6 @@ auto Texture::Loud(const std::string &name, const int Type) -> void
 {
     unsigned int texture;
     glGenTextures(1, &texture);
-    glActiveTexture(GL_TEXTURE0);
     glBindTexture(Type, texture);
     glTexParameteri(Type, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(Type, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -18,7 +17,10 @@ auto Texture::Loud(const std::string &name, const int Type) -> void
         glTexImage2D(Type, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(Type);
 
+        //big bug hire fix later that +1  down
         Textures.insert({name, texture + 1}); // for making 0 is nott valid place
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(Type, texture);
     }
     else
     {
