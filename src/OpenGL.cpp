@@ -130,14 +130,13 @@ auto OpenGL::init_opengl() -> void
             ERR("Failed to set the OpenGL 3.3 pixel format.");
         }
     }
+   
 
-    int gl33_attribs[] = {
-        WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
-        WGL_CONTEXT_MINOR_VERSION_ARB, 3,
-        WGL_CONTEXT_PROFILE_MASK_ARB,  WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
+    int gl33_attribs[] = { 
+        WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
         0,
     };
-
+    
     HGLRC gl33_context = wglCreateContextAttribsARB(m_MainHDC, 0, gl33_attribs);
     if (!gl33_context) {
         ERR("Failed to create OpenGL 3.3 context.");
@@ -152,11 +151,23 @@ auto OpenGL::init_opengl() -> void
         gladLoadGL();
         on = true;
     }
+    GLenum err = glGetError();
+    if (err != GL_NO_ERROR) ERR("OpenGL Error: " << err );
     glEnable(GL_DEPTH_TEST);
+    err = glGetError();
+    if (err != GL_NO_ERROR) ERR("OpenGL Error: " << err );
     glEnable(GL_CULL_FACE);
-    glEnable(GL_CW);
-    glEnable(GL_BACK);
+    err = glGetError();
+    if (err != GL_NO_ERROR) ERR("OpenGL Error: " << err );
+    // glEnable(GL_CW);
+    // err = glGetError();
+    // if (err != GL_NO_ERROR) ERR("OpenGL Error: " << err );
+    // glEnable(GL_BACK);
+    // err = glGetError();
+    // if (err != GL_NO_ERROR) ERR("OpenGL Error: " << err );
     glEnable(GL_LINE_SMOOTH);
+    err = glGetError();
+    if (err != GL_NO_ERROR) ERR("OpenGL Error: " << err );
 
     GLint max_texture_unit = 0;
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_texture_unit);
