@@ -4,12 +4,12 @@
 #include <glm/gtc/type_ptr.hpp>
 
 class Window;
-class Shader;
+class Material;
 
 class Camera
 {
 public:
-    Camera(Window &window, Shader& shader);
+    Camera(Window &window, Material& matt);
     ~Camera();
     auto UpdateMat()                      -> void ;
     auto UpdateView()                     -> void ;
@@ -32,7 +32,7 @@ public:
     auto GetUpDir() const                 -> glm::vec3 ;
     auto GetRightDir() const              -> glm::vec3 ;
     auto GetViewMat() const               -> glm::mat4 const & ;
-    auto GetShader() const               -> const Shader& ;
+    auto GetMaterail() const              -> const Material& ;
 
 private:
     glm::vec3 Position;
@@ -46,5 +46,5 @@ private:
     Window* m_Window;
     float sensitivity;
     float yaw, pitch;
-    Shader* ProgramShader;
+    Material* material;
 };

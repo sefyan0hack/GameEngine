@@ -1,8 +1,8 @@
 #include <core/GameObject.hpp>
-#include <core/Shader.hpp>
+#include <core/Material.hpp>
 #include <string>
-GameObject::GameObject(glm::vec3 position, const Shader &program, const Mesh &mesh)
-: transform(Transform(position)), program(&program), m_Mesh(mesh)
+GameObject::GameObject(glm::vec3 position, const Material &matt, const Mesh &mesh)
+: transform(Transform(position)), material(&matt), m_Mesh(mesh)
 {   
     Transformation();
     UpMatrix();
@@ -14,7 +14,7 @@ GameObject::~GameObject()
 
 auto GameObject::UpMatrix() -> void
 {
-    program->SetUniform("Modle", Transformation());
+    material->SetUniform("Modle", Transformation());
 }
 
 auto GameObject::SetUp(std::vector<glm::vec3> InsPos) -> void
@@ -40,9 +40,9 @@ auto GameObject::Render() -> void
     auto sizeIns = InstancePos.size();
 
     if(sizeIns > 1){
-        m_Mesh.Draw(*program, InstancePos.size());
+        m_Mesh.Draw(*material, InstancePos.size());
     }else{
-        m_Mesh.Draw(*program, 1);
+        m_Mesh.Draw(*material, 1);
     }
 }
 
@@ -97,10 +97,10 @@ auto GameObject::GetInstancePos() const -> const std::vector<glm::vec3> &
     return InstancePos;
 }
 
-auto GameObject::GetShader() const -> const Shader &
+auto GameObject::GetMaterial() const -> const Material &
 {
-    if(program)
-        return *program;
+    if(material)
+        return *material;
 
     ERR("shader program is null");
 }

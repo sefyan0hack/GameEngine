@@ -10,13 +10,15 @@ struct Vertex
     glm::vec2 TexCoords;
 };
 
+class Material;
+
 class Mesh
 {
 public:
     Mesh(const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices);
     ~Mesh();
 public:
-    auto Draw(const Shader &shader, size_t InstanceCount = 1)   -> void ;
+    auto Draw(const Material &matt, size_t InstanceCount = 1)   -> void ;
 public:
     unsigned int VAO, VBO, EBO;
     GLuint vInSize;

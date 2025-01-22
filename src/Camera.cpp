@@ -1,6 +1,6 @@
 #include <core/Camera.hpp>
 #include <core/Window.hpp>
-#include <core/Shader.hpp>
+#include <core/Material.hpp>
 #include <core/Global_H.hpp>
 #include <iostream>
 #include <cmath>
@@ -12,7 +12,7 @@ NO_WARNING_END
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/fast_trigonometry.hpp>
 
-Camera::Camera(Window &window, Shader& shader) 
+Camera::Camera(Window &window, Material& matt) 
 : Position({0, 2, 0}),
   FrontDir({0, 0, -1}), 
   UpDir({ 0, 1, 0}),
@@ -21,7 +21,7 @@ Camera::Camera(Window &window, Shader& shader)
   m_Window(&window),
   sensitivity(0.11f),
   yaw(-90), pitch(0),
-  ProgramShader(&shader){}
+  material(&matt){}
 
 Camera::~Camera() {}
 
@@ -32,7 +32,7 @@ auto Camera::UpdateMat() -> void
 
 auto Camera::UpdateView() -> void
 {
-    ProgramShader->SetUniform("Camera", ViewMat);
+    material->SetUniform("Camera", ViewMat);
 }
 auto Camera::UpdatePersp() -> void
 {
@@ -43,7 +43,7 @@ auto Camera::UpdatePersp() -> void
     auto near_ = 0.1f;
     auto far_ = 100.0f;
     PerspectiveMat = glm::perspective(fov_, aspect_, near_, far_);
-    ProgramShader->SetUniform("Perspective", PerspectiveMat);
+    material->SetUniform("Perspective", PerspectiveMat);
 }
 // get const ref to View Matrix
 auto Camera::GetViewMat() const -> glm::mat4 const &
@@ -111,11 +111,10 @@ auto Camera::UpdateVectors() -> void
 
     auto cospich = cos(glm::radians(this->pitch));
     auto sinpich = sin(glm::radians(this->pitch));
+    glm::vec3 front;
 
-    glm::vec3 front {0,0,0};
-    front.x = cosyaw * cospich;
-    front.y = sinpich;
-    front.z = sinyaw * cospich;
+    front = {cosyaw * cospich, sinpich, sinyaw * cospich};
+    
     this->FrontDir = glm::normalize(front);
     this->RightDir = glm::normalize(glm::cross(this->FrontDir, {0, 1, 0}));
     this->UpDir = glm::normalize(glm::cross(this->RightDir, this->FrontDir));
@@ -136,11 +135,7 @@ auto Camera::MoseMove(bool islocked) -> void
         this->pitch = std::clamp(this->pitch, -LIMIT_ANGLE, LIMIT_ANGLE);
     }
 
-    UpdateVectors();
-    UpdateMat();
-    UpdatePersp();
-    UpdateView();
-
+    //move this code later 
     static auto on = false;
     static auto lastState = false;
 
@@ -156,6 +151,12 @@ auto Camera::MoseMove(bool islocked) -> void
     }else{
         ShowCursor(true);
     }
+    //fin
+
+    UpdateVectors();
+    UpdateMat();
+    UpdatePersp();
+    UpdateView();
 }
 
 auto Camera::SetFrontVector(glm::vec3 front)  -> void { FrontDir = front; }
@@ -167,10 +168,10 @@ auto Camera::GetFrontDir() const -> glm::vec3 { return FrontDir; }
 auto Camera::GetUpDir() const    -> glm::vec3 { return UpDir; }
 auto Camera::GetRightDir() const -> glm::vec3 { return RightDir; }
 
-auto Camera::GetShader() const -> const Shader &
+auto Camera::GetMaterail() const -> const Material &
 {
-    if(ProgramShader)
-        return *ProgramShader;
+    if(material)
+        return *material;
     
     ERR("Shader is null");
 }

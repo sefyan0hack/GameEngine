@@ -4,13 +4,13 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <core/Mesh.hpp>
 #include <core/Transform.hpp>
+#include <core/Material.hpp>
 #include <vector>
 
-class Shader;
 
 class GameObject {
 public:
-    GameObject(glm::vec3 position, const Shader &program, const Mesh &mesh);
+    GameObject(glm::vec3 position, const Material &matt, const Mesh &mesh);
     ~GameObject();
 
     auto UpMatrix()                                             -> void ;
@@ -22,15 +22,15 @@ public:
     auto GetTransform() const                                   -> Transform ;
     auto GetModleMatrix() const                                 -> glm::mat4 ;
     auto GetMesh() const                                        -> const Mesh& ;
-    auto GetShader() const                                        -> const Shader& ;
-    auto GetInstancePos() const                                        -> const std::vector<glm::vec3>&;
+    auto GetMaterial() const                                    -> const Material& ;
+    auto GetInstancePos() const                                 -> const std::vector<glm::vec3>&;
 
 private:
     auto Transformation() const                                 -> glm::mat4 ;
 
 private:
     Transform transform;
-    const Shader* program;
+    const Material* material;
     Mesh m_Mesh;
     std::vector<glm::vec3> InstancePos;
 };

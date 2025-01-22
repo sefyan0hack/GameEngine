@@ -16,7 +16,7 @@ auto Renderer::render() -> void
     //Drwaing    
     auto objs = scene.GetGameObjects();
     for(auto &obj: objs){
-        obj.GetShader().Use();
+        obj.GetMaterial().Use();
         auto sizeIns = obj.GetInstancePos().size();
         auto mesh = obj.GetMesh();
         glBindVertexArray(mesh.VAO);

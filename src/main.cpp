@@ -9,6 +9,7 @@
 #include <core/Texture.hpp>
 #include <core/Scene.hpp>
 #include <core/Renderer.hpp>
+#include <core/Material.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -99,14 +100,16 @@ private:
         2, 1, 4,
         0, 2, 7
     };
-    Shader DefaultShader;
+    Shader vert, frag;
+    Material Matt;
     Camera Cam;
     Mesh cubeMesh;
     Scene Scn;
     Renderer rndr;
 public: // init here
     Game()
-    : DefaultShader(SHADER(Traingl)), Cam(m_Window, DefaultShader), cubeMesh({cubeMeshVert, indices}), rndr(Scn, Cam)
+    : vert(SHADER(Traingl)".vert", GL_VERTEX_SHADER), frag(SHADER(Traingl)".frag", GL_FRAGMENT_SHADER)
+    , Matt(vert, frag), Cam(m_Window, Matt), cubeMesh({cubeMeshVert, indices}), rndr(Scn, Cam)
     {
         constexpr int Grids = 300;
         std::vector<glm::vec3> positions(Grids * Grids * 4);
@@ -116,7 +119,7 @@ public: // init here
                 positions[index++] = {i, 0, j};
         }
 
-        Scn.add({glm::vec3(0,0,0), DefaultShader, cubeMesh});
+        Scn.add({glm::vec3(0,0,0), Matt, cubeMesh});
         for(auto &Obj : Scn.GetGameObjects()){
             Obj.SetUp(positions);
         }
@@ -124,8 +127,8 @@ public: // init here
         Texture brik ;
         brik.Loud(TEXTURE(brik.png));
         brik.BindByName(TEXTURE(brik.png));
-        DefaultShader.Use();
-        DefaultShader.SetUniform("ourTexture", 0);
+        Matt.Use();
+        Matt.SetUniform("ourTexture", 0);
     }
 public:
 
@@ -171,7 +174,7 @@ public:
         }
        
         rndr.render();
-       LOG( "Fps : " << this->fps.QuadPart);
+    //    LOG( "Fps : " << this->fps.QuadPart);
     }
 
 public: // distroy hire

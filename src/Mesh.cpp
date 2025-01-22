@@ -1,4 +1,5 @@
 #include <core/Mesh.hpp>
+#include <core/Material.hpp>
 #include <core/Global_H.hpp>
 NO_WARNING_BEGIN
 #include <glad/glad.h>
@@ -60,9 +61,9 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vect
 
 // }
 
-auto Mesh::Draw(const Shader &shader, size_t InstanceCount) -> void
+auto Mesh::Draw(const Material &matt, size_t InstanceCount) -> void
 {
-    shader.Use();
+    matt.Use();
     glBindVertexArray(VAO);
     
     if(InstanceCount > 1)
