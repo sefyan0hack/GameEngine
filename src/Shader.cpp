@@ -3,6 +3,7 @@
 #include <core/Global_H.hpp>
 #include <core/Shader.hpp>
 #include <glm/glm.hpp>
+#include <fstream>
 
 Shader::Shader(const char* name, GLenum type)
 : id(glCreateShader(type)), Type(type)
@@ -15,34 +16,24 @@ Shader::~Shader()
     glDeleteShader(id);
 }
 
-auto Shader::LoadSource(const char* full_name_file) -> void
+auto Shader::LoadSource(const char* name) -> void
 {
 
-    FILE *shader_file;
-
-    shader_file = fopen(full_name_file, "r+b");
-    
-    if(shader_file == nullptr){
-        ERR("Open " << full_name_file <<" Failed. code: " << errno);
+    std::ifstream shader_file(name);
+    std::string buffer = "#version " + std::to_string(GLVersion.major) + std::to_string(GLVersion.minor) + "0 core\n";
+    std::string myText;
+    while (std::getline(shader_file, myText)) {
+        buffer += myText + "\n";
     }
 
-    LOG("[+] Loding " << full_name_file );
-
-    std::string shader_data ;
-    char  byte;
-    int i = 0;
-    while (fread(&byte, sizeof(char), 1, shader_file))
-    {
-        shader_data.resize(shader_data.size() + 1);
-        shader_data.at(i++) = byte;
+    if( not shader_file.is_open()){
+        ERR("Open " << name <<" Failed. code: " << errno);
     }
 
+    LOG("[+] Loding " << name );
+    LOG(buffer);
 
-    if(fclose(shader_file) != 0 ){
-        ERR("Closing Files erro");
-    }
-
-    const char* ShaderSource = shader_data.c_str();
+    const char* ShaderSource = buffer.c_str();
     glShaderSource(id, 1, &ShaderSource, NULL);
 }
 
