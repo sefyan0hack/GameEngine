@@ -10,7 +10,7 @@
 
 class GameObject {
 public:
-    GameObject(glm::vec3 position, const Material &matt, const Mesh &mesh);
+    GameObject(glm::vec3 position, Material &matt, const Mesh &mesh);
     ~GameObject();
 
     auto UpMatrix()                                             -> void ;
@@ -30,7 +30,7 @@ private:
 
 private:
     Transform transform;
-    const Material* material;
+    Material* material;
     Mesh m_Mesh;
     std::vector<glm::vec3> InstancePos;
 };
