@@ -4,6 +4,7 @@
 #include <core/Shader.hpp>
 #include <glm/glm.hpp>
 #include <fstream>
+#include <format>
 
 Shader::Shader(const char* name, GLenum type)
 : id(glCreateShader(type)), Type(type)
@@ -20,18 +21,14 @@ auto Shader::LoadSource(const char* name) -> void
 {
 
     std::ifstream shader_file(name);
-    std::string buffer = "#version " + std::to_string(GLVersion.major) + std::to_string(GLVersion.minor) + "0 core\n";
-    std::string myText;
-    while (std::getline(shader_file, myText)) {
-        buffer += myText + "\n";
-    }
-
     if( not shader_file.is_open()){
         ERR("Open " << name <<" Failed. code: " << errno);
     }
 
+    std::string buffer = std::format("#version {}{}0 core\n", GLVersion.major, GLVersion.minor);
+    buffer.append(std::istreambuf_iterator<char>(shader_file), std::istreambuf_iterator<char>());
+
     LOG("[+] Loding " << name );
-    LOG(buffer);
 
     const char* ShaderSource = buffer.c_str();
     glShaderSource(id, 1, &ShaderSource, NULL);
