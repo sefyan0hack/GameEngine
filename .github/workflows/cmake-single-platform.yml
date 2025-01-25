@@ -1,4 +1,4 @@
-name: CMake on Windows with Multiple Compilers
+name: CMake on a single platform
 
 on:
   push:
@@ -13,8 +13,7 @@ jobs:
   build:
     strategy:
       matrix:
-        compiler: [msvc, mingw, clang, clang-cl, intel]
-        build_type: [Release, Debug]
+        compiler: [msvc, mingw, clang, intel, icc, zig]
     runs-on: windows-latest
 
     steps:
@@ -24,40 +23,27 @@ jobs:
       shell: pwsh
       run: |
         echo "MATRIX_COMPILER=${{ matrix.compiler }}" | Out-File -FilePath $env:GITHUB_ENV -Append
-        echo "BUILD_TYPE=${{ matrix.build_type }}" | Out-File -FilePath $env:GITHUB_ENV -Append
-
-        if ($env.MATRIX_COMPILER -eq "mingw") {
+        if ($env:MATRIX_COMPILER -eq "mingw") {
           Write-Host "Using MinGW"
-          echo "CC=gcc" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "CXX=g++" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "CMAKE_GENERATOR=MinGW Makefiles" | Out-File -FilePath $env:GITHUB_ENV -Append
-        } elseif ($env.MATRIX_COMPILER -eq "clang") {
+          choco install mingw
+        } elseif ($env:MATRIX_COMPILER -eq "clang") {
           Write-Host "Using Clang"
-          echo "CC=clang" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "CXX=clang++" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "CMAKE_GENERATOR=Ninja" | Out-File -FilePath $env:GITHUB_ENV -Append
-        } elseif ($env.MATRIX_COMPILER -eq "clang-cl") {
-          Write-Host "Using Clang-cl (MSVC compatible Clang)"
-          echo "CC=clang-cl" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "CXX=clang-cl" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "CMAKE_GENERATOR=Visual Studio 17 2022" | Out-File -FilePath $env:GITHUB_ENV -Append
-        } elseif ($env.MATRIX_COMPILER -eq "intel") {
-          Write-Host "Using Intel oneAPI Compiler"
-          Invoke-WebRequest -Uri https://registrationcenter-download.intel.com/akdlm/IRC_NAS/18964/w_BaseKit_p_2024.0.0.49547_offline.exe -OutFile intel.exe
-          Start-Process -Wait -FilePath .\intel.exe -ArgumentList "/silent", "/install"
-          echo "CC=icx" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "CXX=icpx" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "CMAKE_GENERATOR=Ninja" | Out-File -FilePath $env:GITHUB_ENV -Append
+          choco install llvm
+        } elseif ($env:MATRIX_COMPILER -eq "intel") {
+          Write-Host "Using Intel oneAPI"
+          choco install intel-oneapi-dpcpp-cpp-compiler
+        } elseif ($env:MATRIX_COMPILER -eq "icc") {
+          Write-Host "Using Intel Classic Compiler"
+          choco install intel-oneapi-compiler
+        } elseif ($env:MATRIX_COMPILER -eq "zig") {
+          Write-Host "Using Zig Compiler"
+          choco install zig
         } else {
           Write-Host "Using MSVC"
-          echo "CC=cl" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "CXX=cl" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "CMAKE_GENERATOR=Visual Studio 17 2022" | Out-File -FilePath $env:GITHUB_ENV -Append
         }
 
     - name: Configure CMake
-      run: |
-        cmake -G "${{ env.CMAKE_GENERATOR }}" -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_C_COMPILER=${{ env.CC }} -DCMAKE_CXX_COMPILER=${{ env.CXX }}
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build
-      run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }}
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
