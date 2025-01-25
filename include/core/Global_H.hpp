@@ -5,13 +5,6 @@
     #include <iostream>
 #endif
 
-#if !defined(ERR) && !defined(LOG)
-    #define LOG(str) do { std::cout << "LOG : " << str << "\n"; } while(false)
-    #define ERR(str) do { std::cerr << "ERROR : " << __FILE__ << ":" << __LINE__  << "  ::  \" "<< str << " \"\n"; exit(EXIT_FAILURE); } while(false)
-#else
-    #error "LOG && ERR allredy defined"
-#endif
-
 // unused warning 
 #ifndef UNISED
     #define UNUSED(x) (void)x;
