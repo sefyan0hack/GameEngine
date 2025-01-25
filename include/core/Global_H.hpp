@@ -1,15 +1,6 @@
 #pragma once
+#if !defined _MSC_VER
 #pragma GCC system_header
-// LOG & ERR 
-#ifndef _GLIBCXX_IOSTREAM
-    #include <iostream>
-#endif
-
-// unused warning 
-#ifndef UNISED
-    #define UNUSED(x) (void)x;
-#else
-    #error "UNUSED alredy defined"
 #endif
 
 // disable warning
