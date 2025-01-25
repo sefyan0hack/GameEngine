@@ -13,7 +13,7 @@ jobs:
   build:
     strategy:
       matrix:
-        compiler: [msvc, mingw, clang]
+        compiler: [msvc, mingw, clang, intel, icc, zig]
     runs-on: windows-latest
 
     steps:
@@ -29,6 +29,15 @@ jobs:
         } elseif ($env:MATRIX_COMPILER -eq "clang") {
           Write-Host "Using Clang"
           choco install llvm
+        } elseif ($env:MATRIX_COMPILER -eq "intel") {
+          Write-Host "Using Intel oneAPI"
+          choco install intel-oneapi-dpcpp-cpp-compiler
+        } elseif ($env:MATRIX_COMPILER -eq "icc") {
+          Write-Host "Using Intel Classic Compiler"
+          choco install intel-oneapi-compiler
+        } elseif ($env:MATRIX_COMPILER -eq "zig") {
+          Write-Host "Using Zig Compiler"
+          choco install zig
         } else {
           Write-Host "Using MSVC"
         }
