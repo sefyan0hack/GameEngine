@@ -3,16 +3,16 @@
 
 class Scene;
 class Camera;
+class Mesh;
 
 class Renderer
 {    
     public:
-        Renderer(Scene &scene, Camera &camera);
+        Renderer();
         ~Renderer();
         
-        auto render() -> void;
-    
+        auto render(Scene &scene, Camera &camera) -> void;
     private:
-    Scene &scene;
-    Camera &cam;
+        auto draw(const Mesh& mesh, size_t count = 1) -> void;
+        
 };
