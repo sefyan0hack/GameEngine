@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-release_msvc:
-    name: Build Release
+    name: Build Release Msvc
     runs-on: windows-latest
     steps:
       - name: Checkout Repository
@@ -22,7 +22,7 @@ jobs:
         run: cmake --build build/release
 
   build-debug_msvc:
-    name: Build Debug
+    name: Build Debug Msvc
     runs-on: windows-latest
     steps:
       - name: Checkout Repository
