@@ -47,8 +47,8 @@ auto Shader::checkShaderCompileStatus(const GLuint &shader) -> void
         GLchar infoLog[512];
         glGetShaderInfoLog(shader, 512, NULL, infoLog);
         // ERR("SHADER::COMPILATION_FAILED\n" << infoLog );
-        Log::Error("SHADER::COMPILATION_FAILED {}", infoLog);
         glDeleteShader(shader); // Don't leak the shader.
+        Log::Error("SHADER::COMPILATION_FAILED {}", infoLog);
     }
 }
 

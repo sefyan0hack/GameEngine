@@ -27,7 +27,7 @@ auto Renderer::render(Scene &scene, Camera &camera) -> void
     }
 }
 
-auto Renderer::draw(const Mesh& mesh, size_t count) -> void
+auto Renderer::draw(const Mesh& mesh, GLsizei count) -> void
 {
     glBindVertexArray(mesh.VAO);
 

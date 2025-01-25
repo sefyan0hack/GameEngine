@@ -43,7 +43,7 @@ public:
 	auto Read() noexcept 					-> std::optional<Mouse::Event> ;
 	auto GetPosX() const noexcept 			-> int ;
 	auto GetPosY() const noexcept 			-> int ;
-	auto SetPos(int x, int y) 				-> void ;
+	auto SetPos(int x_, int y_) 			-> void ;
 	auto IsInWindow() const noexcept 		-> bool ;
 	auto IsEntered() const noexcept 		-> bool ;
 	auto LeftIsPressed() const noexcept 	-> bool ;

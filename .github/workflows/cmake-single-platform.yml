@@ -1,4 +1,4 @@
-name: CMake on a Windows
+name: CMake on a single platform
 
 on:
   push:
@@ -20,16 +20,18 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Set up compiler
+      shell: pwsh
       run: |
-        if [ "${{ matrix.compiler }}" == "mingw" ]; then
-          echo "Using MinGW"
+        echo "MATRIX_COMPILER=${{ matrix.compiler }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+        if ($env:MATRIX_COMPILER -eq "mingw") {
+          Write-Host "Using MinGW"
           choco install mingw
-        elif [ "${{ matrix.compiler }}" == "clang" ]; then
-          echo "Using Clang"
+        } elseif ($env:MATRIX_COMPILER -eq "clang") {
+          Write-Host "Using Clang"
           choco install llvm
-        else
-          echo "Using MSVC"
-        fi
+        } else {
+          Write-Host "Using MSVC"
+        }
 
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}

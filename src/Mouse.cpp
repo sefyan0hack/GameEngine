@@ -19,9 +19,9 @@ auto Mouse::GetPosY() const noexcept -> int
 	return y;
 }
 
-auto Mouse::SetPos(int x, int y) -> void
+auto Mouse::SetPos(int x_, int y_) -> void
 {
-	SetCursorPos(x, y);
+	SetCursorPos(x_, y_);
 }
 
 auto Mouse::IsInWindow() const noexcept -> bool

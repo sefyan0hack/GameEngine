@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <core/gl.h>
 
 class Scene;
 class Camera;
@@ -13,6 +14,6 @@ class Renderer
         
         auto render(Scene &scene, Camera &camera) -> void;
     private:
-        auto draw(const Mesh& mesh, size_t count = 1) -> void;
+        auto draw(const Mesh& mesh, GLsizei count = 1) -> void;
         
 };

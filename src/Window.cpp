@@ -234,15 +234,15 @@ auto Window::ProcessMessages() -> void
     }
 }
 
-auto Window::_init_helper(int m_Width, int m_Height, const char* Title) -> void
+auto Window::_init_helper(int Width, int Height, const char* Title) -> void
 {
     WinClass::Instance();
 
     RECT WinRect;
 	WinRect.left = 100;
-	WinRect.right = m_Width + WinRect.left;
+	WinRect.right = Width + WinRect.left;
 	WinRect.top = 100;
-	WinRect.bottom = m_Height + WinRect.top;
+	WinRect.bottom = Height + WinRect.top;
 	if( AdjustWindowRect( &WinRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE ) == 0 )
 	{
 		Log::Error("Addjusting Win");
