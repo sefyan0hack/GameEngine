@@ -1,4 +1,5 @@
 #include <core/Material.hpp>
+#include <core/Log.hpp>
 #include <core/Shader.hpp>
 #include <glm/glm.hpp>
 
@@ -43,8 +44,8 @@ auto Material::GetUniformLocation(const char *name) const -> unsigned int
     Use();
     // If not cached, query the location and cache it
     unsigned int location = glGetUniformLocation(id, name);
-    if (location == -1) {
-        ERR("Warning: uniform '" << name << "' doesn't exist!");
+    if (location == static_cast<GLuint>(-1)) {
+        Log::Warning("uniform {} doesn't exist!", std::string(name));
     }
     return location;
 }
@@ -56,7 +57,7 @@ auto Material::checkProgramLinkStatus() const -> void
     if (!success) {
         GLchar infoLog[512];
         glGetProgramInfoLog(id, 512, NULL, infoLog);
-        ERR("PROGRAM::LINKING_FAILED\n" << infoLog);
+        Log::Error("PROGRAM LINKING_FAILED {}", infoLog);
         // We don't need the program anymore.
 	    glDeleteProgram(id);
     }

@@ -1,8 +1,6 @@
 #include <core/OpenGL.hpp>
-#include <core/Global_H.hpp>
-NO_WARNING_BEGIN
-#include <glad/glad.h>
-NO_WARNING_END
+#include <core/Log.hpp>
+#include <core/gl.h>
 extern "C"{
     using wglCreateContextAttribsARB_type = HGLRC(WINAPI*)(HDC hdc, HGLRC hShareContext, const int *attribList);
     wglCreateContextAttribsARB_type wglCreateContextAttribsARB = nullptr;
@@ -24,7 +22,7 @@ auto OpenGL::init_opengl_extensions() -> void
         0);
 
     if (!dummy_window) {
-        ERR("Failed to create dummy OpenGL window.");
+        Log::Error("Failed to create dummy OpenGL window.");
     }
 
     HDC dummy_dc = GetDC(dummy_window);
@@ -42,19 +40,19 @@ auto OpenGL::init_opengl_extensions() -> void
 
     int pixel_format = ChoosePixelFormat(dummy_dc, &pfd);
     if (!pixel_format) {
-        ERR("Failed to find a suitable pixel format.");
+        Log::Error("Failed to find a suitable pixel format.");
     }
     if (!SetPixelFormat(dummy_dc, pixel_format, &pfd)) {
-        ERR("Failed to set the pixel format.");
+        Log::Error("Failed to set the pixel format.");
     }
 
     HGLRC dummy_context = wglCreateContext(dummy_dc);
     if (!dummy_context) {
-        ERR("Failed to create a dummy OpenGL rendering context.");
+        Log::Error("Failed to create a dummy OpenGL rendering context.");
     }
 
     if (!wglMakeCurrent(dummy_dc, dummy_context)) {
-        ERR("Failed to activate dummy OpenGL rendering context.");
+        Log::Error("Failed to activate dummy OpenGL rendering context.");
     }
 
     auto ProcwglCreateContextAttribsARB = wglGetProcAddress("wglCreateContextAttribsARB");
@@ -64,14 +62,14 @@ auto OpenGL::init_opengl_extensions() -> void
     wglChoosePixelFormatARB = (wglChoosePixelFormatARB_type)ProcwglChoosePixelFormatARB;
 
     if (!wglCreateContextAttribsARB || !wglChoosePixelFormatARB) {
-        ERR("Failed to load required WGL extensions.");
+        Log::Error("Failed to load required WGL extensions.");
     }
 
     if( wglMakeCurrent(dummy_dc, 0) == false
     ||  wglDeleteContext(dummy_context) == false
     ||  ReleaseDC(dummy_window, dummy_dc) == false
     ||  DestroyWindow(dummy_window) == false){
-        ERR("Destruction of init_opengl_extention failed");
+        Log::Error("Destruction of init_opengl_extention failed");
     }
 }
 
@@ -96,7 +94,7 @@ auto OpenGL::init_opengl() -> void
 {
 
     if( m_MainHDC == nullptr){
-        ERR("HDC not valid");
+        Log::Error("HDC not valid");
     }
     init_opengl_extensions();
 
@@ -117,17 +115,17 @@ auto OpenGL::init_opengl() -> void
     wglChoosePixelFormatARB(m_MainHDC, pixel_format_attribs, 0, 1, &pixel_format, &num_formats);
 
     if (!num_formats) {
-        ERR("Failed to set the OpenGL 3.3 pixel format.");
+        Log::Error("Failed to set the OpenGL 3.3 pixel format.");
     }
 
     if (GetPixelFormat(m_MainHDC) != pixel_format) {
         PIXELFORMATDESCRIPTOR pfd;
         if (!DescribePixelFormat(m_MainHDC, pixel_format, sizeof(pfd), &pfd)) {
-            ERR("DescribePixelFormat failed.");
+            Log::Error("DescribePixelFormat failed.");
         }
 
         if (!SetPixelFormat(m_MainHDC, pixel_format, &pfd)) {
-            ERR("Failed to set the OpenGL 3.3 pixel format.");
+            Log::Error("Failed to set the OpenGL 3.3 pixel format.");
         }
     }
    
@@ -139,11 +137,11 @@ auto OpenGL::init_opengl() -> void
     
     HGLRC gl33_context = wglCreateContextAttribsARB(m_MainHDC, 0, gl33_attribs);
     if (!gl33_context) {
-        ERR("Failed to create OpenGL 3.3 context.");
+        Log::Error("Failed to create OpenGL 3.3 context.");
     }
 
     if (!wglMakeCurrent(m_MainHDC, gl33_context)) {
-        ERR("Failed to activate OpenGL 3.3 rendering context.");
+        Log::Error("Failed to activate OpenGL 3.3 rendering context.");
     }
     
     static bool on = false;
@@ -151,32 +149,19 @@ auto OpenGL::init_opengl() -> void
         gladLoadGL();
         on = true;
     }
-    GLenum err = glGetError();
-    if (err != GL_NO_ERROR) ERR("OpenGL Error: " << err );
     glEnable(GL_DEPTH_TEST);
-    err = glGetError();
-    if (err != GL_NO_ERROR) ERR("OpenGL Error: " << err );
     glEnable(GL_CULL_FACE);
-    err = glGetError();
-    if (err != GL_NO_ERROR) ERR("OpenGL Error: " << err );
     // glEnable(GL_CW);
-    // err = glGetError();
-    // if (err != GL_NO_ERROR) ERR("OpenGL Error: " << err );
     // glEnable(GL_BACK);
-    // err = glGetError();
-    // if (err != GL_NO_ERROR) ERR("OpenGL Error: " << err );
     glEnable(GL_LINE_SMOOTH);
-    err = glGetError();
-    if (err != GL_NO_ERROR) ERR("OpenGL Error: " << err );
 
     GLint max_texture_unit = 0;
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_texture_unit);
-    
-    LOG("GL Version : " << glGetString(GL_VERSION));
-    LOG("GLSL Version : " << glGetString(GL_SHADING_LANGUAGE_VERSION));
-    LOG("GL Vendor : " << glGetString(GL_VENDOR));
-    LOG("GL Renderer : " << glGetString(GL_RENDERER));
-    LOG("Max Texture Units : " << max_texture_unit);
+    Log::print("GL Version : {}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+    Log::print("GLSL Version : {}", reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
+    Log::print("GL Vendor : {}", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
+    Log::print("GL Renderer : {}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
+    Log::print("Max Texture Units : {}", max_texture_unit);
     m_Context =  gl33_context;
 }
 

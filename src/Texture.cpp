@@ -1,4 +1,5 @@
 #include <core/Texture.hpp>
+#include <core/Log.hpp>
 
 auto Texture::Loud(const std::string &name, const int Type) -> void
 {
@@ -24,7 +25,7 @@ auto Texture::Loud(const std::string &name, const int Type) -> void
     }
     else
     {
-        ERR("Failed to load Texture");
+        Log::Error("Failed to load Texture");
     }
     stbi_image_free(data);
 }
@@ -32,7 +33,7 @@ auto Texture::Loud(const std::string &name, const int Type) -> void
 auto Texture::GetByName(const std::string &name) const -> unsigned int
 {
     if(Textures[name] == static_cast<unsigned int>(0)){
-        ERR(name << "Texture not exist in the map");
+        Log::Error(" {} Texture not exist in the map", std::string{name});
     }
 
     return Textures[name];

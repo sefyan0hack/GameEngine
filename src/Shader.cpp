@@ -1,6 +1,6 @@
 #include <glad/glad.h>
 #include <string>
-#include <core/Global_H.hpp>
+#include <core/Log.hpp>
 #include <core/Shader.hpp>
 #include <glm/glm.hpp>
 #include <fstream>
@@ -22,13 +22,13 @@ auto Shader::LoadSource(const char* name) -> void
 
     std::ifstream shader_file(name);
     if( not shader_file.is_open()){
-        ERR("Open " << name <<" Failed. code: " << errno);
+        Log::Error("Open {} Failed. code: {}", std::string{name}, int{errno});
     }
 
     std::string buffer = std::format("#version {}{}0 core\n", GLVersion.major, GLVersion.minor);
     buffer.append(std::istreambuf_iterator<char>(shader_file), std::istreambuf_iterator<char>());
 
-    LOG("[+] Loding " << name );
+    Log::Info("[+] Loding {}", std::string{name} );
 
     const char* ShaderSource = buffer.c_str();
     glShaderSource(id, 1, &ShaderSource, NULL);
@@ -46,7 +46,8 @@ auto Shader::checkShaderCompileStatus(const GLuint &shader) -> void
     if (!success) {
         GLchar infoLog[512];
         glGetShaderInfoLog(shader, 512, NULL, infoLog);
-        ERR("SHADER::COMPILATION_FAILED\n" << infoLog );
+        // ERR("SHADER::COMPILATION_FAILED\n" << infoLog );
+        Log::Error("SHADER::COMPILATION_FAILED {}", infoLog);
         glDeleteShader(shader); // Don't leak the shader.
     }
 }

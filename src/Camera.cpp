@@ -1,7 +1,7 @@
 #include <core/Camera.hpp>
 #include <core/Window.hpp>
 #include <core/Material.hpp>
-#include <core/Global_H.hpp>
+#include <core/Log.hpp>
 #include <iostream>
 #include <cmath>
 #include <ctime>
@@ -172,6 +172,7 @@ auto Camera::GetMaterail() const -> const Material &
 {
     if(material)
         return *material;
-    
-    ERR("Shader is null");
+    else{
+        Log::Error("Material is null ");
+    }
 }

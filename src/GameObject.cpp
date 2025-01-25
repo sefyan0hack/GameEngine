@@ -1,5 +1,6 @@
 #include <core/GameObject.hpp>
 #include <core/Material.hpp>
+#include <core/Log.hpp>
 #include <string>
 GameObject::GameObject(glm::vec3 position, Material &matt, const Mesh &mesh)
 : transform(Transform(position)), material(&matt), m_Mesh(mesh)
@@ -101,6 +102,7 @@ auto GameObject::GetMaterial() const -> const Material &
 {
     if(material)
         return *material;
-
-    ERR("shader program is null");
+    else{
+        Log::Error("Material is null");
+    }
 }

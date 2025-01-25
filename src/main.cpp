@@ -10,6 +10,7 @@
 #include <core/Scene.hpp>
 #include <core/Renderer.hpp>
 #include <core/Material.hpp>
+#include <core/Log.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -179,7 +180,7 @@ public:
 
 public: // distroy hire
     ~Game(){
-        LOG("Game Destructor");
+        Log::Info("Game Destructor");
     }
 };
 
