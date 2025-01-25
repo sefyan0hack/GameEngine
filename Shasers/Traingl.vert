@@ -8,10 +8,10 @@ out vec2 TexCoord;
 
 uniform mat4 Modle;
 uniform mat4 Perspective;
-uniform mat4 Camera;
+uniform mat4 View;
 
 void main() {
-    gl_Position = Perspective * Camera * Modle * vec4(aPos + offset, 1.0);
-    //gl_Position = Perspective * Camera * Modle * vec4(aPos, 1.0);
+    gl_Position = Perspective * View * Modle * vec4(aPos + offset, 1.0);
+    //gl_Position = Perspective * View * Modle * vec4(aPos, 1.0);
     TexCoord = aTexCoord;
 }
