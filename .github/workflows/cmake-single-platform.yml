@@ -23,40 +23,41 @@ jobs:
       shell: pwsh
       run: |
         echo "MATRIX_COMPILER=${{ matrix.compiler }}" | Out-File -FilePath $env:GITHUB_ENV -Append
-        if ($env:MATRIX_COMPILER -eq "mingw") {
+        if ($env.MATRIX_COMPILER -eq "mingw") {
           Write-Host "Using MinGW"
           choco install mingw
           echo "CC=gcc" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "CXX=g++" | Out-File -FilePath $env:GITHUB_ENV -Append
-        } elseif ($env:MATRIX_COMPILER -eq "clang") {
+          echo "CMAKE_GENERATOR=MinGW Makefiles" | Out-File -FilePath $env:GITHUB_ENV -Append
+        } elseif ($env.MATRIX_COMPILER -eq "clang") {
           Write-Host "Using Clang"
           choco install llvm
           echo "CC=clang" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "CXX=clang++" | Out-File -FilePath $env:GITHUB_ENV -Append
-        } elseif ($env:MATRIX_COMPILER -eq "clang-cl") {
+          echo "CMAKE_GENERATOR=Ninja" | Out-File -FilePath $env:GITHUB_ENV -Append
+        } elseif ($env.MATRIX_COMPILER -eq "clang-cl") {
           Write-Host "Using Clang-cl (MSVC compatible Clang)"
           choco install llvm
           echo "CC=clang-cl" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "CXX=clang-cl" | Out-File -FilePath $env:GITHUB_ENV -Append
-        } elseif ($env:MATRIX_COMPILER -eq "intel") {
+          echo "CMAKE_GENERATOR=Visual Studio 17 2022" | Out-File -FilePath $env:GITHUB_ENV -Append
+        } elseif ($env.MATRIX_COMPILER -eq "intel") {
           Write-Host "Using Intel oneAPI Compiler"
           Invoke-WebRequest -Uri https://registrationcenter-download.intel.com/akdlm/IRC_NAS/18964/w_BaseKit_p_2024.0.0.49547_offline.exe -OutFile intel.exe
           Start-Process -Wait -FilePath .\intel.exe -ArgumentList "/silent", "/install"
           echo "CC=icx" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "CXX=icpx" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "CMAKE_GENERATOR=Ninja" | Out-File -FilePath $env:GITHUB_ENV -Append
         } else {
           Write-Host "Using MSVC"
           echo "CC=cl" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "CXX=cl" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "CMAKE_GENERATOR=Visual Studio 17 2022" | Out-File -FilePath $env:GITHUB_ENV -Append
         }
 
     - name: Configure CMake
       run: |
-        if ("${{ matrix.compiler }}" -eq "mingw") {
-          cmake -G "MinGW Makefiles" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=${{env.CC}} -DCMAKE_CXX_COMPILER=${{env.CXX}}
-        } else {
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=${{env.CC}} -DCMAKE_CXX_COMPILER=${{env.CXX}}
-        }
+        cmake -G "${{ env.CMAKE_GENERATOR }}" -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_C_COMPILER=${{ env.CC }} -DCMAKE_CXX_COMPILER=${{ env.CXX }}
 
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }}
