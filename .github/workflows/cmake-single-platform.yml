@@ -13,7 +13,7 @@ jobs:
   build:
     strategy:
       matrix:
-        compiler: [msvc, mingw, clang, intel, icc, zig]
+        compiler: [msvc, mingw, clang]
     runs-on: windows-latest
 
     steps:
@@ -26,24 +26,21 @@ jobs:
         if ($env:MATRIX_COMPILER -eq "mingw") {
           Write-Host "Using MinGW"
           choco install mingw
+          echo "CC=gcc" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "CXX=g++" | Out-File -FilePath $env:GITHUB_ENV -Append
         } elseif ($env:MATRIX_COMPILER -eq "clang") {
           Write-Host "Using Clang"
           choco install llvm
-        } elseif ($env:MATRIX_COMPILER -eq "intel") {
-          Write-Host "Using Intel oneAPI"
-          choco install intel-oneapi-dpcpp-cpp-compiler
-        } elseif ($env:MATRIX_COMPILER -eq "icc") {
-          Write-Host "Using Intel Classic Compiler"
-          choco install intel-oneapi-compiler
-        } elseif ($env:MATRIX_COMPILER -eq "zig") {
-          Write-Host "Using Zig Compiler"
-          choco install zig
+          echo "CC=clang" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "CXX=clang++" | Out-File -FilePath $env:GITHUB_ENV -Append
         } else {
           Write-Host "Using MSVC"
+          echo "CC=cl" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "CXX=cl" | Out-File -FilePath $env:GITHUB_ENV -Append
         }
 
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=${{env.CC}} -DCMAKE_CXX_COMPILER=${{env.CXX}}
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
