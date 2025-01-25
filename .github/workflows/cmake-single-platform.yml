@@ -14,36 +14,34 @@ jobs:
     strategy:
       matrix:
         compiler: [msvc, mingw, clang, clang-cl, intel]
+        build_type: [Release, Debug]
     runs-on: windows-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
+
     - name: Set up compiler
       shell: pwsh
       run: |
-        $compiler = "${{ matrix.compiler }}"
-        echo "MATRIX_COMPILER=$compiler" | Out-File -FilePath $env:GITHUB_ENV -Append
+        echo "MATRIX_COMPILER=${{ matrix.compiler }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+        echo "BUILD_TYPE=${{ matrix.build_type }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
-        if ($compiler -eq "mingw") {
+        if ($env.MATRIX_COMPILER -eq "mingw") {
           Write-Host "Using MinGW"
-          choco install mingw
           echo "CC=gcc" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "CXX=g++" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "CMAKE_GENERATOR=MinGW Makefiles" | Out-File -FilePath $env:GITHUB_ENV -Append
-        } elseif ($compiler -eq "clang") {
+        } elseif ($env.MATRIX_COMPILER -eq "clang") {
           Write-Host "Using Clang"
-          choco install llvm
           echo "CC=clang" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "CXX=clang++" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "CMAKE_GENERATOR=Ninja" | Out-File -FilePath $env:GITHUB_ENV -Append
-        } elseif ($compiler -eq "clang-cl") {
+        } elseif ($env.MATRIX_COMPILER -eq "clang-cl") {
           Write-Host "Using Clang-cl (MSVC compatible Clang)"
-          choco install llvm
           echo "CC=clang-cl" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "CXX=clang-cl" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "CMAKE_GENERATOR=Visual Studio 17 2022" | Out-File -FilePath $env:GITHUB_ENV -Append
-        } elseif ($compiler -eq "intel") {
+        } elseif ($env.MATRIX_COMPILER -eq "intel") {
           Write-Host "Using Intel oneAPI Compiler"
           Invoke-WebRequest -Uri https://registrationcenter-download.intel.com/akdlm/IRC_NAS/18964/w_BaseKit_p_2024.0.0.49547_offline.exe -OutFile intel.exe
           Start-Process -Wait -FilePath .\intel.exe -ArgumentList "/silent", "/install"
@@ -56,3 +54,10 @@ jobs:
           echo "CXX=cl" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "CMAKE_GENERATOR=Visual Studio 17 2022" | Out-File -FilePath $env:GITHUB_ENV -Append
         }
+
+    - name: Configure CMake
+      run: |
+        cmake -G "${{ env.CMAKE_GENERATOR }}" -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_C_COMPILER=${{ env.CC }} -DCMAKE_CXX_COMPILER=${{ env.CXX }}
+
+    - name: Build
+      run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }}
