@@ -18,8 +18,6 @@ public:
     Mesh(const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices);
     ~Mesh();
 public:
-    auto Draw(const Material &matt, size_t InstanceCount = 1)   -> void ;
-public:
     unsigned int VAO, VBO, EBO;
     GLuint vInSize;
 };
