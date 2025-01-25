@@ -1,0 +1,30 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up MSYS2
+      run: |
+        choco install msys2
+        refreshenv
+    - name: Install Make
+      run: |
+        pacman -S make
+    - name: Configure
+      run: ./configure
+    - name: Make
+      run: make
+    - name: Make Check
+      run: make check
+    - name: Make Distcheck
+      run: make distcheck
