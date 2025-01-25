@@ -4,6 +4,7 @@
 #include <core/Log.hpp>
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 #include <ctime>
 #include <core/gl.h>
 #define GLM_ENABLE_EXPERIMENTAL
