@@ -1,4 +1,3 @@
-#include <glad/glad.h>
 #include <core/gl.h>
 #include <core/Log.hpp>
 #include <core/Renderer.hpp>

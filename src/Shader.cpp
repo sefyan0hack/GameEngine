@@ -1,4 +1,4 @@
-#include <glad/glad.h>
+#include <core/gl.h>
 #include <string>
 #include <core/Log.hpp>
 #include <core/Shader.hpp>

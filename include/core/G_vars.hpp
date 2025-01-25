@@ -4,9 +4,6 @@
 #include <core/Renderer.hpp>
 #include <core/Shader.hpp>
 #include <vector>
-NO_WARNING_BEGIN
-#include <glad/glad.h>
-NO_WARNING_END
 
 #define WM_FPS_PAINT (WM_USER + 1)
 

@@ -1,9 +1,7 @@
 #pragma once
 #include <core/Global_H.hpp>
 #include <unordered_map>
-NO_WARNING_BEGIN
-#include <glad/glad.h>
-NO_WARNING_END
+#include <core/gl.h>
 class Shader
 {
     public:

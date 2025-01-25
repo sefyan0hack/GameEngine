@@ -94,6 +94,7 @@ auto GameObject::GetMaterial() const ->  Material*
     if(material)
         return material;
     else{
-        Log::Error("Material is null");
+        Log::Warning("Material is null");
+        return nullptr;
     }
 }

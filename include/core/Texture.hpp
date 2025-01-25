@@ -3,10 +3,7 @@
 #include <string>
 #include <stb/stb_image.h>
 
-#include <core/Global_H.hpp>
-NO_WARNING_BEGIN
-#include <glad/glad.h>
-NO_WARNING_END
+#include <core/gl.h>
 class Texture
 {
 public:

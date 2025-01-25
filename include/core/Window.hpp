@@ -7,9 +7,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-NO_WARNING_BEGIN
-#include <glad/glad.h>
-NO_WARNING_END
+#include <core/gl.h>
 
 #include <core/Keyboard.hpp>
 #include <core/Mouse.hpp>
