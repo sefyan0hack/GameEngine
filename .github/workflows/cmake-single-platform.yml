@@ -52,7 +52,7 @@ jobs:
 
     - name: Configure CMake
       run: |
-        if ("${{ matrix.compiler }}" == "mingw") {
+        if ("${{ matrix.compiler }}" -eq "mingw") {
           cmake -G "MinGW Makefiles" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=${{env.CC}} -DCMAKE_CXX_COMPILER=${{env.CXX}}
         } else {
           cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=${{env.CC}} -DCMAKE_CXX_COMPILER=${{env.CXX}}
