@@ -1,9 +1,11 @@
 #pragma once
 #include <core/Global_H.hpp>
 #include <core/OpenGL.hpp>
-#include <windows.h>
 #include <memory>
 #include <vector>
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 
 NO_WARNING_BEGIN
 #include <glad/glad.h>

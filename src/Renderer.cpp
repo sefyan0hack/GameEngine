@@ -21,7 +21,7 @@ auto Renderer::render(Scene &scene, Camera &camera) -> void
         material->Use();
         material->SetUniform("Perspective", camera.GetPerspective());
         material->SetUniform("View", camera.GetView());
-        auto sizeIns = obj.GetInstancePos().size();
+        auto sizeIns = static_cast<GLsizei>(obj.GetInstancePos().size());
         auto mesh = obj.GetMesh();
         draw(mesh, sizeIns);
     }
