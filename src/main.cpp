@@ -110,7 +110,7 @@ private:
 public: // init here
     Game()
     : vert(SHADER(Traingl)".vert", GL_VERTEX_SHADER), frag(SHADER(Traingl)".frag", GL_FRAGMENT_SHADER)
-    , Matt(vert, frag), Cam(m_Window, Matt), cubeMesh({cubeMeshVert, indices}), rndr(Scn, Cam)
+    , Matt(vert, frag), Cam(m_Window), cubeMesh({cubeMeshVert, indices})
     {
         constexpr int Grids = 300;
         std::vector<glm::vec3> positions(Grids * Grids * 4);
@@ -134,11 +134,6 @@ public: // init here
 public:
 
     auto Update(float delta) -> void override {
-        //Drwaing
-        // for(auto &obj: Objects){
-        //     obj.Render();
-        // }
-
 
         Cam.MoseMove();
         if( m_Window.kbd.KeyIsPressed('W')){
@@ -174,7 +169,7 @@ public:
             }
         }
        
-        rndr.render();
+        rndr.render(Scn, Cam);
     //    LOG( "Fps : " << this->fps.QuadPart);
     }
 
@@ -185,7 +180,7 @@ public: // distroy hire
 };
 
 
-auto WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int ) -> int {
+auto main(void) -> int {
     Game my_game ;
     my_game.Run();
     return 0;
