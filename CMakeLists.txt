@@ -10,6 +10,9 @@ set(CMAKE_CXX_STANDARD 23)
 # set(CMAKE_C_COMPILER C:/mingw-w64/mingw64/bin/gcc.exe)
 # set(CMAKE_CXX_COMPILER C:/mingw-w64/mingw64/bin/g++.exe)
 
+# Print compiler information
+message(STATUS "Compiler: ${CMAKE_CXX_COMPILER}")
+message(STATUS "Compiler Version: ${CMAKE_CXX_COMPILER_VERSION}")
 
 set(CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}" "${CMAKE_MODULE_PATH}")
 set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}" "${CMAKE_PREFIX_PATH}")
