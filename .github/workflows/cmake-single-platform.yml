@@ -1,4 +1,4 @@
-name: CMake on a single platform
+name: CMake on Windows with Multiple Compilers
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
   build:
     strategy:
       matrix:
-        compiler: [msvc, mingw, clang]
+        compiler: [msvc, mingw, clang, clang-cl, intel]
     runs-on: windows-latest
 
     steps:
@@ -33,6 +33,17 @@ jobs:
           choco install llvm
           echo "CC=clang" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "CXX=clang++" | Out-File -FilePath $env:GITHUB_ENV -Append
+        } elseif ($env:MATRIX_COMPILER -eq "clang-cl") {
+          Write-Host "Using Clang-cl (MSVC compatible Clang)"
+          choco install llvm
+          echo "CC=clang-cl" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "CXX=clang-cl" | Out-File -FilePath $env:GITHUB_ENV -Append
+        } elseif ($env:MATRIX_COMPILER -eq "intel") {
+          Write-Host "Using Intel oneAPI Compiler"
+          Invoke-WebRequest -Uri https://registrationcenter-download.intel.com/akdlm/IRC_NAS/18964/w_BaseKit_p_2024.0.0.49547_offline.exe -OutFile intel.exe
+          Start-Process -Wait -FilePath .\intel.exe -ArgumentList "/silent", "/install"
+          echo "CC=icx" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "CXX=icpx" | Out-File -FilePath $env:GITHUB_ENV -Append
         } else {
           Write-Host "Using MSVC"
           echo "CC=cl" | Out-File -FilePath $env:GITHUB_ENV -Append
@@ -40,7 +51,12 @@ jobs:
         }
 
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=${{env.CC}} -DCMAKE_CXX_COMPILER=${{env.CXX}}
+      run: |
+        if ("${{ matrix.compiler }}" == "mingw") {
+          cmake -G "MinGW Makefiles" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=${{env.CC}} -DCMAKE_CXX_COMPILER=${{env.CXX}}
+        } else {
+          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=${{env.CC}} -DCMAKE_CXX_COMPILER=${{env.CXX}}
+        }
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
