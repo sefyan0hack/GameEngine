@@ -10,23 +10,10 @@ set(CMAKE_CXX_STANDARD 23)
 # set(CMAKE_C_COMPILER C:/mingw-w64/mingw64/bin/gcc.exe)
 # set(CMAKE_CXX_COMPILER C:/mingw-w64/mingw64/bin/g++.exe)
 
+# Print compiler information
+message(STATUS "Compiler: ${CMAKE_CXX_COMPILER}")
+message(STATUS "Compiler Version: ${CMAKE_CXX_COMPILER_VERSION}")
 
-# Detect compiler
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    message(STATUS "Using GCC (MinGW)")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    message(STATUS "Using Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror")
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    message(STATUS "Using MSVC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /WX")
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
-    message(STATUS "Using Intel Compiler")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w3")
-else()
-    message(WARNING "Unknown compiler detected")
-endif()
 
 set(CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}" "${CMAKE_MODULE_PATH}")
 set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}" "${CMAKE_PREFIX_PATH}")

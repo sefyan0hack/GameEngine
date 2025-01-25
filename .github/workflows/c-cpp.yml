@@ -16,10 +16,11 @@ jobs:
     - name: Set up MSYS2
       run: |
         choco install msys2
-        refreshenv
+        # Explicitly refresh environment variables
+        echo "PATH=\$PATH;C:\\tools\\msys64\\usr\\bin" >> $GITHUB_ENV
     - name: Install Make
       run: |
-        pacman -S make
+        pacman -S make --noconfirm
     - name: Configure
       run: ./configure
     - name: Make
