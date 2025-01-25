@@ -9,11 +9,8 @@ class Material;
 class Camera
 {
 public:
-    Camera(Window &window, Material& matt);
+    Camera(Window &window);
     ~Camera();
-    auto UpdateMat()                      -> void ;
-    auto UpdateView()                     -> void ;
-    auto UpdatePersp()                    -> void ;
     auto SetViewMat(const glm::mat4 &mat) -> void ;
     auto SetFrontVector(glm::vec3 front)  -> void ;
     auto SetUpVector(glm::vec3 up)        -> void ;
@@ -27,12 +24,12 @@ public:
     auto EnableMSAA()                     -> void ;
     auto UpdateVectors()                  -> void ;
     auto MoseMove(bool islocked = true)   -> void ;
+    auto GetView()                        -> glm::mat4 ;
+    auto GetPerspective()                 -> glm::mat4 ;
     auto GetPosition() const              -> glm::vec3 ;
     auto GetFrontDir() const              -> glm::vec3 ;
     auto GetUpDir() const                 -> glm::vec3 ;
     auto GetRightDir() const              -> glm::vec3 ;
-    auto GetViewMat() const               -> glm::mat4 const & ;
-    auto GetMaterail() const              -> const Material& ;
 
 private:
     glm::vec3 Position;
@@ -40,11 +37,8 @@ private:
     glm::vec3 UpDir;
     glm::vec3 RightDir;
 
-    glm::mat4 ViewMat;
-    glm::mat4 PerspectiveMat;
     //
     Window* m_Window;
     float sensitivity;
     float yaw, pitch;
-    Material* material;
 };

@@ -5,36 +5,33 @@
 #include <iostream>
 #include <cmath>
 #include <ctime>
-#include <glad/glad.h>
-
-NO_WARNING_END
-
+#include <core/gl.h>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/fast_trigonometry.hpp>
 
-Camera::Camera(Window &window, Material& matt) 
+Camera::Camera(Window &window) 
 : Position({0, 2, 0}),
   FrontDir({0, 0, -1}), 
   UpDir({ 0, 1, 0}),
   RightDir({1, 0, 0}),
-  ViewMat(glm::lookAt(Position, Position + FrontDir, UpDir)),
   m_Window(&window),
   sensitivity(0.11f),
-  yaw(-90), pitch(0),
-  material(&matt){}
+  yaw(-90), pitch(0)
+  {}
 
 Camera::~Camera() {}
 
-auto Camera::UpdateMat() -> void
+auto Camera::GetView() -> glm::mat4
 {
-    ViewMat = glm::lookAt(Position, Position + FrontDir, UpDir);
+    return glm::lookAt(Position, Position + FrontDir, UpDir);
 }
 
-auto Camera::UpdateView() -> void
-{
-    material->SetUniform("Camera", ViewMat);
-}
-auto Camera::UpdatePersp() -> void
+// auto Camera::UpdateView() -> void
+// {
+//     material->SetUniform("Camera", ViewMat);
+// }
+
+auto Camera::GetPerspective() ->  glm::mat4
 {
     auto height = m_Window->GetHeight();
 
@@ -42,22 +39,8 @@ auto Camera::UpdatePersp() -> void
     auto fov_ = glm::radians(45.0f);
     auto near_ = 0.1f;
     auto far_ = 100.0f;
-    PerspectiveMat = glm::perspective(fov_, aspect_, near_, far_);
-    material->SetUniform("Perspective", PerspectiveMat);
-}
-// get const ref to View Matrix
-auto Camera::GetViewMat() const -> glm::mat4 const &
-{
-    return ViewMat;
-}
-
-auto Camera::SetViewMat(const glm::mat4 &mat) -> void
-{
-    ViewMat = mat;
-    glm::mat4 invView = glm::inverse(mat);
-    FrontDir = glm::normalize(-glm::vec3(invView[2]));
-    //dont change its up of the wold space
-    // UpDir =  glm::normalize(glm::vec3(invView[1]));
+    return glm::perspective(fov_, aspect_, near_, far_);
+    // material->SetUniform("Perspective", PerspectiveMat);
 }
 
 auto Camera::MoveFroward(float speed) -> void
@@ -71,32 +54,27 @@ auto Camera::MoveBackward(float speed) -> void
 {
     //negate Z 
     Position += (-FrontDir * speed);
-    UpdateView();
 }
 
 auto Camera::MoveUP(float speed) -> void
 {
     Position += (UpDir  * speed);
-    UpdateView();
 }
 auto Camera::MoveDown(float speed) -> void
 {
     Position -= (UpDir  * speed);
-    UpdateView();
 }
 
 auto Camera::MoveRight(float speed) -> void
 {
     auto c = glm::cross(FrontDir, UpDir);
     Position += (c  * speed);
-    UpdateView();
 }
 
 auto Camera::MoveLeft(float speed) -> void
 {
     auto c = glm::cross(FrontDir, UpDir);
     Position -= (c  * speed);
-    UpdateView();
 }
 
 auto Camera::EnableMSAA() -> void
@@ -154,9 +132,6 @@ auto Camera::MoseMove(bool islocked) -> void
     //fin
 
     UpdateVectors();
-    UpdateMat();
-    UpdatePersp();
-    UpdateView();
 }
 
 auto Camera::SetFrontVector(glm::vec3 front)  -> void { FrontDir = front; }
@@ -167,12 +142,3 @@ auto Camera::GetPosition() const -> glm::vec3 { return Position; }
 auto Camera::GetFrontDir() const -> glm::vec3 { return FrontDir; }
 auto Camera::GetUpDir() const    -> glm::vec3 { return UpDir; }
 auto Camera::GetRightDir() const -> glm::vec3 { return RightDir; }
-
-auto Camera::GetMaterail() const -> const Material &
-{
-    if(material)
-        return *material;
-    else{
-        Log::Error("Material is null ");
-    }
-}
