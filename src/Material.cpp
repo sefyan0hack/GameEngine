@@ -45,7 +45,7 @@ auto Material::GetUniformLocation(const char *name) const -> unsigned int
     // If not cached, query the location and cache it
     unsigned int location = glGetUniformLocation(id, name);
     if (location == static_cast<GLuint>(-1)) {
-        Log::Warning("uniform {} doesn't exist!", std::string(name));
+        Log::Error("uniform {} doesn't exist!", std::string(name));
     }
     return location;
 }
