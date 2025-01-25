@@ -36,16 +36,7 @@ auto GameObject::SetUp(std::vector<glm::vec3> InsPos) -> void
     }
 }
 
-auto GameObject::Render() -> void
-{
-    auto sizeIns = InstancePos.size();
 
-    if(sizeIns > 1){
-        m_Mesh.Draw(*material, InstancePos.size());
-    }else{
-        m_Mesh.Draw(*material, 1);
-    }
-}
 
 Transform GameObject::GetTransform() const
 {
@@ -98,10 +89,10 @@ auto GameObject::GetInstancePos() const -> const std::vector<glm::vec3> &
     return InstancePos;
 }
 
-auto GameObject::GetMaterial() const -> const Material &
+auto GameObject::GetMaterial() const ->  Material*
 {
     if(material)
-        return *material;
+        return material;
     else{
         Log::Error("Material is null");
     }
