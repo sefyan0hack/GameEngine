@@ -1,11 +1,8 @@
 # .codeql.yml
 version: 2
 queries:
-  paths:
-    - '**.cpp'
-    - '**.hpp'
-    - '**.h'
-  exclude:
-    - '3party/**'
-    - 'res/**'
-    - 'Shasers/**'
+    - uses: github/codeql/cpp-queries
+exclude:
+  - '3party/**'
+  - 'res/**'
+  - 'Shasers/**'
