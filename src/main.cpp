@@ -110,7 +110,7 @@ private:
 public: // init here
     Game()
     : vert(SHADER(Traingl)".vert", GL_VERTEX_SHADER), frag(SHADER(Traingl)".frag", GL_FRAGMENT_SHADER)
-    , Matt(vert, frag), Cam(m_Window), cubeMesh({cubeMeshVert, indices})
+    , Matt({vert, frag}), Cam(m_Window), cubeMesh({cubeMeshVert, indices})
     {
         constexpr int Grids = 300;
         std::vector<glm::vec3> positions(Grids * Grids * 4);
