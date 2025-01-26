@@ -34,8 +34,8 @@ jobs:
       with:
         languages: ${{ matrix.language }}
         build-mode: ${{ matrix.build-mode }}
-        exclude: '3party/**'
-        
+        config-file: .github/workflows/codeql-config.yml
+
     - name: Set up CMake
       uses: milliewalky/setup-cmake@v1
       with:
