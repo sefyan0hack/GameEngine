@@ -36,9 +36,9 @@ jobs:
         build-mode: ${{ matrix.build-mode }}
 
     - name: Set up CMake
-      uses: actions/setup-cmake@v3
+      uses: cmake/setup-cmake@v3
       with:
-        cmake-version: '3.25.0'
+        cmake-version: '3.25.0'  # Specify the CMake version you need
 
     - name: Build C++ Project with CMake
       run: |
