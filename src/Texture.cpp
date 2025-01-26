@@ -1,7 +1,7 @@
 #include <core/Texture.hpp>
 #include <core/Log.hpp>
 
-auto Texture::Loud(const std::string &name, const int Type) -> void
+auto Texture::Loud(const std::string &name, const GLenum  Type) -> void
 {
     unsigned int texture;
     glGenTextures(1, &texture);
@@ -30,16 +30,16 @@ auto Texture::Loud(const std::string &name, const int Type) -> void
     stbi_image_free(data);
 }
 
-auto Texture::GetByName(const std::string &name) const -> unsigned int
+auto Texture::GetByName(const std::string &name) const -> GLuint
 {
-    if(Textures[name] == static_cast<unsigned int>(0)){
+    if(Textures[name] == static_cast<GLuint>(0)){
         Log::Error(" {} Texture not exist in the map", std::string{name});
     }
 
     return Textures[name];
 }
 
-auto Texture::BindByName(const std::string &name, const int Type) const -> void
+auto Texture::BindByName(const std::string &name, const GLenum  Type) const -> void
 {
     glBindTexture(Type, GetByName(name));
 }

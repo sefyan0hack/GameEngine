@@ -3,7 +3,7 @@
 #include <core/Global_H.hpp>
 #include <type_traits>
 
-Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vector<unsigned int> &indices): VAO(0), VBO(0), EBO(0)
+Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vector<GLuint> &indices): VAO(0), VBO(0), EBO(0)
 {
     using VetexData = typename std::remove_cv_t<typename std::remove_reference_t<decltype(vertices)>::value_type>;
 
@@ -20,7 +20,7 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vect
         }
         glGenBuffers(1, &EBO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
 #endif
     GLuint index = 0;
     // vertex positions

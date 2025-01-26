@@ -10,10 +10,10 @@ public:
     Texture() = default;
     ~Texture() = default;
 public:
-    auto Loud(const std::string &name, const int Type = GL_TEXTURE_2D) -> void ;
-    auto GetByName(const std::string &name) const -> unsigned int ;
-    auto BindByName(const std::string &name, const int Type = GL_TEXTURE_2D) const -> void ;
+    auto Loud(const std::string &name, const GLenum  Type = GL_TEXTURE_2D) -> void ;
+    auto GetByName(const std::string &name) const -> GLuint ;
+    auto BindByName(const std::string &name, const GLenum  Type = GL_TEXTURE_2D) const -> void ;
 private:
-    inline static std::unordered_map<std::string, unsigned int> Textures;
+    inline static std::unordered_map<std::string, GLuint> Textures;
 
 };

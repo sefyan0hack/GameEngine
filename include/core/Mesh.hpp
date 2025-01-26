@@ -15,9 +15,9 @@ class Material;
 class Mesh
 {
 public:
-    Mesh(const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices);
+    Mesh(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indices);
     ~Mesh();
 public:
-    unsigned int VAO, VBO, EBO;
+    GLuint VAO, VBO, EBO;
     GLuint vInSize;
 };
