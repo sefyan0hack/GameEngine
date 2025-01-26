@@ -38,15 +38,15 @@ jobs:
     - name: Set up CMake
       uses: milliewalky/setup-cmake@v1
       with:
-        cmake-version: '3.25.0'  # Specify the CMake version you need
+        cmake-version: '3.25.0'
 
     - name: Build C++ Project with CMake
       run: |
         echo "Running CMake build for C++ project"
         mkdir build
         cd build
-        cmake ..  # You can add more options here, such as -DCMAKE_BUILD_TYPE=Release
-        cmake --build . --config Release  # Modify this if you're using a different configuration or build type
+        cmake ..
+        cmake --build . --config Release
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
