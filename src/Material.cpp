@@ -110,7 +110,7 @@ auto Material::DumpUniforms() -> void
 
             Uniforms[Uniform_name] =  GetUniformLocation_Prv(Uniform_name.c_str());
 
-            Log::Info("- {} {};  {}", ShaderTypes[type], Uniform_name, count_out);
+            Log::Info("- {} {};  {}", GlslTypes[type], Uniform_name, count_out);
         }
     }
 }

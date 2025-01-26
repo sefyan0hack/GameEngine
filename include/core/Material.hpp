@@ -42,7 +42,7 @@ private:
     GLuint id;
     Shaders_Buffer Shaders;
     std::unordered_map<std::string, GLuint> Uniforms;
-    inline static std::unordered_map<GLint, std::string> ShaderTypes {
+    inline static std::unordered_map<GLint, std::string> GlslTypes {
         {GL_FLOAT,	"float"},
         {GL_FLOAT_VEC2,	"vec2"},
         {GL_FLOAT_VEC3,	"vec3"},
