@@ -6,8 +6,8 @@
 #include <cstdlib>
 #include <string_view>
 
-namespace Log
-{
+
+namespace {
 
 enum class Log_LvL {
   ERR,
@@ -40,6 +40,10 @@ struct ERRF
 
 template <Log_LvL lvl, typename... Ts>
 ERRF(const std::format_string<Ts...>, Ts&& ...) -> ERRF<lvl, Ts...>;
+
+}
+namespace Log
+{
 
 template <typename ...Ts>
 using Error = ERRF<Log_LvL::ERR, Ts...>;
