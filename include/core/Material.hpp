@@ -3,6 +3,8 @@
 #include <core/OpenGL.hpp>
 #include <string>
 #include <unordered_map>
+#include <initializer_list>
+
 class Shader;
 
 struct Shaders_Buffer{
@@ -13,12 +15,11 @@ class Material
 {
 public:
     Material(Shader& vertex, Shader& fragment);
+    Material(std::initializer_list<Shader> shaders);
     ~Material();
 
     auto Getid() const -> GLuint ;
     auto Use() const -> void ;
-    auto Link() const -> void;
-    auto checkProgramLinkStatus() const        -> void;
     auto UniformCount() const                  -> GLint ;
     auto GetUniformLocation(const char*) const -> GLuint;
 
@@ -35,12 +36,13 @@ public:
     auto SetUniform(const std::string &name, const T& value1, const T& value2, const T& value3, const T& value4) const -> void;
 
 private:
+    auto checkProgramLinkStatus() const        -> void;
+    auto Link() const -> void;
     auto GetUniformLocation_Prv(const char*) const -> GLuint;
     auto DumpUniforms()                   -> void ;
 
 private:
     GLuint id;
-    Shaders_Buffer Shaders;
     std::unordered_map<std::string, GLuint> Uniforms;
     inline static std::unordered_map<GLint, std::string> GlslTypes {
         {GL_FLOAT,	"float"},

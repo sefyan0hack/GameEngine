@@ -7,11 +7,23 @@
 Material::Material(Shader& vertex, Shader& fragment)
     : id(glCreateProgram())
 {
-    Shaders.vertex = &vertex;
-    Shaders.fragment = &fragment;
-    
-    glAttachShader(id, Shaders.vertex->Getid());
-    glAttachShader(id, Shaders.fragment->Getid());
+
+    glAttachShader(id, vertex.Getid());
+    glAttachShader(id, fragment.Getid());
+
+    Link();
+    checkProgramLinkStatus();
+    Log::Info("Uniforms count is {}", UniformCount());
+    DumpUniforms();
+}
+Material::Material(std::initializer_list<Shader> shaders)
+    : id(glCreateProgram())
+{
+    for( auto &&shader : shaders ){
+        auto Shaderid = shader.Getid();
+        Log::Info("glAttachShader {}", Shaderid );
+        glAttachShader(id, Shaderid);
+    }
 
     Link();
     checkProgramLinkStatus();
