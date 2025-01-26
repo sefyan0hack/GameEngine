@@ -1,8 +1,8 @@
+name: "Custom CodeQL Config"
+
 queries:
   - uses: security-and-quality
-  
-  paths:
+paths:
   - src
-  
-  paths-ignore:
+paths-ignore:
   - '**/3party/**'
