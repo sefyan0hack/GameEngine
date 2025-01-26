@@ -23,7 +23,7 @@ jobs:
       matrix:
         include:
           - language: c-cpp
-            build-mode: autobuild
+            build-mode: manual
 
     steps:
     - name: Checkout repository
@@ -35,15 +35,18 @@ jobs:
         languages: ${{ matrix.language }}
         build-mode: ${{ matrix.build-mode }}
 
-    - if: matrix.build-mode == 'manual'
-      shell: bash
+    - name: Set up CMake
+      uses: actions/setup-cmake@v3
+      with:
+        cmake-version: '3.25.0'
+
+    - name: Build C++ Project with CMake
       run: |
-        echo 'If you are using a "manual" build mode for one or more of the' \
-          'languages you are analyzing, replace this with the commands to build' \
-          'your code, for example:'
-        echo '  msbuild myproject.sln'
-        echo '  nmake /f Makefile'
-        exit 1
+        echo "Running CMake build for C++ project"
+        mkdir build
+        cd build
+        cmake ..  # You can add more options here, such as -DCMAKE_BUILD_TYPE=Release
+        cmake --build . --config Release  # Modify this if you're using a different configuration or build type
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
