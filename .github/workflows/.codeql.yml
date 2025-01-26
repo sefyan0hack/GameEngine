@@ -1,8 +1,0 @@
-# .codeql.yml
-version: 2
-queries:
-    - uses: github/codeql/cpp-queries
-exclude:
-  - '3party/**'
-  - 'res/**'
-  - 'Shasers/**'

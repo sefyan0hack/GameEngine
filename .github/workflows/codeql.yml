@@ -32,10 +32,10 @@ jobs:
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
-        config-file: '.github/workflows/.codeql.yml'
         languages: ${{ matrix.language }}
         build-mode: ${{ matrix.build-mode }}
-
+        exclude: '3party/**'
+        
     - name: Set up CMake
       uses: milliewalky/setup-cmake@v1
       with:
