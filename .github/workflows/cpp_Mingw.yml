@@ -16,13 +16,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install MinGW
-        uses: egor-tensin/setup-mingw@v2.2.0
-        with:
-          version: 8.1.0
-          arch: x86_64
+      - name: Install Latest MinGW (GCC 13+)
+        run: |
+          choco install mingw --version=13.2.0 -y
+          echo "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin" >> $GITHUB_PATH
 
-      - name: Install CMake 3.23
+      - name: Install CMake 3.25
         uses: milliewalky/setup-cmake@v1
         with:
           cmake-version: '3.25.0'
@@ -37,7 +36,7 @@ jobs:
           ninja --version
 
       - name: Configure CMake
-        run: cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+        run: cmake -B build -G "Ninja" -DCMAKE_CXX_STANDARD=20 -DCMAKE_BUILD_TYPE=Release
 
       - name: Build Project
         run: cmake --build build
