@@ -65,3 +65,13 @@ auto Shader::Getid() const -> GLuint
 {
     return id;
 }
+
+auto Shader::GetType() const -> GLenum
+{
+    return Type;
+}
+
+auto Shader::GetTypeName() const -> const char*
+{
+    return SHADERTYPES[Type];
+}
