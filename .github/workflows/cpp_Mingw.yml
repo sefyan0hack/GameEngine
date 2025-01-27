@@ -1,0 +1,49 @@
+name: Windows MinGW CMake Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install MinGW
+        uses: egor-tensin/setup-mingw@v2.2.0
+        with:
+          version: 8.1.0
+          arch: x86_64
+
+      - name: Install CMake 3.23
+        uses: milliewalky/setup-cmake@v1
+        with:
+          cmake-version: '3.25.0'
+
+      - name: Install Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v3
+
+      - name: Verify Tools
+        run: |
+          g++ --version
+          cmake --version
+          ninja --version
+
+      - name: Configure CMake
+        run: cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build Project
+        run: cmake --build build
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: my_program
+          path: build/
