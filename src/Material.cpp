@@ -21,7 +21,7 @@ Material::Material(std::initializer_list<Shader> shaders)
 {
     for( auto &&shader : shaders ){
         auto Shaderid = shader.Getid();
-        Log::Info("glAttachShader {}", Shaderid );
+        Log::Info("glAttachShader id {}, type {}", Shaderid, shader.GetTypeName());
         glAttachShader(id, Shaderid);
     }
 
