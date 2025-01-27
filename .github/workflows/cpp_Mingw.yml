@@ -18,6 +18,7 @@ jobs:
 
       - name: Install LLVM MinGW
         run: |
+          # Download and install LLVM MinGW
           curl -L -o llvm-mingw.zip -H "User-Agent: Mozilla/5.0" https://github.com/mstorsjo/llvm-mingw/releases/download/20250114/llvm-mingw-20250114-msvcrt-x86_64.zip
           7z x llvm-mingw.zip -ollvm-mingw
           echo "$PWD/llvm-mingw/bin" >> $GITHUB_PATH
@@ -32,12 +33,18 @@ jobs:
 
       - name: Verify Tools
         run: |
+          # Check that LLVM MinGW tools are available
+          $env:PATH = "$PWD/llvm-mingw/bin;$env:PATH"
           g++ --version
           cmake --version
           ninja --version
 
       - name: Configure CMake
-        run: cmake -B build -G "Ninja" -DCMAKE_CXX_STANDARD=20 -DCMAKE_BUILD_TYPE=Release
+        run: |
+          # Set up CMake to use LLVM MinGW
+          cmake -B build -G "Ninja" -DCMAKE_CXX_STANDARD=20 -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_CXX_COMPILER=$PWD/llvm-mingw/bin/clang++ \
+            -DCMAKE_C_COMPILER=$PWD/llvm-mingw/bin/clang
 
       - name: Build Project
         run: cmake --build build
