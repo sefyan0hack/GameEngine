@@ -42,9 +42,10 @@ jobs:
       - name: Configure CMake
         run: |
           # Set up CMake to use LLVM MinGW
-          cmake -B build -G "Ninja" -DCMAKE_CXX_STANDARD=20 -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_CXX_COMPILER=$PWD/llvm-mingw/bin/clang++ \
-            -DCMAKE_C_COMPILER=$PWD/llvm-mingw/bin/clang
+          $llvm_mingw_path = "${PWD}\llvm-mingw\bin"
+          cmake -B build -G "Ninja" -DCMAKE_CXX_STANDARD=20 -DCMAKE_BUILD_TYPE=Release `
+            -DCMAKE_CXX_COMPILER="${llvm_mingw_path}\clang++.exe" `
+            -DCMAKE_C_COMPILER="${llvm_mingw_path}\clang.exe"
 
       - name: Build Project
         run: cmake --build build
