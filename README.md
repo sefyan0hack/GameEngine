@@ -18,15 +18,15 @@ To build and use GameEngine, you’ll need the following:
 - **C++23** or later
 - **CMake** (version 3.25 or later)
 - **C++ compiler** (e.g., GCC, Clang, MSVC)
-- **OpenGL**
-- **GLM** for mathematical operations
+- **OpenGL** (comes with GPU Drivers in all the time)
+- **GLM** for mathematical operations (all deps  in same repo no need for clone or fetch)
 
-### Installation
+### Get The Priject 
 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/GameEngine.git
+   git clone https://github.com/sefyan0hack/GameEngine.git
    cd GameEngine
    
    mkdir build
