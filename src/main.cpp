@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <core/Global_H.hpp>
-#include <core/G_vars.hpp>
 #include <core/Mesh.hpp>
 #include <core/APP.hpp>
 #include <core/GameObject.hpp>
