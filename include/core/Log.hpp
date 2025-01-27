@@ -21,7 +21,7 @@ struct ERRF
 {
   ERRF(const std::format_string<Ts...> fmt, Ts&& ... ts, std::source_location loc = std::source_location::current())
   {
-    auto formatted_msg = std::format(fmt, std::forward<Ts>(ts)...);
+    [[maybe_unused]] auto formatted_msg = std::format(fmt, std::forward<Ts>(ts)...);
 
     if constexpr (lvl == Log_LvL::ERR){
       std::cout << std::format("<X> [ERROR] {}:{} -> {}", loc.file_name(), loc.line(), formatted_msg) << "\n";
