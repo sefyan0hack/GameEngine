@@ -22,6 +22,8 @@ public:
     auto Use() const -> void ;
     auto UniformCount() const                  -> GLint ;
     auto GetUniformLocation(const char*) const -> GLuint;
+    static auto Current_Program() -> GLuint;
+
 
     template<class T>
     auto SetUniform(const std::string &name, const T &value) const -> void;

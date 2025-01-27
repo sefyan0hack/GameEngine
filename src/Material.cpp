@@ -126,6 +126,18 @@ auto Material::DumpUniforms() -> void
         }
     }
 }
+
+auto Material::Current_Program() -> GLuint{
+    GLint prog = 0;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &prog);
+
+    if(prog != 0){
+        return static_cast<GLuint>(prog);
+    }else{
+        Log::Error("no programe curnetly bounded");
+        return 0;
+    }
+}
 ///////
 template<>
 auto Material::SetUniform<GLint>(const std::string& name, const GLint &value) const -> void
