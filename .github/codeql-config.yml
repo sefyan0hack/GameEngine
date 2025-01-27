@@ -6,4 +6,4 @@ paths:
   - src
 paths-ignore:
   - '3party/**'
-  - '**/3party/**
+  - '**/3party/**'
