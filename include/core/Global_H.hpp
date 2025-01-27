@@ -33,7 +33,8 @@
 // remember macro 'SHADER' replace full path woth relative
 //C:/Users/sefyan/Documents/c_projects/GameEngine/
 
-#define SHADER(str)  "C:/Users/sefyan/Documents/c_projects/GameEngine/Shasers/"#str
-#define TEXTURE(str)  "C:/Users/sefyan/Documents/c_projects/GameEngine/res/"#str
-// #define SHADER(str)  "../../Shasers/"#str
-// #define TEXTURE(str)  "../../res/"#str
+// #define SHADER(str)  "C:/Users/sefyan/Documents/c_projects/GameEngine/Shasers/"#str
+// #define TEXTURE(str)  "C:/Users/sefyan/Documents/c_projects/GameEngine/res/"#str
+
+#define SHADER(str)  "../../Shasers/"#str
+#define TEXTURE(str)  "../../res/"#str
