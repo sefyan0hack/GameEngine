@@ -16,10 +16,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install Latest MinGW (GCC 13+)
+      - name: Install LLVM MinGW
         run: |
-          choco install mingw --version=13.2.0 -y
-          echo "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin" >> $GITHUB_PATH
+          curl -L -o llvm-mingw.zip https://github.com/mstorsjo/llvm-mingw/releases/download/20231129/llvm-mingw-20231129-msvcrt-x86_64.zip
+          7z x llvm-mingw.zip -ollvm-mingw
+          echo "$PWD/llvm-mingw/bin" >> $GITHUB_PATH
 
       - name: Install CMake 3.25
         uses: milliewalky/setup-cmake@v1
