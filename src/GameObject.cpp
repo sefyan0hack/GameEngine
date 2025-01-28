@@ -30,7 +30,7 @@ auto GameObject::SetUp(std::vector<glm::vec3> InsPos) -> void
         GLuint UBO;
         glGenBuffers(1, &UBO);
         glBindBuffer(GL_ARRAY_BUFFER, UBO);
-        glBufferData(GL_ARRAY_BUFFER, size * sizeof(glm::vec3), InstancePos.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(size * sizeof(glm::vec3)), InstancePos.data(), GL_STATIC_DRAW);
 
         glEnableVertexAttribArray(3);
         glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);

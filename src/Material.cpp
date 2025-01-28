@@ -68,11 +68,11 @@ auto Material::GetUniformLocation_Prv(const char *name) const -> GLuint
 {
     Use();
     // If not cached, query the location and cache it
-    GLuint location = glGetUniformLocation(id, name);
-    if (location == static_cast<GLuint>(-1)) {
+    GLint location = glGetUniformLocation(id, name);
+    if (location == static_cast<GLint>(-1)) {
         Log::Error("uniform {} doesn't exist!", std::string(name));
     }
-    return location;
+    return static_cast<GLuint>(location);
 }
 
 auto Material::checkProgramLinkStatus() const -> void
@@ -116,9 +116,9 @@ auto Material::DumpUniforms() -> void
         GLenum type;
 
         for(GLint i = 0; i < count; i++){
-            std::string Uniform_name(max_len, '\0');
-            glGetActiveUniform(id, i, max_len, &len, &count_out, &type, Uniform_name.data());
-            Uniform_name.resize(len);
+            std::string Uniform_name(static_cast<size_t>(max_len), '\0');
+            glGetActiveUniform(id, i, static_cast<GLsizei>(max_len), &len, &count_out, &type, Uniform_name.data());
+            Uniform_name.resize(static_cast<size_t>(len));
 
             Uniforms[Uniform_name] =  GetUniformLocation_Prv(Uniform_name.c_str());
 

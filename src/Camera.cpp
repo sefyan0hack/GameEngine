@@ -29,7 +29,7 @@ auto Camera::GetPerspective() ->  glm::mat4
 {
     auto height = m_Window->GetHeight();
 
-    auto aspect_ = height > 0 ? static_cast<float>(m_Window->GetWidth()) / height : 1.0f;
+    auto aspect_ = height > 0 ? static_cast<float>(m_Window->GetWidth()) / static_cast<float>(height) : 1.0f;
     auto fov_ = glm::radians(45.0f);
     auto near_ = 0.1f;
     auto far_ = 100.0f;
@@ -96,8 +96,8 @@ auto Camera::MoseMove(bool islocked) -> void
     constexpr float LIMIT_ANGLE = 45.0f;
     
     while (auto op = m_Window->mouse.ReadRawDelta()) {
-        float xoff = op->x * sensitivity;
-        float yoff = -op->y * sensitivity;
+        float xoff = static_cast<float>(op->x)* sensitivity;
+        float yoff = static_cast<float>(-op->y) * sensitivity;
         this->yaw += xoff;
         this->pitch += yoff;
     }
