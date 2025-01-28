@@ -94,7 +94,7 @@ auto CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lp
 	    	kbd.OnKeyReleased( static_cast<unsigned char>(Wpr) );
 	    	break;
 	    case WM_CHAR:
-	    	kbd.OnChar( static_cast<unsigned char>(Wpr) );
+	    	kbd.OnChar( static_cast<char>(Wpr) );
 	    	break;
 	    ///////////// END KEYBOARD MESSAGES /////////////
 

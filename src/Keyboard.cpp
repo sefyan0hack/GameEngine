@@ -46,7 +46,7 @@ auto Keyboard::ReadChar() noexcept -> std::optional<char>
 {
 	if( charbuffer.size() > 0u )
 	{
-		unsigned char charcode = charbuffer.front();
+		auto charcode = charbuffer.front();
 		charbuffer.pop();
 		return charcode;
 	}

@@ -20,5 +20,5 @@ public:
     ~Mesh();
 public:
     GLuint VAO, VBO, EBO;
-    GLuint vInSize;
+    GLsizei vInSize;
 };
