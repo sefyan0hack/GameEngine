@@ -1,12 +1,9 @@
 #include <core/Camera.hpp>
 #include <core/Window.hpp>
-#include <core/Material.hpp>
 #include <core/Log.hpp>
-#include <iostream>
-#include <cmath>
-#include <algorithm>
-#include <ctime>
 #include <core/gl.h>
+#include <algorithm>
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/fast_trigonometry.hpp>
 
@@ -27,10 +24,6 @@ auto Camera::GetView() -> glm::mat4
     return glm::lookAt(Position, Position + FrontDir, UpDir);
 }
 
-// auto Camera::UpdateView() -> void
-// {
-//     material->SetUniform("Camera", ViewMat);
-// }
 
 auto Camera::GetPerspective() ->  glm::mat4
 {
@@ -41,7 +34,6 @@ auto Camera::GetPerspective() ->  glm::mat4
     auto near_ = 0.1f;
     auto far_ = 100.0f;
     return glm::perspective(fov_, aspect_, near_, far_);
-    // material->SetUniform("Perspective", PerspectiveMat);
 }
 
 auto Camera::MoveFroward(float speed) -> void

@@ -1,7 +1,10 @@
 #include <core/GameObject.hpp>
 #include <core/Material.hpp>
 #include <core/Log.hpp>
-#include <string>
+
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 GameObject::GameObject(glm::vec3 position, Material &matt, const Mesh &mesh)
 : transform(Transform(position)), material(&matt), m_Mesh(mesh)
 {   

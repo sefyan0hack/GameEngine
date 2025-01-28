@@ -1,5 +1,4 @@
 #pragma once
-#include <core/Global_H.hpp>
 #include <core/OpenGL.hpp>
 #include <memory>
 #include <vector>

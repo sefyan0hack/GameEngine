@@ -1,7 +1,8 @@
 #include <core/Texture.hpp>
 #include <core/Log.hpp>
+#include <stb/stb_image.h>
 
-auto Texture::Loud(const std::string &name, const GLenum  Type) -> void
+auto Texture::Load(const std::string &name, const GLenum  Type) -> void
 {
     unsigned int texture;
     glGenTextures(1, &texture);

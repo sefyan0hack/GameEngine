@@ -1,8 +1,8 @@
 #include <core/gl.h>
-#include <string>
 #include <core/Log.hpp>
 #include <core/Shader.hpp>
 #include <glm/glm.hpp>
+#include <string>
 #include <fstream>
 #include <format>
 

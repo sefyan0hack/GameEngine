@@ -1,6 +1,4 @@
 #include <core/Mesh.hpp>
-#include <core/Material.hpp>
-#include <core/Global_H.hpp>
 #include <type_traits>
 
 Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vector<GLuint> &indices): VAO(0), VBO(0), EBO(0)

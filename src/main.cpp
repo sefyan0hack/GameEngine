@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <core/Global_H.hpp>
 #include <core/Mesh.hpp>
 #include <core/APP.hpp>
 #include <core/GameObject.hpp>
@@ -8,13 +7,9 @@
 #include <core/Texture.hpp>
 #include <core/Scene.hpp>
 #include <core/Renderer.hpp>
+#include <core/Shader.hpp>
 #include <core/Material.hpp>
 #include <core/Log.hpp>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#include <core/Utils.hpp>
 
 // #define USE_EBO
 
@@ -125,7 +120,7 @@ public: // init here
         }
 
         Texture brik ;
-        brik.Loud(TEXTURE(brik.png));
+        brik.Load(TEXTURE(brik.png));
         brik.BindByName(TEXTURE(brik.png));
         Matt.Use();
         Matt.SetUniform("ourTexture", 0);

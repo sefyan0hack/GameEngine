@@ -1,5 +1,5 @@
 #pragma once
-#include <core/Global_H.hpp>
+
 #include <unordered_map>
 #include <core/gl.h>
 class Shader

@@ -1,6 +1,5 @@
 #pragma once
 #include <core/gl.h>
-#include <core/OpenGL.hpp>
 #include <string>
 #include <unordered_map>
 #include <initializer_list>

@@ -1,7 +1,5 @@
 #pragma once
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <core/Mesh.hpp>
 #include <core/Transform.hpp>
 #include <core/Material.hpp>

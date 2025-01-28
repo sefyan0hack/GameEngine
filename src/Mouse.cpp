@@ -1,4 +1,5 @@
 #include <core/Mouse.hpp>
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 Mouse::Mouse() : x(0), y(0)
