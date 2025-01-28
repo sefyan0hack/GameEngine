@@ -67,10 +67,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
 # Find OpenGL package
 find_package(OpenGL REQUIRED)
 
-
 # Add include directorys
 include_directories("${CMAKE_SOURCE_DIR}/include")
-include_directories("${CMAKE_SOURCE_DIR}/3party")
+include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/3party")
 
 # Add glad source file
 add_library(glad STATIC 3party/glad/glad.c)
@@ -82,13 +81,13 @@ set_target_properties(stb_image PROPERTIES LINKER_LANGUAGE C)
 
 
 # remove some warning
-set(REMOVE_WAR "-Wno-cast-function-type")
-if (MSVC)
-add_compile_options(/W4)
-else()
-    add_compile_options(-Wall -Wextra -Wpedantic)
-    set(CMAKE_CXX_FLAGS_RELEASE "${REMOVE_WAR} -Ofast -march=native") ## Optimize
-    set(CMAKE_CXX_FLAGS_DEBUG   "${REMOVE_WAR} -O0 -pg -g3 -ggdb") ## Debug
-endif()
-add_executable(${PROJECT_NAME}  ${SOURCE})
+add_executable(${PROJECT_NAME} ${SOURCE})
 target_link_libraries(${PROJECT_NAME} glad stb_image  ${OPENGL_LIBRARIES})
+
+if (MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
+else()
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)
+    set(CMAKE_CXX_FLAGS_RELEASE " -Ofast -march=native") ## Optimize
+    set(CMAKE_CXX_FLAGS_DEBUG   " -pg -g3 -ggdb") ## Debug
+endif()
