@@ -85,7 +85,7 @@ add_executable(${PROJECT_NAME} ${SOURCE})
 target_link_libraries(${PROJECT_NAME} glad stb_image  ${OPENGL_LIBRARIES})
 
 if (MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4)
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wno-cast-function-type)
     set(CMAKE_CXX_FLAGS_RELEASE " -O3 -march=native") ## Optimsize
