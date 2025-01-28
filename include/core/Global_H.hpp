@@ -26,15 +26,6 @@
     #define NO_WARNING_BEGIN
     #define NO_WARNING_END
 #endif
-// random float
-#define Rand_float static_cast<float>(rand()) / static_cast<float>(RAND_MAX)
 
-//
-// remember macro 'SHADER' replace full path woth relative
-//C:/Users/sefyan/Documents/c_projects/GameEngine/
-
-// #define SHADER(str)  "C:/Users/sefyan/Documents/c_projects/GameEngine/Shasers/"#str
-// #define TEXTURE(str)  "C:/Users/sefyan/Documents/c_projects/GameEngine/res/"#str
-
-#define TEXTURE(str)  "../../res/"#str
-#define SHADER(str)  "../../res/Shaders/"#str
+#define TEXTURE(str)  PROJECT_SOURCE_DIR"/res/"#str
+#define SHADER(str)   PROJECT_SOURCE_DIR"/res/Shaders/"#str
