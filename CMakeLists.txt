@@ -87,7 +87,7 @@ target_link_libraries(${PROJECT_NAME} glad stb_image  ${OPENGL_LIBRARIES})
 if (MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
 else()
-    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)
-    set(CMAKE_CXX_FLAGS_RELEASE " -Ofast -march=native") ## Optimize
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wno-cast-function-type)
+    set(CMAKE_CXX_FLAGS_RELEASE " -O3 -march=native") ## Optimsize
     set(CMAKE_CXX_FLAGS_DEBUG   " -pg -g3 -ggdb") ## Debug
 endif()
