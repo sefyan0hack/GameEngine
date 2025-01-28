@@ -91,3 +91,8 @@ else()
     set(CMAKE_CXX_FLAGS_RELEASE " -O3 -march=native") ## Optimsize
     set(CMAKE_CXX_FLAGS_DEBUG   " -pg -g3 -ggdb") ## Debug
 endif()
+
+target_compile_definitions(${PROJECT_NAME}
+    PRIVATE
+        PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
+)
