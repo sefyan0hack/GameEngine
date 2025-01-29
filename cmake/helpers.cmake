@@ -56,13 +56,22 @@ function(apply_compile_options)
                 # Release flags
                 "$<$<CONFIG:Release>:/O2>"
                 "$<$<CONFIG:Release>:/DNDEBUG>"
+                "$<$<CONFIG:Release>:/EHsc>"
+                "$<$<CONFIG:Release>:/DEBUG>"
+                "$<$<CONFIG:Release>:/INCREMENTAL:NO>"
+                "$<$<CONFIG:Release>:/DYNAMICBASE>"
+                "$<$<CONFIG:Release>:/NXCOMPAT>"
+                "$<$<CONFIG:Release>:/fsanitize=address>"
             )
             
         else()
             target_compile_options(${target} PRIVATE
                 # Debug flags
                 "$<$<CONFIG:Debug>:-g>"
+                "$<$<CONFIG:Debug>:-ggdb>"
                 "$<$<CONFIG:Debug>:-O0>"
+                "$<$<CONFIG:Debug>:-fstack-protector-strong>"
+                "$<$<CONFIG:Debug>:-funwind-tables>"
 
                 # Release flags
                 "$<$<CONFIG:Release>:-O3>"
