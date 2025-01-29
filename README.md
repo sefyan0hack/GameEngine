@@ -6,6 +6,7 @@ Welcome to the **GameEngine** repository! This engine is designed to provide a s
 ## Features
 
 - **platform compatibility** (Windows)
+- **Win32 API**
 - **Modular architecture** for easy extension and customization
 - **Input handling** for keyboard, mouse
   
@@ -15,23 +16,22 @@ Welcome to the **GameEngine** repository! This engine is designed to provide a s
 
 To build and use GameEngine, you’ll need the following:
 
+- **C++ compiler** (e.g., GCC, Clang, MSVC)
 - **C++23** or later
 - **CMake** (version 3.25 or later)
-- **C++ compiler** (e.g., GCC, Clang, MSVC)
+- **Make** ( or ninja)
 - **OpenGL** (comes with GPU Drivers in all the time)
-- **GLM** for mathematical operations (all deps  in same repo no need for clone or fetch)
+- **GLM** for mathematical operations (all deps in same repo no need for clone or fetch)
 
-### Get The Priject 
+### Get The Project 
 
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/sefyan0hack/GameEngine.git
-   cd GameEngine
+```bash
+git clone https://github.com/sefyan0hack/GameEngine.git
+cd GameEngine
    
-   mkdir build
-   cd build
+mkdir build
+cd build
 
-   cmake ..
-   cmake --build . --config Release
+cmake ..
+cmake --build . --config Release
 
