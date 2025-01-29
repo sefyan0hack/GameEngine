@@ -54,9 +54,9 @@ function(apply_compile_options)
                 "$<$<CONFIG:Debug>:/Od>"
                 "$<$<CONFIG:Debug>:/EHsc>"
                 "$<$<CONFIG:Debug>:/DEBUG>"
-                "$<$<CONFIG:Debug>:/INCREMENTAL:NO>"
                 "$<$<CONFIG:Debug>:/DYNAMICBASE>"
                 "$<$<CONFIG:Debug>:/fsanitize=address>"
+                "$<$<CONFIG:Debug>:/analyze>"
 
                 # Release flags
                 "$<$<CONFIG:Release>:/O2>"
