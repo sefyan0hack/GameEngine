@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <stacktrace>
 #include <core/Mesh.hpp>
 #include <core/APP.hpp>
 #include <core/GameObject.hpp>
@@ -103,7 +104,8 @@ private:
     Renderer rndr;
 public: // init here
     Game()
-    : vert(SHADER(Traingl)".vert", GL_VERTEX_SHADER), frag(SHADER(Traingl)".frag", GL_FRAGMENT_SHADER)
+    : vert(SHADER(Traingl)".vert", GL_VERTEX_SHADER)
+    , frag(SHADER(Traingl)".frag", GL_FRAGMENT_SHADER)
     , Matt({vert, frag}), Cam(m_Window), cubeMesh({cubeMeshVert, indices})
     {
         constexpr int Grids = 300;
