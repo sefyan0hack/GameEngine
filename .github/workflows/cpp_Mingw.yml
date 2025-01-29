@@ -1,4 +1,4 @@
-name: Windows MinGW CMake Build
+name: MSYS2 C++ Build
 
 on:
   push:
@@ -13,45 +13,22 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Install LLVM MinGW
-        run: |
-          # Download and install LLVM MinGW
-          curl -L -o llvm-mingw.zip -H "User-Agent: Mozilla/5.0" https://github.com/mstorsjo/llvm-mingw/releases/download/20250114/llvm-mingw-20250114-msvcrt-x86_64.zip
-          7z x llvm-mingw.zip -ollvm-mingw
-          echo "$PWD/llvm-mingw/bin" >> $GITHUB_PATH
+    - name: Set up MSYS2
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+        install: >-
+          base-devel
+          mingw-w64-x86_64-toolchain
+          mingw-w64-x86_64-cmake
+          mingw-w64-x86_64-ninja
+        update: true
 
-      - name: Install CMake 3.25
-        uses: milliewalky/setup-cmake@v1
-        with:
-          cmake-version: '3.25.0'
-
-      - name: Install Ninja
-        uses: seanmiddleditch/gha-setup-ninja@v3
-
-      - name: Verify Tools
-        run: |
-          # Check that LLVM MinGW tools are available
-          $env:PATH = "$PWD/llvm-mingw/bin;$env:PATH"
-          g++ --version
-          cmake --version
-          ninja --version
-
-      - name: Configure CMake
-        run: |
-          # Set up CMake to use LLVM MinGW
-          $llvm_mingw_path = "${PWD}\llvm-mingw\bin"
-          cmake -B build -G "Ninja" -DCMAKE_CXX_STANDARD=20 -DCMAKE_BUILD_TYPE=Release `
-            -DCMAKE_CXX_COMPILER="${llvm_mingw_path}\clang++.exe" `
-            -DCMAKE_C_COMPILER="${llvm_mingw_path}\clang.exe"
-
-      - name: Build Project
-        run: cmake --build build
-
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: my_program
-          path: build/
+    - name: Configure and Build
+      shell: msys2 {0}
+      run: |
+        cmake -S . -B build -G "Ninja"
+        cmake --build build
