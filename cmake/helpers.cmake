@@ -56,7 +56,6 @@ function(apply_compile_options)
                 "$<$<CONFIG:Debug>:/DEBUG>"
                 "$<$<CONFIG:Debug>:/DYNAMICBASE>"
                 "$<$<CONFIG:Debug>:/fsanitize=address>"
-                "$<$<CONFIG:Debug>:/analyze>"
 
                 # Release flags
                 "$<$<CONFIG:Release>:/O2>"

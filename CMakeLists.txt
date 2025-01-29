@@ -65,7 +65,7 @@ set_target_properties(stb_image PROPERTIES LINKER_LANGUAGE C)
 apply_compile_options(TARGETS ${PROJECT_NAME} glad stb_image glm::glm)
 
 if(MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /W4)
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4 "$<$<CONFIG:Debug>:/analyze>")
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wno-cast-function-type)
 endif()
