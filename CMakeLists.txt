@@ -40,10 +40,12 @@ set(SOURCE
 find_package(OpenGL REQUIRED)
 
 # Add include directorys
-include_directories("${CMAKE_SOURCE_DIR}/include")
 include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/3party")
 
+
 add_executable(${PROJECT_NAME} ${SOURCE})
+
+target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/include" )
 
 if(MSVC)
     target_link_libraries(${PROJECT_NAME} glad stb_image glm::glm ${OPENGL_LIBRARIES} )
