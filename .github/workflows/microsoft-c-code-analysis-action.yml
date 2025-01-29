@@ -2,10 +2,16 @@ env:
   # Path to the CMake build directory.
   build: '${{ github.workspace }}/build'
   config: 'Debug'
+  GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+
 
 on:
   push:
   pull_request:
+
+permissions:
+  contents: read
+  security-events: write
 
 jobs:
   analyze:
