@@ -4,6 +4,14 @@ project(Engine LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 
+include(${CMAKE_SOURCE_DIR}/cmake/helpers.cmake)
+
+# Include get_cpm.cmake
+include(${CMAKE_SOURCE_DIR}/cmake/get_cpm.cmake)
+
+# deps :
+CPMAddPackage("gh:g-truc/glm#1.0.1") # add glm 1.0.1
+
 
 # Print compiler information
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID} (${CMAKE_CXX_COMPILER_VERSION})")
@@ -44,9 +52,8 @@ add_library(stb_image STATIC 3party/stb/stb_image.c)
 set_target_properties(stb_image PROPERTIES LINKER_LANGUAGE C)
 
 
-# remove some warning
 add_executable(${PROJECT_NAME} ${SOURCE})
-target_link_libraries(${PROJECT_NAME} glad stb_image  ${OPENGL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} glad stb_image glm::glm ${OPENGL_LIBRARIES})
 
 if (MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE
@@ -78,46 +85,14 @@ else()
 
 endif()
 
-function(print_target_compile_options target)
-    foreach(config IN ITEMS ${CMAKE_BUILD_TYPE})
-        get_target_property(flags ${target} COMPILE_OPTIONS)
-        if(flags)
-            string(REPLACE ";" " " flags_with_spaces "${flags}")
-            message(STATUS "  + ${target} (${config}): ${flags_with_spaces}\n")
-        else()
-            message(STATUS "  + ${target} (${config}): No flags set\n")
-        endif()
-    endforeach()
-endfunction()
+
 
 print_target_compile_options(${PROJECT_NAME})
 print_target_compile_options(glad)
 print_target_compile_options(stb_image)
+print_target_compile_options(glm::glm)
 
 target_compile_definitions(${PROJECT_NAME}
     PRIVATE
         PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
 )
-
-include(ProcessorCount)
-ProcessorCount(NUMBER_OF_PROCESSORS)
-if(NOT NUMBER_OF_PROCESSORS EQUAL 0)
-	set(MAKEFLAGS "-j${NUMBER_OF_PROCESSORS}")
-	set(ENV{MAKEFLAGS} "${MAKEFLAGS}")
-	MESSAGE(STATUS "Set MAKEFLAGS for MinGW Makefiles to ${MAKEFLAGS}")
-endif()
-
-
-MARK_AS_ADVANCED(MULTITHREADED_BUILD)
-SET(MULTITHREADED_BUILD ON CACHE BOOL "Parallel build with as many threads as possible!")
-if(MULTITHREADED_BUILD)
-    if(${CMAKE_GENERATOR} MATCHES "MinGW Makefiles")
-        # Use MAKEFLAGS to specify the number of jobs for parallel build
-        set(MAKEFLAGS "-j${NUMBER_OF_PROCESSORS}")
-        set(ENV{MAKEFLAGS} "${MAKEFLAGS}")
-        MESSAGE(STATUS "Set MAKEFLAGS for MinGW Makefiles to ${MAKEFLAGS}")
-    elseif(MSVC)
-        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
-        MESSAGE(STATUS "Added parallel build arguments to CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
-    endif()
-endif()
