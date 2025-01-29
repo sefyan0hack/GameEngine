@@ -11,7 +11,8 @@
 namespace {
 [[maybe_unused]] bool is_system_symbol(const std::string_view& symbol) {
     const std::string_view system_libraries[] = {
-        "KERNEL32", "ntdll", "msvcrt", "ucrtbase", "vcruntime", "register_frame_ctor"
+        "KERNEL32", "ntdll", "msvcrt", "ucrtbase", "vcruntime",
+        "invoke_main", "__scrt_common_main", "mainCRTStartup"
     };
 
     for (const auto& lib : system_libraries) {
@@ -53,23 +54,30 @@ struct ERRF
     *out << std::format("[{}] {} : {}\n--> {}:{}\n", lvl_str, formatedTime(), formatted_msg, loc.file_name(), loc.line()) << "\n";
     
     if constexpr (lvl == Log_LvL::ERR){
-
       const auto trace = std::stacktrace::current(1);
-      auto frame_size = trace.size();
+      short unsigned int frame_size = 0;
+
+      // filter system function on call stack
+      for (const auto& entry : trace)
+      {
+        #ifdef _MSC_VER
+        if( is_system_symbol(entry.description()) || entry.source_line() == 0) break;
+        #else
+        if( entry.source_line() == 0) break;
+        #endif
+
+        frame_size++;
+      }
 
       *out << std::format("Stack trace ({} frames):\n", frame_size);
-      for (const auto& entry : trace) {
 
-        const auto desc = entry.description();
-        const auto file = entry.source_file();
-        const auto line = entry.source_line();
+      for (short unsigned int i = 0;  i < frame_size; i++)
+      {      
+        const auto desc = trace[i].description();
+        const auto file = trace[i].source_file();
+        const auto line = trace[i].source_line();
 
-        // if(is_system_symbol(desc) || line == 0){
-        //   frame_size--;
-        //   continue;
-        // }
-
-        *out << std::format("  #{:<2} {}:{:<2} :: {} \n", frame_size--, file, line, desc);
+        *out << std::format("  #{:<2} {}:{:<2} :: {} \n", frame_size - i, file, line, desc);
       }
 
       exit(EXIT_FAILURE);
