@@ -56,7 +56,6 @@ function(apply_compile_options)
                 "$<$<CONFIG:Debug>:/DEBUG>"
                 "$<$<CONFIG:Debug>:/INCREMENTAL:NO>"
                 "$<$<CONFIG:Debug>:/DYNAMICBASE>"
-                "$<$<CONFIG:Debug>:/NXCOMPAT>"
                 "$<$<CONFIG:Debug>:/fsanitize=address>"
 
                 # Release flags
