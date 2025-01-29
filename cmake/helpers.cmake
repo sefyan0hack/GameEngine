@@ -52,16 +52,16 @@ function(apply_compile_options)
                 # Debug flags
                 "$<$<CONFIG:Debug>:/Zi>"
                 "$<$<CONFIG:Debug>:/Od>"
+                "$<$<CONFIG:Debug>:/EHsc>"
+                "$<$<CONFIG:Debug>:/DEBUG>"
+                "$<$<CONFIG:Debug>:/INCREMENTAL:NO>"
+                "$<$<CONFIG:Debug>:/DYNAMICBASE>"
+                "$<$<CONFIG:Debug>:/NXCOMPAT>"
+                "$<$<CONFIG:Debug>:/fsanitize=address>"
 
                 # Release flags
                 "$<$<CONFIG:Release>:/O2>"
                 "$<$<CONFIG:Release>:/DNDEBUG>"
-                "$<$<CONFIG:Release>:/EHsc>"
-                "$<$<CONFIG:Release>:/DEBUG>"
-                "$<$<CONFIG:Release>:/INCREMENTAL:NO>"
-                "$<$<CONFIG:Release>:/DYNAMICBASE>"
-                "$<$<CONFIG:Release>:/NXCOMPAT>"
-                "$<$<CONFIG:Release>:/fsanitize=address>"
             )
             
         else()
