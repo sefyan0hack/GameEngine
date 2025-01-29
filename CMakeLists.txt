@@ -4,15 +4,9 @@ project(Engine LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 
-# if you have problem with not fouding compiler put path/to/compiler.exe
-# Specify the compiler
-# SET(CMAKE_SYSTEM_NAME Windows)
-# set(CMAKE_C_COMPILER C:/mingw-w64/mingw64/bin/gcc.exe)
-# set(CMAKE_CXX_COMPILER C:/mingw-w64/mingw64/bin/g++.exe)
 
 # Print compiler information
-message(STATUS "Compiler: ${CMAKE_CXX_COMPILER}")
-message(STATUS "Compiler Version: ${CMAKE_CXX_COMPILER_VERSION}")
+message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID} (${CMAKE_CXX_COMPILER_VERSION})")
 
 
 set(CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}" "${CMAKE_MODULE_PATH}")
@@ -36,29 +30,6 @@ set(SOURCE
     src/Scene.cpp
     src/Material.cpp
 	)
-
-include(ProcessorCount)
-ProcessorCount(NUMBER_OF_PROCESSORS)
-if(NOT NUMBER_OF_PROCESSORS EQUAL 0)
-	set(MAKEFLAGS "-j${NUMBER_OF_PROCESSORS}")
-	set(ENV{MAKEFLAGS} "${MAKEFLAGS}")
-	MESSAGE(STATUS "Set MAKEFLAGS for MinGW Makefiles to ${MAKEFLAGS}")
-endif()
-
-
-MARK_AS_ADVANCED(MULTITHREADED_BUILD)
-SET(MULTITHREADED_BUILD ON CACHE BOOL "Parallel build with as many threads as possible!")
-if(MULTITHREADED_BUILD)
-    if(${CMAKE_GENERATOR} MATCHES "MinGW Makefiles")
-        # Use MAKEFLAGS to specify the number of jobs for parallel build
-        set(MAKEFLAGS "-j${NUMBER_OF_PROCESSORS}")
-        set(ENV{MAKEFLAGS} "${MAKEFLAGS}")
-        MESSAGE(STATUS "Set MAKEFLAGS for MinGW Makefiles to ${MAKEFLAGS}")
-    elseif(MSVC)
-        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
-        MESSAGE(STATUS "Added parallel build arguments to CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
-    endif()
-endif()
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
@@ -85,14 +56,75 @@ add_executable(${PROJECT_NAME} ${SOURCE})
 target_link_libraries(${PROJECT_NAME} glad stb_image  ${OPENGL_LIBRARIES})
 
 if (MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /W4)
+    target_compile_options(${PROJECT_NAME} PRIVATE
+        # Warnings
+        /W4
+
+        # Debug flags
+        "$<$<CONFIG:Debug>:/Zi>"
+        "$<$<CONFIG:Debug>:/Od>"
+
+        # Release flags
+        "$<$<CONFIG:Release>:/O2>"
+        "$<$<CONFIG:Release>:/DNDEBUG>"
+    )
 else()
-    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wno-cast-function-type)
-    set(CMAKE_CXX_FLAGS_RELEASE " -O3 -march=native") ## Optimsize
-    set(CMAKE_CXX_FLAGS_DEBUG   " -pg -g3 -ggdb") ## Debug
+    target_compile_options(${PROJECT_NAME} PRIVATE
+        # Warnings
+        -Wall -Wextra -Wpedantic -Wconversion -Wno-cast-function-type
+
+        # Debug flags
+        "$<$<CONFIG:Debug>:-g>"
+        "$<$<CONFIG:Debug>:-O0>"
+
+        # Release flags
+        "$<$<CONFIG:Release>:-O3>"
+        "$<$<CONFIG:Release>:-DNDEBUG>"
+        "$<$<CONFIG:Release>:-march=native>"
+    )
+
 endif()
+
+function(print_target_compile_options target)
+    foreach(config IN ITEMS ${CMAKE_BUILD_TYPE})
+        get_target_property(flags ${target} COMPILE_OPTIONS)
+        if(flags)
+            string(REPLACE ";" " " flags_with_spaces "${flags}")
+            message(STATUS "  + ${target} (${config}): ${flags_with_spaces}\n")
+        else()
+            message(STATUS "  + ${target} (${config}): No flags set\n")
+        endif()
+    endforeach()
+endfunction()
+
+print_target_compile_options(${PROJECT_NAME})
+print_target_compile_options(glad)
+print_target_compile_options(stb_image)
 
 target_compile_definitions(${PROJECT_NAME}
     PRIVATE
         PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
 )
+
+include(ProcessorCount)
+ProcessorCount(NUMBER_OF_PROCESSORS)
+if(NOT NUMBER_OF_PROCESSORS EQUAL 0)
+	set(MAKEFLAGS "-j${NUMBER_OF_PROCESSORS}")
+	set(ENV{MAKEFLAGS} "${MAKEFLAGS}")
+	MESSAGE(STATUS "Set MAKEFLAGS for MinGW Makefiles to ${MAKEFLAGS}")
+endif()
+
+
+MARK_AS_ADVANCED(MULTITHREADED_BUILD)
+SET(MULTITHREADED_BUILD ON CACHE BOOL "Parallel build with as many threads as possible!")
+if(MULTITHREADED_BUILD)
+    if(${CMAKE_GENERATOR} MATCHES "MinGW Makefiles")
+        # Use MAKEFLAGS to specify the number of jobs for parallel build
+        set(MAKEFLAGS "-j${NUMBER_OF_PROCESSORS}")
+        set(ENV{MAKEFLAGS} "${MAKEFLAGS}")
+        MESSAGE(STATUS "Set MAKEFLAGS for MinGW Makefiles to ${MAKEFLAGS}")
+    elseif(MSVC)
+        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+        MESSAGE(STATUS "Added parallel build arguments to CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+    endif()
+endif()
