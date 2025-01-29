@@ -8,10 +8,6 @@ set(CMAKE_CXX_STANDARD 23)
 # Print compiler information
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID} (${CMAKE_CXX_COMPILER_VERSION})")
 
-
-set(CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}" "${CMAKE_MODULE_PATH}")
-set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}" "${CMAKE_PREFIX_PATH}")
-
 set(SOURCE 
     src/main.cpp
     src/Keyboard.cpp
