@@ -32,3 +32,43 @@ if(MULTITHREADED_BUILD)
         MESSAGE(STATUS "Added parallel build arguments to CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
     endif()
 endif()
+
+function(apply_compile_options)
+    set(options)
+    set(oneValueArgs)
+    set(multiValueArgs TARGETS)
+    cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    foreach(target IN LISTS ARG_TARGETS)
+        # check if the target is an ALIAS
+        get_target_property(original_target ${target} ALIASED_TARGET)
+            
+        if (original_target)
+            message(STATUS "Applying compile options to alias target '${target}' (original: '${original_target}')")
+            set(target ${original_target})
+        endif()
+        
+        if(MSVC)
+            target_compile_options(${target} PRIVATE
+                # Debug flags
+                "$<$<CONFIG:Debug>:/Zi>"
+                "$<$<CONFIG:Debug>:/Od>"
+
+                # Release flags
+                "$<$<CONFIG:Release>:/O2>"
+                "$<$<CONFIG:Release>:/DNDEBUG>"
+            )
+            
+        else()
+            target_compile_options(${target} PRIVATE
+                # Debug flags
+                "$<$<CONFIG:Debug>:-g>"
+                "$<$<CONFIG:Debug>:-O0>"
+
+                # Release flags
+                "$<$<CONFIG:Release>:-O3>"
+                "$<$<CONFIG:Release>:-DNDEBUG>"
+                "$<$<CONFIG:Release>:-march=native>"
+            )
+        endif()
+    endforeach()
+endfunction()

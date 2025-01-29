@@ -55,37 +55,14 @@ set_target_properties(stb_image PROPERTIES LINKER_LANGUAGE C)
 add_executable(${PROJECT_NAME} ${SOURCE})
 target_link_libraries(${PROJECT_NAME} glad stb_image glm::glm ${OPENGL_LIBRARIES})
 
-if (MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE
-        # Warnings
-        /W4
+# flags
+apply_compile_options(TARGETS ${PROJECT_NAME} glad stb_image glm::glm)
 
-        # Debug flags
-        "$<$<CONFIG:Debug>:/Zi>"
-        "$<$<CONFIG:Debug>:/Od>"
-
-        # Release flags
-        "$<$<CONFIG:Release>:/O2>"
-        "$<$<CONFIG:Release>:/DNDEBUG>"
-    )
+if(MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4)
 else()
-    target_compile_options(${PROJECT_NAME} PRIVATE
-        # Warnings
-        -Wall -Wextra -Wpedantic -Wconversion -Wno-cast-function-type
-
-        # Debug flags
-        "$<$<CONFIG:Debug>:-g>"
-        "$<$<CONFIG:Debug>:-O0>"
-
-        # Release flags
-        "$<$<CONFIG:Release>:-O3>"
-        "$<$<CONFIG:Release>:-DNDEBUG>"
-        "$<$<CONFIG:Release>:-march=native>"
-    )
-
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wno-cast-function-type)
 endif()
-
-
 
 print_target_compile_options(${PROJECT_NAME})
 print_target_compile_options(glad)
