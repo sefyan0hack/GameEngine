@@ -43,6 +43,16 @@ find_package(OpenGL REQUIRED)
 include_directories("${CMAKE_SOURCE_DIR}/include")
 include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/3party")
 
+add_executable(${PROJECT_NAME} ${SOURCE})
+
+if(MSVC)
+    target_link_libraries(${PROJECT_NAME} glad stb_image glm::glm ${OPENGL_LIBRARIES} )
+else()
+    target_link_libraries(${PROJECT_NAME} glad stb_image glm::glm ${OPENGL_LIBRARIES} stdc++exp )
+
+endif()
+
+
 # Add glad source file
 add_library(glad STATIC 3party/glad/glad.c)
 set_target_properties(glad PROPERTIES LINKER_LANGUAGE C)
@@ -50,10 +60,6 @@ set_target_properties(glad PROPERTIES LINKER_LANGUAGE C)
 # Add stb image source file
 add_library(stb_image STATIC 3party/stb/stb_image.c)
 set_target_properties(stb_image PROPERTIES LINKER_LANGUAGE C)
-
-
-add_executable(${PROJECT_NAME} ${SOURCE})
-target_link_libraries(${PROJECT_NAME} glad stb_image glm::glm ${OPENGL_LIBRARIES})
 
 # flags
 apply_compile_options(TARGETS ${PROJECT_NAME} glad stb_image glm::glm)
