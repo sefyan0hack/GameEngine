@@ -21,9 +21,7 @@ auto OpenGL::init_opengl_extensions() -> void
         NULL,
         0);
 
-    if (!dummy_window) {
-        Log::Error("Failed to create dummy OpenGL window.");
-    }
+    if (dummy_window != nullptr) {
 
     HDC dummy_dc = GetDC(dummy_window);
 
@@ -71,6 +69,9 @@ auto OpenGL::init_opengl_extensions() -> void
     ||  DestroyWindow(dummy_window) == false){
         Log::Error("Destruction of init_opengl_extention failed");
     }
+    }else {
+        Log::Error("Failed to create dummy OpenGL window. {}", GetLastError());
+    }
 }
 
 OpenGL::OpenGL(HWND window)
@@ -110,22 +111,22 @@ auto OpenGL::init_opengl() -> void
         0
     };
 
-    int pixel_format;
-    UINT num_formats;
+    int pixel_format{};
+    UINT num_formats{};
     wglChoosePixelFormatARB(m_MainHDC, pixel_format_attribs, 0, 1, &pixel_format, &num_formats);
 
-    if (!num_formats) {
-        Log::Error("Failed to set the OpenGL 3.3 pixel format.");
-    }
+    if (!num_formats || !m_MainHDC) {
+        Log::Error("Failed to set the OpenGL 3.3 pixel format. {}", GetLastError());
+    }else{
+        if (GetPixelFormat(m_MainHDC) != pixel_format) {
+            PIXELFORMATDESCRIPTOR pfd;
+            if (!DescribePixelFormat(m_MainHDC, pixel_format, sizeof(pfd), &pfd)) {
+                Log::Error("DescribePixelFormat failed.");
+            }
 
-    if (GetPixelFormat(m_MainHDC) != pixel_format) {
-        PIXELFORMATDESCRIPTOR pfd;
-        if (!DescribePixelFormat(m_MainHDC, pixel_format, sizeof(pfd), &pfd)) {
-            Log::Error("DescribePixelFormat failed.");
-        }
-
-        if (!SetPixelFormat(m_MainHDC, pixel_format, &pfd)) {
-            Log::Error("Failed to set the OpenGL 3.3 pixel format.");
+            if (!SetPixelFormat(m_MainHDC, pixel_format, &pfd)) {
+                Log::Error("Failed to set the OpenGL 3.3 pixel format.");
+            }
         }
     }
    

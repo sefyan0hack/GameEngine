@@ -170,7 +170,7 @@ auto CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lp
 	    ///////////////// RAW MOUSE MESSAGES /////////////////
 	    case WM_INPUT:
 	    {
-	    	UINT size;
+	    	UINT size{};
 	    	// first get the size of the input data
 	    	if( GetRawInputData( reinterpret_cast<HRAWINPUT>(Lpr), RID_INPUT, nullptr, &size, sizeof( RAWINPUTHEADER ) ) == (UINT)-1)
 	    	{
