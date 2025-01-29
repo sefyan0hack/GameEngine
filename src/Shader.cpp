@@ -22,13 +22,13 @@ auto Shader::LoadSource(const char* name) -> void
 
     std::ifstream shader_file(name);
     if( not shader_file.is_open()){
-        Log::Error("Open {} Failed. code: {}", std::string{name}, int{errno});
+        Log::Error("Open {} Failed. code: {}", name, errno);
     }
 
     std::string buffer = std::format("#version {}{}0 core\n", GLVersion.major, GLVersion.minor);
     buffer.append(std::istreambuf_iterator<char>(shader_file), std::istreambuf_iterator<char>());
 
-    Log::Info("[+] Loding {}", std::string{name} );
+    Log::Info("[+] Loding {}", name);
 
     const char* ShaderSource = buffer.c_str();
     glShaderSource(id, 1, &ShaderSource, NULL);

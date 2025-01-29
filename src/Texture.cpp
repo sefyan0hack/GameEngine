@@ -34,7 +34,7 @@ auto Texture::Load(const std::string &name, const GLenum  Type) -> void
 auto Texture::GetByName(const std::string &name) const -> GLuint
 {
     if(Textures[name] == static_cast<GLuint>(0)){
-        Log::Error(" {} Texture not exist in the map", std::string{name});
+        Log::Error(" {} Texture not exist in the map", name);
     }
 
     return Textures[name];

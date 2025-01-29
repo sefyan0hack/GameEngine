@@ -152,8 +152,6 @@ auto OpenGL::init_opengl() -> void
     }
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-    // glEnable(GL_CW);
-    // glEnable(GL_BACK);
     glEnable(GL_LINE_SMOOTH);
 
     GLint max_texture_unit = 0;
