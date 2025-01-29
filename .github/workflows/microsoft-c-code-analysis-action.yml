@@ -3,6 +3,10 @@ env:
   build: '${{ github.workspace }}/build'
   config: 'Debug'
 
+on:
+  push:
+  pull_request:
+
 jobs:
   analyze:
     name: Analyze
