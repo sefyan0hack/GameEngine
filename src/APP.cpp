@@ -1,7 +1,13 @@
 #include <core/APP.hpp>
 #include <core/Window.hpp>
 
-APP::APP(): m_Window(1180, 640, "Main"), fps(LARGE_INTEGER{.QuadPart = 60}) {}
+APP::APP()
+: m_Window(1180, 640, "Main")
+, start_count({})
+, end_count({})
+, counts({})
+, freq({})
+, fps(LARGE_INTEGER{.QuadPart = 60}) {}
 
 auto APP::Run() -> void
 {
