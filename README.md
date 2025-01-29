@@ -16,7 +16,7 @@ Welcome to the **GameEngine** repository! This engine is designed to provide a s
 
 To build and use GameEngine, you’ll need the following:
 
-- **C++ compiler** (e.g., GCC, Clang, MSVC)
+- **C++ compiler** (e.g., GCC(14), Clang, MSVC(19))
 - **C++23** or later
 - **CMake** (version 3.25 or later)
 - **Make** ( or ninja)
