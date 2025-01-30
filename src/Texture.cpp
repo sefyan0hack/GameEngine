@@ -1,6 +1,6 @@
 #include <core/Texture.hpp>
 #include <core/Log.hpp>
-#include <stb/stb_image.h>
+#include <stb_image.h>
 
 auto Texture::Load(const std::string &name, const GLenum  Type) -> void
 {
