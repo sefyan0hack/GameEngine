@@ -7,9 +7,15 @@
 #include <string_view>
 #include <cstdlib>
 #include <stacktrace>
+#include <sstream>
+#include <optional>
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 
 namespace {
-[[maybe_unused]] bool is_system_symbol(const std::string_view& symbol) {
+
+[[maybe_unused]] auto is_system_symbol(const std::string_view& symbol) -> bool{
     const std::string_view system_libraries[] = {
         "KERNEL32", "ntdll", "msvcrt", "ucrtbase", "vcruntime",
         "invoke_main", "__scrt_common_main", "mainCRTStartup"
@@ -21,6 +27,41 @@ namespace {
         }
     }
     return false;
+}
+
+auto stack_trace_formated() -> std::optional<std::string>
+{
+  const auto trace = std::stacktrace::current(2);
+  auto msg = std::stringstream{};
+  short unsigned int frame_size = 0;
+
+  // filter system function on call stack
+  for (const auto& entry : trace)
+  {
+    #ifdef _MSC_VER
+    if( is_system_symbol(entry.description()) || entry.source_line() == 0) break;
+    #else
+    if( entry.source_line() == 0) break;
+    #endif
+    frame_size++;
+  }
+
+  if(frame_size != 0)
+  {
+    msg << std::format("Stack trace ({} frames):\n", frame_size);
+
+    for (short unsigned int i = 0;  i < frame_size; i++)
+    {      
+      const auto desc = trace[i].description();
+      const auto file = trace[i].source_file();
+      const auto line = trace[i].source_line();
+
+      msg << std::format("  #{:<2} {}:{:<2} :: {} \n", frame_size - i, file, line, desc);
+    }
+    return msg.str();
+  }else{
+    return std::nullopt;
+  }
 }
 
 enum class Log_LvL {
@@ -50,38 +91,21 @@ struct ERRF
   {
     auto formatted_msg = std::format(fmt, std::forward<Ts>(ts)...);
     auto lvl_str = levelToString(lvl);
+    auto msg = std::stringstream{};
 
-    *out << std::format("[{}] {} : {}\n--> {}:{}\n", lvl_str, formatedTime(), formatted_msg, loc.file_name(), loc.line()) << "\n";
+    msg << std::format("[{}] {} : {}\n--> {}:{}\n", lvl_str, formatedTime(), formatted_msg, loc.file_name(), loc.line()) << "\n";
     
     if constexpr (lvl == Log_LvL::ERR){
-      const auto trace = std::stacktrace::current(1);
-      short unsigned int frame_size = 0;
-
-      // filter system function on call stack
-      for (const auto& entry : trace)
-      {
-        #ifdef _MSC_VER
-        if( is_system_symbol(entry.description()) || entry.source_line() == 0) break;
-        #else
-        if( entry.source_line() == 0) break;
-        #endif
-
-        frame_size++;
+      const auto op = stack_trace_formated();
+      if(op){
+        msg << op.value();
+        MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONWARNING );
       }
 
-      *out << std::format("Stack trace ({} frames):\n", frame_size);
-
-      for (short unsigned int i = 0;  i < frame_size; i++)
-      {      
-        const auto desc = trace[i].description();
-        const auto file = trace[i].source_file();
-        const auto line = trace[i].source_line();
-
-        *out << std::format("  #{:<2} {}:{:<2} :: {} \n", frame_size - i, file, line, desc);
-      }
-
+      *out << msg.rdbuf();
       exit(EXIT_FAILURE);
     }
+
   }
 };
 
