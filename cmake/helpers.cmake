@@ -49,21 +49,28 @@ function(apply_compile_options)
         
         if(MSVC)
             target_compile_options(${target} PRIVATE
+                /W4
+
                 # Debug flags
                 "$<$<CONFIG:Debug>:/Zi>"
                 "$<$<CONFIG:Debug>:/Od>"
+                "$<$<CONFIG:Debug>:/RTC1>"
+                "$<$<CONFIG:Debug>:/MDd>"
                 "$<$<CONFIG:Debug>:/EHsc>"
                 "$<$<CONFIG:Debug>:/DEBUG>"
                 "$<$<CONFIG:Debug>:/DYNAMICBASE>"
-                "$<$<CONFIG:Debug>:/fsanitize=address>"
+                "$<$<CONFIG:Debug>:/analyze>"
 
                 # Release flags
                 "$<$<CONFIG:Release>:/O2>"
+                "$<$<CONFIG:Release>:/MD>"
                 "$<$<CONFIG:Release>:/DNDEBUG>"
             )
             
         else()
             target_compile_options(${target} PRIVATE
+                -Wall -Wextra -Wpedantic -Wconversion -Wno-cast-function-type
+                
                 # Debug flags
                 "$<$<CONFIG:Debug>:-g>"
                 "$<$<CONFIG:Debug>:-ggdb>"

@@ -84,18 +84,9 @@ target_include_directories(stb_image PUBLIC ${stb_image_header_SOURCE_DIR})
 set_target_properties(stb_image PROPERTIES LINKER_LANGUAGE C)
 
 # flags
-apply_compile_options(TARGETS ${PROJECT_NAME} stb_image glad glm::glm)
-
-if(MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /W4 "$<$<CONFIG:Debug>:/analyze>")
-else()
-    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wno-cast-function-type)
-endif()
+apply_compile_options(TARGETS ${PROJECT_NAME})
 
 print_target_compile_options(${PROJECT_NAME})
-print_target_compile_options(glad)
-print_target_compile_options(stb_image)
-print_target_compile_options(glm::glm)
 
 target_compile_definitions(${PROJECT_NAME}
     PRIVATE
