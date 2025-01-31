@@ -93,7 +93,7 @@ struct ERRF
     auto lvl_str = levelToString(lvl);
     auto msg = std::stringstream{};
 
-    msg << std::format("[{}] {} : {}\n--> {}:{}\n", lvl_str, formatedTime(), formatted_msg, loc.file_name(), loc.line()) << "\n";
+    msg << std::format("[{}] {} : {}\n--> {}:{}\n", lvl_str, formatedTime(), formatted_msg, loc.file_name(), loc.line()) << std::endl;
     
     if constexpr (lvl == Log_LvL::ERR){
       const auto op = stack_trace_formated();
@@ -101,11 +101,11 @@ struct ERRF
         msg << op.value();
         MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONWARNING );
       }
-
-      *out << msg.rdbuf();
-      exit(EXIT_FAILURE);
     }
 
+    *out << msg.rdbuf();
+
+    if constexpr (lvl == Log_LvL::ERR) exit(EXIT_FAILURE);
   }
 };
 
