@@ -119,17 +119,10 @@ namespace Log
 {
 
 template <typename ...Ts>
-struct print{
-  print(const std::format_string<Ts...> fmt, Ts&& ... ts)
-  {
-    auto formatted_msg = std::format(fmt, std::forward<Ts>(ts)...);
-    std::cout << std::format("{} : {}", formatedTime(), formatted_msg) << "\n";
-  }
-};
-
-template <typename... Ts>
-print(const std::format_string<Ts...>, Ts&& ...) -> print<Ts...>;
-
+auto print(const std::format_string<Ts...> fmt, Ts&& ... ts) -> void
+{
+  std::cout << std::format("{} : {}\n", formatedTime(), std::format(fmt, std::forward<Ts>(ts)...));
+}
 
 template <typename ...Ts>
 using Error = ERRF<Log_LvL::ERR, &std::cerr, Ts...>;
