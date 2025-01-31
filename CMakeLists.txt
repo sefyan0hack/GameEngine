@@ -57,6 +57,7 @@ set(SOURCE
     src/Texture.cpp
     src/Scene.cpp
     src/Material.cpp
+    src/Log.cpp
 	)
 
 # Find OpenGL package

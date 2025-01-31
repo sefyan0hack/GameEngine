@@ -14,8 +14,10 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-namespace {
+auto setup_crach_handler() -> void;
 
+namespace {
+  
 [[maybe_unused]] auto is_system_symbol(const std::string_view& symbol) -> bool{
     const std::string_view system_libraries[] = {
         "KERNEL32", "ntdll", "msvcrt", "ucrtbase", "vcruntime",

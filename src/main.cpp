@@ -177,6 +177,7 @@ public: // distroy hire
 
 
 auto main(void) -> int {
+    setup_crach_handler();
     Game my_game ;
     my_game.Run();
     return 0;
