@@ -121,9 +121,8 @@ public: // init here
             Obj.SetUp(positions);
         }
 
-        Texture brik ;
-        brik.Load(TEXTURE(brik.png));
-        brik.BindByName(TEXTURE(brik.png));
+        Texture brik(TEXTURE(brik.png));
+        brik.Bind();
         Matt.Use();
         Matt.SetUniform("ourTexture", 0);
     }
