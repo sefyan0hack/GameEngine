@@ -27,5 +27,10 @@
     #define NO_WARNING_END
 #endif
 
-#define TEXTURE(str)  PROJECT_SOURCE_DIR"/res/"#str
-#define SHADER(str)   PROJECT_SOURCE_DIR"/res/Shaders/"#str
+#ifdef PROJECT_SOURCE_DIR
+    #define TEXTURE(str)  PROJECT_SOURCE_DIR"/res/"#str
+    #define SHADER(str)   PROJECT_SOURCE_DIR"/res/Shaders/"#str
+#else
+    #define TEXTURE(str) #str
+    #define SHADER(str)  #str
+#endif
