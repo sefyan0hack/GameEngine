@@ -9,6 +9,7 @@
 #include <stacktrace>
 #include <sstream>
 #include <optional>
+#include <mutex>
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -102,11 +103,15 @@ struct ERRF
         MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONWARNING );
       }
     }
-
+    
+    std::lock_guard lock(mutex_);
     *out << msg.rdbuf();
 
     if constexpr (lvl == Log_LvL::ERR) exit(EXIT_FAILURE);
   }
+
+  private:
+    inline static std::mutex mutex_;
 };
 
 // template <Log_LvL lvl, typename... Ts>
