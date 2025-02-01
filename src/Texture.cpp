@@ -1,5 +1,6 @@
 #include <core/Texture.hpp>
 #include <core/Log.hpp>
+#include <core/Utils.hpp>
 #include <optional>
 #include <tuple>
 #include <stb_image.h>
@@ -32,12 +33,16 @@ Texture::Texture(const std::string &name, const GLenum Type)
     if (op)
     {
         const auto [width, height, channel, data] = op.value();
-        Log::print("texture {} :: w: {}, h: {}, chan: {}, data: {}", id, width, height, channel, reinterpret_cast<const void*>(&data));
+        Log::Info("texture {} :: w: {}, h: {}, chan: {}, data: {}", id, width, height, channel, reinterpret_cast<const void*>(&data));
+        
+        if(is_odd(width)){
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        }
+
         if (channel == 4){
             glTexImage2D(type, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data); // png
         }
         else if (channel == 3){
-            glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
             glTexImage2D(type, 0, GL_RGB8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data); // jpeg
         }
         else {
