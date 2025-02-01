@@ -27,27 +27,16 @@ private:
     GLboolean mipmapped;
 };
 
-
+// custom Texture Format
 template<>
 struct std::formatter<Texture> {
   constexpr auto parse(std::format_parse_context& context) {
     return context.begin();
   }
   auto format(const Texture& obj, std::format_context& context) const {
-    return std::format_to(context.out(), "Texture: {{ id: {}, width: {}, height: {}, type: {}, mipmapped: {} }}", obj.Getid(), obj.GetWidth(), obj.GetHeight(), obj.GetTypeName(), obj.isMipMapped());
-  }
-  auto format(Texture* obj, std::format_context& context) const {
-    return std::format_to(context.out(), "Texture: {{ id: {}, width: {}, height: {}, type: {}, mipmapped: {} }}", obj->Getid(), obj->GetWidth(), obj->GetHeight(), obj->GetTypeName(), obj->isMipMapped());
-  }
-};
-
-template<>
-struct std::formatter<Texture*> {
-  constexpr auto parse(std::format_parse_context& context) {
-    return context.begin();
-  }
-  auto format(const Texture* obj, std::format_context& context) const {
-    return std::format_to(context.out(), "Texture: {{ id: {}, width: {}, height: {}, type: {}, mipmapped: {} }}", obj->Getid(), obj->GetWidth(), obj->GetHeight(), obj->GetTypeName(), obj->isMipMapped());
+    return std::format_to(context.out(),
+    "Texture: {{ id: {}, width: {}, height: {}, type: {}, mipmapped: {} }}"
+    , obj.Getid(), obj.GetWidth(), obj.GetHeight(), obj.GetTypeName(), obj.isMipMapped());
   }
 };
 
