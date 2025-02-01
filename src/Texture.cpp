@@ -6,9 +6,9 @@
 #include <stb_image.h>
 
 namespace {
-auto load_img(const char* name) -> std::optional<std::tuple<int, int, int, GLubyte*>>
+auto load_img(const char* name) -> std::optional<std::tuple<GLsizei, GLsizei, GLsizei, GLubyte*>>
 {
-    int width, height, nrChannels;
+    GLsizei width, height, nrChannels;
     stbi_set_flip_vertically_on_load(true);
     GLubyte *data = stbi_load(name, &width, &height, &nrChannels, 0);
 
@@ -20,6 +20,10 @@ auto load_img(const char* name) -> std::optional<std::tuple<int, int, int, GLuby
 Texture::Texture(const std::string &name, const GLenum Type)
     : id(0)
     , type(Type)
+    , width(0)
+    , height(0)
+    , data(nullptr)
+    , mipmapped(true)
 {
     glGenTextures(1, &id);
     Bind();
@@ -32,32 +36,39 @@ Texture::Texture(const std::string &name, const GLenum Type)
     auto op = load_img(name.c_str());
     if (op)
     {
-        const auto [width, height, channel, data] = op.value();
-        Log::Info("texture {} :: w: {}, h: {}, chan: {}, data: {}", id, width, height, channel, reinterpret_cast<const void*>(&data));
+        const auto [Width, Height, Channel, Data] = op.value();
+        width = Width;
+        height = Height;
+        data = Data;
+
         
         if(is_odd(width)){
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         }
 
-        if (channel == 4){
+        if (Channel == 4){
             glTexImage2D(type, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data); // png
         }
-        else if (channel == 3){
+        else if (Channel == 3){
             glTexImage2D(type, 0, GL_RGB8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data); // jpeg
         }
         else {
-            Log::Error("Unsupported img format num of channels are {}", channel);
+            Log::Error("Unsupported img format num of channels are {}", Channel);
         }
-        glGenerateMipmap(type);
 
+        if(mipmapped){
+            GenerateMipMap();
+        }
+        
         glActiveTexture(GL_TEXTURE1);
-        glBindTexture(type, id);
-        stbi_image_free(data);
+            
     }
     else
     {
         Log::Error("Failed to load Texture");
     }
+    
+    Log::Info("{}", this);
 }
 
 auto Texture::Getid() const -> GLuint
@@ -69,3 +80,37 @@ auto Texture::Bind() const -> void
 {
     glBindTexture(type, id);
 }
+
+Texture::~Texture()
+{
+    if (data)
+        stbi_image_free(data);
+}
+auto Texture::GenerateMipMap() -> void
+{
+    glGenerateMipmap(type);
+}
+
+auto Texture::GetWidth() const -> GLsizei
+{
+    return width;
+}
+auto Texture::GetHeight() const -> GLsizei
+{
+    return height;
+}
+
+auto Texture::GetType() const -> GLenum
+{
+    return type;
+}
+auto Texture::GetTypeName() const -> std::string
+{
+    return TEXTURETYPE[type];
+}
+
+auto Texture::isMipMapped() const -> GLboolean
+{
+    return mipmapped;
+}
+
