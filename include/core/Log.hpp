@@ -59,7 +59,7 @@ auto stack_trace_formated() -> std::optional<std::string>
       const auto file = trace[i].source_file();
       const auto line = trace[i].source_line();
 
-      msg << std::format("  #{:<2} {}:{:<2} :: {} \n", frame_size - i, file, line, desc);
+      msg << std::format(" #{:<2} in {} ({}:{:<2})\n", frame_size - i, desc, file, line);
     }
     return msg.str();
   }else{
@@ -67,10 +67,9 @@ auto stack_trace_formated() -> std::optional<std::string>
   }
 }
 
-enum class Log_LvL {
+enum class Log_LvL : char {
   ERR,
   WAR,
-  INF,
 };
 
 static std::string formatedTime() {
@@ -78,9 +77,8 @@ static std::string formatedTime() {
   return std::format("{:%Y-%m-%d %H:%M:%OS}", now);
 }
 
-static std::string_view levelToString(Log_LvL level) {
+constexpr const char* levelToString(Log_LvL level) {
   switch (level) {
-    case Log_LvL::INF: return "INFO";
     case Log_LvL::WAR: return "WARNING";
     case Log_LvL::ERR: return "ERROR";
     default:           return "UNKNOWN";
@@ -96,7 +94,7 @@ struct ERRF
     auto lvl_str = levelToString(lvl);
     auto msg = std::stringstream{};
 
-    msg << std::format("[{}] {} : {}\n--> {}:{}\n", lvl_str, formatedTime(), formatted_msg, loc.file_name(), loc.line()) << std::endl;
+    msg << std::format("{} : [{}] {}\n--> {}:{}\n", formatedTime(), lvl_str, formatted_msg, loc.file_name(), loc.line()) << std::endl;
     
     if constexpr (lvl == Log_LvL::ERR){
       const auto op = stack_trace_formated();
@@ -132,12 +130,15 @@ auto print(const std::format_string<Ts...> fmt, Ts&& ... ts) -> void
 }
 
 template <typename ...Ts>
+auto Info(const std::format_string<Ts...> fmt, Ts&& ... ts) -> void
+{
+  std::cout << std::format("{} : [INFO] {}\n", formatedTime(), std::format(fmt, std::forward<Ts>(ts)...));
+}
+
+template <typename ...Ts>
 using Error = ERRF<Log_LvL::ERR, &std::cerr, Ts...>;
 
 template <typename ...Ts>
 using Warning = ERRF<Log_LvL::WAR, &std::clog, Ts...>;
-
-template <typename ...Ts>
-using Info = ERRF<Log_LvL::INF, &std::clog, Ts...>;
 
 } // namespace Log
