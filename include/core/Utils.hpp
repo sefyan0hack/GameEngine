@@ -14,9 +14,13 @@ auto setTimeOut( unsigned long delay, Function&& func, Args&&... args) -> void
 }
 
 // compile time
-constexpr std::string_view get_file_directory(const std::string_view file_path = __FILE__) {
+constexpr auto get_file_directory(const std::string_view file_path = __FILE__) -> std::string_view
+{
     const size_t last_slash = file_path.find_last_of("/\\");
     return (last_slash == std::string_view::npos) ? "" : file_path.substr(0, last_slash);
 }
 
-constexpr std::string_view current_directory = get_file_directory();
+constexpr auto is_odd(auto x) -> bool
+{
+    return x % 2 != 0;
+}
