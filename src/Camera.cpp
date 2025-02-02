@@ -15,17 +15,20 @@ Camera::Camera(Window &window)
   m_Window(&window),
   sensitivity(0.11f),
   yaw(-90), pitch(0)
-  {}
+  {
+    Log::Info("{}", *this);
+  }
 
-Camera::~Camera() {}
+Camera::~Camera() {
+}
 
-auto Camera::GetView() -> glm::mat4
+auto Camera::GetView() const -> glm::mat4
 {
     return glm::lookAt(Position, Position + FrontDir, UpDir);
 }
 
 
-auto Camera::GetPerspective() ->  glm::mat4
+auto Camera::GetPerspective() const ->  glm::mat4
 {
     auto height = m_Window->GetHeight();
 
@@ -135,3 +138,4 @@ auto Camera::GetPosition() const -> glm::vec3 { return Position; }
 auto Camera::GetFrontDir() const -> glm::vec3 { return FrontDir; }
 auto Camera::GetUpDir() const    -> glm::vec3 { return UpDir; }
 auto Camera::GetRightDir() const -> glm::vec3 { return RightDir; }
+auto Camera::GetSensitivity() const -> float  { return sensitivity; }

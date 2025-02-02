@@ -3,7 +3,10 @@
 #include <core/Mesh.hpp>
 #include <core/Transform.hpp>
 #include <core/Material.hpp>
+#include <core/fmts.hpp>
 #include <vector>
+
+#include <format>
 
 
 class GameObject {
@@ -30,4 +33,17 @@ private:
     Material* material;
     Mesh m_Mesh;
     std::vector<glm::vec3> InstancePos;
+};
+
+// custom GameObject Format
+template<>
+struct std::formatter<GameObject> {
+  constexpr auto parse(std::format_parse_context& context) {
+    return context.begin();
+  }
+  auto format(const GameObject& obj, std::format_context& context) const {
+    return std::format_to(context.out(),
+    "GameObject: {{ Transform: {} }}"
+    , obj.GetTransform());
+  }
 };

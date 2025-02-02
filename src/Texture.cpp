@@ -68,7 +68,7 @@ Texture::Texture(const std::string &name, const GLenum Type)
         Log::Error("Failed to load Texture");
     }
     
-    Log::Info("{}", this);
+    Log::Info("{}", *this);
 }
 
 auto Texture::Getid() const -> GLuint

@@ -3,12 +3,10 @@
 #include <string>
 #include <unordered_map>
 #include <initializer_list>
+#include <core/fmts.hpp>
+#include <format>
 
 class Shader;
-
-struct Shaders_Buffer{
-    Shader *vertex, *fragment; // vertex and fragment shader for now
-};
 
 class Material
 {
@@ -21,6 +19,7 @@ public:
     auto Use() const -> void ;
     auto UniformCount() const                  -> GLint ;
     auto GetUniformLocation(const char*) const -> GLuint;
+    auto GetUniforms() const -> std::unordered_map<std::string, GLuint>;
     static auto Current_Program() -> GLuint;
 
 
@@ -45,6 +44,23 @@ private:
 private:
     GLuint id;
     std::unordered_map<std::string, GLuint> Uniforms;
+
+};
+
+// custom Material Format
+template<>
+struct std::formatter<Material> {
+  constexpr auto parse(std::format_parse_context& context) {
+    return context.begin();
+  }
+  auto format(const Material& obj, std::format_context& context) const {
+    return std::format_to(context.out(),
+    "Material: {{ id: {}, Uniforms: {} }}"
+    , obj.Getid(), UnorderedMapWrapper{obj.GetUniforms()});
+  }
+};
+
+namespace {
     inline static std::unordered_map<GLenum, std::string> GlslTypes {
         {GL_FLOAT,	"float"},
         {GL_FLOAT_VEC2,	"vec2"},
@@ -152,5 +168,4 @@ private:
         {GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE_ARRAY,	"uimage2DMSArray"},
         {GL_UNSIGNED_INT_ATOMIC_COUNTER,	"atomic_uint"},
 };
-
-};
+}

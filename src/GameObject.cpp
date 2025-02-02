@@ -10,6 +10,7 @@ GameObject::GameObject(glm::vec3 position, Material &matt, const Mesh &mesh)
 {   
     Transformation();
     UpMatrix();
+    Log::Info("{}", *this);
 }
 
 GameObject::~GameObject()

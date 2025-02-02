@@ -15,6 +15,8 @@ Material::Material(Shader& vertex, Shader& fragment)
     checkProgramLinkStatus();
     Log::Info("Uniforms count is {}", UniformCount());
     DumpUniforms();
+    
+    Log::Info("{}", *this);
 }
 Material::Material(std::initializer_list<Shader> shaders)
     : id(glCreateProgram())
@@ -29,6 +31,8 @@ Material::Material(std::initializer_list<Shader> shaders)
     checkProgramLinkStatus();
     Log::Info("Uniforms count is {}", UniformCount());
     DumpUniforms();
+
+    Log::Info("{}", *this);
 }
 
 Material::~Material()
@@ -138,6 +142,12 @@ auto Material::Current_Program() -> GLuint{
         return 0;
     }
 }
+
+auto Material::GetUniforms() const -> std::unordered_map<std::string, GLuint>
+{
+    return Uniforms;
+}
+
 ///////
 template<>
 auto Material::SetUniform<GLint>(const std::string& name, const GLint &value) const -> void
