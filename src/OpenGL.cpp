@@ -10,19 +10,32 @@ extern "C"{
 }
 
 auto rsgl(const char* name) -> void* {
-    static auto module = LoadLibraryA("opengl32.dll");
-    void *addres = (void *)wglGetProcAddress(name);
+    void *address = (void *)wglGetProcAddress(name);
 
-    if(addres == nullptr
-    || addres == reinterpret_cast<void*>(0x1)
-    || addres == reinterpret_cast<void*>(0x2)
-    || addres == reinterpret_cast<void*>(0x3)
-    || addres == reinterpret_cast<void*>(-1))
+    if(address == nullptr
+    || address == reinterpret_cast<void*>(0x1)
+    || address == reinterpret_cast<void*>(0x2)
+    || address == reinterpret_cast<void*>(0x3)
+    || address == reinterpret_cast<void*>(-1))
     {
-        addres = (void *)GetProcAddress(module, name);
-        if(addres == nullptr) Log::Error("Couldnt load  opengl function `{}` reason: {}", name, GetLastError());
+        static auto lib = LoadLibraryA("opengl32.dll");
+        if(lib == nullptr){
+            Log::Error("Couldnt load lib opengl32 reason: {}", GetLastError());
+        }
+        
+        address = (void *)GetProcAddress(lib, name);
+        
+        if(address == nullptr){
+            Log::Error("Couldnt load  opengl function `{}` reason: {}", name, GetLastError());
+        }else{
+            Log::Info("opengl function by LoadLibraryA `{}` at : {}", name, address);
+            return address;
+        }
+        
+    }else{
+        Log::Info("opengl function by wglGetProcAddress `{}` at : {}", name, address);
+        return address;
     }
-    return addres;
 }
 
 auto OpenGL::init_opengl_extensions() -> void
