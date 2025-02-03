@@ -55,7 +55,7 @@ struct std::formatter<Material> {
   }
   auto format(const Material& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    "Material: {{ id: {}, Uniforms: {} }}"
+    "Material: {{ id: {}, uniforms: {} }}"
     , obj.Getid(), UnorderedMapWrapper{obj.GetUniforms()});
   }
 };

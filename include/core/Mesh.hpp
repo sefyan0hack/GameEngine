@@ -3,6 +3,8 @@
 #include <string>
 #include <glm/glm.hpp>
 #include <core/gl.h>
+#include <core/fmts.hpp>
+#include <format>
 
 struct Vertex
 {
@@ -21,4 +23,17 @@ public:
 public:
     GLuint VAO, VBO, EBO;
     GLsizei vInSize;
+};
+
+// custom Mesh Format
+template<>
+struct std::formatter<Mesh> {
+  constexpr auto parse(std::format_parse_context& context) {
+    return context.begin();
+  }
+  auto format(const Mesh& obj, std::format_context& context) const {
+    return std::format_to(context.out(),
+    "Mesh: {{ VAO: {}, VBO: {}, EBO: {}, verticesSize: {} }}"
+    , obj.VAO, obj.VBO, obj.EBO, obj.vInSize);
+  }
 };

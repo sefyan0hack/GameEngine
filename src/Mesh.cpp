@@ -1,4 +1,5 @@
 #include <core/Mesh.hpp>
+#include <core/Log.hpp>
 #include <type_traits>
 
 Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vector<GLuint> &indices): VAO(0), VBO(0), EBO(0)
@@ -32,6 +33,7 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vect
     glVertexAttribPointer(index++, decltype(VetexData::TexCoords)::length(), GL_FLOAT, GL_FALSE, sizeof(VetexData), reinterpret_cast<void*>(offsetof(VetexData, TexCoords)) );
 
     vInSize = static_cast<GLuint>(vertices.size());
+    Log::Info("{}", *this);
 }
 
 Mesh::~Mesh()
