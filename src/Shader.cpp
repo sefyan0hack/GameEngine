@@ -1,5 +1,6 @@
 #include <core/gl.h>
 #include <core/Log.hpp>
+#include <core/OpenGL.hpp>
 #include <core/Shader.hpp>
 #include <glm/glm.hpp>
 #include <string>
@@ -10,6 +11,7 @@ Shader::Shader(const char* name, GLenum type)
 : id(glCreateShader(type)), Type(type)
 {
     Load(name);
+    Log::Info("{}", *this);
 }
 
 Shader::~Shader()
@@ -25,7 +27,7 @@ auto Shader::LoadSource(const char* name) -> void
         Log::Error("Open {} Failed. code: {}", name, errno);
     }
 
-    std::string buffer = std::format("#version {}{}0 core\n", GLVersion.major, GLVersion.minor);
+    std::string buffer = std::format("#version {}{}0 core\n", OpenGL::MajorV(), OpenGL::MinorV());
     buffer.append(std::istreambuf_iterator<char>(shader_file), std::istreambuf_iterator<char>());
 
     Log::Info("[+] Loding {}", name);
