@@ -25,10 +25,32 @@ CPMAddPackage(
     DOWNLOAD_NAME stb_image.h
 )
 
-    # glad c/c++ gl 4.4
 CPMAddPackage(
-    NAME glad
-    URL https://glad.dav1d.de/generated/tmpjukken7yglad/glad.zip
+    NAME glcorearb
+    URL https://registry.khronos.org/OpenGL/api/GL/glcorearb.h
+    DOWNLOAD_ONLY YES
+    DOWNLOAD_NO_EXTRACT TRUE
+    DOWNLOAD_NAME glcorearb.h
+)
+
+CPMAddPackage(
+    NAME khr
+    URL https://raw.githubusercontent.com/KhronosGroup/EGL-Registry/main/api/KHR/khrplatform.h
+    DOWNLOAD_ONLY YES
+    DOWNLOAD_NO_EXTRACT TRUE
+    DOWNLOAD_NAME khrplatform.h
+)
+if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/KHR/khrplatform.h)
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/KHR)
+
+    file(RENAME 
+        ${CMAKE_CURRENT_BINARY_DIR}/_deps/khr-src/khrplatform.h 
+        ${CMAKE_CURRENT_BINARY_DIR}/KHR/khrplatform.h
+    )
+endif()
+include_directories(
+    ${CMAKE_CURRENT_BINARY_DIR}/_deps/glcorearb-src  # For glcorearb.h
+    ${CMAKE_CURRENT_BINARY_DIR}                      # For KHR/khrplatform.h
 )
 
 if(stb_image_header_ADDED)
@@ -68,16 +90,11 @@ add_executable(${PROJECT_NAME} ${SOURCE})
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/include" )
 
 if(MSVC)
-    target_link_libraries(${PROJECT_NAME} glad stb_image glm::glm ${OPENGL_LIBRARIES} )
+    target_link_libraries(${PROJECT_NAME} stb_image glm::glm ${OPENGL_LIBRARIES} )
 else()
-    target_link_libraries(${PROJECT_NAME} glad stb_image glm::glm ${OPENGL_LIBRARIES} stdc++exp )
+    target_link_libraries(${PROJECT_NAME} stb_image glm::glm ${OPENGL_LIBRARIES} stdc++exp )
 
 endif()
-
-# glad lib
-add_library(glad STATIC "${glad_SOURCE_DIR}/src/glad.c")
-target_include_directories(glad PUBLIC "${glad_SOURCE_DIR}/include")
-set_target_properties(glad PROPERTIES LINKER_LANGUAGE C)
 
 # stb_image lib
 add_library(stb_image STATIC "${CMAKE_CURRENT_BINARY_DIR}/stb_image.cpp")
