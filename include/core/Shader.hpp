@@ -2,6 +2,9 @@
 
 #include <unordered_map>
 #include <core/gl.h>
+#include <core/fmts.hpp>
+#include <format>
+
 class Shader
 {
     public:
@@ -21,6 +24,20 @@ class Shader
         GLuint id;
         GLenum Type;
 };
+
+// custom Mesh Format
+template<>
+struct std::formatter<Shader> {
+  constexpr auto parse(std::format_parse_context& context) {
+    return context.begin();
+  }
+  auto format(const Shader& obj, std::format_context& context) const {
+    return std::format_to(context.out(),
+    "Shader: {{ id: {}, type: {} }}"
+    , obj.Getid(), obj.GetTypeName());
+  }
+};
+
 namespace {
 
     inline static std::unordered_map<GLenum, const char*> SHADERTYPES {

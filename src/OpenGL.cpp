@@ -9,6 +9,22 @@ extern "C"{
     wglChoosePixelFormatARB_type wglChoosePixelFormatARB = nullptr;
 }
 
+auto rsgl(const char* name) -> void* {
+    static auto module = LoadLibraryA("opengl32.dll");
+    void *addres = (void *)wglGetProcAddress(name);
+
+    if(addres == nullptr
+    || addres == reinterpret_cast<void*>(0x1)
+    || addres == reinterpret_cast<void*>(0x2)
+    || addres == reinterpret_cast<void*>(0x3)
+    || addres == reinterpret_cast<void*>(-1))
+    {
+        addres = (void *)GetProcAddress(module, name);
+        if(addres == nullptr) Log::Error("Couldnt load  opengl function `{}` reason: {}", name, GetLastError());
+    }
+    return addres;
+}
+
 auto OpenGL::init_opengl_extensions() -> void
 {
     HWND dummy_window = CreateWindowExA(
@@ -82,6 +98,26 @@ OpenGL::OpenGL(HWND window)
         init_opengl();
         once = true;
     }
+
+    //resolve opengl functions
+    #define RESOLVEGL(type, name) name = (type)rsgl(#name)
+	GLFUNCS(RESOLVEGL)
+
+    glGetIntegerv(GL_MAJOR_VERSION, &OpenGL::vMajor);
+    glGetIntegerv(GL_MINOR_VERSION, &OpenGL::vMajor);
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_LINE_SMOOTH);
+
+    GLint max_texture_unit = 0;
+
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_texture_unit);
+    Log::print("GL Version : {}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+    Log::print("GLSL Version : {}", reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
+    Log::print("GL Vendor : {}", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
+    Log::print("GL Renderer : {}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
+    Log::print("Max Texture Units : {}", max_texture_unit);
 }
 
 OpenGL::~OpenGL()
@@ -144,27 +180,20 @@ auto OpenGL::init_opengl() -> void
     if (!wglMakeCurrent(m_MainHDC, gl33_context)) {
         Log::Error("Failed to activate OpenGL 3.3 rendering context.");
     }
-    
-    static bool on = false;
-    if(on == false){
-        gladLoadGL();
-        on = true;
-    }
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_LINE_SMOOTH);
 
-    GLint max_texture_unit = 0;
-    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_texture_unit);
-    Log::print("GL Version : {}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
-    Log::print("GLSL Version : {}", reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
-    Log::print("GL Vendor : {}", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
-    Log::print("GL Renderer : {}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
-    Log::print("Max Texture Units : {}", max_texture_unit);
     m_Context =  gl33_context;
 }
 
 auto OpenGL::GetHDC() const -> HDC
 {
     return m_MainHDC;
+}
+
+auto OpenGL::MajorV() -> GLint
+{
+    return vMajor;
+}
+auto OpenGL::MinorV() -> GLint
+{
+    return vMinor;
 }

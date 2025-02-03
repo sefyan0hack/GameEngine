@@ -1,7 +1,8 @@
 #pragma once
 
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <core/gl.h>
+
 class OpenGL
 {
     public:
@@ -12,6 +13,9 @@ class OpenGL
     public:
         auto GetHDC() const -> HDC;
 
+        static auto MajorV() -> GLint;
+        static auto MinorV() -> GLint;
+
     private:
     static auto init_opengl()             -> void ;
     static auto init_opengl_extensions()  -> void ;
@@ -20,6 +24,8 @@ class OpenGL
         inline static HWND m_MainWindow;
         inline static HDC m_MainHDC;
         inline static HGLRC m_Context;
+        inline static GLint vMajor;
+        inline static GLint vMinor;
         enum {
             WGL_CONTEXT_MAJOR_VERSION_ARB    = 0x2091,
             WGL_CONTEXT_MINOR_VERSION_ARB    = 0x2092,
