@@ -10,8 +10,6 @@
 #include <sstream>
 #include <optional>
 #include <mutex>
-
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 auto setup_crach_handler() -> void;

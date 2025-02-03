@@ -1,13 +1,9 @@
 #pragma once
-#include <core/OpenGL.hpp>
 #include <memory>
 #include <vector>
-
-#define WIN32_LEAN_AND_MEAN
+#include <core/OpenGL.hpp>
 #include <windows.h>
-
 #include <core/gl.h>
-
 #include <core/Keyboard.hpp>
 #include <core/Mouse.hpp>
 
