@@ -2,10 +2,9 @@
 #include <core/Log.hpp>
 #include <core/OpenGL.hpp>
 #include <core/Shader.hpp>
-#include <glm/glm.hpp>
 #include <string>
 #include <fstream>
-#include <format>
+#include <sstream>
 
 Shader::Shader(const char* name, GLenum type)
 : id(glCreateShader(type)), Type(type)
@@ -22,17 +21,17 @@ Shader::~Shader()
 auto Shader::LoadSource(const char* name) -> void
 {
 
-    std::ifstream shader_file(name);
+    auto shader_file = std::ifstream(name);
+    auto buffer = std::ostringstream{};
+
     if( not shader_file.is_open()){
         Log::Error("Open {} Failed. code: {}", name, errno);
     }
+    Log::Info("Loding {}", name);
+    buffer << shader_file.rdbuf();
+    std::string strFile = buffer.str();
 
-    std::string buffer = std::format("#version {}{}0 core\n", OpenGL::MajorV(), OpenGL::MinorV());
-    buffer.append(std::istreambuf_iterator<char>(shader_file), std::istreambuf_iterator<char>());
-
-    Log::Info("[+] Loding {}", name);
-
-    const char* ShaderSource = buffer.c_str();
+    const char* ShaderSource = strFile.c_str();
     glShaderSource(id, 1, &ShaderSource, NULL);
 }
 
