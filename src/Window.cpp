@@ -8,33 +8,27 @@ Window::WinClass &Window::WinClass::Instance()
     static Window::WinClass ClassIns; 
     return ClassIns;
 }
-auto Window::WinClass::Name() -> const char*
+auto Window::WinClass::Name() -> const TCHAR*
 {
     return m_Name;
 }
 Window::WinClass::WinClass(){
-    m_Winclass = {
-        .cbSize = sizeof(WNDCLASSEXA),
-        .style = CS_GLOBALCLASS | CS_OWNDC | CS_HREDRAW | CS_VREDRAW| CS_DBLCLKS,
-        .lpfnWndProc = Window::WinProcSetup,
-        .cbClsExtra = 0,
-        .cbWndExtra = 0,
-        .hInstance =  GetModuleHandleA(nullptr),
-        .hIcon = LoadIconA(nullptr, IDI_APPLICATION),
-        .hCursor = LoadCursorA(nullptr, IDC_ARROW),
-        .hbrBackground = nullptr,
-        .lpszMenuName = "",
-        .lpszClassName = m_Name,
-        .hIconSm = LoadIcon(nullptr, IDI_APPLICATION),
-    };
-    if(RegisterClassExA(&m_Winclass) == 0){
+
+    m_WinclassEx.cbSize = sizeof(WNDCLASSEX);
+    m_WinclassEx.style =  CS_HREDRAW | CS_VREDRAW;
+    m_WinclassEx.lpfnWndProc = Window::WinProcSetup;
+    m_WinclassEx.hInstance =  GetModuleHandle(nullptr);
+    m_WinclassEx.hCursor = LoadCursor(nullptr, IDC_ARROW);
+    m_WinclassEx.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
+    m_WinclassEx.lpszClassName = m_Name;
+		
+	m_Windclass = RegisterClassEx(&m_WinclassEx);
+		
+    if(m_Windclass == 0){
         Log::Error("faild to regester class {}", GetLastError());
     }
 }
-Window::WinClass::~WinClass()
-{
-    UnregisterClassA(m_Name, GetModuleHandleA(nullptr));
-}
+
 ///////////////////////////////////////////////////////////////////
 
 auto Window::WinProcSetup(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT
@@ -212,7 +206,7 @@ auto Window::WindowsCount() -> unsigned short
 {
     return S_WindowsCount;
 }
-Window::Window(int m_Width, int m_Height, const char* Title) 
+Window::Window(int m_Width, int m_Height,  TCHAR* Title) 
 : m_Instance( GetModuleHandleA( nullptr ) ), m_Visible(true)
 {
     _init_helper(m_Width, m_Height, Title);
@@ -234,7 +228,7 @@ auto Window::ProcessMessages() -> void
     }
 }
 
-auto Window::_init_helper(int Width, int Height, const char* Title) -> void
+auto Window::_init_helper(int Width, int Height, TCHAR* Title) -> void
 {
     WinClass::Instance();
 
@@ -250,9 +244,8 @@ auto Window::_init_helper(int Width, int Height, const char* Title) -> void
     m_Width = WinRect.right - WinRect.left;
     m_Height = WinRect.bottom - WinRect.top;
 
-    m_WindowHandle = CreateWindowExA(
-        0,
-        WinClass::Name(),
+    m_WindowHandle = CreateWindow(
+        MAKEINTATOM(WinClass::m_Windclass),
         Title,
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, m_Width, m_Height,

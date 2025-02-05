@@ -3,6 +3,7 @@
 #include <vector>
 #include <core/OpenGL.hpp>
 #include <windows.h>
+#include <tchar.h>
 #include <core/gl.h>
 #include <core/Keyboard.hpp>
 #include <core/Mouse.hpp>
@@ -19,16 +20,17 @@ class Window
             auto operator = (const WinClass&) -> WinClass = delete ;
             auto operator = (WinClass&&)      -> WinClass = delete ;
         public:
-            ~WinClass();
+            ~WinClass() = default;
             static auto Instance()  -> WinClass& ;
-            static auto Name()      -> const char* ;
+            static auto Name()      -> const TCHAR* ;
+            inline static ATOM m_Windclass = {};
         private:
-            inline static const char* m_Name = "singleton WINDOW CLASS";
-            inline static WNDCLASSEXA m_Winclass = {};
+            inline static const TCHAR* m_Name = _T("singleton WINDOW CLASS");
+            inline static WNDCLASSEX m_WinclassEx = {};
     };
     
     public:
-        Window(int Width, int Height, const char* Title);
+        Window(int Width, int Height, TCHAR* Title);
         Window(const Window&) = delete;
         Window(Window&&) = delete;
     
@@ -52,7 +54,7 @@ class Window
         static auto CALLBACK WinProcSetup(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)  -> LRESULT ;
         static auto CALLBACK WinProcSetup2(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT ;
         auto CALLBACK WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)           -> LRESULT ;
-        auto _init_helper(int Width, int Height, const char* Title)                          -> void ;
+        auto _init_helper(int Width, int Height,  TCHAR* Title)                              -> void ;
     private:
         HINSTANCE m_Instance;
         HWND m_WindowHandle;
