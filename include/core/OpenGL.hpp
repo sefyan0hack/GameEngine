@@ -18,7 +18,7 @@ class OpenGL
 
     private:
     static auto init_opengl()             -> void ;
-    static auto init_opengl_extensions()  -> void ;
+    static auto init_opengl_dummy()  -> void ;
 
     private:
         inline static HWND m_MainWindow;
@@ -27,10 +27,6 @@ class OpenGL
         inline static GLint vMajor;
         inline static GLint vMinor;
         enum {
-            WGL_CONTEXT_MAJOR_VERSION_ARB    = 0x2091,
-            WGL_CONTEXT_MINOR_VERSION_ARB    = 0x2092,
-            WGL_CONTEXT_PROFILE_MASK_ARB     = 0x9126,
-            WGL_CONTEXT_CORE_PROFILE_BIT_ARB = 0x00000001,
             WGL_DRAW_TO_WINDOW_ARB           = 0x2001,
             WGL_ACCELERATION_ARB             = 0x2003,
             WGL_SUPPORT_OPENGL_ARB           = 0x2010,
@@ -40,6 +36,12 @@ class OpenGL
             WGL_DEPTH_BITS_ARB               = 0x2022,
             WGL_STENCIL_BITS_ARB             = 0x2023,
             WGL_FULL_ACCELERATION_ARB        = 0x2027,
-            WGL_TYPE_RGBA_ARB                = 0x202B
+            WGL_TYPE_RGBA_ARB                = 0x202B,
+            WGL_CONTEXT_MAJOR_VERSION_ARB    = 0x2091,
+            WGL_CONTEXT_MINOR_VERSION_ARB    = 0x2092,
+            WGL_CONTEXT_FLAGS_ARB            = 0x2094,
+            WGL_CONTEXT_PROFILE_MASK_ARB     = 0x9126,
+            ERROR_INVALID_VERSION_ARB        = 0x2095,
+            ERROR_INVALID_PROFILE_ARB        = 0x2096,
         };
 };
