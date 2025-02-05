@@ -1,6 +1,7 @@
 #include <core/Log.hpp>
 #include <csignal>
 #include <fstream>
+#include <iostream>
 
 namespace {
 
@@ -15,6 +16,7 @@ auto PrintStackTrace() -> void
             std::cerr << std::format("  {} , {}:{}\n", frame.description(), frame.source_file(), line);
         }
     }
+    std::cin.get();
 }
 
 auto WINAPI ExceptionHandler([[maybe_unused]] PEXCEPTION_POINTERS ex) -> LONG
