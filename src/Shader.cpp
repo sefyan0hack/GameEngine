@@ -4,10 +4,9 @@
 #include <core/Shader.hpp>
 #include <string>
 #include <fstream>
-#include <sstream>
 
 Shader::Shader(const char* name, GLenum type)
-: id(glCreateShader(type)), Type(type)
+: id(glCreateShader(type)), Type(type), Content("")
 {
     Load(name);
     Log::Info("{}", *this);
@@ -15,23 +14,27 @@ Shader::Shader(const char* name, GLenum type)
 
 Shader::~Shader()
 {
-    glDeleteShader(id);
+    if(id != 0)
+        glDeleteShader(id);
 }
 
 auto Shader::LoadSource(const char* name) -> void
 {
 
-    auto shader_file = std::ifstream(name);
-    auto buffer = std::ostringstream{};
+    auto shader_file = std::ifstream(name, std::ios::binary | std::ios::ate);
+    auto size = shader_file.tellg();
 
     if( not shader_file.is_open()){
         Log::Error("Open {} Failed. code: {}", name, errno);
     }
-    Log::Info("Loding {}", name);
-    buffer << shader_file.rdbuf();
-    std::string strFile = buffer.str();
 
-    const char* ShaderSource = strFile.c_str();
+    this->Content.resize(size);
+
+    shader_file.seekg(0);
+    shader_file.read(this->Content.data(), size);
+
+    Log::Info("Loding {} ", name);
+    const char* ShaderSource = this->Content.c_str();
     glShaderSource(id, 1, &ShaderSource, NULL);
 }
 

@@ -23,6 +23,7 @@ class Shader
     private:
         GLuint id;
         GLenum Type;
+        std::string Content;
 };
 
 // custom Mesh Format
