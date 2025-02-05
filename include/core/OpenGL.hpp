@@ -18,7 +18,6 @@ class OpenGL
 
     private:
     static auto init_opengl()             -> void ;
-    static auto init_opengl_dummy()  -> void ;
 
     private:
         inline static HWND m_MainWindow;

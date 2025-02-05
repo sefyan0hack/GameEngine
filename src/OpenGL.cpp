@@ -8,6 +8,9 @@ extern "C" {
     using wglChoosePixelFormatARB_type = BOOL(WINAPI*)(HDC hdc, const int *piAttribIList, const FLOAT *pfAttribFList, UINT nMaxFormats, int *piFormats, UINT *nNumFormats);
     wglChoosePixelFormatARB_type wglChoosePixelFormatARB = nullptr;
 
+    using PFNWGLSWAPINTERVALEXTPROC = BOOL(APIENTRY*)(int interval);
+    PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = NULL;
+ 
     void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, [[maybe_unused]] GLsizei length, const GLchar *message, [[maybe_unused]] const void *param)
     {
         const char *source_, *type_, *severity_;
@@ -76,89 +79,20 @@ auto rsgl(const char* name) -> void* {
     }
 }
 
-auto OpenGL::init_opengl_dummy() -> void
-{
-    // Register a dummy window class.
-    const char* dummyClassName = "DummyOpenGLWindowClass";
-    WNDCLASSA wc = {};
-    wc.style         = CS_OWNDC;
-    wc.lpfnWndProc   = DefWindowProc;
-    wc.hInstance     = GetModuleHandle(NULL);
-    wc.lpszClassName = dummyClassName;
-
-    if (!RegisterClassA(&wc)) {
-        Log::Error("Failed to register dummy window class. Error code: {}", GetLastError());
-        return;
-    }
-    HWND dummy_window = CreateWindowExA(
-        0,
-        dummyClassName,
-        "Dummy",
-        0,
-        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-        nullptr, nullptr,
-        wc.hInstance,
-        nullptr);
-
-    if (dummy_window != nullptr) {
-
-    HDC dummy_dc = GetDC(dummy_window);
-
-    PIXELFORMATDESCRIPTOR pfd {};
-    pfd.nSize = sizeof(pfd);
-    pfd.nVersion = 1;
-    pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-    pfd.iPixelType = PFD_TYPE_RGBA;
-    pfd.cColorBits = 32;
-    pfd.cAlphaBits = 8;
-    pfd.cDepthBits = 24;
-    pfd.cStencilBits = 8;
-    pfd.iLayerType = PFD_MAIN_PLANE;
-
-    int pixel_format = ChoosePixelFormat(dummy_dc, &pfd);
-    if (!pixel_format) {
-        Log::Error("Failed to find a suitable pixel format.");
-    }
-    if (!SetPixelFormat(dummy_dc, pixel_format, &pfd)) {
-        Log::Error("Failed to set the pixel format.");
-    }
-
-    HGLRC dummy_context = wglCreateContext(dummy_dc);
-    if (!dummy_context) {
-        Log::Error("Failed to create a dummy OpenGL rendering context.");
-    }
-
-    if (!wglMakeCurrent(dummy_dc, dummy_context)) {
-        Log::Error("Failed to activate dummy OpenGL rendering context.");
-    }
-
-    auto ProcwglCreateContextAttribsARB = wglGetProcAddress("wglCreateContextAttribsARB");
-    auto ProcwglChoosePixelFormatARB = wglGetProcAddress("wglChoosePixelFormatARB");
-    
-    wglCreateContextAttribsARB = (wglCreateContextAttribsARB_type)ProcwglCreateContextAttribsARB;
-    wglChoosePixelFormatARB = (wglChoosePixelFormatARB_type)ProcwglChoosePixelFormatARB;
-
-    if (!wglCreateContextAttribsARB || !wglChoosePixelFormatARB) {
-        Log::Error("Failed to load required WGL extensions.");
-    }
-
-    if( wglMakeCurrent(dummy_dc, 0) == false
-    ||  wglDeleteContext(dummy_context) == false
-    ||  ReleaseDC(dummy_window, dummy_dc) == false
-    ||  DestroyWindow(dummy_window) == false){
-        Log::Error("Destruction of init_opengl_extention failed");
-    }
-    }else {
-        Log::Error("Failed to create dummy OpenGL window. {}", GetLastError());
-    }
-}
 
 OpenGL::OpenGL(HWND window)
 {
     static bool once = false;
+
     if(!once){
         m_MainHDC = GetDC(window);
+
+        if( m_MainHDC == nullptr){
+            Log::Error("HDC not valid");
+        }
+
         init_opengl();
+
         once = true;
     }
 
@@ -178,6 +112,7 @@ OpenGL::OpenGL(HWND window)
 
     if( OpenGL::MajorV() >= 4 && OpenGL::MinorV() >= 3 && (flags & GL_CONTEXT_FLAG_DEBUG_BIT)){
         glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
         glDebugMessageCallback(GLDebugMessageCallback, nullptr);
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
     }
@@ -210,42 +145,47 @@ OpenGL::~OpenGL()
 auto OpenGL::init_opengl() -> void
 {
 
-    if( m_MainHDC == nullptr){
-        Log::Error("HDC not valid");
+    PIXELFORMATDESCRIPTOR pfd {};
+    pfd.nSize = sizeof(pfd);
+    pfd.nVersion = 1;
+    pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+    pfd.iPixelType = PFD_TYPE_RGBA;
+    pfd.cColorBits = 32;
+    pfd.cAlphaBits = 8;
+    pfd.cDepthBits = 32;
+    pfd.cStencilBits = 8;
+    pfd.iLayerType = PFD_MAIN_PLANE;
+
+    int pixel_format = ChoosePixelFormat(m_MainHDC, &pfd);
+    if (!pixel_format) {
+        Log::Error("Failed to find a suitable pixel format.");
     }
-    init_opengl_dummy();
-
-    int pixel_format_attribs[] = {
-        WGL_DRAW_TO_WINDOW_ARB,     GL_TRUE,
-        WGL_SUPPORT_OPENGL_ARB,     GL_TRUE,
-        WGL_DOUBLE_BUFFER_ARB,      GL_TRUE,
-        WGL_ACCELERATION_ARB,       WGL_FULL_ACCELERATION_ARB,
-        WGL_PIXEL_TYPE_ARB,         WGL_TYPE_RGBA_ARB,
-        WGL_COLOR_BITS_ARB,         32,
-        WGL_DEPTH_BITS_ARB,         24,
-        WGL_STENCIL_BITS_ARB,       8,
-        0
-    };
-
-    int pixel_format{};
-    UINT num_formats{};
-    wglChoosePixelFormatARB(m_MainHDC, pixel_format_attribs, 0, 1, &pixel_format, &num_formats);
-
-    if (!num_formats || !m_MainHDC) {
-        Log::Error("Failed to set the OpenGL 3.3 pixel format. {}", GetLastError());
-    }else{
-        if (GetPixelFormat(m_MainHDC) != pixel_format) {
-            PIXELFORMATDESCRIPTOR pfd;
-            if (!DescribePixelFormat(m_MainHDC, pixel_format, sizeof(pfd), &pfd)) {
-                Log::Error("DescribePixelFormat failed.");
-            }
-
-            if (!SetPixelFormat(m_MainHDC, pixel_format, &pfd)) {
-                Log::Error("Failed to set the OpenGL 3.3 pixel format.");
-            }
-        }
+    if (!SetPixelFormat(m_MainHDC, pixel_format, &pfd)) {
+        Log::Error("Failed to set the pixel format.");
     }
-   
+
+    HGLRC dummy_context = nullptr;
+
+    dummy_context = wglCreateContext(m_MainHDC);
+    if (!dummy_context) {
+        Log::Error("Failed to create a dummy OpenGL rendering context.");
+    }
+
+    if (!wglMakeCurrent(m_MainHDC, dummy_context)) {
+        Log::Error("Failed to activate dummy OpenGL rendering context.");
+    }
+
+    auto ProcwglCreateContextAttribsARB = wglGetProcAddress("wglCreateContextAttribsARB");
+    auto ProcwglChoosePixelFormatARB = wglGetProcAddress("wglChoosePixelFormatARB");
+    auto ProcwglSwapIntervalEXT = wglGetProcAddress("wglSwapIntervalEXT");
+    
+    wglCreateContextAttribsARB = (wglCreateContextAttribsARB_type)ProcwglCreateContextAttribsARB;
+    wglChoosePixelFormatARB = (wglChoosePixelFormatARB_type)ProcwglChoosePixelFormatARB;
+    wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)ProcwglSwapIntervalEXT;
+
+    if (!wglCreateContextAttribsARB || !wglChoosePixelFormatARB || !wglSwapIntervalEXT) {
+        Log::Error("Failed to load required WGL extensions.");
+    }
 
     int gl_attribs[] = { 
         WGL_CONTEXT_MAJOR_VERSION_ARB, 4,
@@ -255,20 +195,25 @@ auto OpenGL::init_opengl() -> void
         0,
     };
 
-    if (GetLastError() == ERROR_INVALID_VERSION_ARB){
-        Log::Error("Unsupported GL Version {}.{}", gl_attribs[1], gl_attribs[3]);
-    }
-    
-    HGLRC gl33_context = wglCreateContextAttribsARB(m_MainHDC, 0, gl_attribs);
-    if (!gl33_context) {
-        Log::Error("Failed to create OpenGL 3.3 context.");
+
+    HGLRC opengl_context = NULL;
+    if (nullptr == (opengl_context = wglCreateContextAttribsARB(m_MainHDC, nullptr, gl_attribs))) {
+        wglDeleteContext(dummy_context);
+        ReleaseDC(m_MainWindow, m_MainHDC);
+        DestroyWindow(m_MainWindow);
+
+        if (GetLastError() == ERROR_INVALID_VERSION_ARB){ // ?
+            Log::Error("Unsupported GL Version {}.{}", gl_attribs[1], gl_attribs[3]);
+        }
+        Log::Error("Failed to create the final rendering context!");
     }
 
-    if (!wglMakeCurrent(m_MainHDC, gl33_context)) {
-        Log::Error("Failed to activate OpenGL 3.3 rendering context.");
-    }
 
-    m_Context =  gl33_context;
+    wglMakeCurrent(NULL, NULL);
+    wglDeleteContext(dummy_context);
+    wglMakeCurrent(m_MainHDC, opengl_context);
+
+    m_Context =  opengl_context;
 }
 
 auto OpenGL::GetHDC() const -> HDC
