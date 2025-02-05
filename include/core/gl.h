@@ -58,6 +58,11 @@ X(PFNGLUNIFORM4FPROC, glUniform4f);\
 X(PFNGLUNIFORMMATRIX2FVPROC, glUniformMatrix2fv);\
 X(PFNGLUNIFORMMATRIX3FVPROC, glUniformMatrix3fv);\
 X(PFNGLUNIFORMMATRIX4FVPROC, glUniformMatrix4fv);\
+X(PFNGLGETSTRINGIPROC, glGetStringi);\
+X(PFNGLDEBUGMESSAGECALLBACKPROC, glDebugMessageCallback);\
+X(PFNGLDEBUGMESSAGECONTROLPROC, glDebugMessageControl);\
+X(PFNGLDRAWELEMENTSINSTANCEDPROC, glDrawElementsInstanced);\
+X(PFNGLDRAWELEMENTSPROC, glDrawElements);\
 
 #define GLFUN(type, name)\
 inline type name = nullptr
