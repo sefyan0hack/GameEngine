@@ -9,7 +9,6 @@ namespace {
 auto load_img(const char* name) -> std::optional<std::tuple<GLsizei, GLsizei, GLsizei, GLubyte*>>
 {
     GLsizei width, height, nrChannels;
-    stbi_set_flip_vertically_on_load(true);
     GLubyte *data = stbi_load(name, &width, &height, &nrChannels, 0);
 
     if(data != nullptr) return std::make_tuple(width, height, nrChannels, data);
@@ -35,6 +34,7 @@ Texture::Texture(const std::string &name, const GLenum Type)
     glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+    stbi_set_flip_vertically_on_load(true);
     auto op = load_img(name.c_str());
     if (op)
     {
@@ -84,7 +84,14 @@ Texture::Texture(const std::vector<std::string> faces, const GLenum Type)
     glGenTextures(1, &id);
     Bind();
 
-    size_t i = 0;
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    stbi_set_flip_vertically_on_load(false);
+    GLuint i = 0;
     for (auto face : faces)
     {
         auto op = load_img(face.c_str());
@@ -114,12 +121,6 @@ Texture::Texture(const std::vector<std::string> faces, const GLenum Type)
             Log::Error("the op is null");
         }
     }
-
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }
 auto Texture::Getid() const -> GLuint
 {
