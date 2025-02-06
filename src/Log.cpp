@@ -21,8 +21,17 @@ auto PrintStackTrace() -> void
 
 auto WINAPI ExceptionHandler([[maybe_unused]] PEXCEPTION_POINTERS ex) -> LONG
 {
+
+    Log::Info("\n--- Exception Caught ---\n");
+    Log::Info("Exception Code: {}\n", ex->ExceptionRecord->ExceptionCode);
+    Log::Info("Exception Address: {}\n", ex->ExceptionRecord->ExceptionAddress);
+    
+
+    if (ex->ExceptionRecord->ExceptionCode == EXCEPTION_ACCESS_VIOLATION ||  ex->ExceptionRecord->ExceptionCode == 1073807370L) {
+        return EXCEPTION_CONTINUE_EXECUTION;
+    }
+
     PrintStackTrace();
-    ExitProcess(1);
     return EXCEPTION_EXECUTE_HANDLER;
 }
 
