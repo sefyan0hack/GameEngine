@@ -81,6 +81,50 @@ private:
         {{-0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}, {0.0f, 0.0f}}, // Bottom Left
         {{ 0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}, {1.0f, 0.0f}}, // Bottom Right
     };
+    std::vector<GLfloat> skyboxVertices = {
+        -1.0f,  1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+        1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f,  1.0f,
+        1.0f,  1.0f,  1.0f,
+        1.0f,  1.0f,  1.0f,
+        1.0f,  1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        1.0f,  1.0f,  1.0f,
+        1.0f,  1.0f,  1.0f,
+        1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+        -1.0f,  1.0f, -1.0f,
+        1.0f,  1.0f, -1.0f,
+        1.0f,  1.0f,  1.0f,
+        1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+        1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+        1.0f, -1.0f,  1.0f
+    };
+
 #endif
     std::vector<GLuint> indices {
         0, 1, 2,
@@ -102,11 +146,25 @@ private:
     Mesh cubeMesh;
     Scene Scn;
     Renderer rndr;
+    Mesh skyMesh;
+    Shader skyVert;
+    Shader skyfrag;
+    Material skyMat;
+    Texture skyTexture;
 public: // init here
     Game()
     : vert(SHADER(Traingl)".vert", GL_VERTEX_SHADER)
     , frag(SHADER(Traingl)".frag", GL_FRAGMENT_SHADER)
     , Matt({vert, frag}), Cam(m_Window), cubeMesh({cubeMeshVert, indices})
+    , skyMesh(skyboxVertices)
+    , skyVert(SHADER(skybox)".vert", GL_VERTEX_SHADER)
+    , skyfrag(SHADER(skybox)".frag", GL_FRAGMENT_SHADER)
+    , skyMat({skyVert, skyfrag})
+    , skyTexture(std::vector<std::string>{
+            TEXTURE(posx.jpg), TEXTURE(negx.jpg),
+            TEXTURE(posy.jpg), TEXTURE(negy.jpg),
+            TEXTURE(posz.jpg), TEXTURE(negz.jpg),
+            })
     {
         constexpr int Grids = 300;
         std::vector<glm::vec3> positions(Grids * Grids * 4);
@@ -129,6 +187,18 @@ public: // init here
 public:
 
     auto Update(float delta) -> void override {
+
+        glDepthFunc(GL_LEQUAL);
+        skyMat.Use();
+        skyMat.SetUniform("Perspective", Cam.GetPerspective());
+        skyMat.SetUniform("View", glm::mat4(glm::mat3(Cam.GetView())));
+        // skyMat.SetUniform("View", glm::mat4(Cam.GetView()));
+
+        glBindVertexArray(skyMesh.VAO);
+        skyTexture.Bind();
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindVertexArray(0);
+        glDepthFunc(GL_LESS);
 
         Cam.MoseMove();
         if( m_Window.kbd.KeyIsPressed('W')){
