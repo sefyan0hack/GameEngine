@@ -16,13 +16,15 @@ class OpenGL
         static auto MajorV() -> GLint;
         static auto MinorV() -> GLint;
 
+        inline static LPCSTR OPENGL_MODULE_NAME {"opengl32.dll"};
     private:
-    static auto init_opengl()             -> void ;
+        auto init_opengl()             -> void ;
 
     private:
-        inline static HWND m_MainWindow;
-        inline static HDC m_MainHDC;
-        inline static HGLRC m_Context;
+        HWND m_MainWindow;
+        HDC m_MainHDC;
+        HGLRC m_Context;
+
         inline static GLint vMajor;
         inline static GLint vMinor;
         enum {
@@ -42,5 +44,6 @@ class OpenGL
             WGL_CONTEXT_PROFILE_MASK_ARB     = 0x9126,
             ERROR_INVALID_VERSION_ARB        = 0x2095,
             ERROR_INVALID_PROFILE_ARB        = 0x2096,
+            WGL_CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB = 0x8256,
         };
 };
