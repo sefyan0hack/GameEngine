@@ -1,8 +1,9 @@
 #include <core/APP.hpp>
 #include <core/Window.hpp>
+#include <tchar.h>
 
 APP::APP()
-: m_Window(1180, 640, "Main")
+: m_Window(1180, 640, _T("Main"))
 , start_count({})
 , end_count({})
 , counts({})
