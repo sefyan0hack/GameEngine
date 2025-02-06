@@ -21,6 +21,17 @@ jobs:
       - name: Build (Release)
         run: cmake --build build/release
 
+      - name: Run the executable for 30 seconds
+        shell: pwsh
+        run: |
+          $process = Start-Process -FilePath ".\build\Release\Engine.exe" -PassThru
+
+          # Let it run for 30 seconds
+          Start-Sleep -Seconds 30
+
+          # Terminate the process after 30 seconds
+          Stop-Process -Id $process.Id
+
   build-debug_msvc:
     name: Build Debug Msvc
     runs-on: windows-latest
@@ -36,3 +47,14 @@ jobs:
 
       - name: Build (Debug)
         run: cmake --build build/debug
+
+      - name: Run the executable for 30 seconds
+        shell: pwsh
+        run: |
+          $process = Start-Process -FilePath ".\build\Debug\Engine.exe" -PassThru
+
+          # Let it run for 30 seconds
+          Start-Sleep -Seconds 30
+
+          # Terminate the process after 30 seconds
+          Stop-Process -Id $process.Id
