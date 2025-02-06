@@ -30,9 +30,9 @@ namespace {
     return false;
 }
 
-auto stack_trace_formated() -> std::optional<std::string>
+auto stack_trace_formated(const unsigned short skip = 2) -> std::optional<std::string>
 {
-  const auto trace = std::stacktrace::current(2);
+  const auto trace = std::stacktrace::current(skip);
   auto msg = std::stringstream{};
   short unsigned int frame_size = 0;
 
@@ -133,10 +133,23 @@ auto Info(const std::format_string<Ts...> fmt, Ts&& ... ts) -> void
   std::cout << std::format("{} : [INFO] {}\n", formatedTime(), std::format(fmt, std::forward<Ts>(ts)...));
 }
 
+
 template <typename ...Ts>
 using Error = ERRF<Log_LvL::ERR, &std::cerr, Ts...>;
 
 template <typename ...Ts>
 using Warning = ERRF<Log_LvL::WAR, &std::clog, Ts...>;
 
+
+template <typename ...Ts>
+auto Expect(bool x, const std::format_string<Ts...> fmt, Ts&& ... ts) -> void
+{
+  [[maybe_unused]] auto msg = std::format("{}\n", std::format(fmt, std::forward<Ts>(ts)...));
+
+  if( x != true){
+    print("Expection Failed : {} ", msg);
+    stack_trace_formated(3);
+    exit(1);
+  }
+}
 } // namespace Log
