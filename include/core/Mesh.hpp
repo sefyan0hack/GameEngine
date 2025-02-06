@@ -18,7 +18,7 @@ class Material;
 class Mesh
 {
 public:
-    Mesh(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indices);
+    Mesh(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indices = {});
     ~Mesh();
 public:
     GLuint VAO, VBO, EBO;
