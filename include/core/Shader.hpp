@@ -4,19 +4,28 @@
 #include <core/gl.h>
 #include <core/fmts.hpp>
 #include <format>
+#include <array>
 
 class Shader
 {
     public:
+        Shader();
         Shader(const char* name, GLenum type);
+        Shader(const Shader& other);
+        Shader(Shader&& other);
+
+        Shader& operator=(const Shader& other);
+
+        bool operator==(const Shader& other);
         ~Shader();
     public:
         auto Getid() const             -> GLuint ;
         auto GetType() const             -> GLenum ;
         auto GetTypeName() const             -> const char* ;
+        auto GetContent() const              -> std::string ;
     private:
-        auto Load(const char* name)    -> void ;
-        auto LoadSource(const char* full_name_file)         -> void;
+        auto LoadFile(const char* filenmae) -> void;
+        auto LoadSource()                   -> void;
         auto Compile()                                      -> void;
         auto checkShaderCompileStatus(const GLuint &shader) -> void;
     

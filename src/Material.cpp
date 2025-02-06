@@ -4,9 +4,12 @@
 #include <glm/glm.hpp>
 
 
-Material::Material(Shader& vertex, Shader& fragment)
+Material::Material(Shader vertex, Shader fragment)
     : id(glCreateProgram())
+
 {
+    Shaders[0] = std::move(&vertex);
+    Shaders[1] = std::move(&fragment);
 
     glAttachShader(id, vertex.Getid());
     glAttachShader(id, fragment.Getid());
@@ -21,18 +24,42 @@ Material::Material(Shader& vertex, Shader& fragment)
 Material::Material(std::initializer_list<Shader> shaders)
     : id(glCreateProgram())
 {
-    for( auto &&shader : shaders ){
+    size_t i = 0;
+    for(const auto &shader : shaders ){
         auto Shaderid = shader.Getid();
         Log::Info("glAttachShader id {}, type {}", Shaderid, shader.GetTypeName());
         glAttachShader(id, Shaderid);
+        Shaders[i++] = std::move(&shader);
     }
 
     Link();
     checkProgramLinkStatus();
-    Log::Info("Uniforms count is {}", UniformCount());
     DumpUniforms();
 
     Log::Info("{}", *this);
+}
+
+Material::Material(const Material& other)
+    : id(glCreateProgram())
+    , Uniforms(other.GetUniforms()) // dnt forget  to check if the id are the same in the new Programe
+{
+    for(const auto &shader : other.Shaders ){
+        auto Shaderid = shader->Getid();
+        
+        if(Shaderid != 0){
+            Log::Info("glAttachShader id {}, type {}", Shaderid, shader->GetTypeName());
+            glAttachShader(id, Shaderid);
+        }
+    }
+    
+    Link();
+    //no need for checkProgramLinkStatus
+    Log::Info("{}", *this);
+}
+Material::Material(Material&& other)
+    : id(std::move(other.Getid()))
+    , Uniforms(std::move(other.GetUniforms())) // dnt forget  to check if the id are the same in the new Programe
+{
 }
 
 Material::~Material()

@@ -4,15 +4,17 @@
 #include <unordered_map>
 #include <initializer_list>
 #include <core/fmts.hpp>
+#include <core/Shader.hpp>
 #include <format>
-
-class Shader;
 
 class Material
 {
 public:
-    Material(Shader& vertex, Shader& fragment);
+    Material(Shader vertex, Shader fragment);
     Material(std::initializer_list<Shader> shaders);
+
+    Material(const Material& other);
+    Material(Material&& other);
     ~Material();
 
     auto Getid() const -> GLuint ;
@@ -21,6 +23,7 @@ public:
     auto GetUniformLocation(const char*) const -> GLuint;
     auto GetUniforms() const -> std::unordered_map<std::string, GLuint>;
     static auto Current_Program() -> GLuint;
+    auto GetShaders() const -> const std::array<Shader, 5>&;
 
 
     template<class T>
@@ -43,8 +46,8 @@ private:
 
 private:
     GLuint id;
+    std::array<const Shader*, 5> Shaders;
     std::unordered_map<std::string, GLuint> Uniforms;
-
 };
 
 // custom Material Format
