@@ -206,7 +206,7 @@ auto Window::WindowsCount() -> unsigned short
 {
     return S_WindowsCount;
 }
-Window::Window(int m_Width, int m_Height,  TCHAR* Title) 
+Window::Window(int m_Width, int m_Height, const TCHAR* Title) 
 : m_Instance( GetModuleHandleA( nullptr ) ), m_Visible(true)
 {
     _init_helper(m_Width, m_Height, Title);
@@ -228,7 +228,7 @@ auto Window::ProcessMessages() -> void
     }
 }
 
-auto Window::_init_helper(int Width, int Height, TCHAR* Title) -> void
+auto Window::_init_helper(int Width, int Height, const TCHAR* Title) -> void
 {
     WinClass::Instance();
 

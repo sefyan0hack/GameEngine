@@ -30,7 +30,7 @@ class Window
     };
     
     public:
-        Window(int Width, int Height, TCHAR* Title);
+        Window(int Width, int Height, const TCHAR* Title);
         Window(const Window&) = delete;
         Window(Window&&) = delete;
     
@@ -54,7 +54,7 @@ class Window
         static auto CALLBACK WinProcSetup(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)  -> LRESULT ;
         static auto CALLBACK WinProcSetup2(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT ;
         auto CALLBACK WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)           -> LRESULT ;
-        auto _init_helper(int Width, int Height,  TCHAR* Title)                              -> void ;
+        auto _init_helper(int Width, int Height, const TCHAR* Title)                         -> void ;
     private:
         HINSTANCE m_Instance;
         HWND m_WindowHandle;
