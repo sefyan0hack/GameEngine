@@ -25,6 +25,8 @@ Texture::Texture(const std::string &name, const GLenum Type)
     , data(nullptr)
     , mipmapped(true)
 {
+    Log::Expect(type != GL_TEXTURE_CUBE_MAP, "type is {}", TEXTURETYPE[GL_TEXTURE_CUBE_MAP]);
+    
     glGenTextures(1, &id);
     Bind();
 
@@ -71,6 +73,54 @@ Texture::Texture(const std::string &name, const GLenum Type)
     Log::Info("{}", *this);
 }
 
+Texture::Texture(const std::vector<std::string> faces, const GLenum Type)
+    : id(0)
+    , type(Type)
+    , width(0)
+    , height(0)
+    , data(nullptr)
+    , mipmapped(true)
+{
+    glGenTextures(1, &id);
+    Bind();
+
+    size_t i = 0;
+    for (auto face : faces)
+    {
+        auto op = load_img(face.c_str());
+        if (op)
+        {
+            const auto [Width, Height, Channel, Data] = op.value();
+            width = Width;
+            height = Height;
+
+            if(is_odd(width)){
+                glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+            }
+
+            if (Channel == 4){
+                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Data);// png
+            }
+            else if (Channel == 3){
+                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB8, Width, Height, 0, GL_RGB, GL_UNSIGNED_BYTE, Data);// jpeg
+            }
+            else {
+                Log::Error("Unsupported img format num of channels are {}", Channel);
+            }
+            stbi_image_free(Data);
+
+            i++;
+        }else{
+            Log::Error("the op is null");
+        }
+    }
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+}
 auto Texture::Getid() const -> GLuint
 {
     return id;

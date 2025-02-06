@@ -2,12 +2,14 @@
 #include <unordered_map>
 #include <string>
 #include <format>
+#include <vector>
 #include <core/gl.h>
 
 class Texture
 {
 public:
     Texture(const std::string &name, const GLenum  Type = GL_TEXTURE_2D);
+    Texture(const std::vector<std::string> faces, const GLenum Type = GL_TEXTURE_CUBE_MAP);
     ~Texture();
 public:
     // auto Load(const std::string &name, const GLenum  Type = GL_TEXTURE_2D) -> void ;
@@ -42,18 +44,16 @@ struct std::formatter<Texture> {
 
 namespace {
     inline static std::unordered_map<GLenum, std::string> TEXTURETYPE {
-        { GL_TEXTURE_2D, "GL_TEXTURE_2D"},
-        { GL_PROXY_TEXTURE_2D, "GL_PROXY_TEXTURE_2D"},
-        { GL_TEXTURE_1D_ARRAY, "GL_TEXTURE_1D_ARRAY"},
-        { GL_PROXY_TEXTURE_1D_ARRAY, "GL_PROXY_TEXTURE_1D_ARRAY"},
-        { GL_TEXTURE_RECTANGLE, "GL_TEXTURE_RECTANGLE"},
-        { GL_PROXY_TEXTURE_RECTANGLE, "GL_PROXY_TEXTURE_RECTANGLE"},
-        { GL_TEXTURE_CUBE_MAP_POSITIVE_X, "GL_TEXTURE_CUBE_MAP_POSITIVE_X"},
-        { GL_TEXTURE_CUBE_MAP_NEGATIVE_X, "GL_TEXTURE_CUBE_MAP_NEGATIVE_X"},
-        { GL_TEXTURE_CUBE_MAP_POSITIVE_Y, "GL_TEXTURE_CUBE_MAP_POSITIVE_Y"},
-        { GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, "GL_TEXTURE_CUBE_MAP_NEGATIVE_Y"},
-        { GL_TEXTURE_CUBE_MAP_POSITIVE_Z, "GL_TEXTURE_CUBE_MAP_POSITIVE_Z"},
-        { GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, "GL_TEXTURE_CUBE_MAP_NEGATIVE_Z"},
-        { GL_PROXY_TEXTURE_CUBE_MAP, "GL_PROXY_TEXTURE_CUBE_MA"},
+        {GL_TEXTURE_1D, "GL_TEXTURE_1D"},
+        {GL_TEXTURE_2D, "GL_TEXTURE_2D"},
+        {GL_TEXTURE_3D, "GL_TEXTURE_3D"},
+        {GL_TEXTURE_1D_ARRAY, "GL_TEXTURE_1D_ARRAY"},
+        {GL_TEXTURE_2D_ARRAY, "GL_TEXTURE_2D_ARRAY"},
+        {GL_TEXTURE_RECTANGLE, "GL_TEXTURE_RECTANGLE"},
+        {GL_TEXTURE_CUBE_MAP, "GL_TEXTURE_CUBE_MAP"},
+        {GL_TEXTURE_CUBE_MAP_ARRAY, "GL_TEXTURE_CUBE_MAP_ARRAY"},
+        {GL_TEXTURE_BUFFER, "GL_TEXTURE_BUFFER"},
+        {GL_TEXTURE_2D_MULTISAMPLE, "GL_TEXTURE_2D_MULTISAMPLE"},
+        {GL_TEXTURE_2D_MULTISAMPLE_ARRAY, "GL_TEXTURE_2D_MULTISAMPLE_ARRA"},
     };
 }
