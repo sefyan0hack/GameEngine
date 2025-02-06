@@ -63,6 +63,11 @@ X(PFNGLDEBUGMESSAGECALLBACKPROC, glDebugMessageCallback);\
 X(PFNGLDEBUGMESSAGECONTROLPROC, glDebugMessageControl);\
 X(PFNGLDRAWELEMENTSINSTANCEDPROC, glDrawElementsInstanced);\
 X(PFNGLDRAWELEMENTSPROC, glDrawElements);\
+X(PFNGLSTENCILFUNCPROC, glStencilFunc);\
+X(PFNGLSTENCILOPPROC, glStencilOp);\
+X(PFNGLSTENCILMASKPROC, glStencilMask);\
+X(PFNGLDEPTHMASKPROC, glDepthMask);\
+X(PFNGLDEPTHFUNCPROC, glDepthFunc);\
 
 #define GLFUN(type, name)\
 inline type name = nullptr
