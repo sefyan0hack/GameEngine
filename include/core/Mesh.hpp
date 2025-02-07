@@ -21,9 +21,12 @@ public:
     Mesh(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indices = {});
     Mesh(const std::vector<GLfloat> vertices);
     ~Mesh();
+    auto EnableAttribs() const -> void;
+    auto DisableAttribs() const -> void;
 public:
     GLuint VAO, VBO, EBO;
     GLsizei vInSize;
+    GLuint attribs;
 };
 
 // custom Mesh Format

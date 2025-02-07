@@ -2,7 +2,8 @@
 #include <core/Log.hpp>
 #include <type_traits>
 
-Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vector<GLuint> &indices): VAO(0), VBO(0), EBO(0)
+Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vector<GLuint> &indices)
+    : VAO(0), VBO(0), EBO(0), vInSize(0), attribs(0)
 {
     using VetexData = typename std::remove_cv_t<typename std::remove_reference_t<decltype(vertices)>::value_type>;
 
@@ -36,28 +37,49 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vect
     Log::Info("{}", *this);
     // glBindBuffer(GL_ARRAY_BUFFER, 0);
     // glBindVertexArray(0);
+
+    attribs = index;
 }
 
-Mesh::Mesh(const std::vector<GLfloat> vertices): VAO(0), VBO(0), EBO(0), vInSize(0)
+Mesh::Mesh(const std::vector<GLfloat> vertices)
+    : VAO(0), VBO(0), EBO(0), vInSize(0), attribs(0)
 {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
   
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
+    
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
-
+    
+    GLuint index = 0;
     // vertex positions
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), reinterpret_cast<void*>(0));
+    glEnableVertexAttribArray(index);
+    glVertexAttribPointer(index++, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), reinterpret_cast<void*>(0));
 
     vInSize = static_cast<GLuint>(vertices.size()/3);
     Log::Info("{}", *this);
     // glBindBuffer(GL_ARRAY_BUFFER, 0);
     // glBindVertexArray(0);
+    
+    attribs = index;
+
+    DisableAttribs();
 }
 
 Mesh::~Mesh()
 {
+}
+
+auto Mesh::EnableAttribs() const -> void
+{
+    for(GLuint i = 0; i < attribs; i++){
+        glEnableVertexAttribArray(i);
+    }
+}
+auto Mesh::DisableAttribs() const -> void
+{
+    for(GLuint i = 0; i < attribs; i++){
+        glDisableVertexAttribArray(i);
+    }
 }
