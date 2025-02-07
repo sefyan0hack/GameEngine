@@ -68,6 +68,7 @@ X(PFNGLSTENCILOPPROC, glStencilOp);\
 X(PFNGLSTENCILMASKPROC, glStencilMask);\
 X(PFNGLDEPTHMASKPROC, glDepthMask);\
 X(PFNGLDEPTHFUNCPROC, glDepthFunc);\
+X(PFNGLDISABLEVERTEXATTRIBARRAYPROC, glDisableVertexAttribArray);\
 
 #define GLFUN(type, name)\
 inline type name = nullptr
