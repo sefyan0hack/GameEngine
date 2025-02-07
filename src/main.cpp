@@ -149,7 +149,6 @@ private:
     Mesh cubeMesh;
 
     Camera Cam;
-    Texture skyTexture;
     Scene Scn;
     Renderer rndr;
     public: // init here
@@ -164,11 +163,6 @@ private:
     , Matt({vert, frag})
     , cubeMesh({cubeMeshVert, indices})
     , Cam(m_Window)
-    , skyTexture(std::vector<std::string>{
-            TEXTURE(posx.jpg), TEXTURE(negx.jpg),
-            TEXTURE(posy.jpg), TEXTURE(negy.jpg),
-            TEXTURE(posz.jpg), TEXTURE(negz.jpg),
-            })
     {
         constexpr int Grids = 300;
         std::vector<glm::vec3> positions(Grids * Grids * 4);
@@ -178,15 +172,17 @@ private:
                 positions[index++] = {i, 0, j};
         }
 
-        Matt.texture(TEXTURE(brik.png));
-        
-        Scn.add({glm::vec3(0,0,0), Matt, cubeMesh});
-        for(auto &Obj : Scn.GetGameObjects()){
-            Obj.SetUp(positions);
-        }
+        skyMat.texture(std::vector<std::string>{
+            TEXTURE(posx.jpg), TEXTURE(negx.jpg),
+            TEXTURE(posy.jpg), TEXTURE(negy.jpg),
+            TEXTURE(posz.jpg), TEXTURE(negz.jpg),
+        });
+        Scn.add({glm::vec3(0,0,0), skyMat, skyMesh});
 
-        // brik.Bind();
-        Matt.SetUniform("ourTexture", 0);
+        Matt.texture(TEXTURE(brik.png));
+        Scn.add({glm::vec3(0,0,0), Matt, cubeMesh});
+        Scn.GetGameObjects().back().SetUp(positions);
+
     }
 public:
 
@@ -226,19 +222,8 @@ public:
             }
         }
 
-        glDepthFunc(GL_LEQUAL);
-        skyMat.Use();
-        skyMat.SetUniform("Perspective", Cam.GetPerspective());
-        skyMat.SetUniform("View", glm::mat4(glm::mat3(Cam.GetView())));
-        // skyMat.SetUniform("View", glm::mat4(Cam.GetView()));
-
-        glBindVertexArray(skyMesh.VAO);
-        skyTexture.Bind();
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        glBindVertexArray(0);
-        glDepthFunc(GL_LESS);
         rndr.render(Scn, Cam);
-    //    LOG( "Fps : " << this->fps.QuadPart);
+        //    LOG( "Fps : " << this->fps.QuadPart);
     }
 
 public: // distroy hire
