@@ -5,6 +5,8 @@
 #include <initializer_list>
 #include <core/fmts.hpp>
 #include <core/Shader.hpp>
+#include <core/Texture.hpp>
+
 #include <format>
 
 class Material
@@ -19,11 +21,15 @@ public:
 
     auto Getid() const -> GLuint ;
     auto Use() const -> void ;
+    auto UnUse() const -> void ;
     auto UniformCount() const                  -> GLint ;
     auto GetUniformLocation(const char*) const -> GLuint;
     auto GetUniforms() const -> std::unordered_map<std::string, GLuint>;
     static auto Current_Program() -> GLuint;
-    auto GetShaders() const -> const std::array<Shader, 5>&;
+    auto GetShaders() const -> const std::array<const Shader*, 5>&;
+    auto GetTexture() const -> Texture*;
+    auto texture(const std::string &name, const GLenum Type = GL_TEXTURE_2D) -> void;
+    auto texture(const std::vector<std::string> faces) -> void;
 
 
     template<class T>
@@ -48,6 +54,7 @@ private:
     GLuint id;
     std::array<const Shader*, 5> Shaders;
     std::unordered_map<std::string, GLuint> Uniforms;
+    Texture* albedo;
 };
 
 // custom Material Format

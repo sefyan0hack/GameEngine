@@ -34,6 +34,8 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vect
 
     vInSize = static_cast<GLuint>(vertices.size());
     Log::Info("{}", *this);
+    // glBindBuffer(GL_ARRAY_BUFFER, 0);
+    // glBindVertexArray(0);
 }
 
 Mesh::Mesh(const std::vector<GLfloat> vertices): VAO(0), VBO(0), EBO(0), vInSize(0)
@@ -52,6 +54,8 @@ Mesh::Mesh(const std::vector<GLfloat> vertices): VAO(0), VBO(0), EBO(0), vInSize
 
     vInSize = static_cast<GLuint>(vertices.size()/3);
     Log::Info("{}", *this);
+    // glBindBuffer(GL_ARRAY_BUFFER, 0);
+    // glBindVertexArray(0);
 }
 
 Mesh::~Mesh()

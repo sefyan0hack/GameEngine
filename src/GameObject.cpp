@@ -102,3 +102,9 @@ auto GameObject::GetMaterial() const ->  Material*
         return nullptr;
     }
 }
+
+auto GameObject::Bind() const -> void
+{
+    Log::Expect(m_Mesh.VAO != 0, "VAO is 0");
+    glBindVertexArray(m_Mesh.VAO);
+}

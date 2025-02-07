@@ -1,12 +1,13 @@
 #include <core/Material.hpp>
 #include <core/Log.hpp>
 #include <core/Shader.hpp>
+#include <core/Texture.hpp>
 #include <glm/glm.hpp>
 
 
 Material::Material(Shader vertex, Shader fragment)
     : id(glCreateProgram())
-
+    , albedo(nullptr)
 {
     Shaders[0] = std::move(&vertex);
     Shaders[1] = std::move(&fragment);
@@ -22,7 +23,8 @@ Material::Material(Shader vertex, Shader fragment)
     Log::Info("{}", *this);
 }
 Material::Material(std::initializer_list<Shader> shaders)
-    : id(glCreateProgram())
+: id(glCreateProgram())
+, albedo(nullptr)
 {
     size_t i = 0;
     for(const auto &shader : shaders ){
@@ -31,17 +33,18 @@ Material::Material(std::initializer_list<Shader> shaders)
         glAttachShader(id, Shaderid);
         Shaders[i++] = std::move(&shader);
     }
-
+    
     Link();
     checkProgramLinkStatus();
     DumpUniforms();
-
+    
     Log::Info("{}", *this);
 }
 
 Material::Material(const Material& other)
     : id(glCreateProgram())
     , Uniforms(other.GetUniforms()) // dnt forget  to check if the id are the same in the new Programe
+    , albedo(nullptr)
 {
     for(const auto &shader : other.Shaders ){
         auto Shaderid = shader->Getid();
@@ -66,6 +69,9 @@ Material::~Material()
 {
     glUseProgram(0);
     glDeleteProgram(id);
+
+    if(albedo)
+        delete albedo;
 }
 
 auto Material::Getid() const -> GLuint
@@ -76,6 +82,15 @@ auto Material::Getid() const -> GLuint
 auto Material::Use() const -> void
 {
     glUseProgram(id);
+    if(albedo)
+        albedo->Bind();
+}
+
+auto Material::UnUse() const -> void
+{
+    glUseProgram(0);
+    if(albedo)
+        albedo->UnBind();
 }
 
 auto Material::Link() const -> void
@@ -175,6 +190,24 @@ auto Material::GetUniforms() const -> std::unordered_map<std::string, GLuint>
     return Uniforms;
 }
 
+auto Material::GetShaders() const -> const std::array<const Shader* , 5>&
+{
+    return Shaders;
+}
+
+auto Material::GetTexture() const -> Texture*
+{
+    return albedo;
+}
+
+auto Material::texture(const std::string &name, const GLenum Type) -> void
+{
+    albedo = new Texture(name, Type);
+}
+auto Material::texture(const std::vector<std::string> faces) -> void
+{
+    albedo = new Texture(faces);
+}
 ///////
 template<>
 auto Material::SetUniform<GLint>(const std::string& name, const GLint &value) const -> void

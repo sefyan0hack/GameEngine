@@ -24,6 +24,7 @@ public:
     auto GetMesh() const                                        -> const Mesh& ;
     auto GetMaterial() const                                    -> Material* ;
     auto GetInstancePos() const                                 -> const std::vector<glm::vec3>&;
+    auto Bind() const                               -> void;
 
 private:
     auto Transformation() const                                 -> glm::mat4 ;

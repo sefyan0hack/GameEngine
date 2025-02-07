@@ -9,12 +9,13 @@ class Texture
 {
 public:
     Texture(const std::string &name, const GLenum  Type = GL_TEXTURE_2D);
-    Texture(const std::vector<std::string> faces, const GLenum Type = GL_TEXTURE_CUBE_MAP);
+    Texture(const std::vector<std::string> faces);
     ~Texture();
 public:
     // auto Load(const std::string &name, const GLenum  Type = GL_TEXTURE_2D) -> void ;
     auto Getid() const -> GLuint ;
     auto Bind() const -> void ;
+    auto UnBind() const -> void ;
     auto GenerateMipMap() -> void ;
     auto GetWidth() const -> GLsizei ;
     auto GetHeight() const -> GLsizei ;

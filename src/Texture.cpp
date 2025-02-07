@@ -73,9 +73,9 @@ Texture::Texture(const std::string &name, const GLenum Type)
     Log::Info("{}", *this);
 }
 
-Texture::Texture(const std::vector<std::string> faces, const GLenum Type)
+Texture::Texture(const std::vector<std::string> faces)
     : id(0)
-    , type(Type)
+    , type(GL_TEXTURE_CUBE_MAP)
     , width(0)
     , height(0)
     , data(nullptr)
@@ -130,6 +130,11 @@ auto Texture::Getid() const -> GLuint
 auto Texture::Bind() const -> void
 {
     glBindTexture(type, id);
+}
+
+auto Texture::UnBind() const -> void
+{
+    glBindTexture(type, 0);
 }
 
 Texture::~Texture()

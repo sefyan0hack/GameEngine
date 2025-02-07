@@ -140,26 +140,30 @@ private:
         2, 1, 4,
         0, 2, 7
     };
+    Shader skyVert, skyfrag;
+    Material skyMat;
+    Mesh skyMesh;
+
     Shader vert, frag;
     Material Matt;
-    Camera Cam;
     Mesh cubeMesh;
+
+    Camera Cam;
+    Texture skyTexture;
     Scene Scn;
     Renderer rndr;
-    Mesh skyMesh;
-    Shader skyVert;
-    Shader skyfrag;
-    Material skyMat;
-    Texture skyTexture;
-public: // init here
+    public: // init here
     Game()
-    : vert(SHADER(Traingl)".vert", GL_VERTEX_SHADER)
-    , frag(SHADER(Traingl)".frag", GL_FRAGMENT_SHADER)
-    , Matt({vert, frag}), Cam(m_Window), cubeMesh({cubeMeshVert, indices})
-    , skyMesh(skyboxVertices)
-    , skyVert(SHADER(skybox)".vert", GL_VERTEX_SHADER)
+    : skyVert(SHADER(skybox)".vert", GL_VERTEX_SHADER)
     , skyfrag(SHADER(skybox)".frag", GL_FRAGMENT_SHADER)
     , skyMat({skyVert, skyfrag})
+    , skyMesh(skyboxVertices)
+
+    , vert(SHADER(Traingl)".vert", GL_VERTEX_SHADER)
+    , frag(SHADER(Traingl)".frag", GL_FRAGMENT_SHADER)
+    , Matt({vert, frag})
+    , cubeMesh({cubeMeshVert, indices})
+    , Cam(m_Window)
     , skyTexture(std::vector<std::string>{
             TEXTURE(posx.jpg), TEXTURE(negx.jpg),
             TEXTURE(posy.jpg), TEXTURE(negy.jpg),
@@ -174,31 +178,19 @@ public: // init here
                 positions[index++] = {i, 0, j};
         }
 
+        Matt.texture(TEXTURE(brik.png));
+        
         Scn.add({glm::vec3(0,0,0), Matt, cubeMesh});
         for(auto &Obj : Scn.GetGameObjects()){
             Obj.SetUp(positions);
         }
 
-        Texture brik(TEXTURE(brik.png));
-        brik.Bind();
-        Matt.Use();
+        // brik.Bind();
         Matt.SetUniform("ourTexture", 0);
     }
 public:
 
     auto Update(float delta) -> void override {
-
-        glDepthFunc(GL_LEQUAL);
-        skyMat.Use();
-        skyMat.SetUniform("Perspective", Cam.GetPerspective());
-        skyMat.SetUniform("View", glm::mat4(glm::mat3(Cam.GetView())));
-        // skyMat.SetUniform("View", glm::mat4(Cam.GetView()));
-
-        glBindVertexArray(skyMesh.VAO);
-        skyTexture.Bind();
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        glBindVertexArray(0);
-        glDepthFunc(GL_LESS);
 
         Cam.MoseMove();
         if( m_Window.kbd.KeyIsPressed('W')){
@@ -233,7 +225,18 @@ public:
                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             }
         }
-       
+
+        glDepthFunc(GL_LEQUAL);
+        skyMat.Use();
+        skyMat.SetUniform("Perspective", Cam.GetPerspective());
+        skyMat.SetUniform("View", glm::mat4(glm::mat3(Cam.GetView())));
+        // skyMat.SetUniform("View", glm::mat4(Cam.GetView()));
+
+        glBindVertexArray(skyMesh.VAO);
+        skyTexture.Bind();
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindVertexArray(0);
+        glDepthFunc(GL_LESS);
         rndr.render(Scn, Cam);
     //    LOG( "Fps : " << this->fps.QuadPart);
     }
