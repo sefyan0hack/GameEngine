@@ -79,7 +79,7 @@ Texture::Texture(const std::vector<std::string> faces)
     , width(0)
     , height(0)
     , data(nullptr)
-    , mipmapped(true)
+    , mipmapped(false)
 {
     glGenTextures(1, &id);
     Bind();
@@ -116,10 +116,10 @@ Texture::Texture(const std::vector<std::string> faces)
             }
             stbi_image_free(Data);
 
-            i++;
         }else{
             Log::Error("the op is null");
         }
+        i++;
     }
 }
 auto Texture::Getid() const -> GLuint
