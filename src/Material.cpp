@@ -293,6 +293,16 @@ auto Material::SetUniform<GLuint>(const std::string& name, const GLuint &value) 
         Log::Error("the Uniform {} not exist", name);
     }
 }
+template<>
+auto Material::SetUniform<glm::vec3>(const std::string& name, const glm::vec3 &value) const -> void
+{
+    auto it = Uniforms.find(name);
+    if (it != Uniforms.end()){
+        glUniform3fv(it->second, 1, &value[0]);
+    }else{
+        Log::Error("the Uniform {} not exist", name);
+    }
+}
 //
 template<>
 auto Material::SetUniform<glm::mat2>(const std::string& name, const glm::mat2 &value) const -> void
