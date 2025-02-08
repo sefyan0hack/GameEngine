@@ -13,7 +13,7 @@
 class GameObject {
 public:
     friend struct std::formatter<GameObject>;
-    GameObject(glm::vec3 position, Material &matt, const Mesh &mesh);
+    GameObject(glm::vec3 position, Material &matt, const Mesh &mesh, std::string Name = std::format("Mesh{}", Count));
     ~GameObject();
 
     auto UpMatrix()                                             -> void ;
@@ -30,12 +30,14 @@ public:
 
 private:
     auto Transformation() const                                 -> glm::mat4 ;
-
-private:
+    private:
     Transform transform;
     std::shared_ptr<Material> material;
     Mesh m_Mesh;
     std::vector<glm::vec3> InstancePos;
+public:
+    std::string name;
+    inline static size_t Count = 1;
 };
 
 // custom GameObject Format
@@ -46,7 +48,7 @@ struct std::formatter<GameObject> {
   }
   auto format(const GameObject& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    "GameObject: {{ transform: {}, material: {}, mesh: {} }}"
-    , obj.GetTransform(), *obj.material, obj.m_Mesh);
+    "GameObject: {{ name: {}, transform: {}, material: {}, mesh: {} }}"
+    , obj.name, obj.GetTransform(), *obj.material, obj.m_Mesh);
   }
 };

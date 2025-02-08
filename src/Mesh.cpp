@@ -2,8 +2,8 @@
 #include <core/Log.hpp>
 #include <type_traits>
 
-Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vector<GLuint> &indices)
-    : VAO(0), VBO(0), EBO(0), vInSize(0), attribs(0)
+Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vector<GLuint> &indices, std::string Name)
+    : VAO(0), VBO(0), EBO(0), vInSize(0), attribs(0), name(Name)
 {
     using VetexData = typename std::remove_cv_t<typename std::remove_reference_t<decltype(vertices)>::value_type>;
 
@@ -37,12 +37,14 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vect
     Log::Info("{}", *this);
     // glBindBuffer(GL_ARRAY_BUFFER, 0);
     // glBindVertexArray(0);
+    DisableAttribs();
 
     attribs = index;
+    Count++;
 }
 
-Mesh::Mesh(const std::vector<GLfloat> vertices)
-    : VAO(0), VBO(0), EBO(0), vInSize(0), attribs(0)
+Mesh::Mesh(const std::vector<GLfloat> vertices, std::string Name)
+    : VAO(0), VBO(0), EBO(0), vInSize(0), attribs(0), name(Name)
 {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -65,6 +67,7 @@ Mesh::Mesh(const std::vector<GLfloat> vertices)
     attribs = index;
 
     DisableAttribs();
+    Count++;
 }
 
 Mesh::~Mesh()

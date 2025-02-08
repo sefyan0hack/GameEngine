@@ -5,12 +5,16 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-GameObject::GameObject(glm::vec3 position, Material &matt, const Mesh &mesh)
-: transform(Transform(position)), material(std::make_shared<Material>(std::move(matt))), m_Mesh(mesh)
+GameObject::GameObject(glm::vec3 position, Material &matt, const Mesh &mesh, std::string Name)
+    : transform(Transform(position))
+    , material(std::make_shared<Material>(std::move(matt)))
+    , m_Mesh(mesh)
+    , name(Name)
 {   
     Transformation();
     UpMatrix();
     Log::Info("{}", *this);
+    Count++;
 }
 
 GameObject::~GameObject()

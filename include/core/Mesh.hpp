@@ -19,8 +19,8 @@ class Mesh
 {
 public:
     friend struct std::formatter<Mesh>;
-    Mesh(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indices = {});
-    Mesh(const std::vector<GLfloat> vertices);
+    Mesh(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indices = {}, std::string Name = std::format("Mesh{}", Count));
+    Mesh(const std::vector<GLfloat> vertices, std::string Name = std::format("Mesh{}", Count));
     ~Mesh();
     auto EnableAttribs() const -> void;
     auto DisableAttribs() const -> void;
@@ -28,6 +28,8 @@ public:
     GLuint VAO, VBO, EBO;
     GLsizei vInSize;
     GLuint attribs;
+    std::string name;
+    inline static size_t Count = 1;
 };
 
 // custom Mesh Format
@@ -38,7 +40,7 @@ struct std::formatter<Mesh> {
   }
   auto format(const Mesh& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    "Mesh: {{ VAO: {}, VBO: {}, EBO: {}, verticesSize: {} }}"
-    , obj.VAO, obj.VBO, obj.EBO, obj.vInSize);
+    "Mesh: {{ name: {}, VAO: {}, VBO: {}, EBO: {}, verticesSize: {} }}"
+    , obj.name, obj.VAO, obj.VBO, obj.EBO, obj.vInSize);
   }
 };
