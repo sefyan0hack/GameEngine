@@ -181,8 +181,8 @@ auto Material::DumpUniforms() -> void
     if(count > 0){
 
         GLsizei len;
-        GLsizei count_out;
-        GLenum type;
+        [[maybe_unused]] GLsizei count_out;
+        [[maybe_unused]] GLenum type;
 
         for(GLint i = 0; i < count; i++){
             std::string Uniform_name(static_cast<size_t>(max_len), '\0');
@@ -190,8 +190,6 @@ auto Material::DumpUniforms() -> void
             Uniform_name.resize(static_cast<size_t>(len));
 
             Uniforms[Uniform_name] =  GetUniformLocation_Prv(Uniform_name.c_str());
-
-            Log::Info("[U]- {} {};", GlslTypes[type], Uniform_name, count_out);
         }
     }
 }
@@ -208,7 +206,7 @@ auto Material::DumpAttribs() -> void
     if(count > 0){
 
         GLsizei len;
-        GLenum type;
+        [[maybe_unused]] GLenum type;
 
         for(GLint i = 0; i < count; i++){
             std::string attrib_name(static_cast<size_t>(max_len), '\0');
@@ -216,8 +214,6 @@ auto Material::DumpAttribs() -> void
             attrib_name.resize(static_cast<size_t>(len));
 
             Attribs[attrib_name] = GetAttribLocation_Prv(attrib_name.c_str());
-
-            Log::Info("[A]- {} {};", GlslTypes[type], attrib_name);
         }
     }
 }
