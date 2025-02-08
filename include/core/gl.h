@@ -76,6 +76,7 @@ X(PFNGLBLENDEQUATIONPROC, glBlendEquation);\
 X(PFNGLBLENDFUNCPROC, glBlendFunc);\
 X(PFNGLCULLFACEPROC, glCullFace);\
 X(PFNGLGETERRORPROC, glGetError);\
+X(PFNGLUNIFORM3FVPROC, glUniform3fv);\
 
 #define GLFUN(type, name)\
 inline type name = nullptr
