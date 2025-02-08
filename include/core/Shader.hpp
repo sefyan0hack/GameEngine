@@ -9,6 +9,7 @@
 class Shader
 {
     public:
+        friend struct std::formatter<Shader>;
         Shader();
         Shader(const char* name, GLenum type);
         Shader(const Shader& other);
@@ -43,7 +44,7 @@ struct std::formatter<Shader> {
   auto format(const Shader& obj, std::format_context& context) const {
     return std::format_to(context.out(),
     "Shader: {{ id: {}, type: {} }}"
-    , obj.Getid(), obj.GetTypeName());
+    , obj.id, obj.GetTypeName());
   }
 };
 

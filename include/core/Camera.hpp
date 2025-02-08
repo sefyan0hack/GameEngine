@@ -12,6 +12,8 @@ class Material;
 class Camera
 {
 public:
+    friend struct std::formatter<Camera>;
+    
     Camera(Window &window);
     ~Camera();
     auto SetViewMat(const glm::mat4 &mat) -> void ;
@@ -56,6 +58,6 @@ struct std::formatter<Camera> {
   auto format(const Camera& obj, std::format_context& context) const {
     return std::format_to(context.out(),
     "Camera: {{ position: {}, sensitivity: {}, view: {} }}"
-    , obj.GetPosition(), obj.GetSensitivity(), obj.GetView());
+    , obj.Position, obj.sensitivity, obj.GetView());
   }
 };

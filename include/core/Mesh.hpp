@@ -18,6 +18,7 @@ class Material;
 class Mesh
 {
 public:
+    friend struct std::formatter<Mesh>;
     Mesh(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indices = {});
     Mesh(const std::vector<GLfloat> vertices);
     ~Mesh();

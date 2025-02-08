@@ -8,10 +8,10 @@
 class Texture
 {
 public:
+    friend struct std::formatter<Texture>;
     Texture(const std::string &name, const GLenum  Type = GL_TEXTURE_2D);
     Texture(const std::vector<std::string> faces);
     ~Texture();
-    friend struct std::formatter<Texture>;
 public:
     // auto Load(const std::string &name, const GLenum  Type = GL_TEXTURE_2D) -> void ;
     auto Getid() const -> GLuint ;

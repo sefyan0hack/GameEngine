@@ -49,8 +49,6 @@ Texture::Texture(const std::string &name, const GLenum Type)
         width = Width;
         height = Height;
         data = std::move(Data);
-
-        Log::Info("lenght {}, w*h*c {}", data.size(), width*height*Channel);
         
         if(is_odd(width)){
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -109,8 +107,6 @@ Texture::Texture(const std::vector<std::string> faces)
             width = Width;
             height = Height;
             data = std::move(Data);
-            
-            Log::Info("lenght {}, w*h*c {}", data.size(), width*height*Channel);
 
             if(is_odd(width)){
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

@@ -42,8 +42,8 @@ Material::Material(std::initializer_list<Shader> shaders)
 
 Material::Material(const Material& other)
     : id(glCreateProgram())
-    , Uniforms(other.Uniforms) // dnt forget  to check if the id are the same in the new Programe
     , Attribs(other.Attribs)
+    , Uniforms(other.Uniforms) // dnt forget  to check if the id are the same in the new Programe
     , albedo(nullptr)
 {
     for(const auto shader : other.GetShaders() ){
@@ -56,8 +56,8 @@ Material::Material(const Material& other)
 }
 Material::Material(Material&& other)
     : id(std::move(other.id))
-    , Uniforms(std::move(other.Uniforms)) // dnt forget  to check if the id are the same in the new Programe
     , Attribs(std::move(other.Attribs))
+    , Uniforms(std::move(other.Uniforms)) // dnt forget  to check if the id are the same in the new Programe
 
 {
 }

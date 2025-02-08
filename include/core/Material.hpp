@@ -13,6 +13,7 @@
 class Material
 {
 public:
+    friend struct std::formatter<Material>;
     Material(Shader vertex, Shader fragment);
     Material(std::initializer_list<Shader> shaders);
 
@@ -59,8 +60,8 @@ private:
 
 private:
     GLuint id;
-    std::unordered_map<std::string, GLuint> Uniforms;
     std::unordered_map<std::string, GLuint> Attribs;
+    std::unordered_map<std::string, GLuint> Uniforms;
     std::shared_ptr<Texture> albedo;
 };
 
@@ -73,7 +74,7 @@ struct std::formatter<Material> {
   auto format(const Material& obj, std::format_context& context) const {
     return std::format_to(context.out(),
     "Material: {{ id: {}, attribs: {}, uniforms: {} }}"
-    , obj.Getid(), UnorderedMapWrapper{obj.GetAttribs()}, UnorderedMapWrapper{obj.GetUniforms()});
+    , obj.id, UnorderedMapWrapper{obj.Attribs}, UnorderedMapWrapper{obj.Uniforms});
   }
 };
 

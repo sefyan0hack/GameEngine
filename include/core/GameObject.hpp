@@ -12,6 +12,7 @@
 
 class GameObject {
 public:
+    friend struct std::formatter<GameObject>;
     GameObject(glm::vec3 position, Material &matt, const Mesh &mesh);
     ~GameObject();
 
@@ -46,6 +47,6 @@ struct std::formatter<GameObject> {
   auto format(const GameObject& obj, std::format_context& context) const {
     return std::format_to(context.out(),
     "GameObject: {{ transform: {}, material: {}, mesh: {} }}"
-    , obj.GetTransform(), *obj.GetMaterial(), obj.GetMesh());
+    , obj.GetTransform(), *obj.material, obj.m_Mesh);
   }
 };
