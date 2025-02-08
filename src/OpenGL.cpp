@@ -102,9 +102,12 @@ OpenGL::OpenGL(HWND window)
     glGetIntegerv(GL_MAJOR_VERSION, &OpenGL::vMajor);
     glGetIntegerv(GL_MINOR_VERSION, &OpenGL::vMinor);
 
-    glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
     glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_BLEND);
+
+    glCullFace(GL_BACK);
 
     GLint flags = 0;
     glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
