@@ -24,13 +24,17 @@ public:
     auto Use() const -> void ;
     auto UnUse() const -> void ;
     auto UniformCount() const                  -> GLint ;
+    auto AttribsCount() const                  -> GLint ;
     auto GetUniformLocation(const char*) const -> GLuint;
+    auto GetAttribLocation(const char*) const -> GLuint;
     auto GetUniforms() const -> std::unordered_map<std::string, GLuint>;
+    auto GetAttribs() const -> std::unordered_map<std::string, GLuint>;
     static auto Current_Program() -> GLuint;
-    auto GetShaders() const -> const std::array<std::shared_ptr<Shader>, 5>&;
+    // auto GetShaders() const -> const std::array<std::shared_ptr<Shader>, 5>&;
     auto GetTexture() const -> std::shared_ptr<Texture>;
     auto texture(const std::string &name, const GLenum Type = GL_TEXTURE_2D) -> void;
     auto texture(const std::vector<std::string> faces) -> void;
+    auto GetShaders() const -> std::vector<GLuint>;
 
 
     template<class T>
@@ -48,13 +52,15 @@ public:
 private:
     auto checkProgramLinkStatus() const        -> void;
     auto Link() const -> void;
-    auto GetUniformLocation_Prv(const char*) const -> GLuint;
+    auto GetUniformLocation_Prv(const char* name) const -> GLuint;
+    auto GetAttribLocation_Prv(const char* name) const -> GLuint;
     auto DumpUniforms()                   -> void ;
+    auto DumpAttribs()                   -> void ;
 
 private:
     GLuint id;
-    std::array<std::shared_ptr<Shader>, 5> Shaders;
     std::unordered_map<std::string, GLuint> Uniforms;
+    std::unordered_map<std::string, GLuint> Attribs;
     std::shared_ptr<Texture> albedo;
 };
 
@@ -66,8 +72,8 @@ struct std::formatter<Material> {
   }
   auto format(const Material& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    "Material: {{ id: {}, uniforms: {} }}"
-    , obj.Getid(), UnorderedMapWrapper{obj.GetUniforms()});
+    "Material: {{ id: {}, attribs: {}, uniforms: {} }}"
+    , obj.Getid(), UnorderedMapWrapper{obj.GetAttribs()}, UnorderedMapWrapper{obj.GetUniforms()});
   }
 };
 
