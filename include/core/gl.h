@@ -69,6 +69,9 @@ X(PFNGLSTENCILMASKPROC, glStencilMask);\
 X(PFNGLDEPTHMASKPROC, glDepthMask);\
 X(PFNGLDEPTHFUNCPROC, glDepthFunc);\
 X(PFNGLDISABLEVERTEXATTRIBARRAYPROC, glDisableVertexAttribArray);\
+X(PFNGLGETATTRIBLOCATIONPROC, glGetAttribLocation);\
+X(PFNGLGETACTIVEATTRIBPROC, glGetActiveAttrib);\
+X(PFNGLGETATTACHEDSHADERSPROC, glGetAttachedShaders);\
 
 #define GLFUN(type, name)\
 inline type name = nullptr
