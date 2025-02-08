@@ -72,6 +72,10 @@ X(PFNGLDISABLEVERTEXATTRIBARRAYPROC, glDisableVertexAttribArray);\
 X(PFNGLGETATTRIBLOCATIONPROC, glGetAttribLocation);\
 X(PFNGLGETACTIVEATTRIBPROC, glGetActiveAttrib);\
 X(PFNGLGETATTACHEDSHADERSPROC, glGetAttachedShaders);\
+X(PFNGLBLENDEQUATIONPROC, glBlendEquation);\
+X(PFNGLBLENDFUNCPROC, glBlendFunc);\
+X(PFNGLCULLFACEPROC, glCullFace);\
+X(PFNGLGETERRORPROC, glGetError);\
 
 #define GLFUN(type, name)\
 inline type name = nullptr
