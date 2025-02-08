@@ -6,7 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 GameObject::GameObject(glm::vec3 position, Material &matt, const Mesh &mesh)
-: transform(Transform(position)), material(&matt), m_Mesh(mesh)
+: transform(Transform(position)), material(std::make_shared<Material>(std::move(matt))), m_Mesh(mesh)
 {   
     Transformation();
     UpMatrix();
@@ -97,14 +97,9 @@ auto GameObject::GetInstancePos() const -> const std::vector<glm::vec3> &
     return InstancePos;
 }
 
-auto GameObject::GetMaterial() const ->  Material*
+auto GameObject::GetMaterial() const -> std::shared_ptr<Material>
 {
-    if(material)
-        return material;
-    else{
-        Log::Warning("Material is null");
-        return nullptr;
-    }
+    return material;
 }
 
 auto GameObject::Bind() const -> void

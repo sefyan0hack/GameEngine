@@ -78,17 +78,17 @@ auto CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lp
 	    case WM_KEYDOWN:
 	    // syskey commands need to be handled to track ALT key (VK_MENU) and F10
 	    case WM_SYSKEYDOWN:
-	    	if( !(Lpr & 0x40000000) || kbd.AutorepeatIsEnabled() ) // filter autorepeat
+	    	if( !(Lpr & 0x40000000) || kbd->AutorepeatIsEnabled() ) // filter autorepeat
 	    	{
-	    		kbd.OnKeyPressed( static_cast<unsigned char>(Wpr) );
+	    		kbd->OnKeyPressed( static_cast<unsigned char>(Wpr) );
 	    	}
 	    	break;
 	    case WM_KEYUP:
 	    case WM_SYSKEYUP:
-	    	kbd.OnKeyReleased( static_cast<unsigned char>(Wpr) );
+	    	kbd->OnKeyReleased( static_cast<unsigned char>(Wpr) );
 	    	break;
 	    case WM_CHAR:
-	    	kbd.OnChar( static_cast<char>(Wpr) );
+	    	kbd->OnChar( static_cast<char>(Wpr) );
 	    	break;
 	    ///////////// END KEYBOARD MESSAGES /////////////
 
@@ -96,67 +96,67 @@ auto CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lp
 	    case WM_MOUSEMOVE:
 	    {
 	    	const POINTS pt = MAKEPOINTS( Lpr );
-			if( !mouse.IsInWindow() )
+			if( !mouse->IsInWindow() )
 			{
-				mouse.OnMouseEnter();
+				mouse->OnMouseEnter();
 			}
 			if( pt.x >= 0 && pt.x < m_Width && pt.y >= 0 && pt.y < m_Height )
 			{
-				mouse.OnMouseMove( pt.x, pt.y );
-				mouse.OnMouseEnter();
+				mouse->OnMouseMove( pt.x, pt.y );
+				mouse->OnMouseEnter();
 			}
 			else{
-				mouse.OnMouseLeave();
+				mouse->OnMouseLeave();
 			}
 			return 0;
 	    }
 		case WM_MOUSEHOVER :{
-			mouse.isEnterd = true;
+			mouse->isEnterd = true;
 			return 0;
 		}
 		case WM_MOUSELEAVE :{
-			mouse.isEnterd = false;
+			mouse->isEnterd = false;
 			return 0;
 		}
 	    case WM_LBUTTONDOWN:
 	    {
 	    	SetForegroundWindow( Winhandle );
-	    	mouse.OnLeftPressed();
+	    	mouse->OnLeftPressed();
 	    	break;
 	    }
 	    case WM_RBUTTONDOWN:
 	    {
-	    	mouse.OnRightPressed();
+	    	mouse->OnRightPressed();
 	    	break;
 	    }
 	    case WM_LBUTTONUP:
 	    {
 	    	const POINTS pt = MAKEPOINTS( Lpr );
-	    	mouse.OnLeftReleased();
+	    	mouse->OnLeftReleased();
 	    	// release mouse if outside of window
 	    	if( pt.x < 0 || pt.x >= m_Width || pt.y < 0 || pt.y >= m_Height )
 	    	{
 	    		ReleaseCapture();
-	    		mouse.OnMouseLeave();
+	    		mouse->OnMouseLeave();
 	    	}
 	    	break;
 	    }
 	    case WM_RBUTTONUP:
 	    {
 	    	const POINTS pt = MAKEPOINTS( Lpr );
-	    	mouse.OnRightReleased();
+	    	mouse->OnRightReleased();
 	    	// release mouse if outside of window
 	    	if( pt.x < 0 || pt.x >= m_Width || pt.y < 0 || pt.y >= m_Height )
 	    	{
 	    		ReleaseCapture();
-	    		mouse.OnMouseLeave();
+	    		mouse->OnMouseLeave();
 	    	}
 	    	break;
 	    }
 	    case WM_MOUSEWHEEL:
 	    {
 	    	const int delta = GET_WHEEL_DELTA_WPARAM( Wpr );
-	    	mouse.OnWheelDelta(delta);
+	    	mouse->OnWheelDelta(delta);
 	    	break;
 	    }
 	    ///////////////// END MOUSE MESSAGES /////////////////
@@ -188,13 +188,13 @@ auto CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lp
 	    	if( ri.header.dwType == RIM_TYPEMOUSE &&
 	    		(ri.data.mouse.lLastX != 0 || ri.data.mouse.lLastY != 0) )
 	    	{
-	    		mouse.OnRawDelta( ri.data.mouse.lLastX,ri.data.mouse.lLastY );
+	    		mouse->OnRawDelta( ri.data.mouse.lLastX,ri.data.mouse.lLastY );
 	    	}
 	    	break;
 	    }
 	    ///////////////// END RAW MOUSE MESSAGES /////////////////
         case WM_KILLFOCUS:
-		    kbd.ClearState();
+		    kbd->ClearState();
 		    break;
 
 
@@ -207,12 +207,30 @@ auto Window::WindowsCount() -> unsigned short
     return S_WindowsCount;
 }
 Window::Window(int m_Width, int m_Height, const TCHAR* Title) 
-: m_Instance( GetModuleHandleA( nullptr ) ), m_Visible(true)
+	: m_Instance( GetModuleHandleA( nullptr ) )
+	, m_Visible(true)
+	, kbd(std::make_shared<Keyboard>())
+	, mouse(std::make_shared<Mouse>())
 {
     _init_helper(m_Width, m_Height, Title);
     S_WindowsCount++;
-    m_OpenGl = std::make_unique<OpenGL>(m_WindowHandle);
+    m_OpenGl = std::make_shared<OpenGL>(m_WindowHandle);
 }
+
+Window::Window(const Window& other)
+	: m_Instance(other.m_Instance)
+	, m_WindowHandle(other.m_WindowHandle)
+	, m_HDC(other.m_HDC)
+	, m_Width(other.m_Width)
+	, m_Height(other.m_Height)
+	, m_Visible(other.m_Visible)
+	, rawBuffer(other.rawBuffer)
+	, m_OpenGl(other.m_OpenGl)
+	, kbd(other.kbd)
+	, mouse(other.mouse)
+{
+}
+
 
 Window::~Window()
 {
@@ -296,9 +314,9 @@ auto Window::GetHeight() const -> int
 {
     return m_Height;
 }
-auto Window::GetGL() const -> OpenGL*
+auto Window::GetGL() const -> std::shared_ptr<OpenGL>
 {
-    return m_OpenGl.get();
+    return m_OpenGl;
 }
 auto Window::Visible() const -> bool
 {

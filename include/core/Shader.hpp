@@ -4,7 +4,7 @@
 #include <core/gl.h>
 #include <core/fmts.hpp>
 #include <format>
-#include <array>
+#include <vector>
 
 class Shader
 {
@@ -19,12 +19,11 @@ class Shader
         bool operator==(const Shader& other);
         ~Shader();
     public:
-        auto Getid() const             -> GLuint ;
-        auto GetType() const             -> GLenum ;
-        auto GetTypeName() const             -> const char* ;
-        auto GetContent() const              -> std::string ;
+        auto Getid() const                -> GLuint ;
+        auto GetType() const              -> GLenum ;
+        auto GetTypeName() const          -> const char* ;
     private:
-        auto LoadFile(const char* filenmae) -> void;
+        auto LoadFile(const char* filename) -> void;
         auto LoadSource()                   -> void;
         auto Compile()                                      -> void;
         auto checkShaderCompileStatus(const GLuint &shader) -> void;
@@ -32,7 +31,7 @@ class Shader
     private:
         GLuint id;
         GLenum Type;
-        std::string Content;
+        std::vector<GLchar> Content;
 };
 
 // custom Mesh Format

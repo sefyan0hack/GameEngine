@@ -11,6 +11,7 @@ public:
     Texture(const std::string &name, const GLenum  Type = GL_TEXTURE_2D);
     Texture(const std::vector<std::string> faces);
     ~Texture();
+    friend struct std::formatter<Texture>;
 public:
     // auto Load(const std::string &name, const GLenum  Type = GL_TEXTURE_2D) -> void ;
     auto Getid() const -> GLuint ;
@@ -26,7 +27,7 @@ private:
     GLuint id;
     GLenum type;
     GLsizei width, height;
-    GLubyte* data;
+    std::vector<GLubyte> data;
     GLboolean mipmapped;
 };
 
@@ -38,8 +39,8 @@ struct std::formatter<Texture> {
   }
   auto format(const Texture& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    "Texture: {{ id: {}, width: {}, height: {}, type: {}, mipmapped: {} }}"
-    , obj.Getid(), obj.GetWidth(), obj.GetHeight(), obj.GetTypeName(), obj.isMipMapped());
+    "Texture: {{ id: {}, width: {}, height: {}, type: {}, mipmapped: {}, dataLenght: {} }}"
+    , obj.id, obj.width, obj.height, obj.GetTypeName(), obj.mipmapped, obj.data.size());
   }
 };
 

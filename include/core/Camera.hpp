@@ -4,6 +4,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <core/fmts.hpp>
 #include <format>
+#include <memory>
 
 class Window;
 class Material;
@@ -41,7 +42,7 @@ private:
     glm::vec3 RightDir;
 
     //
-    Window* m_Window;
+    std::shared_ptr<Window> m_Window;
     float sensitivity;
     float yaw, pitch;
 };

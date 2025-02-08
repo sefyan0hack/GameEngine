@@ -9,8 +9,8 @@ Material::Material(Shader vertex, Shader fragment)
     : id(glCreateProgram())
     , albedo(nullptr)
 {
-    Shaders[0] = std::move(&vertex);
-    Shaders[1] = std::move(&fragment);
+    Shaders[0] = std::make_shared<Shader>(std::move(vertex));
+    Shaders[1] = std::make_shared<Shader>(std::move(fragment));
 
     glAttachShader(id, vertex.Getid());
     glAttachShader(id, fragment.Getid());
@@ -31,7 +31,7 @@ Material::Material(std::initializer_list<Shader> shaders)
         auto Shaderid = shader.Getid();
         Log::Info("glAttachShader id {}, type {}", Shaderid, shader.GetTypeName());
         glAttachShader(id, Shaderid);
-        Shaders[i++] = std::move(&shader);
+        Shaders[i++] = std::make_shared<Shader>(std::move(shader));
     }
     
     Link();
@@ -43,7 +43,7 @@ Material::Material(std::initializer_list<Shader> shaders)
 
 Material::Material(const Material& other)
     : id(glCreateProgram())
-    , Uniforms(other.GetUniforms()) // dnt forget  to check if the id are the same in the new Programe
+    , Uniforms(other.Uniforms) // dnt forget  to check if the id are the same in the new Programe
     , albedo(nullptr)
 {
     for(const auto &shader : other.Shaders ){
@@ -60,8 +60,8 @@ Material::Material(const Material& other)
     Log::Info("{}", *this);
 }
 Material::Material(Material&& other)
-    : id(std::move(other.Getid()))
-    , Uniforms(std::move(other.GetUniforms())) // dnt forget  to check if the id are the same in the new Programe
+    : id(std::move(other.id))
+    , Uniforms(std::move(other.Uniforms)) // dnt forget  to check if the id are the same in the new Programe
 {
 }
 
@@ -69,9 +69,6 @@ Material::~Material()
 {
     glUseProgram(0);
     glDeleteProgram(id);
-
-    if(albedo)
-        delete albedo;
 }
 
 auto Material::Getid() const -> GLuint
@@ -190,23 +187,23 @@ auto Material::GetUniforms() const -> std::unordered_map<std::string, GLuint>
     return Uniforms;
 }
 
-auto Material::GetShaders() const -> const std::array<const Shader* , 5>&
+auto Material::GetShaders() const -> const std::array<std::shared_ptr<Shader>, 5>&
 {
     return Shaders;
 }
 
-auto Material::GetTexture() const -> Texture*
+auto Material::GetTexture() const -> std::shared_ptr<Texture>
 {
     return albedo;
 }
 
 auto Material::texture(const std::string &name, const GLenum Type) -> void
 {
-    albedo = new Texture(name, Type);
+    albedo = std::make_shared<Texture>(name, Type);
 }
 auto Material::texture(const std::vector<std::string> faces) -> void
 {
-    albedo = new Texture(faces);
+    albedo = std::make_shared<Texture>(faces);
 }
 ///////
 template<>

@@ -12,7 +12,7 @@ Camera::Camera(Window &window)
   FrontDir({0, 0, -1}), 
   UpDir({ 0, 1, 0}),
   RightDir({1, 0, 0}),
-  m_Window(&window),
+  m_Window(std::make_shared<Window>(window)),
   sensitivity(0.11f),
   yaw(-90), pitch(0)
   {
@@ -98,7 +98,7 @@ auto Camera::MoseMove(bool islocked) -> void
 {
     constexpr float LIMIT_ANGLE = 45.0f;
     
-    while (auto op = m_Window->mouse.ReadRawDelta()) {
+    while (auto op = m_Window->mouse->ReadRawDelta()) {
         float xoff = static_cast<float>(op->x)* sensitivity;
         float yoff = static_cast<float>(-op->y) * sensitivity;
         this->yaw += xoff;
@@ -113,14 +113,14 @@ auto Camera::MoseMove(bool islocked) -> void
     static auto on = false;
     static auto lastState = false;
 
-    auto currentState = m_Window->kbd.KeyIsPressed('L');
+    auto currentState = m_Window->kbd->KeyIsPressed('L');
     if (currentState && !lastState) {
         on = !on;
     }
     lastState = currentState;
 
     if(on){
-        m_Window->mouse.SetPos(m_Window->GetWidth()/2, m_Window->GetHeight()/2);
+        m_Window->mouse->SetPos(m_Window->GetWidth()/2, m_Window->GetHeight()/2);
         ShowCursor(false);
     }else{
         ShowCursor(true);

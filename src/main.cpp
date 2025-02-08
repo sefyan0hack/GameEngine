@@ -189,29 +189,29 @@ public:
     auto Update(float delta) -> void override {
 
         Cam.MoseMove();
-        if( m_Window.kbd.KeyIsPressed('W')){
+        if( m_Window.kbd->KeyIsPressed('W')){
             float speed = 10.0f * delta;
-            if(m_Window.kbd.KeyIsPressed(VK_SHIFT))
+            if(m_Window.kbd->KeyIsPressed(VK_SHIFT))
                 speed *= 10;
                 
             Cam.MoveFroward(speed);
         }
-        if( m_Window.kbd.KeyIsPressed('S')){
+        if( m_Window.kbd->KeyIsPressed('S')){
             Cam.MoveBackward(10.0f * delta);
         }
-        if( m_Window.kbd.KeyIsPressed('A')){
+        if( m_Window.kbd->KeyIsPressed('A')){
              Cam.MoveLeft(10.0f * delta);
         }
-        if( m_Window.kbd.KeyIsPressed('D')){
+        if( m_Window.kbd->KeyIsPressed('D')){
              Cam.MoveRight(10.0f * delta);
         }
-        if( m_Window.kbd.KeyIsPressed('N') ){
+        if( m_Window.kbd->KeyIsPressed('N') ){
              Cam.MoveUP(10.0f * delta);
         }
-        if( m_Window.kbd.KeyIsPressed('M') ){
+        if( m_Window.kbd->KeyIsPressed('M') ){
              Cam.MoveDown(10.0f * delta);
         }
-        if (m_Window.kbd.KeyIsPressed('H')){
+        if (m_Window.kbd->KeyIsPressed('H')){
             static bool flip = false;
             if(flip == false){
                 flip = !flip;

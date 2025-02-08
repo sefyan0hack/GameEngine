@@ -31,7 +31,7 @@ class Window
     
     public:
         Window(int Width, int Height, const TCHAR* Title);
-        Window(const Window&) = delete;
+        Window(const Window& other);
         Window(Window&&) = delete;
     
         auto operator = (const Window &) -> Window = delete ;
@@ -45,7 +45,7 @@ class Window
         auto GetHDC() const         -> HDC ;
         auto GetWidth() const       -> int ;
         auto GetHeight() const      -> int ;
-        auto GetGL() const          -> OpenGL* ;
+        auto GetGL() const          -> std::shared_ptr<OpenGL> ;
         auto Visible() const        -> bool ;
         static auto WindowsCount()  -> unsigned short ;
         static auto ProcessMessages() -> void ;
@@ -63,10 +63,10 @@ class Window
         int m_Height;
         bool m_Visible;
         std::vector<BYTE> rawBuffer;
-        std::unique_ptr<OpenGL> m_OpenGl;
+        std::shared_ptr<OpenGL> m_OpenGl;
     public:
-	    Keyboard kbd;
-        Mouse mouse;
+        std::shared_ptr<Keyboard> kbd;
+        std::shared_ptr<Mouse> mouse;
         
     public:
         inline static unsigned short S_WindowsCount = 0;

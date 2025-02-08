@@ -6,13 +6,20 @@
 #include <stb_image.h>
 
 namespace {
-auto load_img(const char* name) -> std::optional<std::tuple<GLsizei, GLsizei, GLsizei, GLubyte*>>
+auto load_img(const char* name) -> std::optional<std::tuple<GLsizei, GLsizei, GLsizei, std::vector<GLubyte>>>
 {
-    GLsizei width, height, nrChannels;
+    GLsizei width = 0, height = 0, nrChannels = 0;
     GLubyte *data = stbi_load(name, &width, &height, &nrChannels, 0);
 
-    if(data != nullptr) return std::make_tuple(width, height, nrChannels, data);
-    else return  std::nullopt;
+    if(data == nullptr) return std::nullopt;
+
+    const auto size = static_cast<size_t>(width) * height * nrChannels;
+
+    std::vector<GLubyte> result(data, data + size);;
+    
+    stbi_image_free(data);
+    
+    return std::make_tuple(width, height, nrChannels, std::move(result));
 }
 
 }
@@ -21,7 +28,7 @@ Texture::Texture(const std::string &name, const GLenum Type)
     , type(Type)
     , width(0)
     , height(0)
-    , data(nullptr)
+    , data({})
     , mipmapped(true)
 {
     Log::Expect(type != GL_TEXTURE_CUBE_MAP, "type is {}", TEXTURETYPE[GL_TEXTURE_CUBE_MAP]);
@@ -41,18 +48,19 @@ Texture::Texture(const std::string &name, const GLenum Type)
         const auto [Width, Height, Channel, Data] = op.value();
         width = Width;
         height = Height;
-        data = Data;
+        data = std::move(Data);
 
+        Log::Info("lenght {}, w*h*c {}", data.size(), width*height*Channel);
         
         if(is_odd(width)){
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         }
 
         if (Channel == 4){
-            glTexImage2D(type, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data); // png
+            glTexImage2D(type, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data()); // png
         }
         else if (Channel == 3){
-            glTexImage2D(type, 0, GL_RGB8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data); // jpeg
+            glTexImage2D(type, 0, GL_RGB8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data.data()); // jpeg
         }
         else {
             Log::Error("Unsupported img format num of channels are {}", Channel);
@@ -78,7 +86,7 @@ Texture::Texture(const std::vector<std::string> faces)
     , type(GL_TEXTURE_CUBE_MAP)
     , width(0)
     , height(0)
-    , data(nullptr)
+    , data({})
     , mipmapped(false)
 {
     glGenTextures(1, &id);
@@ -100,21 +108,23 @@ Texture::Texture(const std::vector<std::string> faces)
             const auto [Width, Height, Channel, Data] = op.value();
             width = Width;
             height = Height;
+            data = std::move(Data);
+            
+            Log::Info("lenght {}, w*h*c {}", data.size(), width*height*Channel);
 
             if(is_odd(width)){
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
             }
 
             if (Channel == 4){
-                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Data);// png
+                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());// png
             }
             else if (Channel == 3){
-                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB8, Width, Height, 0, GL_RGB, GL_UNSIGNED_BYTE, Data);// jpeg
+                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB8, Width, Height, 0, GL_RGB, GL_UNSIGNED_BYTE, data.data());// jpeg
             }
             else {
                 Log::Error("Unsupported img format num of channels are {}", Channel);
             }
-            stbi_image_free(Data);
 
         }else{
             Log::Error("the op is null");
@@ -139,8 +149,6 @@ auto Texture::UnBind() const -> void
 
 Texture::~Texture()
 {
-    if (data)
-        stbi_image_free(data);
 }
 auto Texture::GenerateMipMap() -> void
 {

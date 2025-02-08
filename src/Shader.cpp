@@ -6,12 +6,12 @@
 #include <fstream>
 
 Shader::Shader()
-: id(0), Type(0), Content("")
+: id(0), Type(0)
 {
 }
 
 Shader::Shader(const char* name, GLenum type)
-: id(glCreateShader(type)), Type(type), Content("")
+: id(glCreateShader(type)), Type(type)
 {
     LoadFile(name);
     LoadSource();
@@ -21,9 +21,9 @@ Shader::Shader(const char* name, GLenum type)
 }
 
 Shader::Shader(const Shader& other)
-    : id(glCreateShader(other.GetType()))
-    , Type(other.GetType())
-    , Content(other.GetContent())
+    : id(glCreateShader(other.Type))
+    , Type(other.Type)
+    , Content(other.Content)
 {
     Compile();
     //no need for check status
@@ -32,18 +32,18 @@ Shader::Shader(const Shader& other)
 }
 
 Shader::Shader(Shader&& other)
-    : id(other.Getid())
-    , Type(other.GetType())
-    , Content(std::move(other.GetContent()))
+    : id(other.id)
+    , Type(other.Type)
+    , Content(std::move(other.Content))
 {
 }
 
 Shader &Shader::operator=(const Shader& other)
 {
     if(*this != other){
-        this->id = glCreateShader(other.GetType());
-        this->Type = other.GetType();
-        this->Content = other.GetContent();
+        this->id = glCreateShader(other.Type);
+        this->Type = other.Type;
+        this->Content = other.Content;
         Compile();
         //no need for check status
     }else{
@@ -62,25 +62,33 @@ Shader::~Shader()
 
 auto Shader::LoadSource() -> void
 {
-    const char* ShaderSource = this->Content.c_str();
-    glShaderSource(id, 1, &ShaderSource, NULL);
+    const auto ShaderSource = this->Content.data();
+    const auto size = static_cast<GLint>(this->Content.size());
+    glShaderSource(id, 1, &ShaderSource, &size);
 }
 
-auto Shader::LoadFile(const char* filenmae) -> void
+auto Shader::LoadFile(const char* filename) -> void
 {
-    auto shader_file = std::ifstream(filenmae, std::ios::binary | std::ios::ate);
-    auto size = shader_file.tellg();
+    auto shader_file = std::ifstream(filename, std::ios::binary | std::ios::ate);
 
     if( not shader_file.is_open()){
-        Log::Error("Open {} Failed. code: {}", filenmae, errno);
+        Log::Error("Open {} Failed. code: {}", filename, errno);
     }
 
-    this->Content.resize(size);
+    auto size = shader_file.tellg();
+    shader_file.seekg(0, std::ios::beg);
+    if (size < 0) {
+        Log::Error("Failed to get size for {}", filename);
+    }
 
-    shader_file.seekg(0);
-    shader_file.read(this->Content.data(), size);
+    this->Content.resize(static_cast<std::size_t>(size));
 
-    Log::Info("Loding {} ", filenmae);
+    if ( not shader_file.read(this->Content.data(), size)) {
+        Log::Error("Reading {} failed.", filename);
+    }
+
+    shader_file.close();
+    Log::Info("Loding {} ", filename);
 }
 
 auto Shader::Compile() -> void
@@ -118,8 +126,4 @@ auto Shader::GetType() const -> GLenum
 auto Shader::GetTypeName() const -> const char*
 {
     return SHADERTYPES[Type];
-}
-auto Shader::GetContent() const -> std::string
-{
-    return Content;
 }

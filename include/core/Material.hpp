@@ -7,6 +7,7 @@
 #include <core/Shader.hpp>
 #include <core/Texture.hpp>
 
+#include <memory>
 #include <format>
 
 class Material
@@ -26,8 +27,8 @@ public:
     auto GetUniformLocation(const char*) const -> GLuint;
     auto GetUniforms() const -> std::unordered_map<std::string, GLuint>;
     static auto Current_Program() -> GLuint;
-    auto GetShaders() const -> const std::array<const Shader*, 5>&;
-    auto GetTexture() const -> Texture*;
+    auto GetShaders() const -> const std::array<std::shared_ptr<Shader>, 5>&;
+    auto GetTexture() const -> std::shared_ptr<Texture>;
     auto texture(const std::string &name, const GLenum Type = GL_TEXTURE_2D) -> void;
     auto texture(const std::vector<std::string> faces) -> void;
 
@@ -52,9 +53,9 @@ private:
 
 private:
     GLuint id;
-    std::array<const Shader*, 5> Shaders;
+    std::array<std::shared_ptr<Shader>, 5> Shaders;
     std::unordered_map<std::string, GLuint> Uniforms;
-    Texture* albedo;
+    std::shared_ptr<Texture> albedo;
 };
 
 // custom Material Format

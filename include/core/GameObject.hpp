@@ -5,6 +5,7 @@
 #include <core/Material.hpp>
 #include <core/fmts.hpp>
 #include <vector>
+#include <memory>
 
 #include <format>
 
@@ -22,16 +23,16 @@ public:
     auto GetTransform() const                                   -> Transform ;
     auto GetModleMatrix() const                                 -> glm::mat4 ;
     auto GetMesh() const                                        -> const Mesh& ;
-    auto GetMaterial() const                                    -> Material* ;
+    auto GetMaterial() const                                    -> std::shared_ptr<Material> ;
     auto GetInstancePos() const                                 -> const std::vector<glm::vec3>&;
-    auto Bind() const                               -> void;
+    auto Bind() const                                           -> void;
 
 private:
     auto Transformation() const                                 -> glm::mat4 ;
 
 private:
     Transform transform;
-    Material* material;
+    std::shared_ptr<Material> material;
     Mesh m_Mesh;
     std::vector<glm::vec3> InstancePos;
 };

@@ -20,16 +20,16 @@ auto Renderer::render(Scene &scene, Camera &camera) -> void
     // render sky box
     auto skybox = objs.front();
     auto skymaterial = skybox.GetMaterial();
-    auto& mesh = skybox.GetMesh();
+    auto& skymesh = skybox.GetMesh();
 
     glDepthFunc(GL_LEQUAL);
     skybox.Bind();
     skymaterial->Use();
     skymaterial->SetUniform("Perspective", camera.GetPerspective());
     skymaterial->SetUniform("View", glm::mat4(glm::mat3(camera.GetView())));
-    mesh.EnableAttribs();
-    draw(mesh);
-    mesh.DisableAttribs();
+    skymesh.EnableAttribs();
+    draw(skymesh);
+    skymesh.DisableAttribs();
     glDepthFunc(GL_LESS);
 
     for(auto &obj: objs | std::views::drop(1)){
