@@ -24,23 +24,17 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vect
 #endif
     GLuint index = 0;
     // vertex positions
-    glEnableVertexAttribArray(index);
     glVertexAttribPointer(index++, decltype(VetexData::Position)::length(), GL_FLOAT, GL_FALSE, sizeof(VetexData), reinterpret_cast<void*>(offsetof(VetexData, Position)) );
     // vertex normals
-    glEnableVertexAttribArray(index);
     glVertexAttribPointer(index++, decltype(VetexData::Normal)::length(), GL_FLOAT, GL_FALSE, sizeof(VetexData), reinterpret_cast<void*>(offsetof(VetexData, Normal)) );
     // vertex texture coords
-    glEnableVertexAttribArray(index);
     glVertexAttribPointer(index++, decltype(VetexData::TexCoords)::length(), GL_FLOAT, GL_FALSE, sizeof(VetexData), reinterpret_cast<void*>(offsetof(VetexData, TexCoords)) );
 
     vInSize = static_cast<GLuint>(vertices.size());
-    Log::Info("{}", *this);
-    // glBindBuffer(GL_ARRAY_BUFFER, 0);
-    // glBindVertexArray(0);
-    DisableAttribs();
-
     attribs = index;
     Count++;
+    
+    Log::Info("{}", *this);
 }
 
 Mesh::Mesh(const std::vector<GLfloat> vertices, std::string Name)
@@ -56,18 +50,15 @@ Mesh::Mesh(const std::vector<GLfloat> vertices, std::string Name)
     
     GLuint index = 0;
     // vertex positions
-    glEnableVertexAttribArray(index);
-    glVertexAttribPointer(index++, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), reinterpret_cast<void*>(0));
+    glVertexAttribPointer(index++, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), reinterpret_cast<void*>(0));
+
+    // Normal attribute
+    glVertexAttribPointer(index++, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), reinterpret_cast<void*>(3 * sizeof(GLfloat)));
 
     vInSize = static_cast<GLuint>(vertices.size()/3);
-    Log::Info("{}", *this);
-    // glBindBuffer(GL_ARRAY_BUFFER, 0);
-    // glBindVertexArray(0);
-    
     attribs = index;
-
-    DisableAttribs();
     Count++;
+    Log::Info("{}", *this);
 }
 
 Mesh::~Mesh()

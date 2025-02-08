@@ -82,47 +82,60 @@ private:
         {{ 0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}, {1.0f, 0.0f}}, // Bottom Right
     };
     std::vector<GLfloat> skyboxVertices = {
-        -1.0f,  1.0f, -1.0f,
-        -1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f,
-        1.0f,  1.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,
-
-        -1.0f, -1.0f,  1.0f,
-        -1.0f, -1.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,
-        -1.0f,  1.0f,  1.0f,
-        -1.0f, -1.0f,  1.0f,
-
-        1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f,  1.0f,
-        1.0f,  1.0f,  1.0f,
-        1.0f,  1.0f,  1.0f,
-        1.0f,  1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f,
-
-        -1.0f, -1.0f,  1.0f,
-        -1.0f,  1.0f,  1.0f,
-        1.0f,  1.0f,  1.0f,
-        1.0f,  1.0f,  1.0f,
-        1.0f, -1.0f,  1.0f,
-        -1.0f, -1.0f,  1.0f,
-
-        -1.0f,  1.0f, -1.0f,
-        1.0f,  1.0f, -1.0f,
-        1.0f,  1.0f,  1.0f,
-        1.0f,  1.0f,  1.0f,
-        -1.0f,  1.0f,  1.0f,
-        -1.0f,  1.0f, -1.0f,
-
-        -1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f,  1.0f,
-        1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f,  1.0f,
-        1.0f, -1.0f,  1.0f
+        // Back face (normal: 0, 0, -1)
+        // positions            // normals
+        -1.0f,  1.0f, -1.0f,     0.0f,  0.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,     0.0f,  0.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,     0.0f,  0.0f, -1.0f,
+    
+         1.0f, -1.0f, -1.0f,     0.0f,  0.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,     0.0f,  0.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,     0.0f,  0.0f, -1.0f,
+    
+        // Left face (normal: -1, 0, 0)
+        -1.0f, -1.0f,  1.0f,    -1.0f,  0.0f,  0.0f,
+        -1.0f, -1.0f, -1.0f,    -1.0f,  0.0f,  0.0f,
+        -1.0f,  1.0f, -1.0f,    -1.0f,  0.0f,  0.0f,
+    
+        -1.0f,  1.0f, -1.0f,    -1.0f,  0.0f,  0.0f,
+        -1.0f,  1.0f,  1.0f,    -1.0f,  0.0f,  0.0f,
+        -1.0f, -1.0f,  1.0f,    -1.0f,  0.0f,  0.0f,
+    
+        // Right face (normal: 1, 0, 0)
+         1.0f, -1.0f, -1.0f,     1.0f,  0.0f,  0.0f,
+         1.0f, -1.0f,  1.0f,     1.0f,  0.0f,  0.0f,
+         1.0f,  1.0f,  1.0f,     1.0f,  0.0f,  0.0f,
+    
+         1.0f,  1.0f,  1.0f,     1.0f,  0.0f,  0.0f,
+         1.0f,  1.0f, -1.0f,     1.0f,  0.0f,  0.0f,
+         1.0f, -1.0f, -1.0f,     1.0f,  0.0f,  0.0f,
+    
+        // Front face (normal: 0, 0, 1)
+        -1.0f, -1.0f,  1.0f,     0.0f,  0.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,     0.0f,  0.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,     0.0f,  0.0f,  1.0f,
+    
+         1.0f,  1.0f,  1.0f,     0.0f,  0.0f,  1.0f,
+         1.0f, -1.0f,  1.0f,     0.0f,  0.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,     0.0f,  0.0f,  1.0f,
+    
+        // Top face (normal: 0, 1, 0)
+        -1.0f,  1.0f, -1.0f,     0.0f,  1.0f,  0.0f,
+         1.0f,  1.0f, -1.0f,     0.0f,  1.0f,  0.0f,
+         1.0f,  1.0f,  1.0f,     0.0f,  1.0f,  0.0f,
+    
+         1.0f,  1.0f,  1.0f,     0.0f,  1.0f,  0.0f,
+        -1.0f,  1.0f,  1.0f,     0.0f,  1.0f,  0.0f,
+        -1.0f,  1.0f, -1.0f,     0.0f,  1.0f,  0.0f,
+    
+        // Bottom face (normal: 0, -1, 0)
+        -1.0f, -1.0f, -1.0f,     0.0f, -1.0f,  0.0f,
+        -1.0f, -1.0f,  1.0f,     0.0f, -1.0f,  0.0f,
+         1.0f, -1.0f, -1.0f,     0.0f, -1.0f,  0.0f,
+    
+         1.0f, -1.0f, -1.0f,     0.0f, -1.0f,  0.0f,
+        -1.0f, -1.0f,  1.0f,     0.0f, -1.0f,  0.0f,
+         1.0f, -1.0f,  1.0f,     0.0f, -1.0f,  0.0f
     };
 
 #endif
@@ -165,7 +178,7 @@ private:
     , Cam(m_Window)
     {
         constexpr int Grids = 300;
-        std::vector<glm::vec3> positions(Grids * Grids * 4);
+        [[maybe_unused]] std::vector<glm::vec3> positions(Grids * Grids * 4);
         size_t index = 0;
         for(int i = -Grids; i < Grids; i ++){
             for(int j = -Grids; j < Grids; j ++)
@@ -181,7 +194,7 @@ private:
 
         Matt.texture(TEXTURE(brik.png));
         Scn.add({glm::vec3(0,0,0), Matt, cubeMesh});
-        Scn.GetGameObjects().back().SetUp(positions);
+        // Scn.GetGameObjects().back().SetUp(positions);
 
     }
 public:
