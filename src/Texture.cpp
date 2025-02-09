@@ -45,7 +45,7 @@ Texture::Texture(const std::string &name, const GLenum Type)
     auto op = load_img(name.c_str());
     if (op)
     {
-        const auto [Width, Height, Channel, Data] = op.value();
+        auto [Width, Height, Channel, Data] = op.value();
         width = Width;
         height = Height;
         data = std::move(Data);
@@ -103,7 +103,7 @@ Texture::Texture(const std::vector<std::string> faces)
         auto op = load_img(face.c_str());
         if (op)
         {
-            const auto [Width, Height, Channel, Data] = op.value();
+            auto [Width, Height, Channel, Data] = op.value();
             width = Width;
             height = Height;
             data = std::move(Data);
