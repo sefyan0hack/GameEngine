@@ -194,7 +194,7 @@ private:
 
         Matt.texture(TEXTURE(brik.png));
         Scn.add({glm::vec3(0,0,0), Matt, cubeMesh});
-        // Scn.GetGameObjects().back().SetUp(positions);
+        Scn.GetGameObjects().back().SetUp(positions);
 
     }
 public:

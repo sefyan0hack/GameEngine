@@ -36,7 +36,9 @@ auto Renderer::render(Scene &scene, Camera &camera) -> void
         obj.Bind();
         auto material = obj.GetMaterial();
         material->Use();
-        // material->SetUniform("Modle", glm::mat4(1.0f));
+        // for(auto pos: obj.GetInstancePos()){
+        //     material->SetUniform("Modle", glm::translate(glm::mat4(1.0f), pos));
+        // }
         material->SetUniform("View", camera.GetView());
         material->SetUniform("Perspective", camera.GetPerspective());
         material->SetUniform("cameraPos", camera.GetPosition());

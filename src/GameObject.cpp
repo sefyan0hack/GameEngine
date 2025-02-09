@@ -36,15 +36,15 @@ auto GameObject::SetUp(std::vector<glm::vec3> InsPos) -> void
     auto size = InstancePos.size();
 
     if(size > 1){
-        GLuint UBO;
-        glGenBuffers(1, &UBO);
-        glBindBuffer(GL_ARRAY_BUFFER, UBO);
+        GLuint VBO; // posible leak vbo think about it `TODO`
+        glGenBuffers(1, &VBO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(size * sizeof(glm::vec3)), InstancePos.data(), GL_STATIC_DRAW);
 
-        glEnableVertexAttribArray(3);
-        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
-        glVertexAttribDivisor(3, 1);
-        glBindVertexArray(0);
+        glVertexAttribPointer(m_Mesh.attribs, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+        glVertexAttribDivisor(m_Mesh.attribs, 1); // Update once per instancedVertexArray(0);
+
+        m_Mesh.attribs++;
     }
 }
 

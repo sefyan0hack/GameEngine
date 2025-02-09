@@ -11,8 +11,8 @@ uniform sampler2D cubeTexture;
 uniform samplerCube skybox;
 
 void main() {
-    float reflectivity = 0.5;
-    float ratio = 1.00 / 1.52;
+    float reflectivity = 0.15;
+    float ratio = 1.00 / 1.55;
 
     // Sample the base texture
     vec4 baseColor = texture(cubeTexture, Position);
