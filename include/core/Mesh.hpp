@@ -21,6 +21,15 @@ public:
     friend struct std::formatter<Mesh>;
     Mesh(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indices = {}, std::string Name = std::format("Mesh{}", Count));
     Mesh(const std::vector<GLfloat> vertices, std::string Name = std::format("Mesh{}", Count));
+
+    Mesh(const Mesh& other);
+    // auto operator=(const Mesh& other) -> Mesh&;
+
+    Mesh(Mesh&& other) noexcept;
+    auto operator=(Mesh&& other) noexcept -> Mesh&;
+
+    auto operator==(const Mesh& other) const -> bool;
+
     ~Mesh();
     auto EnableAttribs() const -> void;
     auto DisableAttribs() const -> void;

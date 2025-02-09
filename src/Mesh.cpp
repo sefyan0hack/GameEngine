@@ -63,8 +63,100 @@ Mesh::Mesh(const std::vector<GLfloat> vertices, std::string Name)
 
 Mesh::~Mesh()
 {
+    if(EBO != 0) glDeleteBuffers(1, &EBO);
+    if(VBO != 0) glDeleteBuffers(1, &VBO);
+    if(VAO != 0) glDeleteVertexArrays(1, &VAO);
+}
+Mesh::Mesh(const Mesh& other)
+    : VAO(0), VBO(0), EBO(0), vInSize(other.vInSize), attribs(other.attribs), name(other.name)
+{
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+  
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+    for (GLuint attributeIndex = 0; attribs < 2; ++attributeIndex)
+    {
+        GLint size = 0;
+        GLenum type = 0;
+        GLboolean normalized = GL_FALSE;
+        GLint stride = 0;
+        void* pointer = nullptr;
+
+        glGetVertexAttribiv(attributeIndex, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
+        glGetVertexAttribiv(attributeIndex, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
+        glGetVertexAttribiv(attributeIndex, GL_VERTEX_ATTRIB_ARRAY_TYPE, reinterpret_cast<GLint*>(&type));
+        glGetVertexAttribiv(attributeIndex, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, reinterpret_cast<GLint*>(&normalized));
+        glGetVertexAttribPointerv(attributeIndex, GL_VERTEX_ATTRIB_ARRAY_POINTER, &pointer);
+
+        glVertexAttribPointer(attributeIndex, size, type, normalized, stride, pointer);
+
+    }
+
+    GLint bufferSize = 0;
+
+    #ifdef USE_EBO
+        glGenBuffers(1, &EBO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufferSize);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, bufferSize, nullptr, GL_STATIC_DRAW);
+    #endif
+
+    bufferSize = 0;
+    glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufferSize);
+    glBufferData(GL_ARRAY_BUFFER, bufferSize, nullptr, GL_STATIC_DRAW);
+
+    // source buffer to GL_COPY_READ_BUFFER
+    glBindBuffer(GL_COPY_READ_BUFFER, other.VBO);
+
+    // destination buffer to GL_COPY_WRITE_BUFFER
+    glBindBuffer(GL_COPY_WRITE_BUFFER, this->VBO);
+
+    // Copy the data from the source to the destination
+    glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, bufferSize);
+
+    glBindBuffer(GL_COPY_READ_BUFFER, 0);
+    glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
 }
 
+// auto Mesh::operator=(const Mesh& other) -> Mesh&
+// {
+//     if(*this != other){
+//         return 
+//     }
+//     return *this;
+// }
+
+Mesh::Mesh(Mesh&& other) noexcept
+    : VAO(other.VAO), VBO(other.VBO), EBO(other.EBO), vInSize(other.vInSize), attribs(other.attribs), name(other.name)
+{
+    other.VAO = 0;
+    other.VBO = 0;
+    other.EBO = 0;
+    other.attribs = 0;
+    other.name.clear();
+}
+
+auto Mesh::operator=(Mesh &&other) noexcept -> Mesh&
+{
+    if(*this != other){
+        this->VAO = other.VAO;
+        this->VBO = other.VBO;
+        this->EBO = other.EBO;
+        this->vInSize = other.vInSize;
+        this->attribs = other.attribs;
+        this->name = other.name;
+
+        other.VAO = 0;
+        other.VBO = 0;
+        other.EBO = 0;
+        other.vInSize = 0;
+        other.attribs = 0;
+        other.name.clear();
+    }
+    return *this;
+}
 auto Mesh::EnableAttribs() const -> void
 {
     for(GLuint i = 0; i < attribs; i++){
@@ -76,4 +168,14 @@ auto Mesh::DisableAttribs() const -> void
     for(GLuint i = 0; i < attribs; i++){
         glDisableVertexAttribArray(i);
     }
+}
+
+auto Mesh::operator==(const Mesh &other) const -> bool
+{
+    return this->VAO == other.VAO
+        && this->VBO == other.VBO
+        && this->EBO == other.EBO
+        && this->vInSize == other.vInSize
+        && this->attribs == other.attribs
+        && this->name == other.name;
 }
