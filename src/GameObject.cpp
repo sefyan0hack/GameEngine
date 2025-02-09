@@ -5,10 +5,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-GameObject::GameObject(glm::vec3 position, Material &matt, const Mesh &mesh, std::string Name)
+GameObject::GameObject(glm::vec3 position, Material &matt, Mesh &mesh, std::string Name)
     : transform(Transform(position))
     , material(std::make_shared<Material>(std::move(matt)))
-    , m_Mesh(mesh)
+    , m_Mesh(std::make_shared<Mesh>(std::move(mesh)))
     , name(Name)
 {   
     Transformation();
@@ -41,10 +41,10 @@ auto GameObject::SetUp(std::vector<glm::vec3> InsPos) -> void
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(size * sizeof(glm::vec3)), InstancePos.data(), GL_STATIC_DRAW);
 
-        glVertexAttribPointer(m_Mesh.attribs, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
-        glVertexAttribDivisor(m_Mesh.attribs, 1); // Update once per instancedVertexArray(0);
+        glVertexAttribPointer(m_Mesh->attribs, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+        glVertexAttribDivisor(m_Mesh->attribs, 1); // Update once per instancedVertexArray(0);
 
-        m_Mesh.attribs++;
+        m_Mesh->attribs++;
     }
 }
 
@@ -92,7 +92,7 @@ auto GameObject::Transformation() const -> glm::mat4
     return transformation;
 }
 
-auto GameObject::GetMesh() const -> const Mesh &
+auto GameObject::GetMesh() const -> std::shared_ptr<Mesh>
 {
     return m_Mesh;
 }
@@ -108,6 +108,6 @@ auto GameObject::GetMaterial() const -> std::shared_ptr<Material>
 
 auto GameObject::Bind() const -> void
 {
-    Log::Expect(m_Mesh.VAO != 0, "VAO is 0");
-    glBindVertexArray(m_Mesh.VAO);
+    Log::Expect(m_Mesh->VAO != 0, "VAO is 0");
+    glBindVertexArray(m_Mesh->VAO);
 }

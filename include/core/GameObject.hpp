@@ -13,7 +13,7 @@
 class GameObject {
 public:
     friend struct std::formatter<GameObject>;
-    GameObject(glm::vec3 position, Material &matt, const Mesh &mesh, std::string Name = std::format("Mesh{}", Count));
+    GameObject(glm::vec3 position, Material &matt, Mesh &mesh, std::string Name = std::format("Mesh{}", Count));
     ~GameObject();
 
     auto UpMatrix()                                             -> void ;
@@ -23,7 +23,7 @@ public:
     auto Rotate(const float &x, const float &y, const float &z) -> void ;
     auto GetTransform() const                                   -> Transform ;
     auto GetModleMatrix() const                                 -> glm::mat4 ;
-    auto GetMesh() const                                        -> const Mesh& ;
+    auto GetMesh() const                                        -> std::shared_ptr<Mesh> ;
     auto GetMaterial() const                                    -> std::shared_ptr<Material> ;
     auto GetInstancePos() const                                 -> const std::vector<glm::vec3>&;
     auto Bind() const                                           -> void;
@@ -33,7 +33,7 @@ private:
     private:
     Transform transform;
     std::shared_ptr<Material> material;
-    Mesh m_Mesh;
+    std::shared_ptr<Mesh> m_Mesh;
     std::vector<glm::vec3> InstancePos;
 public:
     std::string name;
@@ -49,6 +49,6 @@ struct std::formatter<GameObject> {
   auto format(const GameObject& obj, std::format_context& context) const {
     return std::format_to(context.out(),
     "GameObject: {{ name: {}, transform: {}, material: {}, mesh: {} }}"
-    , obj.name, obj.GetTransform(), *obj.material, obj.m_Mesh);
+    , obj.name, obj.GetTransform(), *obj.material, *obj.m_Mesh.get());
   }
 };
