@@ -77,6 +77,7 @@ X(PFNGLBLENDFUNCPROC, glBlendFunc);\
 X(PFNGLCULLFACEPROC, glCullFace);\
 X(PFNGLGETERRORPROC, glGetError);\
 X(PFNGLUNIFORM3FVPROC, glUniform3fv);\
+X(PFNGLDELETETEXTURESPROC, glDeleteTextures);\
 
 #define GLFUN(type, name)\
 inline type name = nullptr
