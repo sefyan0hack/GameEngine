@@ -51,6 +51,8 @@ auto Texture::UnBind() const -> void
 
 Texture::~Texture()
 {
+    Log::Info("Destructor");
+    glDeleteTextures(1, &id);
 }
 
 auto Texture::GetWidth() const -> GLsizei
@@ -116,7 +118,7 @@ Texture2D::Texture2D(const std::string &name)
         Log::Error("Failed to load Texture");
     }
     
-    Log::Info("{}", static_cast<Texture>(*this));
+    Log::Info("{}", static_cast<const Texture&>(*this));
 }
 
 auto Texture2D::GenerateMipMap() -> void
@@ -171,5 +173,5 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
             Log::Error("the op is null");
         }
     }
-    Log::Info("{}", static_cast<Texture>(*this));
+    Log::Info("{}", static_cast<const Texture&>(*this));
 }
