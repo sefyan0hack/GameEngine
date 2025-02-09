@@ -33,7 +33,7 @@ public:
     static auto Current_Program() -> GLuint;
     // auto GetShaders() const -> const std::array<std::shared_ptr<Shader>, 5>&;
     auto GetTexture() const -> std::shared_ptr<Texture>;
-    auto texture(const std::string &name, const GLenum Type = GL_TEXTURE_2D) -> void;
+    auto texture(const std::string &name) -> void;
     auto texture(const std::vector<std::string> faces) -> void;
     auto GetShaders() const -> std::vector<GLuint>;
 

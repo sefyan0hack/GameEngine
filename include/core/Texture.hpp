@@ -3,32 +3,46 @@
 #include <string>
 #include <format>
 #include <vector>
+#include <array>
 #include <core/gl.h>
 
 class Texture
 {
 public:
     friend struct std::formatter<Texture>;
-    Texture(const std::string &name, const GLenum  Type = GL_TEXTURE_2D);
-    Texture(const std::vector<std::string> faces);
+    Texture(GLenum texType);
     ~Texture();
 public:
-    // auto Load(const std::string &name, const GLenum  Type = GL_TEXTURE_2D) -> void ;
-    auto Getid() const -> GLuint ;
-    auto Bind() const -> void ;
-    auto UnBind() const -> void ;
-    auto GenerateMipMap() -> void ;
-    auto GetWidth() const -> GLsizei ;
-    auto GetHeight() const -> GLsizei ;
-    auto GetType() const -> GLenum;
-    auto GetTypeName() const -> std::string;
-    auto isMipMapped() const -> GLboolean;
-private:
+    virtual auto Getid() const -> GLuint ;
+    virtual auto Bind() const -> void ;
+    virtual auto UnBind() const -> void ;
+    virtual auto GetWidth() const -> GLsizei ;
+    virtual auto GetHeight() const -> GLsizei ;
+    virtual auto GetType() const -> GLenum;
+    virtual auto GetTypeName() const -> std::string;
+protected:
     GLuint id;
     GLenum type;
     GLsizei width, height;
+};
+
+class Texture2D : public Texture
+{
+  public:
+    Texture2D(const std::string &name);
+    auto GenerateMipMap() -> void ;
+    auto isMipMapped() const -> GLboolean;
+  private:
     std::vector<GLubyte> data;
     GLboolean mipmapped;
+};
+
+class TextureCubeMap : public Texture
+{
+  public:
+    TextureCubeMap(const std::vector<std::string> faces);
+  private:
+    std::array<std::vector<GLubyte>, 6> data;
 };
 
 // custom Texture Format
@@ -39,8 +53,8 @@ struct std::formatter<Texture> {
   }
   auto format(const Texture& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    "Texture: {{ id: {}, width: {}, height: {}, type: {}, mipmapped: {}, dataLenght: {} }}"
-    , obj.id, obj.width, obj.height, obj.GetTypeName(), obj.mipmapped, obj.data.size());
+    "Texture: {{ id: {}, width: {}, height: {}, type: {} }}"
+    , obj.id, obj.width, obj.height, obj.GetTypeName());
   }
 };
 

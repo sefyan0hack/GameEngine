@@ -6,8 +6,9 @@
 #include <stb_image.h>
 
 namespace {
-auto load_img(const char* name) -> std::optional<std::tuple<GLsizei, GLsizei, GLsizei, std::vector<GLubyte>>>
+auto load_img(const char* name, bool flip = true) -> std::optional<std::tuple<GLsizei, GLsizei, GLsizei, std::vector<GLubyte>>>
 {
+    stbi_set_flip_vertically_on_load(flip);
     GLsizei width = 0, height = 0, nrChannels = 0;
     GLubyte *data = stbi_load(name, &width, &height, &nrChannels, 0);
 
@@ -23,18 +24,58 @@ auto load_img(const char* name) -> std::optional<std::tuple<GLsizei, GLsizei, GL
 }
 
 }
-Texture::Texture(const std::string &name, const GLenum Type)
+Texture::Texture(GLenum texType)
     : id(0)
-    , type(Type)
+    , type(texType)
     , width(0)
     , height(0)
-    , data({})
-    , mipmapped(true)
 {
-    Log::Expect(type != GL_TEXTURE_CUBE_MAP, "type is {}", TEXTURETYPE[GL_TEXTURE_CUBE_MAP]);
-    
     glGenTextures(1, &id);
     Bind();
+}
+
+auto Texture::Getid() const -> GLuint
+{
+    return id;
+}
+
+auto Texture::Bind() const -> void
+{
+    glBindTexture(type, id);
+}
+
+auto Texture::UnBind() const -> void
+{
+    glBindTexture(type, 0);
+}
+
+Texture::~Texture()
+{
+}
+
+auto Texture::GetWidth() const -> GLsizei
+{
+    return width;
+}
+
+auto Texture::GetHeight() const -> GLsizei
+{
+    return height;
+}
+
+auto Texture::GetType() const -> GLenum
+{
+    return type;
+}
+auto Texture::GetTypeName() const -> std::string
+{
+    return TEXTURETYPE[type];
+}
+
+//////////
+Texture2D::Texture2D(const std::string &name)
+    : Texture(GL_TEXTURE_2D), mipmapped(true)
+{
 
     glTexParameteri(type, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(type, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -69,54 +110,58 @@ Texture::Texture(const std::string &name, const GLenum Type)
         }
         
         glActiveTexture(GL_TEXTURE1);
-            
     }
     else
     {
         Log::Error("Failed to load Texture");
     }
     
-    Log::Info("{}", *this);
+    Log::Info("{}", static_cast<Texture>(*this));
 }
 
-Texture::Texture(const std::vector<std::string> faces)
-    : id(0)
-    , type(GL_TEXTURE_CUBE_MAP)
-    , width(0)
-    , height(0)
-    , data({})
-    , mipmapped(false)
+auto Texture2D::GenerateMipMap() -> void
 {
-    glGenTextures(1, &id);
-    Bind();
+    glGenerateMipmap(type);
+}
 
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+auto Texture2D::isMipMapped() const -> GLboolean
+{
+    return mipmapped;
+}
 
-    stbi_set_flip_vertically_on_load(false);
-    GLuint i = 0;
-    for (auto face : faces)
+//////
+TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
+    : Texture(GL_TEXTURE_CUBE_MAP)
+{
+
+    glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(type, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(type, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    for (GLenum i = 0; i < faces.size(); i++)
     {
-        auto op = load_img(face.c_str());
+        auto face = faces[i];
+        auto& dataface = data[i];
+
+        auto op = load_img(face.c_str(), false);
         if (op)
         {
             auto [Width, Height, Channel, Data] = op.value();
             width = Width;
             height = Height;
-            data = std::move(Data);
+            dataface = std::move(Data);
 
             if(is_odd(width)){
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
             }
 
             if (Channel == 4){
-                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());// png
+                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, dataface.data());// png
             }
             else if (Channel == 3){
-                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB8, Width, Height, 0, GL_RGB, GL_UNSIGNED_BYTE, data.data());// jpeg
+                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, dataface.data());// jpeg
             }
             else {
                 Log::Error("Unsupported img format num of channels are {}", Channel);
@@ -125,52 +170,6 @@ Texture::Texture(const std::vector<std::string> faces)
         }else{
             Log::Error("the op is null");
         }
-        i++;
     }
+    Log::Info("{}", static_cast<Texture>(*this));
 }
-auto Texture::Getid() const -> GLuint
-{
-    return id;
-}
-
-auto Texture::Bind() const -> void
-{
-    glBindTexture(type, id);
-}
-
-auto Texture::UnBind() const -> void
-{
-    glBindTexture(type, 0);
-}
-
-Texture::~Texture()
-{
-}
-auto Texture::GenerateMipMap() -> void
-{
-    glGenerateMipmap(type);
-}
-
-auto Texture::GetWidth() const -> GLsizei
-{
-    return width;
-}
-auto Texture::GetHeight() const -> GLsizei
-{
-    return height;
-}
-
-auto Texture::GetType() const -> GLenum
-{
-    return type;
-}
-auto Texture::GetTypeName() const -> std::string
-{
-    return TEXTURETYPE[type];
-}
-
-auto Texture::isMipMapped() const -> GLboolean
-{
-    return mipmapped;
-}
-

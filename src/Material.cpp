@@ -254,13 +254,13 @@ auto Material::GetTexture() const -> std::shared_ptr<Texture>
     return albedo;
 }
 
-auto Material::texture(const std::string &name, const GLenum Type) -> void
+auto Material::texture(const std::string &name) -> void
 {
-    albedo = std::make_shared<Texture>(name, Type);
+    albedo = std::make_shared<Texture2D>(name);
 }
 auto Material::texture(const std::vector<std::string> faces) -> void
 {
-    albedo = std::make_shared<Texture>(faces);
+    albedo = std::make_shared<TextureCubeMap>(faces);
 }
 ///////
 template<>
