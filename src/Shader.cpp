@@ -46,9 +46,9 @@ Shader &Shader::operator=(const Shader& other)
         this->Content = other.Content;
         Compile();
         //no need for check status
-    }else{
-        return *this;
     }
+    
+    return *this;
 }
 bool Shader::operator==(const Shader &other)
 {
@@ -56,8 +56,7 @@ bool Shader::operator==(const Shader &other)
 }
 Shader::~Shader()
 {
-    if(id != 0)
-        glDeleteShader(id);
+    if(glIsShader(id) == GL_TRUE) glDeleteShader(id);
 }
 
 auto Shader::LoadSource() -> void
