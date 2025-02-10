@@ -109,7 +109,7 @@ Texture2D::Texture2D(const std::string &name)
         if(mipmapped){
             GenerateMipMap();
         }
-        
+        Log::Info("Loding {} ", name);
         glActiveTexture(GL_TEXTURE1);
     }
     else
@@ -167,6 +167,7 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
             else {
                 Log::Error("Unsupported img format num of channels are {}", Channel);
             }
+            Log::Info("Loding {} ", face);
 
         }else{
             Log::Error("the op is null");
