@@ -192,7 +192,7 @@ private:
         });
         Scn.add({glm::vec3(0,0,0), skyMat, skyMesh});
 
-        Matt.texture(TEXTURE(brik.png));
+        Matt.texture(TEXTURE(gravelly_sand_diff_4k.png));
         Scn.add({glm::vec3(0,0,0), Matt, cubeMesh});
         Scn.GetGameObjects().back().SetUp(positions);
 
