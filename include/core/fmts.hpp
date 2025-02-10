@@ -1,7 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <format>
-#include <unordered_map>
 
 // custom glm::vec2 Format
 template<>
@@ -50,27 +49,26 @@ struct std::formatter<glm::mat4> {
   }
 };
 
-// custom unordered_map Format
+// custom maps formater
 
-template<typename K, typename V>
-struct UnorderedMapWrapper {
-    const std::unordered_map<K, V>& map;
+template<typename Map>
+struct MapWrapper {
+    const Map& map;
 };
 
-template<typename K, typename V>
-struct std::formatter<UnorderedMapWrapper<K, V>> : std::formatter<std::string> {
-    auto format(const UnorderedMapWrapper<K, V>& wrapper, std::format_context& ctx) const {
+template<typename Wrapper>
+struct MapFormatter : std::formatter<std::string> {
+    auto format(const Wrapper& wrapper, std::format_context& ctx) const {
         std::string result = "{ ";
         bool first = true;
         for (const auto& [key, value] : wrapper.map) {
-            if (!first) {
-                result += ", ";
-            } else {
-                first = false;
-            }
-            result += std::format("[{} : {}]", key, value);
+            result += std::format("{}{}[{} : {}]", 
+                (first ? "" : ", "), first ? "" : "", key, value);
+            first = false;
         }
-        result += " }";
-        return std::formatter<std::string>::format(result, ctx);
+        return std::formatter<std::string>::format(result + " }", ctx);
     }
 };
+
+template<typename Map>
+struct std::formatter<MapWrapper<Map>> : MapFormatter<MapWrapper<Map>> {};
