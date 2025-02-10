@@ -27,26 +27,21 @@ auto Renderer::render(Scene &scene, Camera &camera) -> void
     skymaterial->Use();
     skymaterial->SetUniform("View", glm::mat4(glm::mat3(camera.GetView())));
     skymaterial->SetUniform("Perspective", camera.GetPerspective());
-    skymesh->EnableAttribs();
+    skymaterial->EnableAttribs();
     draw(*skymesh.get());
-    skymesh->DisableAttribs();
     glDepthFunc(GL_LESS);
     
     for(auto &obj: objs | std::views::drop(1)){
         obj.Bind();
         auto material = obj.GetMaterial();
         material->Use();
-        // for(auto pos: obj.GetInstancePos()){
-        //     material->SetUniform("Modle", glm::translate(glm::mat4(1.0f), pos));
-        // }
         material->SetUniform("View", camera.GetView());
         material->SetUniform("Perspective", camera.GetPerspective());
         material->SetUniform("cameraPos", camera.GetPosition());
         auto sizeIns = static_cast<GLsizei>(obj.GetInstancePos().size());
         auto mesh = obj.GetMesh();
-        mesh->EnableAttribs();
+        material->EnableAttribs();
         draw(*mesh.get(), sizeIns);
-        mesh->DisableAttribs();
     }
 }
 
