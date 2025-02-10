@@ -76,19 +76,14 @@ auto rsgl(const char* name) -> void* {
     || address == reinterpret_cast<void*>(0x3)
     || address == reinterpret_cast<void*>(-1))
     {
-        
         address = __GetProcAddress(OpenGL::OPENGL_MODULE_NAME, name);
         if(address == nullptr){
             Log::Error("Couldnt load opengl function `{}` reason: {}", name, GetLastError());
-        }else{
-            Log::Info("opengl function by LoadLibraryA `{}` at : {}", name, address);
-            return address;
-        }
-        
-    }else{
-        Log::Info("opengl function by wglGetProcAddress `{}` at : {}", name, address);
-        return address;
+        }  
     }
+
+    Log::Info("load opengl function `{}` at : {}", name, address);
+    return address;
 }
 
 OpenGL::OpenGL(HWND window)
@@ -110,10 +105,11 @@ OpenGL::OpenGL(HWND window)
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_MULTISAMPLE);
+ 
+    glDisable(GL_CULL_FACE);
+    glFrontFace(GL_CCW);
 
-
-    // glCullFace(GL_BACK);
-    // glCullFace(GL_FRONT);
     GLint flags = 0;
     glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
 
