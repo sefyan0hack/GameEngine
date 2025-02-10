@@ -51,8 +51,7 @@ auto Texture::UnBind() const -> void
 
 Texture::~Texture()
 {
-    Log::Info("Destructor");
-    glDeleteTextures(1, &id);
+    if(glIsTexture(id) == GL_TRUE) glDeleteTextures(1, &id);
 }
 
 auto Texture::GetWidth() const -> GLsizei
