@@ -63,9 +63,9 @@ Mesh::Mesh(const std::vector<GLfloat> vertices, std::string Name)
 
 Mesh::~Mesh()
 {
-    if(EBO != 0) glDeleteBuffers(1, &EBO);
-    if(VBO != 0) glDeleteBuffers(1, &VBO);
-    if(VAO != 0) glDeleteVertexArrays(1, &VAO);
+    if(glIsBuffer(EBO) == GL_TRUE) glDeleteBuffers(1, &EBO);
+    if(glIsBuffer(VBO) == GL_TRUE) glDeleteBuffers(1, &VBO);
+    if(glIsVertexArray(VAO) == GL_TRUE) glDeleteVertexArrays(1, &VAO);
 }
 Mesh::Mesh(const Mesh& other)
     : VAO(0), VBO(0), EBO(0), vInSize(other.vInSize), attribs(other.attribs), name(other.name)
@@ -156,18 +156,6 @@ auto Mesh::operator=(Mesh &&other) noexcept -> Mesh&
         other.name.clear();
     }
     return *this;
-}
-auto Mesh::EnableAttribs() const -> void
-{
-    for(GLuint i = 0; i < attribs; i++){
-        glEnableVertexAttribArray(i);
-    }
-}
-auto Mesh::DisableAttribs() const -> void
-{
-    for(GLuint i = 0; i < attribs; i++){
-        glDisableVertexAttribArray(i);
-    }
 }
 
 auto Mesh::operator==(const Mesh &other) const -> bool

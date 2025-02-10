@@ -31,8 +31,6 @@ public:
     auto operator==(const Mesh& other) const -> bool;
 
     ~Mesh();
-    auto EnableAttribs() const -> void;
-    auto DisableAttribs() const -> void;
 public:
     GLuint VAO, VBO, EBO;
     GLsizei vInSize;
