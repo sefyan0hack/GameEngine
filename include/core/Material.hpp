@@ -2,6 +2,7 @@
 #include <core/gl.h>
 #include <string>
 #include <unordered_map>
+#include <map>
 #include <initializer_list>
 #include <core/fmts.hpp>
 #include <core/Shader.hpp>
@@ -28,14 +29,15 @@ public:
     auto AttribsCount() const                  -> GLint ;
     auto GetUniformLocation(const char*) const -> GLuint;
     auto GetAttribLocation(const char*) const -> GLuint;
-    auto GetUniforms() const -> std::unordered_map<std::string, GLuint>;
-    auto GetAttribs() const -> std::unordered_map<std::string, GLuint>;
+    auto GetUniforms() const -> std::map<std::string, GLuint>;
+    auto GetAttribs() const -> std::map<std::string, GLuint>;
     static auto Current_Program() -> GLuint;
-    // auto GetShaders() const -> const std::array<std::shared_ptr<Shader>, 5>&;
     auto GetTexture() const -> std::shared_ptr<Texture>;
     auto texture(const std::string &name) -> void;
     auto texture(const std::vector<std::string> faces) -> void;
     auto GetShaders() const -> std::vector<GLuint>;
+    auto EnableAttribs() const -> void;
+    auto DisableAttribs() const -> void;
 
 
     template<class T>
@@ -56,12 +58,12 @@ private:
     auto GetUniformLocation_Prv(const char* name) const -> GLuint;
     auto GetAttribLocation_Prv(const char* name) const -> GLuint;
     auto DumpUniforms()                   -> void ;
-    auto DumpAttribs()                   -> void ;
+    auto DumpAttribs()                    -> void ;
 
 private:
     GLuint id;
-    std::unordered_map<std::string, GLuint> Attribs;
-    std::unordered_map<std::string, GLuint> Uniforms;
+    std::map<std::string, GLuint> Attribs;
+    std::map<std::string, GLuint> Uniforms;
     std::shared_ptr<Texture> albedo;
 };
 
@@ -74,7 +76,7 @@ struct std::formatter<Material> {
   auto format(const Material& obj, std::format_context& context) const {
     return std::format_to(context.out(),
     "Material: {{ id: {}, attribs: {}, uniforms: {} }}"
-    , obj.id, UnorderedMapWrapper{obj.Attribs}, UnorderedMapWrapper{obj.Uniforms});
+    , obj.id, MapWrapper{obj.Attribs}, MapWrapper{obj.Uniforms});
   }
 };
 
