@@ -91,6 +91,7 @@ X(PFNGLISTEXTUREPROC, glIsTexture);\
 X(PFNGLISSHADERPROC, glIsShader);\
 X(PFNGLFRONTFACEPROC, glFrontFace);\
 X(PFNGLDISABLEPROC, glDisable);\
+X(PFNGLVALIDATEPROGRAMPROC, glValidateProgram);\
 
 #define GLFUN(type, name)\
 inline type name = nullptr
