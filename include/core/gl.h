@@ -1,7 +1,7 @@
 #pragma once
 #include <core/Global_H.hpp>
 #include <windows.h>
-#include <glcorearb.h>
+#include <glcorearb.h> // need repl  with glext.h
 
 #define GLFUNCS(X)\
 X(PFNGLCLEARCOLORPROC, glClearColor);\
@@ -84,6 +84,13 @@ X(PFNGLGETVERTEXATTRIBIVPROC, glGetVertexAttribiv);\
 X(PFNGLGETVERTEXATTRIBPOINTERVPROC, glGetVertexAttribPointerv);\
 X(PFNGLGETBUFFERPARAMETERIVPROC, glGetBufferParameteriv);\
 X(PFNGLCOPYBUFFERSUBDATAPROC, glCopyBufferSubData);\
+X(PFNGLISPROGRAMPROC, glIsProgram);\
+X(PFNGLISBUFFERPROC, glIsBuffer);\
+X(PFNGLISVERTEXARRAYPROC, glIsVertexArray);\
+X(PFNGLISTEXTUREPROC, glIsTexture);\
+X(PFNGLISSHADERPROC, glIsShader);\
+X(PFNGLFRONTFACEPROC, glFrontFace);\
+X(PFNGLDISABLEPROC, glDisable);\
 
 #define GLFUN(type, name)\
 inline type name = nullptr
