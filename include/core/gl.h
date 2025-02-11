@@ -92,6 +92,7 @@ X(PFNGLISSHADERPROC, glIsShader);\
 X(PFNGLFRONTFACEPROC, glFrontFace);\
 X(PFNGLDISABLEPROC, glDisable);\
 X(PFNGLVALIDATEPROGRAMPROC, glValidateProgram);\
+X(PFNGLDETACHSHADERPROC, glDetachShader);\
 
 #define GLFUN(type, name)\
 inline type name = nullptr
