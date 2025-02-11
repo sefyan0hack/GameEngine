@@ -8,6 +8,12 @@
 #include <string_view>
 #include <algorithm>
 
+#include <fstream>
+#include <future>
+#include <iostream>
+#include <vector>
+
+
 template<typename Function, typename... Args>
 auto setTimeOut( unsigned long delay, Function&& func, Args&&... args) -> void
 {
@@ -60,3 +66,5 @@ template <FixedString Str>
 constexpr std::array<char, sizeof(Str.value)> ToUpper<Str>::value;
 
 #define TO_UPPER(str) std::string_view(ToUpper<FixedString{str}>::value.data())
+
+std::future<std::vector<char>> load_file_async(const std::string& filename);
