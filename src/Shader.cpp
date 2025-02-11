@@ -26,7 +26,7 @@ Shader::Shader(const Shader& other)
     , Content(other.Content)
 {
     Compile();
-    //no need for check status
+    checkShaderCompileStatus(id);
     Log::Info("{}", *this);
 
 }
@@ -36,6 +36,9 @@ Shader::Shader(Shader&& other)
     , Type(other.Type)
     , Content(std::move(other.Content))
 {
+    other.id = 0;
+    other.Type = 0;
+    other.Content.clear();
 }
 
 Shader &Shader::operator=(const Shader& other)
@@ -125,4 +128,9 @@ auto Shader::GetType() const -> GLenum
 auto Shader::GetTypeName() const -> const char*
 {
     return SHADERTYPES[Type];
+}
+
+auto Shader::GetContent() const -> std::vector<GLchar>
+{
+    return Content;
 }

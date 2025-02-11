@@ -23,6 +23,7 @@ class Shader
         auto Getid() const                -> GLuint ;
         auto GetType() const              -> GLenum ;
         auto GetTypeName() const          -> const char* ;
+        auto GetContent() const           -> std::vector<GLchar>;
     private:
         auto LoadFile(const char* filename) -> void;
         auto LoadSource()                   -> void;
