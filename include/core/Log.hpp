@@ -11,11 +11,12 @@
 #include <optional>
 #include <mutex>
 #include <windows.h>
+#include <dbghelp.h>
 
 auto setup_crach_handler() -> void;
+auto resolveSymbol(void* addr, HANDLE proc = GetCurrentProcess()) -> std::string;
 
 namespace {
-  
 [[maybe_unused]] auto is_system_symbol(const std::string_view& symbol) -> bool{
     const std::string_view system_libraries[] = {
         "KERNEL32", "ntdll", "msvcrt", "ucrtbase", "vcruntime",

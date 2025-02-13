@@ -3,10 +3,10 @@
 #include <core/gl.h>
 
 extern "C" {
-    auto _wglMakeCurrent = (BOOL(*)(HDC, HGLRC))(nullptr);
-    auto _wglCreateContext = (HGLRC(*)(HDC))(nullptr);
-    auto _wglGetProcAddress = (PROC(*)(LPCSTR))(nullptr);
-    auto _wglDeleteContext = (BOOL(*)(HGLRC))(nullptr);
+    auto _wglMakeCurrent = (BOOL(WINAPI*)(HDC, HGLRC))(nullptr);
+    auto _wglCreateContext = (HGLRC(WINAPI*)(HDC))(nullptr);
+    auto _wglGetProcAddress = (PROC(WINAPI*)(LPCSTR))(nullptr);
+    auto _wglDeleteContext = (BOOL(WINAPI*)(HGLRC))(nullptr);
     auto wglCreateContextAttribsARB = (HGLRC(WINAPI*)(HDC hdc, HGLRC hShareContext, const int *attribList))(nullptr);
     auto wglGetExtensionsStringARB = (const char *(WINAPI*)(HDC hdc))(nullptr);
     auto wglSwapIntervalEXT = (BOOL(APIENTRY*)(int interval))(nullptr);

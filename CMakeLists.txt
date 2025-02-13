@@ -90,9 +90,9 @@ add_executable(${PROJECT_NAME} ${SOURCE})
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/include" )
 
 if(MSVC)
-    target_link_libraries(${PROJECT_NAME} stb_image glm::glm ${OPENGL_LIBRARIES} )
+    target_link_libraries(${PROJECT_NAME} stb_image glm::glm ${OPENGL_LIBRARIES} dbghelp)
 else()
-    target_link_libraries(${PROJECT_NAME} stb_image glm::glm ${OPENGL_LIBRARIES} stdc++exp )
+    target_link_libraries(${PROJECT_NAME} stb_image glm::glm ${OPENGL_LIBRARIES} stdc++exp dbghelp)
 
 endif()
 
