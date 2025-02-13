@@ -93,6 +93,9 @@ X(PFNGLFRONTFACEPROC, glFrontFace);\
 X(PFNGLDISABLEPROC, glDisable);\
 X(PFNGLVALIDATEPROGRAMPROC, glValidateProgram);\
 X(PFNGLDETACHSHADERPROC, glDetachShader);\
+X(PFNGLVERTEXATTRIBFORMATPROC, glVertexAttribFormat);\
+X(PFNGLVERTEXATTRIBBINDINGPROC, glVertexAttribBinding);\
+X(PFNGLBINDVERTEXBUFFERPROC, glBindVertexBuffer);\
 
 #define GLFUN(type, name)\
 inline type name = nullptr
