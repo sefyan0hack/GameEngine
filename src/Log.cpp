@@ -53,10 +53,64 @@ inline auto EXCEPTION_RECORD_to_str(const DWORD& exr) -> const char*{
     }
 }
 #endif
+auto PrintStackTrace(unsigned short skip) -> void
+{
+    constexpr ULONG maxFrames = 64;
+    DWORD skipFtames = 2 + skip;
 
+    PVOID stack[maxFrames];
+    
+    USHORT framesCaptured = RtlCaptureStackBackTrace(skipFtames, maxFrames, stack, NULL);
+    auto process = GetCurrentProcess();
+
+    std::string msg = std::format("Captured {} stack frames:\n", framesCaptured);
+
+    for (USHORT i = 0; i < framesCaptured; i++) {
+        auto addr = stack[i];
+
+        std::string modulename = "<unknown>";
+        std::string fname = "<unknown>";
+        std::string file = "file";
+        DWORD line = 0;
+        DWORD64 lineaddr = 0;
+        
+        auto moduleBase = SymGetModuleBase64(process, reinterpret_cast<DWORD64>(addr));
+        char buffer[MAX_PATH];
+        if (GetModuleFileNameA(reinterpret_cast<HMODULE>(moduleBase), buffer, MAX_PATH)) {
+            auto path = std::filesystem::path(buffer);
+            modulename = path.lexically_relative(std::filesystem::current_path()).string();
+        }
+        
+        char symbolBuffer[sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR)] = {};
+        PSYMBOL_INFO pSymbol = reinterpret_cast<PSYMBOL_INFO>(symbolBuffer);
+        pSymbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+        pSymbol->MaxNameLen = MAX_SYM_NAME;
+        DWORD64 displacement = 0;
+        
+        if (SymFromAddr(process,  reinterpret_cast<DWORD64>(addr), &displacement, pSymbol)) {
+            fname = pSymbol->Name;
+
+            IMAGEHLP_LINE64 lineInfo{};
+            lineInfo.SizeOfStruct = sizeof(lineInfo);
+            DWORD lineDisplacement = 0;
+
+            if (SymGetLineFromAddr64(process, reinterpret_cast<DWORD64>(addr), &lineDisplacement, &lineInfo)) {
+                auto path = std::filesystem::path(lineInfo.FileName);
+                auto strpath = path.lexically_relative(std::filesystem::current_path()).string();
+                file = not strpath.empty() ? strpath : lineInfo.FileName;
+                line = lineInfo.LineNumber;
+                lineaddr = lineInfo.Address;
+            }
+        }
+
+        msg += std::format("{:p} {} -> {}:{} `{}` {:#x}\n", addr, fname, file, line, modulename, lineaddr);
+    }
+    std::cerr << msg;
+    MessageBox(GetForegroundWindow(), msg.c_str(), "Stack Trace", MB_OK | MB_ICONWARNING);
+}
 namespace {
 
-auto PrintStackTrace(CONTEXT* context) -> void {
+auto PrintStackTracectx(CONTEXT* context) -> void {
     HANDLE process = GetCurrentProcess();
     
     STACKFRAME64 stackFrame{};
@@ -145,7 +199,7 @@ auto WINAPI ExceptionHandler([[maybe_unused]] PEXCEPTION_POINTERS ex) -> LONG
     const auto& exr = ex->ExceptionRecord;
     const auto& excode = exr->ExceptionCode;
     const auto& exaddr = exr->ExceptionAddress;
-
+    
     // 1073807370L just for `RendeDoc` to work 
     if (excode == 1073807370L) {
         return EXCEPTION_CONTINUE_EXECUTION;
@@ -155,12 +209,13 @@ auto WINAPI ExceptionHandler([[maybe_unused]] PEXCEPTION_POINTERS ex) -> LONG
     Log::Info("Exception {} (0x{:x})", EXCEPTION_RECORD_to_str(excode), excode);
     Log::Info("Exception  [{}] - {}\n", exaddr, resolveSymbol(exaddr));
 
-    if(ex->ContextRecord != nullptr){
-        PrintStackTrace(ex->ContextRecord);
-    }
-    else{
-        Log::Error("ContextRecord is null");
-    }
+    // if(ex->ContextRecord != nullptr){
+    //     PrintStackTrace(ex->ContextRecord);
+    // }
+    // else{
+    //     Log::Error("ContextRecord is null");
+    // }
+    PrintStackTrace();
 
     return EXCEPTION_EXECUTE_HANDLER;
 }

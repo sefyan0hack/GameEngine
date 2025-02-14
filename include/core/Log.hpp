@@ -15,6 +15,7 @@
 
 auto setup_crach_handler() -> void;
 auto resolveSymbol(void* addr, HANDLE proc = GetCurrentProcess()) -> std::string;
+auto PrintStackTrace(unsigned short skip = 0) -> void;
 
 namespace {
 [[maybe_unused]] auto is_system_symbol(const std::string_view& symbol) -> bool{
@@ -143,14 +144,14 @@ using Warning = ERRF<Log_LvL::WAR, &std::clog, Ts...>;
 
 
 template <typename ...Ts>
-auto Expect(bool x, const std::format_string<Ts...> fmt, Ts&& ... ts) -> void
+[[noreturn]] auto Expect(bool x, const std::format_string<Ts...> fmt, Ts&& ... ts) -> void
 {
   [[maybe_unused]] auto msg = std::format("{}\n", std::format(fmt, std::forward<Ts>(ts)...));
 
   if( x != true){
     print("Expection Failed : {} ", msg);
-    stack_trace_formated(3);
-    exit(1);
+    PrintStackTrace();
+    std::terminate();
   }
 }
 } // namespace Log
