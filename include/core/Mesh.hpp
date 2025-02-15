@@ -13,6 +13,16 @@ struct Vertex
     glm::vec2 TexCoords;
 };
 
+struct AttributeInfo {
+  GLint enabled;
+  GLint size;
+  GLenum type;
+  GLboolean normalized;
+  GLint stride;
+  GLvoid* offset;
+  GLint divisor;
+};
+
 class Material;
 
 class Mesh
@@ -31,11 +41,16 @@ public:
     auto operator==(const Mesh& other) const -> bool;
 
     ~Mesh();
-public:
-    GLuint VAO, VBO, EBO;
+    auto setAttribute(AttributeInfo att) -> void;
+    private:
+        auto CloneBuffer(GLenum type, GLuint src) -> GLuint;
+        auto CloneVBO(GLuint src) -> GLuint;
+        auto CloneEBO(GLuint src) -> GLuint;
+  public:
     GLsizei vInSize;
-    GLuint attribs;
+    std::vector<AttributeInfo> attribs;
     std::string name;
+    GLuint VBO, EBO, VAO;
     inline static size_t Count = 1;
 };
 

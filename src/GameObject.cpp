@@ -4,6 +4,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <type_traits>
 
 GameObject::GameObject(glm::vec3 position, Material &matt, Mesh &mesh, std::string Name)
     : transform(Transform(position))
@@ -34,17 +35,27 @@ auto GameObject::SetUp(std::vector<glm::vec3> InsPos) -> void
 {
     InstancePos = std::move(InsPos);
     auto size = InstancePos.size();
+    using VetexData = typename std::remove_cv_t<typename std::remove_reference_t<decltype(InstancePos)>::value_type>;
 
     if(size > 1){
         GLuint VBO; // posible leak vbo think about it `TODO`
         glGenBuffers(1, &VBO);
+        
+        glBindVertexArray(m_Mesh->VAO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(size * sizeof(glm::vec3)), InstancePos.data(), GL_STATIC_DRAW);
 
-        glVertexAttribPointer(m_Mesh->attribs, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
-        glVertexAttribDivisor(m_Mesh->attribs, 1); // Update once per instancedVertexArray(0);
-
-        m_Mesh->attribs++;
+        AttributeInfo positions{
+            GL_TRUE,
+            VetexData::length(),
+            GL_FLOAT,
+            GL_FALSE,
+            sizeof(glm::vec3),
+            reinterpret_cast<GLvoid*>(0),
+            1,
+        };
+    
+        m_Mesh->setAttribute(positions);
     }
 }
 

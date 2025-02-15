@@ -4,6 +4,7 @@
 #include <core/Shader.hpp>
 #include <string>
 #include <fstream>
+#include <sstream>
 
 Shader::Shader()
 : id(0), Type(0)
@@ -71,26 +72,23 @@ auto Shader::LoadSource() -> void
 
 auto Shader::LoadFile(const char* filename) -> void
 {
-    auto shader_file = std::ifstream(filename, std::ios::binary | std::ios::ate);
+    auto file = std::ifstream{};
+    auto buffer = std::stringstream{};
 
-    if( not shader_file.is_open()){
-        Log::Error("Open {} Failed. code: {}", filename, errno);
+    file.open(filename);
+    if(file.is_open())
+    {
+        buffer << file.rdbuf();
+        auto str = buffer.str();
+        str += '\0';
+        this->Content.resize(str.size());
+        memcpy(this->Content.data(), str.data(), str.size());
+        Log::Info("Loding {} ", filename);
+    }else{
+        Log::Error("Couldnt open file {} : {}", filename, errno);
     }
 
-    auto size = shader_file.tellg();
-    shader_file.seekg(0, std::ios::beg);
-    if (size < 0) {
-        Log::Error("Failed to get size for {}", filename);
-    }
-
-    this->Content.resize(static_cast<std::size_t>(size));
-
-    if ( not shader_file.read(this->Content.data(), size)) {
-        Log::Error("Reading {} failed.", filename);
-    }
-
-    shader_file.close();
-    Log::Info("Loding {} ", filename);
+    file.close();
 }
 
 auto Shader::Compile() -> void

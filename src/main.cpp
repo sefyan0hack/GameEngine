@@ -81,57 +81,6 @@ private:
         {{-0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}, {0.0f, 0.0f}}, // Bottom Left
         {{ 0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}, {1.0f, 0.0f}}, // Bottom Right
     };
-    std::vector<Vertex> skyboxVertices = {
-        // Back face (normal: 0, 0, -1)
-        // positions            // normals
-        {{-1.0f,  1.0f, -1.0f}, {0.0f,  0.0f, -1.0f}, {1.0f, 1.0f}},
-        {{-1.0f, -1.0f, -1.0f}, {0.0f,  0.0f, -1.0f}, {0.0f, 0.0f}},
-        {{ 1.0f, -1.0f, -1.0f}, {0.0f,  0.0f, -1.0f}, {0.0f, 1.0f}},
-        {{ 1.0f, -1.0f, -1.0f}, {0.0f,  0.0f, -1.0f}, {1.0f, 1.0f}},
-        {{ 1.0f,  1.0f, -1.0f}, {0.0f,  0.0f, -1.0f}, {1.0f, 0.0f}},
-        {{-1.0f,  1.0f, -1.0f}, {0.0f,  0.0f, -1.0f}, {0.0f, 0.0f}},
-    
-        // Left face (normal: -1, 0, 0)},
-        {{-1.0f, -1.0f,  1.0f}, {1.0f,  0.0f,  0.0f}, {1.0f, 1.0f}},
-        {{-1.0f, -1.0f, -1.0f}, {1.0f,  0.0f,  0.0f}, {0.0f, 1.0f}},
-        {{-1.0f,  1.0f, -1.0f}, {1.0f,  0.0f,  0.0f}, {0.0f, 0.0f}},
-        {{-1.0f,  1.0f, -1.0f}, {1.0f,  0.0f,  0.0f}, {1.0f, 1.0f}},
-        {{-1.0f,  1.0f,  1.0f}, {1.0f,  0.0f,  0.0f}, {0.0f, 0.0f}},
-        {{-1.0f, -1.0f,  1.0f}, {1.0f,  0.0f,  0.0f}, {1.0f, 0.0f}},
-    
-        // Right face (normal: 1, 0, 0)},
-        {{ 1.0f, -1.0f, -1.0f}, {1.0f,  0.0f,  0.0f}, {1.0f, 1.0f}},
-        {{ 1.0f, -1.0f,  1.0f}, {1.0f,  0.0f,  0.0f}, {0.0f, 0.0f}},
-        {{ 1.0f,  1.0f,  1.0f}, {1.0f,  0.0f,  0.0f}, {0.0f, 1.0f}},
-        {{ 1.0f,  1.0f,  1.0f}, {1.0f,  0.0f,  0.0f}, {1.0f, 1.0f}},
-        {{ 1.0f,  1.0f, -1.0f}, {1.0f,  0.0f,  0.0f}, {1.0f, 0.0f}},
-        {{ 1.0f, -1.0f, -1.0f}, {1.0f,  0.0f,  0.0f}, {0.0f, 0.0f}},
-    
-        // Front face (normal: 0, 0, 1)},
-        {{-1.0f, -1.0f,  1.0f}, {0.0f,  0.0f,  1.0f}, {1.0f, 1.0f}},
-        {{-1.0f,  1.0f,  1.0f}, {0.0f,  0.0f,  1.0f}, {0.0f, 1.0f}},
-        {{ 1.0f,  1.0f,  1.0f}, {0.0f,  0.0f,  1.0f}, {0.0f, 0.0f}},
-        {{ 1.0f,  1.0f,  1.0f}, {0.0f,  0.0f,  1.0f}, {1.0f, 1.0f}},
-        {{ 1.0f, -1.0f,  1.0f}, {0.0f,  0.0f,  1.0f}, {0.0f, 0.0f}},
-        {{-1.0f, -1.0f,  1.0f}, {0.0f,  0.0f,  1.0f}, {1.0f, 0.0f}},
-    
-        // Top face (normal: 0, 1, 0)},
-        {{-1.0f,  1.0f, -1.0f}, {0.0f,  1.0f,  0.0f}, {1.0f, 1.0f}},
-        {{ 1.0f,  1.0f, -1.0f}, {0.0f,  1.0f,  0.0f}, {0.0f, 0.0f}},
-        {{ 1.0f,  1.0f,  1.0f}, {0.0f,  1.0f,  0.0f}, {0.0f, 1.0f}},
-        {{ 1.0f,  1.0f,  1.0f}, {0.0f,  1.0f,  0.0f}, {1.0f, 1.0f}},
-        {{-1.0f,  1.0f,  1.0f}, {0.0f,  1.0f,  0.0f}, {1.0f, 0.0f}},
-        {{-1.0f,  1.0f, -1.0f}, {0.0f,  1.0f,  0.0f}, {0.0f, 0.0f}},
-    
-        // Bottom face (normal: 0, -1, 0)
-        {{-1.0f, -1.0f, -1.0f}, {0.0f, -1.0f,  0.0f}, {1.0f, 1.0f}},
-        {{-1.0f, -1.0f,  1.0f}, {0.0f, -1.0f,  0.0f}, {0.0f, 1.0f}},
-        {{ 1.0f, -1.0f, -1.0f}, {0.0f, -1.0f,  0.0f}, {0.0f, 0.0f}},
-        {{ 1.0f, -1.0f, -1.0f}, {0.0f, -1.0f,  0.0f}, {1.0f, 1.0f}},
-        {{-1.0f, -1.0f,  1.0f}, {0.0f, -1.0f,  0.0f}, {0.0f, 0.0f}},
-        {{ 1.0f, -1.0f,  1.0f}, {0.0f, -1.0f,  0.0f}, {1.0f, 0.0f}},
-    };
-
 #endif
     std::vector<GLuint> indices {
         0, 1, 2,
@@ -163,7 +112,7 @@ private:
     : skyVert(SHADER(skybox)".vert", GL_VERTEX_SHADER)
     , skyfrag(SHADER(skybox)".frag", GL_FRAGMENT_SHADER)
     , skyMat({skyVert, skyfrag})
-    , skyMesh(skyboxVertices)
+    , skyMesh(cubeMeshVert)
 
     , vert(SHADER(Traingl)".vert", GL_VERTEX_SHADER)
     , frag(SHADER(Traingl)".frag", GL_FRAGMENT_SHADER)
@@ -171,7 +120,7 @@ private:
     , cubeMesh({cubeMeshVert, indices})
     , Cam(m_Window)
     {
-        constexpr int Grids = 300;
+        constexpr int Grids = 200;
         [[maybe_unused]] std::vector<glm::vec3> positions(Grids * Grids * 4);
         size_t index = 0;
         for(int i = -Grids; i < Grids; i ++){
@@ -186,7 +135,7 @@ private:
         });
         Scn.add({glm::vec3(0,0,0), skyMat, skyMesh});
 
-        Matt.texture(TEXTURE(gravelly_sand_diff_4k.png));
+        Matt.texture(TEXTURE(brik.png));
         Scn.add({glm::vec3(0,0,0), Matt, cubeMesh});
         Scn.GetGameObjects().back().SetUp(positions);
 
