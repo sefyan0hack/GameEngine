@@ -151,7 +151,7 @@ template <typename ...Ts>
   if( x != true){
     print("Expection Failed : {} ", msg);
     PrintStackTrace();
-    std::terminate();
+    std::exit(1);
   }
 }
 } // namespace Log

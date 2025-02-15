@@ -3,6 +3,7 @@
 #include <core/Shader.hpp>
 #include <core/Texture.hpp>
 #include <glm/glm.hpp>
+#include <ranges>
 
 
 Material::Material(Shader vertex, Shader fragment)
@@ -268,12 +269,12 @@ auto Material::EnableAttribs() const -> void
 {
     GLint enabled = 0;
 
-    for (auto rit = Attribs.rbegin(); rit != Attribs.rend(); ++rit) {
-        auto index = rit->second;
-        glGetVertexAttribiv(index, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
+    for(const auto& [aName, aIndex] : Attribs | std::views::reverse){
+
+        glGetVertexAttribiv(aIndex, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
 
         if(not enabled){
-            glEnableVertexAttribArray(index);
+            glEnableVertexAttribArray(aIndex);
         }
     }
 }
@@ -282,12 +283,13 @@ auto Material::DisableAttribs() const -> void
 {
     GLint enabled = 0;
 
-    for (auto rit = Attribs.rbegin(); rit != Attribs.rend(); ++rit) {
-        auto index = rit->second;
-        glGetVertexAttribiv(index, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
+    for(const auto& [aName, aIndex] : Attribs | std::views::reverse){
 
-        if(enabled)
-            glDisableVertexAttribArray(index);
+        glGetVertexAttribiv(aIndex, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
+
+        if(enabled){
+            glDisableVertexAttribArray(aIndex);
+        }
     }
 }
 

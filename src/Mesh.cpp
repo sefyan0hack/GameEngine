@@ -255,10 +255,6 @@ auto Mesh::setAttribute(AttributeInfo att) -> void
         att.offset
     );
 
-    // if(att.enabled == GL_TRUE){
-    //     glEnableVertexAttribArray(index);
-    // }
-
     glVertexAttribPointer(
         index,
         att.size,
