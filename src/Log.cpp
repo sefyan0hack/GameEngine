@@ -11,6 +11,8 @@
 #ifdef _WIN32
 std::string resolveSymbol(void* addr, HANDLE proc) {
 
+    SymInitialize(proc, nullptr, TRUE);
+    
     char buffer[sizeof(SYMBOL_INFO) + 256 * sizeof(char)];
     SYMBOL_INFO* symbol = reinterpret_cast<SYMBOL_INFO*>(buffer);
     symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
@@ -86,13 +88,14 @@ auto PrintStackTrace(unsigned short skip) -> void
         pSymbol->SizeOfStruct = sizeof(SYMBOL_INFO);
         pSymbol->MaxNameLen = MAX_SYM_NAME;
         DWORD64 displacement = 0;
+        SymInitialize(process, NULL, TRUE);
         
+        DWORD lineDisplacement = 0;
         if (SymFromAddr(process,  reinterpret_cast<DWORD64>(addr), &displacement, pSymbol)) {
             fname = pSymbol->Name;
 
             IMAGEHLP_LINE64 lineInfo{};
             lineInfo.SizeOfStruct = sizeof(lineInfo);
-            DWORD lineDisplacement = 0;
 
             if (SymGetLineFromAddr64(process, reinterpret_cast<DWORD64>(addr), &lineDisplacement, &lineInfo)) {
                 auto path = std::filesystem::path(lineInfo.FileName);
@@ -102,8 +105,7 @@ auto PrintStackTrace(unsigned short skip) -> void
                 lineaddr = lineInfo.Address;
             }
         }
-
-        msg += std::format("{:p} {} -> {}:{} `{}` {:#x}\n", addr, fname, file, line, modulename, lineaddr);
+        msg += std::format("{:p} {}+{:#x} -> {}:{} `{}` \n", addr, fname, lineDisplacement, file, line, modulename);
     }
     std::cerr << msg;
     MessageBox(GetForegroundWindow(), msg.c_str(), "Stack Trace", MB_OK | MB_ICONWARNING);
@@ -162,13 +164,14 @@ auto PrintStackTracectx(CONTEXT* context) -> void {
         pSymbol->SizeOfStruct = sizeof(SYMBOL_INFO);
         pSymbol->MaxNameLen = MAX_SYM_NAME;
         DWORD64 displacement = 0;
+        SymInitialize(process, NULL, TRUE);
         
+        DWORD lineDisplacement = 0;
         if (SymFromAddr(process, addr, &displacement, pSymbol)) {
             fname = pSymbol->Name;
 
             IMAGEHLP_LINE64 lineInfo{};
             lineInfo.SizeOfStruct = sizeof(lineInfo);
-            DWORD lineDisplacement = 0;
 
             if (SymGetLineFromAddr64(process, addr, &lineDisplacement, &lineInfo)) {
                 auto path = std::filesystem::path(lineInfo.FileName);
@@ -186,7 +189,7 @@ auto PrintStackTracectx(CONTEXT* context) -> void {
             modulename = path.lexically_relative(std::filesystem::current_path()).string();
         }
 
-        msg += std::format("{:#x} {} -> {}:{} `{}` {:#x}\n", addr, fname, file, line, modulename, lineaddr);
+        msg += std::format("{:#x} {}+{:#x} -> {}:{} `{}` \n", addr, fname, lineDisplacement, file, line, modulename);
     }
 
     std::cerr << msg;
@@ -209,13 +212,14 @@ auto WINAPI ExceptionHandler([[maybe_unused]] PEXCEPTION_POINTERS ex) -> LONG
     Log::Info("Exception {} (0x{:x})", EXCEPTION_RECORD_to_str(excode), excode);
     Log::Info("Exception  [{}] - {}\n", exaddr, resolveSymbol(exaddr));
 
-    // if(ex->ContextRecord != nullptr){
-    //     PrintStackTrace(ex->ContextRecord);
-    // }
-    // else{
-    //     Log::Error("ContextRecord is null");
-    // }
-    PrintStackTrace();
+    if(ex->ContextRecord != nullptr){
+        PrintStackTracectx(ex->ContextRecord);
+        //PrintStackTrace();
+    }
+    else{
+        // Log::Error("ContextRecord is null");
+        PrintStackTrace();
+    }
 
     return EXCEPTION_EXECUTE_HANDLER;
 }
