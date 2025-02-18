@@ -35,7 +35,7 @@ auto Camera::GetPerspective() const ->  glm::mat4
     auto aspect_ = height > 0 ? static_cast<float>(m_Window->GetWidth()) / static_cast<float>(height) : 1.0f;
     auto fov_ = glm::radians(45.0f);
     auto near_ = 0.1f;
-    auto far_ = 100.0f;
+    auto far_ = 1000.0f;
     return glm::perspective(fov_, aspect_, near_, far_);
 }
 
