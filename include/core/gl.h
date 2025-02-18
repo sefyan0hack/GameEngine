@@ -96,10 +96,10 @@ X(PFNGLDETACHSHADERPROC, glDetachShader);\
 X(PFNGLVERTEXATTRIBFORMATPROC, glVertexAttribFormat);\
 X(PFNGLVERTEXATTRIBBINDINGPROC, glVertexAttribBinding);\
 X(PFNGLBINDVERTEXBUFFERPROC, glBindVertexBuffer);\
+X(PFNGLISENABLEDPROC, glIsEnabled);\
+X(PFNGLGETFLOATVPROC, glGetFloatv);\
 
 #define GLFUN(type, name)\
 inline type name = nullptr
 
-extern "C" {
-    GLFUNCS(GLFUN)
-}
+GLFUNCS(GLFUN)
