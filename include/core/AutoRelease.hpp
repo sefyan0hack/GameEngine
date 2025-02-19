@@ -14,6 +14,7 @@ private:
     std::shared_ptr<std::atomic<size_t>> ref_count;
 
 public:
+    AutoRelease() = default;
     AutoRelease(T res, std::function<void(T)> del) noexcept
         : resource(res), deleter(std::move(del)), ref_count(std::make_shared<std::atomic<size_t>>(1)) {}
 
@@ -36,6 +37,11 @@ public:
     AutoRelease(const AutoRelease&) = default;
     AutoRelease& operator=(const AutoRelease&) = default;
 
+    bool operator==(const AutoRelease& other) const
+    {
+        return this->resource == other.resource;
+    }
+
     ~AutoRelease() {
         release();
     }
@@ -51,7 +57,7 @@ public:
         return resource;
     }
 
-    operator T() const noexcept {
+    constexpr operator T() const noexcept {
         return resource;
     }
 
