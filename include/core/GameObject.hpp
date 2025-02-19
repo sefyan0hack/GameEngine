@@ -4,6 +4,7 @@
 #include <core/Transform.hpp>
 #include <core/Material.hpp>
 #include <core/fmts.hpp>
+#include <core/AutoRelease.hpp>
 #include <vector>
 #include <memory>
 
@@ -13,7 +14,8 @@
 class GameObject {
 public:
     friend struct std::formatter<GameObject>;
-    GameObject(glm::vec3 position, Material &matt, Mesh &mesh, std::string Name = std::format("Mesh{}", Count));
+    GameObject(glm::vec3 position, Material& matt, Mesh& mesh, std::string Name = std::format("Obj{}", Count));
+    GameObject(Transform transform, Material& matt, Mesh& mesh, std::string Name = std::format("Obj{}", Count));
     ~GameObject();
 
     auto UpMatrix()                                             -> void ;
@@ -48,7 +50,7 @@ struct std::formatter<GameObject> {
   }
   auto format(const GameObject& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    "GameObject: {{ name: {}, transform: {}, material: {}, mesh: {} }}"
-    , obj.name, obj.GetTransform(), *obj.material, *obj.m_Mesh.get());
+    "{}: {{ name: {}, transform: {}, material: {}, mesh: {} }}"
+    , typeid(obj).name(), obj.name, obj.GetTransform(), *obj.material, *obj.m_Mesh.get());
   }
 };

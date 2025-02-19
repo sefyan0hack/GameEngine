@@ -6,13 +6,12 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <type_traits>
 
-GameObject::GameObject(glm::vec3 position, Material &matt, Mesh &mesh, std::string Name)
+GameObject::GameObject(glm::vec3 position, Material& matt, Mesh& mesh, std::string Name)
     : transform(Transform(position))
-    , material(std::make_shared<Material>(std::move(matt)))
-    , m_Mesh(std::make_shared<Mesh>(std::move(mesh)))
+    , material(std::make_shared<Material>(matt))
+    , m_Mesh(std::make_shared<Mesh>(mesh))
     , name(Name)
 {   
-    Transformation();
     UpMatrix();
     Log::Info("{}", *this);
     Count++;
@@ -37,16 +36,19 @@ auto GameObject::SetUp(std::vector<glm::vec3> InsPos) -> void
     auto size = InstancePos.size();
     using VetexData = typename std::remove_cv_t<typename std::remove_reference_t<decltype(InstancePos)>::value_type>;
 
+    auto currentVAO = Mesh::CurrentVAO();
     if(size > 1){
         GLuint VBO; // posible leak vbo think about it `TODO`
         glGenBuffers(1, &VBO);
         
-        glBindVertexArray(m_Mesh->VAO);
+        Log::Expect(m_Mesh->VAO != 0, "VAO is 0");
+        auto currentVBO = m_Mesh->CurrentVBO();
+
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(size * sizeof(glm::vec3)), InstancePos.data(), GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, currentVBO);
 
         AttributeInfo positions{
-            GL_TRUE,
             VetexData::length(),
             GL_FLOAT,
             GL_FALSE,
@@ -55,7 +57,8 @@ auto GameObject::SetUp(std::vector<glm::vec3> InsPos) -> void
             1,
         };
     
-        m_Mesh->setAttribute(positions);
+        m_Mesh->setAttribute(3, positions); // dnt forget  3 is the index need better way
+        glBindVertexArray(currentVAO);
     }
 }
 
