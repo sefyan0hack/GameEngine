@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <core/gl.h>
 #include <core/fmts.hpp>
+#include <core/AutoRelease.hpp>
 #include <format>
 #include <vector>
 
@@ -20,7 +21,7 @@ class Shader
         bool operator==(const Shader& other);
         ~Shader();
     public:
-        auto Getid() const                -> GLuint ;
+        auto Getid() const                -> AutoRelease<GLuint> ;
         auto GetType() const              -> GLenum ;
         auto GetTypeName() const          -> const char* ;
         auto GetContent() const           -> std::vector<GLchar>;
@@ -31,7 +32,7 @@ class Shader
         auto checkShaderCompileStatus(const GLuint &shader) -> void;
     
     private:
-        GLuint id;
+        AutoRelease<GLuint> id;
         GLenum Type;
         std::vector<GLchar> Content;
 };
@@ -44,8 +45,8 @@ struct std::formatter<Shader> {
   }
   auto format(const Shader& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    "Shader: {{ id: {}, type: {} }}"
-    , obj.id, obj.GetTypeName());
+    "{}: {{ id: {}, type: {} }}"
+    , typeid(obj).name(), obj.id.get(), obj.GetTypeName());
   }
 };
 

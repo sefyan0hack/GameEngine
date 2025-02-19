@@ -7,12 +7,11 @@
 #include <sstream>
 
 Shader::Shader()
-: id(0), Type(0)
 {
 }
 
 Shader::Shader(const char* name, GLenum type)
-: id(glCreateShader(type)), Type(type)
+: id({glCreateShader(type), glDeleteShader}), Type(type)
 {
     LoadFile(name);
     LoadSource();
@@ -22,12 +21,12 @@ Shader::Shader(const char* name, GLenum type)
 }
 
 Shader::Shader(const Shader& other)
-    : id(glCreateShader(other.Type))
+    : id(other.id)
     , Type(other.Type)
     , Content(other.Content)
 {
-    Compile();
-    checkShaderCompileStatus(id);
+    // Compile();
+    // checkShaderCompileStatus(id);
     Log::Info("{}", *this);
 
 }
@@ -37,7 +36,7 @@ Shader::Shader(Shader&& other)
     , Type(other.Type)
     , Content(std::move(other.Content))
 {
-    other.id = 0;
+    other.id.release();
     other.Type = 0;
     other.Content.clear();
 }
@@ -45,10 +44,10 @@ Shader::Shader(Shader&& other)
 Shader &Shader::operator=(const Shader& other)
 {
     if(*this != other){
-        this->id = glCreateShader(other.Type);
+        this->id = other.id;
         this->Type = other.Type;
         this->Content = other.Content;
-        Compile();
+        // Compile();
         //no need for check status
     }
     
@@ -60,7 +59,7 @@ bool Shader::operator==(const Shader &other)
 }
 Shader::~Shader()
 {
-    if(glIsShader(id) == GL_TRUE) glDeleteShader(id);
+    // if(glIsShader(id) == GL_TRUE) glDeleteShader(id);
 }
 
 auto Shader::LoadSource() -> void
@@ -93,8 +92,7 @@ auto Shader::LoadFile(const char* filename) -> void
 
 auto Shader::Compile() -> void
 {
-    Log::Info("Compiling Shader id: {}, Type: {}", id, GetTypeName());
-    LoadSource();
+    Log::Info("Compiling Shader id: {}, Type: {}", (GLuint)id, GetTypeName());
     glCompileShader(id);
 }
 
@@ -112,8 +110,7 @@ auto Shader::checkShaderCompileStatus(const GLuint &shader) -> void
 }
 
 
-
-auto Shader::Getid() const -> GLuint
+auto Shader::Getid() const -> AutoRelease<GLuint>
 {
     return id;
 }
