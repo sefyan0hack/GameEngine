@@ -14,7 +14,6 @@ struct Vertex
 };
 
 struct AttributeInfo {
-  GLint enabled;
   GLint size;
   GLenum type;
   GLboolean normalized;
@@ -27,6 +26,9 @@ class Material;
 
 class Mesh
 {
+public:
+  using VetexData = Vertex;
+
 public:
     friend struct std::formatter<Mesh>;
     Mesh(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indices = {}, std::string Name = std::format("Mesh{}", Count));
@@ -41,12 +43,20 @@ public:
     auto operator==(const Mesh& other) const -> bool;
 
     ~Mesh();
-    auto setAttribute(AttributeInfo att) -> void;
+    auto setAttribute(GLuint index, AttributeInfo att) -> void;
+    auto EnableAttribs() const -> void;
+    auto DisableAttribs() const -> void;
+
+    static auto CurrentVAO() -> GLuint;
+    static auto CurrentVBO() -> GLuint;
     private:
         auto CloneBuffer(GLenum type, GLuint src) -> GLuint;
         auto CloneVBO(GLuint src) -> GLuint;
         auto CloneEBO(GLuint src) -> GLuint;
+        auto PrepareAttribs() ->void;
+        auto Updata() -> void;
   public:
+    std::vector<Vertex> vertices;
     GLsizei vInSize;
     std::vector<AttributeInfo> attribs;
     std::string name;
@@ -62,7 +72,7 @@ struct std::formatter<Mesh> {
   }
   auto format(const Mesh& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    "Mesh: {{ name: {}, VAO: {}, VBO: {}, EBO: {}, verticesSize: {} }}"
-    , obj.name, obj.VAO, obj.VBO, obj.EBO, obj.vInSize);
+    "{}: {{ name: {}, VAO: {}, VBO: {}, EBO: {}, verticesSize: {} }}"
+    , typeid(obj).name(), obj.name, obj.VAO, obj.VBO, obj.EBO, obj.vInSize);
   }
 };

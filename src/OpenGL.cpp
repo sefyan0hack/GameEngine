@@ -2,52 +2,67 @@
 #include <core/Log.hpp>
 #include <core/gl.h>
 
-extern "C" {
-    auto _wglMakeCurrent = (BOOL(WINAPI*)(HDC, HGLRC))(nullptr);
-    auto _wglCreateContext = (HGLRC(WINAPI*)(HDC))(nullptr);
-    auto _wglGetProcAddress = (PROC(WINAPI*)(LPCSTR))(nullptr);
-    auto _wglDeleteContext = (BOOL(WINAPI*)(HGLRC))(nullptr);
-    auto wglCreateContextAttribsARB = (HGLRC(WINAPI*)(HDC hdc, HGLRC hShareContext, const int *attribList))(nullptr);
-    auto wglGetExtensionsStringARB = (const char *(WINAPI*)(HDC hdc))(nullptr);
-    auto wglSwapIntervalEXT = (BOOL(APIENTRY*)(int interval))(nullptr);
+inline static auto _wglMakeCurrent = (BOOL(WINAPI*)(HDC, HGLRC))(nullptr);
+inline static auto _wglCreateContext = (HGLRC(WINAPI*)(HDC))(nullptr);
+inline static auto _wglGetProcAddress = (PROC(WINAPI*)(LPCSTR))(nullptr);
+inline static auto _wglDeleteContext = (BOOL(WINAPI*)(HGLRC))(nullptr);
+inline static auto wglCreateContextAttribsARB = (HGLRC(WINAPI*)(HDC hdc, HGLRC hShareContext, const int *attribList))(nullptr);
+inline static auto wglGetExtensionsStringARB = (const char *(WINAPI*)(HDC hdc))(nullptr);
+inline static auto wglSwapIntervalEXT = (BOOL(APIENTRY*)(int interval))(nullptr);
 
-    void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, [[maybe_unused]] GLsizei length, const GLchar *message, [[maybe_unused]] const void *param)
+constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
+{
+    switch (glError)
     {
-        const char *source_, *type_, *severity_;
-
-        switch (source)
-        {
-        case GL_DEBUG_SOURCE_API:             source_ = "API";             break;
-        case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   source_ = "WINDOW_SYSTEM";   break;
-        case GL_DEBUG_SOURCE_SHADER_COMPILER: source_ = "SHADER_COMPILER"; break;
-        case GL_DEBUG_SOURCE_THIRD_PARTY:     source_ = "THIRD_PARTY";     break;
-        case GL_DEBUG_SOURCE_APPLICATION:     source_ = "APPLICATION";     break;
-        case GL_DEBUG_SOURCE_OTHER:           source_ = "OTHER";           break;
-        default:                              source_ = "<SOURCE>";        break;
-        }
-
-        switch (type)
-        {
-        case GL_DEBUG_TYPE_ERROR:               type_ = "ERROR";               break;
-        case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: type_ = "DEPRECATED_BEHAVIOR"; break;
-        case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  type_ = "UDEFINED_BEHAVIOR";   break;
-        case GL_DEBUG_TYPE_PORTABILITY:         type_ = "PORTABILITY";         break;
-        case GL_DEBUG_TYPE_PERFORMANCE:         type_ = "PERFORMANCE";         break;
-        case GL_DEBUG_TYPE_OTHER:               type_ = "OTHER";               break;
-        case GL_DEBUG_TYPE_MARKER:              type_ = "MARKER";              break;
-        default:                                type_ = "<TYPE>";              break;
-        }
-
-        switch (severity)
-        {
-        case GL_DEBUG_SEVERITY_HIGH:         severity_ = "HIGH";         break;
-        case GL_DEBUG_SEVERITY_MEDIUM:       severity_ = "MEDIUM";       break;
-        case GL_DEBUG_SEVERITY_LOW:          severity_ = "LOW";          break;
-        case GL_DEBUG_SEVERITY_NOTIFICATION: severity_ = "NOTIFICATION"; break;
-        default:                             severity_ = "<SEVERITY>";   break;
-        }
-        Log::print("[{} {}({})] From {} : \n\t- {}", severity_, type_, id, source_, message);
+        case GL_INVALID_ENUM: return "GL_INVALID_ENUM";
+        case GL_INVALID_VALUE: return "GL_INVALID_VALUE";
+        case GL_INVALID_OPERATION: return "GL_INVALID_OPERATION";
+        case GL_STACK_OVERFLOW: return "GL_STACK_OVERFLOW";
+        case GL_STACK_UNDERFLOW: return "GL_STACK_UNDERFLOW";
+        case GL_OUT_OF_MEMORY: return "GL_OUT_OF_MEMORY";
+        case GL_INVALID_FRAMEBUFFER_OPERATION: return "GL_INVALID_FRAMEBUFFER_OPERATION";
+        case GL_CONTEXT_LOST: return "GL_CONTEXT_LOST";
+        default: return "GL_UNKNOWN";
     }
+}
+
+static void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, [[maybe_unused]] GLsizei length, const GLchar *message, [[maybe_unused]] const void *param)
+{
+    const char *source_, *type_, *severity_;
+
+    switch (source)
+    {
+    case GL_DEBUG_SOURCE_API:             source_ = "API";             break;
+    case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   source_ = "WINDOW_SYSTEM";   break;
+    case GL_DEBUG_SOURCE_SHADER_COMPILER: source_ = "SHADER_COMPILER"; break;
+    case GL_DEBUG_SOURCE_THIRD_PARTY:     source_ = "THIRD_PARTY";     break;
+    case GL_DEBUG_SOURCE_APPLICATION:     source_ = "APPLICATION";     break;
+    case GL_DEBUG_SOURCE_OTHER:           source_ = "OTHER";           break;
+    default:                              source_ = "<SOURCE>";        break;
+    }
+
+    switch (type)
+    {
+    case GL_DEBUG_TYPE_ERROR:               type_ = "ERROR";               break;
+    case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: type_ = "DEPRECATED_BEHAVIOR"; break;
+    case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  type_ = "UDEFINED_BEHAVIOR";   break;
+    case GL_DEBUG_TYPE_PORTABILITY:         type_ = "PORTABILITY";         break;
+    case GL_DEBUG_TYPE_PERFORMANCE:         type_ = "PERFORMANCE";         break;
+    case GL_DEBUG_TYPE_OTHER:               type_ = "OTHER";               break;
+    case GL_DEBUG_TYPE_MARKER:              type_ = "MARKER";              break;
+    default:                                type_ = "<TYPE>";              break;
+    }
+
+    switch (severity)
+    {
+    case GL_DEBUG_SEVERITY_HIGH:         severity_ = "HIGH";         break;
+    case GL_DEBUG_SEVERITY_MEDIUM:       severity_ = "MEDIUM";       break;
+    case GL_DEBUG_SEVERITY_LOW:          severity_ = "LOW";          break;
+    case GL_DEBUG_SEVERITY_NOTIFICATION: severity_ = "NOTIFICATION"; break;
+    default:                             severity_ = "<SEVERITY>";   break;
+    }
+
+    Log::print("[{} {}({})] From {} : \n\t- {}", severity_, type_, id, source_, message);
 }
 
 
@@ -136,7 +151,7 @@ OpenGL::OpenGL(HWND window)
     Log::print("GL Renderer : {}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
     Log::print("GL Exts : {}", wglGetExtensionsStringARB(m_MainHDC));
     Log::print("Max Texture Units : {}", max_texture_unit);
-    Log::print("Is Debugable : {}", flags && GL_CONTEXT_FLAG_DEBUG_BIT);
+    Log::print("Is Debugable : {}", !!(flags & GL_CONTEXT_FLAG_DEBUG_BIT));
 }
 
 OpenGL::~OpenGL()
@@ -228,7 +243,10 @@ auto OpenGL::init_opengl() -> void
     m_Context =  opengl_context;
 
     //resolve opengl functions
-    #define RESOLVEGL(type, name) name = reinterpret_cast<type>(rsgl(#name))
+    #define RESOLVEGL(type, name)\
+    name = reinterpret_cast<type>(rsgl(#name));\
+    Log::Expect(name != nullptr, "{} is null", #name)
+
 	GLFUNCS(RESOLVEGL)
 
 }

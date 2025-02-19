@@ -53,8 +53,8 @@ struct std::formatter<Texture> {
   }
   auto format(const Texture& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    "Texture: {{ id: {}, width: {}, height: {}, type: {} }}"
-    , obj.id, obj.width, obj.height, obj.GetTypeName());
+    "{}: {{ id: {}, width: {}, height: {}, type: {} }}"
+    , typeid(obj).name(), obj.id, obj.width, obj.height, obj.GetTypeName());
   }
 };
 

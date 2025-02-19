@@ -2,22 +2,55 @@
 #include <core/Log.hpp>
 #include <type_traits>
 
+namespace {
+
+    constinit static AttributeInfo position {
+        .size = 3,//decltype(Mesh::VetexData::Position)::length(),
+        .type = GL_FLOAT,
+        .normalized = GL_FALSE,
+        .stride = sizeof(Mesh::VetexData),
+        .offset = reinterpret_cast<GLvoid*>(offsetof(Mesh::VetexData, Position)),
+        .divisor = 0,
+    };
+    
+    constinit static AttributeInfo normals {
+        .size = 3,//decltype(Mesh::VetexData::Normal)::length(),
+        .type = GL_FLOAT,
+        .normalized = GL_FALSE,
+        .stride = sizeof(Mesh::VetexData),
+        .offset = reinterpret_cast<GLvoid*>(offsetof(Mesh::VetexData, Normal)),
+        .divisor = 0,
+    };
+
+    constinit static AttributeInfo texCoords {
+        .size = 2,//decltype(Mesh::VetexData::TexCoords)::length(),
+        .type = GL_FLOAT,
+        .normalized = GL_FALSE,
+        .stride = sizeof(Mesh::VetexData),
+        .offset = reinterpret_cast<GLvoid*>(offsetof(Mesh::VetexData, TexCoords)),
+        .divisor = 0,
+    };
+}
+
 Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vector<GLuint> &indices, std::string Name)
-    : vInSize(0)
-    , attribs({})
+    : vertices(vertices)
+    , vInSize(vertices.size())
+    , attribs({position, normals, texCoords})
     , name(Name)
     , VBO(0)
     , EBO(0)
     , VAO(0)
 {
-    using VetexData = typename std::remove_cv_t<typename std::remove_reference_t<decltype(vertices)>::value_type>;
-
     glGenVertexArrays(1, &VAO);
+    // Log::Expect(glIsVertexArray(VAO) == GL_TRUE, "{} not VertexArray", VAO);
     glGenBuffers(1, &VBO);
-    glBindVertexArray(VAO);
+    
+    Log::Expect(VAO != 0, "VAO is {}", VAO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(VetexData), vertices.data(), GL_STATIC_DRAW);
+    Log::print("Create VAO {}", VAO);
+
+    Updata();
+
 #ifdef USE_EBO
         if(vertices.size() != indices.size()){
             ERR("vert size != indces size");
@@ -27,103 +60,76 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vect
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
 #endif
 
-    AttributeInfo position{
-        GL_TRUE,
-        decltype(VetexData::Position)::length(),
-        GL_FLOAT,
-        GL_FALSE,
-        sizeof(VetexData),
-        reinterpret_cast<GLvoid*>(offsetof(VetexData, Position)),
-        0,
-    };
-    
-    AttributeInfo normals{
-        GL_TRUE,
-        decltype(VetexData::Normal)::length(),
-        GL_FLOAT,
-        GL_FALSE,
-        sizeof(VetexData),
-        reinterpret_cast<GLvoid*>(offsetof(VetexData, Normal)),
-        0,
-    };
-
-    AttributeInfo texCoords{
-        GL_TRUE,
-        decltype(VetexData::TexCoords)::length(),
-        GL_FLOAT,
-        GL_FALSE,
-        sizeof(VetexData),
-        reinterpret_cast<GLvoid*>(offsetof(VetexData, TexCoords)),
-        0,
-    };
-
-    setAttribute(position);
-    setAttribute(normals);
-    setAttribute(texCoords);
-
-    vInSize = static_cast<GLuint>(vertices.size());
+    PrepareAttribs();
     Count++;
-    // glBindVertexArray(0);
-    
     Log::Info("{}", *this);
 }
 
 
 Mesh::~Mesh()
 {
+    Count--;
     if(glIsBuffer(EBO) == GL_TRUE) glDeleteBuffers(1, &EBO);
     if(glIsBuffer(VBO) == GL_TRUE) glDeleteBuffers(1, &VBO);
     if(glIsVertexArray(VAO) == GL_TRUE) glDeleteVertexArrays(1, &VAO);
+    Log::print("Delete VAO {}", VAO);
 }
 
 Mesh::Mesh(const Mesh& other)
-    : vInSize(other.vInSize)
-    , attribs({})
+    : vertices(other.vertices)
+    , vInSize(other.vInSize)
+    , attribs(other.attribs)
     , name(other.name)
-    , VBO(CloneVBO(other.VBO))
-    , EBO(CloneEBO(other.EBO))
+    , VBO(0)
+    , EBO(0)
     , VAO(0)
 {
     glGenVertexArrays(1, &VAO);
-    if(VAO == 0) Log::Error("clone is 0");
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-    for (auto atrb : other.attribs)
-    {
-        setAttribute(atrb);
-    }
+    glGenBuffers(1, &VBO);
+    Log::Expect(VAO != 0, "VAO == 0");
+    Log::Expect(VBO != 0, "VBO == 0");
+    Log::print("Create VAO {}", VAO);
+
+    Updata();
+
+    PrepareAttribs();
 }
 
 auto Mesh::operator=(const Mesh& other) -> Mesh&
 {
     if(*this != other){
+        this->vertices = other.vertices;
         this->vInSize = other.vInSize;
-        this->attribs = {};
+        this->attribs = other.attribs;
         this->name = other.name;
-        this->VBO = CloneVBO(other.VBO);
-        this->EBO = CloneEBO(other.EBO);
+        this->VBO = 0;
+        this->EBO = 0;
         this->VAO = 0;
 
         glGenVertexArrays(1, &VAO);
-        if(VAO == 0) Log::Error("clone is 0");
-        glBindVertexArray(VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-        for (auto atrb : other.attribs)
-        {
-            setAttribute(atrb);
-        }
+        glGenBuffers(1, &VBO);
+
+        Log::Expect(VAO != 0, "VAO == 0");
+        Log::Expect(VBO != 0, "VBO == 0");
+        Log::print("Create VAO {}", VAO);
+
+        Updata();
+        
+        PrepareAttribs();
     }
     return *this;
 }
 
 Mesh::Mesh(Mesh&& other) noexcept
-    : vInSize(other.vInSize)
+    : vertices(other.vertices)
+    , vInSize(other.vInSize)
     , attribs(other.attribs)
     , name(other.name)
     , VBO(other.VBO)
     , EBO(other.EBO)
     , VAO(other.VAO)
 {
+    other.vertices.clear();
     other.vInSize = 0;
     other.attribs.clear();
     other.name.clear();
@@ -135,6 +141,7 @@ Mesh::Mesh(Mesh&& other) noexcept
 auto Mesh::operator=(Mesh &&other) noexcept -> Mesh&
 {
     if(*this != other){
+        this->vertices = other.vertices;
         this->vInSize = other.vInSize;
         this->attribs = other.attribs;
         this->name = other.name;
@@ -142,6 +149,7 @@ auto Mesh::operator=(Mesh &&other) noexcept -> Mesh&
         this->EBO = other.EBO;
         this->VAO = other.VAO;
 
+        other.vertices.clear();
         other.vInSize = 0;
         other.attribs.clear();
         other.name.clear();
@@ -239,11 +247,9 @@ auto Mesh::CloneEBO(GLuint src) -> GLuint
     return 0;
     #endif
 }
-auto Mesh::setAttribute(AttributeInfo att) -> void
+auto Mesh::setAttribute(GLuint index, AttributeInfo att) -> void
 {
     Log::Expect(att.size > 0 && att.size <= 4, "position.size : 0<{}<4 wrong", att.size);
-
-    GLuint index = attribs.size();
 
     Log::Info(
         "attribute {} : size: {}, type: {}, normalized: {}, stride: {}, offset: {}",
@@ -265,6 +271,81 @@ auto Mesh::setAttribute(AttributeInfo att) -> void
     );
 
     glVertexAttribDivisor(index, att.divisor);
+}
 
-    attribs.push_back(att);
+auto Mesh::PrepareAttribs() ->void
+{
+    auto currentVAO = CurrentVAO();
+    auto currentVBO = CurrentVBO();
+
+    // Log::Expect(glIsVertexArray(VAO) && VAO != 0, "VAO is 0");
+
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    GLuint index = 0;
+    for(const auto& attrib : attribs){
+        setAttribute(index++, attrib);
+    }
+    glBindBuffer(GL_ARRAY_BUFFER, currentVBO);
+    glBindVertexArray(currentVAO);
+}
+
+auto Mesh::EnableAttribs() const -> void
+{
+    auto currentVAO = CurrentVAO();
+    auto currentVBO = CurrentVBO();
+
+    // Log::Expect(glIsVertexArray(VAO) && VAO != 0, "VAO is 0");
+
+    if(currentVAO == VAO){
+        for(GLuint i = 0; i < attribs.size(); i++){
+            glEnableVertexAttribArray(i);
+        }
+    }else{   
+        glBindVertexArray(VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        
+        for(GLuint i = 0; i < attribs.size(); i++){
+            glEnableVertexAttribArray(i);
+        }
+        
+        glBindBuffer(GL_ARRAY_BUFFER, currentVBO);
+        glBindVertexArray(currentVAO);
+    }
+}
+
+auto Mesh::DisableAttribs() const -> void
+{
+    auto currentVAO = CurrentVAO();
+    auto currentVBO = CurrentVBO();
+
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    for(GLuint i = 0; i < attribs.size(); i++){
+        glDisableVertexAttribArray(i);
+    }
+    glBindBuffer(GL_ARRAY_BUFFER, currentVBO);
+    glBindVertexArray(currentVAO);
+}
+
+auto Mesh::CurrentVAO() -> GLuint
+{
+    GLint currentVAO = 0;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
+    return currentVAO;
+}
+
+auto Mesh::CurrentVBO() -> GLuint
+{
+    GLint currentVBO = 0;
+    glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &currentVBO);
+    return currentVBO;
+}
+
+auto Mesh::Updata() -> void
+{
+    auto currentVBO = CurrentVBO();
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Mesh::VetexData), vertices.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, currentVBO);
 }
