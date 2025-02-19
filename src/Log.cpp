@@ -212,14 +212,20 @@ auto WINAPI ExceptionHandler([[maybe_unused]] PEXCEPTION_POINTERS ex) -> LONG
     Log::Info("Exception {} (0x{:x})", EXCEPTION_RECORD_to_str(excode), excode);
     Log::Info("Exception  [{}] - {}\n", exaddr, resolveSymbol(exaddr));
 
-    if(ex->ContextRecord != nullptr){
+    if(g_safeStacktrace.has_value()){
+        std::cerr << g_safeStacktrace.value() << "\n";
+    }else{
         PrintStackTracectx(ex->ContextRecord);
-        //PrintStackTrace();
     }
-    else{
-        // Log::Error("ContextRecord is null");
-        PrintStackTrace();
-    }
+
+    // if(ex->ContextRecord != nullptr){
+    //     // PrintStackTracectx(ex->ContextRecord);
+    //     // PrintStackTrace();
+    // }
+    // else{
+    //     // Log::Error("ContextRecord is null");
+    //     // PrintStackTrace();
+    // }
 
     return EXCEPTION_EXECUTE_HANDLER;
 }
@@ -229,9 +235,5 @@ auto WINAPI ExceptionHandler([[maybe_unused]] PEXCEPTION_POINTERS ex) -> LONG
 auto setup_crach_handler() -> void
 {
     SymSetOptions(SYMOPT_UNDNAME | SYMOPT_DEFERRED_LOADS | SYMOPT_LOAD_LINES);
-    if (!SymInitialize(GetCurrentProcess(), nullptr, TRUE)) {
-        Log::Error("SymInitialize failed with error : {}", GetLastError());
-    }
-
     AddVectoredExceptionHandler(1, ExceptionHandler);
 }

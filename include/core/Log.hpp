@@ -17,6 +17,8 @@ auto setup_crach_handler() -> void;
 auto resolveSymbol(void* addr, HANDLE proc = GetCurrentProcess()) -> std::string;
 auto PrintStackTrace(unsigned short skip = 0) -> void;
 
+inline thread_local std::optional<std::stacktrace> g_safeStacktrace; //dnt forget to make this only in debuge mode
+
 namespace {
 [[maybe_unused]] auto is_system_symbol(const std::string_view& symbol) -> bool{
     const std::string_view system_libraries[] = {

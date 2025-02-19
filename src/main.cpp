@@ -11,6 +11,7 @@
 #include <core/Shader.hpp>
 #include <core/Material.hpp>
 #include <core/Log.hpp>
+#include <thread>
 
 // #define USE_EBO
 
@@ -137,8 +138,16 @@ private:
 
         Matt.texture(TEXTURE(brik.png));
         Scn.add({glm::vec3(0,0,0), Matt, cubeMesh});
-        Scn.GetGameObjects().back().SetUp(positions);
+        // Scn.GetGameObjects().back().SetUp(positions);
+        
+        auto mesh2 = Mesh(cubeMeshVert);
+        auto matt2 = Material({Shader(SHADER(Traingl)".vert", GL_VERTEX_SHADER), Shader(SHADER(Traingl)".frag", GL_FRAGMENT_SHADER)});
+        matt2.texture(TEXTURE(brik.png));
+        Scn.add({glm::vec3(0,5,0), matt2, mesh2});
 
+        // #define PrintGLfunc(type, name) Log::print("{} {}", (void*)name, #name)
+        
+        // GLFUNCS(PrintGLfunc)
     }
 public:
 
@@ -188,8 +197,14 @@ public: // distroy hire
     }
 };
 
-
 auto main(void) -> int {
+    std::thread([]{
+        while (true) {
+            g_safeStacktrace = std::stacktrace::current();
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+    }).detach();
+
     setup_crach_handler();
     Game my_game ;
     my_game.Run();
