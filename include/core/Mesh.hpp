@@ -31,7 +31,7 @@ public:
 
 public:
     friend struct std::formatter<Mesh>;
-    Mesh(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indices = {}, std::string Name = std::format("Mesh{}", Count));
+    Mesh(const std::vector<VetexData> &vertices, const std::vector<GLuint> &indices = {}, std::string Name = std::format("Mesh{}", Count));
     // Mesh(const std::vector<GLfloat> vertices, std::string Name = std::format("Mesh{}", Count));
 
     Mesh(const Mesh& other);
@@ -54,9 +54,16 @@ public:
         auto CloneVBO(GLuint src) -> GLuint;
         auto CloneEBO(GLuint src) -> GLuint;
         auto PrepareAttribs() ->void;
-        auto Updata() -> void;
+        auto PrepareVertexdata() -> void;
+        static auto Updata(GLuint buffer, const std::vector<VetexData>& vrtx) -> void;
+        static auto GenVertexArray() -> GLuint;
+        static auto GenBuffer() -> GLuint;
+        static auto BindVertexArray(GLuint vao) -> void;
+        static auto BindBuffer(GLenum type, GLuint buffer) -> void;
+        static auto BindVertexBuffer(GLuint buffer) -> void;
+        static auto BindIndexBuffer(GLuint buffer) -> void;
   public:
-    std::vector<Vertex> vertices;
+    std::vector<VetexData> vertices;
     GLsizei vInSize;
     std::vector<AttributeInfo> attribs;
     std::string name;
