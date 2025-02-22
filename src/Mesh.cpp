@@ -336,22 +336,11 @@ auto Mesh::GenBuffer() -> GLuint
 auto Mesh::BindVertexArray(GLuint vao) -> void
 {
     glBindVertexArray(vao);
-
-    if(glGetError() != GL_INVALID_OPERATION ){
-        Log::Info("Bind VertexArray {}", vao);
-    }else{
-        Log::Warning("Couldn't Bind VertexArray {}", vao);
-    }
 }
 
 auto Mesh::BindBuffer(GLenum type, GLuint buffer) -> void
 {
     glBindBuffer(type, buffer);
-
-    if(glGetError() == GL_INVALID_VALUE ){
-        Log::Warning("Couldn't Bind buffer {}", buffer);
-        return;
-    }
 }
 
 auto Mesh::BindVertexBuffer(GLuint buffer) -> void
@@ -367,4 +356,10 @@ auto Mesh::BindIndexBuffer(GLuint buffer) -> void
 auto Mesh::PrepareVertexdata() -> void
 {
     Updata(VBO, this->vertices);
+}
+
+auto Mesh::Bind() const -> void
+{
+    EnableAttribs();
+    BindVertexArray(this->VAO);
 }

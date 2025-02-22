@@ -10,22 +10,6 @@ inline static auto wglCreateContextAttribsARB = (HGLRC(WINAPI*)(HDC hdc, HGLRC h
 inline static auto wglGetExtensionsStringARB = (const char *(WINAPI*)(HDC hdc))(nullptr);
 inline static auto wglSwapIntervalEXT = (BOOL(APIENTRY*)(int interval))(nullptr);
 
-constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
-{
-    switch (glError)
-    {
-        case GL_INVALID_ENUM: return "GL_INVALID_ENUM";
-        case GL_INVALID_VALUE: return "GL_INVALID_VALUE";
-        case GL_INVALID_OPERATION: return "GL_INVALID_OPERATION";
-        case GL_STACK_OVERFLOW: return "GL_STACK_OVERFLOW";
-        case GL_STACK_UNDERFLOW: return "GL_STACK_UNDERFLOW";
-        case GL_OUT_OF_MEMORY: return "GL_OUT_OF_MEMORY";
-        case GL_INVALID_FRAMEBUFFER_OPERATION: return "GL_INVALID_FRAMEBUFFER_OPERATION";
-        case GL_CONTEXT_LOST: return "GL_CONTEXT_LOST";
-        default: return "GL_UNKNOWN";
-    }
-}
-
 static void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, [[maybe_unused]] GLsizei length, const GLchar *message, [[maybe_unused]] const void *param)
 {
     const char *source_, *type_, *severity_;

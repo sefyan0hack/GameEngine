@@ -6,7 +6,7 @@
 #include <ranges>
 
 
-Material::Material(Shader vertex, Shader fragment)
+Material::Material(const Shader& vertex, const Shader& fragment)
     : id({glCreateProgram(), glDeleteProgram})
     , albedo(nullptr)
     , previd(Current_Program())

@@ -173,9 +173,7 @@ auto Renderer::render(Scene &scene, Camera &camera) -> void
 auto Renderer::draw(const Mesh& mesh, GLsizei count) -> void
 {
     // dumpOpenGLState();
-    mesh.EnableAttribs();
-    Log::Expect(mesh.VAO != 0, "VAO is 0");
-    glBindVertexArray(mesh.VAO);
+    mesh.Bind();
     if(count > 1){
         #ifdef USE_EBO
         glDrawElementsInstanced(GL_TRIANGLES, mesh.vInSize, GL_UNSIGNED_INT, 0, count);

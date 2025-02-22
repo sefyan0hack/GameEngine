@@ -46,6 +46,7 @@ public:
     auto setAttribute(GLuint index, AttributeInfo att) -> void;
     auto EnableAttribs() const -> void;
     auto DisableAttribs() const -> void;
+    auto Bind() const -> void;
 
     static auto CurrentVAO() -> GLuint;
     static auto CurrentVBO() -> GLuint;

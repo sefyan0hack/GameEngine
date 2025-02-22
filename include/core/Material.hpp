@@ -16,7 +16,7 @@ class Material
 {
 public:
     friend struct std::formatter<Material>;
-    Material(Shader vertex, Shader fragment);
+    Material(const Shader& vertex, const Shader& fragment);
     Material(std::initializer_list<Shader> shaders);
 
     Material(const Material& other);
@@ -63,6 +63,7 @@ private:
 
 private:
     AutoRelease<GLuint> id;
+    std::vector<Shader> Shaders;
     std::map<std::string, GLuint> Attribs;
     std::map<std::string, GLuint> Uniforms;
     std::shared_ptr<Texture> albedo;
