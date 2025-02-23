@@ -212,20 +212,20 @@ auto WINAPI ExceptionHandler([[maybe_unused]] PEXCEPTION_POINTERS ex) -> LONG
     Log::Info("Exception {} (0x{:x})", EXCEPTION_RECORD_to_str(excode), excode);
     Log::Info("Exception  [{}] - {}\n", exaddr, resolveSymbol(exaddr));
 
-    if(g_safeStacktrace.has_value()){
-        std::cerr << g_safeStacktrace.value() << "\n";
-    }else{
-        PrintStackTracectx(ex->ContextRecord);
-    }
+    // if(g_safeStacktrace.has_value()){
+    //     std::cerr << g_safeStacktrace.value() << "\n";
+    // }else{
+    //     PrintStackTracectx(ex->ContextRecord);
+    // }
 
-    // if(ex->ContextRecord != nullptr){
-    //     // PrintStackTracectx(ex->ContextRecord);
-    //     // PrintStackTrace();
-    // }
-    // else{
-    //     // Log::Error("ContextRecord is null");
-    //     // PrintStackTrace();
-    // }
+    if(ex->ContextRecord != nullptr){
+        PrintStackTracectx(ex->ContextRecord);
+        // PrintStackTrace();
+    }
+    else{
+        // Log::Error("ContextRecord is null");
+        // PrintStackTrace();
+    }
 
     return EXCEPTION_EXECUTE_HANDLER;
 }

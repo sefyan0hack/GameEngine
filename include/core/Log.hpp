@@ -50,41 +50,6 @@ namespace {
     return false;
 }
 
-auto stack_trace_formated(const unsigned short skip = 2) -> std::optional<std::string>
-{
-  const auto trace = std::stacktrace::current(skip);
-  auto msg = std::stringstream{};
-  short unsigned int frame_size = 0;
-
-  // filter system function on call stack
-  for (const auto& entry : trace)
-  {
-    #ifdef _MSC_VER
-    if( is_system_symbol(entry.description()) || entry.source_line() == 0) break;
-    #else
-    if( entry.source_line() == 0) break;
-    #endif
-    frame_size++;
-  }
-
-  if(frame_size != 0)
-  {
-    msg << std::format("Stack trace ({} frames):\n", frame_size);
-
-    for (short unsigned int i = 0;  i < frame_size; i++)
-    {      
-      const auto desc = trace[i].description();
-      const auto file = trace[i].source_file();
-      const auto line = trace[i].source_line();
-
-      msg << std::format(" #{:<2} in {} ({}:{:<2})\n", frame_size - i, desc, file, line);
-    }
-    return msg.str();
-  }else{
-    return std::nullopt;
-  }
-}
-
 enum class Log_LvL : char {
   ERR,
   WAR,
@@ -115,11 +80,8 @@ struct ERRF
     msg << std::format("{} : [{}] {}\n--> {}:{}\n", formatedTime(), lvl_str, formatted_msg, loc.file_name(), loc.line()) << std::endl;
     
     if constexpr (lvl == Log_LvL::ERR){
-      const auto op = stack_trace_formated();
-      if(op){
-        msg << op.value();
+        msg << std::stacktrace::current(1);
         MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONWARNING );
-      }
     }
     
     std::lock_guard lock(mutex_);
@@ -168,8 +130,8 @@ template <typename ...Ts>
 
   if( x != true){
     print("Expection Failed : {} ", msg);
-    PrintStackTrace();
-    std::exit(1);
+    std::cerr << std::stacktrace::current() << std::endl;
+    std::abort();
   }
 }
 } // namespace Log
