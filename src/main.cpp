@@ -112,12 +112,12 @@ private:
     Game()
     : skyVert(SHADER(skybox)".vert", GL_VERTEX_SHADER)
     , skyfrag(SHADER(skybox)".frag", GL_FRAGMENT_SHADER)
-    , skyMat({skyVert, skyfrag})
+    , skyMat(skyVert, skyfrag)
     , skyMesh(cubeMeshVert)
 
     , vert(SHADER(Traingl)".vert", GL_VERTEX_SHADER)
     , frag(SHADER(Traingl)".frag", GL_FRAGMENT_SHADER)
-    , Matt({vert, frag})
+    , Matt(vert, frag)
     , cubeMesh({cubeMeshVert, indices})
     , Cam(m_Window)
     {
@@ -137,13 +137,15 @@ private:
         Scn.add({glm::vec3(0,0,0), skyMat, skyMesh});
 
         Matt.texture(TEXTURE(brik.png));
-        Scn.add({glm::vec3(0,0,0), Matt, cubeMesh});
+        Scn.add({{0,0,0}, Matt, cubeMesh});
+        // Scn.GetGameObjects().back().SetUp(positions);
+
+        Scn.add({{0,5,0}, Matt, cubeMesh});
         // Scn.GetGameObjects().back().SetUp(positions);
         
-        auto mesh2 = Mesh(cubeMeshVert);
-        auto matt2 = Material({Shader(SHADER(Traingl)".vert", GL_VERTEX_SHADER), Shader(SHADER(Traingl)".frag", GL_FRAGMENT_SHADER)});
-        matt2.texture(TEXTURE(brik.png));
-        Scn.add({glm::vec3(0,5,0), matt2, mesh2});
+        // auto mesh2 = Mesh(cubeMeshVert);
+        // auto matt2 = Material(Shader(SHADER(Traingl)".vert", GL_VERTEX_SHADER), Shader(SHADER(Traingl)".frag", GL_FRAGMENT_SHADER));
+        // matt2.texture(TEXTURE(brik.png));        
 
         // #define PrintGLfunc(type, name) Log::print("{} {}", (void*)name, #name)
         
@@ -205,7 +207,7 @@ auto main(void) -> int {
         }
     }).detach();
 
-    setup_crach_handler();
+    // setup_crach_handler();
     Game my_game ;
     my_game.Run();
     return 0;
