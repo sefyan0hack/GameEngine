@@ -3,7 +3,6 @@
 #include <unordered_map>
 #include <core/gl.h>
 #include <core/fmts.hpp>
-#include <core/AutoRelease.hpp>
 #include <format>
 #include <vector>
 
@@ -21,18 +20,21 @@ class Shader
         bool operator==(const Shader& other);
         ~Shader();
     public:
-        auto Getid() const                -> AutoRelease<GLuint> ;
+        auto Getid() const                -> GLuint ;
         auto GetType() const              -> GLenum ;
         auto GetTypeName() const          -> const char* ;
         auto GetContent() const           -> std::vector<GLchar>;
+
+        static auto LoadFile(const char* filename) -> std::vector<GLchar>;
+        static auto Compile(GLuint shader)             -> void;
+        static auto LoadSource(const std::vector<GLchar>& src, GLuint shader) -> void;
+        static auto checkShaderCompileStatus(const GLuint &shader) -> void;
+
     private:
-        auto LoadFile(const char* filename) -> void;
         auto LoadSource()                   -> void;
-        auto Compile()                                      -> void;
-        auto checkShaderCompileStatus(const GLuint &shader) -> void;
     
     private:
-        AutoRelease<GLuint> id;
+        GLuint id;
         GLenum Type;
         std::vector<GLchar> Content;
 };
@@ -46,7 +48,7 @@ struct std::formatter<Shader> {
   auto format(const Shader& obj, std::format_context& context) const {
     return std::format_to(context.out(),
     "{}: {{ id: {}, type: {} }}"
-    , typeid(obj).name(), obj.id.get(), obj.GetTypeName());
+    , typeid(obj).name(), obj.id, obj.GetTypeName());
   }
 };
 

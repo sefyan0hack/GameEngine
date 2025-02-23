@@ -7,13 +7,15 @@
 
 
 Material::Material(const Shader& vertex, const Shader& fragment)
-    : id({glCreateProgram(), glDeleteProgram})
+    : id(glCreateProgram())
+    , Shaders({vertex, fragment})
     , albedo(nullptr)
     , previd(Current_Program())
 {
 
-    glAttachShader(id, vertex.Getid());
-    glAttachShader(id, fragment.Getid());
+    for(const auto &shader : Shaders ){
+        glAttachShader(id, shader.Getid());
+    }
 
     Link();
     checkProgramLinkStatus();
@@ -24,45 +26,51 @@ Material::Material(const Shader& vertex, const Shader& fragment)
     Log::Info("{}", *this);
 }
 Material::Material(std::initializer_list<Shader> shaders)
-    : id({glCreateProgram(), glDeleteProgram})
+    : id(glCreateProgram())
+    , Shaders(std::move(shaders))
     , albedo(nullptr)
     , previd(Current_Program())
 {
-    for(const auto &shader : shaders ){
+    for(const auto &shader : Shaders ){
         glAttachShader(id, shader.Getid());
     }
     
     Link();
     checkProgramLinkStatus();
-    Log::Info("Attribs count is {}", AttribsCount());
-    Log::Info("Uniforms count is {}", UniformCount());
     DumpAttribs();
     DumpUniforms();
     Log::Info("{}", *this);
 }
 
 Material::Material(const Material& other)
-    : id(other.id)
-    , Attribs(other.Attribs)
-    , Uniforms(other.Uniforms) // dnt forget  to check if the id are the same in the new Programe
+    : id(glCreateProgram())
+    , Shaders(other.Shaders)
     , albedo(other.albedo)
     , previd(Current_Program())
 {
-    // for(const auto shader : other.GetShaders() ){
-    //     glAttachShader(id, shader);
-    // }
-    
-    // Link();
-    //no need for checkProgramLinkStatus
+    for(const auto& shader : Shaders ){
+        glAttachShader(id, shader.Getid());
+    }
+
+    Link();
+    checkProgramLinkStatus();
+    DumpAttribs();
+    DumpUniforms();
     Log::Info("{}", *this);
 }
 Material::Material(Material&& other)
     : id(std::move(other.id))
+    , Shaders(std::move(other.Shaders))
     , Attribs(std::move(other.Attribs))
     , Uniforms(std::move(other.Uniforms)) // dnt forget  to check if the id are the same in the new Programe
+    , albedo(std::move(other.albedo))
     , previd(Current_Program())
 
 {
+    other.id = 0;
+    other.Shaders.clear();
+    other.Attribs.clear();
+    other.Uniforms.clear();
 }
 
 Material::~Material()
@@ -71,7 +79,7 @@ Material::~Material()
     glUseProgram(previd);
 }
 
-auto Material::Getid() const -> AutoRelease<GLuint>
+auto Material::Getid() const -> GLuint
 {
     return id;
 }
@@ -240,15 +248,20 @@ auto Material::GetAttribs() const -> std::map<std::string, GLuint>
     return Attribs;
 }
 
-auto Material::GetShaders() const -> std::vector<GLuint>
+auto Material::GetShaders() const -> std::vector<Shader>
 {
-    constexpr GLsizei maxShaderCount = 5;
-    GLsizei count = 0;
-    std::vector<GLuint> shaders(maxShaderCount, 0);
-    glGetAttachedShaders(id, maxShaderCount, &count, shaders.data());
-    shaders.resize(count);
-    return shaders;
+    return Shaders;
 }
+
+// auto Material::GetShaders() const -> std::vector<GLuint>
+// {
+//     constexpr GLsizei maxShaderCount = 5;
+//     GLsizei count = 0;
+//     std::vector<GLuint> shaders(maxShaderCount, 0);
+//     glGetAttachedShaders(id, maxShaderCount, &count, shaders.data());
+//     shaders.resize(count);
+//     return shaders;
+// }
 
 auto Material::GetTexture() const -> std::shared_ptr<Texture>
 {

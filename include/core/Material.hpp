@@ -7,7 +7,6 @@
 #include <core/fmts.hpp>
 #include <core/Shader.hpp>
 #include <core/Texture.hpp>
-#include <core/AutoRelease.hpp>
 
 #include <memory>
 #include <format>
@@ -23,7 +22,7 @@ public:
     Material(Material&& other);
     ~Material();
 
-    auto Getid() const -> AutoRelease<GLuint> ;
+    auto Getid() const -> GLuint ;
     auto Use() const -> void ;
     auto UnUse() const -> void ;
     auto UniformCount() const                  -> GLint ;
@@ -36,7 +35,8 @@ public:
     auto GetTexture() const -> std::shared_ptr<Texture>;
     auto texture(const std::string &name) -> void;
     auto texture(const std::vector<std::string> faces) -> void;
-    auto GetShaders() const -> std::vector<GLuint>;
+    // auto GetShaders() const -> std::vector<GLuint>;
+    auto GetShaders() const -> std::vector<Shader>;
     // auto EnableAttribs() const -> void;
     // auto DisableAttribs() const -> void;
 
@@ -62,7 +62,7 @@ private:
     auto DumpAttribs()                    -> void ;
 
 private:
-    AutoRelease<GLuint> id;
+    GLuint id;
     std::vector<Shader> Shaders;
     std::map<std::string, GLuint> Attribs;
     std::map<std::string, GLuint> Uniforms;
@@ -79,7 +79,7 @@ struct std::formatter<Material> {
   auto format(const Material& obj, std::format_context& context) const {
     return std::format_to(context.out(),
     "{}: {{ id: {}, attribs: {}, uniforms: {} }}"
-    , typeid(obj).name(), (GLuint)obj.id, MapWrapper{obj.Attribs}, MapWrapper{obj.Uniforms});
+    , typeid(obj).name(), obj.id, MapWrapper{obj.Attribs}, MapWrapper{obj.Uniforms});
   }
 };
 

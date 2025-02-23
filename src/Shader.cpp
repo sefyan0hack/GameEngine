@@ -11,22 +11,22 @@ Shader::Shader()
 }
 
 Shader::Shader(const char* name, GLenum type)
-: id({glCreateShader(type), glDeleteShader}), Type(type)
+: id(glCreateShader(type)), Type(type), Content(LoadFile(name))
 {
-    LoadFile(name);
     LoadSource();
-    Compile();
+    Compile(id);
     checkShaderCompileStatus(id);
     Log::Info("{}", *this);
 }
 
 Shader::Shader(const Shader& other)
-    : id(other.id)
+    : id(glCreateShader(other.Type))
     , Type(other.Type)
     , Content(other.Content)
 {
-    // Compile();
-    // checkShaderCompileStatus(id);
+    LoadSource();
+    Compile(id);
+    checkShaderCompileStatus(id);
     Log::Info("{}", *this);
 
 }
@@ -36,7 +36,7 @@ Shader::Shader(Shader&& other)
     , Type(other.Type)
     , Content(std::move(other.Content))
 {
-    other.id.release();
+    other.id = 0;
     other.Type = 0;
     other.Content.clear();
 }
@@ -44,11 +44,13 @@ Shader::Shader(Shader&& other)
 Shader &Shader::operator=(const Shader& other)
 {
     if(*this != other){
-        this->id = other.id;
+        this->id = glCreateShader(other.Type);
         this->Type = other.Type;
         this->Content = other.Content;
-        // Compile();
-        //no need for check status
+        
+        LoadSource();
+        Compile(id);
+        checkShaderCompileStatus(id);
     }
     
     return *this;
@@ -69,10 +71,18 @@ auto Shader::LoadSource() -> void
     glShaderSource(id, 1, &ShaderSource, &size);
 }
 
-auto Shader::LoadFile(const char* filename) -> void
+auto Shader::LoadSource(const std::vector<GLchar>& src, GLuint shader) -> void
+{
+    const auto ShaderSource = src.data();
+    const auto size = static_cast<GLint>(src.size());
+    glShaderSource(shader, 1, &ShaderSource, &size);
+}
+
+auto Shader::LoadFile(const char* filename) -> std::vector<GLchar>
 {
     auto file = std::ifstream{};
     auto buffer = std::stringstream{};
+    auto result = std::vector<GLchar>{};
 
     file.open(filename);
     if(file.is_open())
@@ -80,20 +90,20 @@ auto Shader::LoadFile(const char* filename) -> void
         buffer << file.rdbuf();
         auto str = buffer.str();
         str += '\0';
-        this->Content.resize(str.size());
-        memcpy(this->Content.data(), str.data(), str.size());
+        result.resize(str.size());
+        memcpy(result.data(), str.data(), str.size());
         Log::Info("Loding {} ", filename);
     }else{
         Log::Error("Couldnt open file {} : {}", filename, errno);
     }
 
     file.close();
+    return result;
 }
 
-auto Shader::Compile() -> void
+auto Shader::Compile(GLuint shader) -> void
 {
-    Log::Info("Compiling Shader id: {}, Type: {}", (GLuint)id, GetTypeName());
-    glCompileShader(id);
+    glCompileShader(shader);
 }
 
 auto Shader::checkShaderCompileStatus(const GLuint &shader) -> void
@@ -110,7 +120,7 @@ auto Shader::checkShaderCompileStatus(const GLuint &shader) -> void
 }
 
 
-auto Shader::Getid() const -> AutoRelease<GLuint>
+auto Shader::Getid() const -> GLuint
 {
     return id;
 }
