@@ -124,7 +124,7 @@ using Warning = ERRF<Log_LvL::WAR, &std::clog, Ts...>;
 
 
 template <typename ...Ts>
-[[noreturn]] auto Expect(bool x, const std::format_string<Ts...> fmt, Ts&& ... ts) -> void
+auto Expect(bool x, const std::format_string<Ts...> fmt, Ts&& ... ts) -> void
 {
   [[maybe_unused]] auto msg = std::format("{}\n", std::format(fmt, std::forward<Ts>(ts)...));
 
