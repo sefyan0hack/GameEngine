@@ -2,6 +2,7 @@
 #include <core/Log.hpp>
 #include <core/Shader.hpp>
 #include <core/Texture.hpp>
+#include <core/Mesh.hpp>
 #include <glm/glm.hpp>
 #include <ranges>
 
@@ -79,7 +80,7 @@ Material::~Material()
     glUseProgram(previd);
 }
 
-auto Material::Getid() const -> GLuint
+auto Material::Getid() const noexcept -> GLuint
 {
     return id;
 }
@@ -239,16 +240,16 @@ auto Material::Current_Program() -> GLuint{
     return prog;
 }
 
-auto Material::GetUniforms() const -> std::map<std::string, GLuint>
+auto Material::GetUniforms() const noexcept -> const std::map<std::string, GLuint>&
 {
     return Uniforms;
 }
-auto Material::GetAttribs() const -> std::map<std::string, GLuint>
+auto Material::GetAttribs() const noexcept -> const std::map<std::string, GLuint>&
 {
     return Attribs;
 }
 
-auto Material::GetShaders() const -> std::vector<Shader>
+auto Material::GetShaders() const noexcept -> const std::vector<Shader>&
 {
     return Shaders;
 }
@@ -263,7 +264,7 @@ auto Material::GetShaders() const -> std::vector<Shader>
 //     return shaders;
 // }
 
-auto Material::GetTexture() const -> std::shared_ptr<Texture>
+auto Material::GetTexture() const noexcept-> std::shared_ptr<Texture>
 {
     return albedo;
 }
