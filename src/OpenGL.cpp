@@ -108,6 +108,8 @@ OpenGL::OpenGL(HWND window)
  
     glDisable(GL_CULL_FACE);
     glFrontFace(GL_CCW);
+    
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
     GLint flags = 0;
     glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
