@@ -98,6 +98,9 @@ X(PFNGLVERTEXATTRIBBINDINGPROC, glVertexAttribBinding);\
 X(PFNGLBINDVERTEXBUFFERPROC, glBindVertexBuffer);\
 X(PFNGLISENABLEDPROC, glIsEnabled);\
 X(PFNGLGETFLOATVPROC, glGetFloatv);\
+X(PFNGLCLEARTEXIMAGEPROC, glClearTexImage);\
+X(PFNGLTEXSUBIMAGE2DPROC, glTexSubImage2D);\
+X(PFNGLTEXSTORAGE2DPROC, glTexStorage2D);\
 
 #define GLFUN(type, name)\
 inline type name = nullptr
