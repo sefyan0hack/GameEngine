@@ -59,7 +59,7 @@ auto CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lp
             return 0;
         }
         case WM_CLOSE:{
-            int ret = MessageBoxA(nullptr, "Close.", "Exit", MB_YESNO | MB_ICONWARNING);
+            int ret = MessageBoxA(m_WindowHandle, "Close.", "Exit", MB_YESNO | MB_ICONWARNING);
             if (ret == IDYES){
                 --S_WindowsCount;
                 m_Visible = false;
