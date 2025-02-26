@@ -6,6 +6,11 @@
 #include <array>
 #include <core/gl.h>
 
+struct Image {
+  GLsizei width, height, Channels;
+  GLubyte* data;
+};
+
 class Texture
 {
 public:
@@ -24,6 +29,7 @@ protected:
     GLuint id;
     GLenum type;
     GLsizei width, height;
+
 };
 
 class Texture2D : public Texture
