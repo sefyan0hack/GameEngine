@@ -207,7 +207,7 @@ auto main(void) -> int {
         }
     }).detach();
 
-    // setup_crach_handler();
+    setup_crach_handler();
     Game my_game ;
     my_game.Run();
     return 0;

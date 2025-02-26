@@ -176,15 +176,15 @@ auto Renderer::draw(const Mesh& mesh, GLsizei count) -> void
     mesh.Bind();
     if(count > 1){
         #ifdef USE_EBO
-        glDrawElementsInstanced(GL_TRIANGLES, mesh.vInSize, GL_UNSIGNED_INT, 0, count);
+        glDrawElementsInstanced(GL_TRIANGLES, mesh.VextexSize(), GL_UNSIGNED_INT, 0, count);
         #else
-        glDrawArraysInstanced(GL_TRIANGLES, 0, mesh.vInSize, count);
+        glDrawArraysInstanced(GL_TRIANGLES, 0, mesh.VextexSize(), count);
         #endif
     }else{
         #ifdef USE_EBO
-        glDrawElements(GL_TRIANGLES, mesh.vInSize, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, mesh.VextexSize(), GL_UNSIGNED_INT, 0);
         #else
-        glDrawArrays(GL_TRIANGLES, 0, mesh.vInSize);
+        glDrawArrays(GL_TRIANGLES, 0, mesh.VextexSize());
         #endif
     }
     mesh.DisableAttribs();
