@@ -6,6 +6,7 @@
 #include <core/fmts.hpp>
 #include <format>
 
+auto to_string(GLenum type) -> const char*;
 struct Vertex
 {
     glm::vec3 Position;
@@ -47,6 +48,7 @@ public:
     auto EnableAttribs() const -> void;
     auto DisableAttribs() const -> void;
     auto Bind() const -> void;
+    auto VextexSize() const noexcept -> GLsizei;
 
     static auto CurrentVAO() -> GLuint;
     static auto CurrentVBO() -> GLuint;
@@ -64,10 +66,9 @@ public:
         static auto BindVertexBuffer(GLuint buffer) -> void;
         static auto BindIndexBuffer(GLuint buffer) -> void;
   public:
-    std::vector<VetexData> vertices;
-    GLsizei vInSize;
-    std::vector<AttributeInfo> attribs;
     std::string name;
+    std::vector<VetexData> vertices;
+    std::vector<AttributeInfo> attribs;
     GLuint VBO, EBO, VAO;
     inline static size_t Count = 1;
 };
@@ -81,6 +82,6 @@ struct std::formatter<Mesh> {
   auto format(const Mesh& obj, std::format_context& context) const {
     return std::format_to(context.out(),
     "{}: {{ name: {}, VAO: {}, VBO: {}, EBO: {}, verticesSize: {} }}"
-    , typeid(obj).name(), obj.name, obj.VAO, obj.VBO, obj.EBO, obj.vInSize);
+    , typeid(obj).name(), obj.name, obj.VAO, obj.VBO, obj.EBO, obj.VextexSize());
   }
 };

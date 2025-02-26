@@ -33,10 +33,9 @@ namespace {
 }
 
 Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vector<GLuint> &indices, std::string Name)
-    : vertices(vertices)
-    , vInSize(vertices.size())
+    : name(Name)
+    , vertices(vertices)
     , attribs({position, normals, texCoords})
-    , name(Name)
     , VBO(GenBuffer())
     , EBO(0)
     , VAO(GenVertexArray())
@@ -67,10 +66,9 @@ Mesh::~Mesh()
 }
 
 Mesh::Mesh(const Mesh& other)
-    : vertices(other.vertices)
-    , vInSize(other.vInSize)
+    : name(other.name)
+    , vertices(other.vertices)
     , attribs(other.attribs)
-    , name(other.name)
     , VBO(GenBuffer())
     , EBO(0)
     , VAO(GenVertexArray())
@@ -83,10 +81,9 @@ Mesh::Mesh(const Mesh& other)
 auto Mesh::operator=(const Mesh& other) -> Mesh&
 {
     if(*this != other){
-        this->vertices = other.vertices;
-        this->vInSize = other.vInSize;
-        this->attribs = other.attribs;
         this->name = other.name;
+        this->vertices = other.vertices;
+        this->attribs = other.attribs;
         this->VBO = GenBuffer();
         this->EBO = 0;
         this->VAO = GenVertexArray();
@@ -98,18 +95,16 @@ auto Mesh::operator=(const Mesh& other) -> Mesh&
 }
 
 Mesh::Mesh(Mesh&& other) noexcept
-    : vertices(other.vertices)
-    , vInSize(other.vInSize)
+    : name(other.name)
+    , vertices(other.vertices)
     , attribs(other.attribs)
-    , name(other.name)
     , VBO(other.VBO)
     , EBO(other.EBO)
     , VAO(other.VAO)
 {
-    other.vertices.clear();
-    other.vInSize = 0;
-    other.attribs.clear();
     other.name.clear();
+    other.vertices.clear();
+    other.attribs.clear();
     other.VBO = 0;
     other.EBO = 0;
     other.VAO = 0;
@@ -118,18 +113,16 @@ Mesh::Mesh(Mesh&& other) noexcept
 auto Mesh::operator=(Mesh &&other) noexcept -> Mesh&
 {
     if(*this != other){
-        this->vertices = other.vertices;
-        this->vInSize = other.vInSize;
-        this->attribs = other.attribs;
         this->name = other.name;
+        this->vertices = other.vertices;
+        this->attribs = other.attribs;
         this->VBO = other.VBO;
         this->EBO = other.EBO;
         this->VAO = other.VAO;
 
-        other.vertices.clear();
-        other.vInSize = 0;
-        other.attribs.clear();
         other.name.clear();
+        other.vertices.clear();
+        other.attribs.clear();
         other.VBO = 0;
         other.EBO = 0;
         other.VAO = 0;
@@ -362,4 +355,122 @@ auto Mesh::Bind() const -> void
 {
     EnableAttribs();
     BindVertexArray(this->VAO);
+}
+
+auto Mesh::VextexSize() const noexcept -> GLsizei
+{
+    return vertices.size();
+}
+
+auto to_string(GLenum type) -> const char*
+{
+    switch (type)
+    {
+        case GL_FLOAT: return "GL_FLOAT";
+        case GL_FLOAT_VEC2: return "GL_FLOAT_VEC2";
+        case GL_FLOAT_VEC3: return "GL_FLOAT_VEC3";
+        case GL_FLOAT_VEC4: return "GL_FLOAT_VEC4";
+        case GL_DOUBLE: return "GL_DOUBLE";
+        case GL_DOUBLE_VEC2: return "GL_DOUBLE_VEC2";
+        case GL_DOUBLE_VEC3: return "GL_DOUBLE_VEC3";
+        case GL_DOUBLE_VEC4: return "GL_DOUBLE_VEC4";
+        case GL_INT: return "GL_INT";
+        case GL_INT_VEC2: return "GL_INT_VEC2";
+        case GL_INT_VEC3: return "GL_INT_VEC3";
+        case GL_INT_VEC4: return "GL_INT_VEC4";
+        case GL_UNSIGNED_INT: return "GL_UNSIGNED_INT";
+        case GL_UNSIGNED_INT_VEC2: return "GL_UNSIGNED_INT_VEC2";
+        case GL_UNSIGNED_INT_VEC3: return "GL_UNSIGNED_INT_VEC3";
+        case GL_UNSIGNED_INT_VEC4: return "GL_UNSIGNED_INT_VEC4";
+        case GL_BOOL: return "GL_BOOL";
+        case GL_BOOL_VEC2: return "GL_BOOL_VEC2";
+        case GL_BOOL_VEC3: return "GL_BOOL_VEC3";
+        case GL_BOOL_VEC4: return "GL_BOOL_VEC4";
+        case GL_FLOAT_MAT2: return "GL_FLOAT_MAT2";
+        case GL_FLOAT_MAT3: return "GL_FLOAT_MAT3";
+        case GL_FLOAT_MAT4: return "GL_FLOAT_MAT4";
+        case GL_FLOAT_MAT2x3: return "GL_FLOAT_MAT2x3";
+        case GL_FLOAT_MAT2x4: return "GL_FLOAT_MAT2x4";
+        case GL_FLOAT_MAT3x2: return "GL_FLOAT_MAT3x2";
+        case GL_FLOAT_MAT3x4: return "GL_FLOAT_MAT3x4";
+        case GL_FLOAT_MAT4x2: return "GL_FLOAT_MAT4x2";
+        case GL_FLOAT_MAT4x3: return "GL_FLOAT_MAT4x3";
+        case GL_DOUBLE_MAT2: return "GL_DOUBLE_MAT2";
+        case GL_DOUBLE_MAT3: return "GL_DOUBLE_MAT3";
+        case GL_DOUBLE_MAT4: return "GL_DOUBLE_MAT4";
+        case GL_DOUBLE_MAT2x3: return "GL_DOUBLE_MAT2x3";
+        case GL_DOUBLE_MAT2x4: return "GL_DOUBLE_MAT2x4";
+        case GL_DOUBLE_MAT3x2: return "GL_DOUBLE_MAT3x2";
+        case GL_DOUBLE_MAT3x4: return "GL_DOUBLE_MAT3x4";
+        case GL_DOUBLE_MAT4x2: return "GL_DOUBLE_MAT4x2";
+        case GL_DOUBLE_MAT4x3: return "GL_DOUBLE_MAT4x3";
+        case GL_SAMPLER_1D: return "GL_SAMPLER_1D";
+        case GL_SAMPLER_2D: return "GL_SAMPLER_2D";
+        case GL_SAMPLER_3D: return "GL_SAMPLER_3D";
+        case GL_SAMPLER_CUBE: return "GL_SAMPLER_CUBE";
+        case GL_SAMPLER_1D_SHADOW: return "GL_SAMPLER_1D_SHADOW";
+        case GL_SAMPLER_2D_SHADOW: return "GL_SAMPLER_2D_SHADOW";
+        case GL_SAMPLER_1D_ARRAY: return "GL_SAMPLER_1D_ARRAY";
+        case GL_SAMPLER_2D_ARRAY: return "GL_SAMPLER_2D_ARRAY";
+        case GL_SAMPLER_1D_ARRAY_SHADOW: return "GL_SAMPLER_1D_ARRAY_SHADOW";
+        case GL_SAMPLER_2D_ARRAY_SHADOW: return "GL_SAMPLER_2D_ARRAY_SHADOW";
+        case GL_SAMPLER_2D_MULTISAMPLE: return "GL_SAMPLER_2D_MULTISAMPLE";
+        case GL_SAMPLER_2D_MULTISAMPLE_ARRAY: return "GL_SAMPLER_2D_MULTISAMPLE_ARRAY";
+        case GL_SAMPLER_CUBE_SHADOW: return "GL_SAMPLER_CUBE_SHADOW";
+        case GL_SAMPLER_BUFFER: return "GL_SAMPLER_BUFFER";
+        case GL_SAMPLER_2D_RECT: return "GL_SAMPLER_2D_RECT";
+        case GL_SAMPLER_2D_RECT_SHADOW: return "GL_SAMPLER_2D_RECT_SHADOW";
+        case GL_INT_SAMPLER_1D: return "GL_INT_SAMPLER_1D";
+        case GL_INT_SAMPLER_2D: return "GL_INT_SAMPLER_2D";
+        case GL_INT_SAMPLER_3D: return "GL_INT_SAMPLER_3D";
+        case GL_INT_SAMPLER_CUBE: return "GL_INT_SAMPLER_CUBE";
+        case GL_INT_SAMPLER_1D_ARRAY: return "GL_INT_SAMPLER_1D_ARRAY";
+        case GL_INT_SAMPLER_2D_ARRAY: return "GL_INT_SAMPLER_2D_ARRAY";
+        case GL_INT_SAMPLER_2D_MULTISAMPLE: return "GL_INT_SAMPLER_2D_MULTISAMPLE";
+        case GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY: return "GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY";
+        case GL_INT_SAMPLER_BUFFER: return "GL_INT_SAMPLER_BUFFER";
+        case GL_INT_SAMPLER_2D_RECT: return "GL_INT_SAMPLER_2D_RECT";
+        case GL_UNSIGNED_INT_SAMPLER_1D: return "GL_UNSIGNED_INT_SAMPLER_1D";
+        case GL_UNSIGNED_INT_SAMPLER_2D: return "GL_UNSIGNED_INT_SAMPLER_2D";
+        case GL_UNSIGNED_INT_SAMPLER_3D: return "GL_UNSIGNED_INT_SAMPLER_3D";
+        case GL_UNSIGNED_INT_SAMPLER_CUBE: return "GL_UNSIGNED_INT_SAMPLER_CUBE";
+        case GL_UNSIGNED_INT_SAMPLER_1D_ARRAY: return "GL_UNSIGNED_INT_SAMPLER_1D_ARRAY";
+        case GL_UNSIGNED_INT_SAMPLER_2D_ARRAY: return "GL_UNSIGNED_INT_SAMPLER_2D_ARRAY";
+        case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE: return "GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE";
+        case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY: return "GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY";
+        case GL_UNSIGNED_INT_SAMPLER_BUFFER: return "GL_UNSIGNED_INT_SAMPLER_BUFFER";
+        case GL_UNSIGNED_INT_SAMPLER_2D_RECT: return "GL_UNSIGNED_INT_SAMPLER_2D_RECT";
+        case GL_IMAGE_1D: return "GL_IMAGE_1D";
+        case GL_IMAGE_2D: return "GL_IMAGE_2D";
+        case GL_IMAGE_3D: return "GL_IMAGE_3D";
+        case GL_IMAGE_2D_RECT: return "GL_IMAGE_2D_RECT";
+        case GL_IMAGE_CUBE: return "GL_IMAGE_CUBE";
+        case GL_IMAGE_BUFFER: return "GL_IMAGE_BUFFER";
+        case GL_IMAGE_1D_ARRAY: return "GL_IMAGE_1D_ARRAY";
+        case GL_IMAGE_2D_ARRAY: return "GL_IMAGE_2D_ARRAY";
+        case GL_IMAGE_2D_MULTISAMPLE: return "GL_IMAGE_2D_MULTISAMPLE";
+        case GL_IMAGE_2D_MULTISAMPLE_ARRAY: return "GL_IMAGE_2D_MULTISAMPLE_ARRAY";
+        case GL_INT_IMAGE_1D: return "GL_INT_IMAGE_1D";
+        case GL_INT_IMAGE_2D: return "GL_INT_IMAGE_2D";
+        case GL_INT_IMAGE_3D: return "GL_INT_IMAGE_3D";
+        case GL_INT_IMAGE_2D_RECT: return "GL_INT_IMAGE_2D_RECT";
+        case GL_INT_IMAGE_CUBE: return "GL_INT_IMAGE_CUBE";
+        case GL_INT_IMAGE_BUFFER: return "GL_INT_IMAGE_BUFFER";
+        case GL_INT_IMAGE_1D_ARRAY: return "GL_INT_IMAGE_1D_ARRAY";
+        case GL_INT_IMAGE_2D_ARRAY: return "GL_INT_IMAGE_2D_ARRAY";
+        case GL_INT_IMAGE_2D_MULTISAMPLE: return "GL_INT_IMAGE_2D_MULTISAMPLE";
+        case GL_INT_IMAGE_2D_MULTISAMPLE_ARRAY: return "GL_INT_IMAGE_2D_MULTISAMPLE_ARRAY";
+        case GL_UNSIGNED_INT_IMAGE_1D: return "GL_UNSIGNED_INT_IMAGE_1D";
+        case GL_UNSIGNED_INT_IMAGE_2D: return "GL_UNSIGNED_INT_IMAGE_2D";
+        case GL_UNSIGNED_INT_IMAGE_3D: return "GL_UNSIGNED_INT_IMAGE_3D";
+        case GL_UNSIGNED_INT_IMAGE_2D_RECT: return "GL_UNSIGNED_INT_IMAGE_2D_RECT";
+        case GL_UNSIGNED_INT_IMAGE_CUBE: return "GL_UNSIGNED_INT_IMAGE_CUBE";
+        case GL_UNSIGNED_INT_IMAGE_BUFFER: return "GL_UNSIGNED_INT_IMAGE_BUFFER";
+        case GL_UNSIGNED_INT_IMAGE_1D_ARRAY: return "GL_UNSIGNED_INT_IMAGE_1D_ARRAY";
+        case GL_UNSIGNED_INT_IMAGE_2D_ARRAY: return "GL_UNSIGNED_INT_IMAGE_2D_ARRAY";
+        case GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE: return "GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE";
+        case GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE_ARRAY: return "GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE_ARRAY";
+        case GL_UNSIGNED_INT_ATOMIC_COUNTER: return "GL_UNSIGNED_INT_ATOMIC_COUNTER";
+        default: return "unknown";
+    }
 }
