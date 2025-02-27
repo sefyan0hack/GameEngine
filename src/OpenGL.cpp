@@ -2,14 +2,6 @@
 #include <core/Log.hpp>
 #include <core/gl.h>
 
-inline static auto _wglMakeCurrent = (BOOL(WINAPI*)(HDC, HGLRC))(nullptr);
-inline static auto _wglCreateContext = (HGLRC(WINAPI*)(HDC))(nullptr);
-inline static auto _wglGetProcAddress = (PROC(WINAPI*)(LPCSTR))(nullptr);
-inline static auto _wglDeleteContext = (BOOL(WINAPI*)(HGLRC))(nullptr);
-inline static auto wglCreateContextAttribsARB = (HGLRC(WINAPI*)(HDC hdc, HGLRC hShareContext, const int *attribList))(nullptr);
-inline static auto wglGetExtensionsStringARB = (const char *(WINAPI*)(HDC hdc))(nullptr);
-inline static auto wglSwapIntervalEXT = (BOOL(APIENTRY*)(int interval))(nullptr);
-
 static void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, [[maybe_unused]] GLsizei length, const GLchar *message, [[maybe_unused]] const void *param)
 {
     const char *source_, *type_, *severity_;

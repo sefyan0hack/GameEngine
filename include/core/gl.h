@@ -103,6 +103,14 @@ X(PFNGLTEXSUBIMAGE2DPROC, glTexSubImage2D);\
 X(PFNGLTEXSTORAGE2DPROC, glTexStorage2D);\
 
 #define GLFUN(type, name)\
-inline type name = nullptr
+[[maybe_unused]] inline type name = nullptr
 
 GLFUNCS(GLFUN)
+
+[[maybe_unused]] inline static auto _wglMakeCurrent = (BOOL(WINAPI*)(HDC, HGLRC))(nullptr);
+[[maybe_unused]] inline static auto _wglCreateContext = (HGLRC(WINAPI*)(HDC))(nullptr);
+[[maybe_unused]] inline static auto _wglGetProcAddress = (PROC(WINAPI*)(LPCSTR))(nullptr);
+[[maybe_unused]] inline static auto _wglDeleteContext = (BOOL(WINAPI*)(HGLRC))(nullptr);
+[[maybe_unused]] inline static auto wglCreateContextAttribsARB = (HGLRC(WINAPI*)(HDC, HGLRC, const int*))(nullptr);
+[[maybe_unused]] inline static auto wglGetExtensionsStringARB = (const char *(WINAPI*)(HDC))(nullptr);
+[[maybe_unused]] inline static auto wglSwapIntervalEXT = (BOOL(APIENTRY*)(int))(nullptr);
