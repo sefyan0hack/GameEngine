@@ -359,7 +359,7 @@ auto Mesh::Bind() const -> void
 
 auto Mesh::VextexSize() const noexcept -> GLsizei
 {
-    return static<GLsizei>(vertices.size());
+    return static_cast<GLsizei>(vertices.size());
 }
 
 auto to_string(GLenum type) -> const char*
