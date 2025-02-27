@@ -64,12 +64,12 @@ auto GameObject::SetUp(std::vector<glm::vec3> InsPos) -> void
 
 
 
-Transform GameObject::GetTransform() const
+auto GameObject::GetTransform() const -> Transform
 {
     return transform;
 }
 
-glm::mat4 GameObject::GetModleMatrix() const
+auto GameObject::GetModleMatrix() const -> glm::mat4
 {
     return Transformation();
 }
@@ -91,9 +91,8 @@ auto GameObject::Rotate(const float &x, const float &y, const float &z) -> void
 
 auto GameObject::Transformation() const -> glm::mat4
 {
-    static auto transformation = glm::mat4(1.0f);
-    transformation = glm::mat4(1.0f);
-    auto t = transform;
+    auto transformation = glm::mat4(1.0f);
+    const auto& t = transform;
     // Apply translation
     transformation = glm::translate(transformation, t.position);
     
