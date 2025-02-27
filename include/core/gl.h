@@ -111,6 +111,7 @@ GLFUNCS(GLFUN)
 [[maybe_unused]] inline static auto _wglCreateContext = (HGLRC(WINAPI*)(HDC))(nullptr);
 [[maybe_unused]] inline static auto _wglGetProcAddress = (PROC(WINAPI*)(LPCSTR))(nullptr);
 [[maybe_unused]] inline static auto _wglDeleteContext = (BOOL(WINAPI*)(HGLRC))(nullptr);
+[[maybe_unused]] inline static auto _wglCopyContext = (BOOL(WINAPI*)(HGLRC, HGLRC, UINT))(nullptr);
 [[maybe_unused]] inline static auto wglCreateContextAttribsARB = (HGLRC(WINAPI*)(HDC, HGLRC, const int*))(nullptr);
 [[maybe_unused]] inline static auto wglGetExtensionsStringARB = (const char *(WINAPI*)(HDC))(nullptr);
 [[maybe_unused]] inline static auto wglSwapIntervalEXT = (BOOL(APIENTRY*)(int))(nullptr);
