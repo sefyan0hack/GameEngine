@@ -84,9 +84,9 @@ OpenGL::OpenGL(HWND window)
         Log::Error("HDC not valid");
     }
 
-    init_opengl();
-    glGetIntegerv(GL_MAJOR_VERSION, &OpenGL::vMajor);
-    glGetIntegerv(GL_MINOR_VERSION, &OpenGL::vMinor);
+    init_opengl(window);
+    glGetIntegerv(GL_MAJOR_VERSION, &vMajor);
+    glGetIntegerv(GL_MINOR_VERSION, &vMinor);
 
     // glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
@@ -132,14 +132,32 @@ OpenGL::OpenGL(HWND window)
     Log::print("Is Debugable : {}", !!(flags & GL_CONTEXT_FLAG_DEBUG_BIT));
 }
 
+OpenGL::OpenGL(const OpenGL &other)
+    : m_MainHDC(other.m_MainHDC)
+    , vMajor(other.vMajor)
+    , vMinor(other.vMinor)
+{
+    auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
+    if(tst != TRUE) Log::Error("couldn't Copy Opengl Context");
+}
+
+auto OpenGL::operator=(const OpenGL &other) -> OpenGL
+{
+    this->m_MainHDC = other.m_MainHDC;
+    this->vMajor = other.vMajor;
+    this->vMinor = other.vMinor;
+    auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
+    if(tst != TRUE) Log::Error("couldn't Copy Opengl Context");
+
+    return *this;
+}
 OpenGL::~OpenGL()
 {
     _wglMakeCurrent(nullptr, nullptr);
-    ReleaseDC (m_MainWindow, m_MainHDC);
     _wglDeleteContext(m_Context);
 }
 
-auto OpenGL::init_opengl() -> void
+auto OpenGL::init_opengl(HWND window) -> void
 {
 
     PIXELFORMATDESCRIPTOR pfd {};
@@ -161,10 +179,11 @@ auto OpenGL::init_opengl() -> void
         Log::Error("Failed to set the pixel format.");
     }
 
-    _wglMakeCurrent     = (decltype(_wglMakeCurrent))__GetProcAddress(OpenGL::OPENGL_MODULE_NAME, "wglMakeCurrent");
-    _wglCreateContext   = (decltype(_wglCreateContext))__GetProcAddress(OpenGL::OPENGL_MODULE_NAME, "wglCreateContext");
-    _wglGetProcAddress  = (decltype(_wglGetProcAddress))__GetProcAddress(OpenGL::OPENGL_MODULE_NAME, "wglGetProcAddress");
-    _wglDeleteContext   = (decltype(_wglDeleteContext))__GetProcAddress(OpenGL::OPENGL_MODULE_NAME, "wglDeleteContext");
+    _wglMakeCurrent     = (decltype(_wglMakeCurrent))__GetProcAddress(OPENGL_MODULE_NAME, "wglMakeCurrent");
+    _wglCreateContext   = (decltype(_wglCreateContext))__GetProcAddress(OPENGL_MODULE_NAME, "wglCreateContext");
+    _wglGetProcAddress  = (decltype(_wglGetProcAddress))__GetProcAddress(OPENGL_MODULE_NAME, "wglGetProcAddress");
+    _wglDeleteContext   = (decltype(_wglDeleteContext))__GetProcAddress(OPENGL_MODULE_NAME, "wglDeleteContext");
+    _wglCopyContext     = (decltype(_wglCopyContext))__GetProcAddress(OPENGL_MODULE_NAME, "wglCopyContext");
 
     if (!_wglMakeCurrent
         || !_wglCreateContext
@@ -206,8 +225,7 @@ auto OpenGL::init_opengl() -> void
     HGLRC opengl_context = nullptr;
     if (nullptr == (opengl_context = wglCreateContextAttribsARB(m_MainHDC, nullptr, gl_attribs))) {
         _wglDeleteContext(dummy_context);
-        ReleaseDC(m_MainWindow, m_MainHDC);
-        DestroyWindow(m_MainWindow);
+        m_Context = nullptr;
 
         if (GetLastError() == ERROR_INVALID_VERSION_ARB){ // ?
             Log::Error("Unsupported GL Version {}.{}", gl_attribs[1], gl_attribs[3]);
@@ -215,7 +233,7 @@ auto OpenGL::init_opengl() -> void
         Log::Error("Failed to create the final rendering context!");
     }
 
-    _wglMakeCurrent(m_MainHDC, opengl_context);
+    _wglMakeCurrent(m_MainHDC, opengl_context); // conseder to make it curent in window.hpp maybe
     _wglDeleteContext(dummy_context);
 
     m_Context =  opengl_context;
@@ -241,4 +259,9 @@ auto OpenGL::MajorV() -> GLint
 auto OpenGL::MinorV() -> GLint
 {
     return vMinor;
+}
+
+auto OpenGL::isValid() -> bool
+{
+    return not m_Context;
 }

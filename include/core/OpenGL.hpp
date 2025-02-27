@@ -7,26 +7,25 @@ class OpenGL
 {
     public:
         explicit OpenGL(HWND window);
-        OpenGL(const OpenGL&) = delete;
-        auto operator = (const OpenGL&) -> OpenGL = delete;
+        OpenGL(const OpenGL& other);
+        auto operator = (const OpenGL& other) -> OpenGL;
         ~OpenGL();
     public:
         auto GetHDC() const -> HDC;
 
-        static auto MajorV() -> GLint;
-        static auto MinorV() -> GLint;
+        auto MajorV() -> GLint;
+        auto MinorV() -> GLint;
+        auto isValid() -> bool;
 
         inline static LPCSTR OPENGL_MODULE_NAME {"opengl32.dll"};
     private:
-        auto init_opengl()             -> void ;
+        auto init_opengl(HWND window)             -> void ;
 
     private:
-        HWND m_MainWindow;
         HDC m_MainHDC;
         HGLRC m_Context;
-
-        inline static GLint vMajor;
-        inline static GLint vMinor;
+        GLint vMajor;
+        GLint vMinor;
         enum {
             WGL_DRAW_TO_WINDOW_ARB           = 0x2001,
             WGL_ACCELERATION_ARB             = 0x2003,
@@ -45,5 +44,6 @@ class OpenGL
             ERROR_INVALID_VERSION_ARB        = 0x2095,
             ERROR_INVALID_PROFILE_ARB        = 0x2096,
             WGL_CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB = 0x8256,
+            GL_ALL_ATTRIB_BITS               = 0x000fffff,
         };
 };
