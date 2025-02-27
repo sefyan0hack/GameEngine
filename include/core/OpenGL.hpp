@@ -2,6 +2,7 @@
 
 #include <windows.h>
 #include <core/gl.h>
+#include <ctime>
 
 class OpenGL
 {
@@ -18,10 +19,10 @@ class OpenGL
 
     public:
         auto GetHDC() const -> HDC;
-
         auto MajorV() const -> GLint;
         auto MinorV() const -> GLint;
         auto isValid() const -> bool;
+        auto CreationTime() const -> std::time_t;
 
         inline static LPCSTR OPENGL_MODULE_NAME {"opengl32.dll"};
     private:
@@ -32,6 +33,7 @@ class OpenGL
         HGLRC m_Context;
         GLint vMajor;
         GLint vMinor;
+        std::time_t creationTime;
         enum {
             WGL_DRAW_TO_WINDOW_ARB           = 0x2001,
             WGL_ACCELERATION_ARB             = 0x2003,

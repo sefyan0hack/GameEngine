@@ -79,6 +79,10 @@ auto rsgl(const char* name) -> void* {
 
 OpenGL::OpenGL(HWND window)
     : m_MainHDC(GetDC(window))
+    , m_Context(nullptr)
+    , vMajor(0)
+    , vMinor(0)
+    , creationTime(std::time(nullptr))
 {
     if( m_MainHDC == nullptr){
         Log::Error("HDC not valid");
@@ -134,8 +138,10 @@ OpenGL::OpenGL(HWND window)
 
 OpenGL::OpenGL(const OpenGL &other)
     : m_MainHDC(other.m_MainHDC)
+    , m_Context(nullptr)
     , vMajor(other.vMajor)
     , vMinor(other.vMinor)
+    , creationTime(std::time(nullptr))
 {
     auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
     if(tst != TRUE) Log::Error("couldn't Copy Opengl Context");
@@ -145,8 +151,11 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL
 {
     if(*this != other){
         this->m_MainHDC = other.m_MainHDC;
+        this->m_Context = nullptr;
         this->vMajor = other.vMajor;
         this->vMinor = other.vMinor;
+        this->creationTime = std::time(nullptr);
+
         auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
         if(tst != TRUE) Log::Error("couldn't Copy Opengl Context");
     }
@@ -155,26 +164,32 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL
 
 OpenGL::OpenGL(OpenGL &&other)
     : m_MainHDC(other.m_MainHDC)
+    , m_Context(other.m_Context)
     , vMajor(other.vMajor)
     , vMinor(other.vMinor)
+    , creationTime(other.creationTime)
 {
     other.m_MainHDC = nullptr;
     other.m_Context = nullptr;
     other.vMajor = 0;
     other.vMinor = 0;
+    other.creationTime = 0;
 }
 
 auto OpenGL::operator=(OpenGL &&other) -> OpenGL
 {
     if(*this != other){
         this->m_MainHDC = other.m_MainHDC;
+        this->m_Context = other.m_Context;
         this->vMajor = other.vMajor;
         this->vMinor = other.vMinor;
+        this->creationTime = other.creationTime;
         
         other.m_MainHDC = nullptr;
         other.m_Context = nullptr;
         other.vMajor = 0;
         other.vMinor = 0;
+        other.creationTime = 0;
     }
 
     return *this;
@@ -308,4 +323,9 @@ auto OpenGL::MinorV() const -> GLint
 auto OpenGL::isValid() const -> bool
 {
     return not m_Context;
+}
+
+auto OpenGL::CreationTime() const -> std::time_t
+{
+    return creationTime;
 }
