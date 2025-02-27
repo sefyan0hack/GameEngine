@@ -9,7 +9,7 @@ namespace {
         .type = GL_FLOAT,
         .normalized = GL_FALSE,
         .stride = sizeof(Mesh::VetexData),
-        .offset = reinterpret_cast<GLvoid*>(offsetof(Mesh::VetexData, Position)),
+        .offset = reinterpret_cast<GLvoid*>(static_cast<std::uintptr_t>(offsetof(Mesh::VetexData, Position))),
         .divisor = 0,
     };
     
@@ -18,7 +18,7 @@ namespace {
         .type = GL_FLOAT,
         .normalized = GL_FALSE,
         .stride = sizeof(Mesh::VetexData),
-        .offset = reinterpret_cast<GLvoid*>(offsetof(Mesh::VetexData, Normal)),
+        .offset = reinterpret_cast<GLvoid*>(static_cast<std::uintptr_t>(offsetof(Mesh::VetexData, Normal))),
         .divisor = 0,
     };
 
@@ -27,7 +27,7 @@ namespace {
         .type = GL_FLOAT,
         .normalized = GL_FALSE,
         .stride = sizeof(Mesh::VetexData),
-        .offset = reinterpret_cast<GLvoid*>(offsetof(Mesh::VetexData, TexCoords)),
+        .offset = reinterpret_cast<GLvoid*>(static_cast<std::uintptr_t>(offsetof(Mesh::VetexData, TexCoords))),
         .divisor = 0,
     };
 }
@@ -359,7 +359,7 @@ auto Mesh::Bind() const -> void
 
 auto Mesh::VextexSize() const noexcept -> GLsizei
 {
-    return vertices.size();
+    return static<GLsizei>(vertices.size());
 }
 
 auto to_string(GLenum type) -> const char*
