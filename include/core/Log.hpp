@@ -18,7 +18,6 @@ auto setup_crach_handler() -> void;
 auto resolveSymbol(void* addr, HANDLE proc = GetCurrentProcess()) -> std::string;
 auto PrintStackTrace(unsigned short skip = 0) -> void;
 
-inline thread_local std::optional<std::stacktrace> g_safeStacktrace; //dnt forget to make this only in debuge mode
 constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
 {
     switch (glError)

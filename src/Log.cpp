@@ -202,29 +202,32 @@ auto WINAPI ExceptionHandler([[maybe_unused]] PEXCEPTION_POINTERS ex) -> LONG
     const auto& exr = ex->ExceptionRecord;
     const auto& excode = exr->ExceptionCode;
     const auto& exaddr = exr->ExceptionAddress;
+    auto symName = resolveSymbol(exaddr);
     
-    // 1073807370L just for `RendeDoc` to work 
-    if (excode == 1073807370L) {
-        return EXCEPTION_CONTINUE_EXECUTION;
-    }
+    switch (excode)
+    {
+        case 1073807370L: // just for `RendeDoc` to work 
+        case EXCEPTION_BREAKPOINT:
+        case EXCEPTION_SINGLE_STEP:
+            return EXCEPTION_CONTINUE_EXECUTION;
 
+        case EXCEPTION_ILLEGAL_INSTRUCTION:
+            if(symName == "Ordinal332")
+            return EXCEPTION_EXECUTE_HANDLER;
+    }
+    
     Log::Info("--- Exception Caught ---");
     Log::Info("Exception {} (0x{:x})", EXCEPTION_RECORD_to_str(excode), excode);
-    Log::Info("Exception  [{}] - {}\n", exaddr, resolveSymbol(exaddr));
-
-    // if(g_safeStacktrace.has_value()){
-    //     std::cerr << g_safeStacktrace.value() << "\n";
-    // }else{
-    //     PrintStackTracectx(ex->ContextRecord);
-    // }
+    Log::Info("Exception  [{}] - {}", exaddr, symName);
+    Log::Info("Exception Flags: {:#x}", exr->ExceptionFlags);
+    Log::Info("Number of Parameters: {}", exr->NumberParameters);
+    
+    for (DWORD i = 0; i < exr->NumberParameters; i++) {
+        Log::Info("Parameter[{}]: {:p}", i, (void*)exr->ExceptionInformation[i]);
+    }
 
     if(ex->ContextRecord != nullptr){
         PrintStackTracectx(ex->ContextRecord);
-        // PrintStackTrace();
-    }
-    else{
-        // Log::Error("ContextRecord is null");
-        // PrintStackTrace();
     }
 
     return EXCEPTION_EXECUTE_HANDLER;
