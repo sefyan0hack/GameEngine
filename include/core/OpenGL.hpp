@@ -6,20 +6,26 @@
 class OpenGL
 {
     public:
-        explicit OpenGL(HWND window);
+        OpenGL(HWND window);
         OpenGL(const OpenGL& other);
-        auto operator = (const OpenGL& other) -> OpenGL;
+        OpenGL(OpenGL&& other);
         ~OpenGL();
+        auto operator = (const OpenGL& other) -> OpenGL;
+        auto operator = (OpenGL&& other) -> OpenGL;
+        auto operator == (const OpenGL& other) const -> bool;
+        auto operator != (const OpenGL& other) const -> bool;
+        operator bool () const;
+
     public:
         auto GetHDC() const -> HDC;
 
-        auto MajorV() -> GLint;
-        auto MinorV() -> GLint;
-        auto isValid() -> bool;
+        auto MajorV() const -> GLint;
+        auto MinorV() const -> GLint;
+        auto isValid() const -> bool;
 
         inline static LPCSTR OPENGL_MODULE_NAME {"opengl32.dll"};
     private:
-        auto init_opengl(HWND window)             -> void ;
+        auto init_opengl()             -> void ;
 
     private:
         HDC m_MainHDC;

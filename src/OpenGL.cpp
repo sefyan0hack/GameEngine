@@ -84,7 +84,7 @@ OpenGL::OpenGL(HWND window)
         Log::Error("HDC not valid");
     }
 
-    init_opengl(window);
+    init_opengl();
     glGetIntegerv(GL_MAJOR_VERSION, &vMajor);
     glGetIntegerv(GL_MINOR_VERSION, &vMinor);
 
@@ -143,21 +143,65 @@ OpenGL::OpenGL(const OpenGL &other)
 
 auto OpenGL::operator=(const OpenGL &other) -> OpenGL
 {
-    this->m_MainHDC = other.m_MainHDC;
-    this->vMajor = other.vMajor;
-    this->vMinor = other.vMinor;
-    auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
-    if(tst != TRUE) Log::Error("couldn't Copy Opengl Context");
+    if(*this != other){
+        this->m_MainHDC = other.m_MainHDC;
+        this->vMajor = other.vMajor;
+        this->vMinor = other.vMinor;
+        auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
+        if(tst != TRUE) Log::Error("couldn't Copy Opengl Context");
+    }
+    return *this;
+}
+
+OpenGL::OpenGL(OpenGL &&other)
+    : m_MainHDC(other.m_MainHDC)
+    , vMajor(other.vMajor)
+    , vMinor(other.vMinor)
+{
+    other.m_MainHDC = nullptr;
+    other.m_Context = nullptr;
+    other.vMajor = 0;
+    other.vMinor = 0;
+}
+
+auto OpenGL::operator=(OpenGL &&other) -> OpenGL
+{
+    if(*this != other){
+        this->m_MainHDC = other.m_MainHDC;
+        this->vMajor = other.vMajor;
+        this->vMinor = other.vMinor;
+        
+        other.m_MainHDC = nullptr;
+        other.m_Context = nullptr;
+        other.vMajor = 0;
+        other.vMinor = 0;
+    }
 
     return *this;
 }
+
+auto OpenGL::operator == (const OpenGL& other) const -> bool
+{
+    return this->m_Context == other.m_Context;
+}
+
+auto OpenGL::operator != (const OpenGL& other) const ->bool
+{
+    return !(*this == other);
+}
+
+OpenGL::operator bool() const
+{
+    return isValid();
+}
+
 OpenGL::~OpenGL()
 {
     _wglMakeCurrent(nullptr, nullptr);
     _wglDeleteContext(m_Context);
 }
 
-auto OpenGL::init_opengl(HWND window) -> void
+auto OpenGL::init_opengl() -> void
 {
 
     PIXELFORMATDESCRIPTOR pfd {};
@@ -252,16 +296,16 @@ auto OpenGL::GetHDC() const -> HDC
     return m_MainHDC;
 }
 
-auto OpenGL::MajorV() -> GLint
+auto OpenGL::MajorV() const -> GLint
 {
     return vMajor;
 }
-auto OpenGL::MinorV() -> GLint
+auto OpenGL::MinorV() const -> GLint
 {
     return vMinor;
 }
 
-auto OpenGL::isValid() -> bool
+auto OpenGL::isValid() const -> bool
 {
     return not m_Context;
 }
