@@ -200,13 +200,6 @@ public: // distroy hire
 };
 
 auto main(void) -> int {
-    std::thread([]{
-        while (true) {
-            g_safeStacktrace = std::stacktrace::current();
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
-    }).detach();
-
     setup_crach_handler();
     Game my_game ;
     my_game.Run();
