@@ -12,7 +12,12 @@
 #include <future>
 #include <iostream>
 #include <vector>
+#include <type_traits>
 
+template <typename T>
+concept Formatable = requires(T t) {
+    std::format("{}", t);
+};
 
 template<typename Function, typename... Args>
 auto setTimeOut( unsigned long delay, Function&& func, Args&&... args) -> void
@@ -68,3 +73,18 @@ constexpr std::array<char, sizeof(Str.value)> ToUpper<Str>::value;
 #define TO_UPPER(str) std::string_view(ToUpper<FixedString{str}>::value.data())
 
 std::future<std::vector<char>> load_file_async(const std::string& filename);
+std::vector<std::string> split(std::string s, const std::string& delimiter);
+
+template<class T>
+requires std::convertible_to<T, std::string> || Formatable<T>
+std::string to_string(const std::vector<T>& vec) {
+    std::string result = "[ ";
+    for (size_t i = 0; i < vec.size(); ++i) {
+        result += vec[i];
+        if (i != vec.size() - 1) {
+            result += ", ";
+        }
+    }
+    result += " ]";
+    return result;
+}
