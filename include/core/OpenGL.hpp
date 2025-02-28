@@ -11,10 +11,10 @@ class OpenGL
     public:
         OpenGL(HWND window);
         OpenGL(const OpenGL& other);
-        OpenGL(OpenGL&& other);
+        OpenGL(OpenGL&& other) noexcept;
         ~OpenGL();
         auto operator = (const OpenGL& other) -> OpenGL;
-        auto operator = (OpenGL&& other) -> OpenGL;
+        auto operator = (OpenGL&& other)  noexcept -> OpenGL;
         auto operator == (const OpenGL& other) const -> bool;
         auto operator != (const OpenGL& other) const -> bool;
         operator bool () const;

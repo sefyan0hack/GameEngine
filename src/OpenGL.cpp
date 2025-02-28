@@ -175,7 +175,7 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL
     return *this;
 }
 
-OpenGL::OpenGL(OpenGL &&other)
+OpenGL::OpenGL(OpenGL &&other) noexcept
     : m_MainHDC(other.m_MainHDC)
     , m_Context(other.m_Context)
     , vMajor(other.vMajor)
@@ -191,7 +191,7 @@ OpenGL::OpenGL(OpenGL &&other)
     other.Debug = false;
 }
 
-auto OpenGL::operator=(OpenGL &&other) -> OpenGL
+auto OpenGL::operator=(OpenGL &&other) noexcept -> OpenGL
 {
     if(*this != other){
         this->m_MainHDC = other.m_MainHDC;
