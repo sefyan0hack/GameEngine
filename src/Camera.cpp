@@ -8,13 +8,13 @@
 #include <glm/gtx/fast_trigonometry.hpp>
 
 Camera::Camera(Window &window) 
-: Position({0, 2, 0}),
-  FrontDir({0, 0, -1}), 
-  UpDir({ 0, 1, 0}),
-  RightDir({1, 0, 0}),
+: m_Position({0, 2, 0}),
+  m_FrontDir({0, 0, -1}), 
+  m_UpDir({ 0, 1, 0}),
+  m_RightDir({1, 0, 0}),
   m_Window(std::make_shared<Window>(window)),
-  sensitivity(0.11f),
-  yaw(-90), pitch(0)
+  m_Sensitivity(0.11f),
+  m_Yaw(-90), m_Pitch(0)
   {
     Log::Info("{}", *this);
   }
@@ -22,17 +22,17 @@ Camera::Camera(Window &window)
 Camera::~Camera() {
 }
 
-auto Camera::GetView() const -> glm::mat4
+auto Camera::View() const -> glm::mat4
 {
-    return glm::lookAt(Position, Position + FrontDir, UpDir);
+    return glm::lookAt(m_Position, m_Position + m_FrontDir, m_UpDir);
 }
 
 
-auto Camera::GetPerspective() const ->  glm::mat4
+auto Camera::Perspective() const ->  glm::mat4
 {
-    auto height = m_Window->GetHeight();
+    auto height = m_Window->Height();
 
-    auto aspect_ = height > 0 ? static_cast<float>(m_Window->GetWidth()) / static_cast<float>(height) : 1.0f;
+    auto aspect_ = height > 0 ? static_cast<float>(m_Window->Width()) / static_cast<float>(height) : 1.0f;
     auto fov_ = glm::radians(45.0f);
     auto near_ = 0.1f;
     auto far_ = 1000.0f;
@@ -42,35 +42,35 @@ auto Camera::GetPerspective() const ->  glm::mat4
 auto Camera::MoveFroward(float speed) -> void
 {
     //negate Z 
-    Position -= (-FrontDir * speed);
+    m_Position -= (-m_FrontDir * speed);
     
 }
 
 auto Camera::MoveBackward(float speed) -> void
 {
     //negate Z 
-    Position += (-FrontDir * speed);
+    m_Position += (-m_FrontDir * speed);
 }
 
 auto Camera::MoveUP(float speed) -> void
 {
-    Position += (UpDir  * speed);
+    m_Position += (m_UpDir  * speed);
 }
 auto Camera::MoveDown(float speed) -> void
 {
-    Position -= (UpDir  * speed);
+    m_Position -= (m_UpDir  * speed);
 }
 
 auto Camera::MoveRight(float speed) -> void
 {
-    auto c = glm::cross(FrontDir, UpDir);
-    Position += (c  * speed);
+    auto c = glm::cross(m_FrontDir, m_UpDir);
+    m_Position += (c  * speed);
 }
 
 auto Camera::MoveLeft(float speed) -> void
 {
-    auto c = glm::cross(FrontDir, UpDir);
-    Position -= (c  * speed);
+    auto c = glm::cross(m_FrontDir, m_UpDir);
+    m_Position -= (c  * speed);
 }
 
 auto Camera::EnableMSAA() -> void
@@ -80,47 +80,47 @@ auto Camera::EnableMSAA() -> void
 
 auto Camera::UpdateVectors() -> void
 {
-    auto cosyaw  = cos(glm::radians(this->yaw));
-    auto sinyaw  = sin(glm::radians(this->yaw));
+    auto cosyaw  = cos(glm::radians(this->m_Yaw));
+    auto sinyaw  = sin(glm::radians(this->m_Yaw));
 
-    auto cospich = cos(glm::radians(this->pitch));
-    auto sinpich = sin(glm::radians(this->pitch));
+    auto cospich = cos(glm::radians(this->m_Pitch));
+    auto sinpich = sin(glm::radians(this->m_Pitch));
     glm::vec3 front;
 
     front = {cosyaw * cospich, sinpich, sinyaw * cospich};
     
-    this->FrontDir = glm::normalize(front);
-    this->RightDir = glm::normalize(glm::cross(this->FrontDir, {0, 1, 0}));
-    this->UpDir = glm::normalize(glm::cross(this->RightDir, this->FrontDir));
+    this->m_FrontDir = glm::normalize(front);
+    this->m_RightDir = glm::normalize(glm::cross(this->m_FrontDir, {0, 1, 0}));
+    this->m_UpDir = glm::normalize(glm::cross(this->m_RightDir, this->m_FrontDir));
 }
 
 auto Camera::MoseMove(bool islocked) -> void
 {
     constexpr float LIMIT_ANGLE = 45.0f;
     
-    while (auto op = m_Window->mouse->ReadRawDelta()) {
-        float xoff = static_cast<float>(op->x)* sensitivity;
-        float yoff = static_cast<float>(-op->y) * sensitivity;
-        this->yaw += xoff;
-        this->pitch += yoff;
+    while (auto op = m_Window->m_Mouse->ReadRawDelta()) {
+        float xoff = static_cast<float>(op->x)* m_Sensitivity;
+        float yoff = static_cast<float>(-op->y) * m_Sensitivity;
+        this->m_Yaw += xoff;
+        this->m_Pitch += yoff;
     }
 
     if(islocked){
-        this->pitch = std::clamp(this->pitch, -LIMIT_ANGLE, LIMIT_ANGLE);
+        this->m_Pitch = std::clamp(this->m_Pitch, -LIMIT_ANGLE, LIMIT_ANGLE);
     }
 
     //move this code later 
     static auto on = false;
     static auto lastState = false;
 
-    auto currentState = m_Window->kbd->KeyIsPressed('L');
+    auto currentState = m_Window->m_Keyboard->KeyIsPressed('L');
     if (currentState && !lastState) {
         on = !on;
     }
     lastState = currentState;
 
     if(on){
-        m_Window->mouse->SetPos(m_Window->GetWidth()/2, m_Window->GetHeight()/2);
+        m_Window->m_Mouse->SetPos(m_Window->Width()/2, m_Window->Height()/2);
         ShowCursor(false);
     }else{
         ShowCursor(true);
@@ -130,12 +130,12 @@ auto Camera::MoseMove(bool islocked) -> void
     UpdateVectors();
 }
 
-auto Camera::SetFrontVector(glm::vec3 front)  -> void { FrontDir = front; }
-auto Camera::SetUpVector(glm::vec3 up)        -> void { FrontDir = up; }
-auto Camera::SetRightVector(glm::vec3 right)  -> void { RightDir = right; }
+auto Camera::SetFrontVector(glm::vec3 front)  -> void { m_FrontDir = front; }
+auto Camera::SetUpVector(glm::vec3 up)        -> void { m_FrontDir = up; }
+auto Camera::SetRightVector(glm::vec3 right)  -> void { m_RightDir = right; }
 
-auto Camera::GetPosition() const -> glm::vec3 { return Position; }
-auto Camera::GetFrontDir() const -> glm::vec3 { return FrontDir; }
-auto Camera::GetUpDir() const    -> glm::vec3 { return UpDir; }
-auto Camera::GetRightDir() const -> glm::vec3 { return RightDir; }
-auto Camera::GetSensitivity() const -> float  { return sensitivity; }
+auto Camera::Position() const -> glm::vec3 { return m_Position; }
+auto Camera::FrontDir() const -> glm::vec3 { return m_FrontDir; }
+auto Camera::UpDir() const    -> glm::vec3 { return m_UpDir; }
+auto Camera::RightDir() const -> glm::vec3 { return m_RightDir; }
+auto Camera::Sensitivity() const -> float  { return m_Sensitivity; }

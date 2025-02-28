@@ -144,28 +144,28 @@ Renderer::~Renderer(){
 auto Renderer::render(Scene &scene, Camera &camera) -> void
 {
     //Drwaing    
-    auto objs = scene.GetGameObjects();
+    auto objs = scene.Entitys();
 
     // render sky box
     auto skybox = objs.front();
-    auto skymaterial = skybox.GetMaterial();
-    auto skymesh = skybox.GetMesh();
+    auto skymaterial = skybox.material();
+    auto skymesh = skybox.mesh();
 
     glDepthFunc(GL_LEQUAL);
     skymaterial->Use();
-    skymaterial->SetUniform("View", glm::mat4(glm::mat3(camera.GetView())));
-    skymaterial->SetUniform("Perspective", camera.GetPerspective());
+    skymaterial->SetUniform("View", glm::mat4(glm::mat3(camera.View())));
+    skymaterial->SetUniform("Perspective", camera.Perspective());
     draw(*skymesh.get());
     glDepthFunc(GL_LESS);
     
     for(auto &obj: objs | std::views::drop(1)){
-        auto material = obj.GetMaterial();
+        auto material = obj.material();
         material->Use();
-        material->SetUniform("View", camera.GetView());
-        material->SetUniform("Perspective", camera.GetPerspective());
-        material->SetUniform("cameraPos", camera.GetPosition());
-        auto sizeIns = static_cast<GLsizei>(obj.GetInstancePos().size());
-        auto mesh = obj.GetMesh();
+        material->SetUniform("View", camera.View());
+        material->SetUniform("Perspective", camera.Perspective());
+        material->SetUniform("cameraPos", camera.Position());
+        auto sizeIns = static_cast<GLsizei>(obj.InstancePos().size());
+        auto mesh = obj.mesh();
         draw(*mesh.get(), sizeIns);
     }
 }

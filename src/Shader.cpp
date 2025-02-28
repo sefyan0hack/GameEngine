@@ -6,58 +6,75 @@
 #include <fstream>
 #include <sstream>
 
+namespace {
+
+constexpr auto to_string(GLenum type) -> const char*
+{
+  switch(type){
+    case GL_VERTEX_SHADER: return "GL_VERTEX_SHADER";
+    case GL_FRAGMENT_SHADER: return "GL_FRAGMENT_SHADER";
+    case GL_COMPUTE_SHADER: return "GL_COMPUTE_SHADER";
+    case GL_GEOMETRY_SHADER: return "GL_GEOMETRY_SHADER";
+    case GL_TESS_CONTROL_SHADER: return "GL_TESS_CONTROL_SHADER";
+    case GL_TESS_EVALUATION_SHADER: return "GL_TESS_EVALUATION_SHADER";
+    default: return "UNKNOWN";
+  }
+}
+
+}
+
 Shader::Shader()
 {
 }
 
 Shader::Shader(const char* name, GLenum type)
-: id(glCreateShader(type)), Type(type), Content(LoadFile(name))
+: m_Id(glCreateShader(type)), m_Type(type), m_Content(LoadFile(name))
 {
     LoadSource();
-    Compile(id);
-    checkShaderCompileStatus(id);
+    Compile(m_Id);
+    checkShaderCompileStatus(m_Id);
     Log::Info("{}", *this);
 }
 
 Shader::Shader(const Shader& other)
-    : id(glCreateShader(other.Type))
-    , Type(other.Type)
-    , Content(other.Content)
+    : m_Id(glCreateShader(other.m_Type))
+    , m_Type(other.m_Type)
+    , m_Content(other.m_Content)
 {
     LoadSource();
-    Compile(id);
-    checkShaderCompileStatus(id);
+    Compile(m_Id);
+    checkShaderCompileStatus(m_Id);
     Log::Info("{}", *this);
 
 }
 
 Shader::Shader(Shader&& other)
-    : id(other.id)
-    , Type(other.Type)
-    , Content(std::move(other.Content))
+    : m_Id(other.m_Id)
+    , m_Type(other.m_Type)
+    , m_Content(std::move(other.m_Content))
 {
-    other.id = 0;
-    other.Type = 0;
-    other.Content.clear();
+    other.m_Id = 0;
+    other.m_Type = 0;
+    other.m_Content.clear();
 }
 
 Shader &Shader::operator=(const Shader& other)
 {
     if(*this != other){
-        this->id = glCreateShader(other.Type);
-        this->Type = other.Type;
-        this->Content = other.Content;
+        this->m_Id = glCreateShader(other.m_Type);
+        this->m_Type = other.m_Type;
+        this->m_Content = other.m_Content;
         
         LoadSource();
-        Compile(id);
-        checkShaderCompileStatus(id);
+        Compile(m_Id);
+        checkShaderCompileStatus(m_Id);
     }
     
     return *this;
 }
 bool Shader::operator==(const Shader &other)
 {
-    return this->id == other.id;
+    return this->m_Id == other.m_Id;
 }
 Shader::~Shader()
 {
@@ -66,9 +83,9 @@ Shader::~Shader()
 
 auto Shader::LoadSource() -> void
 {
-    const auto ShaderSource = this->Content.data();
-    const auto size = static_cast<GLint>(this->Content.size());
-    glShaderSource(id, 1, &ShaderSource, &size);
+    const auto ShaderSource = this->m_Content.data();
+    const auto size = static_cast<GLint>(this->m_Content.size());
+    glShaderSource(m_Id, 1, &ShaderSource, &size);
 }
 
 auto Shader::LoadSource(const std::vector<GLchar>& src, GLuint shader) -> void
@@ -120,22 +137,22 @@ auto Shader::checkShaderCompileStatus(const GLuint &shader) -> void
 }
 
 
-auto Shader::Getid() const -> GLuint
+auto Shader::id() const -> GLuint
 {
-    return id;
+    return m_Id;
 }
 
-auto Shader::GetType() const -> GLenum
+auto Shader::Type() const -> GLenum
 {
-    return Type;
+    return m_Type;
 }
 
-auto Shader::GetTypeName() const -> const char*
+auto Shader::TypeName() const -> const char*
 {
-    return SHADERTYPES[Type];
+    return to_string(m_Type);
 }
 
-auto Shader::GetContent() const -> std::vector<GLchar>
+auto Shader::Content() const -> std::vector<GLchar>
 {
-    return Content;
+    return m_Content;
 }

@@ -23,22 +23,21 @@ public:
     auto SetPosition(const glm::vec3 &pos)                      -> void ;
     auto SetScale(const glm::vec3 &Scale)                       -> void ;
     auto Rotate(const float &x, const float &y, const float &z) -> void ;
-    auto GetTransform() const                                   -> Transform ;
-    auto GetModleMatrix() const                                 -> glm::mat4 ;
-    auto GetMesh() const                                        -> std::shared_ptr<Mesh> ;
-    auto GetMaterial() const                                    -> std::shared_ptr<Material> ;
-    auto GetInstancePos() const                                 -> const std::vector<glm::vec3>&;
+    auto transform() const                                   -> Transform ;
+    auto Modle() const                                 -> glm::mat4 ;
+    auto mesh() const                                        -> std::shared_ptr<Mesh> ;
+    auto material() const                                    -> std::shared_ptr<Material> ;
+    auto InstancePos() const                                 -> const std::vector<glm::vec3>&;
     auto Bind() const                                           -> void;
 
 private:
     auto Transformation() const                                 -> glm::mat4 ;
     private:
-    Transform transform;
-    std::shared_ptr<Material> material;
+    Transform m_Transform;
+    std::shared_ptr<Material> m_Material;
     std::shared_ptr<Mesh> m_Mesh;
-    std::vector<glm::vec3> InstancePos;
-public:
-    std::string name;
+    std::vector<glm::vec3> m_InstancePos;
+    std::string m_Name;
     inline static size_t Count = 1;
 };
 
@@ -51,6 +50,6 @@ struct std::formatter<GameObject> {
   auto format(const GameObject& obj, std::format_context& context) const {
     return std::format_to(context.out(),
     "{}: {{ name: {}, transform: {}, material: {}, mesh: {} }}"
-    , typeid(obj).name(), obj.name, obj.GetTransform(), *obj.material, *obj.m_Mesh.get());
+    , typeid(obj).name(), obj.m_Name, obj.transform(), *obj.m_Material, *obj.m_Mesh.get());
   }
 };

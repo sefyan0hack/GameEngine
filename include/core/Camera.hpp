@@ -29,24 +29,24 @@ public:
     auto EnableMSAA()                     -> void ;
     auto UpdateVectors()                  -> void ;
     auto MoseMove(bool islocked = true)   -> void ;
-    auto GetView() const                       -> glm::mat4 ;
-    auto GetPerspective() const                -> glm::mat4 ;
-    auto GetPosition() const              -> glm::vec3 ;
-    auto GetFrontDir() const              -> glm::vec3 ;
-    auto GetUpDir() const                 -> glm::vec3 ;
-    auto GetRightDir() const              -> glm::vec3 ;
-    auto GetSensitivity() const              -> float ;
+    auto View() const                       -> glm::mat4 ;
+    auto Perspective() const                -> glm::mat4 ;
+    auto Position() const              -> glm::vec3 ;
+    auto FrontDir() const              -> glm::vec3 ;
+    auto UpDir() const                 -> glm::vec3 ;
+    auto RightDir() const              -> glm::vec3 ;
+    auto Sensitivity() const              -> float ;
 
 private:
-    glm::vec3 Position;
-    glm::vec3 FrontDir;
-    glm::vec3 UpDir;
-    glm::vec3 RightDir;
+    glm::vec3 m_Position;
+    glm::vec3 m_FrontDir;
+    glm::vec3 m_UpDir;
+    glm::vec3 m_RightDir;
 
     //
     std::shared_ptr<Window> m_Window;
-    float sensitivity;
-    float yaw, pitch;
+    float m_Sensitivity;
+    float m_Yaw, m_Pitch;
 };
 
 // custom Camera Format
@@ -58,6 +58,6 @@ struct std::formatter<Camera> {
   auto format(const Camera& obj, std::format_context& context) const {
     return std::format_to(context.out(),
     "Camera: {{ position: {}, sensitivity: {}, view: {} }}"
-    , obj.Position, obj.sensitivity, obj.GetView());
+    , obj.m_Position, obj.m_Sensitivity, obj.View());
   }
 };

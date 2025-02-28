@@ -18,17 +18,17 @@ public:
     Texture(GLenum texType);
     virtual ~Texture();
 public:
-    virtual auto Getid() const -> GLuint ;
+    virtual auto id() const -> GLuint ;
     virtual auto Bind() const -> void ;
     virtual auto UnBind() const -> void ;
-    virtual auto GetWidth() const -> GLsizei ;
-    virtual auto GetHeight() const -> GLsizei ;
-    virtual auto GetType() const -> GLenum;
-    virtual auto GetTypeName() const -> std::string;
+    virtual auto Width() const -> GLsizei ;
+    virtual auto Height() const -> GLsizei ;
+    virtual auto Type() const -> GLenum;
+    virtual auto TypeName() const -> std::string;
 protected:
-    GLuint id;
-    GLenum type;
-    GLsizei width, height;
+    GLuint m_Id;
+    GLenum m_Type;
+    GLsizei m_Width, m_Height;
 
 };
 
@@ -36,11 +36,12 @@ class Texture2D : public Texture
 {
   public:
     Texture2D(const std::string &name);
-    auto GenerateMipMap() -> void ;
     auto isMipMapped() const -> GLboolean;
   private:
-    std::vector<GLubyte> data;
-    GLboolean mipmapped;
+    auto GenerateMipMap() -> void ;
+  
+    std::vector<GLubyte> m_Data;
+    GLboolean m_Mipmapped;
 };
 
 class TextureCubeMap : public Texture
@@ -48,7 +49,7 @@ class TextureCubeMap : public Texture
   public:
     TextureCubeMap(const std::vector<std::string> faces);
   private:
-    std::array<std::vector<GLubyte>, 6> data;
+    std::array<std::vector<GLubyte>, 6> m_Data;
 };
 
 // custom Texture Format
@@ -60,6 +61,6 @@ struct std::formatter<Texture> {
   auto format(const Texture& obj, std::format_context& context) const {
     return std::format_to(context.out(),
     "{}: {{ id: {}, width: {}, height: {}, type: {} }}"
-    , typeid(obj).name(), obj.id, obj.width, obj.height, obj.GetTypeName());
+    , typeid(obj).name(), obj.m_Id, obj.m_Width, obj.m_Height, obj.TypeName());
   }
 };

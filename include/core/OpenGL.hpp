@@ -20,7 +20,7 @@ class OpenGL
         operator bool () const;
 
     public:
-        auto GetHDC() const -> HDC;
+        auto DrawContext() const -> HDC;
         auto MajorV() const -> GLint;
         auto MinorV() const -> GLint;
         auto isValid() const -> bool;

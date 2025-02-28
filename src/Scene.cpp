@@ -12,10 +12,10 @@ Scene::~Scene()
 
 auto Scene::add(const GameObject &gobj) -> void
 {
-    objs.emplace_back(gobj);
+    m_Entitys.emplace_back(gobj);
 }
 
-auto Scene::GetGameObjects() -> std::vector<GameObject>&
+auto Scene::Entitys() -> std::vector<GameObject>&
 {
-    return objs;
+    return m_Entitys;
 }

@@ -20,10 +20,10 @@ class Shader
         bool operator==(const Shader& other);
         ~Shader();
     public:
-        auto Getid() const                -> GLuint ;
-        auto GetType() const              -> GLenum ;
-        auto GetTypeName() const          -> const char* ;
-        auto GetContent() const           -> std::vector<GLchar>;
+        auto id() const                -> GLuint ;
+        auto Type() const              -> GLenum ;
+        auto TypeName() const          -> const char* ;
+        auto Content() const           -> std::vector<GLchar>;
 
         static auto LoadFile(const char* filename) -> std::vector<GLchar>;
         static auto Compile(GLuint shader)             -> void;
@@ -34,9 +34,9 @@ class Shader
         auto LoadSource()                   -> void;
     
     private:
-        GLuint id;
-        GLenum Type;
-        std::vector<GLchar> Content;
+        GLuint m_Id;
+        GLenum m_Type;
+        std::vector<GLchar> m_Content;
 };
 
 // custom Mesh Format
@@ -48,19 +48,6 @@ struct std::formatter<Shader> {
   auto format(const Shader& obj, std::format_context& context) const {
     return std::format_to(context.out(),
     "{}: {{ id: {}, type: {} }}"
-    , typeid(obj).name(), obj.id, obj.GetTypeName());
+    , typeid(obj).name(), obj.m_Id, obj.TypeName());
   }
 };
-
-namespace {
-
-    inline static std::unordered_map<GLenum, const char*> SHADERTYPES {
-        { GL_VERTEX_SHADER, "GL_VERTEX_SHADER"},
-        { GL_FRAGMENT_SHADER, "GL_FRAGMENT_SHADE"},
-        { GL_COMPUTE_SHADER, "GL_COMPUTE_SHADER"},
-        { GL_GEOMETRY_SHADER, "GL_GEOMETRY_SHADER"},
-        { GL_TESS_CONTROL_SHADER, "GL_TESS_CONTROL_SHADER"},
-        { GL_TESS_EVALUATION_SHADER, "GL_TESS_EVALUATION_SHADER"},
-    };
-
-}

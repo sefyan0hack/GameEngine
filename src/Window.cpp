@@ -78,17 +78,17 @@ auto CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lp
 	    case WM_KEYDOWN:
 	    // syskey commands need to be handled to track ALT key (VK_MENU) and F10
 	    case WM_SYSKEYDOWN:
-	    	if( !(Lpr & 0x40000000) || kbd->AutorepeatIsEnabled() ) // filter autorepeat
+	    	if( !(Lpr & 0x40000000) || m_Keyboard->AutorepeatIsEnabled() ) // filter autorepeat
 	    	{
-	    		kbd->OnKeyPressed( static_cast<unsigned char>(Wpr) );
+	    		m_Keyboard->OnKeyPressed( static_cast<unsigned char>(Wpr) );
 	    	}
 	    	break;
 	    case WM_KEYUP:
 	    case WM_SYSKEYUP:
-	    	kbd->OnKeyReleased( static_cast<unsigned char>(Wpr) );
+	    	m_Keyboard->OnKeyReleased( static_cast<unsigned char>(Wpr) );
 	    	break;
 	    case WM_CHAR:
-	    	kbd->OnChar( static_cast<char>(Wpr) );
+	    	m_Keyboard->OnChar( static_cast<char>(Wpr) );
 	    	break;
 	    ///////////// END KEYBOARD MESSAGES /////////////
 
@@ -96,67 +96,67 @@ auto CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lp
 	    case WM_MOUSEMOVE:
 	    {
 	    	const POINTS pt = MAKEPOINTS( Lpr );
-			if( !mouse->IsInWindow() )
+			if( !m_Mouse->IsInWindow() )
 			{
-				mouse->OnMouseEnter();
+				m_Mouse->OnMouseEnter();
 			}
 			if( pt.x >= 0 && pt.x < m_Width && pt.y >= 0 && pt.y < m_Height )
 			{
-				mouse->OnMouseMove( pt.x, pt.y );
-				mouse->OnMouseEnter();
+				m_Mouse->OnMouseMove( pt.x, pt.y );
+				m_Mouse->OnMouseEnter();
 			}
 			else{
-				mouse->OnMouseLeave();
+				m_Mouse->OnMouseLeave();
 			}
 			return 0;
 	    }
 		case WM_MOUSEHOVER :{
-			mouse->isEnterd = true;
+			m_Mouse->isEnterd = true;
 			return 0;
 		}
 		case WM_MOUSELEAVE :{
-			mouse->isEnterd = false;
+			m_Mouse->isEnterd = false;
 			return 0;
 		}
 	    case WM_LBUTTONDOWN:
 	    {
 	    	SetForegroundWindow( Winhandle );
-	    	mouse->OnLeftPressed();
+	    	m_Mouse->OnLeftPressed();
 	    	break;
 	    }
 	    case WM_RBUTTONDOWN:
 	    {
-	    	mouse->OnRightPressed();
+	    	m_Mouse->OnRightPressed();
 	    	break;
 	    }
 	    case WM_LBUTTONUP:
 	    {
 	    	const POINTS pt = MAKEPOINTS( Lpr );
-	    	mouse->OnLeftReleased();
+	    	m_Mouse->OnLeftReleased();
 	    	// release mouse if outside of window
 	    	if( pt.x < 0 || pt.x >= m_Width || pt.y < 0 || pt.y >= m_Height )
 	    	{
 	    		ReleaseCapture();
-	    		mouse->OnMouseLeave();
+	    		m_Mouse->OnMouseLeave();
 	    	}
 	    	break;
 	    }
 	    case WM_RBUTTONUP:
 	    {
 	    	const POINTS pt = MAKEPOINTS( Lpr );
-	    	mouse->OnRightReleased();
+	    	m_Mouse->OnRightReleased();
 	    	// release mouse if outside of window
 	    	if( pt.x < 0 || pt.x >= m_Width || pt.y < 0 || pt.y >= m_Height )
 	    	{
 	    		ReleaseCapture();
-	    		mouse->OnMouseLeave();
+	    		m_Mouse->OnMouseLeave();
 	    	}
 	    	break;
 	    }
 	    case WM_MOUSEWHEEL:
 	    {
 	    	const int delta = GET_WHEEL_DELTA_WPARAM( Wpr );
-	    	mouse->OnWheelDelta(delta);
+	    	m_Mouse->OnWheelDelta(delta);
 	    	break;
 	    }
 	    ///////////////// END MOUSE MESSAGES /////////////////
@@ -171,12 +171,12 @@ auto CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lp
 	    		//my log error hire
 	    		break;
 	    	}
-	    	rawBuffer.resize( size );
+	    	m_RawBuffer.resize( size );
 	    	// read in the input data
 	    	if( GetRawInputData(
 	    		reinterpret_cast<HRAWINPUT>(Lpr),
 	    		RID_INPUT,
-	    		rawBuffer.data(),
+	    		m_RawBuffer.data(),
 	    		&size,
 	    		sizeof( RAWINPUTHEADER ) ) != size )
 	    	{
@@ -184,17 +184,17 @@ auto CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lp
 	    		break;
 	    	}
 	    	// process the raw input data
-	    	auto& ri = reinterpret_cast<const RAWINPUT&>(*rawBuffer.data());
+	    	auto& ri = reinterpret_cast<const RAWINPUT&>(*m_RawBuffer.data());
 	    	if( ri.header.dwType == RIM_TYPEMOUSE &&
 	    		(ri.data.mouse.lLastX != 0 || ri.data.mouse.lLastY != 0) )
 	    	{
-	    		mouse->OnRawDelta( ri.data.mouse.lLastX,ri.data.mouse.lLastY );
+	    		m_Mouse->OnRawDelta( ri.data.mouse.lLastX,ri.data.mouse.lLastY );
 	    	}
 	    	break;
 	    }
 	    ///////////////// END RAW MOUSE MESSAGES /////////////////
         case WM_KILLFOCUS:
-		    kbd->ClearState();
+		    m_Keyboard->ClearState();
 		    break;
 
 
@@ -209,8 +209,8 @@ auto Window::WindowsCount() -> unsigned short
 Window::Window(int m_Width, int m_Height, const TCHAR* Title) 
 	: m_Instance( GetModuleHandleA( nullptr ) )
 	, m_Visible(true)
-	, kbd(std::make_shared<Keyboard>())
-	, mouse(std::make_shared<Mouse>())
+	, m_Keyboard(std::make_shared<Keyboard>())
+	, m_Mouse(std::make_shared<Mouse>())
 {
     _init_helper(m_Width, m_Height, Title);
     S_WindowsCount++;
@@ -224,10 +224,10 @@ Window::Window(const Window& other)
 	, m_Width(other.m_Width)
 	, m_Height(other.m_Height)
 	, m_Visible(other.m_Visible)
-	, rawBuffer(other.rawBuffer)
+	, m_RawBuffer(other.m_RawBuffer)
 	, m_OpenGl(other.m_OpenGl)
-	, kbd(other.kbd)
-	, mouse(other.mouse)
+	, m_Keyboard(other.m_Keyboard)
+	, m_Mouse(other.m_Mouse)
 {
 }
 
@@ -290,31 +290,31 @@ auto Window::_init_helper(int Width, int Height, const TCHAR* Title) -> void
     UpdateWindow(m_WindowHandle);
 }
 
-auto Window::GetHINSTANCE() const -> HINSTANCE
+auto Window::Hinstance() const -> HINSTANCE
 {
     return m_Instance;
 }
 
-auto Window::GetHWND() const -> HWND
+auto Window::WindowHandle() const -> HWND
 {
     return m_WindowHandle;
 }
 
-auto Window::GetHDC() const -> HDC
+auto Window::DrawContext() const -> HDC
 {
     return m_HDC;
 }
 
-auto Window::GetWidth() const -> int
+auto Window::Width() const -> int
 {
     return m_Width;
 }
 
-auto Window::GetHeight() const -> int
+auto Window::Height() const -> int
 {
     return m_Height;
 }
-auto Window::GetGL() const -> std::shared_ptr<OpenGL>
+auto Window::opengl() const -> std::shared_ptr<OpenGL>
 {
     return m_OpenGl;
 }

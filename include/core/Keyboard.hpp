@@ -17,7 +17,7 @@ private:
 		Event( Type type, unsigned char code ) noexcept;
 		auto IsPress() const noexcept 	-> bool ;
 		auto IsRelease() const noexcept -> bool ;
-		auto GetCode() const noexcept 	-> unsigned char;
+		auto Code() const noexcept 	-> unsigned char;
     private:
 		Type type;
 		unsigned char code;

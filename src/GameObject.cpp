@@ -7,10 +7,10 @@
 #include <type_traits>
 
 GameObject::GameObject(glm::vec3 position, Material& matt, Mesh& mesh, std::string Name)
-    : transform(Transform(position))
-    , material(std::make_shared<Material>(matt))
+    : m_Transform(Transform(position))
+    , m_Material(std::make_shared<Material>(matt))
     , m_Mesh(std::make_shared<Mesh>(mesh))
-    , name(Name)
+    , m_Name(Name)
 {   
     UpMatrix();
     Log::Info("{}", *this);
@@ -23,18 +23,18 @@ GameObject::~GameObject()
 
 auto GameObject::UpMatrix() -> void
 {
-    auto Uniforms = material->GetUniforms();
+    auto Uniforms = m_Material->Uniforms();
     auto it = Uniforms.find("Modle");
     if (it != Uniforms.end()){
-        material->SetUniform("Modle", Transformation());
+        m_Material->SetUniform("Modle", Transformation());
     }
 }
 
 auto GameObject::SetUp(std::vector<glm::vec3> InsPos) -> void
 {
-    InstancePos = std::move(InsPos);
-    auto size = InstancePos.size();
-    using VetexData = typename std::remove_cv_t<typename std::remove_reference_t<decltype(InstancePos)>::value_type>;
+    m_InstancePos = std::move(InsPos);
+    auto size = m_InstancePos.size();
+    using VetexData = typename std::remove_cv_t<typename std::remove_reference_t<decltype(m_InstancePos)>::value_type>;
 
     auto currentVAO = Mesh::CurrentVAO();
     if(size > 1){
@@ -45,7 +45,7 @@ auto GameObject::SetUp(std::vector<glm::vec3> InsPos) -> void
         auto currentVBO = m_Mesh->CurrentVBO();
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(size * sizeof(glm::vec3)), InstancePos.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(size * sizeof(glm::vec3)), m_InstancePos.data(), GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, currentVBO);
 
         AttributeInfo positions{
@@ -64,35 +64,35 @@ auto GameObject::SetUp(std::vector<glm::vec3> InsPos) -> void
 
 
 
-auto GameObject::GetTransform() const -> Transform
+auto GameObject::transform() const -> Transform
 {
-    return transform;
+    return m_Transform;
 }
 
-auto GameObject::GetModleMatrix() const -> glm::mat4
+auto GameObject::Modle() const -> glm::mat4
 {
     return Transformation();
 }
 
 auto GameObject::SetPosition(const glm::vec3 &pos) -> void
 {
-    transform.position = pos;
+    m_Transform.position = pos;
 }
 
 auto GameObject::SetScale(const glm::vec3 &Scale) -> void
 {
-    transform.scale = Scale;
+    m_Transform.scale = Scale;
 }
 
 auto GameObject::Rotate(const float &x, const float &y, const float &z) -> void
 {
-    transform.rotation = {x, y, z};
+    m_Transform.rotation = {x, y, z};
 }
 
 auto GameObject::Transformation() const -> glm::mat4
 {
     auto transformation = glm::mat4(1.0f);
-    const auto& t = transform;
+    const auto& t = m_Transform;
     // Apply translation
     transformation = glm::translate(transformation, t.position);
     
@@ -105,18 +105,18 @@ auto GameObject::Transformation() const -> glm::mat4
     return transformation;
 }
 
-auto GameObject::GetMesh() const -> std::shared_ptr<Mesh>
+auto GameObject::mesh() const -> std::shared_ptr<Mesh>
 {
     return m_Mesh;
 }
-auto GameObject::GetInstancePos() const -> const std::vector<glm::vec3> &
+auto GameObject::InstancePos() const -> const std::vector<glm::vec3> &
 {
-    return InstancePos;
+    return m_InstancePos;
 }
 
-auto GameObject::GetMaterial() const -> std::shared_ptr<Material>
+auto GameObject::material() const -> std::shared_ptr<Material>
 {
-    return material;
+    return m_Material;
 }
 
 auto GameObject::Bind() const -> void

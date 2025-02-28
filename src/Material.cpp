@@ -8,14 +8,14 @@
 
 
 Material::Material(const Shader& vertex, const Shader& fragment)
-    : id(glCreateProgram())
-    , Shaders({vertex, fragment})
-    , albedo(nullptr)
-    , previd(Current_Program())
+    : m_Id(glCreateProgram())
+    , m_Shaders({vertex, fragment})
+    , m_Albedo(nullptr)
+    , m_Previd(Current_Program())
 {
 
-    for(const auto &shader : Shaders ){
-        glAttachShader(id, shader.Getid());
+    for(const auto &shader : m_Shaders ){
+        glAttachShader(m_Id, shader.id());
     }
 
     Link();
@@ -27,13 +27,13 @@ Material::Material(const Shader& vertex, const Shader& fragment)
     Log::Info("{}", *this);
 }
 Material::Material(std::initializer_list<Shader> shaders)
-    : id(glCreateProgram())
-    , Shaders(std::move(shaders))
-    , albedo(nullptr)
-    , previd(Current_Program())
+    : m_Id(glCreateProgram())
+    , m_Shaders(std::move(shaders))
+    , m_Albedo(nullptr)
+    , m_Previd(Current_Program())
 {
-    for(const auto &shader : Shaders ){
-        glAttachShader(id, shader.Getid());
+    for(const auto &shader : m_Shaders ){
+        glAttachShader(m_Id, shader.id());
     }
     
     Link();
@@ -44,13 +44,13 @@ Material::Material(std::initializer_list<Shader> shaders)
 }
 
 Material::Material(const Material& other)
-    : id(glCreateProgram())
-    , Shaders(other.Shaders)
-    , albedo(other.albedo)
-    , previd(Current_Program())
+    : m_Id(glCreateProgram())
+    , m_Shaders(other.m_Shaders)
+    , m_Albedo(other.m_Albedo)
+    , m_Previd(Current_Program())
 {
-    for(const auto& shader : Shaders ){
-        glAttachShader(id, shader.Getid());
+    for(const auto& shader : m_Shaders ){
+        glAttachShader(m_Id, shader.id());
     }
 
     Link();
@@ -60,69 +60,69 @@ Material::Material(const Material& other)
     Log::Info("{}", *this);
 }
 Material::Material(Material&& other)
-    : id(std::move(other.id))
-    , Shaders(std::move(other.Shaders))
-    , Attribs(std::move(other.Attribs))
-    , Uniforms(std::move(other.Uniforms)) // dnt forget  to check if the id are the same in the new Programe
-    , albedo(std::move(other.albedo))
-    , previd(Current_Program())
+    : m_Id(std::move(other.m_Id))
+    , m_Shaders(std::move(other.m_Shaders))
+    , m_Attribs(std::move(other.m_Attribs))
+    , m_Uniforms(std::move(other.m_Uniforms)) // dnt forget  to check if the id are the same in the new Programe
+    , m_Albedo(std::move(other.m_Albedo))
+    , m_Previd(Current_Program())
 
 {
-    other.id = 0;
-    other.Shaders.clear();
-    other.Attribs.clear();
-    other.Uniforms.clear();
+    other.m_Id = 0;
+    other.m_Shaders.clear();
+    other.m_Attribs.clear();
+    other.m_Uniforms.clear();
 }
 
 Material::~Material()
 {
-    if(glIsProgram(id) == GL_TRUE) glDeleteProgram(id);
-    glUseProgram(previd);
+    if(glIsProgram(m_Id) == GL_TRUE) glDeleteProgram(m_Id);
+    glUseProgram(m_Previd);
 }
 
-auto Material::Getid() const noexcept -> GLuint
+auto Material::id() const noexcept -> GLuint
 {
-    return id;
+    return m_Id;
 }
 
 auto Material::Use() const -> void
 {
-    previd = Current_Program();
-    if(id != 0 && glIsProgram(id) == GL_TRUE){
-        glUseProgram(id); // crache hire even i'm checking the id
-        if(albedo)
-           albedo->Bind();
+    m_Previd = Current_Program();
+    if(m_Id != 0 && glIsProgram(m_Id) == GL_TRUE){
+        glUseProgram(m_Id); // crache hire even i'm checking the id
+        if(m_Albedo)
+           m_Albedo->Bind();
     }
 }
 
 auto Material::UnUse() const -> void
 {
-    glUseProgram(previd);
-    if(albedo)
-        albedo->UnBind();
+    glUseProgram(m_Previd);
+    if(m_Albedo)
+        m_Albedo->UnBind();
 }
 
 auto Material::Link() const -> void
 {
-    glLinkProgram(id);
+    glLinkProgram(m_Id);
 }
 
-auto Material::GetUniformLocation(const char *name) const -> GLuint
+auto Material::UniformLocation(const char *name) const -> GLuint
 {
-    auto it = Uniforms.find(name);
+    auto it = m_Uniforms.find(name);
     
-    if (it != Uniforms.end()){
+    if (it != m_Uniforms.end()){
         return it->second;
     }else{
         Log::Error("the Uniform {} not exist", name);
         return static_cast<GLuint>(-1);
     }
 }
-auto Material::GetAttribLocation(const char *name) const -> GLuint
+auto Material::AttribLocation(const char *name) const -> GLuint
 {
-    auto it = Attribs.find(name);
+    auto it = m_Attribs.find(name);
     
-    if (it != Attribs.end()){
+    if (it != m_Attribs.end()){
         return it->second;
     }else{
         Log::Error("the Attrib {} not exist", name);
@@ -130,20 +130,20 @@ auto Material::GetAttribLocation(const char *name) const -> GLuint
     }
 }
 
-auto Material::GetUniformLocation_Prv(const char *name) const -> GLuint
+auto Material::UniformLocation_Prv(const char *name) const -> GLuint
 {
     Use();
-    GLint location = glGetUniformLocation(id, name);
+    GLint location = glGetUniformLocation(m_Id, name);
     if (location == -1) {
         Log::Error("uniform {} doesn't exist!", name);
     }
     return static_cast<GLuint>(location);
 }
 
-auto Material::GetAttribLocation_Prv(const char *name) const -> GLuint
+auto Material::AttribLocation_Prv(const char *name) const -> GLuint
 {
     Use();
-    GLint location = glGetAttribLocation(id, name);
+    GLint location = glGetAttribLocation(m_Id, name);
     if (location == -1) {
         Log::Error("Attrib {} doesn't exist!", name);
     }
@@ -153,19 +153,19 @@ auto Material::GetAttribLocation_Prv(const char *name) const -> GLuint
 auto Material::checkProgramLinkStatus() const -> void
 {
     GLint success;
-    glGetProgramiv(id, GL_LINK_STATUS, &success);
+    glGetProgramiv(m_Id, GL_LINK_STATUS, &success);
     if (!success) {
         GLchar infoLog[512];
-        glGetProgramInfoLog(id, 512, NULL, infoLog);
+        glGetProgramInfoLog(m_Id, 512, NULL, infoLog);
 	    // glDeleteProgram(id);
         Log::Error("PROGRAM LINKING_FAILED {}", infoLog);
     }
 }
 auto Material::UniformCount() const -> GLint
 {
-    Log::Expect(glIsProgram(id) == GL_TRUE , "program id {} is not a value generated by OpenGL", (GLuint)id);
+    Log::Expect(glIsProgram(m_Id) == GL_TRUE , "program id {} is not a value generated by OpenGL", (GLuint)m_Id);
     GLint count;
-    glGetProgramiv(id, GL_ACTIVE_UNIFORMS, &count);
+    glGetProgramiv(m_Id, GL_ACTIVE_UNIFORMS, &count);
 
     if(count <= 0){
         Log::Error("program id is not a value generated by OpenGL.");
@@ -175,10 +175,10 @@ auto Material::UniformCount() const -> GLint
 }
 auto Material::AttribsCount() const -> GLint
 {
-    Log::Expect(glIsProgram(id) == GL_TRUE, "program id {} is not a value generated by OpenGL", (GLuint)id);
+    Log::Expect(glIsProgram(m_Id) == GL_TRUE, "program id {} is not a value generated by OpenGL", (GLuint)m_Id);
 
     GLint count;
-    glGetProgramiv(id, GL_ACTIVE_ATTRIBUTES, &count);
+    glGetProgramiv(m_Id, GL_ACTIVE_ATTRIBUTES, &count);
 
     if(count <= 0){
         Log::Error("program id is not a value generated by OpenGL.");
@@ -190,7 +190,7 @@ auto Material::AttribsCount() const -> GLint
 auto Material::DumpUniforms() -> void
 {
     GLint max_len = 0;
-    glGetProgramiv(id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &max_len);
+    glGetProgramiv(m_Id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &max_len);
     
     Log::Expect(max_len > 0, "max_len  is not  valid max_len: {}", max_len);
 
@@ -203,10 +203,10 @@ auto Material::DumpUniforms() -> void
 
         for(GLint i = 0; i < count; i++){
             std::string Uniform_name(static_cast<size_t>(max_len), '\0');
-            glGetActiveUniform(id, i, static_cast<GLsizei>(max_len), &len, &count_out, &type, Uniform_name.data());
+            glGetActiveUniform(m_Id, i, static_cast<GLsizei>(max_len), &len, &count_out, &type, Uniform_name.data());
             Uniform_name.resize(static_cast<size_t>(len));
 
-            Uniforms[Uniform_name] =  GetUniformLocation_Prv(Uniform_name.c_str());
+            m_Uniforms[Uniform_name] =  UniformLocation_Prv(Uniform_name.c_str());
         }
     }
 }
@@ -214,7 +214,7 @@ auto Material::DumpUniforms() -> void
 auto Material::DumpAttribs() -> void
 {
     GLint max_len = 0;
-    glGetProgramiv(id, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &max_len);
+    glGetProgramiv(m_Id, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &max_len);
     
     Log::Expect(max_len > 0, "max_len  is not  valid max_len: {}", max_len);
 
@@ -225,10 +225,10 @@ auto Material::DumpAttribs() -> void
 
         for(GLint i = 0; i < count; i++){
             std::string attrib_name(static_cast<size_t>(max_len), '\0');
-            glGetActiveAttrib(id, i, max_len, &len, nullptr, &type, attrib_name.data());
+            glGetActiveAttrib(m_Id, i, max_len, &len, nullptr, &type, attrib_name.data());
             attrib_name.resize(static_cast<size_t>(len));
 
-            Attribs[attrib_name] = GetAttribLocation_Prv(attrib_name.c_str());
+            m_Attribs[attrib_name] = AttribLocation_Prv(attrib_name.c_str());
         }
     }
 }
@@ -240,18 +240,18 @@ auto Material::Current_Program() -> GLuint{
     return prog;
 }
 
-auto Material::GetUniforms() const noexcept -> const std::map<std::string, GLuint>&
+auto Material::Uniforms() const noexcept -> const std::map<std::string, GLuint>&
 {
-    return Uniforms;
+    return m_Uniforms;
 }
-auto Material::GetAttribs() const noexcept -> const std::map<std::string, GLuint>&
+auto Material::Attribs() const noexcept -> const std::map<std::string, GLuint>&
 {
-    return Attribs;
+    return m_Attribs;
 }
 
-auto Material::GetShaders() const noexcept -> const std::vector<Shader>&
+auto Material::Shaders() const noexcept -> const std::vector<Shader>&
 {
-    return Shaders;
+    return m_Shaders;
 }
 
 // auto Material::GetShaders() const -> std::vector<GLuint>
@@ -264,19 +264,19 @@ auto Material::GetShaders() const noexcept -> const std::vector<Shader>&
 //     return shaders;
 // }
 
-auto Material::GetTexture() const noexcept-> std::shared_ptr<Texture>
+auto Material::texture() const noexcept-> std::shared_ptr<Texture>
 {
-    return albedo;
+    return m_Albedo;
 }
 
-auto Material::texture(const std::string &name) -> void
+auto Material::SetTexture(const std::string &name) -> void
 {
-    albedo = std::make_shared<Texture2D>(name);
+    m_Albedo = std::make_shared<Texture2D>(name);
 }
 
-auto Material::texture(const std::vector<std::string> faces) -> void
+auto Material::SetTexture(const std::vector<std::string> faces) -> void
 {
-    albedo = std::make_shared<TextureCubeMap>(faces);
+    m_Albedo = std::make_shared<TextureCubeMap>(faces);
 }
 
 // auto Material::EnableAttribs() const -> void
@@ -297,8 +297,8 @@ auto Material::texture(const std::vector<std::string> faces) -> void
 template<>
 auto Material::SetUniform<GLint>(const std::string& name, const GLint &value) const -> void
 {
-    auto it = Uniforms.find(name);
-    if (it != Uniforms.end()){
+    auto it = m_Uniforms.find(name);
+    if (it != m_Uniforms.end()){
         glUniform1i(it->second, value);
     }else{
         Log::Error("the Uniform {} not exist", name);
@@ -307,8 +307,8 @@ auto Material::SetUniform<GLint>(const std::string& name, const GLint &value) co
 template<>
 auto Material::SetUniform<GLfloat>(const std::string& name, const GLfloat &value) const -> void
 {
-    auto it = Uniforms.find(name);
-    if (it != Uniforms.end()){
+    auto it = m_Uniforms.find(name);
+    if (it != m_Uniforms.end()){
         glUniform1f(it->second, value);
     }else{
         Log::Error("the Uniform {} not exist", name);
@@ -317,8 +317,8 @@ auto Material::SetUniform<GLfloat>(const std::string& name, const GLfloat &value
 template<>
 auto Material::SetUniform<GLuint>(const std::string& name, const GLuint &value) const -> void
 {
-    auto it = Uniforms.find(name);
-    if (it != Uniforms.end()){
+    auto it = m_Uniforms.find(name);
+    if (it != m_Uniforms.end()){
         glUniform1ui(it->second, value);
     }else{
         Log::Error("the Uniform {} not exist", name);
@@ -327,8 +327,8 @@ auto Material::SetUniform<GLuint>(const std::string& name, const GLuint &value) 
 template<>
 auto Material::SetUniform<glm::vec3>(const std::string& name, const glm::vec3 &value) const -> void
 {
-    auto it = Uniforms.find(name);
-    if (it != Uniforms.end()){
+    auto it = m_Uniforms.find(name);
+    if (it != m_Uniforms.end()){
         glUniform3fv(it->second, 1, &value[0]);
     }else{
         Log::Error("the Uniform {} not exist", name);
@@ -338,8 +338,8 @@ auto Material::SetUniform<glm::vec3>(const std::string& name, const glm::vec3 &v
 template<>
 auto Material::SetUniform<glm::mat2>(const std::string& name, const glm::mat2 &value) const -> void
 {
-    auto it = Uniforms.find(name);
-    if (it != Uniforms.end()){
+    auto it = m_Uniforms.find(name);
+    if (it != m_Uniforms.end()){
         glUniformMatrix2fv(it->second, 1, GL_FALSE, &value[0][0]);
     }else{
         Log::Error("the Uniform {} not exist", name);
@@ -348,8 +348,8 @@ auto Material::SetUniform<glm::mat2>(const std::string& name, const glm::mat2 &v
 template<>
 auto Material::SetUniform<glm::mat3>(const std::string& name, const glm::mat3 &value) const -> void
 {
-    auto it = Uniforms.find(name);
-    if (it != Uniforms.end()){
+    auto it = m_Uniforms.find(name);
+    if (it != m_Uniforms.end()){
         glUniformMatrix3fv(it->second, 1, GL_FALSE, &value[0][0]);
     }else{
         Log::Error("the Uniform {} not exist", name);
@@ -358,8 +358,8 @@ auto Material::SetUniform<glm::mat3>(const std::string& name, const glm::mat3 &v
 template<>
 auto Material::SetUniform<glm::mat4>(const std::string& name, const glm::mat4 &value) const -> void
 {
-    auto it = Uniforms.find(name);
-    if (it != Uniforms.end()){
+    auto it = m_Uniforms.find(name);
+    if (it != m_Uniforms.end()){
         glUniformMatrix4fv(it->second, 1, GL_FALSE, &value[0][0]);
     }else{
         Log::Error("the Uniform {} not exist", name);
@@ -370,8 +370,8 @@ auto Material::SetUniform<glm::mat4>(const std::string& name, const glm::mat4 &v
 template<>
 auto Material::SetUniform<GLint>(const std::string& name, const GLint &value1, const GLint &value2) const -> void
 {
-    auto it = Uniforms.find(name);
-    if (it != Uniforms.end()){
+    auto it = m_Uniforms.find(name);
+    if (it != m_Uniforms.end()){
         glUniform2i(it->second, value1, value2);
     }else{
         Log::Error("the Uniform {} not exist", name);
@@ -380,8 +380,8 @@ auto Material::SetUniform<GLint>(const std::string& name, const GLint &value1, c
 template<>
 auto Material::SetUniform<GLfloat>(const std::string& name, const GLfloat &value1, const GLfloat &value2) const -> void
 {
-    auto it = Uniforms.find(name);
-    if (it != Uniforms.end()){
+    auto it = m_Uniforms.find(name);
+    if (it != m_Uniforms.end()){
         glUniform2f(it->second, value1, value2);
     }else{
         Log::Error("the Uniform {} not exist", name);
@@ -390,8 +390,8 @@ auto Material::SetUniform<GLfloat>(const std::string& name, const GLfloat &value
 template<>
 auto Material::SetUniform<GLuint>(const std::string& name, const GLuint &value1, const GLuint &value2) const -> void
 {
-    auto it = Uniforms.find(name);
-    if (it != Uniforms.end()){
+    auto it = m_Uniforms.find(name);
+    if (it != m_Uniforms.end()){
         glUniform2ui(it->second, value1, value2);
     }else{
         Log::Error("the Uniform {} not exist", name);
@@ -402,8 +402,8 @@ auto Material::SetUniform<GLuint>(const std::string& name, const GLuint &value1,
 template<>
 auto Material::SetUniform<GLint>(const std::string& name, const GLint &value1, const GLint &value2, const GLint &value3) const -> void
 {
-    auto it = Uniforms.find(name);
-    if (it != Uniforms.end()){
+    auto it = m_Uniforms.find(name);
+    if (it != m_Uniforms.end()){
         glUniform3i(it->second, value1, value2, value3);
     }else{
         Log::Error("the Uniform {} not exist", name);
@@ -412,8 +412,8 @@ auto Material::SetUniform<GLint>(const std::string& name, const GLint &value1, c
 template<>
 auto Material::SetUniform<GLfloat>(const std::string& name, const GLfloat &value1, const GLfloat &value2, const GLfloat &value3) const -> void
 {
-    auto it = Uniforms.find(name);
-    if (it != Uniforms.end()){
+    auto it = m_Uniforms.find(name);
+    if (it != m_Uniforms.end()){
         glUniform3f(it->second, value1, value2, value3);
     }else{
         Log::Error("the Uniform {} not exist", name);
@@ -422,8 +422,8 @@ auto Material::SetUniform<GLfloat>(const std::string& name, const GLfloat &value
 template<>
 auto Material::SetUniform<GLuint>(const std::string& name, const GLuint &value1, const GLuint &value2, const GLuint &value3) const -> void
 {
-    auto it = Uniforms.find(name);
-    if (it != Uniforms.end()){
+    auto it = m_Uniforms.find(name);
+    if (it != m_Uniforms.end()){
         glUniform3ui(it->second, value1, value2, value3);
     }else{
         Log::Error("the Uniform {} not exist", name);
@@ -434,8 +434,8 @@ auto Material::SetUniform<GLuint>(const std::string& name, const GLuint &value1,
 template<>
 auto Material::SetUniform<GLint>(const std::string& name, const GLint &value1, const GLint &value2, const GLint &value3, const GLint &value4) const -> void
 {
-    auto it = Uniforms.find(name);
-    if (it != Uniforms.end()){
+    auto it = m_Uniforms.find(name);
+    if (it != m_Uniforms.end()){
         glUniform4i(it->second, value1, value2, value3, value4);
     }else{
         Log::Error("the Uniform {} not exist", name);
@@ -444,8 +444,8 @@ auto Material::SetUniform<GLint>(const std::string& name, const GLint &value1, c
 template<>
 auto Material::SetUniform<GLfloat>(const std::string& name, const GLfloat &value1, const GLfloat &value2, const GLfloat &value3, const GLfloat &value4) const -> void
 {
-    auto it = Uniforms.find(name);
-    if (it != Uniforms.end()){
+    auto it = m_Uniforms.find(name);
+    if (it != m_Uniforms.end()){
         glUniform4f(it->second, value1, value2, value3, value4);
     }else{
         Log::Error("the Uniform {} not exist", name);
@@ -454,8 +454,8 @@ auto Material::SetUniform<GLfloat>(const std::string& name, const GLfloat &value
 template<>
 auto Material::SetUniform<GLuint>(const std::string& name, const GLuint &value1, const GLuint &value2, const GLuint &value3, const GLuint &value4) const -> void
 {
-    auto it = Uniforms.find(name);
-    if (it != Uniforms.end()){
+    auto it = m_Uniforms.find(name);
+    if (it != m_Uniforms.end()){
         glUniform4ui(it->second, value1, value2, value3, value4);
     }else{
         Log::Error("the Uniform {} not exist", name);

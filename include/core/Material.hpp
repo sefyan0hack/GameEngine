@@ -23,21 +23,20 @@ public:
     Material(Material&& other);
     ~Material();
 
-    auto Getid() const noexcept -> GLuint ;
+    auto id() const noexcept -> GLuint ;
     auto Use() const -> void ;
     auto UnUse() const -> void ;
     auto UniformCount() const                  -> GLint ;
     auto AttribsCount() const                  -> GLint ;
-    auto GetUniformLocation(const char*) const -> GLuint;
-    auto GetAttribLocation(const char*) const -> GLuint;
-    auto GetUniforms() const noexcept -> const std::map<std::string, GLuint>&;
-    auto GetAttribs() const noexcept -> const std::map<std::string, GLuint>&;
+    auto UniformLocation(const char*) const -> GLuint;
+    auto AttribLocation(const char*) const -> GLuint;
+    auto Uniforms() const noexcept -> const std::map<std::string, GLuint>&;
+    auto Attribs() const noexcept -> const std::map<std::string, GLuint>&;
     static auto Current_Program() -> GLuint;
-    auto GetTexture() const noexcept -> std::shared_ptr<Texture>;
-    auto texture(const std::string &name) -> void;
-    auto texture(const std::vector<std::string> faces) -> void;
-    // auto GetShaders() const -> std::vector<GLuint>;
-    auto GetShaders() const noexcept -> const std::vector<Shader>&;
+    auto texture() const noexcept -> std::shared_ptr<Texture>;
+    auto SetTexture(const std::string &name) -> void;
+    auto SetTexture(const std::vector<std::string> faces) -> void;
+    auto Shaders() const noexcept -> const std::vector<Shader>&;
     // auto EnableAttribs() const -> void;
     // auto DisableAttribs() const -> void;
 
@@ -57,18 +56,18 @@ public:
 private:
     auto checkProgramLinkStatus() const        -> void;
     auto Link() const -> void;
-    auto GetUniformLocation_Prv(const char* name) const -> GLuint;
-    auto GetAttribLocation_Prv(const char* name) const -> GLuint;
+    auto UniformLocation_Prv(const char* name) const -> GLuint;
+    auto AttribLocation_Prv(const char* name) const -> GLuint;
     auto DumpUniforms()                   -> void ;
     auto DumpAttribs()                    -> void ;
 
 private:
-    GLuint id;
-    std::vector<Shader> Shaders;
-    std::map<std::string, GLuint> Attribs;
-    std::map<std::string, GLuint> Uniforms;
-    std::shared_ptr<Texture> albedo;
-    mutable GLuint previd;
+    GLuint m_Id;
+    std::vector<Shader> m_Shaders;
+    std::map<std::string, GLuint> m_Attribs;
+    std::map<std::string, GLuint> m_Uniforms;
+    std::shared_ptr<Texture> m_Albedo;
+    mutable GLuint m_Previd;
 };
 
 // custom Material Format
@@ -80,6 +79,6 @@ struct std::formatter<Material> {
   auto format(const Material& obj, std::format_context& context) const {
     return std::format_to(context.out(),
     "{}: {{ id: {}, attribs: {}, uniforms: {} }}"
-    , typeid(obj).name(), obj.id, MapWrapper{obj.Attribs}, MapWrapper{obj.Uniforms});
+    , typeid(obj).name(), obj.m_Id, MapWrapper{obj.m_Attribs}, MapWrapper{obj.m_Uniforms});
   }
 };

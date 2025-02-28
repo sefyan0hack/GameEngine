@@ -49,87 +49,87 @@ auto ubyte_to_vector(GLubyte* data, GLsizei size) -> std::vector<GLubyte>
 
 }
 Texture::Texture(GLenum texType)
-    : id(0)
-    , type(texType)
-    , width(1)
-    , height(1)
+    : m_Id(0)
+    , m_Type(texType)
+    , m_Width(1)
+    , m_Height(1)
 {
-    glGenTextures(1, &id);
+    glGenTextures(1, &m_Id);
     Bind();
 }
 
-auto Texture::Getid() const -> GLuint
+auto Texture::id() const -> GLuint
 {
-    return id;
+    return m_Id;
 }
 
 auto Texture::Bind() const -> void
 {
-    glBindTexture(type, id);
+    glBindTexture(m_Type, m_Id);
 }
 
 auto Texture::UnBind() const -> void
 {
-    glBindTexture(type, 0);
+    glBindTexture(m_Type, 0);
 }
 
 Texture::~Texture()
 {
-    if(glIsTexture(id) == GL_TRUE) glDeleteTextures(1, &id);
+    if(glIsTexture(m_Id) == GL_TRUE) glDeleteTextures(1, &m_Id);
 }
 
-auto Texture::GetWidth() const -> GLsizei
+auto Texture::Width() const -> GLsizei
 {
-    return width;
+    return m_Width;
 }
 
-auto Texture::GetHeight() const -> GLsizei
+auto Texture::Height() const -> GLsizei
 {
-    return height;
+    return m_Height;
 }
 
-auto Texture::GetType() const -> GLenum
+auto Texture::Type() const -> GLenum
 {
-    return type;
+    return m_Type;
 }
-auto Texture::GetTypeName() const -> std::string
+auto Texture::TypeName() const -> std::string
 {
     return to_string(m_Type);
 }
 
 //////////
 Texture2D::Texture2D(const std::string &name)
-    : Texture(GL_TEXTURE_2D), mipmapped(true)
+    : Texture(GL_TEXTURE_2D), m_Mipmapped(true)
 {
 
-    glTexParameteri(type, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(type, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(m_Type, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(m_Type, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(m_Type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(m_Type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     
     if (auto result = load_img(name.c_str()); result)
     {
         auto [Width, Height, Channel, Data] = result.value();
-        width = Width;
-        height = Height;
-        data = std::move(ubyte_to_vector(Data, Width * Height * Channel));
+        m_Width = Width;
+        m_Height = Height;
+        m_Data = std::move(ubyte_to_vector(Data, Width * Height * Channel));
         auto format = Channel == 1 ? GL_RED : Channel == 3 ? GL_RGB : GL_RGBA;
-        if(is_odd(width)){
+        if(is_odd(m_Width)){
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         }
-        glTexImage2D(type, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data.data());
+        glTexImage2D(m_Type, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, m_Data.data());
 
-        if (mipmapped) GenerateMipMap();
+        if (m_Mipmapped) GenerateMipMap();
 
         glActiveTexture(GL_TEXTURE1);
         Log::Info("Loding {} ", name);
     }
     else
     {
-        glTexStorage2D(type, 1, GL_RGB32F, width, height);
+        glTexStorage2D(m_Type, 1, GL_RGB32F, m_Width, m_Height);
         GLfloat clearColor[3] = { 1.0f, 0.0f, 1.0f};
-        glClearTexImage(id, 0, GL_RGB, GL_FLOAT, clearColor); 
+        glClearTexImage(m_Id, 0, GL_RGB, GL_FLOAT, clearColor); 
         
         Log::Warning("{}", result.error());
     }
@@ -139,12 +139,12 @@ Texture2D::Texture2D(const std::string &name)
 
 auto Texture2D::GenerateMipMap() -> void
 {
-    glGenerateMipmap(type);
+    glGenerateMipmap(m_Type);
 }
 
 auto Texture2D::isMipMapped() const -> GLboolean
 {
-    return mipmapped;
+    return m_Mipmapped;
 }
 
 //////
@@ -152,21 +152,21 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
     : Texture(GL_TEXTURE_CUBE_MAP)
 {
 
-    glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(type, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(type, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri(m_Type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(m_Type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(m_Type, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(m_Type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(m_Type, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-    for (auto [face, dataface, i] : std::views::zip(faces, data, std::views::iota(0)))
+    for (auto [face, dataface, i] : std::views::zip(faces, m_Data, std::views::iota(0)))
     {
 
         if (auto result = load_img(face.c_str(), false); result)
         {
             auto [Width, Height, Channel, Data] = result.value();
 
-            width = Width;
-            height = Height;
+            m_Width = Width;
+            m_Height = Height;
             dataface = std::move(ubyte_to_vector(Data, Width * Height * Channel));
 
             auto format = Channel == 1 ? GL_RED : Channel == 3 ? GL_RGB : GL_RGBA;
@@ -175,7 +175,7 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
             GLuint alignment = (rowBytes % 8 == 0)? 8 : (rowBytes % 4 == 0)? 4 : (rowBytes % 2 == 0)? 2 : 1;
             glPixelStorei(GL_UNPACK_ALIGNMENT, alignment);
 
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, dataface.data());
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, dataface.data());
 
             Log::Info("Loding {} ", face);
         }else{

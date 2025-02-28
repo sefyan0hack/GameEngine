@@ -40,12 +40,12 @@ class Window
         ~Window();
     
     public:
-        auto GetHINSTANCE() const   -> HINSTANCE ;
-        auto GetHWND() const        -> HWND ;
-        auto GetHDC() const         -> HDC ;
-        auto GetWidth() const       -> int ;
-        auto GetHeight() const      -> int ;
-        auto GetGL() const          -> std::shared_ptr<OpenGL> ;
+        auto Hinstance() const   -> HINSTANCE ;
+        auto WindowHandle() const        -> HWND ;
+        auto DrawContext() const         -> HDC ;
+        auto Width() const       -> int ;
+        auto Height() const      -> int ;
+        auto opengl() const          -> std::shared_ptr<OpenGL> ;
         auto Visible() const        -> bool ;
         static auto WindowsCount()  -> unsigned short ;
         static auto ProcessMessages() -> void ;
@@ -62,11 +62,11 @@ class Window
         int m_Width;
         int m_Height;
         bool m_Visible;
-        std::vector<BYTE> rawBuffer;
+        std::vector<BYTE> m_RawBuffer;
         std::shared_ptr<OpenGL> m_OpenGl;
     public:
-        std::shared_ptr<Keyboard> kbd;
-        std::shared_ptr<Mouse> mouse;
+        std::shared_ptr<Keyboard> m_Keyboard;
+        std::shared_ptr<Mouse> m_Mouse;
         
     public:
         inline static unsigned short S_WindowsCount = 0;

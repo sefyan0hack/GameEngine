@@ -129,19 +129,19 @@ private:
                 positions[index++] = {i, 0, j};
         }
 
-        skyMat.texture(std::vector<std::string>{
+        skyMat.SetTexture(std::vector<std::string>{
             TEXTURE(posx.jpg), TEXTURE(negx.jpg),
             TEXTURE(posy.jpg), TEXTURE(negy.jpg),
             TEXTURE(posz.jpg), TEXTURE(negz.jpg),
         });
         Scn.add({glm::vec3(0,0,0), skyMat, skyMesh});
 
-        Matt.texture(TEXTURE(brik.png));
+        Matt.SetTexture(TEXTURE(brik.png));
         Scn.add({{0,0,0}, Matt, cubeMesh});
-        // Scn.GetGameObjects().back().SetUp(positions);
+        // Scn.Entitys().back().SetUp(positions);
 
         Scn.add({{0,5,0}, Matt, cubeMesh});
-        // Scn.GetGameObjects().back().SetUp(positions);
+        // Scn.Entitys().back().SetUp(positions);
         
         // auto mesh2 = Mesh(cubeMeshVert);
         // auto matt2 = Material(Shader(SHADER(Traingl)".vert", GL_VERTEX_SHADER), Shader(SHADER(Traingl)".frag", GL_FRAGMENT_SHADER));
@@ -156,29 +156,29 @@ public:
     auto Update(float delta) -> void override {
 
         Cam.MoseMove();
-        if( m_Window.kbd->KeyIsPressed('W')){
+        if( m_Window.m_Keyboard->KeyIsPressed('W')){
             float speed = 10.0f * delta;
-            if(m_Window.kbd->KeyIsPressed(VK_SHIFT))
+            if(m_Window.m_Keyboard->KeyIsPressed(VK_SHIFT))
                 speed *= 10;
                 
             Cam.MoveFroward(speed);
         }
-        if( m_Window.kbd->KeyIsPressed('S')){
+        if( m_Window.m_Keyboard->KeyIsPressed('S')){
             Cam.MoveBackward(10.0f * delta);
         }
-        if( m_Window.kbd->KeyIsPressed('A')){
+        if( m_Window.m_Keyboard->KeyIsPressed('A')){
              Cam.MoveLeft(10.0f * delta);
         }
-        if( m_Window.kbd->KeyIsPressed('D')){
+        if( m_Window.m_Keyboard->KeyIsPressed('D')){
              Cam.MoveRight(10.0f * delta);
         }
-        if( m_Window.kbd->KeyIsPressed('N') ){
+        if( m_Window.m_Keyboard->KeyIsPressed('N') ){
              Cam.MoveUP(10.0f * delta);
         }
-        if( m_Window.kbd->KeyIsPressed('M') ){
+        if( m_Window.m_Keyboard->KeyIsPressed('M') ){
              Cam.MoveDown(10.0f * delta);
         }
-        if (m_Window.kbd->KeyIsPressed('H')){
+        if (m_Window.m_Keyboard->KeyIsPressed('H')){
             static bool flip = false;
             if(flip == false){
                 flip = !flip;

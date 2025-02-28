@@ -13,7 +13,7 @@ auto Keyboard::Event::IsRelease() const noexcept -> bool
 {
 	return type == Type::Release;
 }
-auto Keyboard::Event::GetCode() const noexcept -> unsigned char
+auto Keyboard::Event::Code() const noexcept -> unsigned char
 {
 	return code;
 }

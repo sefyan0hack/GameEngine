@@ -10,7 +10,7 @@ public:
     ~Scene();
 
     auto add(const GameObject &gobj)   -> void;
-    auto GetGameObjects()       -> std::vector<GameObject>&;
+    auto Entitys()       -> std::vector<GameObject>&;
 private:
-    std::vector<GameObject> objs;
+    std::vector<GameObject> m_Entitys;
 };

@@ -324,7 +324,7 @@ auto OpenGL::init_opengl() -> void
 
 }
 
-auto OpenGL::GetHDC() const -> HDC
+auto OpenGL::DrawContext() const -> HDC
 {
     return m_MainHDC;
 }
