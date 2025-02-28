@@ -33,16 +33,16 @@ class OpenGL
     private:
         HDC m_MainHDC;
         HGLRC m_Context;
-        GLint vMajor;
-        GLint vMinor;
-        std::time_t creationTime;
-        bool Debug;
+        GLint m_Major;
+        GLint m_Minor;
+        std::time_t m_CreationTime;
+        bool m_Debug;
 
-        inline static std::string Vendor;
-        inline static std::string Renderer;
-        inline static std::vector<std::string> Glslversions;
-        inline static std::vector<std::string> Extensions;
-        inline static GLint max_texture_unit;
+        inline static std::string m_Vendor;
+        inline static std::string m_Renderer;
+        inline static std::vector<std::string> m_Glslversions;
+        inline static std::vector<std::string> m_Extensions;
+        inline static GLint m_MaxTextureUnits;
 
         enum {
             WGL_DRAW_TO_WINDOW_ARB           = 0x2001,

@@ -81,37 +81,37 @@ auto rsgl(const char* name) -> void* {
 OpenGL::OpenGL(HWND window)
     : m_MainHDC(GetDC(window))
     , m_Context(nullptr)
-    , vMajor(0)
-    , vMinor(0)
-    , creationTime(std::time(nullptr))
-    , Debug(false)
+    , m_Major(0)
+    , m_Minor(0)
+    , m_CreationTime(std::time(nullptr))
+    , m_Debug(false)
 {
     if( m_MainHDC == nullptr){
         Log::Error("HDC not valid");
     }
 
     init_opengl();
-    glGetIntegerv(GL_MAJOR_VERSION, &vMajor);
-    glGetIntegerv(GL_MINOR_VERSION, &vMinor);
+    glGetIntegerv(GL_MAJOR_VERSION, &m_Major);
+    glGetIntegerv(GL_MINOR_VERSION, &m_Minor);
     GLint flags = 0;
     glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
-    Debug = !!(flags & GL_CONTEXT_FLAG_DEBUG_BIT);
+    m_Debug = !!(flags & GL_CONTEXT_FLAG_DEBUG_BIT);
     
     static bool isInitialized = false;
     if (!isInitialized) {
-        Vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
-        Renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
-        Extensions = split(reinterpret_cast<const char*>(wglGetExtensionsStringARB(m_MainHDC)), " ");
+        m_Vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+        m_Renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+        m_Extensions = split(reinterpret_cast<const char*>(wglGetExtensionsStringARB(m_MainHDC)), " ");
 
         GLint nGlslv = 0;
         glGetIntegerv(GL_NUM_SHADING_LANGUAGE_VERSIONS, &nGlslv);
 
         for(GLint i = 0; i < nGlslv; i++){
             auto r = reinterpret_cast<const char*>(glGetStringi(GL_SHADING_LANGUAGE_VERSION, i));
-            if(r) Glslversions.push_back(r);
+            if(r) m_Glslversions.push_back(r);
         }
 
-        glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_texture_unit);
+        glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_MaxTextureUnits);
     }
     
 
@@ -131,29 +131,29 @@ OpenGL::OpenGL(HWND window)
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 
-    if( vMajor >= 4 && vMinor >= 3 && Debug){
+    if( m_Major >= 4 && m_Minor >= 3 && m_Debug){
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
         glDebugMessageCallback(GLDebugMessageCallback, nullptr);
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
     }
 
-    Log::print("GL Version : {}.{}", vMajor, vMinor);
-    Log::print("GLSL Version Supported : {}", to_string(Glslversions));
-    Log::print("GL Vendor : {}", Vendor);
-    Log::print("GL Renderer : {}", Renderer);
-    Log::print("GL Exts : {}", to_string(Extensions));
-    Log::print("Max Texture Units : {}", max_texture_unit);
-    Log::print("Is Debug : {}", Debug ? "On" : "Off");
+    Log::print("GL Version : {}.{}", m_Major, m_Minor);
+    Log::print("GLSL Version Supported : {}", to_string(m_Glslversions));
+    Log::print("GL Vendor : {}", m_Vendor);
+    Log::print("GL Renderer : {}", m_Renderer);
+    Log::print("GL Exts : {}", to_string(m_Extensions));
+    Log::print("Max Texture Units : {}", m_MaxTextureUnits);
+    Log::print("Debug : {}", m_Debug ? "On" : "Off");
 }
 
 OpenGL::OpenGL(const OpenGL &other)
     : m_MainHDC(other.m_MainHDC)
     , m_Context(nullptr)
-    , vMajor(other.vMajor)
-    , vMinor(other.vMinor)
-    , creationTime(std::time(nullptr))
-    , Debug(other.Debug)
+    , m_Major(other.m_Major)
+    , m_Minor(other.m_Minor)
+    , m_CreationTime(std::time(nullptr))
+    , m_Debug(other.m_Debug)
 {
     auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
     if(tst != TRUE) Log::Error("couldn't Copy Opengl Context");
@@ -164,10 +164,10 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL
     if(*this != other){
         this->m_MainHDC = other.m_MainHDC;
         this->m_Context = nullptr;
-        this->vMajor = other.vMajor;
-        this->vMinor = other.vMinor;
-        this->creationTime = std::time(nullptr);
-        this->Debug = other.Debug;
+        this->m_Major = other.m_Major;
+        this->m_Minor = other.m_Minor;
+        this->m_CreationTime = std::time(nullptr);
+        this->m_Debug = other.m_Debug;
 
         auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
         if(tst != TRUE) Log::Error("couldn't Copy Opengl Context");
@@ -178,17 +178,17 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL
 OpenGL::OpenGL(OpenGL &&other) noexcept
     : m_MainHDC(other.m_MainHDC)
     , m_Context(other.m_Context)
-    , vMajor(other.vMajor)
-    , vMinor(other.vMinor)
-    , creationTime(other.creationTime)
-    , Debug(other.Debug)
+    , m_Major(other.m_Major)
+    , m_Minor(other.m_Minor)
+    , m_CreationTime(other.m_CreationTime)
+    , m_Debug(other.m_Debug)
 {
     other.m_MainHDC = nullptr;
     other.m_Context = nullptr;
-    other.vMajor = 0;
-    other.vMinor = 0;
-    other.creationTime = 0;
-    other.Debug = false;
+    other.m_Major = 0;
+    other.m_Minor = 0;
+    other.m_CreationTime = 0;
+    other.m_Debug = false;
 }
 
 auto OpenGL::operator=(OpenGL &&other) noexcept -> OpenGL
@@ -196,17 +196,17 @@ auto OpenGL::operator=(OpenGL &&other) noexcept -> OpenGL
     if(*this != other){
         this->m_MainHDC = other.m_MainHDC;
         this->m_Context = other.m_Context;
-        this->vMajor = other.vMajor;
-        this->vMinor = other.vMinor;
-        this->creationTime = other.creationTime;
-        this->Debug = other.Debug;
+        this->m_Major = other.m_Major;
+        this->m_Minor = other.m_Minor;
+        this->m_CreationTime = other.m_CreationTime;
+        this->m_Debug = other.m_Debug;
         
         other.m_MainHDC = nullptr;
         other.m_Context = nullptr;
-        other.vMajor = 0;
-        other.vMinor = 0;
-        other.creationTime = 0;
-        other.Debug = false;
+        other.m_Major = 0;
+        other.m_Minor = 0;
+        other.m_CreationTime = 0;
+        other.m_Debug = false;
 
     }
 
@@ -331,11 +331,11 @@ auto OpenGL::GetHDC() const -> HDC
 
 auto OpenGL::MajorV() const -> GLint
 {
-    return vMajor;
+    return m_Major;
 }
 auto OpenGL::MinorV() const -> GLint
 {
-    return vMinor;
+    return m_Minor;
 }
 
 auto OpenGL::isValid() const -> bool
@@ -345,5 +345,5 @@ auto OpenGL::isValid() const -> bool
 
 auto OpenGL::CreationTime() const -> std::time_t
 {
-    return creationTime;
+    return m_CreationTime;
 }
