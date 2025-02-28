@@ -9,7 +9,7 @@
 class OpenGL
 {
     public:
-        OpenGL(HWND window);
+        explicit OpenGL(HWND window);
         OpenGL(const OpenGL& other);
         OpenGL(OpenGL&& other) noexcept;
         ~OpenGL();
