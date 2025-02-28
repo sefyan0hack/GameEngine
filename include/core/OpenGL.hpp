@@ -25,7 +25,14 @@ class OpenGL
         auto MinorV() const -> GLint;
         auto isValid() const -> bool;
         auto CreationTime() const -> std::time_t;
+        auto isDebugable() const -> bool;
 
+        static auto Vendor() -> std::string;
+        static auto Renderer() -> std::string;
+        static auto GlslVersions() -> std::vector<std::string>;
+        static auto Extensions() -> std::vector<std::string>;
+        static auto MaxTextureUnits() -> GLint;
+        
         inline static LPCSTR OPENGL_MODULE_NAME {"opengl32.dll"};
     private:
         auto init_opengl()             -> void ;
@@ -40,7 +47,7 @@ class OpenGL
 
         inline static std::string m_Vendor;
         inline static std::string m_Renderer;
-        inline static std::vector<std::string> m_Glslversions;
+        inline static std::vector<std::string> m_GlslVersions;
         inline static std::vector<std::string> m_Extensions;
         inline static GLint m_MaxTextureUnits;
 

@@ -108,7 +108,7 @@ OpenGL::OpenGL(HWND window)
 
         for(GLint i = 0; i < nGlslv; i++){
             auto r = reinterpret_cast<const char*>(glGetStringi(GL_SHADING_LANGUAGE_VERSION, i));
-            if(r) m_Glslversions.push_back(r);
+            if(r) m_GlslVersions.push_back(r);
         }
 
         glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_MaxTextureUnits);
@@ -139,7 +139,7 @@ OpenGL::OpenGL(HWND window)
     }
 
     Log::print("GL Version : {}.{}", m_Major, m_Minor);
-    Log::print("GLSL Version Supported : {}", to_string(m_Glslversions));
+    Log::print("GLSL Version Supported : {}", to_string(m_GlslVersions));
     Log::print("GL Vendor : {}", m_Vendor);
     Log::print("GL Renderer : {}", m_Renderer);
     Log::print("GL Exts : {}", to_string(m_Extensions));
@@ -346,4 +346,33 @@ auto OpenGL::isValid() const -> bool
 auto OpenGL::CreationTime() const -> std::time_t
 {
     return m_CreationTime;
+}
+
+auto OpenGL::isDebugable() const -> bool
+{
+    return m_Debug;
+}
+
+auto OpenGL::Vendor() -> std::string
+{
+    return m_Vendor;
+}
+auto OpenGL::Renderer() -> std::string
+{
+    return m_Renderer;
+}
+
+auto OpenGL::GlslVersions() -> std::vector<std::string>
+{
+    return m_GlslVersions;
+}
+
+auto OpenGL::Extensions() -> std::vector<std::string>
+{
+    return m_Extensions;
+}
+
+auto OpenGL::MaxTextureUnits() -> GLint
+{
+    return m_MaxTextureUnits;
 }
