@@ -1,6 +1,7 @@
 #include <core/OpenGL.hpp>
 #include <core/Log.hpp>
 #include <core/gl.h>
+#include <core/Utils.hpp>
 
 static void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, [[maybe_unused]] GLsizei length, const GLchar *message, [[maybe_unused]] const void *param)
 {
@@ -83,6 +84,7 @@ OpenGL::OpenGL(HWND window)
     , vMajor(0)
     , vMinor(0)
     , creationTime(std::time(nullptr))
+    , Debug(false)
 {
     if( m_MainHDC == nullptr){
         Log::Error("HDC not valid");
@@ -91,6 +93,27 @@ OpenGL::OpenGL(HWND window)
     init_opengl();
     glGetIntegerv(GL_MAJOR_VERSION, &vMajor);
     glGetIntegerv(GL_MINOR_VERSION, &vMinor);
+    GLint flags = 0;
+    glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+    Debug = !!(flags & GL_CONTEXT_FLAG_DEBUG_BIT);
+    
+    static bool isInitialized = false;
+    if (!isInitialized) {
+        Vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+        Renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+        Extensions = split(reinterpret_cast<const char*>(wglGetExtensionsStringARB(m_MainHDC)), " ");
+
+        GLint nGlslv = 0;
+        glGetIntegerv(GL_NUM_SHADING_LANGUAGE_VERSIONS, &nGlslv);
+
+        for(GLint i = 0; i < nGlslv; i++){
+            auto r = reinterpret_cast<const char*>(glGetStringi(GL_SHADING_LANGUAGE_VERSION, i));
+            if(r) Glslversions.push_back(r);
+        }
+
+        glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_texture_unit);
+    }
+    
 
     // glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
@@ -107,33 +130,21 @@ OpenGL::OpenGL(HWND window)
     
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-    GLint flags = 0;
-    glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
 
-    if( OpenGL::MajorV() >= 4 && OpenGL::MinorV() >= 3 && (flags & GL_CONTEXT_FLAG_DEBUG_BIT)){
+    if( vMajor >= 4 && vMinor >= 3 && Debug){
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
         glDebugMessageCallback(GLDebugMessageCallback, nullptr);
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
     }
 
-    GLint max_texture_unit = 0, nGlslv = 0;
-
-    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_texture_unit);
-    glGetIntegerv(GL_NUM_SHADING_LANGUAGE_VERSIONS, &nGlslv);
-
-    Log::print("GL Version({}.{}) : {}", OpenGL::MajorV(), OpenGL::MinorV(), reinterpret_cast<const char*>(glGetString(GL_VERSION)));
-    Log::print("GLSL Version : {}", reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
-
-    Log::print("Number of GLSL Version Supported : {}", nGlslv);
-    for(GLint i = 0; i < nGlslv; i++) 
-        Log::print("    [{}]- {}", i+1, reinterpret_cast<const char*>(glGetStringi(GL_SHADING_LANGUAGE_VERSION, i)));
-
-    Log::print("GL Vendor : {}", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
-    Log::print("GL Renderer : {}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
-    Log::print("GL Exts : {}", wglGetExtensionsStringARB(m_MainHDC));
+    Log::print("GL Version : {}.{}", vMajor, vMinor);
+    Log::print("GLSL Version Supported : {}", to_string(Glslversions));
+    Log::print("GL Vendor : {}", Vendor);
+    Log::print("GL Renderer : {}", Renderer);
+    Log::print("GL Exts : {}", to_string(Extensions));
     Log::print("Max Texture Units : {}", max_texture_unit);
-    Log::print("Is Debugable : {}", !!(flags & GL_CONTEXT_FLAG_DEBUG_BIT));
+    Log::print("Is Debug : {}", Debug ? "On" : "Off");
 }
 
 OpenGL::OpenGL(const OpenGL &other)
@@ -142,6 +153,7 @@ OpenGL::OpenGL(const OpenGL &other)
     , vMajor(other.vMajor)
     , vMinor(other.vMinor)
     , creationTime(std::time(nullptr))
+    , Debug(other.Debug)
 {
     auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
     if(tst != TRUE) Log::Error("couldn't Copy Opengl Context");
@@ -155,6 +167,7 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL
         this->vMajor = other.vMajor;
         this->vMinor = other.vMinor;
         this->creationTime = std::time(nullptr);
+        this->Debug = other.Debug;
 
         auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
         if(tst != TRUE) Log::Error("couldn't Copy Opengl Context");
@@ -168,12 +181,14 @@ OpenGL::OpenGL(OpenGL &&other)
     , vMajor(other.vMajor)
     , vMinor(other.vMinor)
     , creationTime(other.creationTime)
+    , Debug(other.Debug)
 {
     other.m_MainHDC = nullptr;
     other.m_Context = nullptr;
     other.vMajor = 0;
     other.vMinor = 0;
     other.creationTime = 0;
+    other.Debug = false;
 }
 
 auto OpenGL::operator=(OpenGL &&other) -> OpenGL
@@ -184,12 +199,15 @@ auto OpenGL::operator=(OpenGL &&other) -> OpenGL
         this->vMajor = other.vMajor;
         this->vMinor = other.vMinor;
         this->creationTime = other.creationTime;
+        this->Debug = other.Debug;
         
         other.m_MainHDC = nullptr;
         other.m_Context = nullptr;
         other.vMajor = 0;
         other.vMinor = 0;
         other.creationTime = 0;
+        other.Debug = false;
+
     }
 
     return *this;

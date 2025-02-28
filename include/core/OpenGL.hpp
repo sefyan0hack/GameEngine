@@ -3,6 +3,8 @@
 #include <windows.h>
 #include <core/gl.h>
 #include <ctime>
+#include <vector>
+#include <string>
 
 class OpenGL
 {
@@ -34,6 +36,14 @@ class OpenGL
         GLint vMajor;
         GLint vMinor;
         std::time_t creationTime;
+        bool Debug;
+
+        inline static std::string Vendor;
+        inline static std::string Renderer;
+        inline static std::vector<std::string> Glslversions;
+        inline static std::vector<std::string> Extensions;
+        inline static GLint max_texture_unit;
+
         enum {
             WGL_DRAW_TO_WINDOW_ARB           = 0x2001,
             WGL_ACCELERATION_ARB             = 0x2003,
