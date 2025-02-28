@@ -6,7 +6,6 @@
 #include <core/fmts.hpp>
 #include <format>
 
-auto to_string(GLenum type) -> const char*;
 struct Vertex
 {
     glm::vec3 Position;

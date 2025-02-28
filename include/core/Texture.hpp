@@ -63,19 +63,3 @@ struct std::formatter<Texture> {
     , typeid(obj).name(), obj.id, obj.width, obj.height, obj.GetTypeName());
   }
 };
-
-namespace {
-    inline static std::unordered_map<GLenum, std::string> TEXTURETYPE {
-        {GL_TEXTURE_1D, "GL_TEXTURE_1D"},
-        {GL_TEXTURE_2D, "GL_TEXTURE_2D"},
-        {GL_TEXTURE_3D, "GL_TEXTURE_3D"},
-        {GL_TEXTURE_1D_ARRAY, "GL_TEXTURE_1D_ARRAY"},
-        {GL_TEXTURE_2D_ARRAY, "GL_TEXTURE_2D_ARRAY"},
-        {GL_TEXTURE_RECTANGLE, "GL_TEXTURE_RECTANGLE"},
-        {GL_TEXTURE_CUBE_MAP, "GL_TEXTURE_CUBE_MAP"},
-        {GL_TEXTURE_CUBE_MAP_ARRAY, "GL_TEXTURE_CUBE_MAP_ARRAY"},
-        {GL_TEXTURE_BUFFER, "GL_TEXTURE_BUFFER"},
-        {GL_TEXTURE_2D_MULTISAMPLE, "GL_TEXTURE_2D_MULTISAMPLE"},
-        {GL_TEXTURE_2D_MULTISAMPLE_ARRAY, "GL_TEXTURE_2D_MULTISAMPLE_ARRA"},
-    };
-}
