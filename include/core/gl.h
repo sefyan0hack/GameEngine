@@ -118,6 +118,7 @@ X(PFNGLGETFLOATVPROC, glGetFloatv);\
 X(PFNGLCLEARTEXIMAGEPROC, glClearTexImage);\
 X(PFNGLTEXSUBIMAGE2DPROC, glTexSubImage2D);\
 X(PFNGLTEXSTORAGE2DPROC, glTexStorage2D);\
+X(PFNGLUNIFORM2FVPROC, glUniform2fv);\
 
 #define GLFUN(type, name)\
 [[maybe_unused]] inline type name = nullptr

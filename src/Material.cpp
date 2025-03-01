@@ -324,8 +324,18 @@ auto Material::SetUniform<GLuint>(const std::string& name, const GLuint &value) 
         Log::Error("the Uniform {} not exist", name);
     }
 }
-template<>
-auto Material::SetUniform<glm::vec3>(const std::string& name, const glm::vec3 &value) const -> void
+
+auto Material::SetUniform(const std::string& name, const glm::vec2 &value) const -> void
+{
+    auto it = m_Uniforms.find(name);
+    if (it != m_Uniforms.end()){
+        glUniform2fv(it->second, 1, &value[0]);
+    }else{
+        Log::Error("the Uniform {} not exist", name);
+    }
+}
+
+auto Material::SetUniform(const std::string& name, const glm::vec3 &value) const -> void
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
@@ -334,9 +344,8 @@ auto Material::SetUniform<glm::vec3>(const std::string& name, const glm::vec3 &v
         Log::Error("the Uniform {} not exist", name);
     }
 }
-//
-template<>
-auto Material::SetUniform<glm::mat2>(const std::string& name, const glm::mat2 &value) const -> void
+
+auto Material::SetUniform(const std::string& name, const glm::mat2 &value) const -> void
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
@@ -345,8 +354,8 @@ auto Material::SetUniform<glm::mat2>(const std::string& name, const glm::mat2 &v
         Log::Error("the Uniform {} not exist", name);
     }
 }
-template<>
-auto Material::SetUniform<glm::mat3>(const std::string& name, const glm::mat3 &value) const -> void
+
+auto Material::SetUniform(const std::string& name, const glm::mat3 &value) const -> void
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
@@ -355,8 +364,8 @@ auto Material::SetUniform<glm::mat3>(const std::string& name, const glm::mat3 &v
         Log::Error("the Uniform {} not exist", name);
     }
 }
-template<>
-auto Material::SetUniform<glm::mat4>(const std::string& name, const glm::mat4 &value) const -> void
+
+auto Material::SetUniform(const std::string& name, const glm::mat4 &value) const -> void
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
@@ -367,8 +376,7 @@ auto Material::SetUniform<glm::mat4>(const std::string& name, const glm::mat4 &v
 }
 ///////
 
-template<>
-auto Material::SetUniform<GLint>(const std::string& name, const GLint &value1, const GLint &value2) const -> void
+auto Material::SetUniform(const std::string& name, const GLint &value1, const GLint &value2) const -> void
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
@@ -377,8 +385,8 @@ auto Material::SetUniform<GLint>(const std::string& name, const GLint &value1, c
         Log::Error("the Uniform {} not exist", name);
     }
 }
-template<>
-auto Material::SetUniform<GLfloat>(const std::string& name, const GLfloat &value1, const GLfloat &value2) const -> void
+
+auto Material::SetUniform(const std::string& name, const GLfloat &value1, const GLfloat &value2) const -> void
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
@@ -387,8 +395,8 @@ auto Material::SetUniform<GLfloat>(const std::string& name, const GLfloat &value
         Log::Error("the Uniform {} not exist", name);
     }
 }
-template<>
-auto Material::SetUniform<GLuint>(const std::string& name, const GLuint &value1, const GLuint &value2) const -> void
+
+auto Material::SetUniform(const std::string& name, const GLuint &value1, const GLuint &value2) const -> void
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
@@ -399,8 +407,7 @@ auto Material::SetUniform<GLuint>(const std::string& name, const GLuint &value1,
 }
 ///////
 
-template<>
-auto Material::SetUniform<GLint>(const std::string& name, const GLint &value1, const GLint &value2, const GLint &value3) const -> void
+auto Material::SetUniform(const std::string& name, const GLint &value1, const GLint &value2, const GLint &value3) const -> void
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
@@ -409,8 +416,8 @@ auto Material::SetUniform<GLint>(const std::string& name, const GLint &value1, c
         Log::Error("the Uniform {} not exist", name);
     }
 }
-template<>
-auto Material::SetUniform<GLfloat>(const std::string& name, const GLfloat &value1, const GLfloat &value2, const GLfloat &value3) const -> void
+
+auto Material::SetUniform(const std::string& name, const GLfloat &value1, const GLfloat &value2, const GLfloat &value3) const -> void
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
@@ -419,8 +426,8 @@ auto Material::SetUniform<GLfloat>(const std::string& name, const GLfloat &value
         Log::Error("the Uniform {} not exist", name);
     }
 }
-template<>
-auto Material::SetUniform<GLuint>(const std::string& name, const GLuint &value1, const GLuint &value2, const GLuint &value3) const -> void
+
+auto Material::SetUniform(const std::string& name, const GLuint &value1, const GLuint &value2, const GLuint &value3) const -> void
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
@@ -431,8 +438,7 @@ auto Material::SetUniform<GLuint>(const std::string& name, const GLuint &value1,
 }
 ///////
 
-template<>
-auto Material::SetUniform<GLint>(const std::string& name, const GLint &value1, const GLint &value2, const GLint &value3, const GLint &value4) const -> void
+auto Material::SetUniform(const std::string& name, const GLint &value1, const GLint &value2, const GLint &value3, const GLint &value4) const -> void
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
@@ -441,8 +447,8 @@ auto Material::SetUniform<GLint>(const std::string& name, const GLint &value1, c
         Log::Error("the Uniform {} not exist", name);
     }
 }
-template<>
-auto Material::SetUniform<GLfloat>(const std::string& name, const GLfloat &value1, const GLfloat &value2, const GLfloat &value3, const GLfloat &value4) const -> void
+
+auto Material::SetUniform(const std::string& name, const GLfloat &value1, const GLfloat &value2, const GLfloat &value3, const GLfloat &value4) const -> void
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
@@ -451,8 +457,8 @@ auto Material::SetUniform<GLfloat>(const std::string& name, const GLfloat &value
         Log::Error("the Uniform {} not exist", name);
     }
 }
-template<>
-auto Material::SetUniform<GLuint>(const std::string& name, const GLuint &value1, const GLuint &value2, const GLuint &value3, const GLuint &value4) const -> void
+
+auto Material::SetUniform(const std::string& name, const GLuint &value1, const GLuint &value2, const GLuint &value3, const GLuint &value4) const -> void
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){

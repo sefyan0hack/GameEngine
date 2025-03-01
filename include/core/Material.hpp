@@ -41,17 +41,26 @@ public:
     // auto DisableAttribs() const -> void;
 
 
-    template<class T>
-    auto SetUniform(const std::string &name, const T &value) const -> void;
+    auto SetUniform(const std::string &name, const GLuint &value) const -> void;
+    auto SetUniform(const std::string &name, const GLfloat &value) const -> void;
+    auto SetUniform(const std::string &name, const GLint &value) const -> void;
+    auto SetUniform(const std::string &name, const glm::vec2 &value) const -> void;
+    auto SetUniform(const std::string &name, const glm::vec3 &value) const -> void;
+    auto SetUniform(const std::string &name, const glm::mat2 &value) const -> void;
+    auto SetUniform(const std::string &name, const glm::mat3 &value) const -> void;
+    auto SetUniform(const std::string &name, const glm::mat4 &value) const -> void;
 
-    template<class T>
-    auto SetUniform(const std::string &name, const T& value1, const T& value2) const -> void;
+    auto SetUniform(const std::string &name, const GLuint& value1, const GLuint& value2) const -> void;
+    auto SetUniform(const std::string &name, const GLfloat& value1, const GLfloat& value2) const -> void;
+    auto SetUniform(const std::string &name, const GLint& value1, const GLint& value2) const -> void;
 
-    template<class T>
-    auto SetUniform(const std::string &name, const T& value1, const T& value2, const T& value3) const -> void;
+    auto SetUniform(const std::string &name, const GLuint& value1, const GLuint& value2, const GLuint& value3) const -> void;
+    auto SetUniform(const std::string &name, const GLfloat& value1, const GLfloat& value2, const GLfloat& value3) const -> void;
+    auto SetUniform(const std::string &name, const GLint& value1, const GLint& value2, const GLint& value3) const -> void;
 
-    template<class T>
-    auto SetUniform(const std::string &name, const T& value1, const T& value2, const T& value3, const T& value4) const -> void;
+    auto SetUniform(const std::string &name, const GLuint& value1, const GLuint& value2, const GLuint& value3, const GLuint& value4) const -> void;
+    auto SetUniform(const std::string &name, const GLfloat& value1, const GLfloat& value2, const GLfloat& value3, const GLfloat& value4) const -> void;
+    auto SetUniform(const std::string &name, const GLint& value1, const GLint& value2, const GLint& value3, const GLint& value4) const -> void;
 
 private:
     auto checkProgramLinkStatus() const        -> void;
