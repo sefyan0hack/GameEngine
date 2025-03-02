@@ -11,7 +11,7 @@ public:
     Scene() = default;
     Scene(std::unique_ptr<SkyBox> skybox);
     ~Scene();
-    auto operator << (GameObject obj);
+    auto operator << (GameObject obj) -> void;
 
     auto add(GameObject gobj)   -> void;
     auto Entitys()       -> std::vector<GameObject>&;
