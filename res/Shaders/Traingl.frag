@@ -1,21 +1,20 @@
 #version 440 core
-
-out vec4 FragColor;
-
 in vec3 Normal;
 in vec3 FragPos;
 in vec2 Position;
 
-uniform vec3 cameraPos;
-uniform sampler2D cubeTexture;
+out vec4 FragColor;
+
+uniform sampler2D albedo;
 uniform samplerCube skybox;
+uniform vec3 cameraPos;
 
 void main() {
-    float reflectivity = 0.02;
+    float reflectivity = 0.2;
     float ratio = 1.00 / 1.46;
 
     // Sample the base texture
-    vec4 baseColor = texture(cubeTexture, Position);
+    vec4 baseColor = texture(albedo, Position);
 
     // Calculate the view vector (from the fragment to the camera)
     vec3 viewDir = normalize(FragPos - cameraPos);

@@ -5,9 +5,9 @@
 #include <core/Material.hpp>
 #include <core/fmts.hpp>
 #include <core/AutoRelease.hpp>
+#include <core/Camera.hpp>
 #include <vector>
 #include <memory>
-
 #include <format>
 
 
@@ -32,7 +32,7 @@ public:
 
 private:
     auto Transformation() const                                 -> glm::mat4 ;
-    private:
+private:
     Transform m_Transform;
     std::shared_ptr<Material> m_Material;
     std::shared_ptr<Mesh> m_Mesh;
@@ -49,7 +49,39 @@ struct std::formatter<GameObject> {
   }
   auto format(const GameObject& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    "{}: {{ name: {}, transform: {}, material: {}, mesh: {} }}"
+    R"("{}": {{"name": "{}", "transform": {}, "material": {}, "mesh": {} }})"
     , typeid(obj).name(), obj.m_Name, obj.transform(), *obj.m_Material, *obj.m_Mesh.get());
   }
+};
+
+class SkyBox
+{
+public:
+  SkyBox(glm::vec3 position, Material& matt, Mesh& mesh)
+    : m_skybox(GameObject(position, matt, mesh))
+  {
+  }
+  auto render(const Camera& camera) -> void
+  {
+    auto mat = m_skybox.material();
+    auto mesh = m_skybox.mesh();
+    auto TextureUnit = mat->texture()->TextureUnit();
+    
+    glDepthFunc(GL_LEQUAL);
+    mat->Use();
+    mat->SetUniform("View", glm::mat4(glm::mat3(camera.View())));
+    mat->SetUniform("Perspective", camera.Perspective());
+    mat->SetUniform("albedo", TextureUnit);
+    mesh->Bind();
+    glDrawArrays(GL_TRIANGLES, 0, mesh->VextexSize());
+    mesh->DisableAttribs();
+    glDepthFunc(GL_LESS);
+  }
+  auto gameObject() const -> const GameObject&
+  {
+    return m_skybox;
+  }
+
+private:
+    const GameObject m_skybox;
 };

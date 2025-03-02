@@ -53,6 +53,7 @@ Texture::Texture(GLenum texType)
     , m_Type(texType)
     , m_Width(1)
     , m_Height(1)
+    , m_TextureUnit(m_TextureUnitCount++)
 {
     glGenTextures(1, &m_Id);
     Bind();
@@ -65,6 +66,7 @@ auto Texture::id() const -> GLuint
 
 auto Texture::Bind() const -> void
 {
+    glActiveTexture(GL_TEXTURE0 + m_TextureUnit);
     glBindTexture(m_Type, m_Id);
 }
 
@@ -96,6 +98,10 @@ auto Texture::TypeName() const -> std::string
 {
     return to_string(m_Type);
 }
+auto Texture::TextureUnit() const -> GLint
+{
+    return m_TextureUnit;
+}
 
 //////////
 Texture2D::Texture2D(const std::string &name)
@@ -122,7 +128,6 @@ Texture2D::Texture2D(const std::string &name)
 
         if (m_Mipmapped) GenerateMipMap();
 
-        glActiveTexture(GL_TEXTURE1);
         Log::Info("Loding {} ", name);
     }
     else

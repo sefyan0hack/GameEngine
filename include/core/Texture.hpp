@@ -25,11 +25,13 @@ public:
     virtual auto Height() const -> GLsizei ;
     virtual auto Type() const -> GLenum;
     virtual auto TypeName() const -> std::string;
+    virtual auto TextureUnit() const -> GLint;
 protected:
     GLuint m_Id;
     GLenum m_Type;
     GLsizei m_Width, m_Height;
-
+    GLint m_TextureUnit;
+    inline static GLint m_TextureUnitCount = 0;
 };
 
 class Texture2D : public Texture

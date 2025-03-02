@@ -17,6 +17,17 @@ GameObject::GameObject(glm::vec3 position, Material& matt, Mesh& mesh, std::stri
     Count++;
 }
 
+GameObject::GameObject(Transform transform, Material &matt, Mesh &mesh, std::string Name)
+    : m_Transform(transform)
+    , m_Material(std::make_shared<Material>(matt))
+    , m_Mesh(std::make_shared<Mesh>(mesh))
+    , m_Name(Name)
+{
+    UpMatrix();
+    Log::Info("{}", *this);
+    Count++;
+}
+
 GameObject::~GameObject()
 {
 }

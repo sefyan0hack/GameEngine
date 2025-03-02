@@ -20,6 +20,7 @@ Material::Material(const Shader& vertex, const Shader& fragment)
 
     Link();
     checkProgramLinkStatus();
+    glUseProgram(m_Id);
     Log::Info("Attribs count is {}", AttribsCount());
     Log::Info("Uniforms count is {}", UniformCount());
     DumpAttribs();
@@ -38,6 +39,7 @@ Material::Material(std::initializer_list<Shader> shaders)
     
     Link();
     checkProgramLinkStatus();
+    glUseProgram(m_Id);
     DumpAttribs();
     DumpUniforms();
     Log::Info("{}", *this);
@@ -55,6 +57,7 @@ Material::Material(const Material& other)
 
     Link();
     checkProgramLinkStatus();
+    glUseProgram(m_Id);
     DumpAttribs();
     DumpUniforms();
     Log::Info("{}", *this);
@@ -132,7 +135,6 @@ auto Material::AttribLocation(const char *name) const -> GLuint
 
 auto Material::UniformLocation_Prv(const char *name) const -> GLuint
 {
-    Use();
     GLint location = glGetUniformLocation(m_Id, name);
     if (location == -1) {
         Log::Error("uniform {} doesn't exist!", name);
@@ -142,7 +144,6 @@ auto Material::UniformLocation_Prv(const char *name) const -> GLuint
 
 auto Material::AttribLocation_Prv(const char *name) const -> GLuint
 {
-    Use();
     GLint location = glGetAttribLocation(m_Id, name);
     if (location == -1) {
         Log::Error("Attrib {} doesn't exist!", name);

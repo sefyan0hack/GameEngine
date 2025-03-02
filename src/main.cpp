@@ -134,18 +134,16 @@ private:
             TEXTURE(posy.jpg), TEXTURE(negy.jpg),
             TEXTURE(posz.jpg), TEXTURE(negz.jpg),
         });
-        Scn.add({glm::vec3(0,0,0), skyMat, skyMesh});
+        Scn.setSkyBox(std::make_unique<SkyBox>(glm::vec3(0,0,0), skyMat, skyMesh));
 
         Matt.SetTexture(TEXTURE(brik.png));
         Scn.add({{0,0,0}, Matt, cubeMesh});
-        // Scn.Entitys().back().SetUp(positions);
-
-        Scn.add({{0,5,0}, Matt, cubeMesh});
-        // Scn.Entitys().back().SetUp(positions);
         
-        // auto mesh2 = Mesh(cubeMeshVert);
-        // auto matt2 = Material(Shader(SHADER(Traingl)".vert", GL_VERTEX_SHADER), Shader(SHADER(Traingl)".frag", GL_FRAGMENT_SHADER));
-        // matt2.texture(TEXTURE(brik.png));        
+        Matt.SetTexture(TEXTURE(annie_spratt.jpg));
+        Scn.add({{0,1,0}, Matt, cubeMesh});
+
+        Matt.SetTexture(TEXTURE(gravelly_sand_diff_4k.png));
+        Scn.add({{1,0,0}, Matt, cubeMesh});
 
         // #define PrintGLfunc(type, name) Log::print("{} {}", (void*)name, #name)
         
