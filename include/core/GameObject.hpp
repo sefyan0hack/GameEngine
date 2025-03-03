@@ -49,8 +49,8 @@ struct std::formatter<GameObject> {
   }
   auto format(const GameObject& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    R"("{}": {{"name": "{}", "transform": {}, "material": {}, "mesh": {} }})"
-    , typeid(obj).name(), obj.m_Name, obj.transform(), *obj.m_Material, *obj.m_Mesh.get());
+    R"({{"name": "{}", "transform": {}, "material": {}, "mesh": {} }})"
+    , obj.m_Name, obj.transform(), *obj.m_Material, *obj.m_Mesh.get());
   }
 };
 

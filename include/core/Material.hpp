@@ -87,7 +87,7 @@ struct std::formatter<Material> {
   }
   auto format(const Material& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    "{}: {{ id: {}, attribs: {}, uniforms: {} }}"
-    , typeid(obj).name(), obj.m_Id, MapWrapper{obj.m_Attribs}, MapWrapper{obj.m_Uniforms});
+    R"({{ "id": {}, "attribs": {}, "uniforms": {} }})"
+    , obj.m_Id, MapWrapper{obj.m_Attribs}, MapWrapper{obj.m_Uniforms});
   }
 };

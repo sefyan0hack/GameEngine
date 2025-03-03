@@ -62,7 +62,7 @@ struct std::formatter<Texture> {
   }
   auto format(const Texture& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    "{}: {{ id: {}, width: {}, height: {}, type: {} }}"
-    , typeid(obj).name(), obj.m_Id, obj.m_Width, obj.m_Height, obj.TypeName());
+    R"({{ "id": {}, "width": {}, "height": {}, "type": "{}" }})"
+    , obj.m_Id, obj.m_Width, obj.m_Height, obj.TypeName());
   }
 };

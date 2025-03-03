@@ -24,7 +24,7 @@ struct std::formatter<Transform> {
   }
   auto format(const Transform& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    "{}: {{ position: {}, rotation: {}, scale: {} }}"
-    , typeid(obj).name(), obj.position, obj.rotation, obj.scale);
+    R"({{ "position": {}, "rotation": {}, "scale": {} }})"
+    , obj.position, obj.rotation, obj.scale);
   }
 };

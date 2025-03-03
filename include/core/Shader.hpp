@@ -47,7 +47,7 @@ struct std::formatter<Shader> {
   }
   auto format(const Shader& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    "{}: {{ id: {}, type: {} }}"
-    , typeid(obj).name(), obj.m_Id, obj.TypeName());
+    R"({{ "id": {}, "type": "{}" }})"
+    , obj.m_Id, obj.TypeName());
   }
 };

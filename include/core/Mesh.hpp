@@ -80,7 +80,7 @@ struct std::formatter<Mesh> {
   }
   auto format(const Mesh& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    "{}: {{ name: {}, VAO: {}, VBO: {}, EBO: {}, verticesSize: {} }}"
-    , typeid(obj).name(), obj.name, obj.VAO, obj.VBO, obj.EBO, obj.VextexSize());
+    R"({{ "name": "{}", "VAO": {}, "VBO": {}, "EBO": {}, "verticesSize": {} }})"
+    , obj.name, obj.VAO, obj.VBO, obj.EBO, obj.VextexSize());
   }
 };

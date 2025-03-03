@@ -57,7 +57,7 @@ struct std::formatter<Camera> {
   }
   auto format(const Camera& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    "Camera: {{ position: {}, sensitivity: {}, view: {} }}"
+    R"({{ "position": {}, "sensitivity": {}, "view": {} }})"
     , obj.m_Position, obj.m_Sensitivity, obj.View());
   }
 };
