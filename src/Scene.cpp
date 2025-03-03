@@ -13,12 +13,12 @@ Scene::~Scene()
 auto Scene::add(GameObject gobj) -> void
 {
     
-    m_Entitys.emplace_back(std::move(gobj));
+    m_Entities.emplace_back(std::move(gobj));
 }
 
 auto Scene::Entitys() -> std::vector<GameObject>&
 {
-    return m_Entitys;
+    return m_Entities;
 }
 
 auto Scene::setSkyBox(std::unique_ptr<SkyBox> skybox) -> void
@@ -33,4 +33,8 @@ auto Scene::skyBox() -> std::unique_ptr<SkyBox>&
 auto Scene::operator<<(GameObject obj) -> void
 {
     add(std::move(obj));
+}
+auto Scene::to_json() const -> std::string
+{
+    return std::format("{}", *this);
 }
