@@ -3,6 +3,7 @@
 #include <core/Shader.hpp>
 #include <core/Texture.hpp>
 #include <core/Mesh.hpp>
+#include <core/ResourceManager.hpp>
 #include <glm/glm.hpp>
 #include <ranges>
 
@@ -272,13 +273,9 @@ auto Material::texture() const noexcept-> std::shared_ptr<Texture>
 
 auto Material::SetTexture(const std::string &name) -> void
 {
-    m_Albedo = std::make_shared<Texture2D>(name);
+    m_Albedo = ResManager.getTexture(name);
 }
 
-auto Material::SetTexture(const std::vector<std::string> faces) -> void
-{
-    m_Albedo = std::make_shared<TextureCubeMap>(faces);
-}
 
 // auto Material::EnableAttribs() const -> void
 // {

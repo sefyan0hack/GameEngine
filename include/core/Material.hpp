@@ -35,7 +35,6 @@ public:
     static auto Current_Program() -> GLuint;
     auto texture() const noexcept -> std::shared_ptr<Texture>;
     auto SetTexture(const std::string &name) -> void;
-    auto SetTexture(const std::vector<std::string> faces) -> void;
     auto Shaders() const noexcept -> const std::vector<Shader>&;
     // auto EnableAttribs() const -> void;
     // auto DisableAttribs() const -> void;
