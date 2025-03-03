@@ -11,6 +11,7 @@
 #include <core/Shader.hpp>
 #include <core/Material.hpp>
 #include <core/Log.hpp>
+#include <core/ResourceManager.hpp>
 #include <thread>
 
 // #define USE_EBO
@@ -121,6 +122,12 @@ private:
     , cubeMesh({cubeMeshVert, indices})
     , Cam(m_Window)
     {
+        ResManager.load(TEXTURE(brik.jpg), ResType::Texture2D);
+        ResManager.load(TEXTURE(brik.png), ResType::Texture2D);
+        ResManager.load(TEXTURE(annie_spratt.jpg), ResType::Texture2D);
+        ResManager.load(TEXTURE(gravelly_sand_diff_4k.png), ResType::Texture2D);
+        ResManager.load(TEXTURE(forest.jpg), ResType::TextureCube);
+
         constexpr int Grids = 200;
         [[maybe_unused]] std::vector<glm::vec3> positions(Grids * Grids * 4);
         size_t index = 0;
@@ -129,11 +136,7 @@ private:
                 positions[index++] = {i, 0, j};
         }
 
-        skyMat.SetTexture(std::vector<std::string>{
-            TEXTURE(posx.jpg), TEXTURE(negx.jpg),
-            TEXTURE(posy.jpg), TEXTURE(negy.jpg),
-            TEXTURE(posz.jpg), TEXTURE(negz.jpg),
-        });
+        skyMat.SetTexture(TEXTURE(forest.jpg));
         Scn.setSkyBox(std::make_unique<SkyBox>(glm::vec3(0,0,0), skyMat, skyMesh));
 
         Matt.SetTexture(TEXTURE(brik.png));
@@ -144,7 +147,10 @@ private:
 
         Matt.SetTexture(TEXTURE(gravelly_sand_diff_4k.png));
         Scn << GameObject({1,0,0}, Matt, cubeMesh);
-
+        Scn << GameObject({0,0,1}, Matt, cubeMesh);
+        Scn << GameObject({1,1,0}, Matt, cubeMesh);
+        Scn << GameObject({1,1,1}, Matt, cubeMesh);
+        
         // #define PrintGLfunc(type, name) Log::print("{} {}", (void*)name, #name)
         
         // GLFUNCS(PrintGLfunc)

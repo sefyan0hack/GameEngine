@@ -80,6 +80,7 @@ set(SOURCE
     src/Scene.cpp
     src/Material.cpp
     src/Log.cpp
+    src/ResourceManager.cpp
 	)
 
 # Find OpenGL package
