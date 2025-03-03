@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <format>
+#include <vector>
 
 // custom glm::vec2 Format
 template<>
@@ -71,3 +72,33 @@ struct MapFormatter : std::formatter<std::string> {
 
 template<typename Map>
 struct std::formatter<MapWrapper<Map>> : MapFormatter<MapWrapper<Map>> {};
+
+
+template <typename T>
+struct VecWrapper {
+    std::vector<T> vec;
+};
+
+template <typename T>
+struct std::formatter<VecWrapper<T>, char> {
+    constexpr auto parse(std::format_parse_context& ctx) {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto format(const VecWrapper<T>& w, FormatContext& ctx) const {
+        auto out = ctx.out();
+        *out++ = '{';
+        out = std::format_to(out, "\"vec\": [");
+        bool first = true;
+        for (const auto& item : w.vec) {
+            if (!first)
+                out = std::format_to(out, ", ");
+            first = false;
+            out = std::format_to(out, "{}", item);
+        }
+        out = std::format_to(out, "]");
+        *out++ = '}';
+        return out;
+    }
+};
