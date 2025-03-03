@@ -3,6 +3,11 @@
 **A high-performance C++ game engine**  
 Welcome to the **GameEngine** repository! This engine is designed to provide a solid foundation for building games and interactive applications. It leverages modern C++ standards, powerful libraries, and intuitive tools to help you create amazing experiences.
 
+|         | **GCC** | **MSVC** |
+| ------- | --- | ---- |
+| **Windows** | [![MSYS2 C++ Build](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_Mingw.yml/badge.svg?event=push)](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_Mingw.yml) | [![Build Windows (MSVC)](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_work.yml/badge.svg?event=push)](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_work.yml) |
+
+
 ## Features
 
 - **platform compatibility** (Windows)
