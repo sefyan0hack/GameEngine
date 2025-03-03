@@ -61,6 +61,9 @@ public:
     : m_skybox(GameObject(position, matt, mesh))
   {
   }
+  operator GameObject() const {
+    return m_skybox;
+  }
   auto render(const Camera& camera) -> void
   {
     auto mat = m_skybox.material();
