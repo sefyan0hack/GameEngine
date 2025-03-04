@@ -116,8 +116,8 @@ private:
     , skyMat(skyVert, skyfrag)
     , skyMesh(cubeMeshVert)
 
-    , vert(SHADER(Traingl)".vert", GL_VERTEX_SHADER)
-    , frag(SHADER(Traingl)".frag", GL_FRAGMENT_SHADER)
+    , vert(SHADER(cube)".vert", GL_VERTEX_SHADER)
+    , frag(SHADER(cube)".frag", GL_FRAGMENT_SHADER)
     , Matt(vert, frag)
     , cubeMesh({cubeMeshVert, indices})
     , Cam(m_Window)
