@@ -1,10 +1,10 @@
 #version 440 core
 
 out vec4 FragColor;
-in vec3 TexCoord;
+in vec3 Uv;
 
 uniform samplerCube albedo;
 
 void main() {
-    FragColor = texture(albedo, TexCoord);
+    FragColor = texture(albedo, Uv);
 }

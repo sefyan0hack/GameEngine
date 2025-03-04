@@ -1,7 +1,7 @@
 #version 440 core
 in vec3 Normal;
 in vec3 FragPos;
-in vec2 Position;
+in vec2 Uv;
 
 out vec4 FragColor;
 
@@ -14,7 +14,7 @@ void main() {
     float ratio = 1.00 / 1.46;
 
     // Sample the base texture
-    vec4 baseColor = texture(albedo, Position);
+    vec4 baseColor = texture(albedo, Uv);
 
     // Calculate the view vector (from the fragment to the camera)
     vec3 viewDir = normalize(FragPos - cameraPos);
