@@ -212,7 +212,7 @@ auto WINAPI ExceptionHandler([[maybe_unused]] PEXCEPTION_POINTERS ex) -> LONG
             return EXCEPTION_CONTINUE_EXECUTION;
 
         case EXCEPTION_ILLEGAL_INSTRUCTION:
-            if(symName == "Ordinal332")
+            if(symName.find("Ordinal") != std::string::npos)
             return EXCEPTION_EXECUTE_HANDLER;
     }
     

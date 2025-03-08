@@ -132,10 +132,10 @@ OpenGL::OpenGL(HWND window)
 
 
     if( m_Major >= 4 && m_Minor >= 3 && m_Debug){
-        glEnable(GL_DEBUG_OUTPUT);
-        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-        glDebugMessageCallback(GLDebugMessageCallback, nullptr);
-        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+        // glEnable(GL_DEBUG_OUTPUT);
+        // glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        // glDebugMessageCallback(GLDebugMessageCallback, nullptr);
+        // glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
     }
 
     Log::print("GL Version : {}.{}", m_Major, m_Minor);
@@ -315,10 +315,12 @@ auto OpenGL::init_opengl() -> void
 
     m_Context =  opengl_context;
 
-    //resolve opengl functions
+    glGetError = reinterpret_cast<decltype(glGetError)>(rsgl("glGetError"));
+
     #define RESOLVEGL(type, name)\
-    name = reinterpret_cast<type>(rsgl(#name));\
-    Log::Expect(name != nullptr, "{} is null", #name)
+    gl_function_wrapper<type, const_hash(#name)>::Func = reinterpret_cast<type>(rsgl(#name));\
+    name = &gl_function_wrapper<type, const_hash(#name)>::get_func;\
+    get_hash_registry().emplace(const_hash(#name), #name)
 
 	GLFUNCS(RESOLVEGL)
 

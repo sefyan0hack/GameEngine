@@ -18,22 +18,6 @@ auto setup_crach_handler() -> void;
 auto resolveSymbol(void* addr, HANDLE proc = GetCurrentProcess()) -> std::string;
 auto PrintStackTrace(unsigned short skip = 0) -> void;
 
-constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
-{
-    switch (glError)
-    {
-        case GL_INVALID_ENUM: return "GL_INVALID_ENUM";
-        case GL_INVALID_VALUE: return "GL_INVALID_VALUE";
-        case GL_INVALID_OPERATION: return "GL_INVALID_OPERATION";
-        case GL_STACK_OVERFLOW: return "GL_STACK_OVERFLOW";
-        case GL_STACK_UNDERFLOW: return "GL_STACK_UNDERFLOW";
-        case GL_OUT_OF_MEMORY: return "GL_OUT_OF_MEMORY";
-        case GL_INVALID_FRAMEBUFFER_OPERATION: return "GL_INVALID_FRAMEBUFFER_OPERATION";
-        case GL_CONTEXT_LOST: return "GL_CONTEXT_LOST";
-        default: return "GL_UNKNOWN";
-    }
-}
-
 namespace {
 [[maybe_unused]] auto is_system_symbol(const std::string_view& symbol) -> bool{
     const std::string_view system_libraries[] = {
@@ -78,13 +62,16 @@ struct ERRF
 
     msg << std::format("{} : [{}] {}\n--> {}:{}\n", formatedTime(), lvl_str, formatted_msg, loc.file_name(), loc.line()) << std::endl;
     
+    msg << std::stacktrace::current(1) << std::endl;
+
     if constexpr (lvl == Log_LvL::ERR){
-        msg << std::stacktrace::current(1);
-        MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONWARNING );
+      MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONWARNING );
     }
     
-    std::lock_guard lock(mutex_);
-    *out << msg.rdbuf();
+    {
+      std::lock_guard lock(mutex_);
+      *out << msg.rdbuf();
+    }
 
     if constexpr (lvl == Log_LvL::ERR) exit(EXIT_FAILURE);
   }
@@ -93,7 +80,6 @@ struct ERRF
     inline static std::mutex mutex_;
 };
 
-// template <Log_LvL lvl, typename... Ts>
 template <Log_LvL lvl, std::ostream* out, typename ...Ts>
 ERRF(const std::format_string<Ts...>, Ts&& ...) -> ERRF<lvl, out, Ts...>;
 
@@ -129,7 +115,7 @@ auto Expect(bool x, const std::format_string<Ts...> fmt, Ts&& ... ts) -> void
 
   if( x != true){
     print("Expection Failed : {} ", msg);
-    std::cerr << std::stacktrace::current() << std::endl;
+    std::cerr << std::stacktrace::current(1) << std::endl;
     std::abort();
   }
 }
