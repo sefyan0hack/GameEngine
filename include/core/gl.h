@@ -5,8 +5,8 @@
 #include <glcorearb.h> // need repl  with glext.h
 #include <type_traits>
 #include <string>
-#include <sstream>
-#include <unordered_map>
+#include <array>
+#include <source_location>
 
 inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
 {
@@ -140,88 +140,67 @@ X(PFNGLTEXSUBIMAGE2DPROC, glTexSubImage2D);\
 X(PFNGLTEXSTORAGE2DPROC, glTexStorage2D);\
 X(PFNGLUNIFORM2FVPROC, glUniform2fv);\
 
-inline PFNGLGETERRORPROC glGetError = nullptr;
+[[maybe_unused]] inline PFNGLGETERRORPROC glGetError = nullptr;
 
-// Compile-time string hashing (64-bit FNV-1a)
-template <size_t N>
-constexpr uint64_t const_hash(const char (&str)[N]) {
-    constexpr uint64_t prime = 0x100000001B3;
-    uint64_t hash = 0xCBF29CE484222325;
-    
-    for (size_t i = 0; i < N-1; ++i) {
-        hash = (hash ^ static_cast<uint64_t>(str[i])) * prime;
-    }
-    return hash;
-}
-
-static std::unordered_map<uint64_t, std::string>& get_hash_registry() {
-    static auto* registry = new std::unordered_map<uint64_t, std::string>;
-    return *registry;
-}
-inline std::string get_name_from_hash(uint64_t hash) {
-    const auto& registry = get_hash_registry();
-    auto it = registry.find(hash);
-    return it != registry.end() ? it->second : "UNKNOWN_FUNCTION";
-}
-
-template <typename T, uint64_t NameHash>
+template <typename T>
 struct gl_function_wrapper;
 
-template <typename R, typename... Args, uint64_t NameHash>
-struct gl_function_wrapper<R(APIENTRY*)(Args...), NameHash> {
+template <typename R, typename... Args>
+struct gl_function_wrapper<R(APIENTRY*)(Args...)> {
     using FuncType = R(APIENTRY*)(Args...);
-    inline static FuncType Func = nullptr;
 
-    static R APIENTRY get_func(Args... args) {
-        std::stringstream sig;
-        sig << std::format("{} {}(", typeid(R).name(), get_name_from_hash(NameHash));
-        (([&]() {
-            sig << typeid(Args).name() << " = ";
-            using CleanType = std::remove_cv_t<std::remove_reference_t<Args>>;
-            if constexpr (std::is_pointer_v<CleanType>) {
-                using PointeeType = std::remove_pointer_t<CleanType>;
+    gl_function_wrapper()
+    : m_Func(nullptr)
+    , m_Name("glFunction")
+    , m_ReturnType(typeid(R).name())
+    , m_Args{typeid(Args).name()...}
+    { m_Count++; }
 
-                if constexpr (std::is_void_v<PointeeType>) {
-                    sig << static_cast<const void*>(args);
-                } else {
-                    if(args != nullptr) sig << *args;
-                    else sig << "nullptr";
-                }
-            } else {
-                sig << args;
-            }
-            sig << ", ";
-        }()), ...);
-
-        auto strsig = sig.str();
-        if constexpr (sizeof...(Args)){
-            strsig.pop_back();
-            strsig.pop_back();
-        }
-        strsig += ")";
-
-        while (glGetError() != GL_NO_ERROR) {}
+    R APIENTRY operator()(Args... args, std::source_location loc = std::source_location::current()){
 
         GLenum err = GL_NO_ERROR;
         
         if constexpr (std::is_void_v<R>) {
-            Func(args...);
+            m_Func(args...);
             err = glGetError();
             if (err != GL_NO_ERROR) {
-                std::cout << std::format("[OpenGL ERROR] {} : {} ({})", strsig, GL_ERR_to_string(err), err) << std::endl;
+                std::cout << std::format("{} -> {} ({}) -> {}:{}", to_string(), GL_ERR_to_string(err), err, loc.file_name(), loc.line()) << std::endl;
             }
         } else {
-            R result = Func(args...);
+            R result = m_Func(args...);
             err = glGetError();
             if (err != GL_NO_ERROR) {
-                std::cout << std::format("[OpenGL ERROR] {} : {} ({})", strsig, GL_ERR_to_string(err), err) << std::endl;
+                std::cout << std::format("{} -> {} ({}) -> {}:{}", to_string(), GL_ERR_to_string(err), err, loc.file_name(), loc.line()) << std::endl;
             }
             return result;
         }
     }
+    std::string to_string(){
+        std::string result = std::format("{} {}(", m_ReturnType, m_Name);
+        bool first = true;
+        for(const auto& arg : m_Args)
+        {
+            if (!first) result += ", ";
+            result += arg;
+            first = false;
+        }
+        result+=")";
+        return result;
+    }
+
+    FuncType m_Func;
+    std::string m_Name;
+    std::string m_ReturnType;
+    std::array<std::string, sizeof...(Args)> m_Args;
+    inline static size_t m_Count = 0;
 };
 
-#define GLFUN(type, name)\
-    inline type name = nullptr;
+#ifdef DEBUG
+#   define GLFUN(type, name)\
+    inline gl_function_wrapper<type> name;
+#else
+#   define GLFUN(type, name)\
+    inline type name;
+#endif
 
 GLFUNCS(GLFUN)

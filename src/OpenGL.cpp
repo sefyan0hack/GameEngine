@@ -3,7 +3,7 @@
 #include <core/gl.h>
 #include <core/Utils.hpp>
 
-static void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, [[maybe_unused]] GLsizei length, const GLchar *message, [[maybe_unused]] const void *param)
+[[maybe_unused]] static void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, [[maybe_unused]] GLsizei length, const GLchar *message, [[maybe_unused]] const void *param)
 {
     const char *source_, *type_, *severity_;
 
@@ -131,12 +131,14 @@ OpenGL::OpenGL(HWND window)
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 
-    if( m_Major >= 4 && m_Minor >= 3 && m_Debug){
-        // glEnable(GL_DEBUG_OUTPUT);
-        // glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-        // glDebugMessageCallback(GLDebugMessageCallback, nullptr);
-        // glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-    }
+    // #ifdef DEBUG
+    // if( m_Major >= 4 && m_Minor >= 3 && m_Debug){
+    //     glEnable(GL_DEBUG_OUTPUT);
+    //     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+    //     glDebugMessageCallback(GLDebugMessageCallback, nullptr);
+    //     glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+    // }
+    // #endif
 
     Log::print("GL Version : {}.{}", m_Major, m_Minor);
     Log::print("GLSL Version Supported : {}", to_string(m_GlslVersions));
@@ -317,13 +319,17 @@ auto OpenGL::init_opengl() -> void
 
     glGetError = reinterpret_cast<decltype(glGetError)>(rsgl("glGetError"));
 
-    #define RESOLVEGL(type, name)\
-    gl_function_wrapper<type, const_hash(#name)>::Func = reinterpret_cast<type>(rsgl(#name));\
-    name = &gl_function_wrapper<type, const_hash(#name)>::get_func;\
-    get_hash_registry().emplace(const_hash(#name), #name)
+    #ifdef DEBUG
+    #   define RESOLVEGL(type, name)\
+        name = gl_function_wrapper<type>{};\
+        name.m_Func = reinterpret_cast<type>(rsgl(#name));\
+        name.m_Name = #name;
+    #else
+    #   define RESOLVEGL(type, name)\
+        name = reinterpret_cast<type>(rsgl(#name))
+    #endif
 
 	GLFUNCS(RESOLVEGL)
-
 }
 
 auto OpenGL::DrawContext() const -> HDC
