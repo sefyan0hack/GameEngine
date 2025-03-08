@@ -81,7 +81,6 @@ Material::Material(Material&& other)
 Material::~Material()
 {
     if(glIsProgram(m_Id) == GL_TRUE) glDeleteProgram(m_Id);
-    glUseProgram(m_Previd);
 }
 
 auto Material::id() const noexcept -> GLuint

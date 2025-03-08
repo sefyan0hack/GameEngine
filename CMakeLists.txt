@@ -111,3 +111,6 @@ target_compile_definitions(${PROJECT_NAME}
     PRIVATE
         PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
 )
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_definitions(-DDEBUG)
+endif()

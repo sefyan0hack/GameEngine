@@ -316,7 +316,7 @@ auto Mesh::CloneVBO(GLuint src) -> GLuint
     return CloneBuffer(GL_ARRAY_BUFFER, src);
 }
 
-auto Mesh::CloneEBO(GLuint src) -> GLuint
+auto Mesh::CloneEBO([[maybe_unused]] GLuint src) -> GLuint
 {
     #ifdef USE_EBO
     return CloneBuffer(GL_ELEMENT_ARRAY_BUFFER, src);
