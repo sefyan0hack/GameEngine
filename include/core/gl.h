@@ -7,6 +7,9 @@
 #include <string>
 #include <array>
 #include <source_location>
+#include <tuple>
+#include <utility>
+#include <ranges>
 
 inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
 {
@@ -143,61 +146,98 @@ X(PFNGLUNIFORM2FVPROC, glUniform2fv);\
 [[maybe_unused]] inline PFNGLGETERRORPROC glGetError = nullptr;
 
 template <typename T>
-struct gl_function_wrapper;
+class glFunction;
 
 template <typename R, typename... Args>
-struct gl_function_wrapper<R(APIENTRY*)(Args...)> {
+class glFunction<R(APIENTRY*)(Args...)> {
+public:
     using FuncType = R(APIENTRY*)(Args...);
 
-    gl_function_wrapper()
+    glFunction()
     : m_Func(nullptr)
     , m_Name("glFunction")
     , m_ReturnType(typeid(R).name())
-    , m_Args{typeid(Args).name()...}
+    , m_ArgsTypes{typeid(Args).name()...}
+    , m_ArgsValues{}
+    , m_CallCount(0)
     { m_Count++; }
 
     R APIENTRY operator()(Args... args, std::source_location loc = std::source_location::current()){
-
+        m_ArgsValues = std::make_tuple(args...);
+        m_CallCount++;
         GLenum err = GL_NO_ERROR;
         
         if constexpr (std::is_void_v<R>) {
             m_Func(args...);
             err = glGetError();
             if (err != GL_NO_ERROR) {
-                std::cout << std::format("{} -> {} ({}) -> {}:{}", to_string(), GL_ERR_to_string(err), err, loc.file_name(), loc.line()) << std::endl;
+                std::cout << std::format("{} -> {} ({}) -> {}:{}", formated_function_sig(), GL_ERR_to_string(err), err, loc.file_name(), loc.line()) << std::endl;
             }
         } else {
             R result = m_Func(args...);
             err = glGetError();
             if (err != GL_NO_ERROR) {
-                std::cout << std::format("{} -> {} ({}) -> {}:{}", to_string(), GL_ERR_to_string(err), err, loc.file_name(), loc.line()) << std::endl;
+                std::cout << std::format("{} -> {} ({}) -> {}:{}", formated_function_sig(), GL_ERR_to_string(err), err, loc.file_name(), loc.line()) << std::endl;
             }
             return result;
         }
     }
-    std::string to_string(){
+    std::string formated_function_sig(){
         std::string result = std::format("{} {}(", m_ReturnType, m_Name);
         bool first = true;
-        for(const auto& arg : m_Args)
+        int index = 1;
+        for(const auto& [type, value] : std::views::zip(m_ArgsTypes, ArgsValues()))
         {
             if (!first) result += ", ";
-            result += arg;
+            result += type + " arg" + std::to_string(index++) + " = " + value;
             first = false;
         }
-        result+=")";
+        result += ")";
         return result;
     }
 
+    std::array<std::string, sizeof...(Args)> ArgsValues(){
+        std::array<std::string, sizeof...(Args)> result;
+        int i = 0;
+        std::apply([this, &result, &i](auto&&... args) {
+            ((result[i++] = to_string(args)), ...);
+        }, m_ArgsValues);
+        return result;
+    }
+
+    template<typename T>
+    std::string to_string(const T& value) {
+        using CleanType = std::remove_cv_t<std::remove_pointer_t<T>>;
+    
+        if constexpr (std::is_pointer_v<T>) {
+            if (!value) return "nullptr";
+    
+            if constexpr (std::is_same_v<CleanType, void>) {
+                return "??";
+            } else if constexpr (std::is_arithmetic_v<CleanType>) {
+                return std::to_string(*value);
+            } else {
+                return std::string(*value); // Assumes CleanType is convertible to std::string
+            }
+        } else if constexpr (std::is_arithmetic_v<T>) {
+            return std::to_string(value);
+        } else {
+            return value; // Requires T to be convertible to std::string
+        }
+    }
+public:
     FuncType m_Func;
     std::string m_Name;
     std::string m_ReturnType;
-    std::array<std::string, sizeof...(Args)> m_Args;
+    std::array<std::string, sizeof...(Args)> m_ArgsTypes;
+    std::tuple<Args...> m_ArgsValues;
+    size_t m_CallCount;
     inline static size_t m_Count = 0;
 };
 
 #ifdef DEBUG
 #   define GLFUN(type, name)\
-    inline gl_function_wrapper<type> name;
+    inline glFunction<type> name;
 #else
 #   define GLFUN(type, name)\
     inline type name;
