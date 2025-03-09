@@ -16,7 +16,7 @@ class Texture
 public:
     friend struct std::formatter<Texture>;
     Texture(GLenum texType);
-    virtual ~Texture();
+    virtual ~Texture() = default;
 public:
     virtual auto id() const -> GLuint ;
     virtual auto Bind() const -> void ;

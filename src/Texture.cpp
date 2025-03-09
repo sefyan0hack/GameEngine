@@ -75,10 +75,6 @@ auto Texture::UnBind() const -> void
     glBindTexture(m_Type, 0);
 }
 
-Texture::~Texture()
-{
-    if(glIsTexture(m_Id) == GL_TRUE) glDeleteTextures(1, &m_Id);
-}
 
 auto Texture::Width() const -> GLsizei
 {

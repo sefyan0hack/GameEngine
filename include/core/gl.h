@@ -189,7 +189,7 @@ public:
         for(const auto& [type, value] : std::views::zip(m_ArgsTypes, ArgsValues()))
         {
             if (!first) result += ", ";
-            result += type + " arg" + std::to_string(index++) + " = " + value;
+            result += type + " arg_" + std::to_string(index++) + " = " + value;
             first = false;
         }
         result += ")";
