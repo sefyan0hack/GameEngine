@@ -217,12 +217,12 @@ public:
             } else if constexpr (std::is_arithmetic_v<CleanType>) {
                 return std::to_string(*value);
             } else {
-                return std::string(*value); // Assumes CleanType is convertible to std::string
+                return std::string(*value);
             }
         } else if constexpr (std::is_arithmetic_v<T>) {
             return std::to_string(value);
         } else {
-            return value; // Requires T to be convertible to std::string
+            return value;
         }
     }
 public:
