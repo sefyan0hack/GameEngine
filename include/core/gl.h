@@ -162,7 +162,8 @@ public:
     , m_CallCount(0)
     { m_Count++; }
 
-    R APIENTRY operator()(Args... args, std::source_location loc = std::source_location::current()){
+    auto operator()(Args... args, std::source_location loc = std::source_location::current()) -> R
+    {
         m_ArgsValues = std::make_tuple(args...);
         m_CallCount++;
         GLenum err = GL_NO_ERROR;
@@ -182,7 +183,8 @@ public:
             return result;
         }
     }
-    std::string formated_function_sig(){
+    auto formated_function_sig() const -> std::string
+    {
         std::string result = std::format("{} {}(", m_ReturnType, m_Name);
         bool first = true;
         int index = 1;
@@ -196,7 +198,8 @@ public:
         return result;
     }
 
-    std::array<std::string, sizeof...(Args)> ArgsValues(){
+    auto ArgsValues() const -> std::array<std::string, sizeof...(Args)>
+    {
         std::array<std::string, sizeof...(Args)> result;
         int i = 0;
         std::apply([this, &result, &i](auto&&... args) {
@@ -205,8 +208,8 @@ public:
         return result;
     }
 
-    template<typename T>
-    std::string to_string(const T& value) {
+    auto to_string(const auto& value) const -> std::string {
+        using T = std::remove_reference_t<decltype(value)>;
         using CleanType = std::remove_cv_t<std::remove_pointer_t<T>>;
     
         if constexpr (std::is_pointer_v<T>) {
@@ -225,9 +228,35 @@ public:
             return value;
         }
     }
+
+    auto ReturnType() const -> std::string
+    {
+        return m_ReturnType;
+    }
+
+    auto ArgsTypes() const -> std::array<std::string, sizeof...(Args)>
+    {
+        return m_ArgsTypes;
+    }
+
+    auto CallsCount() const -> size_t
+    {
+        return m_CallCount;
+    }
+
+    constexpr auto ArgsCount() const -> size_t
+    {
+        return sizeof...(Args);
+    }
+
+    static auto functionCount() -> size_t
+    {
+        return m_Count;
+    }
 public:
     FuncType m_Func;
     std::string m_Name;
+private:
     std::string m_ReturnType;
     std::array<std::string, sizeof...(Args)> m_ArgsTypes;
     std::tuple<Args...> m_ArgsValues;
