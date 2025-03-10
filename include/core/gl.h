@@ -146,16 +146,16 @@ X(PFNGLUNIFORM2FVPROC, glUniform2fv);\
 [[maybe_unused]] inline PFNGLGETERRORPROC glGetError = nullptr;
 
 template <typename T>
-class glFunction;
+class Function;
 
 template <typename R, typename... Args>
-class glFunction<R(APIENTRY*)(Args...)> {
+class Function<R(APIENTRY*)(Args...)> {
 public:
     using FuncType = R(APIENTRY*)(Args...);
 
-    glFunction()
+    Function()
     : m_Func(nullptr)
-    , m_Name("glFunction")
+    , m_Name("Function")
     , m_ReturnType(typeid(R).name())
     , m_ArgsTypes{typeid(Args).name()...}
     , m_ArgsValues{}
@@ -266,7 +266,7 @@ private:
 
 #ifdef DEBUG
 #   define GLFUN(type, name)\
-    inline glFunction<type> name;
+    inline Function<type> name;
 #else
 #   define GLFUN(type, name)\
     inline type name;

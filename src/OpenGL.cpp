@@ -321,7 +321,7 @@ auto OpenGL::init_opengl() -> void
 
     #ifdef DEBUG
     #   define RESOLVEGL(type, name)\
-        name = glFunction<type>{};\
+        name = Function<type>{};\
         name.m_Func = reinterpret_cast<type>(rsgl(#name));\
         name.m_Name = #name;
     #else
