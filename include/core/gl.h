@@ -11,6 +11,12 @@
 #include <utility>
 #include <ranges>
 
+#ifdef __GNUG__
+#include <cxxabi.h>
+#include <cstdlib>
+#include <memory>
+#endif
+
 inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
 {
     switch (glError)
@@ -156,8 +162,8 @@ public:
     Function()
     : m_Func(nullptr)
     , m_Name("Function")
-    , m_ReturnType(typeid(R).name())
-    , m_ArgsTypes{typeid(Args).name()...}
+    , m_ReturnType(type_name<R>())
+    , m_ArgsTypes{type_name<Args>()...}
     , m_ArgsValues{}
     , m_CallCount(0)
     { m_Count++; }
@@ -219,6 +225,8 @@ public:
                 return "??";
             } else if constexpr (std::is_arithmetic_v<CleanType>) {
                 return std::to_string(*value);
+            } else if constexpr (std::is_function_v<CleanType>) {
+                return get_function_signature<CleanType>();
             } else {
                 return std::string(*value);
             }
@@ -253,6 +261,39 @@ public:
     {
         return m_Count;
     }
+
+    static auto demangle(const char* name) -> std::string
+    {
+    #ifdef __GNUG__
+        int status = -1;
+        std::unique_ptr<char, void(*)(void*)> res {
+            abi::__cxa_demangle(name, nullptr, nullptr, &status),
+            std::free
+        };
+        return (status == 0) ? res.get() : name;
+    #else
+        return name;
+    #endif
+    }
+
+    template <typename T>
+    static auto type_name() -> std::string
+    {
+        return demangle(typeid(T).name());
+    }
+
+    template<typename R, typename... Args>
+    static auto get_function_signature() -> std::string
+    {
+        std::string signature = type_name<R>() + " (*)(";
+        
+        bool first = true;
+        ((signature += (first ? "" : ", ") + type_name<Args>(), first = false), ...);
+        
+        signature += ")";
+        return signature;
+    }
+
 public:
     FuncType m_Func;
     std::string m_Name;
