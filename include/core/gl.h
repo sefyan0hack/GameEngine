@@ -172,36 +172,13 @@ public:
     {
         m_ArgsValues = std::make_tuple(args...);
         m_CallCount++;
-        GLenum err = GL_NO_ERROR;
-        
-        if constexpr (std::is_void_v<R>) {
-            m_Func(args...);
-            err = glGetError();
-            if (err != GL_NO_ERROR) {
-                std::cout << std::format("{} -> {} ({}) -> {}:{}", formated_function_sig(), GL_ERR_to_string(err), err, loc.file_name(), loc.line()) << std::endl;
-            }
-        } else {
-            R result = m_Func(args...);
-            err = glGetError();
-            if (err != GL_NO_ERROR) {
-                std::cout << std::format("{} -> {} ({}) -> {}:{}", formated_function_sig(), GL_ERR_to_string(err), err, loc.file_name(), loc.line()) << std::endl;
-            }
+
+        auto&& [result, err] = execute_function(args...);
+        handle_gl_error(err, loc);
+            
+        if constexpr (!std::is_void_v<R>) {
             return result;
         }
-    }
-    auto formated_function_sig() const -> std::string
-    {
-        std::string result = std::format("{} {}(", m_ReturnType, m_Name);
-        bool first = true;
-        int index = 1;
-        for(const auto& [type, value] : std::views::zip(m_ArgsTypes, ArgsValues()))
-        {
-            if (!first) result += ", ";
-            result += type + " arg_" + std::to_string(index++) + " = " + value;
-            first = false;
-        }
-        result += ")";
-        return result;
     }
 
     auto ArgsValues() const -> std::array<std::string, sizeof...(Args)>
@@ -212,29 +189,6 @@ public:
             ((result[i++] = to_string(args)), ...);
         }, m_ArgsValues);
         return result;
-    }
-
-    auto to_string(const auto& value) const -> std::string {
-        using T = std::remove_reference_t<decltype(value)>;
-        using CleanType = std::remove_cv_t<std::remove_pointer_t<T>>;
-    
-        if constexpr (std::is_pointer_v<T>) {
-            if (!value) return "nullptr";
-    
-            if constexpr (std::is_same_v<CleanType, void>) {
-                return "??";
-            } else if constexpr (std::is_arithmetic_v<CleanType>) {
-                return std::to_string(*value);
-            } else if constexpr (std::is_function_v<CleanType>) {
-                return get_function_signature<CleanType>();
-            } else {
-                return std::string(*value);
-            }
-        } else if constexpr (std::is_arithmetic_v<T>) {
-            return std::to_string(value);
-        } else {
-            return value;
-        }
     }
 
     auto ReturnType() const -> std::string
@@ -261,7 +215,69 @@ public:
     {
         return m_Count;
     }
+    
+private:
+    auto formated_function_sig() const -> std::string {
+        std::string result = std::format("{} {}(", m_ReturnType, m_Name);
+        format_arguments(result);
+        return result + ")";
+    }
 
+    auto execute_function(Args... args) -> std::tuple<std::conditional_t<std::is_void_v<R>, std::monostate, R>, GLenum> {
+        GLenum err = GL_NO_ERROR;
+        if constexpr (std::is_void_v<R>) {
+            m_Func(args...);
+            err = glGetError();
+            return { {}, err };
+        } else {
+            R result = m_Func(args...);
+            err = glGetError();
+            return { result, err };
+        }
+    }
+
+    void handle_gl_error(GLenum err, const std::source_location& loc) {
+        if (err != GL_NO_ERROR) {
+            std::cout << std::format("{} -> {} ({}) -> {}:{}", formated_function_sig(), GL_ERR_to_string(err), err, loc.file_name(), loc.line()) << std::endl;
+        }
+    }
+
+    void format_arguments(std::string& result) const {
+        int index = 1;
+        bool first = true;
+        for (const auto& [type, value] : std::views::zip(m_ArgsTypes, ArgsValues())) {
+            if (!first) result += ", ";
+            result += std::format("{} arg_{} = {}", type, index++, value);
+            first = false;
+        }
+    }
+
+
+    static auto to_string(const auto& value) -> std::string {
+        using T = std::decay_t<decltype(value)>;
+        if constexpr (std::is_pointer_v<T>) {
+            return format_pointer(value);
+        } else if constexpr (std::is_arithmetic_v<T>) {
+            return std::to_string(value);
+        } else {
+            return std::string(value);
+        }
+    }
+
+    static auto format_pointer(const auto* ptr) -> std::string {
+        if (!ptr) return "nullptr";
+        using Pointee = std::remove_cv_t<std::remove_pointer_t<decltype(ptr)>>;
+        if constexpr (std::is_function_v<Pointee>) {
+            return functionPtrSigature<Pointee>();
+        } else if constexpr (std::is_arithmetic_v<Pointee>) {
+            return std::to_string(*ptr);
+        } else if constexpr (std::is_same_v<Pointee, void>) {
+            return std::string("??");
+        } else {
+            return std::string(*ptr);
+        }
+    }
+    
     static auto demangle(const char* name) -> std::string
     {
     #ifdef __GNUG__
@@ -283,7 +299,7 @@ public:
     }
 
     template<typename R, typename... Args>
-    static auto get_function_signature() -> std::string
+    static auto functionPtrSigature() -> std::string
     {
         std::string signature = type_name<R>() + " (*)(";
         
