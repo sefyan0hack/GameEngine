@@ -131,14 +131,14 @@ OpenGL::OpenGL(HWND window)
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 
-    // #ifdef DEBUG
-    // if( m_Major >= 4 && m_Minor >= 3 && m_Debug){
-    //     glEnable(GL_DEBUG_OUTPUT);
-    //     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-    //     glDebugMessageCallback(GLDebugMessageCallback, nullptr);
-    //     glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-    // }
-    // #endif
+    #ifdef DEBUG
+    if( m_Major >= 4 && m_Minor >= 3 && m_Debug){
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        glDebugMessageCallback(GLDebugMessageCallback, nullptr);
+        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+    }
+    #endif
 
     Log::print("GL Version : {}.{}", m_Major, m_Minor);
     Log::print("GLSL Version Supported : {}", to_string(m_GlslVersions));
@@ -293,9 +293,10 @@ auto OpenGL::init_opengl() -> void
     int gl_attribs[] = { 
         WGL_CONTEXT_MAJOR_VERSION_ARB, 4,
         WGL_CONTEXT_MINOR_VERSION_ARB, 4,
-        WGL_CONTEXT_FLAGS_ARB, 0x00000004, // WGL_CONTEXT_ROBUST_ACCESS_BIT_ARB
         WGL_CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB, 0x8252, // WGL_LOSE_CONTEXT_ON_RESET_ARB
+    #ifdef DEBUG
         WGL_CONTEXT_FLAGS_ARB, 0x0001 | 0x0002,  // WGL_CONTEXT_DEBUG_BIT_ARB | WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB
+    #endif
         WGL_CONTEXT_PROFILE_MASK_ARB, 0x00000001, // WGL_CONTEXT_CORE_PROFILE_BIT_ARB
         0,
     };
@@ -348,7 +349,7 @@ auto OpenGL::MinorV() const -> GLint
 
 auto OpenGL::isValid() const -> bool
 {
-    return not m_Context;
+    return m_Context != nullptr;
 }
 
 auto OpenGL::CreationTime() const -> std::time_t
