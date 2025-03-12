@@ -39,7 +39,7 @@
     default:                             severity_ = "<SEVERITY>";   break;
     }
 
-    Log::print("[{} {}({})] From {} : \n\t- {}", severity_, type_, id, source_, message);
+    Log::Info("[{} {}({})] From {} : \n\t- {}", severity_, type_, id, source_, message);
 }
 
 
@@ -140,13 +140,13 @@ OpenGL::OpenGL(HWND window)
     }
     #endif
 
-    Log::print("GL Version : {}.{}", m_Major, m_Minor);
-    Log::print("GLSL Version Supported : {}", to_string(m_GlslVersions));
-    Log::print("GL Vendor : {}", m_Vendor);
-    Log::print("GL Renderer : {}", m_Renderer);
-    Log::print("GL Exts : {}", to_string(m_Extensions));
-    Log::print("Max Texture Units : {}", m_MaxTextureUnits);
-    Log::print("Debug : {}", m_Debug ? "On" : "Off");
+    Log::Info("GL Version : {}.{}", m_Major, m_Minor);
+    Log::Info("GLSL Version Supported : {}", to_string(m_GlslVersions));
+    Log::Info("GL Vendor : {}", m_Vendor);
+    Log::Info("GL Renderer : {}", m_Renderer);
+    Log::Info("GL Exts : {}", to_string(m_Extensions));
+    Log::Info("Max Texture Units : {}", m_MaxTextureUnits);
+    Log::Info("Debug : {}", m_Debug ? "On" : "Off");
 }
 
 OpenGL::OpenGL(const OpenGL &other)

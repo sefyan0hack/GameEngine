@@ -132,7 +132,7 @@ Texture2D::Texture2D(const std::string &name)
         GLfloat clearColor[3] = { 1.0f, 0.0f, 1.0f};
         glClearTexImage(m_Id, 0, GL_RGB, GL_FLOAT, clearColor); 
         
-        Log::Warning("{}", result.error());
+        Log::Info("{}", result.error());
     }
 
     Log::Info("{}", static_cast<const Texture&>(*this));

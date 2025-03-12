@@ -174,7 +174,6 @@ Mesh::~Mesh()
     if(glIsBuffer(EBO) == GL_TRUE) glDeleteBuffers(1, &EBO);
     if(glIsBuffer(VBO) == GL_TRUE) glDeleteBuffers(1, &VBO);
     if(glIsVertexArray(VAO) == GL_TRUE) glDeleteVertexArrays(1, &VAO);
-    Log::print("Delete VAO {}", VAO);
 }
 
 Mesh::Mesh(const Mesh& other)
