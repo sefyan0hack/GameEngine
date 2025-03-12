@@ -36,6 +36,7 @@ namespace {
 enum class Log_LvL : char {
   ERR,
   WAR,
+  INFO,
 };
 
 static std::string formatedTime() {
@@ -45,29 +46,32 @@ static std::string formatedTime() {
 
 constexpr const char* levelToString(Log_LvL level) {
   switch (level) {
-    case Log_LvL::WAR: return "WARNING";
-    case Log_LvL::ERR: return "ERROR";
-    default:           return "UNKNOWN";
+    case Log_LvL::INFO: return "INFO";
+    case Log_LvL::ERR:  return "ERROR";
+    default:            return "UNKNOWN";
   }
 }
 
 template <Log_LvL lvl, std::ostream* out, typename ...Ts>
 struct ERRF
 {
-  ERRF(const std::format_string<Ts...> fmt, Ts&& ... ts, std::source_location loc = std::source_location::current())
+  ERRF([[maybe_unused]] const std::format_string<Ts...> fmt, [[maybe_unused]] Ts&& ... ts, [[maybe_unused]] std::source_location loc = std::source_location::current())
   {
     auto formatted_msg = std::format(fmt, std::forward<Ts>(ts)...);
     auto lvl_str = levelToString(lvl);
     auto msg = std::stringstream{};
 
-    msg << std::format("{} : [{}] {}\n--> {}:{}\n", formatedTime(), lvl_str, formatted_msg, loc.file_name(), loc.line()) << std::endl;
-    
-    msg << std::stacktrace::current(1) << std::endl;
-
-    if constexpr (lvl == Log_LvL::ERR){
+    if constexpr (lvl == Log_LvL::INFO)
+    {
+      msg << std::format("{} : [{}] {}\n", formatedTime(), lvl_str, formatted_msg) << "\n";
+    }
+    else if constexpr (lvl == Log_LvL::ERR)
+    {
+      msg << std::format("{} : [{}] {}\n--> {}:{}", formatedTime(), lvl_str, formatted_msg, loc.file_name(), loc.line())
+      << "\n" << std::stacktrace::current(1) << "\n";
       MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONWARNING );
     }
-    
+
     {
       std::lock_guard lock(mutex_);
       *out << msg.rdbuf();
@@ -77,7 +81,7 @@ struct ERRF
   }
 
   private:
-    inline static std::mutex mutex_;
+    std::mutex mutex_;
 };
 
 template <Log_LvL lvl, std::ostream* out, typename ...Ts>
@@ -94,18 +98,13 @@ auto print(const std::format_string<Ts...> fmt, Ts&& ... ts) -> void
   std::cout << std::format("{} : {}\n", formatedTime(), std::format(fmt, std::forward<Ts>(ts)...));
 }
 
-template <typename ...Ts>
-auto Info(const std::format_string<Ts...> fmt, Ts&& ... ts) -> void
-{
-  std::cout << std::format("{} : [INFO] {}\n", formatedTime(), std::format(fmt, std::forward<Ts>(ts)...));
-}
 
 
 template <typename ...Ts>
 using Error = ERRF<Log_LvL::ERR, &std::cerr, Ts...>;
 
 template <typename ...Ts>
-using Warning = ERRF<Log_LvL::WAR, &std::clog, Ts...>;
+using Info = ERRF<Log_LvL::INFO, &std::clog, Ts...>;
 
 
 template <typename ...Ts>
