@@ -70,6 +70,7 @@ function(apply_compile_options)
         else()
             target_compile_options(${target} PRIVATE
                 -Wall -Wextra -Wpedantic -Wconversion -Wno-cast-function-type
+                -fno-exceptions
                 
                 # Debug flags
                 "$<$<CONFIG:Debug>:-g>"
