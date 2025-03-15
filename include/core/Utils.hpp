@@ -74,6 +74,7 @@ constexpr std::array<char, sizeof(Str.value)> ToUpper<Str>::value;
 
 std::future<std::vector<char>> load_file_async(const std::string& filename);
 std::vector<std::string> split(std::string s, const std::string& delimiter);
+std::string replace(std::string s, char c, char with);
 
 template<class T>
 requires std::convertible_to<T, std::string> || Formatable<T>

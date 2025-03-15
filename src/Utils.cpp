@@ -29,3 +29,9 @@ std::vector<std::string> split(std::string s, const std::string& delimiter) {
 
     return tokens;
 }
+
+std::string replace(std::string s, char c, char with)
+{
+    for(auto& ch: s) if(ch == c) ch = with;
+    return s;
+}
