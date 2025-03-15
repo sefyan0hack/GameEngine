@@ -81,7 +81,7 @@ struct ERRF
   }
 
   private:
-    std::mutex mutex_;
+    inline static std::mutex mutex_;
 };
 
 template <Log_LvL lvl, std::ostream* out, typename ...Ts>
