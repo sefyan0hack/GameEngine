@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <stacktrace>
 #include <sstream>
+#include <fstream>
 #include <optional>
 #include <mutex>
 #include <windows.h>
@@ -52,7 +53,33 @@ constexpr const char* levelToString(Log_LvL level) {
   }
 }
 
-template <Log_LvL lvl, std::ostream* out, typename ...Ts>
+struct CerrPolicy {
+  static auto& get_stream() {
+      static auto& stream = std::cerr;
+      return stream;
+  }
+};
+
+struct ClogPolicy {
+    static auto& get_stream() {
+        static auto& stream = std::clog;
+        return stream;
+    }
+};
+
+struct FilePolicy {
+    static auto& get_stream() {
+        static std::ofstream stream("Engine.log", std::ios::app);
+        return stream;
+    }
+};
+
+template<class T>
+concept StreamOut = requires(){
+  { T::get_stream() } -> std::convertible_to<std::ostream&>;
+};
+
+template <Log_LvL lvl, StreamOut Out, typename ...Ts>
 struct ERRF
 {
   ERRF([[maybe_unused]] const std::format_string<Ts...> fmt, [[maybe_unused]] Ts&& ... ts, [[maybe_unused]] std::source_location loc = std::source_location::current())
@@ -60,6 +87,8 @@ struct ERRF
     auto formatted_msg = std::format(fmt, std::forward<Ts>(ts)...);
     auto lvl_str = levelToString(lvl);
     auto msg = std::stringstream{};
+    auto& out = Out::get_stream();
+
 
     if constexpr (lvl == Log_LvL::INFO)
     {
@@ -74,7 +103,8 @@ struct ERRF
 
     {
       std::lock_guard lock(mutex_);
-      *out << msg.rdbuf();
+      out << msg.rdbuf();
+      out.flush();
     }
 
     if constexpr (lvl == Log_LvL::ERR) exit(EXIT_FAILURE);
@@ -84,8 +114,8 @@ struct ERRF
     inline static std::mutex mutex_;
 };
 
-template <Log_LvL lvl, std::ostream* out, typename ...Ts>
-ERRF(const std::format_string<Ts...>, Ts&& ...) -> ERRF<lvl, out, Ts...>;
+template <Log_LvL lvl, StreamOut Out, typename ...Ts>
+ERRF(const std::format_string<Ts...>, Ts&& ...) -> ERRF<lvl, Out, Ts...>;
 
 }
 
@@ -101,11 +131,15 @@ auto print(const std::format_string<Ts...> fmt, Ts&& ... ts) -> void
 
 
 template <typename ...Ts>
-using Error = ERRF<Log_LvL::ERR, &std::cerr, Ts...>;
+using Error = ERRF<Log_LvL::ERR, CerrPolicy, Ts...>;
 
+#ifdef DEBUG
 template <typename ...Ts>
-using Info = ERRF<Log_LvL::INFO, &std::clog, Ts...>;
-
+using Info = ERRF<Log_LvL::INFO, ClogPolicy, Ts...>;
+#else
+template <typename ...Ts>
+using Info = ERRF<Log_LvL::INFO, FilePolicy, Ts...>;
+#endif
 
 template <typename ...Ts>
 auto Expect(bool x, const std::format_string<Ts...> fmt, Ts&& ... ts) -> void

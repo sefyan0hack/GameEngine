@@ -203,7 +203,8 @@ public: // distroy hire
     }
 };
 
-auto main(void) -> int {
+auto APIENTRY WinMain(HINSTANCE, HINSTANCE, PSTR, int) -> int
+{
     setup_crach_handler();
     Game my_game ;
     my_game.Run();
