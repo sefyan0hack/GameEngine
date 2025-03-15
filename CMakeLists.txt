@@ -90,6 +90,11 @@ add_executable(${PROJECT_NAME} ${SOURCE})
 
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/include" )
 
+# stb_image lib
+add_library(stb_image STATIC "${CMAKE_CURRENT_BINARY_DIR}/stb_image.cpp")
+target_include_directories(stb_image PUBLIC ${stb_image_header_SOURCE_DIR})
+set_target_properties(stb_image PROPERTIES LINKER_LANGUAGE C)
+
 if(MSVC)
     target_link_libraries(${PROJECT_NAME} stb_image glm::glm ${OPENGL_LIBRARIES} dbghelp)
 else()
@@ -97,13 +102,8 @@ else()
 
 endif()
 
-# stb_image lib
-add_library(stb_image STATIC "${CMAKE_CURRENT_BINARY_DIR}/stb_image.cpp")
-target_include_directories(stb_image PUBLIC ${stb_image_header_SOURCE_DIR})
-set_target_properties(stb_image PROPERTIES LINKER_LANGUAGE C)
-
 # flags
-apply_compile_options(TARGETS ${PROJECT_NAME})
+apply_compile_options(TARGETS ${PROJECT_NAME} stb_image glm::glm)
 
 print_target_compile_options(${PROJECT_NAME})
 

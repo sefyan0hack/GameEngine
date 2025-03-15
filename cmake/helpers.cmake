@@ -63,8 +63,9 @@ function(apply_compile_options)
 
                 # Release flags
                 "$<$<CONFIG:Release>:/O2>"
-                "$<$<CONFIG:Release>:/MD>"
+                "$<$<CONFIG:Release>:/MT>"
                 "$<$<CONFIG:Release>:/DNDEBUG>"
+                "$<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>"
             )
             
         else()
@@ -83,6 +84,7 @@ function(apply_compile_options)
                 "$<$<CONFIG:Release>:-O3>"
                 "$<$<CONFIG:Release>:-DNDEBUG>"
                 "$<$<CONFIG:Release>:-march=native>"
+                "$<$<CONFIG:Release>:-mwindows>"
             )
         endif()
     endforeach()
