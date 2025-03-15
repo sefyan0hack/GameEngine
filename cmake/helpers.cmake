@@ -65,9 +65,9 @@ function(apply_compile_options)
                 "$<$<CONFIG:Release>:/O2>"
                 "$<$<CONFIG:Release>:/MT>"
                 "$<$<CONFIG:Release>:/DNDEBUG>"
-                "$<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>"
             )
-            
+            target_link_options(${target} PRIVATE /SUBSYSTEM:WINDOWS)
+
         else()
             target_compile_options(${target} PRIVATE
                 -Wall -Wextra -Wpedantic -Wconversion -Wno-cast-function-type

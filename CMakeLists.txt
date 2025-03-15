@@ -97,6 +97,7 @@ set_target_properties(stb_image PROPERTIES LINKER_LANGUAGE C)
 
 if(MSVC)
     target_link_libraries(${PROJECT_NAME} stb_image glm::glm ${OPENGL_LIBRARIES} dbghelp)
+
 else()
     target_link_libraries(${PROJECT_NAME} stb_image glm::glm ${OPENGL_LIBRARIES} stdc++exp dbghelp)
 
@@ -110,7 +111,5 @@ print_target_compile_options(${PROJECT_NAME})
 target_compile_definitions(${PROJECT_NAME}
     PRIVATE
         PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
+        $<$<CONFIG:Debug>:DEBUG>
 )
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_definitions(-DDEBUG)
-endif()
