@@ -63,7 +63,7 @@ struct ERRF
 
     if constexpr (lvl == Log_LvL::INFO)
     {
-      msg << std::format("{} : [{}] {}\n", formatedTime(), lvl_str, formatted_msg) << "\n";
+      msg << std::format("{} : [{}] {}", formatedTime(), lvl_str, formatted_msg) << "\n";
     }
     else if constexpr (lvl == Log_LvL::ERR)
     {
