@@ -8,9 +8,12 @@ message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID} (${CMAKE_CXX_COMPILER_VERSION
 
 include(${CMAKE_SOURCE_DIR}/cmake/helpers.cmake)
 
+set(ONLINE TURE)
+
+if(ONLINE)
+
 # Include get_cpm.cmake
 include(${CMAKE_SOURCE_DIR}/cmake/get_cpm.cmake)
-
 # deps :
 
     # add glm 1.0.1
@@ -52,10 +55,11 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/glcorearb-src  # For glcorearb.h
     ${CMAKE_CURRENT_BINARY_DIR}                      # For KHR/khrplatform.h
 )
-
+else()
+add_subdirectory(3party/glm)
+endif()
 
 set(SOURCE
-    "${stb_image_header_SOURCE_DIR}/stb_image.h"
     src/main.cpp
     src/Keyboard.cpp
     src/Mouse.cpp
@@ -81,13 +85,24 @@ find_package(OpenGL REQUIRED)
 
 add_executable(${PROJECT_NAME} ${SOURCE})
 
-target_include_directories(${PROJECT_NAME} PRIVATE
-    "${CMAKE_SOURCE_DIR}/include"
-    ${stb_image_header_SOURCE_DIR}
-)
+if(ONLINE)
+    list(APPEND SOURCES "${stb_image_header_SOURCE_DIR}/stb_image.h")
+
+    target_include_directories(${PROJECT_NAME} PRIVATE
+        "${CMAKE_SOURCE_DIR}/include"
+        ${stb_image_header_SOURCE_DIR}
+    )
+else()
+    list(APPEND SOURCES "${CMAKE_SOURCE_DIR}/3party/stb_image.h")
+
+    target_include_directories(${PROJECT_NAME} PRIVATE
+        "${CMAKE_SOURCE_DIR}/include"
+        "${CMAKE_SOURCE_DIR}/3party"
+    )
+endif()
 
 # flags
-apply_compile_options(TARGETS ${PROJECT_NAME} glm::glm)
+apply_compile_options(TARGETS ${PROJECT_NAME} )
 
 print_target_compile_options(${PROJECT_NAME})
 
