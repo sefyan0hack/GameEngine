@@ -264,7 +264,7 @@ private:
         }
     }
 
-    static auto format_pointer(const auto* ptr) -> std::string {
+    static auto format_pointer(auto ptr) -> std::string {
         if (!ptr) return "nullptr";
         using Pointee = std::remove_cv_t<std::remove_pointer_t<decltype(ptr)>>;
         if constexpr (std::is_function_v<Pointee>) {
