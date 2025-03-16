@@ -203,7 +203,11 @@ public: // distroy hire
     }
 };
 
-auto APIENTRY WinMain(HINSTANCE, HINSTANCE, PSTR, int) -> int
+#ifdef DEBUG
+auto main() -> int
+#else
+int APIENTRY WinMain(HINSTANCE, HINSTANCE, PSTR, int)
+#endif
 {
     setup_crach_handler();
     Game my_game ;
