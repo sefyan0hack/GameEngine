@@ -298,13 +298,13 @@ private:
         return demangle(typeid(T).name());
     }
 
-    template<typename R, typename... Args>
+    template<typename SubR, typename... SubArgs>
     static auto functionPtrSigature() -> std::string
     {
-        std::string signature = type_name<R>() + " (*)(";
+        std::string signature = type_name<SubR>() + " (*)(";
         
         bool first = true;
-        ((signature += (first ? "" : ", ") + type_name<Args>(), first = false), ...);
+        ((signature += (first ? "" : ", ") + type_name<SubArgs>(), first = false), ...);
         
         signature += ")";
         return signature;
