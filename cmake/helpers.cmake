@@ -84,20 +84,30 @@ function(apply_compile_options)
                 -fno-exceptions
                 
                 # Debug flags
-                "$<$<CONFIG:Debug>:-g3>"
                 "$<$<CONFIG:Debug>:-ggdb>"
-                "$<$<CONFIG:Debug>:-O0>"
+                "$<$<CONFIG:Debug>:-g3>"
+                "$<$<CONFIG:Debug>:-Og>"
+                "$<$<CONFIG:Debug>:-fno-inline>"
                 "$<$<CONFIG:Debug>:-fstack-protector-strong>"
                 "$<$<CONFIG:Debug>:-funwind-tables>"
+                "$<$<CONFIG:Debug>:-fno-optimize-sibling-calls>"
+                "$<$<CONFIG:Debug>:-fno-elide-constructors>"
 
                 # Release flags
                 "$<$<CONFIG:Release>:-O3>"
-                "$<$<CONFIG:Release>:-g>"
+                "$<$<CONFIG:Release>:-g3>"
                 "$<$<CONFIG:Release>:-DNDEBUG>"
                 "$<$<CONFIG:Release>:-march=native>"
-                "$<$<CONFIG:Release>:-mwindows>"
                 "$<$<CONFIG:Release>:-DNDEBUG>"
                 "$<$<CONFIG:Release>:-fno-omit-frame-pointer>"
+                "$<$<CONFIG:Release>:-funwind-tables>"
+                "$<$<CONFIG:Release>:-fasynchronous-unwind-tables>"
+                "$<$<CONFIG:Release>:-gsplit-dwarf>"
+                )
+            target_link_options(${target} PRIVATE
+                "$<$<CONFIG:Release>:-mwindows>"
+                "$<$<CONFIG:Release>:-Wl,--strip-all>"
+
             )
         endif()
     endforeach()
