@@ -30,13 +30,35 @@ To build and use GameEngine, you’ll need the following:
 
 ### Get The Project 
 
+#### if you Want Auto fetch debs [`Good Connection`] :
 ```bash
-git clone https://github.com/sefyan0hack/GameEngine.git
-cd GameEngine
+$ git clone https://github.com/sefyan0hack/GameEngine.git
+$ cd GameEngine
    
-mkdir build
-cd build
+$ mkdir build
+$ cd build
 
-cmake ..
-cmake --build . --config Release
+$ cmake ..
+$ cmake --build . --config Release
+```
+#### else
+in `CMakelists.txt` turn `set(ONLINE TRUE)` -> `set(ONLINE FALSE)`
+and make `3party` in side by side to `src`
+```
+$ mkdir 3party
+$ tree
+3party
+│   glcorearb.h // https://registry.khronos.org/OpenGL/api/GL/glcorearb.h
+│   stb_image.h // https://raw.githubusercontent.com/nothings/stb/5c205738c191bcb0abc65c4febfa9bd25ff35234/stb_image.h
+├───glm // https://github.com/g-truc/glm/releases/download/1.0.1/glm-1.0.1-light.zip
+└───KHR
+        khrplatform.h // https://raw.githubusercontent.com/KhronosGroup/EGL-Registry/main/api/KHR/khrplatform.h
+$ git clone https://github.com/sefyan0hack/GameEngine.git
+$ cd GameEngine
+   
+$ mkdir build
+$ cd build
 
+$ cmake ..
+$ cmake --build . --config Release
+```
