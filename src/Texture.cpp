@@ -2,8 +2,9 @@
 #include <core/Log.hpp>
 #include <core/Utils.hpp>
 #include <expected>
-#include <stb_image.h>
 #include <ranges>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 namespace {
 

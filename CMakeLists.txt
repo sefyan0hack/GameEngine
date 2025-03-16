@@ -53,16 +53,9 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}                      # For KHR/khrplatform.h
 )
 
-if(stb_image_header_ADDED)
-  # Create a dummy source file to compile the implementation
-  file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/stb_image.cpp"
-    "#define STB_IMAGE_IMPLEMENTATION\n#include \"stb_image.h\"\n"
-  )
-endif()
 
-# Print compiler information
-
-set(SOURCE 
+set(SOURCE
+    "${stb_image_header_SOURCE_DIR}/stb_image.h"
     src/main.cpp
     src/Keyboard.cpp
     src/Mouse.cpp
@@ -88,23 +81,13 @@ find_package(OpenGL REQUIRED)
 
 add_executable(${PROJECT_NAME} ${SOURCE})
 
-target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/include" )
-
-# stb_image lib
-add_library(stb_image STATIC "${CMAKE_CURRENT_BINARY_DIR}/stb_image.cpp")
-target_include_directories(stb_image PUBLIC ${stb_image_header_SOURCE_DIR})
-set_target_properties(stb_image PROPERTIES LINKER_LANGUAGE C)
-
-if(MSVC)
-    target_link_libraries(${PROJECT_NAME} stb_image glm::glm ${OPENGL_LIBRARIES} dbghelp)
-
-else()
-    target_link_libraries(${PROJECT_NAME} stb_image glm::glm ${OPENGL_LIBRARIES} stdc++exp dbghelp)
-
-endif()
+target_include_directories(${PROJECT_NAME} PRIVATE
+    "${CMAKE_SOURCE_DIR}/include"
+    ${stb_image_header_SOURCE_DIR}
+)
 
 # flags
-apply_compile_options(TARGETS ${PROJECT_NAME} stb_image glm::glm)
+apply_compile_options(TARGETS ${PROJECT_NAME} glm::glm)
 
 print_target_compile_options(${PROJECT_NAME})
 
@@ -113,3 +96,11 @@ target_compile_definitions(${PROJECT_NAME}
         PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
         $<$<CONFIG:Debug>:DEBUG>
 )
+
+if(MSVC)
+    target_link_libraries(${PROJECT_NAME} glm::glm ${OPENGL_LIBRARIES} dbghelp)
+
+else()
+    target_link_libraries(${PROJECT_NAME} glm::glm ${OPENGL_LIBRARIES} stdc++exp dbghelp)
+
+endif()
