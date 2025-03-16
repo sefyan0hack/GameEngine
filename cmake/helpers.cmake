@@ -60,21 +60,31 @@ function(apply_compile_options)
                 "$<$<CONFIG:Debug>:/DEBUG>"
                 "$<$<CONFIG:Debug>:/DYNAMICBASE>"
                 "$<$<CONFIG:Debug>:/analyze>"
+                "$<$<CONFIG:Debug>:/Oy->"
 
                 # Release flags
                 "$<$<CONFIG:Release>:/O2>"
+                "$<$<CONFIG:Release>:/Zi>"
+                "$<$<CONFIG:Release>:/Zo>"
+                "$<$<CONFIG:Release>:/Oy->"
                 "$<$<CONFIG:Release>:/MT>"
                 "$<$<CONFIG:Release>:/DNDEBUG>"
             )
-            target_link_options(${target} PRIVATE /SUBSYSTEM:WINDOWS)
-
+            target_link_options(${target} PRIVATE
+                "$<$<CONFIG:Debug>:/DEBUG>"       # Debugger-optimized linking (Debug)
+                "$<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>" # no terminale
+                "$<$<CONFIG:Release>:/DEBUG>"     # Include debug symbols in Release
+                "$<$<CONFIG:Release>:/OPT:REF>"   # Optimize unused functions
+                "$<$<CONFIG:Release>:/OPT:ICF>"   # Identical COMDAT folding
+                "$<$<CONFIG:RELEASE>:/INCREMENTAL:NO>"  # Disable incremental linking
+            )
         else()
             target_compile_options(${target} PRIVATE
                 -Wall -Wextra -Wpedantic -Wconversion -Wno-cast-function-type
                 -fno-exceptions
                 
                 # Debug flags
-                "$<$<CONFIG:Debug>:-g>"
+                "$<$<CONFIG:Debug>:-g3>"
                 "$<$<CONFIG:Debug>:-ggdb>"
                 "$<$<CONFIG:Debug>:-O0>"
                 "$<$<CONFIG:Debug>:-fstack-protector-strong>"
@@ -82,9 +92,12 @@ function(apply_compile_options)
 
                 # Release flags
                 "$<$<CONFIG:Release>:-O3>"
+                "$<$<CONFIG:Release>:-g>"
                 "$<$<CONFIG:Release>:-DNDEBUG>"
                 "$<$<CONFIG:Release>:-march=native>"
                 "$<$<CONFIG:Release>:-mwindows>"
+                "$<$<CONFIG:Release>:-DNDEBUG>"
+                "$<$<CONFIG:Release>:-fno-omit-frame-pointer>"
             )
         endif()
     endforeach()
