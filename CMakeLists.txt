@@ -8,7 +8,7 @@ message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID} (${CMAKE_CXX_COMPILER_VERSION
 
 include(${CMAKE_SOURCE_DIR}/cmake/helpers.cmake)
 
-set(ONLINE TURE)
+set(ONLINE TRUE)
 
 if(ONLINE)
 
