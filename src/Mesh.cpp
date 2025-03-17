@@ -4,7 +4,7 @@
 
 namespace {
 
-auto to_string(GLenum type) -> const char*
+[[maybe_unused]] auto to_string(GLenum type) -> const char*
 {
     switch (type)
     {

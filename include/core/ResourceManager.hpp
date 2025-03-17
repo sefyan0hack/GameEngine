@@ -12,7 +12,6 @@
 enum class ResType{
     Texture2D,
     TextureCube,
-    Shader
 };
 
 class ResourceManager
