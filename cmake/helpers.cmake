@@ -80,9 +80,12 @@ function(apply_compile_options)
             )
         else()
             target_compile_options(${target} PRIVATE
-                -Wall -Wextra -Wpedantic -Wconversion -Wno-cast-function-type
+                -Wall -Wextra -Wpedantic -Wconversion -Wno-cast-function-type -Wfloat-equal
                 -fno-exceptions
-                
+                -fstack-protector-strong
+                -Wlogical-op -Wnull-dereference -Wswitch-enum
+                -Wsuggest-final-types -Wsuggest-final-methods
+                -fdevirtualize -ftree-vectorize
                 # Debug flags
                 "$<$<CONFIG:Debug>:-ggdb>"
                 "$<$<CONFIG:Debug>:-g3>"
@@ -92,12 +95,12 @@ function(apply_compile_options)
                 "$<$<CONFIG:Debug>:-funwind-tables>"
                 "$<$<CONFIG:Debug>:-fno-optimize-sibling-calls>"
                 "$<$<CONFIG:Debug>:-fno-elide-constructors>"
+                "$<$<CONFIG:Debug>:-D_FORTIFY_SOURCE=2>"
 
                 # Release flags
                 "$<$<CONFIG:Release>:-O3>"
                 "$<$<CONFIG:Release>:-g3>"
-                "$<$<CONFIG:Release>:-DNDEBUG>"
-                "$<$<CONFIG:Release>:-march=native>"
+                # "$<$<CONFIG:Release>:-march=native>"  #enable when dnt need to send the app
                 "$<$<CONFIG:Release>:-DNDEBUG>"
                 "$<$<CONFIG:Release>:-fno-omit-frame-pointer>"
                 "$<$<CONFIG:Release>:-funwind-tables>"
@@ -107,7 +110,7 @@ function(apply_compile_options)
             target_link_options(${target} PRIVATE
                 "$<$<CONFIG:Release>:-mwindows>"
                 "$<$<CONFIG:Release>:-Wl,--strip-all>"
-
+                "$<$<CONFIG:Release>:-flto>"
             )
         endif()
     endforeach()

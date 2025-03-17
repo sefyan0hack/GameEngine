@@ -4,11 +4,15 @@ project(Engine LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 
+if(NOT WIN32)
+ message(FATAL_ERROR  "Whis project only support Windows , Sorry :)")
+endif()
+
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID} (${CMAKE_CXX_COMPILER_VERSION})")
 
 include(${CMAKE_SOURCE_DIR}/cmake/helpers.cmake)
 
-set(ONLINE TRUE)
+set(ONLINE FALSE)
 
 if(ONLINE)
 
@@ -87,6 +91,9 @@ add_executable(${PROJECT_NAME} ${SOURCE})
 
 if(ONLINE)
     list(APPEND SOURCES "${stb_image_header_SOURCE_DIR}/stb_image.h")
+    set_source_files_properties("${stb_image_header_SOURCE_DIR}/stb_image.h" PROPERTIES COMPILE_FLAGS
+        "$<$<CXX_COMPILER_ID:MSVC>:/W0>$<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-w>"
+    )
 
     target_include_directories(${PROJECT_NAME} PRIVATE
         "${CMAKE_SOURCE_DIR}/include"
@@ -94,7 +101,10 @@ if(ONLINE)
     )
 else()
     list(APPEND SOURCES "${CMAKE_SOURCE_DIR}/3party/stb_image.h")
-
+    set_source_files_properties("${CMAKE_SOURCE_DIR}/3party/stb_image.h" PROPERTIES COMPILE_FLAGS 
+        "$<$<CXX_COMPILER_ID:MSVC>:/W0>$<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-w>"
+    )
+  
     target_include_directories(${PROJECT_NAME} PRIVATE
         "${CMAKE_SOURCE_DIR}/include"
         "${CMAKE_SOURCE_DIR}/3party"
@@ -113,9 +123,18 @@ target_compile_definitions(${PROJECT_NAME}
 )
 
 if(MSVC)
-    target_link_libraries(${PROJECT_NAME} glm::glm ${OPENGL_LIBRARIES} dbghelp)
-
+    target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+        glm::glm
+        ${OPENGL_LIBRARIES}
+        $<$<CONFIG:Debug>:dbghelp>
+    )
 else()
-    target_link_libraries(${PROJECT_NAME} glm::glm ${OPENGL_LIBRARIES} stdc++exp dbghelp)
-
+    target_link_libraries(${PROJECT_NAME}
+    PRIVATE 
+        glm::glm 
+        ${OPENGL_LIBRARIES} 
+        stdc++exp 
+        $<$<CONFIG:Debug>:dbghelp>
+    )
 endif()
