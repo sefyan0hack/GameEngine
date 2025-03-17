@@ -15,9 +15,11 @@
 #include <dbghelp.h>
 #include <core/gl.h>
 
+#ifdef DEBUG
 auto setup_crach_handler() -> void;
 auto resolveSymbol(void* addr, HANDLE proc = GetCurrentProcess()) -> std::string;
 auto PrintStackTrace(unsigned short skip = 0) -> void;
+#endif //DEBUG
 
 namespace {
 [[maybe_unused]] auto is_system_symbol(const std::string_view& symbol) -> bool{

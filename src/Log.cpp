@@ -8,6 +8,7 @@
 #include <sstream>
 #include <filesystem>
 
+#ifdef DEBUG
 #ifdef _WIN32
 std::string resolveSymbol(void* addr, HANDLE proc) {
 
@@ -240,3 +241,5 @@ auto setup_crach_handler() -> void
     SymSetOptions(SYMOPT_UNDNAME | SYMOPT_DEFERRED_LOADS | SYMOPT_LOAD_LINES);
     AddVectoredExceptionHandler(1, ExceptionHandler);
 }
+
+#endif //DEBUG

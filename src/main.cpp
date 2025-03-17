@@ -182,6 +182,7 @@ public:
         if( m_Window.m_Keyboard->KeyIsPressed('M') ){
              Cam.MoveDown(10.0f * delta);
         }
+        
         if (m_Window.m_Keyboard->KeyIsPressed('H')){
             static bool flip = false;
             if(flip == false){
@@ -203,13 +204,14 @@ public: // distroy hire
     }
 };
 
-#ifdef DEBUG
-auto main() -> int
-#else
+#ifndef DEBUG
 int APIENTRY WinMain(HINSTANCE, HINSTANCE, PSTR, int)
-#endif
+{
+#else
+auto main() -> int
 {
     setup_crach_handler();
+#endif
     Game my_game ;
     my_game.Run();
     return 0;
