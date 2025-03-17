@@ -36,7 +36,6 @@ namespace {
 
 enum class Log_LvL : char {
   ERR,
-  WAR,
   INFO,
 };
 
