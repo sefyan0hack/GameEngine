@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_SUPPRESS_REGENERATION true)
 
 if(NOT WIN32)
- message(FATAL_ERROR  "Whis project only support Windows. Sorry :)")
+ message(FATAL_ERROR  "This project only support Windows. Sorry :)")
 endif()
 
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID} (${CMAKE_CXX_COMPILER_VERSION})")
