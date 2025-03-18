@@ -13,7 +13,7 @@ class Shader
         Shader();
         Shader(const char* name, GLenum type);
         Shader(const Shader& other);
-        Shader(Shader&& other);
+        Shader(Shader&& other) noexcept;
 
         Shader& operator=(const Shader& other);
 

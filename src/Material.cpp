@@ -63,7 +63,7 @@ Material::Material(const Material& other)
     DumpUniforms();
     Log::Info("{}", *this);
 }
-Material::Material(Material&& other)
+Material::Material(Material&& other) noexcept
     : m_Id(std::move(other.m_Id))
     , m_Shaders(std::move(other.m_Shaders))
     , m_Attribs(std::move(other.m_Attribs))

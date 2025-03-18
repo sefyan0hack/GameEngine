@@ -24,6 +24,7 @@ constexpr auto to_string(GLenum type) -> const char*
 }
 
 Shader::Shader()
+: m_Id(0), m_Type(0), m_Content("")
 {
 }
 
@@ -48,7 +49,7 @@ Shader::Shader(const Shader& other)
 
 }
 
-Shader::Shader(Shader&& other)
+Shader::Shader(Shader&& other) noexcept
     : m_Id(other.m_Id)
     , m_Type(other.m_Type)
     , m_Content(std::move(other.m_Content))

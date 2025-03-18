@@ -20,7 +20,7 @@ public:
     Material(std::initializer_list<Shader> shaders);
 
     Material(const Material& other);
-    Material(Material&& other);
+    Material(Material&& other) noexcept;
     ~Material();
 
     auto id() const noexcept -> GLuint ;
