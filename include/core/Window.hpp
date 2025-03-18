@@ -2,11 +2,14 @@
 #include <memory>
 #include <vector>
 #include <core/OpenGL.hpp>
-#include <windows.h>
 #include <tchar.h>
 #include <core/gl.h>
 #include <core/Keyboard.hpp>
 #include <core/Mouse.hpp>
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 class Window
 {

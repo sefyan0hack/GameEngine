@@ -8,8 +8,8 @@
 #include <sstream>
 #include <filesystem>
 
-#ifdef DEBUG
 #ifdef _WIN32
+#ifdef DEBUG
 std::string resolveSymbol(void* addr, HANDLE proc) {
 
     SymInitialize(proc, nullptr, TRUE);
@@ -55,7 +55,6 @@ inline auto EXCEPTION_RECORD_to_str(const DWORD& exr) -> const char*{
         default: return "<unknown>";
     }
 }
-#endif
 auto PrintStackTrace(unsigned short skip) -> void
 {
     constexpr ULONG maxFrames = 64;
@@ -243,3 +242,4 @@ auto setup_crach_handler() -> void
 }
 
 #endif //DEBUG
+#endif //_WIN32

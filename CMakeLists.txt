@@ -5,14 +5,14 @@ project(Engine LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 23)
 
 if(NOT WIN32)
- message(FATAL_ERROR  "Whis project only support Windows , Sorry :)")
+ message(FATAL_ERROR  "Whis project only support Windows. Sorry :)")
 endif()
 
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID} (${CMAKE_CXX_COMPILER_VERSION})")
 
 include(${CMAKE_SOURCE_DIR}/cmake/helpers.cmake)
 
-set(ONLINE FALSE)
+set(ONLINE TRUE)
 
 if(ONLINE)
 

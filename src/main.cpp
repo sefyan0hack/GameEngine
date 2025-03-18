@@ -204,14 +204,23 @@ public: // distroy hire
     }
 };
 
-#ifndef DEBUG
-int APIENTRY WinMain(HINSTANCE, HINSTANCE, PSTR, int)
-{
-#else
-auto main() -> int
-{
-    setup_crach_handler();
+
+#ifdef _WIN32
+#   ifdef DEBUG
+#       define MAIN_FUNC int main()
+#   else
+#       define MAIN_FUNC int APIENTRY WinMain(HINSTANCE, HINSTANCE, PSTR, int)
+#   endif
+#else 
+#   define MAIN_FUNC int main()
 #endif
+
+MAIN_FUNC {
+    #ifdef _WIN32
+    #   ifdef DEBUG
+    setup_crach_handler();
+    #   endif
+    #endif
     Game my_game ;
     my_game.Run();
     return 0;

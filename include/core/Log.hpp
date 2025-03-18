@@ -11,30 +11,18 @@
 #include <fstream>
 #include <optional>
 #include <mutex>
-#include <windows.h>
-#include <dbghelp.h>
 #include <core/gl.h>
 
+
+#ifdef _WIN32
 #ifdef DEBUG
 auto setup_crach_handler() -> void;
 auto resolveSymbol(void* addr, HANDLE proc = GetCurrentProcess()) -> std::string;
 auto PrintStackTrace(unsigned short skip = 0) -> void;
 #endif //DEBUG
+#endif
 
 namespace {
-[[maybe_unused]] auto is_system_symbol(const std::string_view& symbol) -> bool{
-    const std::string_view system_libraries[] = {
-        "KERNEL32", "ntdll", "msvcrt", "ucrtbase", "vcruntime",
-        "invoke_main", "__scrt_common_main", "mainCRTStartup"
-    };
-
-    for (const auto& lib : system_libraries) {
-        if (symbol.find(lib) != std::string_view::npos) {
-            return true;
-        }
-    }
-    return false;
-}
 
 enum class Log_LvL : char {
   ERR,
@@ -99,7 +87,10 @@ struct ERRF
     {
       msg << std::format("{} : [{}] {}\n--> {}:{}", formatedTime(), lvl_str, formatted_msg, loc.file_name(), loc.line())
       << "\n" << std::stacktrace::current(1) << "\n";
+
+      #ifdef _WIN32
       MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONWARNING );
+      #endif
     }
 
     {
