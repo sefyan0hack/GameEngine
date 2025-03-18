@@ -42,8 +42,7 @@ $ cmake ..
 $ cmake --build . --config Release
 ```
 #### else
-in `CMakelists.txt` turn `set(ONLINE TRUE)` -> `set(ONLINE FALSE)`
-and make `3party` in side by side to `src`
+and make `3party` side by side to `src` and download files need  as shown below
 ```
 $ mkdir 3party
 $ tree
