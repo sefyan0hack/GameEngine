@@ -24,7 +24,7 @@ constexpr auto to_string(GLenum type) -> const char*
 }
 
 Shader::Shader()
-: m_Id(0), m_Type(0), m_Content("")
+: m_Id(0), m_Type(0), m_Content({})
 {
 }
 
