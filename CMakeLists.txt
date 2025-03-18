@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.25)
 project(Engine LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_SUPPRESS_REGENERATION true)
 
 if(NOT WIN32)
  message(FATAL_ERROR  "Whis project only support Windows. Sorry :)")
