@@ -9,6 +9,8 @@
 #include <filesystem>
 
 #ifdef _WIN32
+#include <windows.h>
+#include <dbghelp.h>
 #ifdef DEBUG
 std::string resolveSymbol(void* addr, HANDLE proc) {
 
