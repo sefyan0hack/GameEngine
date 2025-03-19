@@ -205,20 +205,10 @@ public: // distroy hire
 };
 
 
-#ifdef _WIN32
-#   ifdef DEBUG
-#       define MAIN_FUNC int main()
-#   else
-#       define MAIN_FUNC int APIENTRY WinMain(HINSTANCE, HINSTANCE, PSTR, int)
-#   endif
-#else 
-#   define MAIN_FUNC int main()
-#endif
-
-MAIN_FUNC {
+int main() {
     #ifdef _WIN32
     #   ifdef DEBUG
-    setup_crach_handler();
+        setup_crach_handler();
     #   endif
     #endif
     Game my_game ;

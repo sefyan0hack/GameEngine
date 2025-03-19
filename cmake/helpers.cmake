@@ -73,6 +73,7 @@ function(apply_compile_options)
             target_link_options(${target} PRIVATE
                 "$<$<CONFIG:Debug>:/DEBUG>"       # Debugger-optimized linking (Debug)
                 "$<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>" # no terminale
+                "$<$<CONFIG:Release>:/ENTRY:mainCRTStartup>" # entry
                 "$<$<CONFIG:Release>:/DEBUG>"     # Include debug symbols in Release
                 "$<$<CONFIG:Release>:/OPT:REF>"   # Optimize unused functions
                 "$<$<CONFIG:Release>:/OPT:ICF>"   # Identical COMDAT folding
@@ -107,7 +108,7 @@ function(apply_compile_options)
                 "$<$<CONFIG:Release>:-fasynchronous-unwind-tables>"
                 )
             target_link_options(${target} PRIVATE
-                "$<$<CONFIG:Release>:-mwindows>"
+                "$<$<CONFIG:Release>:-Wl,--subsystem,windows>"
                 "$<$<CONFIG:Release>:-flto>"
                 "$<$<CONFIG:Release>:-Wl,--as-needed>"
             )
