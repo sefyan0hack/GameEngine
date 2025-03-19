@@ -139,19 +139,24 @@ target_compile_definitions(${PROJECT_NAME}
         $<$<CONFIG:Debug>:DEBUG>
 )
 
-if(MSVC)
-    target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME}
     PRIVATE
         glm::glm
         ${OPENGL_LIBRARIES}
-        $<$<CONFIG:Debug>:dbghelp>
-    )
-else()
-    target_link_libraries(${PROJECT_NAME}
-    PRIVATE 
-        glm::glm 
-        ${OPENGL_LIBRARIES} 
-        stdc++exp 
-        $<$<CONFIG:Debug>:dbghelp>
-    )
+        dbghelp
+        $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:stdc++exp>
+)
+
+
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+  add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_OBJCOPY} --only-keep-debug 
+      $<TARGET_FILE:${PROJECT_NAME}>
+      $<TARGET_FILE_DIR:${PROJECT_NAME}>/$<TARGET_FILE_BASE_NAME:${PROJECT_NAME}>.debug
+    COMMAND ${CMAKE_OBJCOPY} --strip-debug $<TARGET_FILE:${PROJECT_NAME}>
+    COMMAND ${CMAKE_OBJCOPY} 
+      --add-gnu-debuglink=$<TARGET_FILE_DIR:${PROJECT_NAME}>/$<TARGET_FILE_BASE_NAME:${PROJECT_NAME}>.debug 
+      $<TARGET_FILE:${PROJECT_NAME}>
+    COMMENT "Separating debug symbols into $<TARGET_FILE_BASE_NAME:${PROJECT_NAME}>.debug"
+  )
 endif()
