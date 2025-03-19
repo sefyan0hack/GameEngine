@@ -13,9 +13,8 @@ APP::APP()
 auto APP::Run() -> void
 {
     #ifdef _WIN32
-    static LARGE_INTEGER hold;
-    QueryPerformanceCounter(&hold); start_count = hold.QuadPart;
-    QueryPerformanceFrequency(&hold); freq = hold.QuadPart;
+    QueryPerformanceCounter((LARGE_INTEGER *)&start_count);
+    QueryPerformanceFrequency((LARGE_INTEGER *)&freq);
     glClearColor(0.2f, 0.21f, 0.22f, 1.0f);
     
     while (Window::WindowsCount() != 0) {
@@ -28,7 +27,7 @@ auto APP::Run() -> void
 
         SwapBuffers(_hdc);
         Sleep(1);
-        QueryPerformanceCounter(&hold); end_count = hold.QuadPart;
+        QueryPerformanceCounter((LARGE_INTEGER *)&end_count);
         counts = end_count - start_count;
         start_count = end_count;
         fps = freq / counts;

@@ -195,7 +195,6 @@ public:
         }
 
         rndr.render(Scn, Cam);
-        //    LOG( "Fps : " << this->fps.QuadPart);
     }
 
 public: // distroy hire
