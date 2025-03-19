@@ -22,9 +22,20 @@ concept Formatable = requires(T t) {
 template<typename Function, typename... Args>
 auto setTimeOut( unsigned long delay, Function&& func, Args&&... args) -> void
 {
-    std::thread([func, delay, args...]() mutable {
+    std::thread([delay, func = std::forward<Function>(func), ...args = std::forward<Args>(args)]() mutable {
         std::this_thread::sleep_for(std::chrono::milliseconds(delay));
         std::invoke(func, std::forward<Args>(args)...);
+    }).detach();
+}
+
+template<typename Function, typename... Args>
+auto Repeat( unsigned long interval, Function&& func, Args&&... args) -> void
+{
+    std::thread([interval, func = std::forward<Function>(func), ...args = std::forward<Args>(args)]() mutable {
+        while(true){
+            std::invoke(func, std::forward<Args>(args)...);
+            std::this_thread::sleep_for(std::chrono::milliseconds(interval));   
+        }
     }).detach();
 }
 
