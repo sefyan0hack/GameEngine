@@ -40,7 +40,7 @@ auto Repeat( unsigned long interval, Function&& func, Args&&... args) -> void
 }
 
 // compile time
-constexpr auto get_file_directory(const std::string_view file_path = __FILE__) -> std::string_view
+consteval auto get_file_directory(const std::string_view file_path = __FILE__) -> std::string_view
 {
     const size_t last_slash = file_path.find_last_of("/\\");
     return (last_slash == std::string_view::npos) ? "" : file_path.substr(0, last_slash);
