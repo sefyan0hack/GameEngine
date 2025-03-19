@@ -105,12 +105,11 @@ function(apply_compile_options)
                 "$<$<CONFIG:Release>:-fno-omit-frame-pointer>"
                 "$<$<CONFIG:Release>:-funwind-tables>"
                 "$<$<CONFIG:Release>:-fasynchronous-unwind-tables>"
-                "$<$<CONFIG:Release>:-gsplit-dwarf>"
                 )
             target_link_options(${target} PRIVATE
                 "$<$<CONFIG:Release>:-mwindows>"
-                "$<$<CONFIG:Release>:-Wl,--strip-all>"
                 "$<$<CONFIG:Release>:-flto>"
+                "$<$<CONFIG:Release>:-Wl,--as-needed>"
             )
         endif()
     endforeach()
