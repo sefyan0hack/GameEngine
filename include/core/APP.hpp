@@ -1,5 +1,6 @@
 #pragma once
 #include <core/Window.hpp>
+#include <cstdint>
 
 class APP
 {
@@ -13,5 +14,5 @@ public:
 
 protected:
     Window m_Window;
-    LARGE_INTEGER start_count, end_count, counts, freq, fps;
+    int64_t start_count, end_count, counts, freq, fps;
 };
