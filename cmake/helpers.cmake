@@ -81,7 +81,8 @@ function(apply_compile_options)
             )
         else()
             target_compile_options(${target} PRIVATE
-                -Wall -Wextra -Wpedantic -Wconversion -Wno-cast-function-type -Wfloat-equal
+                -Wall -Wextra -Wpedantic -Wconversion -Wno-cast-function-type -Wfloat-equal -Winit-self -Wcast-qual -Wwrite-strings
+                -Wmissing-declarations
                 -fno-exceptions
                 -fstack-protector-strong
                 -Wlogical-op -Wnull-dereference -Wswitch-enum
