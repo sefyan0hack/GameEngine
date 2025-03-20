@@ -5,8 +5,14 @@ project(Engine LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_SUPPRESS_REGENERATION true)
 
-if(NOT WIN32)
- message(FATAL_ERROR "This project only support Windows. Sorry :)")
+if(WIN32)
+    add_definitions(-DNOMINMAX)
+    #shut up about unsafe stuff
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+    set(CMAKE_USE_RELATIVE_PATHS true)
+
+else()
+    message(FATAL_ERROR "This project only support Windows. Sorry :)")
 endif()
 
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID} (${CMAKE_CXX_COMPILER_VERSION})")
