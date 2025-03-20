@@ -112,30 +112,19 @@ find_package(OpenGL REQUIRED)
 
 add_executable(${PROJECT_NAME} ${SOURCE})
 
-if(ONLINE)
-    list(APPEND SOURCES "${stb_image_header_SOURCE_DIR}/stb_image.h")
-    set_source_files_properties("${stb_image_header_SOURCE_DIR}/stb_image.h" PROPERTIES COMPILE_FLAGS
-        "$<$<CXX_COMPILER_ID:MSVC>:/W0>$<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-w>"
-    )
+target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/include")
 
-    target_include_directories(${PROJECT_NAME} PRIVATE
-        "${CMAKE_SOURCE_DIR}/include"
-        ${stb_image_header_SOURCE_DIR}
-    )
+if(ONLINE)
+    set(STB_IMG_HEADER ${stb_image_header_SOURCE_DIR})
 else()
-    list(APPEND SOURCES "${CMAKE_SOURCE_DIR}/3party/stb_image.h")
-    set_source_files_properties("${CMAKE_SOURCE_DIR}/3party/stb_image.h" PROPERTIES COMPILE_FLAGS 
-        "$<$<CXX_COMPILER_ID:MSVC>:/W0>$<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-w>"
-    )
-  
-    target_include_directories(${PROJECT_NAME} PRIVATE
-        "${CMAKE_SOURCE_DIR}/include"
-        "${CMAKE_SOURCE_DIR}/3party"
-    )
+    set(STB_IMG_HEADER ${CMAKE_SOURCE_DIR}/3party)
 endif()
 
+add_library(stb_image INTERFACE)
+target_include_directories(stb_image SYSTEM INTERFACE ${STB_IMG_HEADER})
+
 # flags
-apply_compile_options(TARGETS ${PROJECT_NAME} )
+apply_compile_options(TARGETS ${PROJECT_NAME})
 
 print_target_compile_options(${PROJECT_NAME})
 
@@ -150,6 +139,7 @@ target_link_libraries(${PROJECT_NAME}
         glm::glm
         ${OPENGL_LIBRARIES}
         dbghelp
+        stb_image
         $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:stdc++exp>
 )
 
