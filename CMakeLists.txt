@@ -2,8 +2,16 @@ cmake_minimum_required(VERSION 3.25)
 
 project(Engine LANGUAGES C CXX)
 
+####################################################################################################
+# Futures 
+####################################################################################################
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_SUPPRESS_REGENERATION true)
+
+####################################################################################################
+# WIN32 defines 
+####################################################################################################
 
 if(WIN32)
     add_definitions(-DNOMINMAX)
@@ -14,6 +22,10 @@ if(WIN32)
 else()
     message(FATAL_ERROR "This project only support Windows. Sorry :)")
 endif()
+
+####################################################################################################
+# Compiler Check
+####################################################################################################
 
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID} (${CMAKE_CXX_COMPILER_VERSION})")
 
@@ -29,7 +41,9 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   endif()
 endif()
 
-include(${CMAKE_SOURCE_DIR}/cmake/helpers.cmake)
+####################################################################################################
+# Check if 3party exist to not fetch Debs
+####################################################################################################
 
 if(EXISTS ${CMAKE_SOURCE_DIR}/3party)
     set(ONLINE FALSE)
@@ -37,6 +51,7 @@ else()
     set(ONLINE TRUE)
 endif()
 
+include(${CMAKE_SOURCE_DIR}/cmake/helpers.cmake)
 if(ONLINE)
 
 # Include get_cpm.cmake
@@ -86,7 +101,11 @@ else()
 add_subdirectory(3party/glm)
 endif()
 
-set(SOURCE
+####################################################################################################
+# Source Files 
+####################################################################################################
+
+set(SOURCES
     src/main.cpp
     src/Keyboard.cpp
     src/Mouse.cpp
@@ -107,10 +126,23 @@ set(SOURCE
     src/ResourceManager.cpp
 	)
 
+
+####################################################################################################
+# Find instaled packages 
+####################################################################################################
+
 # Find OpenGL package
 find_package(OpenGL REQUIRED)
 
-add_executable(${PROJECT_NAME} ${SOURCE})
+####################################################################################################
+# Build Exe 
+####################################################################################################
+
+add_executable(${PROJECT_NAME} ${SOURCES})
+
+####################################################################################################
+# Include Dirs 
+####################################################################################################
 
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/include")
 
@@ -123,7 +155,10 @@ endif()
 add_library(stb_image INTERFACE)
 target_include_directories(stb_image SYSTEM INTERFACE ${STB_IMG_HEADER})
 
-# flags
+####################################################################################################
+# Compile Flags 
+####################################################################################################
+
 apply_compile_options(TARGETS ${PROJECT_NAME})
 
 print_target_compile_options(${PROJECT_NAME})
@@ -134,6 +169,10 @@ target_compile_definitions(${PROJECT_NAME}
         $<$<CONFIG:Debug>:DEBUG>
 )
 
+####################################################################################################
+# Link Libs 
+####################################################################################################
+
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
         glm::glm
@@ -142,6 +181,10 @@ target_link_libraries(${PROJECT_NAME}
         stb_image
         $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:stdc++exp>
 )
+
+####################################################################################################
+# Separate debug symbols from release buld (GNU or Clang)
+####################################################################################################
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
