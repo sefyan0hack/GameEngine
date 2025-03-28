@@ -6,9 +6,6 @@
 #include <core/fmts.hpp>
 #include <core/AutoRelease.hpp>
 #include <core/Camera.hpp>
-#include <vector>
-#include <memory>
-#include <format>
 
 
 class GameObject {

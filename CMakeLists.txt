@@ -181,6 +181,14 @@ target_link_libraries(${PROJECT_NAME}
         stb_image
         $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:stdc++exp>
 )
+target_precompile_headers(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
+
+# Force-Include for Compilers
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(${PROJECT_NAME} PRIVATE -include ${CMAKE_SOURCE_DIR}/include/pch.h)
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_compile_options(${PROJECT_NAME} PRIVATE /FI${CMAKE_SOURCE_DIR}/include/pch.h)
+endif()
 
 ####################################################################################################
 # Separate debug symbols from release buld (GNU or Clang)

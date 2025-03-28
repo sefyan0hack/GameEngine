@@ -5,7 +5,6 @@
 #include <core/Mesh.hpp>
 #include <core/ResourceManager.hpp>
 #include <glm/glm.hpp>
-#include <ranges>
 
 
 Material::Material(const Shader& vertex, const Shader& fragment)

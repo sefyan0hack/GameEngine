@@ -1,9 +1,4 @@
 #pragma once
-#include <unordered_map>
-#include <string>
-#include <memory>
-#include <vector>
-#include <array>
 
 #include <core/Texture.hpp>
 #include <core/Shader.hpp>

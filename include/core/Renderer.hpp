@@ -1,5 +1,5 @@
 #pragma once
-#include <string>
+
 #include <core/gl.h>
 
 class Scene;

@@ -1,6 +1,5 @@
 #include <core/Mesh.hpp>
 #include <core/Log.hpp>
-#include <type_traits>
 
 namespace {
 

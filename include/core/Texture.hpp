@@ -1,9 +1,5 @@
 #pragma once
-#include <unordered_map>
-#include <string>
-#include <format>
-#include <vector>
-#include <array>
+
 #include <core/gl.h>
 
 struct Image {

@@ -1,6 +1,5 @@
 #pragma once
 #include <core/Window.hpp>
-#include <cstdint>
 
 class APP
 {

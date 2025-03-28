@@ -1,14 +1,7 @@
 #pragma once
 #include <core/Global_H.hpp>
-#include <iostream>
 #include <glcorearb.h> // need repl  with glext.h
-#include <type_traits>
-#include <string>
-#include <array>
-#include <source_location>
-#include <tuple>
-#include <utility>
-#include <ranges>
+
 
 #ifdef _WIN32
 #include <windows.h>

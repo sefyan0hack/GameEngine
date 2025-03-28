@@ -1,8 +1,6 @@
 #include <core/Texture.hpp>
 #include <core/Log.hpp>
 #include <core/Utils.hpp>
-#include <expected>
-#include <ranges>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 

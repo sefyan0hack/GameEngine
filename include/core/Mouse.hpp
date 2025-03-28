@@ -1,6 +1,4 @@
 #pragma once
-#include <queue>
-#include <optional>
 
 class Window;
 class Mouse

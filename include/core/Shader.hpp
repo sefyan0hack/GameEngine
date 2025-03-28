@@ -1,10 +1,7 @@
 #pragma once
 
-#include <unordered_map>
 #include <core/gl.h>
 #include <core/fmts.hpp>
-#include <format>
-#include <vector>
 
 class Shader
 {

@@ -4,8 +4,7 @@
 #include <core/Scene.hpp>
 #include <core/GameObject.hpp>
 #include <core/Camera.hpp>
-#include <ranges>
-#include <iostream>
+
 
 // const char* getEnumName(GLenum value) {
 //     switch(value) {

@@ -1,6 +1,5 @@
 #pragma once
-#include <memory>
-#include <vector>
+
 #include <core/OpenGL.hpp>
 #include <tchar.h>
 #include <core/gl.h>

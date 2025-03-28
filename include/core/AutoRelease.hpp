@@ -1,10 +1,4 @@
 #pragma once
-#include <atomic>
-#include <cstddef>
-#include <utility>
-#include <functional>
-#include <memory>
-
 
 template <typename T>
 class AutoRelease {

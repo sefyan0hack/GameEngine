@@ -1,6 +1,3 @@
-#include <iostream>
-#include <vector>
-#include <stacktrace>
 #include <core/Mesh.hpp>
 #include <core/APP.hpp>
 #include <core/GameObject.hpp>
@@ -12,14 +9,13 @@
 #include <core/Material.hpp>
 #include <core/Log.hpp>
 #include <core/ResourceManager.hpp>
-#include <thread>
 
 // #define USE_EBO
 
 using namespace std;
 class Game : public APP
 {
-    
+
 private:
 #ifdef USE_EBO
     std::vector<Vertex> cubeMeshVert {

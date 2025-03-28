@@ -1,6 +1,5 @@
 #include <core/Scene.hpp>
 #include <core/GameObject.hpp>
-#include <vector>
 
 Scene::Scene(std::unique_ptr<SkyBox> skybox)
     : m_SkyBox(std::move(skybox))

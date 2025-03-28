@@ -2,7 +2,6 @@
 #include <core/Window.hpp>
 #include <core/Log.hpp>
 #include <core/gl.h>
-#include <algorithm>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/fast_trigonometry.hpp>

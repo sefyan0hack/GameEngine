@@ -1,16 +1,10 @@
 #pragma once
 #include <core/gl.h>
-#include <string>
-#include <unordered_map>
-#include <map>
-#include <initializer_list>
 #include <core/fmts.hpp>
 #include <core/Shader.hpp>
 #include <core/Texture.hpp>
 #include <core/Mesh.hpp>
 
-#include <memory>
-#include <format>
 
 class Material
 {

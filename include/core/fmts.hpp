@@ -1,7 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
-#include <format>
-#include <vector>
+
 
 // custom glm::vec2 Format
 template<>

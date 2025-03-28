@@ -1,12 +1,4 @@
 #include <core/Log.hpp>
-#include <csignal>
-#include <fstream>
-#include <iostream>
-#include <cstdint>
-#include <iomanip>
-#include <cstring>
-#include <sstream>
-#include <filesystem>
 
 #ifdef _WIN32
 #include <windows.h>

@@ -2,9 +2,7 @@
 #include <core/Log.hpp>
 #include <core/OpenGL.hpp>
 #include <core/Shader.hpp>
-#include <string>
-#include <fstream>
-#include <sstream>
+
 
 namespace {
 

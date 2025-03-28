@@ -1,18 +1,6 @@
 #pragma once
 
-#include <source_location>
-#include <format>
-#include <iostream>
-#include <chrono>
-#include <string_view>
-#include <cstdlib>
-#include <stacktrace>
-#include <sstream>
-#include <fstream>
-#include <optional>
-#include <mutex>
 #include <core/gl.h>
-
 
 #ifdef _WIN32
 #ifdef DEBUG

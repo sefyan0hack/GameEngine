@@ -1,18 +1,5 @@
 #pragma once
 
-#include <thread>
-#include <chrono>
-#include <functional>
-#include <array>
-#include <cstddef>
-#include <string_view>
-#include <algorithm>
-
-#include <fstream>
-#include <future>
-#include <iostream>
-#include <vector>
-#include <type_traits>
 
 template <typename T>
 concept Formatable = requires(T t) {

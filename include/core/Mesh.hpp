@@ -1,10 +1,9 @@
 #pragma once
-#include <vector>
-#include <string>
+
 #include <glm/glm.hpp>
 #include <core/gl.h>
 #include <core/fmts.hpp>
-#include <format>
+
 
 struct Vertex
 {

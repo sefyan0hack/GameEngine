@@ -4,7 +4,6 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <type_traits>
 
 GameObject::GameObject(glm::vec3 position, Material& matt, Mesh& mesh, std::string Name)
     : m_Transform(Transform(position))

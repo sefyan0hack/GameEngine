@@ -1,9 +1,6 @@
 #pragma once
 
 #include <core/gl.h>
-#include <ctime>
-#include <vector>
-#include <string>
 
 #ifdef _WIN32
 #include <windows.h>
