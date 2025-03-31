@@ -210,14 +210,14 @@ auto WINAPI ExceptionHandler([[maybe_unused]] PEXCEPTION_POINTERS ex) -> LONG
             return EXCEPTION_EXECUTE_HANDLER;
     }
     
-    Log::Info("--- Exception Caught ---");
-    Log::Info("Exception {} (0x{:x})", EXCEPTION_RECORD_to_str(excode), excode);
-    Log::Info("Exception  [{}] - {}", exaddr, symName);
-    Log::Info("Exception Flags: {:#x}", exr->ExceptionFlags);
-    Log::Info("Number of Parameters: {}", exr->NumberParameters);
+    Info("--- Exception Caught ---");
+    Info("Exception {} (0x{:x})", EXCEPTION_RECORD_to_str(excode), excode);
+    Info("Exception  [{}] - {}", exaddr, symName);
+    Info("Exception Flags: {:#x}", exr->ExceptionFlags);
+    Info("Number of Parameters: {}", exr->NumberParameters);
     
     for (DWORD i = 0; i < exr->NumberParameters; i++) {
-        Log::Info("Parameter[{}]: {:p}", i, (void*)exr->ExceptionInformation[i]);
+        Info("Parameter[{}]: {:p}", i, (void*)exr->ExceptionInformation[i]);
     }
 
     if(ex->ContextRecord != nullptr){

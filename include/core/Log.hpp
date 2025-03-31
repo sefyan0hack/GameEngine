@@ -56,51 +56,47 @@ concept StreamOut = requires(){
   { T::get_stream() } -> std::convertible_to<std::ostream&>;
 };
 
-template <Log_LvL lvl, StreamOut Out, typename ...Ts>
-struct ERRF
-{
-  ERRF([[maybe_unused]] const std::format_string<Ts...> fmt, [[maybe_unused]] Ts&& ... ts, [[maybe_unused]] std::source_location loc = std::source_location::current())
-  {
-    auto formatted_msg = std::format(fmt, std::forward<Ts>(ts)...);
-    auto lvl_str = levelToString(lvl);
-    auto msg = std::stringstream{};
-    auto& out = Out::get_stream();
-
-
-    if constexpr (lvl == Log_LvL::INFO)
-    {
-      msg << std::format("{} : [{}] {}", formatedTime(), lvl_str, formatted_msg) << "\n";
-    }
-    else if constexpr (lvl == Log_LvL::ERR)
-    {
-      msg << std::format("{} : [{}] {}\n--> {}:{}", formatedTime(), lvl_str, formatted_msg, loc.file_name(), loc.line())
-      << "\n" << std::stacktrace::current(1) << "\n";
-
-      #ifdef _WIN32
-      MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONWARNING );
-      #endif
-    }
-
-    {
-      std::lock_guard lock(mutex_);
-      out << msg.rdbuf();
-      out.flush();
-    }
-
-    if constexpr (lvl == Log_LvL::ERR) exit(EXIT_FAILURE);
-  }
-
-  private:
-    inline static std::mutex mutex_;
-};
-
-template <Log_LvL lvl, StreamOut Out, typename ...Ts>
-ERRF(const std::format_string<Ts...>, Ts&& ...) -> ERRF<lvl, Out, Ts...>;
-
+inline auto& get_logger_mutex() {
+  static std::mutex mtx;
+  return mtx;
 }
 
-namespace Log
+template <Log_LvL lvl, StreamOut Out, typename ...Ts>
+auto ERRF(
+  [[maybe_unused]] std::source_location loc,
+  [[maybe_unused]] const std::format_string<Ts...> fmt,
+  [[maybe_unused]] Ts&& ... ts) -> void
 {
+  std::scoped_lock lock(get_logger_mutex());
+  auto formatted_msg = std::format(fmt, std::forward<Ts>(ts)...);
+  auto lvl_str = levelToString(lvl);
+  auto msg = std::stringstream{};
+  auto& out = Out::get_stream();
+
+
+  if constexpr (lvl == Log_LvL::INFO)
+  {
+    msg << std::format("{} : [{}] {}", formatedTime(), lvl_str, formatted_msg) << "\n";
+  }
+  else if constexpr (lvl == Log_LvL::ERR)
+  {
+    msg << std::format("{} : [{}] {}\n--> {}:{}", formatedTime(), lvl_str, formatted_msg, loc.file_name(), loc.line())
+    << "\n" << std::stacktrace::current(1) << "\n";
+
+    #ifdef _WIN32
+    MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONWARNING );
+    #endif
+  }
+
+  {
+    out << msg.rdbuf();
+    out.flush();
+  }
+
+  if constexpr (lvl == Log_LvL::ERR) exit(EXIT_FAILURE);
+}
+
+}
 
 template <typename ...Ts>
 auto print(const std::format_string<Ts...> fmt, Ts&& ... ts) -> void
@@ -108,17 +104,12 @@ auto print(const std::format_string<Ts...> fmt, Ts&& ... ts) -> void
   std::cout << std::format("{} : {}\n", formatedTime(), std::format(fmt, std::forward<Ts>(ts)...));
 }
 
-
-
-template <typename ...Ts>
-using Error = ERRF<Log_LvL::ERR, CerrPolicy, Ts...>;
-
 #ifdef DEBUG
-template <typename ...Ts>
-using Info = ERRF<Log_LvL::INFO, ClogPolicy, Ts...>;
+#define Error(...) ERRF<Log_LvL::ERR, CerrPolicy>(std::source_location::current(), __VA_ARGS__)
+#define Info(...) ERRF<Log_LvL::INFO, ClogPolicy>(std::source_location::current(), __VA_ARGS__)
 #else
-template <typename ...Ts>
-using Info = ERRF<Log_LvL::INFO, FilePolicy, Ts...>;
+#define Error(...) ERRF<Log_LvL::ERR, FilePolicy>(std::source_location::current(), __VA_ARGS__)
+#define Info(...) ERRF<Log_LvL::INFO, FilePolicy>(std::source_location::current(), __VA_ARGS__)
 #endif
 
 template <typename ...Ts>
@@ -132,4 +123,3 @@ auto Expect(bool x, const std::format_string<Ts...> fmt, Ts&& ... ts) -> void
     std::abort();
   }
 }
-} // namespace Log
