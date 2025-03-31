@@ -39,14 +39,14 @@
     default:                             severity_ = "<SEVERITY>";   break;
     }
 
-    Log::Info("[{} {}({})] From {} : \n\t- {}", severity_, type_, id, source_, message);
+    Info("[{} {}({})] From {} : \n\t- {}", severity_, type_, id, source_, message);
 }
 
 
 auto __GetProcAddress(LPCSTR module, const char* name) -> void* {
     auto lib = LoadLibraryA(module);
     if(lib == nullptr){
-        Log::Error("Couldnt load lib opengl32 reason: {}", GetLastError());
+        Error("Couldnt load lib opengl32 reason: {}", GetLastError());
         return nullptr;
     }
 
@@ -55,7 +55,7 @@ auto __GetProcAddress(LPCSTR module, const char* name) -> void* {
     {
         return address;
     }else{
-        Log::Error("Couldnt load function `{}` from module : {}", name, module);
+        Error("Couldnt load function `{}` from module : {}", name, module);
         return nullptr;
     }
 }
@@ -70,11 +70,11 @@ auto rsgl(const char* name) -> void* {
     {
         address = __GetProcAddress(OpenGL::OPENGL_MODULE_NAME, name);
         if(address == nullptr){
-            Log::Error("Couldnt load opengl function `{}` reason: {}", name, GetLastError());
+            Error("Couldnt load opengl function `{}` reason: {}", name, GetLastError());
         }  
     }
 
-    Log::Info("load opengl function `{}` at : {}", name, address);
+    Info("load opengl function `{}` at : {}", name, address);
     return address;
 }
 
@@ -87,7 +87,7 @@ OpenGL::OpenGL(HWND window)
     , m_Debug(false)
 {
     if( m_MainHDC == nullptr){
-        Log::Error("HDC not valid");
+        Error("HDC not valid");
     }
 
     init_opengl();
@@ -140,13 +140,13 @@ OpenGL::OpenGL(HWND window)
     }
     #endif
 
-    Log::Info("GL Version : {}.{}", m_Major, m_Minor);
-    Log::Info("GLSL Version Supported : {}", to_string(m_GlslVersions));
-    Log::Info("GL Vendor : {}", m_Vendor);
-    Log::Info("GL Renderer : {}", m_Renderer);
-    Log::Info("GL Exts : {}", to_string(m_Extensions));
-    Log::Info("Max Texture Units : {}", m_MaxTextureUnits);
-    Log::Info("Debug : {}", m_Debug ? "On" : "Off");
+    Info("GL Version : {}.{}", m_Major, m_Minor);
+    Info("GLSL Version Supported : {}", to_string(m_GlslVersions));
+    Info("GL Vendor : {}", m_Vendor);
+    Info("GL Renderer : {}", m_Renderer);
+    Info("GL Exts : {}", to_string(m_Extensions));
+    Info("Max Texture Units : {}", m_MaxTextureUnits);
+    Info("Debug : {}", m_Debug ? "On" : "Off");
 }
 
 OpenGL::OpenGL(const OpenGL &other)
@@ -158,7 +158,7 @@ OpenGL::OpenGL(const OpenGL &other)
     , m_Debug(other.m_Debug)
 {
     auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
-    if(tst != TRUE) Log::Error("couldn't Copy Opengl Context");
+    if(tst != TRUE) Error("couldn't Copy Opengl Context");
 }
 
 auto OpenGL::operator=(const OpenGL &other) -> OpenGL
@@ -172,7 +172,7 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL
         this->m_Debug = other.m_Debug;
 
         auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
-        if(tst != TRUE) Log::Error("couldn't Copy Opengl Context");
+        if(tst != TRUE) Error("couldn't Copy Opengl Context");
     }
     return *this;
 }
@@ -252,10 +252,10 @@ auto OpenGL::init_opengl() -> void
 
     auto pixel_format = ChoosePixelFormat(m_MainHDC, &pfd);
     if (!pixel_format) {
-        Log::Error("Failed to find a suitable pixel format.");
+        Error("Failed to find a suitable pixel format.");
     }
     if (!SetPixelFormat(m_MainHDC, pixel_format, &pfd)) {
-        Log::Error("Failed to set the pixel format.");
+        Error("Failed to set the pixel format.");
     }
 
     _wglMakeCurrent     = (decltype(_wglMakeCurrent))__GetProcAddress(OPENGL_MODULE_NAME, "wglMakeCurrent");
@@ -268,7 +268,7 @@ auto OpenGL::init_opengl() -> void
         || !_wglCreateContext
         || !_wglGetProcAddress
         || !_wglDeleteContext) {
-        Log::Error("Failed to load required WGL function.");
+        Error("Failed to load required WGL function.");
     }
 
 
@@ -276,18 +276,18 @@ auto OpenGL::init_opengl() -> void
 
     dummy_context = _wglCreateContext(m_MainHDC);
     if (!dummy_context) {
-        Log::Error("Failed to create a dummy OpenGL rendering context.");
+        Error("Failed to create a dummy OpenGL rendering context.");
     }
 
     if (!_wglMakeCurrent(m_MainHDC, dummy_context)) {
-        Log::Error("Failed to activate dummy OpenGL rendering context.");
+        Error("Failed to activate dummy OpenGL rendering context.");
     }
 
     wglCreateContextAttribsARB  = (decltype(wglCreateContextAttribsARB))rsgl("wglCreateContextAttribsARB");
     wglGetExtensionsStringARB   = (decltype(wglGetExtensionsStringARB))rsgl("wglGetExtensionsStringARB");
 
     if (!wglGetExtensionsStringARB || !wglCreateContextAttribsARB) {
-        Log::Error("Failed to load required WGL extensions.");
+        Error("Failed to load required WGL extensions.");
     }
 
     int gl_attribs[] = { 
@@ -308,9 +308,9 @@ auto OpenGL::init_opengl() -> void
         m_Context = nullptr;
 
         if (GetLastError() == ERROR_INVALID_VERSION_ARB){ // ?
-            Log::Error("Unsupported GL Version {}.{}", gl_attribs[1], gl_attribs[3]);
+            Error("Unsupported GL Version {}.{}", gl_attribs[1], gl_attribs[3]);
         }
-        Log::Error("Failed to create the final rendering context!");
+        Error("Failed to create the final rendering context!");
     }
 
     _wglMakeCurrent(m_MainHDC, opengl_context); // conseder to make it curent in window.hpp maybe

@@ -25,7 +25,7 @@ Window::WinClass::WinClass(){
 	m_Windclass = RegisterClassEx(&m_WinclassEx);
 		
     if(m_Windclass == 0){
-        Log::Error("faild to regester class {}", GetLastError());
+        Error("faild to regester class {}", GetLastError());
     }
 }
 
@@ -55,7 +55,7 @@ auto CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lp
     switch (msg)
     {
         case WM_CREATE:{
-            Log::Info("Creat Main Window");
+            Info("Creat Main Window");
             return 0;
         }
         case WM_CLOSE:{
@@ -65,7 +65,7 @@ auto CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lp
                 m_Visible = false;
                 ShowWindow(Winhandle, HIDE_WINDOW);
                 PostQuitMessage(0); //hmmmm
-                Log::Info("Exit. ");
+                Info("Exit. ");
             }
             return 0;
         }
@@ -257,7 +257,7 @@ auto Window::_init_helper(int Width, int Height, const TCHAR* Title) -> void
 	WinRect.bottom = Height + WinRect.top;
 	if( AdjustWindowRect( &WinRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE ) == 0 )
 	{
-		Log::Error("Addjusting Win");
+		Error("Addjusting Win");
 	}
     m_Width = WinRect.right - WinRect.left;
     m_Height = WinRect.bottom - WinRect.top;
@@ -273,7 +273,7 @@ auto Window::_init_helper(int Width, int Height, const TCHAR* Title) -> void
     );
 
     if(m_WindowHandle == nullptr){
-        Log::Error("faild to creat Window code : {}", GetLastError());
+        Error("faild to creat Window code : {}", GetLastError());
         return;
     }
 	// regester mouse raw data
@@ -283,7 +283,7 @@ auto Window::_init_helper(int Width, int Height, const TCHAR* Title) -> void
 	_rid.usUsage  = 0x02;
 	_rid.hwndTarget = nullptr;
 	if(RegisterRawInputDevices(&_rid, 1, sizeof(_rid)) == false){
-		Log::Error("Mouse row data not regesterd");
+		Error("Mouse row data not regesterd");
 	}
     
     ShowWindow(m_WindowHandle, SW_SHOW);

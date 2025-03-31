@@ -123,7 +123,7 @@ Texture2D::Texture2D(const std::string &name)
 
         if (m_Mipmapped) GenerateMipMap();
 
-        Log::Info("Loding {} ", name);
+        Info("Loding {} ", name);
     }
     else
     {
@@ -131,10 +131,10 @@ Texture2D::Texture2D(const std::string &name)
         GLfloat clearColor[3] = { 1.0f, 0.0f, 1.0f};
         glClearTexImage(m_Id, 0, GL_RGB, GL_FLOAT, clearColor); 
         
-        Log::Info("{}", result.error());
+        Info("{}", result.error());
     }
 
-    Log::Info("{}", static_cast<const Texture&>(*this));
+    Info("{}", static_cast<const Texture&>(*this));
 }
 
 auto Texture2D::GenerateMipMap() -> void
@@ -177,11 +177,11 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
 
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, dataface.data());
 
-            Log::Info("Loding {} ", face);
+            Info("Loding {} ", face);
         }else{
-            Log::Error("{}", result.error());
+            Error("{}", result.error());
         }
     }
     glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-    Log::Info("{}", static_cast<const Texture&>(*this));
+    Info("{}", static_cast<const Texture&>(*this));
 }

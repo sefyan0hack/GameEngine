@@ -15,7 +15,7 @@ Camera::Camera(Window &window)
   m_Sensitivity(0.11f),
   m_Yaw(-90), m_Pitch(0)
   {
-    Log::Info("{}", *this);
+    Info("{}", *this);
   }
 
 Camera::~Camera() {

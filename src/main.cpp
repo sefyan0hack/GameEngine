@@ -147,7 +147,7 @@ private:
         Scn << GameObject({1,1,0}, Matt, cubeMesh);
         Scn << GameObject({1,1,1}, Matt, cubeMesh);
         
-        // #define PrintGLfunc(type, name) Log::print("{} {}", (void*)name, #name)
+        // #define PrintGLfunc(type, name) print("{} {}", (void*)name, #name)
         
         // GLFUNCS(PrintGLfunc)
     }
@@ -195,7 +195,7 @@ public:
 
 public: // distroy hire
     ~Game(){
-        Log::Info("Game Destructor");
+        Info("Game Destructor");
     }
 };
 

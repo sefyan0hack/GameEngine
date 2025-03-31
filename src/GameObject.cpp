@@ -12,7 +12,7 @@ GameObject::GameObject(glm::vec3 position, Material& matt, Mesh& mesh, std::stri
     , m_Name(Name)
 {   
     UpMatrix();
-    Log::Info("{}", *this);
+    Info("{}", *this);
     Count++;
 }
 
@@ -23,7 +23,7 @@ GameObject::GameObject(Transform transform, Material &matt, Mesh &mesh, std::str
     , m_Name(Name)
 {
     UpMatrix();
-    Log::Info("{}", *this);
+    Info("{}", *this);
     Count++;
 }
 
@@ -51,7 +51,7 @@ auto GameObject::SetUp(std::vector<glm::vec3> InsPos) -> void
         GLuint VBO; // posible leak vbo think about it `TODO`
         glGenBuffers(1, &VBO);
         
-        Log::Expect(m_Mesh->VAO != 0, "VAO is 0");
+        Expect(m_Mesh->VAO != 0, "VAO is 0");
         auto currentVBO = m_Mesh->CurrentVBO();
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -131,6 +131,6 @@ auto GameObject::material() const -> std::shared_ptr<Material>
 
 auto GameObject::Bind() const -> void
 {
-    Log::Expect(m_Mesh->VAO != 0, "VAO is 0");
+    Expect(m_Mesh->VAO != 0, "VAO is 0");
     glBindVertexArray(m_Mesh->VAO);
 }

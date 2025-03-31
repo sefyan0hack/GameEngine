@@ -32,7 +32,7 @@ Shader::Shader(const char* name, GLenum type)
     LoadSource();
     Compile(m_Id);
     checkShaderCompileStatus(m_Id);
-    Log::Info("{}", *this);
+    Info("{}", *this);
 }
 
 Shader::Shader(const Shader& other)
@@ -43,7 +43,7 @@ Shader::Shader(const Shader& other)
     LoadSource();
     Compile(m_Id);
     checkShaderCompileStatus(m_Id);
-    Log::Info("{}", *this);
+    Info("{}", *this);
 
 }
 
@@ -108,9 +108,9 @@ auto Shader::LoadFile(const char* filename) -> std::vector<GLchar>
         str += '\0';
         result.resize(str.size());
         memcpy(result.data(), str.data(), str.size());
-        Log::Info("Loding {} ", filename);
+        Info("Loding {} ", filename);
     }else{
-        Log::Error("Couldnt open file {} : {}", filename, errno);
+        Error("Couldnt open file {} : {}", filename, errno);
     }
 
     file.close();
@@ -131,7 +131,7 @@ auto Shader::checkShaderCompileStatus(const GLuint &shader) -> void
         glGetShaderInfoLog(shader, 512, NULL, infoLog);
         // ERR("SHADER::COMPILATION_FAILED\n" << infoLog );
         glDeleteShader(shader); // Don't leak the shader.
-        Log::Error("SHADER::COMPILATION_FAILED {}", infoLog);
+        Error("SHADER::COMPILATION_FAILED {}", infoLog);
     }
 }
 

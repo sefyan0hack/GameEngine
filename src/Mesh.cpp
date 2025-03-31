@@ -163,7 +163,7 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vect
     PrepareVertexdata();
     PrepareAttribs();
     Count++;
-    Log::Info("{}", *this);
+    Info("{}", *this);
 }
 
 
@@ -249,12 +249,12 @@ auto Mesh::operator==(const Mesh &other) const -> bool
 // {
 //     GLuint clone = 0;
 //     glGenVertexArrays(1, &clone);
-//     if(clone == 0) Log::Error("clone is 0");
+//     if(clone == 0) Error("clone is 0");
     
 //     GLint maxAttributes = 0;
 //     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxAttributes);
 
-//     if(attribs.size() >= maxAttributes) Log::Error("attribs reched max `{}`", maxAttributes);
+//     if(attribs.size() >= maxAttributes) Error("attribs reched max `{}`", maxAttributes);
 
 //     // glBindVertexArray(src);
 
@@ -273,7 +273,7 @@ auto Mesh::operator==(const Mesh &other) const -> bool
 //     //     }
 //     // }
 
-//     Log::Expect(glIsBuffer(this->VBO) == GL_TRUE, "{} is not valid buffer", this->VBO);
+//     Expect(glIsBuffer(this->VBO) == GL_TRUE, "{} is not valid buffer", this->VBO);
 
 //     glBindVertexArray(clone);
 //     glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
@@ -289,7 +289,7 @@ auto Mesh::operator==(const Mesh &other) const -> bool
 auto Mesh::CloneBuffer(GLenum type, GLuint src) -> GLuint
 {
     GLuint clone = GenBuffer();
-    if(clone == 0) Log::Error("VBO clone is 0");
+    if(clone == 0) Error("VBO clone is 0");
 
     BindBuffer(type, src);
     
@@ -303,7 +303,7 @@ auto Mesh::CloneBuffer(GLenum type, GLuint src) -> GLuint
         glCopyBufferSubData(type, GL_COPY_WRITE_BUFFER, 0, 0, bufferSize);
     } else {
         glDeleteBuffers(1, &clone);
-        Log::Error("VBO bufferSize is 0");
+        Error("VBO bufferSize is 0");
     }
 
     return clone;
@@ -324,9 +324,9 @@ auto Mesh::CloneEBO([[maybe_unused]] GLuint src) -> GLuint
 }
 auto Mesh::setAttribute(GLuint index, AttributeInfo att) -> void
 {
-    Log::Expect(att.size > 0 && att.size <= 4, "position.size : 0<{}<4 wrong", att.size);
+    Expect(att.size > 0 && att.size <= 4, "position.size : 0<{}<4 wrong", att.size);
 
-    Log::Info(
+    Info(
         "attribute {} : size: {}, type: {}, normalized: {}, stride: {}, offset: {}",
         index,
         att.size,
@@ -425,7 +425,7 @@ auto Mesh::GenVertexArray() -> GLuint
 {
     GLuint result = 0;
     glGenVertexArrays(1, &result);
-    Log::Info("GenVertexArray {}", result);
+    Info("GenVertexArray {}", result);
     return result;
 }
 
@@ -433,7 +433,7 @@ auto Mesh::GenBuffer() -> GLuint
 {
     GLuint result = 0;
     glGenBuffers(1, &result);
-    Log::Info("GenBuffer {}", result);
+    Info("GenBuffer {}", result);
     return result;
 }
 auto Mesh::BindVertexArray(GLuint vao) -> void
