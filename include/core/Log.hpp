@@ -15,6 +15,8 @@ namespace {
 enum class Log_LvL : char {
   ERR,
   INFO,
+  EXPT,
+  PRT,
 };
 
 static std::string formatedTime() {
@@ -24,8 +26,10 @@ static std::string formatedTime() {
 
 constexpr const char* levelToString(Log_LvL level) {
   switch (level) {
-    case Log_LvL::INFO: return "INFO";
     case Log_LvL::ERR:  return "ERROR";
+    case Log_LvL::INFO: return "INFO";
+    case Log_LvL::EXPT: return "EXPECT";
+    case Log_LvL::PRT:  return "PRINT";
     default:            return "UNKNOWN";
   }
 }
@@ -72,20 +76,28 @@ auto ERRF(
   auto lvl_str = levelToString(lvl);
   auto msg = std::stringstream{};
   auto& out = Out::get_stream();
-
-
-  if constexpr (lvl == Log_LvL::INFO)
-  {
-    msg << std::format("{} : [{}] {}", formatedTime(), lvl_str, formatted_msg) << "\n";
-  }
-  else if constexpr (lvl == Log_LvL::ERR)
-  {
+  
+  if constexpr (lvl == Log_LvL::ERR){
     msg << std::format("{} : [{}] {}\n--> {}:{}", formatedTime(), lvl_str, formatted_msg, loc.file_name(), loc.line())
     << "\n" << std::stacktrace::current(1) << "\n";
 
     #ifdef _WIN32
     MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONWARNING );
     #endif
+  }
+  else if constexpr (lvl == Log_LvL::INFO){
+    msg << std::format("{} : [{}] {}", formatedTime(), lvl_str, formatted_msg) << "\n";
+  }
+  else if constexpr (lvl == Log_LvL::EXPT){
+    msg << std::format("{} : [{}] {}\n--> {}:{}", formatedTime(), lvl_str, formatted_msg, loc.file_name(), loc.line())
+    << "\n" << std::stacktrace::current(1) << "\n";
+
+    #ifdef _WIN32
+    MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONWARNING );
+    #endif
+  }
+  else if constexpr (lvl == Log_LvL::PRT){
+    msg << std::format("{} : {}\n", formatedTime(), formatted_msg);
   }
 
   {
@@ -94,32 +106,21 @@ auto ERRF(
   }
 
   if constexpr (lvl == Log_LvL::ERR) exit(EXIT_FAILURE);
+  if constexpr (lvl == Log_LvL::EXPT) std::abort();
 }
 
 }
 
-template <typename ...Ts>
-auto print(const std::format_string<Ts...> fmt, Ts&& ... ts) -> void
-{
-  std::cout << std::format("{} : {}\n", formatedTime(), std::format(fmt, std::forward<Ts>(ts)...));
-}
 
 #ifdef DEBUG
 #define Error(...) ERRF<Log_LvL::ERR, CerrPolicy>(std::source_location::current(), __VA_ARGS__)
-#define Info(...) ERRF<Log_LvL::INFO, ClogPolicy>(std::source_location::current(), __VA_ARGS__)
+#define Info(...)  ERRF<Log_LvL::INFO, ClogPolicy>(std::source_location::current(), __VA_ARGS__)
+#define print(...) ERRF<Log_LvL::PRT, ClogPolicy>(std::source_location::current(), __VA_ARGS__)
+#define Expect(cond, ...) do { if (!(cond)){ print("Expectation Failed: "#cond); ERRF<Log_LvL::EXPT, ClogPolicy>(std::source_location::current(), __VA_ARGS__); } } while (0)
+
 #else
 #define Error(...) ERRF<Log_LvL::ERR, FilePolicy>(std::source_location::current(), __VA_ARGS__)
-#define Info(...) ERRF<Log_LvL::INFO, FilePolicy>(std::source_location::current(), __VA_ARGS__)
+#define Info(...)  ERRF<Log_LvL::INFO, FilePolicy>(std::source_location::current(), __VA_ARGS__)
+#define print(...) ERRF<Log_LvL::PRT, FilePolicy>(std::source_location::current(), __VA_ARGS__)
+#define Expect(cond, ...) do { if (!(cond)){ print("Expectation Failed: "#cond); ERRF<Log_LvL::EXPT, FilePolicy>(std::source_location::current(), __VA_ARGS__); } } while (0)
 #endif
-
-template <typename ...Ts>
-auto Expect(bool x, const std::format_string<Ts...> fmt, Ts&& ... ts) -> void
-{
-  [[maybe_unused]] auto msg = std::format("{}\n", std::format(fmt, std::forward<Ts>(ts)...));
-
-  if( x != true){
-    print("Expection Failed : {} ", msg);
-    std::cerr << std::stacktrace::current(1) << std::endl;
-    std::abort();
-  }
-}
