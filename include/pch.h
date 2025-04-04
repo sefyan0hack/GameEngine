@@ -21,7 +21,11 @@
 #include <cstddef>
 #include <utility>
 #include <functional>
+#if __has_include(<format>)
 #include <format>
+#else
+#error "This project uses <format>, and it need's modern compiler with -std=c++23"
+#endif
 #include <array>
 #include <source_location>
 #include <tuple>

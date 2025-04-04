@@ -50,7 +50,7 @@ function(apply_compile_options)
         if(MSVC)
             target_compile_options(${target} PRIVATE
                 /W4
-
+                /bigobj
                 # Debug flags
                 "$<$<CONFIG:Debug>:/Zi>"
                 "$<$<CONFIG:Debug>:/Od>"
