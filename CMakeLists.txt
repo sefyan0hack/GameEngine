@@ -183,18 +183,11 @@ target_link_libraries(${PROJECT_NAME}
 )
 target_precompile_headers(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
 
-# Force-Include for Compilers
-if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    target_compile_options(${PROJECT_NAME} PRIVATE -include ${CMAKE_SOURCE_DIR}/include/pch.h)
-elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_compile_options(${PROJECT_NAME} PRIVATE /FI${CMAKE_SOURCE_DIR}/include/pch.h)
-endif()
-
 ####################################################################################################
 # Separate debug symbols from release buld (GNU or Clang)
 ####################################################################################################
 
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
+if(FALSE AND CMAKE_BUILD_TYPE STREQUAL "Release")
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_OBJCOPY} --only-keep-debug 
