@@ -52,7 +52,7 @@ function(apply_compile_options)
                 /W4
                 /bigobj
                 # Debug flags
-                "$<$<CONFIG:Debug>:/Zi>"
+                "$<$<CONFIG:Debug>:/Z7>"
                 "$<$<CONFIG:Debug>:/Od>"
                 "$<$<CONFIG:Debug>:/RTC1>"
                 "$<$<CONFIG:Debug>:/MDd>"
@@ -82,12 +82,13 @@ function(apply_compile_options)
         else()
             target_compile_options(${target} PRIVATE
                 -Wall -Wextra -Wpedantic -Wconversion -Wno-cast-function-type -Wfloat-equal -Winit-self -Wcast-qual -Wwrite-strings
-                -Wmissing-declarations
+                # -Wmissing-declarations
                 -fno-exceptions
                 -fstack-protector-strong
                 -Wlogical-op -Wnull-dereference -Wswitch-enum
                 -Wsuggest-final-types -Wsuggest-final-methods
                 -fdevirtualize -ftree-vectorize
+                -Wuninitialized -Wpointer-arith -Wreturn-type -Winline -Wredundant-decls
                 # Debug flags
                 "$<$<CONFIG:Debug>:-ggdb>"
                 "$<$<CONFIG:Debug>:-g3>"
@@ -101,17 +102,21 @@ function(apply_compile_options)
 
                 # Release flags
                 "$<$<CONFIG:Release>:-O3>"
-                "$<$<CONFIG:Release>:-g3>"
+                "$<$<CONFIG:Release>:-g1>"
                 # "$<$<CONFIG:Release>:-march=native>"  #enable when dnt need to send the app
                 "$<$<CONFIG:Release>:-DNDEBUG>"
                 "$<$<CONFIG:Release>:-fno-omit-frame-pointer>"
                 "$<$<CONFIG:Release>:-funwind-tables>"
                 "$<$<CONFIG:Release>:-fasynchronous-unwind-tables>"
+                "$<$<CONFIG:Release>:-ffunction-sections>"
+                "$<$<CONFIG:Release>:-fdata-sections>"
                 )
             target_link_options(${target} PRIVATE
                 "$<$<CONFIG:Release>:-Wl,--subsystem,windows>"
                 "$<$<CONFIG:Release>:-flto>"
                 "$<$<CONFIG:Release>:-Wl,--as-needed>"
+                "$<$<CONFIG:Release>:-Wl,--gc-sections>"
+                "$<$<CONFIG:Release>:-Wl,-Bsymbolic-functions>"
             )
         endif()
     endforeach()
