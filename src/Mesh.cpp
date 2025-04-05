@@ -324,7 +324,7 @@ auto Mesh::CloneEBO([[maybe_unused]] GLuint src) -> GLuint
 }
 auto Mesh::setAttribute(GLuint index, AttributeInfo att) -> void
 {
-    Expect(att.size > 0 && att.size <= 4, "position.size : 0<{}<4 wrong", att.size);
+    Expect(att.size > 0 and att.size <= 4, "position.size : 0<{}<4 wrong", att.size);
 
     Info(
         "attribute {} : size: {}, type: {}, normalized: {}, stride: {}, offset: {}",

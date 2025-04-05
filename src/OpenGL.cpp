@@ -63,10 +63,10 @@ auto rsgl(const char* name) -> void* {
     void *address = (void *)_wglGetProcAddress(name);
 
     if(address == nullptr
-    || address == reinterpret_cast<void*>(0x1)
-    || address == reinterpret_cast<void*>(0x2)
-    || address == reinterpret_cast<void*>(0x3)
-    || address == reinterpret_cast<void*>(-1))
+    or address == reinterpret_cast<void*>(0x1)
+    or address == reinterpret_cast<void*>(0x2)
+    or address == reinterpret_cast<void*>(0x3)
+    or address == reinterpret_cast<void*>(-1))
     {
         address = __GetProcAddress(OpenGL::OPENGL_MODULE_NAME, name);
         if(address == nullptr){
@@ -132,7 +132,7 @@ OpenGL::OpenGL(HWND window)
 
 
     #ifdef DEBUG
-    if( m_Major >= 4 && m_Minor >= 3 && m_Debug){
+    if( m_Major >= 4 and m_Minor >= 3 and m_Debug){
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
         glDebugMessageCallback(GLDebugMessageCallback, nullptr);
@@ -264,10 +264,10 @@ auto OpenGL::init_opengl() -> void
     _wglDeleteContext   = (decltype(_wglDeleteContext))__GetProcAddress(OPENGL_MODULE_NAME, "wglDeleteContext");
     _wglCopyContext     = (decltype(_wglCopyContext))__GetProcAddress(OPENGL_MODULE_NAME, "wglCopyContext");
 
-    if (!_wglMakeCurrent
-        || !_wglCreateContext
-        || !_wglGetProcAddress
-        || !_wglDeleteContext) {
+    if (not _wglMakeCurrent
+        or not _wglCreateContext
+        or not _wglGetProcAddress
+        or not _wglDeleteContext) {
         Error("Failed to load required WGL function.");
     }
 
@@ -286,7 +286,7 @@ auto OpenGL::init_opengl() -> void
     wglCreateContextAttribsARB  = (decltype(wglCreateContextAttribsARB))rsgl("wglCreateContextAttribsARB");
     wglGetExtensionsStringARB   = (decltype(wglGetExtensionsStringARB))rsgl("wglGetExtensionsStringARB");
 
-    if (!wglGetExtensionsStringARB || !wglCreateContextAttribsARB) {
+    if (!wglGetExtensionsStringARB or !wglCreateContextAttribsARB) {
         Error("Failed to load required WGL extensions.");
     }
 

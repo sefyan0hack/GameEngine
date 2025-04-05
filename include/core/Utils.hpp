@@ -53,7 +53,7 @@ struct ToUpper {
         std::array<char, N> result{};
         for (std::size_t i = 0; i < N - 1; ++i) {
             char c = Str.value[i];
-            if (c >= 'a' && c <= 'z') {
+            if (c >= 'a' and c <= 'z') {
                 result[i] = c - ('a' - 'A');
             } else {
                 result[i] = c;
@@ -75,7 +75,7 @@ std::vector<std::string> split(std::string s, const std::string& delimiter);
 std::string replace(std::string s, char c, char with);
 
 template<class T>
-requires std::convertible_to<T, std::string> || Formatable<T>
+requires std::convertible_to<T, std::string> or Formatable<T>
 std::string to_string(const std::vector<T>& vec) {
     std::string result = "[ ";
     for (size_t i = 0; i < vec.size(); ++i) {

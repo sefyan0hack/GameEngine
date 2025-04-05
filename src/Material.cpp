@@ -90,7 +90,7 @@ auto Material::id() const noexcept -> GLuint
 auto Material::Use() const -> void
 {
     m_Previd = Current_Program();
-    if(m_Id != 0 && glIsProgram(m_Id) == GL_TRUE){
+    if(m_Id != 0 and glIsProgram(m_Id) == GL_TRUE){
         glUseProgram(m_Id); // crache hire even i'm checking the id
         if(m_Albedo)
            m_Albedo->Bind();

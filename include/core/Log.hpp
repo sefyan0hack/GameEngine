@@ -60,7 +60,7 @@ concept StreamOut = requires(){
   { T::get_stream() } -> std::convertible_to<std::ostream&>;
 };
 
-inline auto& get_logger_mutex() {
+auto& get_logger_mutex() {
   static std::mutex mtx;
   return mtx;
 }
@@ -77,33 +77,28 @@ auto Log(
   auto msg = std::stringstream{};
   auto& out = Out::get_stream();
   
-  if constexpr (lvl == Log_LvL::ERR){
-    msg << std::format("{} : [{}] {}\n--> {}:{}", formatedTime(), lvl_str, formatted_msg, loc.file_name(), loc.line())
-    << "\n" << std::stacktrace::current(1) << "\n";
-
+  if constexpr (lvl == Log_LvL::ERR or lvl == Log_LvL::EXPT){
+    msg << std::format(
+      "{} : [{}] ``{}``\n"
+      "\t-> `{}` [{}:{}]\n"
+      "{}\n",
+      formatedTime(), lvl_str, formatted_msg,
+      loc.function_name(), loc.file_name(), loc.line(),
+      std::stacktrace::current(1)
+    );
     #ifdef _WIN32
     MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONERROR );
     #endif
   }
   else if constexpr (lvl == Log_LvL::INFO){
-    msg << std::format("{} : [{}] {}", formatedTime(), lvl_str, formatted_msg) << "\n";
-  }
-  else if constexpr (lvl == Log_LvL::EXPT){
-    msg << std::format("{} : [{}] {}\n--> {}:{}", formatedTime(), lvl_str, formatted_msg, loc.file_name(), loc.line())
-    << "\n" << std::stacktrace::current(1) << "\n";
-
-    #ifdef _WIN32
-    MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONWARNING );
-    #endif
+    msg << std::format("{} : [{}] ``{}``\n", formatedTime(), lvl_str, formatted_msg);
   }
   else if constexpr (lvl == Log_LvL::PRT){
     msg << std::format("{} : {}\n", formatedTime(), formatted_msg);
   }
 
-  {
-    out << msg.rdbuf();
-    out.flush();
-  }
+  out << msg.rdbuf();
+  out.flush();
 
   if constexpr (lvl == Log_LvL::ERR  or lvl == Log_LvL::EXPT) exit(EXIT_FAILURE);
 }
@@ -114,11 +109,11 @@ auto Log(
 #define Error(...) Log<Log_LvL::ERR, CerrPolicy>(std::source_location::current(), __VA_ARGS__)
 #define Info(...)  Log<Log_LvL::INFO, ClogPolicy>(std::source_location::current(), __VA_ARGS__)
 #define print(...) Log<Log_LvL::PRT, ClogPolicy>(std::source_location::current(), __VA_ARGS__)
-#define Expect(cond, ...) do { if (!(cond)){ print("Expectation Failed: "#cond); Log<Log_LvL::EXPT, ClogPolicy>(std::source_location::current(), __VA_ARGS__); } } while (0)
+#define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); Log<Log_LvL::EXPT, ClogPolicy>(std::source_location::current(), __VA_ARGS__); } } while (0)
 
 #else
 #define Error(...) Log<Log_LvL::ERR, FilePolicy>(std::source_location::current(), __VA_ARGS__)
 #define Info(...)  Log<Log_LvL::INFO, FilePolicy>(std::source_location::current(), __VA_ARGS__)
 #define print(...) Log<Log_LvL::PRT, FilePolicy>(std::source_location::current(), __VA_ARGS__)
-#define Expect(cond, ...) do { if (!(cond)){ print("Expectation Failed: "#cond); Log<Log_LvL::EXPT, FilePolicy>(std::source_location::current(), __VA_ARGS__); } } while (0)
+#define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); Log<Log_LvL::EXPT, FilePolicy>(std::source_location::current(), __VA_ARGS__); } } while (0)
 #endif
