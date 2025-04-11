@@ -158,9 +158,10 @@ public:
         Cam.MoseMove();
         if( m_Window.m_Keyboard->KeyIsPressed('W')){
             float speed = 10.0f * delta;
+            #ifdef _WIN32
             if(m_Window.m_Keyboard->KeyIsPressed(VK_SHIFT))
                 speed *= 10;
-                
+            #endif //_WIN32
             Cam.MoveFroward(speed);
         }
         if( m_Window.m_Keyboard->KeyIsPressed('S')){

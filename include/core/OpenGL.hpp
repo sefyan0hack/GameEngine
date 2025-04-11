@@ -3,27 +3,21 @@
 #include <core/gl.h>
 
 #ifdef _WIN32
-
 #include <windows.h>
+using WindHandl = HWND;
+using HDC_D     = HDC;
+using GLCTX     = HGLRC;
 auto __GetProcAddress(LPCSTR module, const char* name) -> void*;
 auto rsgl(const char* name) -> void*;
 #elif __linux__
-
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 // #include <GL/gl.h>
 #include <GL/glx.h>
-#endif
-
-#ifdef _WIN32
-using WindHandl = HWND;
-using HDC_D     = HDC;
-using GLCTX     = HGLRC;
-#elif __linux__
 using WindHandl = Window;
 using HDC_D     = Display;
 using GLCTX     = GLXContext;
-#endif //_WIN32
+#endif
 
 class OpenGL
 {
