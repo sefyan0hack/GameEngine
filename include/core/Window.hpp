@@ -1,13 +1,13 @@
 #pragma once
 
 #include <core/OpenGL.hpp>
-#include <tchar.h>
 #include <core/gl.h>
 #include <core/Keyboard.hpp>
 #include <core/Mouse.hpp>
 
 #ifdef _WIN32
 #include <windows.h>
+#include <tchar.h>
 
 class CWindow
 {
