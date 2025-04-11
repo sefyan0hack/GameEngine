@@ -5,15 +5,14 @@
 #ifdef _WIN32
 
 #include <windows.h>
-
+auto __GetProcAddress(LPCSTR module, const char* name) -> void*;
+auto rsgl(const char* name) -> void*;
 #elif __linux__
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 // #include <GL/gl.h>
-// #include <GL/glx.h>
-auto __GetProcAddress(LPCSTR module, const char* name) -> void*;
-auto rsgl(const char* name) -> void*;
+#include <GL/glx.h>
 #endif
 
 #ifdef _WIN32
