@@ -10,7 +10,7 @@
 #include <windows.h>
 #endif
 
-class Window
+class CWindow
 {
     class WinClass
     {
@@ -32,14 +32,14 @@ class Window
     };
     
     public:
-        Window(int Width, int Height, const TCHAR* Title);
-        Window(const Window& other);
-        Window(Window&&) = delete;
+        CWindow(int Width, int Height, const TCHAR* Title);
+        CWindow(const CWindow& other);
+        CWindow(CWindow&&) = delete;
     
-        auto operator = (const Window &) -> Window = delete ;
-        auto operator = (Window &&)      -> Window = delete ;
+        auto operator = (const CWindow &) -> CWindow = delete ;
+        auto operator = (CWindow &&)      -> CWindow = delete ;
     
-        ~Window();
+        ~CWindow();
     
     public:
         auto Hinstance() const   -> HINSTANCE ;

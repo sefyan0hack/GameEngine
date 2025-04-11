@@ -4,7 +4,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <core/fmts.hpp>
 
-class Window;
+class CWindow;
 class Material;
 
 class Camera
@@ -12,7 +12,7 @@ class Camera
 public:
     friend struct std::formatter<Camera>;
     
-    Camera(Window &window);
+    Camera(CWindow &window);
     ~Camera();
     auto SetViewMat(const glm::mat4 &mat) -> void ;
     auto SetFrontVector(glm::vec3 front)  -> void ;
@@ -42,7 +42,7 @@ private:
     glm::vec3 m_RightDir;
 
     //
-    std::shared_ptr<Window> m_Window;
+    std::shared_ptr<CWindow> m_Window;
     float m_Sensitivity;
     float m_Yaw, m_Pitch;
 };

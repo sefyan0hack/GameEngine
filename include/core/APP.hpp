@@ -12,6 +12,6 @@ public:
     auto Run() -> void ;
 
 protected:
-    Window m_Window;
+    CWindow m_Window;
     int64_t start_count, end_count, counts, freq, fps;
 };

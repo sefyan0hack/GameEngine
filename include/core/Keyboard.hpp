@@ -1,10 +1,10 @@
 #pragma once
 
-class Window;  // Forward declaration if necessary
+class CWindow;  // Forward declaration if necessary
 
 class Keyboard
 {
-	friend class Window;
+	friend class CWindow;
 private:
 	class Event
 	{

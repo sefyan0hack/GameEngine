@@ -2,21 +2,21 @@
 #include <core/Log.hpp>
 #include <core/gl.h>
 
-// Window class things///////////////////////////////////
-Window::WinClass &Window::WinClass::Instance()
+// CWindow class things///////////////////////////////////
+CWindow::WinClass &CWindow::WinClass::Instance()
 {
-    static Window::WinClass ClassIns; 
+    static CWindow::WinClass ClassIns; 
     return ClassIns;
 }
-auto Window::WinClass::Name() -> const TCHAR*
+auto CWindow::WinClass::Name() -> const TCHAR*
 {
     return m_Name;
 }
-Window::WinClass::WinClass(){
+CWindow::WinClass::WinClass(){
 
     m_WinclassEx.cbSize = sizeof(WNDCLASSEX);
     m_WinclassEx.style =  CS_HREDRAW | CS_VREDRAW;
-    m_WinclassEx.lpfnWndProc = Window::WinProcSetup;
+    m_WinclassEx.lpfnWndProc = CWindow::WinProcSetup;
     m_WinclassEx.hInstance =  GetModuleHandle(nullptr);
     m_WinclassEx.hCursor = LoadCursor(nullptr, IDC_ARROW);
     m_WinclassEx.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
@@ -31,31 +31,31 @@ Window::WinClass::WinClass(){
 
 ///////////////////////////////////////////////////////////////////
 
-auto Window::WinProcSetup(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT
+auto CWindow::WinProcSetup(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT
 {
     if (msg == WM_NCCREATE){
         const CREATESTRUCTW* WinptrStruct = reinterpret_cast<CREATESTRUCTW*>(Lpr);
-        Window* const pWin  = reinterpret_cast<Window*>(WinptrStruct->lpCreateParams);
+        CWindow* const pWin  = reinterpret_cast<CWindow*>(WinptrStruct->lpCreateParams);
         SetWindowLongPtrA( Winhandle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWin) );
-		SetWindowLongPtrA( Winhandle, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&Window::WinProcSetup2) );
+		SetWindowLongPtrA( Winhandle, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&CWindow::WinProcSetup2) );
 
 		return DefWindowProcA(Winhandle, msg, Wpr, Lpr);
     }
     return DefWindowProcA(Winhandle, msg, Wpr, Lpr);
 }
 
-auto Window::WinProcSetup2(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT
+auto CWindow::WinProcSetup2(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT
 {
-	Window* const pWnd = reinterpret_cast<Window*>(GetWindowLongPtrA( Winhandle, GWLP_USERDATA ));
+	CWindow* const pWnd = reinterpret_cast<CWindow*>(GetWindowLongPtrA( Winhandle, GWLP_USERDATA ));
 
 	return pWnd->WinProcFun( Winhandle, msg, Wpr, Lpr );
 }
-auto CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT
+auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT
 {
     switch (msg)
     {
         case WM_CREATE:{
-            Info("Creat Main Window");
+            Info("Creat Main CWindow");
             return 0;
         }
         case WM_CLOSE:{
@@ -202,11 +202,11 @@ auto CALLBACK Window::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lp
     return DefWindowProcA(Winhandle, msg, Wpr, Lpr);
 }
 
-auto Window::WindowsCount() -> unsigned short
+auto CWindow::WindowsCount() -> unsigned short
 {
     return S_WindowsCount;
 }
-Window::Window(int m_Width, int m_Height, const TCHAR* Title) 
+CWindow::CWindow(int m_Width, int m_Height, const TCHAR* Title) 
 	: m_Instance( GetModuleHandleA( nullptr ) )
 	, m_Visible(true)
 	, m_Keyboard(std::make_shared<Keyboard>())
@@ -217,7 +217,7 @@ Window::Window(int m_Width, int m_Height, const TCHAR* Title)
     m_OpenGl = std::make_shared<OpenGL>(m_WindowHandle);
 }
 
-Window::Window(const Window& other)
+CWindow::CWindow(const CWindow& other)
 	: m_Instance(other.m_Instance)
 	, m_WindowHandle(other.m_WindowHandle)
 	, m_HDC(other.m_HDC)
@@ -232,11 +232,11 @@ Window::Window(const Window& other)
 }
 
 
-Window::~Window()
+CWindow::~CWindow()
 {
     DestroyWindow(m_WindowHandle);
 }
-auto Window::ProcessMessages() -> void
+auto CWindow::ProcessMessages() -> void
 {
     MSG Msg = {};
     while (PeekMessageA(&Msg, nullptr, 0u, 0u, PM_REMOVE))
@@ -246,7 +246,7 @@ auto Window::ProcessMessages() -> void
     }
 }
 
-auto Window::_init_helper(int Width, int Height, const TCHAR* Title) -> void
+auto CWindow::_init_helper(int Width, int Height, const TCHAR* Title) -> void
 {
     WinClass::Instance();
 
@@ -273,7 +273,7 @@ auto Window::_init_helper(int Width, int Height, const TCHAR* Title) -> void
     );
 
     if(m_WindowHandle == nullptr){
-        Error("faild to creat Window code : {}", GetLastError());
+        Error("faild to creat CWindow code : {}", GetLastError());
         return;
     }
 	// regester mouse raw data
@@ -290,35 +290,35 @@ auto Window::_init_helper(int Width, int Height, const TCHAR* Title) -> void
     UpdateWindow(m_WindowHandle);
 }
 
-auto Window::Hinstance() const -> HINSTANCE
+auto CWindow::Hinstance() const -> HINSTANCE
 {
     return m_Instance;
 }
 
-auto Window::WindowHandle() const -> HWND
+auto CWindow::WindowHandle() const -> HWND
 {
     return m_WindowHandle;
 }
 
-auto Window::DrawContext() const -> HDC
+auto CWindow::DrawContext() const -> HDC
 {
     return m_HDC;
 }
 
-auto Window::Width() const -> int
+auto CWindow::Width() const -> int
 {
     return m_Width;
 }
 
-auto Window::Height() const -> int
+auto CWindow::Height() const -> int
 {
     return m_Height;
 }
-auto Window::opengl() const -> std::shared_ptr<OpenGL>
+auto CWindow::opengl() const -> std::shared_ptr<OpenGL>
 {
     return m_OpenGl;
 }
-auto Window::Visible() const -> bool
+auto CWindow::Visible() const -> bool
 {
     return m_Visible;
 }

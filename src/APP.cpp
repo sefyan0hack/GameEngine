@@ -17,8 +17,8 @@ auto APP::Run() -> void
     QueryPerformanceFrequency((LARGE_INTEGER *)&freq);
     glClearColor(0.2f, 0.21f, 0.22f, 1.0f);
     
-    while (Window::WindowsCount() != 0) {
-        Window::ProcessMessages();
+    while (CWindow::WindowsCount() != 0) {
+        CWindow::ProcessMessages();
         auto _hdc = m_Window.opengl()->DrawContext();
         glViewport(0, 0, m_Window.Width(), m_Window.Height());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

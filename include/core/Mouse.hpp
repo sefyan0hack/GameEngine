@@ -1,9 +1,9 @@
 #pragma once
 
-class Window;
+class CWindow;
 class Mouse
 {
-    friend class Window;
+    friend class CWindow;
 private:
     struct RawDelta
 	{
