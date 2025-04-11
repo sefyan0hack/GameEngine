@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 3.28)
 
 project(Engine LANGUAGES C CXX)
 
@@ -20,7 +20,7 @@ if(WIN32)
     set(CMAKE_USE_RELATIVE_PATHS true)
 
 else()
-    message(FATAL_ERROR "This project only support Windows. Sorry :)")
+    # message(FATAL_ERROR "This project only support Windows. Sorry :)")
 endif()
 
 ####################################################################################################
@@ -110,6 +110,7 @@ set(SOURCES
     src/Keyboard.cpp
     src/Mouse.cpp
 	src/Window.cpp
+	src/XWindow.cpp
 	src/Renderer.cpp
 	src/Shader.cpp
 	src/Transform.cpp
@@ -172,6 +173,11 @@ target_compile_definitions(${PROJECT_NAME}
 ####################################################################################################
 # Link Libs 
 ####################################################################################################
+if(UNIX)
+find_package(X11 REQUIRED)
+target_include_directories(${PROJECT_NAME} PRIVATE ${X11_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${X11_LIBRARIES})
+endif()
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
