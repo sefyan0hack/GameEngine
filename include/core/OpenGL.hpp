@@ -3,13 +3,33 @@
 #include <core/gl.h>
 
 #ifdef _WIN32
+
 #include <windows.h>
+
+#elif __linux__
+
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+// #include <GL/gl.h>
+// #include <GL/glx.h>
+auto __GetProcAddress(LPCSTR module, const char* name) -> void*;
+auto rsgl(const char* name) -> void*;
 #endif
+
+#ifdef _WIN32
+using WindHandl = HWND;
+using HDC_D     = HDC;
+using GLCTX     = HGLRC;
+#elif __linux__
+using WindHandl = Window;
+using HDC_D     = Display;
+using GLCTX     = GLXContext;
+#endif //_WIN32
 
 class OpenGL
 {
     public:
-        explicit OpenGL(HWND window);
+        explicit OpenGL(WindHandl window);
         OpenGL(const OpenGL& other);
         OpenGL(OpenGL&& other) noexcept;
         ~OpenGL();
@@ -20,7 +40,7 @@ class OpenGL
         operator bool () const;
 
     public:
-        auto DrawContext() const -> HDC;
+        auto DrawContext() const -> HDC_D;
         auto MajorV() const -> GLint;
         auto MinorV() const -> GLint;
         auto isValid() const -> bool;
@@ -32,14 +52,20 @@ class OpenGL
         static auto GlslVersions() -> std::vector<std::string>;
         static auto Extensions() -> std::vector<std::string>;
         static auto MaxTextureUnits() -> GLint;
-        
-        inline static LPCSTR OPENGL_MODULE_NAME {"opengl32.dll"};
-    private:
-        auto init_opengl()             -> void ;
 
     private:
-        HDC m_MainHDC;
-        HGLRC m_Context;
+        #ifdef _WIN32
+        friend auto __GetProcAddress(LPCSTR module, const char* name) -> void*;
+        friend auto rsgl(const char* name) -> void*;
+        inline static LPCSTR OPENGL_MODULE_NAME {"opengl32.dll"};    
+        auto init_opengl_win32()              -> void ;
+        #elif __linux__
+        auto init_opengl_linux(Window window) -> void ;
+        #endif //_WIN32
+
+    private:
+        GLCTX m_Context;
+        HDC_D m_MainHDC;
         GLint m_Major;
         GLint m_Minor;
         std::time_t m_CreationTime;

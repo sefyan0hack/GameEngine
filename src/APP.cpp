@@ -1,9 +1,15 @@
 #include <core/APP.hpp>
+
+#ifdef _WIN32
 #include <core/Window.hpp>
-#include <tchar.h>
+#elif __linux__
+#include <core/XWindow.hpp>
+#endif //_WIN32
+
+constexpr auto Wname = "Main";
 
 APP::APP()
-: m_Window(1180, 640, _T("Main"))
+: m_Window(1180, 640, Wname)
 , start_count(0)
 , end_count(0)
 , counts(0)

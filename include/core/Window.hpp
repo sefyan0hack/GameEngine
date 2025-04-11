@@ -8,7 +8,6 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#endif
 
 class CWindow
 {
@@ -64,7 +63,7 @@ class CWindow
         int m_Width;
         int m_Height;
         bool m_Visible;
-        std::vector<BYTE> m_RawBuffer;
+        std::vector<std::byte> m_RawBuffer;
         std::shared_ptr<OpenGL> m_OpenGl;
     public:
         std::shared_ptr<Keyboard> m_Keyboard;
@@ -74,3 +73,4 @@ class CWindow
         inline static unsigned short S_WindowsCount = 0;
 };
 
+#endif //_WIN32

@@ -24,7 +24,9 @@ auto Mouse::GetPosY() const noexcept -> int
 
 auto Mouse::SetPos(int x_, int y_) -> void
 {
+	#ifdef _WIN32
 	SetCursorPos(x_, y_);
+	#endif //_WIN32
 }
 
 auto Mouse::IsInWindow() const noexcept -> bool
