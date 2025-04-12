@@ -178,6 +178,7 @@ auto OpenGL::init_opengl_win32() -> void
 
 
 #elif __linux__
+// [[maybe_unused]] inline static auto glXCreateContext = (HGLRC(WINAPI*)(HDC, HGLRC, const int*))(nullptr);
 
 auto OpenGL::init_opengl_linux(Window window) -> void
 {
