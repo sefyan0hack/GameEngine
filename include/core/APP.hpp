@@ -1,7 +1,7 @@
 #pragma once
 #ifdef _WIN32
 #include <core/Window.hpp>
-#elif __linux__
+#elif defined(__linux__)
 #include <core/XWindow.hpp>
 #endif //_WIN32
 

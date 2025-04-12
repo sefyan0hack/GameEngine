@@ -177,7 +177,7 @@ auto OpenGL::init_opengl_win32() -> void
 }
 
 
-#elif __linux__
+#elif defined(__linux__)
 // [[maybe_unused]] inline static auto glXCreateContext = (HGLRC(WINAPI*)(HDC, HGLRC, const int*))(nullptr);
 
 auto OpenGL::init_opengl_linux(Window window) -> void
@@ -207,7 +207,7 @@ OpenGL::OpenGL(WindHandl window)
     }
     init_opengl_win32();
 
-    #elif __linux__
+    #elif defined(__linux__)
     init_opengl_linux(window);
     #endif //_WIN32
 
@@ -282,7 +282,7 @@ OpenGL::OpenGL(const OpenGL &other)
     #if _WIN32
     auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
     if(tst != TRUE) Error("couldn't Copy Opengl Context");
-    #elif __linux__
+    #elif defined(__linux__)
     #error "not impl for linux"
     #endif //_WIN32
 }
@@ -300,7 +300,7 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL
         #if _WIN32
         auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
         if(tst != TRUE) Error("couldn't Copy Opengl Context");
-        #elif __linux__
+        #elif defined(__linux__)
         #error "not impl for linux"
         #endif //_WIN32
     }
@@ -365,7 +365,7 @@ OpenGL::~OpenGL()
     #ifdef _WIN32
     _wglMakeCurrent(nullptr, nullptr);
     _wglDeleteContext(m_Context);
-    #elif __linux__
+    #elif defined(__linux__)
     glXDestroyContext(m_MainHDC, m_Context);
     #endif //_WIN32
 }

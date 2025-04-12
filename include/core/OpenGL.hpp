@@ -9,7 +9,7 @@ using HDC_D     = HDC;
 using GLCTX     = HGLRC;
 auto __GetProcAddress(LPCSTR module, const char* name) -> void*;
 auto rsgl(const char* name) -> void*;
-#elif __linux__
+#elif defined(__linux__)
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 // #include <GL/gl.h>
@@ -52,7 +52,7 @@ class OpenGL
         friend auto rsgl(const char* name) -> void*;
         inline static LPCSTR OPENGL_MODULE_NAME {"opengl32.dll"};    
         auto init_opengl_win32()              -> void ;
-        #elif __linux__
+        #elif defined(__linux__)
         auto init_opengl_linux(Window window) -> void ;
         #endif //_WIN32
 
