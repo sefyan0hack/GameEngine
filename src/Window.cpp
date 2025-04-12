@@ -1,20 +1,21 @@
 #include <core/Window.hpp>
 #include <core/Log.hpp>
 #include <core/gl.h>
+#ifdef _WIN32
 
 // CWindow class things///////////////////////////////////
 CWindow::WinClass &CWindow::WinClass::Instance()
 {
-    static CWindow::WinClass ClassIns; 
+	static CWindow::WinClass ClassIns; 
     return ClassIns;
 }
 auto CWindow::WinClass::Name() -> const TCHAR*
 {
-    return m_Name;
+	return m_Name;
 }
 CWindow::WinClass::WinClass(){
-
-    m_WinclassEx.cbSize = sizeof(WNDCLASSEX);
+	
+	m_WinclassEx.cbSize = sizeof(WNDCLASSEX);
     m_WinclassEx.style =  CS_HREDRAW | CS_VREDRAW;
     m_WinclassEx.lpfnWndProc = CWindow::WinProcSetup;
     m_WinclassEx.hInstance =  GetModuleHandle(nullptr);
@@ -55,7 +56,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
     switch (msg)
     {
         case WM_CREATE:{
-            Info("Creat Main CWindow");
+			Info("Creat Main CWindow");
             return 0;
         }
         case WM_CLOSE:{
@@ -78,14 +79,14 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    case WM_KEYDOWN:
 	    // syskey commands need to be handled to track ALT key (VK_MENU) and F10
 	    case WM_SYSKEYDOWN:
-	    	if( !(Lpr & 0x40000000) or m_Keyboard->AutorepeatIsEnabled() ) // filter autorepeat
+		if( !(Lpr & 0x40000000) or m_Keyboard->AutorepeatIsEnabled() ) // filter autorepeat
 	    	{
 	    		m_Keyboard->OnKeyPressed( static_cast<unsigned char>(Wpr) );
 	    	}
 	    	break;
 	    case WM_KEYUP:
 	    case WM_SYSKEYUP:
-	    	m_Keyboard->OnKeyReleased( static_cast<unsigned char>(Wpr) );
+		m_Keyboard->OnKeyReleased( static_cast<unsigned char>(Wpr) );
 	    	break;
 	    case WM_CHAR:
 	    	m_Keyboard->OnChar( static_cast<char>(Wpr) );
@@ -180,23 +181,23 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    		&size,
 	    		sizeof( RAWINPUTHEADER ) ) != size )
 	    	{
-	    		//my log error hire
+				//my log error hire
 	    		break;
 	    	}
 	    	// process the raw input data
 	    	auto& ri = reinterpret_cast<const RAWINPUT&>(*m_RawBuffer.data());
 	    	if( ri.header.dwType == RIM_TYPEMOUSE and
 	    		(ri.data.mouse.lLastX != 0 or ri.data.mouse.lLastY != 0) )
-	    	{
+				{
 	    		m_Mouse->OnRawDelta( ri.data.mouse.lLastX,ri.data.mouse.lLastY );
 	    	}
 	    	break;
 	    }
 	    ///////////////// END RAW MOUSE MESSAGES /////////////////
         case WM_KILLFOCUS:
-		    m_Keyboard->ClearState();
-		    break;
-
+		m_Keyboard->ClearState();
+		break;
+		
 
     }
     return DefWindowProcA(Winhandle, msg, Wpr, Lpr);
@@ -204,7 +205,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 
 auto CWindow::WindowsCount() -> unsigned short
 {
-    return S_WindowsCount;
+	return S_WindowsCount;
 }
 CWindow::CWindow(int m_Width, int m_Height, const TCHAR* Title) 
 	: m_Instance( GetModuleHandleA( nullptr ) )
@@ -316,9 +317,11 @@ auto CWindow::Height() const -> int
 }
 auto CWindow::opengl() const -> std::shared_ptr<OpenGL>
 {
-    return m_OpenGl;
+	return m_OpenGl;
 }
 auto CWindow::Visible() const -> bool
 {
-    return m_Visible;
+	return m_Visible;
 }
+
+#endif //_WIN32

@@ -161,8 +161,10 @@ auto Mouse::TrimRawInputBuffer() noexcept -> void
 	}
 }
 
+
 auto Mouse::OnWheelDelta(int delta ) noexcept -> void
 {
+	#ifdef _WIN32
 	wheelDeltaCarry += delta;
 	while( wheelDeltaCarry >= WHEEL_DELTA )
 	{
@@ -174,6 +176,7 @@ auto Mouse::OnWheelDelta(int delta ) noexcept -> void
 		wheelDeltaCarry += WHEEL_DELTA;
 		OnWheelDown();
 	}
+	#endif //_WIN32
 }
 
 auto Mouse::IsEmpty() const noexcept -> bool 

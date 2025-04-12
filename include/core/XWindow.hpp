@@ -1,7 +1,6 @@
 #pragma once
 
 #include <core/OpenGL.hpp>
-#include <tchar.h>
 #include <core/gl.h>
 #include <core/Keyboard.hpp>
 #include <core/Mouse.hpp>

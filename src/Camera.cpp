@@ -1,7 +1,12 @@
 #include <core/Camera.hpp>
-#include <core/Window.hpp>
 #include <core/Log.hpp>
 #include <core/gl.h>
+
+#ifdef _WIN32
+#include <core/Window.hpp>
+#elif __linux__
+#include <core/XWindow.hpp>
+#endif //_WIN32
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/fast_trigonometry.hpp>
