@@ -17,12 +17,7 @@ CWindow::CWindow(int m_Width, int m_Height, const char* Title)
 {
     _init_helper(m_Width, m_Height, Title);
     S_WindowsCount++;
-    #ifdef __WIN32
     m_OpenGl = std::make_shared<OpenGL>(m_WindowHandle);
-    #elif defined(__linux__)
-    auto w = {m_Display, m_WindowHandle};
-    m_OpenGl = std::make_shared<OpenGL>(w);
-    #endif //__WIN32
 }
 
 CWindow::CWindow(const CWindow& other)

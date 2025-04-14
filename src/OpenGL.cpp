@@ -219,13 +219,13 @@ OpenGL::OpenGL(WindHandl window)
     init_opengl_win32();
     
     #elif defined(__linux__)
-    m_MainHDC = window.dis;
+    m_MainHDC = XOpenDisplay(nullptr);
 
     if( m_MainHDC == nullptr){
         Error("HDC not valid");
     }
 
-    init_opengl_linux(window.win);
+    init_opengl_linux(window);
     #endif //_WIN32
 
     glGetIntegerv(GL_MAJOR_VERSION, &m_Major);

@@ -18,11 +18,7 @@ auto rsgl(const char* name) -> void*;
 // #include <GL/gl.h>
 #include <GL/glext.h>
 struct __GLXcontextRec;
-struct WNDHNDL{
-    Display* dis;
-    Window win;
-};
-using WindHandl = WNDHNDL;
+using WindHandl = Window;
 using HDC_D     = Display*;
 using GLCTX     = __GLXcontextRec*;
 
