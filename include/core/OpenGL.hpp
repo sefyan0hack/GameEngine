@@ -31,8 +31,8 @@ typedef XID GLXContextID;
 typedef XID GLXWindow;
 typedef XID GLXPbuffer;
 
-extern Bool glXMakeCurrent( Display *dpy, GLXDrawable drawable, GLXContext ctx);
-extern void glXDestroyContext( Display *dpy, GLXContext ctx );
+extern Bool glXMakeCurrent( Display *dpy, GLXDrawable drawable, GLCTX ctx);
+extern void glXDestroyContext( Display *dpy, GLCTX ctx );
 
 #endif
 
