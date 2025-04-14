@@ -28,7 +28,7 @@ class CWindow
         auto opengl() const          -> std::shared_ptr<OpenGL> ;
         auto Visible() const        -> bool ;
         static auto WindowsCount()  -> unsigned short ;
-        static auto ProcessMessages() -> void ;
+        auto ProcessMessages() -> void ;
 
     private:
         auto _init_helper(int Width, int Height, const char* Title)                         -> void ;

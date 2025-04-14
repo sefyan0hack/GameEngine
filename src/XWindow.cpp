@@ -20,7 +20,7 @@ CWindow::CWindow(int m_Width, int m_Height, const char** Title)
     m_OpenGl = std::make_shared<OpenGL>(m_WindowHandle);
 }
 
-CWindow::CWindow(const Window& other)
+CWindow::CWindow(const CWindow& other)
 	: m_Display(other.m_Display)
 	, m_WindowHandle(other.m_WindowHandle)
 	, m_Width(other.m_Width)
@@ -33,7 +33,7 @@ CWindow::CWindow(const Window& other)
 {
 }
 
-CWindow::~Window()
+CWindow::~CWindow()
 {
     XDestroyWindow(m_Display, m_WindowHandle);
     XCloseDisplay(m_Display);
@@ -81,29 +81,25 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
         XMapWindow(m_Display, m_WindowHandle);
 }
 
-CWindow::~CWindow(){
-    XCloseDisplay(m_Display);
-}
-
-auto Window::WindowHandle() const -> Window
+auto CWindow::WindowHandle() const -> Window
 {
     return m_WindowHandle;
 }
 
-auto Window::Width() const -> int
+auto CWindow::Width() const -> int
 {
     return m_Width;
 }
 
-auto Window::Height() const -> int
+auto CWindow::Height() const -> int
 {
     return m_Height;
 }
-auto Window::opengl() const -> std::shared_ptr<OpenGL>
+auto CWindow::opengl() const -> std::shared_ptr<OpenGL>
 {
     return m_OpenGl;
 }
-auto Window::Visible() const -> bool
+auto CWindow::Visible() const -> bool
 {
     return m_Visible;
 }
