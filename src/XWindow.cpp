@@ -20,7 +20,8 @@ CWindow::CWindow(int m_Width, int m_Height, const char* Title)
     #ifdef __WIN32
     m_OpenGl = std::make_shared<OpenGL>(m_WindowHandle);
     #elif defined(__linux__)
-    m_OpenGl = std::make_shared<OpenGL>(m_Display, m_WindowHandle);
+    auto w = {m_Display, m_WindowHandle};
+    m_OpenGl = std::make_shared<OpenGL>(w);
     #endif //__WIN32
 }
 
