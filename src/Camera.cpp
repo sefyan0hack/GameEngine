@@ -122,13 +122,14 @@ auto Camera::MoseMove(bool islocked) -> void
         on = !on;
     }
     lastState = currentState;
-
+    #ifdef _WIN32
     if(on){
         m_Window->m_Mouse->SetPos(m_Window->Width()/2, m_Window->Height()/2);
         ShowCursor(false);
     }else{
         ShowCursor(true);
     }
+    #endif //_WIN32
     //fin
 
     UpdateVectors();
