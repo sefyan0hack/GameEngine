@@ -182,7 +182,7 @@ endif()
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
         glm::glm
-        ${OPENGL_LIBRARIES}
+        OpenGL::GL
         stb_image
         $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
         $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:stdc++exp>
