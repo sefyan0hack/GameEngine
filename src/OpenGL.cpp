@@ -178,7 +178,6 @@ auto OpenGL::init_opengl_win32() -> void
 
 
 #elif defined(__linux__)
-// [[maybe_unused]] inline static auto glXCreateContext = (HGLRC(WINAPI*)(HDC, HGLRC, const int*))(nullptr);
 
 auto OpenGL::init_opengl_linux(Window window) -> void
 {
@@ -186,8 +185,19 @@ auto OpenGL::init_opengl_linux(Window window) -> void
     if (!XGetWindowAttributes(m_MainHDC, window, &win_attr)) {
         Error("Failed to get window attributes.");
     }
-
-    m_Context = glXCreateContext(m_MainHDC, win_attr.visual, NULL, GL_TRUE);
+    
+    XVisualInfo visual_info_template{};
+    visual_info_template.visualid = win_attr.visual->visualid;
+    int num_visuals = 0;
+    XVisualInfo* visual_info_list = XGetVisualInfo(m_MainHDC, VisualIDMask, &visual_info_template, &num_visuals);
+    if (num_visuals == 0) {
+        Error("No matching XVisualInfo found.");
+    }
+    
+    m_Context = glXCreateContext(m_MainHDC, visual_info_list, nullptr, GL_TRUE);
+    
+    XFree(visual_info_list);
+    
     glXMakeCurrent(m_MainHDC, window, m_Context);
 }
 #endif //_WIN32
