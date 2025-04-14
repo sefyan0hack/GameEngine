@@ -13,7 +13,7 @@ auto rsgl(const char* name) -> void*;
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #ifndef GL_GLEXT_PROTOTYPES
-#define GL_GLEXT_PROTOTYPES 0 // Explicitly disable if not already
+#undef GL_GLEXT_PROTOTYPES
 #endif
 #include <GL/gl.h>
 #include <GL/glx.h>
