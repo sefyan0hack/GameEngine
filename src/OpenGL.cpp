@@ -283,7 +283,7 @@ OpenGL::OpenGL(const OpenGL &other)
     auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
     if(tst != TRUE) Error("couldn't Copy Opengl Context");
     #elif defined(__linux__)
-    #error "not impl for linux"
+    #warning "not impl for linux"
     #endif //_WIN32
 }
 
@@ -301,7 +301,7 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL
         auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
         if(tst != TRUE) Error("couldn't Copy Opengl Context");
         #elif defined(__linux__)
-        #error "not impl for linux"
+        #warning "not impl for linux"
         #endif //_WIN32
     }
     return *this;
