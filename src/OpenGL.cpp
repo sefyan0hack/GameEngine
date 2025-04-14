@@ -203,7 +203,7 @@ auto OpenGL::init_opengl_linux(Window window) -> void
 }
 #endif //_WIN32
 
-OpenGL::OpenGL(WindHandl window)
+OpenGL::OpenGL(WindHandl window, HDC_D hdcd)
     : m_Context(nullptr)
     , m_Major(0)
     , m_Minor(0)
@@ -211,7 +211,11 @@ OpenGL::OpenGL(WindHandl window)
     , m_Debug(false)
 {
     #ifdef _WIN32
-    m_MainHDC = GetDC(window);
+    if(hdcd == HDC_D{})
+        m_MainHDC = GetDC(window);
+    else
+        m_MainHDC = hdcd;
+
     
     if( m_MainHDC == nullptr){
         Error("HDC not valid");
@@ -219,7 +223,10 @@ OpenGL::OpenGL(WindHandl window)
     init_opengl_win32();
     
     #elif defined(__linux__)
-    m_MainHDC = XOpenDisplay(nullptr);
+    if(hdcd == HDC_D{})
+        Error("invalid HDC_D");
+    else
+        m_MainHDC = hdcd;
 
     if( m_MainHDC == nullptr){
         Error("HDC not valid");

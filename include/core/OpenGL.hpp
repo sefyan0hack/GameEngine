@@ -41,7 +41,7 @@ extern "C" {
 class OpenGL
 {
     public:
-        explicit OpenGL(WindHandl window);
+        explicit OpenGL(WindHandl window, HDC_D hdcd = HDC_D{});
         OpenGL(const OpenGL& other);
         OpenGL(OpenGL&& other) noexcept;
         ~OpenGL();

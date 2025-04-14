@@ -17,7 +17,7 @@ CWindow::CWindow(int m_Width, int m_Height, const char* Title)
 {
     _init_helper(m_Width, m_Height, Title);
     S_WindowsCount++;
-    m_OpenGl = std::make_shared<OpenGL>(m_WindowHandle);
+    m_OpenGl = std::make_shared<OpenGL>(m_WindowHandle, m_Display);
 }
 
 CWindow::CWindow(const CWindow& other)
@@ -58,7 +58,6 @@ auto CWindow::ProcessMessages() -> void
 
 auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 {
-    
     /* Open connection to X server */
     m_Display = XOpenDisplay(nullptr);
     if (m_Display == nullptr) {
