@@ -17,9 +17,10 @@ auto rsgl(const char* name) -> void*;
 #endif
 // #include <GL/gl.h>
 #include <GL/glext.h>
+struct __GLXcontextRec;
 using WindHandl = Window;
 using HDC_D     = Display;
-using GLCTX     = GLXContext;
+using GLCTX     = __GLXcontextRec*;
 #endif
 
 class OpenGL
