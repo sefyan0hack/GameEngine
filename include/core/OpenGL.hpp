@@ -12,7 +12,10 @@ auto rsgl(const char* name) -> void*;
 #elif defined(__linux__)
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-// #include <GL/gl.h>
+#ifndef GL_GLEXT_PROTOTYPES
+#define GL_GLEXT_PROTOTYPES 0 // Explicitly disable if not already
+#endif
+#include <GL/gl.h>
 #include <GL/glx.h>
 using WindHandl = Window;
 using HDC_D     = Display;
