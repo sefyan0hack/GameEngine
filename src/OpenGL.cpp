@@ -195,10 +195,11 @@ auto OpenGL::init_opengl_linux(Window window) -> void
     }
     
     m_Context = glXCreateContext(m_MainHDC, visual_info_list, nullptr, GL_TRUE);
-    
-    XFree(visual_info_list);
-    
-    glXMakeCurrent(m_MainHDC, window, m_Context);
+        
+    if (!glXMakeCurrent(m_MainHDC, window, m_Context)) {
+        Error("Failed to make context current.");
+    }
+
 }
 #endif //_WIN32
 
