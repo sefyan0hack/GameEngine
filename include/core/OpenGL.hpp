@@ -16,7 +16,7 @@ auto rsgl(const char* name) -> void*;
 #undef GL_GLEXT_PROTOTYPES
 #endif
 // #include <GL/gl.h>
-// #include <GL/glx.h>
+#include <GL/glext.h>
 using WindHandl = Window;
 using HDC_D     = Display;
 using GLCTX     = GLXContext;
