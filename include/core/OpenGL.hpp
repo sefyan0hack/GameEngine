@@ -91,6 +91,8 @@ class OpenGL
             ERROR_INVALID_VERSION_ARB        = 0x2095,
             ERROR_INVALID_PROFILE_ARB        = 0x2096,
             WGL_CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB = 0x8256,
+            #ifndef __linux__
             GL_ALL_ATTRIB_BITS               = 0x000fffff,
+            #endif //__linux__
         };
 };
