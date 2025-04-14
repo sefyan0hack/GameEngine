@@ -69,9 +69,9 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 
     /* Create a window */
     m_WindowHandle = XCreateSimpleWindow(m_Display, RootWindow(m_Display, screen), 
-                                 10, 10, 800, 600, 1, 
+                                 10, 10, Width, Height, 1, 
                                  BlackPixel(m_Display, screen), WhitePixel(m_Display, screen));
-    
+    Expect(m_WindowHandle != nullptr, "m_WindowHandle are null ???");
     XStoreName(m_Display, m_WindowHandle, Title);
 
     /* Select input events */
