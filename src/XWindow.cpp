@@ -9,7 +9,7 @@ auto CWindow::WindowsCount() -> unsigned short
 {
     return S_WindowsCount;
 }
-CWindow::CWindow(int m_Width, int m_Height, const char** Title) 
+CWindow::CWindow(int m_Width, int m_Height, const char* Title) 
 	: m_Display(nullptr)
 	, m_Visible(true)
 	, m_Keyboard(std::make_shared<Keyboard>())
@@ -41,6 +41,8 @@ CWindow::~CWindow()
 
 auto CWindow::ProcessMessages() -> void
 {
+    int screen = DefaultScreen(m_Display);
+
     /* Event loop */
     while (true) {
         XNextEvent(m_Display, &m_Event);
@@ -56,15 +58,14 @@ auto CWindow::ProcessMessages() -> void
 
 auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 {
-    int screen;
-
+    
     /* Open connection to X server */
     m_Display = XOpenDisplay(nullptr);
     if (m_Display == nullptr) {
         Error("Cannot open display");
     }
-
-    screen = DefaultScreen(m_Display);
+    
+    int screen = DefaultScreen(m_Display);
 
     /* Create a window */
     m_WindowHandle = XCreateSimpleWindow(m_Display, RootWindow(m_Display, screen), 

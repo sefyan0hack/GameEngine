@@ -21,7 +21,7 @@ class CWindow
     
     public:
         // auto Hinstance() const   -> HINSTANCE ;
-        // auto WindowHandle() const        -> HWND ;
+        auto WindowHandle() const        -> Window ;
         // auto DrawContext() const         -> HDC ;
         auto Width() const       -> int ;
         auto Height() const      -> int ;
