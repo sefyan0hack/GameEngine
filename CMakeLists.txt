@@ -183,8 +183,8 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE
         glm::glm
         ${OPENGL_LIBRARIES}
-        dbghelp
         stb_image
+        $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
         $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:stdc++exp>
 )
 target_precompile_headers(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
