@@ -92,7 +92,8 @@ function(apply_compile_options)
                 # Debug flags
                 "$<$<CONFIG:Debug>:-ggdb>"
                 "$<$<CONFIG:Debug>:-g3>"
-                "$<$<CONFIG:Debug>:-Og>"
+                "$<$<CONFIG:Debug>:-O0>"
+                "$<$<CONFIG:Debug>:-pg>"
                 "$<$<CONFIG:Debug>:-fno-inline>"
                 "$<$<CONFIG:Debug>:-fstack-protector-strong>"
                 "$<$<CONFIG:Debug>:-funwind-tables>"
