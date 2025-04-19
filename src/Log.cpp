@@ -68,7 +68,6 @@ auto PrintStackTrace(unsigned short skip) -> void
         std::string fname = "<unknown>";
         std::string file = "file";
         DWORD line = 0;
-        DWORD64 lineaddr = 0;
         
         auto moduleBase = SymGetModuleBase64(process, reinterpret_cast<DWORD64>(addr));
         char buffer[MAX_PATH];
@@ -96,7 +95,6 @@ auto PrintStackTrace(unsigned short skip) -> void
                 auto strpath = path.lexically_relative(std::filesystem::current_path()).string();
                 file = not strpath.empty() ? strpath : lineInfo.FileName;
                 line = lineInfo.LineNumber;
-                lineaddr = lineInfo.Address;
             }
         }
         msg += std::format("{:p} {}+{:#x} -> {}:{} `{}` \n", addr, fname, lineDisplacement, file, line, modulename);
@@ -147,7 +145,6 @@ auto PrintStackTracectx(CONTEXT* context) -> void {
         std::string fname = "<unknown>";
         std::string file = "file";
         DWORD line = 0;
-        DWORD64 lineaddr = 0;
 
         if (!result){
             break;
@@ -172,7 +169,6 @@ auto PrintStackTracectx(CONTEXT* context) -> void {
                 auto strpath = path.lexically_relative(std::filesystem::current_path()).string();
                 file = not strpath.empty() ? strpath : lineInfo.FileName;
                 line = lineInfo.LineNumber;
-                lineaddr = lineInfo.Address;
             }
         }
 
