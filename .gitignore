@@ -39,3 +39,4 @@ build
 *.vsix
 
 3party/
+.env
