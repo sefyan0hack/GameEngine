@@ -8,6 +8,7 @@ project(Engine LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_SUPPRESS_REGENERATION true)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 ####################################################################################################
 # WIN32 defines 
@@ -51,11 +52,11 @@ else()
     set(ONLINE TRUE)
 endif()
 
-include(${CMAKE_SOURCE_DIR}/cmake/helpers.cmake)
+include(helpers)
 if(ONLINE)
 
 # Include get_cpm.cmake
-include(${CMAKE_SOURCE_DIR}/cmake/get_cpm.cmake)
+include(get_cpm)
 # deps :
 
     # add glm 1.0.1
@@ -206,4 +207,31 @@ if(FALSE AND CMAKE_BUILD_TYPE STREQUAL "Release")
         COMMENT "Separating debug symbols into $<TARGET_FILE_BASE_NAME:${PROJECT_NAME}>.debug"
     )
     endif()
+endif()
+
+####################################################################################################
+# Code Coverage
+####################################################################################################
+
+find_program(GCOVR_EXECUTABLE gcovr)
+if(GCOVR_EXECUTABLE)
+  add_custom_target(coverage
+    COMMENT "Generating coverage report"
+    COMMAND ${GCOVR_EXECUTABLE}
+      -r ${CMAKE_SOURCE_DIR}
+      --html --html-details
+      --exclude ".*/3party/.*"
+      --exclude ".*\\.h"
+      --exclude ".*\\.hpp"
+      --exclude ".*\\.inl"
+      -o coverage.html
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+  )
+
+  add_dependencies(coverage ${PROJECT_NAME})
+
+  if(NOT MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_${_LANG}_FLAGS} -pg -g --coverage -O0 -fprofile-arcs -ftest-coverage")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage -fprofile-arcs -ftest-coverage")
+  endif()
 endif()
