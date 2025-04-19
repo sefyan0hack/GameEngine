@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.28)
 
 project(Engine LANGUAGES C CXX)
 
+if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+    message(FATAL_ERROR "Create a build directory and run CMake from there.")
+endif()
 ####################################################################################################
 # Futures 
 ####################################################################################################
