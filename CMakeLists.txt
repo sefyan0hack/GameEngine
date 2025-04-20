@@ -64,6 +64,7 @@ include(get_cpm)
 
     # add glm 1.0.1
 CPMAddPackage("gh:g-truc/glm#1.0.1")
+CPMAddPackage("gh:google/googletest@1.16.0")
 
     # stb_image v2.30
 CPMAddPackage(
@@ -103,6 +104,7 @@ include_directories(
 )
 else()
 add_subdirectory(3party/glm)
+add_subdirectory(3party/googletest-1.16.0)
 endif()
 
 ####################################################################################################

@@ -1,4 +1,13 @@
 
+file(GLOB TEST_SOURCES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/" "*_test.cpp")
+
+add_executable(tests ${TEST_SOURCES})
+
+target_link_libraries(tests PRIVATE core gtest gtest_main)
+
+# Register the test with CTest
+include(GoogleTest)
+gtest_discover_tests(tests)
 
 find_program(GCOVR_EXECUTABLE gcovr)
 if(GCOVR_EXECUTABLE AND NOT MSVC)
@@ -23,17 +32,6 @@ if(NOT MSVC AND CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_link_options(core PUBLIC --coverage -fprofile-arcs -ftest-coverage)
 endif()
 
-file(GLOB TEST_SOURCES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/" "*_test.cpp")
-set(ALL_TEST_TARGETS "")
-
-foreach(src IN LISTS TEST_SOURCES)
-    get_filename_component(test_name ${src} NAME_WE)
-    list(APPEND ALL_TEST_TARGETS ${test_name})
-    add_executable(${test_name} ${src})
-    target_link_libraries(${test_name} PRIVATE core)
-    add_test(NAME ${test_name} COMMAND ${test_name})
-endforeach()
-
 if(MSVC)
   find_program(OPENCPPCOVERAGE_PATH OpenCppCoverage.exe)
   if(OPENCPPCOVERAGE_PATH)
@@ -48,63 +46,16 @@ if(MSVC)
       --excluded_sources "*.hpp"
       --excluded_sources "*.inl"
     )
-
-    # Initialize coverage commands
-    set(COVERAGE_COMMANDS 
-      COMMAND ${CMAKE_COMMAND} -E make_directory "${NATIVE_OUTPUT_DIR}"
-    )
-
-    # Generate coverage files for each test executable
-    set(COVERAGE_FILES "")
-    foreach(TEST_TARGET ${ALL_TEST_TARGETS})
-        # Generate coverage file path
-        set(COV_FILE "${NATIVE_OUTPUT_DIR}/coverage_${TEST_TARGET}.cov")
-        file(TO_NATIVE_PATH "${COV_FILE}" NATIVE_COV_FILE)
-        list(APPEND COVERAGE_FILES "${NATIVE_COV_FILE}")
-
-        # Add coverage command using generator expressions
-        list(APPEND COVERAGE_COMMANDS
-          COMMAND ${OPENCPPCOVERAGE_PATH}
-            --sources "${NATIVE_SOURCE_DIR}"
-            ${EXCLUDED_SOURCES}
-            --export_type binary:${NATIVE_COV_FILE}
-            -- "$<TARGET_FILE:${TEST_TARGET}>"
-            WORKING_DIRECTORY "$<TARGET_FILE_DIR:${TEST_TARGET}>"
-        )
-    endforeach()
-
-    # Build merge command with multiple --input_coverage args
-    set(MERGE_COMMAND ${OPENCPPCOVERAGE_PATH})
-    foreach(COV_FILE ${COVERAGE_FILES})
-        list(APPEND MERGE_COMMAND --input_coverage "${COV_FILE}")
-    endforeach()
-    list(APPEND MERGE_COMMAND
-        --export_type binary:${NATIVE_OUTPUT_DIR}/merged.cov
-        --
-    )
-
-    # Add commands to coverage target
-    list(APPEND COVERAGE_COMMANDS
-        # Merge coverage files
-        COMMAND ${MERGE_COMMAND}
-        
-        # Generate HTML report
-        COMMAND ${OPENCPPCOVERAGE_PATH}
-            --input_coverage ${NATIVE_OUTPUT_DIR}/merged.cov
-            --export_type html:${NATIVE_OUTPUT_DIR}
-            --
-        
-        # Cleanup intermediate files
-        COMMAND ${CMAKE_COMMAND} -E remove ${COVERAGE_FILES}
-        COMMAND ${CMAKE_COMMAND} -E remove ${NATIVE_OUTPUT_DIR}/merged.cov
-    )
-
-    # Create custom coverage target
     add_custom_target(coverage
-      ${COVERAGE_COMMANDS}
+      COMMAND ${CMAKE_COMMAND} -E make_directory "${NATIVE_OUTPUT_DIR}"
+      COMMAND ${OPENCPPCOVERAGE_PATH}
+        --sources "${NATIVE_SOURCE_DIR}"
+        ${EXCLUDED_SOURCES}
+        --export_type html:${NATIVE_OUTPUT_DIR}
+        -- "$<TARGET_FILE:tests>"
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-      COMMENT "Running OpenCppCoverage for all tests and generating merged report..."
-      DEPENDS ${ALL_TEST_TARGETS} core
+      COMMENT "Running OpenCppCoverage..."
+      DEPENDS ${PROJECT_NAME}
     )
   endif()
 endif()
