@@ -55,9 +55,7 @@ function(apply_compile_options)
                 "$<$<CONFIG:Debug>:/Z7>"
                 "$<$<CONFIG:Debug>:/Od>"
                 "$<$<CONFIG:Debug>:/RTC1>"
-                "$<$<CONFIG:Debug>:/MDd>"
                 "$<$<CONFIG:Debug>:/EHsc>"
-                "$<$<CONFIG:Debug>:/DEBUG>"
                 "$<$<CONFIG:Debug>:/DYNAMICBASE>"
                 "$<$<CONFIG:Debug>:/analyze>"
                 "$<$<CONFIG:Debug>:/Oy->"
@@ -67,14 +65,12 @@ function(apply_compile_options)
                 "$<$<CONFIG:Release>:/Zi>"
                 "$<$<CONFIG:Release>:/Zo>"
                 "$<$<CONFIG:Release>:/Oy->"
-                "$<$<CONFIG:Release>:/MT>"
                 "$<$<CONFIG:Release>:/DNDEBUG>"
             )
             target_link_options(${target} PRIVATE
                 "$<$<CONFIG:Debug>:/DEBUG>"       # Debugger-optimized linking (Debug)
                 "$<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>" # no terminale
                 "$<$<CONFIG:Release>:/ENTRY:mainCRTStartup>" # entry
-                "$<$<CONFIG:Release>:/DEBUG>"     # Include debug symbols in Release
                 "$<$<CONFIG:Release>:/OPT:REF>"   # Optimize unused functions
                 "$<$<CONFIG:Release>:/OPT:ICF>"   # Identical COMDAT folding
                 "$<$<CONFIG:RELEASE>:/INCREMENTAL:NO>"  # Disable incremental linking
