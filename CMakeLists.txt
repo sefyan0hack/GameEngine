@@ -169,7 +169,7 @@ apply_compile_options(TARGETS core)
 print_target_compile_options(core)
 
 target_compile_definitions(core
-    PRIVATE
+    PUBLIC
         PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
         $<$<CONFIG:Debug>:DEBUG>
 )
