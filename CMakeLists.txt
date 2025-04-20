@@ -110,7 +110,6 @@ endif()
 ####################################################################################################
 
 set(SOURCES
-    src/main.cpp
     src/Keyboard.cpp
     src/Mouse.cpp
 	src/Window.cpp
@@ -118,8 +117,8 @@ set(SOURCES
 	src/Renderer.cpp
 	src/Shader.cpp
 	src/Transform.cpp
-    src/Mesh.cpp
     src/Camera.cpp
+    src/Mesh.cpp
     src/OpenGL.cpp
     src/APP.cpp
     src/Utils.cpp
@@ -142,19 +141,20 @@ find_package(OpenGL REQUIRED)
 ####################################################################################################
 # Build Exe 
 ####################################################################################################
-
-add_executable(${PROJECT_NAME} ${SOURCES})
-
+add_library(core ${SOURCES})
+add_executable(${PROJECT_NAME} src/main.cpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE core)
 ####################################################################################################
 # Include Dirs 
 ####################################################################################################
 
-target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/include")
+target_include_directories(core PUBLIC "${CMAKE_SOURCE_DIR}/include")
 
 if(ONLINE)
     set(STB_IMG_HEADER ${stb_image_header_SOURCE_DIR})
 else()
     set(STB_IMG_HEADER ${CMAKE_SOURCE_DIR}/3party)
+    target_include_directories(core PUBLIC "${CMAKE_SOURCE_DIR}/3party")
 endif()
 
 add_library(stb_image INTERFACE)
@@ -164,11 +164,11 @@ target_include_directories(stb_image SYSTEM INTERFACE ${STB_IMG_HEADER})
 # Compile Flags 
 ####################################################################################################
 
-apply_compile_options(TARGETS ${PROJECT_NAME})
+apply_compile_options(TARGETS core)
 
-print_target_compile_options(${PROJECT_NAME})
+print_target_compile_options(core)
 
-target_compile_definitions(${PROJECT_NAME}
+target_compile_definitions(core
     PRIVATE
         PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
         $<$<CONFIG:Debug>:DEBUG>
@@ -179,20 +179,22 @@ target_compile_definitions(${PROJECT_NAME}
 ####################################################################################################
 if(UNIX)
 find_package(X11 REQUIRED)
-target_include_directories(${PROJECT_NAME} PRIVATE ${X11_INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${X11_LIBRARIES})
+target_include_directories(core PUBLIC ${X11_INCLUDE_DIR})
+target_link_libraries(core PUBLIC ${X11_LIBRARIES})
 endif()
 
-target_link_libraries(${PROJECT_NAME}
-    PRIVATE
+target_link_libraries(core
+    PUBLIC
         glm::glm
         OpenGL::GL
         stb_image
         $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
         $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:stdc++exp>
 )
-target_precompile_headers(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
-
+target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
+if(MINGW)
+    target_compile_options(core PRIVATE -fno-keep-inline-dllexport)
+endif()
 ####################################################################################################
 # Separate debug symbols from release buld (GNU or Clang)
 ####################################################################################################
@@ -215,11 +217,12 @@ endif()
 ####################################################################################################
 # Code Coverage
 ####################################################################################################
-include(CTest)
 enable_testing()
+include(CTest)
+add_subdirectory(tests)
 
 find_program(GCOVR_EXECUTABLE gcovr)
-if(GCOVR_EXECUTABLE)
+if(GCOVR_EXECUTABLE AND NOT MSVC)
   add_custom_target(coverage
     COMMENT "Generating coverage report"
     COMMAND ${GCOVR_EXECUTABLE}
@@ -233,10 +236,9 @@ if(GCOVR_EXECUTABLE)
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
   )
 
-  add_dependencies(coverage ${PROJECT_NAME})
+endif()
 
-  if(NOT MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_${_LANG}_FLAGS} -pg -g --coverage -O0 -fprofile-arcs -ftest-coverage")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage -fprofile-arcs -ftest-coverage")
-  endif()
+if(NOT MSVC AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_options(core PRIVATE --coverage -fprofile-arcs -ftest-coverage)
+    target_link_options(core PUBLIC --coverage -fprofile-arcs -ftest-coverage)
 endif()

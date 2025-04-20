@@ -180,16 +180,16 @@ public:
              Cam.MoveDown(10.0f * delta);
         }
         
-        if (m_Window.m_Keyboard->KeyIsPressed('H')){
-            static bool flip = false;
-            if(flip == false){
-                flip = !flip;
-                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            }else{
-                flip = !flip;
-                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            }
-        }
+        // if (m_Window.m_Keyboard->KeyIsPressed('H')){
+        //     static bool flip = false;
+        //     if(flip == false){
+        //         flip = !flip;
+        //         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        //     }else{
+        //         flip = !flip;
+        //         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        //     }
+        // }
 
         rndr.render(Scn, Cam);
     }
