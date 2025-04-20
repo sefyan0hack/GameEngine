@@ -70,7 +70,7 @@ constexpr std::array<char, sizeof(Str.value)> ToUpper<Str>::value;
 
 #define TO_UPPER(str) std::string_view(ToUpper<FixedString{str}>::value.data())
 
-std::future<std::vector<char>> load_file_async(const std::string& filename);
+std::future<std::optional<std::vector<char>>> load_file_async(const std::string& filename);
 std::vector<std::string> split(std::string s, const std::string& delimiter);
 std::string replace(std::string s, char c, char with);
 

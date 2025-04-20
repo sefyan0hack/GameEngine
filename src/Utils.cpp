@@ -1,26 +1,27 @@
 #include <core/Utils.hpp>
 #include <core/Log.hpp>
+using namespace std;
 
-std::future<std::vector<char>> load_file_async(const std::string& filename) {
-    return std::async(std::launch::async, [filename]() -> std::vector<char> {
-        std::ifstream file(filename, std::ios::binary | std::ios::ate);
+future<optional<vector<char>>> load_file_async(const string& filename) {
+    return async(launch::async, [filename]() -> optional<vector<char>> {
+        ifstream file(filename, ios::binary | ios::ate);
         if (!file) {
-            Error("Failed to open file {}", filename);
+            return std::nullopt;
         }
-        std::streamsize size = file.tellg();
-        file.seekg(0, std::ios::beg);
+        streamsize size = file.tellg();
+        file.seekg(0, ios::beg);
 
-        std::vector<char> buffer(size);
+        vector<char> buffer(size);
         file.read(buffer.data(), size);
         return buffer;
     });
 }
 
-std::vector<std::string> split(std::string s, const std::string& delimiter) {
-    std::vector<std::string> tokens;
+vector<string> split(string s, const string& delimiter) {
+    vector<string> tokens;
     size_t pos = 0;
-    std::string token;
-    while ((pos = s.find(delimiter)) != std::string::npos) {
+    string token;
+    while ((pos = s.find(delimiter)) != string::npos) {
         token = s.substr(0, pos);
         tokens.push_back(token);
         s.erase(0, pos + delimiter.length());
@@ -30,7 +31,7 @@ std::vector<std::string> split(std::string s, const std::string& delimiter) {
     return tokens;
 }
 
-std::string replace(std::string s, char c, char with)
+string replace(string s, char c, char with)
 {
     for(auto& ch: s) if(ch == c) ch = with;
     return s;

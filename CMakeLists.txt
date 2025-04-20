@@ -215,30 +215,9 @@ if(FALSE AND CMAKE_BUILD_TYPE STREQUAL "Release")
 endif()
 
 ####################################################################################################
-# Code Coverage
+# TEST
 ####################################################################################################
 enable_testing()
 include(CTest)
 add_subdirectory(tests)
 
-find_program(GCOVR_EXECUTABLE gcovr)
-if(GCOVR_EXECUTABLE AND NOT MSVC)
-  add_custom_target(coverage
-    COMMENT "Generating coverage report"
-    COMMAND ${GCOVR_EXECUTABLE}
-      -r ${CMAKE_SOURCE_DIR}
-      --html --html-details
-      --exclude ".*/3party/.*"
-      --exclude ".*\\.h"
-      --exclude ".*\\.hpp"
-      --exclude ".*\\.inl"
-      -o coverage.html
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-  )
-
-endif()
-
-if(NOT MSVC AND CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_compile_options(core PRIVATE --coverage -fprofile-arcs -ftest-coverage)
-    target_link_options(core PUBLIC --coverage -fprofile-arcs -ftest-coverage)
-endif()
