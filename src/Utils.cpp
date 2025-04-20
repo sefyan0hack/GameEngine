@@ -18,6 +18,8 @@ future<optional<vector<char>>> load_file_async(const string& filename) {
 }
 
 vector<string> split(string s, const string& delimiter) {
+    if(s.empty()) return {};
+    
     vector<string> tokens;
     size_t pos = 0;
     string token;
@@ -33,6 +35,7 @@ vector<string> split(string s, const string& delimiter) {
 
 string replace(string s, char c, char with)
 {
+    if( c == '\0' or with == '\0') return s;
     for(auto& ch: s) if(ch == c) ch = with;
     return s;
 }
