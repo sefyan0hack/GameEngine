@@ -26,6 +26,9 @@ if(IS_DEBUG)
       "$<$<CONFIG:Debug>:-fkeep-static-functions>"
       "$<$<CONFIG:Debug>:-fno-inline>"
       "$<$<CONFIG:Debug>:-fno-elide-constructors>"
+      "$<$<CONFIG:Debug>:-fno-inline-small-functions>"
+      "$<$<CONFIG:Debug>:-fno-default-inline>"
+      "$<$<CONFIG:Debug>:-fprofile-abs-path>"
     )
     target_link_options(core PUBLIC 
       "$<$<CONFIG:Debug>:--coverage>"
@@ -34,6 +37,9 @@ if(IS_DEBUG)
       "$<$<CONFIG:Debug>:-fkeep-static-functions>"
       "$<$<CONFIG:Debug>:-fno-inline>"
       "$<$<CONFIG:Debug>:-fno-elide-constructors>"
+      "$<$<CONFIG:Debug>:-fno-inline-small-functions>"
+      "$<$<CONFIG:Debug>:-fno-default-inline>"
+      "$<$<CONFIG:Debug>:-fprofile-abs-path>"
     )
     add_custom_target(coverage
       COMMENT "Generating coverage report"
@@ -44,10 +50,10 @@ if(IS_DEBUG)
       --calls
       --branches
       --exclude ".*/3party/.*"
-      --exclude ".*\\.h"
-      --exclude ".*\\.hpp"
       --exclude ".*\\.inl"
       --decisions
+      --exclude-function-lines
+      --exclude-noncode-lines
       --delete
       -o coverage.html
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
