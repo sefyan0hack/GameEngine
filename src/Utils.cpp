@@ -35,7 +35,10 @@ vector<string> split(string s, const string& delimiter) {
 
 string replace(string s, char c, char with)
 {
-    if( c == '\0' or with == '\0') return s;
-    for(auto& ch: s) if(ch == c) ch = with;
+    if( c == '\0' || with == '\0')
+        return s;
+    for(auto& ch: s)
+        if(ch == c) 
+            ch = with;
     return s;
 }
