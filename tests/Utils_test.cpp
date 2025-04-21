@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include <core/Utils.hpp>
-#include <windows.h>
 
 TEST(load_file_async, exist) {
     auto r = load_file_async(__FILE__).get();
