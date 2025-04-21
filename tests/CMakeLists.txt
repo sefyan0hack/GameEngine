@@ -12,24 +12,28 @@ gtest_discover_tests(tests)
 find_program(GCOVR_EXECUTABLE gcovr)
 if(GCOVR_EXECUTABLE AND NOT MSVC)
     add_custom_target(coverage
-        COMMENT "Generating coverage report"
-        COMMAND ${GCOVR_EXECUTABLE}
-            -r ${CMAKE_SOURCE_DIR}
-            --html --html-details
-            --exclude ".*/3party/.*"
-            --exclude ".*\\.h"
-            --exclude ".*\\.hpp"
-            --exclude ".*\\.inl"
-            -o coverage.html
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        DEPENDS ${PROJECT_NAME}
-  )
-
+      COMMENT "Generating coverage report"
+      COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure  # Run tests first
+      COMMAND ${GCOVR_EXECUTABLE}
+        -r ${CMAKE_SOURCE_DIR}
+        --html --html-details --html-title "UnitTest coverage"
+        --calls
+        --branches
+        --exclude ".*/3party/.*"
+        --exclude ".*\\.h"
+        --exclude ".*\\.hpp"
+        --exclude ".*\\.inl"
+        --decisions
+        --delete
+        -o coverage.html
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+      DEPENDS core tests
+    )
 endif()
 
 if(NOT MSVC AND CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_compile_options(core PRIVATE --coverage -fprofile-arcs -ftest-coverage)
-    target_link_options(core PUBLIC --coverage -fprofile-arcs -ftest-coverage)
+    target_compile_options(core PRIVATE --coverage -fprofile-arcs -ftest-coverage -fkeep-static-functions -fno-inline -fno-elide-constructors)
+    target_link_options(core PUBLIC --coverage -fprofile-arcs -ftest-coverage -fkeep-static-functions -fno-inline -fno-elide-constructors)
 endif()
 
 if(MSVC)
