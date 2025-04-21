@@ -38,3 +38,8 @@ TEST(replace, with_not_exist_char) {
     auto r = replace("fuzz", 'a', 'b');
     EXPECT_EQ(r, "fuzz");
 }
+
+TEST(replace, c_null) {
+    auto r = replace("fuzz", '\0', 'b');
+    EXPECT_EQ(r, "fuzz");
+}
