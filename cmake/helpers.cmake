@@ -75,7 +75,7 @@ function(apply_compile_options)
                 "$<$<CONFIG:Release>:/OPT:ICF>"   # Identical COMDAT folding
                 "$<$<CONFIG:RELEASE>:/INCREMENTAL:NO>"  # Disable incremental linking
             )
-        else()
+        elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
             target_compile_options(${target} PRIVATE
                 -Wall -Wextra -Wpedantic -Wconversion -Wno-cast-function-type -Wfloat-equal -Winit-self -Wcast-qual -Wwrite-strings
                 # -Wmissing-declarations
