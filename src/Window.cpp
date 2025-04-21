@@ -79,7 +79,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    case WM_KEYDOWN:
 	    // syskey commands need to be handled to track ALT key (VK_MENU) and F10
 	    case WM_SYSKEYDOWN:
-		if( !(Lpr & 0x40000000) or m_Keyboard->AutorepeatIsEnabled() ) // filter autorepeat
+		if( !(Lpr & 0x40000000) || m_Keyboard->AutorepeatIsEnabled() ) // filter autorepeat
 	    	{
 	    		m_Keyboard->OnKeyPressed( static_cast<unsigned char>(Wpr) );
 	    	}
@@ -101,7 +101,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 			{
 				m_Mouse->OnMouseEnter();
 			}
-			if( pt.x >= 0 and  pt.x < m_Width and pt.y >= 0 and pt.y < m_Height )
+			if( pt.x >= 0 &&  pt.x < m_Width && pt.y >= 0 && pt.y < m_Height )
 			{
 				m_Mouse->OnMouseMove( pt.x, pt.y );
 				m_Mouse->OnMouseEnter();
@@ -135,7 +135,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    	const POINTS pt = MAKEPOINTS( Lpr );
 	    	m_Mouse->OnLeftReleased();
 	    	// release mouse if outside of window
-	    	if( pt.x < 0 or pt.x >= m_Width or pt.y < 0 or pt.y >= m_Height )
+	    	if( pt.x < 0 || pt.x >= m_Width || pt.y < 0 || pt.y >= m_Height )
 	    	{
 	    		ReleaseCapture();
 	    		m_Mouse->OnMouseLeave();
@@ -147,7 +147,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    	const POINTS pt = MAKEPOINTS( Lpr );
 	    	m_Mouse->OnRightReleased();
 	    	// release mouse if outside of window
-	    	if( pt.x < 0 or pt.x >= m_Width or pt.y < 0 or pt.y >= m_Height )
+	    	if( pt.x < 0 || pt.x >= m_Width || pt.y < 0 || pt.y >= m_Height )
 	    	{
 	    		ReleaseCapture();
 	    		m_Mouse->OnMouseLeave();
@@ -186,8 +186,8 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    	}
 	    	// process the raw input data
 	    	auto& ri = reinterpret_cast<const RAWINPUT&>(*m_RawBuffer.data());
-	    	if( ri.header.dwType == RIM_TYPEMOUSE and
-	    		(ri.data.mouse.lLastX != 0 or ri.data.mouse.lLastY != 0) )
+	    	if( ri.header.dwType == RIM_TYPEMOUSE &&
+	    		(ri.data.mouse.lLastX != 0 || ri.data.mouse.lLastY != 0) )
 				{
 	    		m_Mouse->OnRawDelta( ri.data.mouse.lLastX,ri.data.mouse.lLastY );
 	    	}

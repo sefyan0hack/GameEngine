@@ -85,6 +85,7 @@ function(apply_compile_options)
                 -Wsuggest-final-types -Wsuggest-final-methods
                 -fdevirtualize -ftree-vectorize
                 -Wuninitialized -Wpointer-arith -Wreturn-type -Winline -Wredundant-decls
+                -fno-operator-names
                 # Debug flags
                 "$<$<CONFIG:Debug>:-ggdb>"
                 "$<$<CONFIG:Debug>:-g3>"

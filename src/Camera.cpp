@@ -118,7 +118,7 @@ auto Camera::MoseMove(bool islocked) -> void
     static auto lastState = false;
 
     auto currentState = m_Window->m_Keyboard->KeyIsPressed('L');
-    if (currentState and !lastState) {
+    if (currentState && !lastState) {
         on = !on;
     }
     lastState = currentState;

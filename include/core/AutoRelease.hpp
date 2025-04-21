@@ -41,7 +41,7 @@ public:
     }
 
     void release() noexcept {
-        if (ref_count and --(*ref_count) == 0) {
+        if (ref_count && --(*ref_count) == 0) {
             deleter(resource);
             resource = 0;
         }

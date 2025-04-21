@@ -77,7 +77,7 @@ auto Log(
   auto msg = std::stringstream{};
   auto& out = Out::get_stream();
   
-  if constexpr (lvl == Log_LvL::ERR or lvl == Log_LvL::EXPT){
+  if constexpr (lvl == Log_LvL::ERR || lvl == Log_LvL::EXPT){
     msg << std::format(
       "{} : [{}] ``{}``\n"
       "\t-> `{}` [{}:{}]\n"
@@ -100,7 +100,7 @@ auto Log(
   out << msg.rdbuf();
   out.flush();
 
-  if constexpr (lvl == Log_LvL::ERR  or lvl == Log_LvL::EXPT) exit(EXIT_FAILURE);
+  if constexpr (lvl == Log_LvL::ERR  || lvl == Log_LvL::EXPT) exit(EXIT_FAILURE);
 }
 
 }

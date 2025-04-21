@@ -93,7 +93,7 @@ auto PrintStackTrace(unsigned short skip) -> void
             if (SymGetLineFromAddr64(process, reinterpret_cast<DWORD64>(addr), &lineDisplacement, &lineInfo)) {
                 auto path = std::filesystem::path(lineInfo.FileName);
                 auto strpath = path.lexically_relative(std::filesystem::current_path()).string();
-                file = not strpath.empty() ? strpath : lineInfo.FileName;
+                file = !strpath.empty() ? strpath : lineInfo.FileName;
                 line = lineInfo.LineNumber;
             }
         }
@@ -167,7 +167,7 @@ auto PrintStackTracectx(CONTEXT* context) -> void {
             if (SymGetLineFromAddr64(process, addr, &lineDisplacement, &lineInfo)) {
                 auto path = std::filesystem::path(lineInfo.FileName);
                 auto strpath = path.lexically_relative(std::filesystem::current_path()).string();
-                file = not strpath.empty() ? strpath : lineInfo.FileName;
+                file =  !strpath.empty() ? strpath : lineInfo.FileName;
                 line = lineInfo.LineNumber;
             }
         }
