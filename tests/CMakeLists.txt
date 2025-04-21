@@ -44,6 +44,8 @@ if(IS_DEBUG)
       --calls
       --branches
       --exclude ".*/3party/.*"
+      --exclude ".*\\.h"
+      --exclude ".*\\.hpp"
       --exclude ".*\\.inl"
       --decisions
       --delete
