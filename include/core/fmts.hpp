@@ -91,7 +91,8 @@ struct std::formatter<VecWrapper<T>, char> {
       bool first = true;
       for (const auto& elem : w.vec) {
           if (!first) {
-              *out++ = ", ";
+              *out++ = ',';
+              *out++ = ' ';
           } else {
               first = false;
           }
