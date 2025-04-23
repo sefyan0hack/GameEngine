@@ -134,3 +134,8 @@ auto GameObject::Bind() const -> void
     Expect(m_Mesh->VAO != 0, "VAO is 0");
     glBindVertexArray(m_Mesh->VAO);
 }
+
+auto GameObject::Name() const -> std::string
+{
+    return m_Name;
+}
