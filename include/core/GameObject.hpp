@@ -26,6 +26,7 @@ public:
     auto material() const                                    -> std::shared_ptr<Material> ;
     auto InstancePos() const                                 -> const std::vector<glm::vec3>&;
     auto Bind() const                                           -> void;
+    auto Name() const                                           -> std::string;
 
 private:
     auto Transformation() const                                 -> glm::mat4 ;
@@ -47,7 +48,7 @@ struct std::formatter<GameObject> {
   auto format(const GameObject& obj, std::format_context& context) const {
     return std::format_to(context.out(),
     R"({{"name": "{}", "transform": {}, "material": {}, "mesh": {} }})"
-    , obj.m_Name, obj.transform(), *obj.m_Material, *obj.m_Mesh.get());
+    , obj.m_Name, obj.m_Transform, *obj.m_Material, *obj.m_Mesh.get());
   }
 };
 
