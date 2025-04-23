@@ -55,7 +55,7 @@ struct MapWrapper {
 template<typename Wrapper>
 struct MapFormatter : std::formatter<std::string> {
     auto format(const Wrapper& wrapper, std::format_context& ctx) const {
-        std::string result = "{ ";
+        std::string result = "{";
         bool first = true;
         for (const auto& [key, value] : wrapper.map) {
             if (!first) {
@@ -64,7 +64,7 @@ struct MapFormatter : std::formatter<std::string> {
             result += std::format(R"("{}": "{}")", key, value);
             first = false;
         }
-        result += " }";
+        result += "}";
         return std::formatter<std::string>::format(result, ctx);
     }
 };
@@ -87,17 +87,13 @@ struct std::formatter<VecWrapper<T>, char> {
     template <typename FormatContext>
     auto format(const VecWrapper<T>& w, FormatContext& ctx) const {
         auto out = ctx.out();
-        *out++ = '{';
-        out = std::format_to(out, "\"vec\": [");
-        bool first = true;
+        out = std::format_to(out, "[");
+        char[2] sep = "";
         for (const auto& item : w.vec) {
-            if (!first)
-                out = std::format_to(out, ", ");
-            first = false;
-            out = std::format_to(out, "{}", item);
+            out = std::format_to(out, "{}{}", item, sep);
+            sep = ", ";
         }
         out = std::format_to(out, "]");
-        *out++ = '}';
         return out;
     }
 };
