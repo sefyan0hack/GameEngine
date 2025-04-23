@@ -12,6 +12,7 @@ class Camera
 public:
     friend struct std::formatter<Camera>;
     
+    Camera();
     Camera(CWindow &window);
     ~Camera();
     auto SetViewMat(const glm::mat4 &mat) -> void ;
