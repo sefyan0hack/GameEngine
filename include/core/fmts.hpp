@@ -86,19 +86,16 @@ struct std::formatter<VecWrapper<T>, char> {
 
     template <typename FormatContext>
     auto format(const VecWrapper<T>& w, FormatContext& ctx) const {
-      auto out = ctx.out();
-      *out++ = '[';
-      bool first = true;
-      for (const auto& elem : w.vec) {
-          if (!first) {
-              *out++ = ',';
-              *out++ = ' ';
-          } else {
-              first = false;
-          }
-          out = std::format_to(out, "{}", elem);
-      }
-      *out++ = ']';
-      return out;
+      using namespace std::ranges;
+      auto joined = w.vec 
+          | views::transform([](const T& elem) { return std::format("{}", elem); })
+          | views::join_with(std::string_view{", "});
+      
+      *ctx.out()++ = '[';
+      for (char c : joined) *ctx.out()++ = c;
+      *ctx.out()++ = ']';
+
+      
+      return ctx.out();
     }
 };
