@@ -86,14 +86,18 @@ struct std::formatter<VecWrapper<T>, char> {
 
     template <typename FormatContext>
     auto format(const VecWrapper<T>& w, FormatContext& ctx) const {
-        auto out = ctx.out();
-        out = std::format_to(out, "[");
-        char[2] sep = "";
-        for (const auto& item : w.vec) {
-            out = std::format_to(out, "{}{}", item, sep);
-            sep = ", ";
-        }
-        out = std::format_to(out, "]");
-        return out;
+      auto out = ctx.out();
+      *out++ = '[';
+      bool first = true;
+      for (const auto& elem : w.vec) {
+          if (!first) {
+              *out++ = ", ";
+          } else {
+              first = false;
+          }
+          out = std::format_to(out, "{}", elem);
+      }
+      *out++ = ']';
+      return out;
     }
 };

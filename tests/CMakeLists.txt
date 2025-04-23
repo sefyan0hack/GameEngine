@@ -41,14 +41,19 @@ if(MSVC)
     )
   endif()
 else()
-  include(CodeCoverage)
-  append_coverage_compiler_flags()
-  append_coverage_compiler_flags_to_target(core)
-  set(GCOVR_ADDITIONAL_ARGS "--calls;--branches;--decisions;--exclude-function-lines;--exclude-noncode-lines;--exclude-unreachable-branches;--exclude-throw-branches;--delete")
-  set(COVERAGE_EXCLUDES "${CMAKE_SOURCE_DIR}/3party/*" "${CMAKE_SOURCE_DIR}/tests/*")
-  setup_target_for_coverage_gcovr_html(
-    NAME coverage
-    EXECUTABLE ctest
-    DEPENDS core tests
-  )
+  find_program(GCOVR_PATH gcovr.exe)
+    if(GCOVR_PATH)
+    include(CodeCoverage)
+    append_coverage_compiler_flags()
+    append_coverage_compiler_flags_to_target(core)
+    set(GCOVR_ADDITIONAL_ARGS "--calls;--branches;--decisions;--exclude-function-lines;--exclude-noncode-lines;--exclude-unreachable-branches;--exclude-throw-branches;--delete")
+    set(COVERAGE_EXCLUDES "${CMAKE_SOURCE_DIR}/3party/*" "${CMAKE_SOURCE_DIR}/tests/*")
+    setup_target_for_coverage_gcovr_html(
+      NAME coverage
+      EXECUTABLE ctest
+      DEPENDS core tests
+    )
+  else()
+  message(STATUS "conseder dowing `pip install gcovr` if you want code covegare")
+  endif()
 endif()
