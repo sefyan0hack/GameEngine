@@ -11,17 +11,24 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/fast_trigonometry.hpp>
 
-Camera::Camera(CWindow &window) 
-: m_Position({0, 2, 0}),
-  m_FrontDir({0, 0, -1}), 
-  m_UpDir({ 0, 1, 0}),
-  m_RightDir({1, 0, 0}),
-  m_Window(std::make_shared<CWindow>(window)),
-  m_Sensitivity(0.11f),
-  m_Yaw(-90), m_Pitch(0)
-  {
+Camera::Camera() 
+    : m_Position({0, 2, 0})
+    , m_FrontDir({0, 0, -1})
+    , m_UpDir({ 0, 1, 0})
+    , m_RightDir({1, 0, 0})
+    , m_Window(nullptr)
+    , m_Sensitivity(0.11f)
+    , m_Yaw(-90), m_Pitch(0)
+{
+
     Info("{}", *this);
-  }
+}
+
+Camera::Camera(CWindow &window) : Camera()
+{
+  m_Window = std::make_shared<CWindow>(window);
+  Info("{}", *this);
+}
 
 Camera::~Camera() {
 }
