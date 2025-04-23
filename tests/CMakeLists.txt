@@ -5,64 +5,12 @@ add_executable(tests ${TEST_SOURCES})
 
 target_link_libraries(tests PRIVATE core gtest gtest_main)
 
-# Register the test with CTest
 include(GoogleTest)
 gtest_discover_tests(tests)
 
-# set up a helper variable to detect Debug mode in single‐config generators
-if(NOT CMAKE_CONFIGURATION_TYPES)
-  set(IS_DEBUG   "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-else()
-  set(IS_DEBUG   TRUE)
-endif()
-
-if(IS_DEBUG)
-  find_program(GCOVR_EXECUTABLE gcovr)
-  if(GCOVR_EXECUTABLE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    target_compile_options(core PRIVATE 
-      "$<$<CONFIG:Debug>:--coverage>"
-      "$<$<CONFIG:Debug>:-fprofile-arcs>"
-      "$<$<CONFIG:Debug>:-ftest-coverage>"
-      "$<$<CONFIG:Debug>:-fkeep-static-functions>"
-      "$<$<CONFIG:Debug>:-fno-inline>"
-      "$<$<CONFIG:Debug>:-fno-elide-constructors>"
-      "$<$<CONFIG:Debug>:-fno-inline-small-functions>"
-      "$<$<CONFIG:Debug>:-fno-default-inline>"
-      "$<$<CONFIG:Debug>:-fprofile-abs-path>"
-    )
-    target_link_options(core PUBLIC 
-      "$<$<CONFIG:Debug>:--coverage>"
-      "$<$<CONFIG:Debug>:-fprofile-arcs>"
-      "$<$<CONFIG:Debug>:-ftest-coverage>"
-      "$<$<CONFIG:Debug>:-fkeep-static-functions>"
-      "$<$<CONFIG:Debug>:-fno-inline>"
-      "$<$<CONFIG:Debug>:-fno-elide-constructors>"
-      "$<$<CONFIG:Debug>:-fno-inline-small-functions>"
-      "$<$<CONFIG:Debug>:-fno-default-inline>"
-      "$<$<CONFIG:Debug>:-fprofile-abs-path>"
-    )
-    add_custom_target(coverage
-      COMMENT "Generating coverage report"
-      COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure  # Run tests first
-      COMMAND ${GCOVR_EXECUTABLE}
-      -r ${CMAKE_SOURCE_DIR}
-      --html --html-details --html-title "UnitTest coverage"
-      --calls
-      --branches
-      --exclude ".*/3party/.*"
-      --exclude ".*\\.inl"
-      --decisions
-      --exclude-function-lines
-      --exclude-noncode-lines
-      --delete
-      -o coverage.html
-      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-      DEPENDS core tests
-    )
-  endif()
-
+if(MSVC)
   find_program(OPENCPPCOVERAGE_PATH OpenCppCoverage.exe)
-  if(OPENCPPCOVERAGE_PATH AND MSVC)
+  if(OPENCPPCOVERAGE_PATH)
     # Convert paths to native Windows format
     file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/src" NATIVE_SOURCE_DIR)
     file(TO_NATIVE_PATH "${CMAKE_BINARY_DIR}/coverage_report" NATIVE_OUTPUT_DIR)
@@ -92,4 +40,15 @@ if(IS_DEBUG)
     DEPENDS core
     )
   endif()
-endif() #IS_DEBUG
+else()
+  include(CodeCoverage)
+  append_coverage_compiler_flags()
+  append_coverage_compiler_flags_to_target(core)
+  set(GCOVR_ADDITIONAL_ARGS "--calls;--branches;--decisions;--exclude-function-lines;--exclude-noncode-lines;--exclude-unreachable-branches;--exclude-throw-branches;--delete")
+  set(COVERAGE_EXCLUDES "${CMAKE_SOURCE_DIR}/3party/*" "${CMAKE_SOURCE_DIR}/tests/*")
+  setup_target_for_coverage_gcovr_html(
+    NAME coverage
+    EXECUTABLE ctest
+    DEPENDS core tests
+  )
+endif()
