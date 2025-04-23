@@ -155,13 +155,21 @@ public:
     using FuncType = R(APIENTRY*)(Args...);
 
     Function()
-    : m_Func(nullptr)
+    : m_Func(noctx)
     , m_Name("Function")
     , m_ReturnType(type_name<R>())
     , m_ArgsTypes{type_name<Args>()...}
     , m_ArgsValues{}
     , m_CallCount(0)
     { m_Count++; }
+
+    static auto APIENTRY noctx([[maybe_unused]] Args... args) -> R
+    {
+        std::cout << "noctx??????????\n\n";
+        if constexpr (!std::is_void_v<R>) {
+            return R{};
+        }
+    }
 
     auto operator()(Args... args, std::source_location loc = std::source_location::current()) -> R
     {
@@ -321,7 +329,7 @@ private:
     inline Function<type> name;
 #else
 #   define GLFUN(type, name)\
-    inline type name;
+    inline type name = Function<type>::noctx;
 #endif
 
 GLFUNCS(GLFUN)
