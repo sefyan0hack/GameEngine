@@ -10,6 +10,12 @@ auto PrintStackTrace(unsigned short skip = 0) -> void;
 #endif //DEBUG
 #endif
 
+namespace config {
+  inline bool exit_on_error = true;
+  inline bool show_message_box = true;
+  inline bool show_output = true;
+}
+
 namespace {
 
 enum class Log_LvL : char {
@@ -87,7 +93,8 @@ auto Log(
       std::stacktrace::current(1)
     );
     #ifdef _WIN32
-    MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONERROR );
+    if(config::show_message_box)
+      MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONERROR );
     #endif
   }
   else if constexpr (lvl == Log_LvL::INFO){
@@ -96,11 +103,14 @@ auto Log(
   else if constexpr (lvl == Log_LvL::PRT){
     msg << std::format("{} : {}\n", formatedTime(), formatted_msg);
   }
+  if(config::show_output){
+    out << msg.rdbuf();
+    out.flush();
+  }
 
-  out << msg.rdbuf();
-  out.flush();
-
-  if constexpr (lvl == Log_LvL::ERR  || lvl == Log_LvL::EXPT) exit(EXIT_FAILURE);
+  if constexpr (lvl == Log_LvL::ERR  || lvl == Log_LvL::EXPT){
+    if(config::exit_on_error) exit(EXIT_FAILURE);
+  }
 }
 
 }
