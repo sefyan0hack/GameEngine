@@ -144,7 +144,7 @@ X(PFNGLTEXSUBIMAGE2DPROC, glTexSubImage2D);\
 X(PFNGLTEXSTORAGE2DPROC, glTexStorage2D);\
 X(PFNGLUNIFORM2FVPROC, glUniform2fv);\
 
-[[maybe_unused]] inline PFNGLGETERRORPROC glGetError = nullptr;
+[[maybe_unused]] inline PFNGLGETERRORPROC glGetError = [] -> GLuint { return 0; };
 
 template <typename T>
 class Function;
@@ -165,7 +165,6 @@ public:
 
     static auto APIENTRY noctx([[maybe_unused]] Args... args) -> R
     {
-        std::cout << "noctx??????????\n\n";
         if constexpr (!std::is_void_v<R>) {
             return R{};
         }
