@@ -144,7 +144,7 @@ X(PFNGLTEXSUBIMAGE2DPROC, glTexSubImage2D);\
 X(PFNGLTEXSTORAGE2DPROC, glTexStorage2D);\
 X(PFNGLUNIFORM2FVPROC, glUniform2fv);\
 
-[[maybe_unused]] inline PFNGLGETERRORPROC glGetError = [] -> GLuint { return 0; };
+[[maybe_unused]] inline PFNGLGETERRORPROC glGetError = []() -> GLuint { return 0; };
 
 template <typename T>
 class Function;
