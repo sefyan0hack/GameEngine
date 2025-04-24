@@ -94,15 +94,15 @@ TEST(Formatters, Shader){
     EXPECT_EQ(r, e);
 }
 
-// TEST(Formatters, Mesh){
-//     auto obj = Mesh(std::vector<Vertex>());
-//     auto r = std::format("{}", obj);
-//     auto e = format(
-//         R"({{ "name": "{}", "VAO": {}, "VBO": {}, "EBO": {}, "verticesSize": {} }})",
-//         obj.name, obj.VAO, obj.VBO, obj.EBO, obj.VextexSize()
-//     );
-//     EXPECT_EQ(r, e);
-// }
+TEST(Formatters, Mesh){
+    auto obj = Mesh(std::vector<Vertex>());
+    auto r = std::format("{}", obj);
+    auto e = format(
+        R"({{ "name": "{}", "VAO": {}, "VBO": {}, "EBO": {}, "verticesSize": {} }})",
+        obj.name, obj.VAO, obj.VBO, obj.EBO, obj.VextexSize()
+    );
+    EXPECT_EQ(r, e);
+}
 
 
 // TEST(Formatters, Material){
