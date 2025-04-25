@@ -119,7 +119,7 @@ Texture2D::Texture2D(const std::string &name)
         if(is_odd(m_Width)){
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         }
-        glTexImage2D(m_Type, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, m_Data.data());
+        glTexImage2D(m_Type, 0, static_cast<GLint>(format), m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, m_Data.data());
 
         if (m_Mipmapped) GenerateMipMap();
 
@@ -175,7 +175,7 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
             GLint alignment = (rowBytes % 8 == 0)? 8 : (rowBytes % 4 == 0)? 4 : (rowBytes % 2 == 0)? 2 : 1;
             glPixelStorei(GL_UNPACK_ALIGNMENT, alignment);
 
-            glTexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, dataface.data());
+            glTexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, static_cast<GLint>(format), m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, dataface.data());
 
             Info("Loding {} ", face);
         }else{
