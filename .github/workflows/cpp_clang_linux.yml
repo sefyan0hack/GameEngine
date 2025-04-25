@@ -26,18 +26,22 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y clang cmake ninja-build \
           libgl1-mesa-dev libglu1-mesa-dev \
-          libxrandr-dev libxinerama-dev libxcursor-dev xorg-dev
+          libxrandr-dev libxinerama-dev libxcursor-dev xorg-dev \
+          libasan6 libubsan1
 
     - name: Configure (Clang ${{ matrix.build_type }})
       run: |
         CC=clang CXX=clang++ cmake -S . -B build -G "Ninja" \
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
           -DOPENGL_gl_LIBRARY=/usr/lib/x86_64-linux-gnu/libGL.so \
-          -DOPENGL_glu_LIBRARY=/usr/lib/x86_64-linux-gnu/libGLU.so
+          -DOPENGL_glu_LIBRARY=/usr/lib/x86_64-linux-gnu/libGLU.so \
+          -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined"
 
     - name: Build (Clang ${{ matrix.build_type }})
       run: cmake --build build --target all
 
     - name: Run tests
       working-directory: ./build
-      run: ctest --output-on-failure
+      run: | 
+        export ASAN_OPTIONS=detect_leaks=0  # Disable leak detection for CI
+        ctest --output-on-failure --timeout 30
