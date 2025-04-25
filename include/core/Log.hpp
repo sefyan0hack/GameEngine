@@ -66,7 +66,7 @@ concept StreamOut = requires(){
   { T::get_stream() } -> std::convertible_to<std::ostream&>;
 };
 
-auto& get_logger_mutex() {
+inline auto& get_logger_mutex() {
   static std::mutex mtx;
   return mtx;
 }
