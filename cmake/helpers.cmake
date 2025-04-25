@@ -114,8 +114,7 @@ function(apply_compile_options)
                 "$<$<CONFIG:Debug>:-O0>"
                 "$<$<CONFIG:Debug>:-fno-inline>"
                 "$<$<CONFIG:Debug>:-funwind-tables>"
-                "$<$<CONFIG:Debug>:-fno-optimize-sibling-calls>"
-
+                
                 # Release flags
                 "$<$<CONFIG:Release>:-O3>"
                 "$<$<CONFIG:Release>:-g1>"
