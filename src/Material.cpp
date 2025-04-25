@@ -203,7 +203,7 @@ auto Material::DumpUniforms() -> void
 
         for(GLint i = 0; i < count; i++){
             std::string Uniform_name(static_cast<size_t>(max_len), '\0');
-            glGetActiveUniform(m_Id, i, static_cast<GLsizei>(max_len), &len, &count_out, &type, Uniform_name.data());
+            glGetActiveUniform(m_Id, static_cast<GLuint>(i), static_cast<GLsizei>(max_len), &len, &count_out, &type, Uniform_name.data());
             Uniform_name.resize(static_cast<size_t>(len));
 
             m_Uniforms[Uniform_name] =  UniformLocation_Prv(Uniform_name.c_str());
@@ -225,7 +225,7 @@ auto Material::DumpAttribs() -> void
 
         for(GLint i = 0; i < count; i++){
             std::string attrib_name(static_cast<size_t>(max_len), '\0');
-            glGetActiveAttrib(m_Id, i, max_len, &len, nullptr, &type, attrib_name.data());
+            glGetActiveAttrib(m_Id, static_cast<GLuint>(i), max_len, &len, nullptr, &type, attrib_name.data());
             attrib_name.resize(static_cast<size_t>(len));
 
             m_Attribs[attrib_name] = AttribLocation_Prv(attrib_name.c_str());
@@ -233,11 +233,12 @@ auto Material::DumpAttribs() -> void
     }
 }
 
-auto Material::Current_Program() -> GLuint{
+auto Material::Current_Program() -> GLuint
+{
     GLint prog = 0;
     glGetIntegerv(GL_CURRENT_PROGRAM, &prog);
 
-    return prog;
+    return static_cast<GLuint>(prog);
 }
 
 auto Material::Uniforms() const noexcept -> const std::map<std::string, GLuint>&

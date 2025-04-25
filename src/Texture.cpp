@@ -65,7 +65,7 @@ auto Texture::id() const -> GLuint
 
 auto Texture::Bind() const -> void
 {
-    glActiveTexture(GL_TEXTURE0 + m_TextureUnit);
+    glActiveTexture(static_cast<GLenum>(GL_TEXTURE0 + m_TextureUnit));
     glBindTexture(m_Type, m_Id);
 }
 
@@ -115,7 +115,7 @@ Texture2D::Texture2D(const std::string &name)
         m_Width = Width;
         m_Height = Height;
         m_Data = std::move(ubyte_to_vector(Data, Width * Height * Channel));
-        auto format = Channel == 1 ? GL_RED : Channel == 3 ? GL_RGB : GL_RGBA;
+        GLenum format = Channel == 1 ? GL_RED : Channel == 3 ? GL_RGB : GL_RGBA;
         if(is_odd(m_Width)){
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         }
@@ -169,13 +169,13 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
             m_Height = Height;
             dataface = std::move(ubyte_to_vector(Data, Width * Height * Channel));
 
-            auto format = Channel == 1 ? GL_RED : Channel == 3 ? GL_RGB : GL_RGBA;
+            GLenum format = Channel == 1 ? GL_RED : Channel == 3 ? GL_RGB : GL_RGBA;
             
             GLint rowBytes = Width * Channel;
-            GLuint alignment = (rowBytes % 8 == 0)? 8 : (rowBytes % 4 == 0)? 4 : (rowBytes % 2 == 0)? 2 : 1;
+            GLint alignment = (rowBytes % 8 == 0)? 8 : (rowBytes % 4 == 0)? 4 : (rowBytes % 2 == 0)? 2 : 1;
             glPixelStorei(GL_UNPACK_ALIGNMENT, alignment);
 
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, dataface.data());
+            glTexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, dataface.data());
 
             Info("Loding {} ", face);
         }else{
