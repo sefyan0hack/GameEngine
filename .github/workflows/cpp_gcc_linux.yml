@@ -30,7 +30,7 @@ jobs:
 
     - name: Configure (GCC ${{ matrix.build_type }})
       run: |
-        CC=gcc CXX=g++ cmake -S . -B build -G "Ninja" \
+        CC=gcc-14 CXX=g++-14 cmake -S . -B build -G "Ninja" \
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
     - name: Build (GCC ${{ matrix.build_type }})
