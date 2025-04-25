@@ -16,7 +16,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Install Latest Clang
-      uses: llvm/actions/setup-llvm@v1
+      uses: ZhongRuoyu/setup-llvm@v0
       with:
         version: "latest"
         platform: win64
