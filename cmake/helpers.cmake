@@ -91,12 +91,13 @@ function(apply_compile_options)
             )
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             target_compile_options(${target} PRIVATE -ftime-trace
-            "$<$<AND:$<CXX_COMPILER_ID:Clang>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-fuse-ld=lld>"
-            "$<$<AND:$<CXX_COMPILER_ID:Clang>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-lmsvcrt>"
-            "$<$<AND:$<CXX_COMPILER_ID:Clang>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Xlinker /subsystem:console>"
-            "$<$<AND:$<CXX_COMPILER_ID:Clang>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Xlinker /entry:mainCRTStartup>"
+            "$<$<AND:$<CXX_COMPILER_ID:Clang>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-fuse-ld=lld>"            
             )
             add_compile_options(-Wno-language-extension-token)
+            target_link_options(${target} PRIVATE
+            "$<$<AND:$<CXX_COMPILER_ID:Clang>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:/subsystem:console>"
+            "$<$<AND:$<CXX_COMPILER_ID:Clang>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:/entry:mainCRTStartup>"
+            )
         endif()
 
         if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
