@@ -6,39 +6,32 @@ on:
 
 jobs:
   build:
-    name: Clang ${{ matrix.build_type }}
     runs-on: windows-latest
     strategy:
       matrix:
         build_type: [Debug, Release]
-        include:
-          - build_type: Debug
-            build_dir: build/debug
-          - build_type: Release
-            build_dir: build/release
-
+    
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Install LLVM/Clang
-      run: |
-        choco uninstall llvm -y --force
-        choco install llvm --version=17.0.1 -y --force
-        echo "C:\Program Files\LLVM\bin" >> $env:GITHUB_PATH
+    - name: Install Latest Clang
+      uses: llvm/actions/setup-llvm@v1
+      with:
+        version: "latest"
+        platform: win64
+        components: clang
 
-    - name: Install Build Tools
-      run: |
-        choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
-        choco install ninja -y
+    - name: Install CMake/Ninja
+      uses: lukka/get-cmake@latest
 
     - name: Configure (Clang ${{ matrix.build_type }})
       shell: pwsh
       run: |
-        cmake -S . -B ${{ matrix.build_dir }} -G "Ninja" `
+        cmake -S . -B build -G "Ninja" `
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} `
           -DCMAKE_C_COMPILER=clang `
           -DCMAKE_CXX_COMPILER=clang++
 
-    - name: Build (Clang ${{ matrix.build_type }})
-      run: cmake --build ${{ matrix.build_dir }}
+    - name: Build
+      run: cmake --build build
