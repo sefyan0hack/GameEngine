@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    name: Clang ${{ matrix.build_type }} (LLVM)
+    name: Clang ${{ matrix.build_type }}
     runs-on: windows-latest
     strategy:
       matrix:
@@ -23,7 +23,8 @@ jobs:
 
     - name: Install LLVM/Clang
       run: |
-        choco install llvm --version=17.0.1 -y
+        choco uninstall llvm -y --force
+        choco install llvm --version=17.0.1 -y --force
         echo "C:\Program Files\LLVM\bin" >> $env:GITHUB_PATH
 
     - name: Install Build Tools
