@@ -33,6 +33,13 @@ jobs:
         cmake -S . -B build -G "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         cmake --build build --target all
 
+    - name: Add DLLs to PATH
+      shell: msys2 {0}
+      run: |
+        echo "Adding mingw64 bin to PATH"
+        export PATH="$MSYS2_PATH/mingw64/bin:$PATH"
+
     - name: Run tests
+      shell: msys2 {0}
       working-directory: ./build
       run: ctest --output-on-failure
