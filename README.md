@@ -8,7 +8,7 @@ https://my.cdash.org/index.php?project=GameEngine
 
 |         | **GCC** | **MSVC** |
 | ------- | --- | ---- |
-| **Windows** | [![MSYS2 C++ Build](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_Mingw.yml/badge.svg?event=push)](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_Mingw.yml) | [![Build Windows (MSVC)](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_work.yml/badge.svg?event=push)](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_work.yml) |
+| **Windows** | [![Build Windows (GCC)](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_Mingw.yml/badge.svg?event=push)](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_Mingw.yml) | [![Build Windows (MSVC)](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_work.yml/badge.svg?event=push)](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_work.yml) |
 
 
 ## Features
