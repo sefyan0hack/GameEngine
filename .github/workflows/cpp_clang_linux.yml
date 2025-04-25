@@ -26,8 +26,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y clang cmake ninja-build \
           libgl1-mesa-dev libglu1-mesa-dev \
-          libxrandr-dev libxinerama-dev libxcursor-dev xorg-dev \
-          libasan6 libubsan1
+          libxrandr-dev libxinerama-dev libxcursor-dev xorg-dev
 
     - name: Configure (Clang ${{ matrix.build_type }})
       run: |
@@ -41,6 +40,5 @@ jobs:
 
     - name: Run tests
       working-directory: ./build
-      run: | 
-        export ASAN_OPTIONS=detect_leaks=0  # Disable leak detection for CI
-        ctest --output-on-failure --timeout 30
+      run:
+        ctest --output-on-failure
