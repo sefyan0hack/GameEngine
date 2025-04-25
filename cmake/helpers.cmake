@@ -90,7 +90,7 @@ function(apply_compile_options)
             )
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             target_compile_options(${target} PRIVATE 
-            "$<$<CONFIG:Debug>:-ftime-trace>"
+            -ftime-trace
             )
         endif()
 
