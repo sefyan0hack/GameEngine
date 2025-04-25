@@ -36,7 +36,7 @@ jobs:
           -DOPENGL_glu_LIBRARY=/usr/lib/x86_64-linux-gnu/libGLU.so
 
     - name: Build (Clang ${{ matrix.build_type }})
-      run: cmake --build build
+      run: cmake --build build --target all
 
     - name: Run tests
       working-directory: ./build

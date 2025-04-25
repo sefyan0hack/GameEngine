@@ -34,7 +34,7 @@ jobs:
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
     - name: Build (GCC ${{ matrix.build_type }})
-      run: cmake --build build
+      run: cmake --build build --target all
 
     - name: Run tests
       working-directory: ./build

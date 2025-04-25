@@ -31,7 +31,7 @@ jobs:
       shell: msys2 {0}
       run: |
         cmake -S . -B build -G "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        cmake --build build
+        cmake --build build --target all
 
     - name: Run tests
       working-directory: ./build
