@@ -82,7 +82,8 @@ function(apply_compile_options)
                 -fdevirtualize -ftree-vectorize
                 )
             target_link_options(${target} PRIVATE
-                "$<$<CONFIG:Release>:-Wl,--subsystem,windows>"
+                
+                "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
                 "$<$<CONFIG:Release>:-flto>"
                 "$<$<CONFIG:Release>:-Wl,--as-needed>"
                 "$<$<CONFIG:Release>:-Wl,--gc-sections>"
