@@ -1,0 +1,35 @@
+name: Build Linux (Clang)
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    name: Clang ${{ matrix.build_type }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+        include:
+          - build_type: Debug
+            build_dir: build/debug
+          - build_type: Release
+            build_dir: build/release
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y clang cmake ninja-build
+
+    - name: Configure (Clang ${{ matrix.build_type }})
+      run: |
+        CC=clang CXX=clang++ cmake -S . -B ${{ matrix.build_dir }} -G "Ninja" \
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+
+    - name: Build (Clang ${{ matrix.build_type }})
+      run: cmake --build ${{ matrix.build_dir }}

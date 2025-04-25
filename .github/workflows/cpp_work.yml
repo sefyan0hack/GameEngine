@@ -5,34 +5,27 @@ on:
   pull_request:
 
 jobs:
-  build-release_msvc:
-    name: Build Release Msvc
+  build:
+    name: Build ${{ matrix.build_type }} MSVC
     runs-on: windows-latest
+    strategy:
+      matrix:
+        build_type: [Release, Debug]
+        include:
+          - build_type: Release
+            build_dir: build/release
+          - build_type: Debug
+            build_dir: build/debug
+
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup MSVC Environment
         uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Configure CMake (Release)
-        run: cmake -G "Ninja" -B build/release -DCMAKE_BUILD_TYPE=Release
+      - name: Configure CMake (${{ matrix.build_type }})
+        run: cmake -G "Ninja" -B ${{ matrix.build_dir }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
-      - name: Build (Release)
-        run: cmake --build build/release
-
-  build-debug_msvc:
-    name: Build Debug Msvc
-    runs-on: windows-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Setup MSVC Environment
-        uses: ilammy/msvc-dev-cmd@v1
-
-      - name: Configure CMake (Debug)
-        run: cmake -G "Ninja" -B build/debug -DCMAKE_BUILD_TYPE=Debug
-
-      - name: Build (Debug)
-        run: cmake --build build/debug
+      - name: Build (${{ matrix.build_type }})
+        run: cmake --build ${{ matrix.build_dir }}
