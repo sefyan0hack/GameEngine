@@ -115,6 +115,8 @@ function(apply_compile_options)
                 "$<$<CONFIG:Release>:-Wl,--gc-sections>"
                 "$<$<CONFIG:Release>:-Wl,-Bsymbolic-functions>"
             )
+        else()
+            target_compile_options(${target} PRIVATE "$<$<CONFIG:Debug>:-ftime-trace>")
         endif()
     endforeach()
 endfunction()
