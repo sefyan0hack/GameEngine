@@ -89,9 +89,7 @@ function(apply_compile_options)
                 "$<$<CONFIG:Release>:-Wl,-Bsymbolic-functions>"
             )
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-            target_compile_options(${target} PRIVATE 
-            -ftime-trace
-            )
+            add_compile_options(-ftime-trace)
         endif()
 
         if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
