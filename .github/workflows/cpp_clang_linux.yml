@@ -37,3 +37,7 @@ jobs:
 
     - name: Build (Clang ${{ matrix.build_type }})
       run: cmake --build build
+
+    - name: Run tests
+      working-directory: ./build
+      run: ctest --output-on-failure
