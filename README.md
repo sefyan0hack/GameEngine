@@ -6,9 +6,11 @@ Welcome to the **GameEngine** repository! This engine is designed to provide a s
 ### CDash
 https://my.cdash.org/index.php?project=GameEngine
 
-|         | **GCC** | **MSVC** |
-| ------- | --- | ---- |
-| **Windows** | [![Build Windows (GCC)](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_Mingw.yml/badge.svg?event=push)](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_Mingw.yml) | [![Build Windows (MSVC)](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_work.yml/badge.svg?event=push)](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_work.yml) |
+|             | **GCC**                                                                 | **MSVC**                                                                  | **Clang**                                                               |
+|-----------|:------------------------------------------------------------------------:|:-------------------------------------------------------------------------:|:------------------------------------------------------------------------:|
+| **Windows** | [![Build Windows (GCC)](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_Mingw.yml/badge.svg?event=push)](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_Mingw.yml) | [![Build Windows (MSVC)](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_work.yml/badge.svg?event=push)](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_work.yml) | –                                                                      |
+| **Linux**   | [![Build Linux (GCC)](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_gcc_linux.yml/badge.svg?event=push)](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_gcc_linux.yml) | –                                                                         | [![Build Linux (Clang)](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_clang_linux.yml/badge.svg?event=push)](https://github.com/sefyan0hack/GameEngine/actions/workflows/cpp_clang_linux.yml) |
+
 
 
 ## Features
