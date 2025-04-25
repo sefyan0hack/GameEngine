@@ -115,8 +115,6 @@ function(apply_compile_options)
                 "$<$<CONFIG:Debug>:-fno-inline>"
                 "$<$<CONFIG:Debug>:-funwind-tables>"
                 "$<$<CONFIG:Debug>:-fno-optimize-sibling-calls>"
-                "$<$<CONFIG:Debug>:-fno-elide-constructors>"
-                "$<$<CONFIG:Debug>:-D_FORTIFY_SOURCE=2>"
 
                 # Release flags
                 "$<$<CONFIG:Release>:-O3>"
