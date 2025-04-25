@@ -90,13 +90,12 @@ function(apply_compile_options)
                 "$<$<CONFIG:Release>:-Wl,-Bsymbolic-functions>"
             )
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-            target_compile_options(${target} PRIVATE -ftime-trace
-            "$<$<AND:$<CXX_COMPILER_ID:Clang>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-fuse-ld=lld>"            
+            target_compile_options(${target} PRIVATE -Wno-language-extension-token
+                "$<$<STREQUAL:$<PLATFORM_ID>,Windows>:-fuse-ld=lld>"            
             )
-            add_compile_options(-Wno-language-extension-token)
             target_link_options(${target} PRIVATE
-            "$<$<AND:$<CXX_COMPILER_ID:Clang>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:/subsystem:console>"
-            "$<$<AND:$<CXX_COMPILER_ID:Clang>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:/entry:mainCRTStartup>"
+                "$<$<STREQUAL:$<PLATFORM_ID>,Windows>:/subsystem:console>"
+                "$<$<STREQUAL:$<PLATFORM_ID>,Windows>:/entry:mainCRTStartup>"
             )
         endif()
 
@@ -113,8 +112,7 @@ function(apply_compile_options)
                 "$<$<CONFIG:Debug>:-g3>"
                 "$<$<CONFIG:Debug>:-O0>"
                 "$<$<CONFIG:Debug>:-fno-inline>"
-                "$<$<CONFIG:Debug>:-funwind-tables>"
-                
+
                 # Release flags
                 "$<$<CONFIG:Release>:-O3>"
                 "$<$<CONFIG:Release>:-g1>"
