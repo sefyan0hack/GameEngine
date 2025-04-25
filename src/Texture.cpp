@@ -114,7 +114,7 @@ Texture2D::Texture2D(const std::string &name)
         auto [Width, Height, Channel, Data] = result.value();
         m_Width = Width;
         m_Height = Height;
-        m_Data = std::move(ubyte_to_vector(Data, Width * Height * Channel));
+        m_Data = ubyte_to_vector(Data, Width * Height * Channel);
         GLenum format = Channel == 1 ? GL_RED : Channel == 3 ? GL_RGB : GL_RGBA;
         if(is_odd(m_Width)){
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -167,7 +167,7 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
 
             m_Width = Width;
             m_Height = Height;
-            dataface = std::move(ubyte_to_vector(Data, Width * Height * Channel));
+            dataface = ubyte_to_vector(Data, Width * Height * Channel);
 
             GLenum format = Channel == 1 ? GL_RED : Channel == 3 ? GL_RGB : GL_RGBA;
             
