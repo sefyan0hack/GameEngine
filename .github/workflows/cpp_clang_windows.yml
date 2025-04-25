@@ -1,0 +1,42 @@
+name: Build Windows (Clang)
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    name: Clang ${{ matrix.build_type }} (LLVM)
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+        include:
+          - build_type: Debug
+            build_dir: build/debug
+          - build_type: Release
+            build_dir: build/release
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install LLVM/Clang
+      run: |
+        choco install llvm -y
+        echo "C:\Program Files\LLVM\bin" >> $GITHUB_PATH
+
+    - name: Install Build Tools
+      run: |
+        choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
+        choco install ninja -y
+
+    - name: Configure (Clang ${{ matrix.build_type }})
+      run: |
+        cmake -S . -B ${{ matrix.build_dir }} -G "Ninja" \
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+          -DCMAKE_C_COMPILER=clang \
+          -DCMAKE_CXX_COMPILER=clang++
+
+    - name: Build (Clang ${{ matrix.build_type }})
+      run: cmake --build ${{ matrix.build_dir }}
