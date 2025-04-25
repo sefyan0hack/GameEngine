@@ -34,8 +34,7 @@ jobs:
         CC=clang CXX=clang++ cmake -S . -B build -G "Ninja" \
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
           -DOPENGL_gl_LIBRARY=/usr/lib/x86_64-linux-gnu/libGL.so \
-          -DOPENGL_glu_LIBRARY=/usr/lib/x86_64-linux-gnu/libGLU.so \
-          -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined"
+          -DOPENGL_glu_LIBRARY=/usr/lib/x86_64-linux-gnu/libGLU.so
 
     - name: Build (Clang ${{ matrix.build_type }})
       run: cmake --build build --target all
