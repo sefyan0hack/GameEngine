@@ -115,8 +115,11 @@ function(apply_compile_options)
                 "$<$<CONFIG:Release>:-Wl,--gc-sections>"
                 "$<$<CONFIG:Release>:-Wl,-Bsymbolic-functions>"
             )
-        else()
-            target_compile_options(${target} PRIVATE "$<$<CONFIG:Debug>:-ftime-trace>")
+        elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+            target_compile_options(${target} PRIVATE 
+            "$<$<CONFIG:Debug>:-ftime-trace>"
+            "$<$<CONFIG:Debug>:-std=c++2b;-stdlib=libc++>"
+            )
         endif()
     endforeach()
 endfunction()
