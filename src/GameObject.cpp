@@ -63,7 +63,7 @@ auto GameObject::SetUp(std::vector<glm::vec3> InsPos) -> void
             GL_FLOAT,
             GL_FALSE,
             sizeof(glm::vec3),
-            reinterpret_cast<GLvoid*>(0),
+            0,
             1,
         };
     

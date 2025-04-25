@@ -17,7 +17,7 @@ struct AttributeInfo {
   GLenum type;
   GLboolean normalized;
   GLint stride;
-  GLvoid* offset;
+  GLsizei offset;
   GLint divisor;
 };
 

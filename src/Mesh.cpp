@@ -115,30 +115,30 @@ namespace {
         default: return "unknown";
     }
 }
-    constexpr static AttributeInfo position {
+    constinit static AttributeInfo position {
         .size = 3,//decltype(Mesh::VetexData::Position)::length(),
         .type = GL_FLOAT,
         .normalized = GL_FALSE,
         .stride = sizeof(Mesh::VetexData),
-        .offset = reinterpret_cast<GLvoid*>(static_cast<std::uintptr_t>(offsetof(Mesh::VetexData, Position))),
+        .offset = offsetof(Mesh::VetexData, Position),  // No reinterpret_cast!
         .divisor = 0,
     };
     
-    constexpr static AttributeInfo normals {
+    constinit static AttributeInfo normals {
         .size = 3,//decltype(Mesh::VetexData::Normal)::length(),
         .type = GL_FLOAT,
         .normalized = GL_FALSE,
         .stride = sizeof(Mesh::VetexData),
-        .offset = reinterpret_cast<GLvoid*>(static_cast<std::uintptr_t>(offsetof(Mesh::VetexData, Normal))),
+        .offset = offsetof(Mesh::VetexData, Normal),  // No reinterpret_cast!
         .divisor = 0,
     };
 
-    constexpr static AttributeInfo texCoords {
+    constinit static AttributeInfo texCoords {
         .size = 2,//decltype(Mesh::VetexData::TexCoords)::length(),
         .type = GL_FLOAT,
         .normalized = GL_FALSE,
         .stride = sizeof(Mesh::VetexData),
-        .offset = reinterpret_cast<GLvoid*>(static_cast<std::uintptr_t>(offsetof(Mesh::VetexData, TexCoords))),
+        .offset = offsetof(Mesh::VetexData, TexCoords),  // No reinterpret_cast!
         .divisor = 0,
     };
 }
@@ -342,7 +342,7 @@ auto Mesh::setAttribute(GLuint index, AttributeInfo att) -> void
         att.type,
         att.normalized,
         att.stride,
-        att.offset
+        reinterpret_cast<GLvoid*>(att.offset)
     );
 
     glVertexAttribDivisor(index, att.divisor);
