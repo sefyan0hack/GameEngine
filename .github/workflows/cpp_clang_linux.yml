@@ -21,15 +21,19 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Install dependencies
+    - name: Install Clang and OpenGL dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y clang cmake ninja-build
+        sudo apt-get install -y clang cmake ninja-build \
+          libgl1-mesa-dev libglu1-mesa-dev \
+          libxrandr-dev libxinerama-dev libxcursor-dev xorg-dev
 
     - name: Configure (Clang ${{ matrix.build_type }})
       run: |
-        CC=clang CXX=clang++ cmake -S . -B ${{ matrix.build_dir }} -G "Ninja" \
-          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        CC=clang CXX=clang++ cmake -S . -B build -G "Ninja" \
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+          -DOPENGL_gl_LIBRARY=/usr/lib/x86_64-linux-gnu/libGL.so \
+          -DOPENGL_glu_LIBRARY=/usr/lib/x86_64-linux-gnu/libGLU.so
 
     - name: Build (Clang ${{ matrix.build_type }})
-      run: cmake --build ${{ matrix.build_dir }}
+      run: cmake --build build
