@@ -299,7 +299,7 @@ auto Mesh::CloneBuffer(GLenum type, GLuint src) -> GLuint
     
     if (bufferSize > 0) {
         BindBuffer(GL_COPY_WRITE_BUFFER, clone);
-        glBufferData(GL_COPY_WRITE_BUFFER, bufferSize, nullptr, usage);
+        glBufferData(GL_COPY_WRITE_BUFFER, bufferSize, nullptr, static_cast<GLenum>(usage));
         glCopyBufferSubData(type, GL_COPY_WRITE_BUFFER, 0, 0, bufferSize);
     } else {
         glDeleteBuffers(1, &clone);
@@ -345,7 +345,7 @@ auto Mesh::setAttribute(GLuint index, AttributeInfo att) -> void
         reinterpret_cast<GLvoid*>(att.offset)
     );
 
-    glVertexAttribDivisor(index, att.divisor);
+    glVertexAttribDivisor(index, static_cast<GLuint>(att.divisor));
 }
 
 auto Mesh::PrepareAttribs() ->void
@@ -403,21 +403,21 @@ auto Mesh::CurrentVAO() -> GLuint
 {
     GLint currentVAO = 0;
     glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
-    return currentVAO;
+    return static_cast<GLuint>(currentVAO);
 }
 
 auto Mesh::CurrentVBO() -> GLuint
 {
     GLint currentVBO = 0;
     glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &currentVBO);
-    return currentVBO;
+    return static_cast<GLuint>(currentVBO);
 }
 
 auto Mesh::Updata(GLuint buffer, const std::vector<VetexData>& vrtx) -> void
 {
     auto currentVBO = CurrentVBO();
     BindVertexBuffer(buffer);
-    glBufferData(GL_ARRAY_BUFFER, vrtx.size() * sizeof(Mesh::VetexData), vrtx.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(vrtx.size() * sizeof(Mesh::VetexData)), vrtx.data(), GL_STATIC_DRAW);
     BindVertexBuffer(currentVBO);
 }
 

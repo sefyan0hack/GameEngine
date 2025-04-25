@@ -11,7 +11,7 @@ future<optional<vector<char>>> load_file_async(const string& filename) {
         streamsize size = file.tellg();
         file.seekg(0, ios::beg);
 
-        vector<char> buffer(size);
+        vector<char> buffer(static_cast<size_t>(size));
         file.read(buffer.data(), size);
         return buffer;
     });

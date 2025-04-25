@@ -22,7 +22,7 @@ auto Mouse::GetPosY() const noexcept -> int
 	return y;
 }
 
-auto Mouse::SetPos(int x_, int y_) -> void
+auto Mouse::SetPos([[maybe_unused]] int x_, [[maybe_unused]] int y_) -> void
 {
 	#ifdef _WIN32
 	SetCursorPos(x_, y_);
@@ -162,7 +162,7 @@ auto Mouse::TrimRawInputBuffer() noexcept -> void
 }
 
 
-auto Mouse::OnWheelDelta(int delta ) noexcept -> void
+auto Mouse::OnWheelDelta([[maybe_unused]] int delta ) noexcept -> void
 {
 	#ifdef _WIN32
 	wheelDeltaCarry += delta;

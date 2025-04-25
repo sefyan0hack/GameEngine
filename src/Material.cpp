@@ -294,7 +294,7 @@ auto Material::SetUniform(const std::string& name, const GLint &value) const -> 
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        glUniform1i(it->second, value);
+        glUniform1i(static_cast<GLint>(it->second), value);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -304,7 +304,7 @@ auto Material::SetUniform(const std::string& name, const GLfloat &value) const -
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        glUniform1f(it->second, value);
+        glUniform1f(static_cast<GLint>(it->second), value);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -313,7 +313,7 @@ auto Material::SetUniform(const std::string& name, const GLuint &value) const ->
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        glUniform1ui(it->second, value);
+        glUniform1ui(static_cast<GLint>(it->second), value);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -323,7 +323,7 @@ auto Material::SetUniform(const std::string& name, const glm::vec2 &value) const
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        glUniform2fv(it->second, 1, &value[0]);
+        glUniform2fv(static_cast<GLint>(it->second), 1, &value[0]);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -333,7 +333,7 @@ auto Material::SetUniform(const std::string& name, const glm::vec3 &value) const
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        glUniform3fv(it->second, 1, &value[0]);
+        glUniform3fv(static_cast<GLint>(it->second), 1, &value[0]);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -343,7 +343,7 @@ auto Material::SetUniform(const std::string& name, const glm::mat2 &value) const
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        glUniformMatrix2fv(it->second, 1, GL_FALSE, &value[0][0]);
+        glUniformMatrix2fv(static_cast<GLint>(it->second), 1, GL_FALSE, &value[0][0]);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -353,7 +353,7 @@ auto Material::SetUniform(const std::string& name, const glm::mat3 &value) const
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        glUniformMatrix3fv(it->second, 1, GL_FALSE, &value[0][0]);
+        glUniformMatrix3fv(static_cast<GLint>(it->second), 1, GL_FALSE, &value[0][0]);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -363,7 +363,7 @@ auto Material::SetUniform(const std::string& name, const glm::mat4 &value) const
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        glUniformMatrix4fv(it->second, 1, GL_FALSE, &value[0][0]);
+        glUniformMatrix4fv(static_cast<GLint>(it->second), 1, GL_FALSE, &value[0][0]);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -374,7 +374,7 @@ auto Material::SetUniform(const std::string& name, const GLint &value1, const GL
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        glUniform2i(it->second, value1, value2);
+        glUniform2i(static_cast<GLint>(it->second), value1, value2);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -384,7 +384,7 @@ auto Material::SetUniform(const std::string& name, const GLfloat &value1, const 
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        glUniform2f(it->second, value1, value2);
+        glUniform2f(static_cast<GLint>(it->second), value1, value2);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -394,7 +394,7 @@ auto Material::SetUniform(const std::string& name, const GLuint &value1, const G
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        glUniform2ui(it->second, value1, value2);
+        glUniform2ui(static_cast<GLint>(it->second), value1, value2);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -405,7 +405,7 @@ auto Material::SetUniform(const std::string& name, const GLint &value1, const GL
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        glUniform3i(it->second, value1, value2, value3);
+        glUniform3i(static_cast<GLint>(it->second), value1, value2, value3);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -415,7 +415,7 @@ auto Material::SetUniform(const std::string& name, const GLfloat &value1, const 
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        glUniform3f(it->second, value1, value2, value3);
+        glUniform3f(static_cast<GLint>(it->second), value1, value2, value3);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -425,7 +425,7 @@ auto Material::SetUniform(const std::string& name, const GLuint &value1, const G
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        glUniform3ui(it->second, value1, value2, value3);
+        glUniform3ui(static_cast<GLint>(it->second), value1, value2, value3);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -436,7 +436,7 @@ auto Material::SetUniform(const std::string& name, const GLint &value1, const GL
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        glUniform4i(it->second, value1, value2, value3, value4);
+        glUniform4i(static_cast<GLint>(it->second), value1, value2, value3, value4);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -446,7 +446,7 @@ auto Material::SetUniform(const std::string& name, const GLfloat &value1, const 
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        glUniform4f(it->second, value1, value2, value3, value4);
+        glUniform4f(static_cast<GLint>(it->second), value1, value2, value3, value4);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -456,7 +456,7 @@ auto Material::SetUniform(const std::string& name, const GLuint &value1, const G
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        glUniform4ui(it->second, value1, value2, value3, value4);
+        glUniform4ui(static_cast<GLint>(it->second), value1, value2, value3, value4);
     }else{
         Error("the Uniform {} not exist", name);
     }
