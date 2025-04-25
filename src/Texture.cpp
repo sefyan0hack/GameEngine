@@ -24,7 +24,7 @@ constexpr auto to_string(GLenum type) -> const char*
   }
 }
 
-[[nodiscard]] auto load_img(const char* name, bool flip = true) -> std::expected<Image, std::string>
+[[nodiscard]] auto load_img(const char* name, bool flip = true) -> std::optional<Image>
 {
     Image img{};
 
@@ -32,7 +32,7 @@ constexpr auto to_string(GLenum type) -> const char*
 
     img.data = stbi_load(name, &img.width, &img.height, &img.Channels, 0);
 
-    if(img.data == nullptr) return std::unexpected(std::format("failed to load {} : {}", name, stbi_failure_reason()));
+    if(img.data == nullptr) return std::nullopt;
     
     return img;
 }
@@ -130,8 +130,8 @@ Texture2D::Texture2D(const std::string &name)
         glTexStorage2D(m_Type, 1, GL_RGB32F, m_Width, m_Height);
         GLfloat clearColor[3] = { 1.0f, 0.0f, 1.0f};
         glClearTexImage(m_Id, 0, GL_RGB, GL_FLOAT, clearColor); 
-        
-        Info("{}", result.error());
+
+        Info("{}", std::format("failed to load {} : {}", name, stbi_failure_reason()));
     }
 
     Info("{}", static_cast<const Texture&>(*this));
@@ -179,7 +179,7 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
 
             Info("Loding {} ", face);
         }else{
-            Error("{}", result.error());
+            Error("{}", std::format("failed to load {} : {}", face, stbi_failure_reason()));
         }
     }
     glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
