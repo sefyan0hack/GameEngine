@@ -96,7 +96,6 @@ function(apply_compile_options)
             "$<$<AND:$<CXX_COMPILER_ID:Clang>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Xlinker /subsystem:console>"
             "$<$<AND:$<CXX_COMPILER_ID:Clang>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Xlinker /entry:mainCRTStartup>"
             )
-            remove_compile_options(-nostartfiles -nostdlib)
             add_compile_options(-Wno-language-extension-token)
         endif()
 
