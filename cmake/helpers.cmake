@@ -77,13 +77,29 @@ function(apply_compile_options)
             )
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
             target_compile_options(${target} PRIVATE
-                -Wall -Wextra -Wpedantic -Wconversion -Wno-cast-function-type -Wfloat-equal -Winit-self -Wcast-qual -Wwrite-strings
-                # -Wmissing-declarations
+                -Wno-cast-function-type -Winit-self -Wcast-qual
+                -Wsuggest-final-types -Wsuggest-final-methods
+                -fdevirtualize -ftree-vectorize
+                )
+            target_link_options(${target} PRIVATE
+                "$<$<CONFIG:Release>:-Wl,--subsystem,windows>"
+                "$<$<CONFIG:Release>:-flto>"
+                "$<$<CONFIG:Release>:-Wl,--as-needed>"
+                "$<$<CONFIG:Release>:-Wl,--gc-sections>"
+                "$<$<CONFIG:Release>:-Wl,-Bsymbolic-functions>"
+            )
+        elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+            target_compile_options(${target} PRIVATE 
+            "$<$<CONFIG:Debug>:-ftime-trace>"
+            )
+        endif()
+
+        if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        target_compile_options(${target} PRIVATE
+                -Wall -Wextra -Wpedantic -Wconversion  -Wfloat-equal  -Wwrite-strings
                 -fno-exceptions
                 -fstack-protector-strong
                 -Wlogical-op -Wnull-dereference -Wswitch-enum
-                -Wsuggest-final-types -Wsuggest-final-methods
-                -fdevirtualize -ftree-vectorize
                 -Wuninitialized -Wpointer-arith -Wreturn-type -Winline -Wredundant-decls
                 -fno-operator-names
                 # Debug flags
@@ -91,7 +107,6 @@ function(apply_compile_options)
                 "$<$<CONFIG:Debug>:-g3>"
                 "$<$<CONFIG:Debug>:-O0>"
                 "$<$<CONFIG:Debug>:-fno-inline>"
-                "$<$<CONFIG:Debug>:-fstack-protector-strong>"
                 "$<$<CONFIG:Debug>:-funwind-tables>"
                 "$<$<CONFIG:Debug>:-fno-optimize-sibling-calls>"
                 "$<$<CONFIG:Debug>:-fno-elide-constructors>"
@@ -108,18 +123,6 @@ function(apply_compile_options)
                 "$<$<CONFIG:Release>:-ffunction-sections>"
                 "$<$<CONFIG:Release>:-fdata-sections>"
                 )
-            target_link_options(${target} PRIVATE
-                "$<$<CONFIG:Release>:-Wl,--subsystem,windows>"
-                "$<$<CONFIG:Release>:-flto>"
-                "$<$<CONFIG:Release>:-Wl,--as-needed>"
-                "$<$<CONFIG:Release>:-Wl,--gc-sections>"
-                "$<$<CONFIG:Release>:-Wl,-Bsymbolic-functions>"
-            )
-        elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-            target_compile_options(${target} PRIVATE 
-            "$<$<CONFIG:Debug>:-ftime-trace>"
-            "$<$<CONFIG:Debug>:-std=c++2b;-stdlib=libc++>"
-            )
         endif()
     endforeach()
 endfunction()
