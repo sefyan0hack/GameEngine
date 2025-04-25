@@ -166,7 +166,7 @@ target_include_directories(stb_image SYSTEM INTERFACE ${STB_IMG_HEADER})
 # Compile Flags 
 ####################################################################################################
 
-apply_compile_options(TARGETS core)
+apply_compile_options(TARGETS core ${PROJECT_NAME})
 
 print_target_compile_options(core)
 
