@@ -115,7 +115,7 @@ namespace {
         default: return "unknown";
     }
 }
-    constinit static AttributeInfo position {
+    constexpr static AttributeInfo position {
         .size = 3,//decltype(Mesh::VetexData::Position)::length(),
         .type = GL_FLOAT,
         .normalized = GL_FALSE,
@@ -124,7 +124,7 @@ namespace {
         .divisor = 0,
     };
     
-    constinit static AttributeInfo normals {
+    constexpr static AttributeInfo normals {
         .size = 3,//decltype(Mesh::VetexData::Normal)::length(),
         .type = GL_FLOAT,
         .normalized = GL_FALSE,
@@ -133,7 +133,7 @@ namespace {
         .divisor = 0,
     };
 
-    constinit static AttributeInfo texCoords {
+    constexpr static AttributeInfo texCoords {
         .size = 2,//decltype(Mesh::VetexData::TexCoords)::length(),
         .type = GL_FLOAT,
         .normalized = GL_FALSE,
