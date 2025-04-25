@@ -99,7 +99,7 @@ function(apply_compile_options)
                 -Wall -Wextra -Wpedantic -Wconversion  -Wfloat-equal  -Wwrite-strings
                 -fno-exceptions
                 -fstack-protector-strong
-                -Wlogical-op -Wnull-dereference -Wswitch-enum
+                -Wnull-dereference -Wswitch-enum
                 -Wuninitialized -Wpointer-arith -Wreturn-type -Winline -Wredundant-decls
                 -fno-operator-names
                 # Debug flags
