@@ -115,7 +115,7 @@ jobs:
               -ex 'run' \
               -ex 'bt full' \
               -ex 'quit' \
-              --args ./tests
+              --args ./tests/tests
 
   linux_gcc:
     name: Linux GCC (${{ matrix.build_type }})
