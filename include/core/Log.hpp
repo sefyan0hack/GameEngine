@@ -14,6 +14,11 @@ namespace config {
   inline bool exit_on_error = true;
   inline bool show_message_box = true;
   inline bool show_output = true;
+  inline void TestFlags(){
+    exit_on_error = false;
+    show_message_box = false;
+    show_output = false;
+  }
 }
 
 namespace {

@@ -100,9 +100,7 @@ class Formatters {
     }
     private:
     Formatters(){
-        config::exit_on_error = false;
-        config::show_message_box = false;
-        config::show_output = false;
+        config::TestFlags();
 
         mesh = new  Mesh(std::vector<Vertex>());
         shader = new Shader();
