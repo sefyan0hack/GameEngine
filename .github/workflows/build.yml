@@ -109,11 +109,13 @@ jobs:
 
       - name: Run tests under GDB
         working-directory: ./${{ matrix.build_dir }}
-        gdb -ex 'set pagination off' \
-          -ex 'run' \
-          -ex 'bt full' \
-          -ex 'quit' \
-          --args ./your_test_executable
+        run: |
+          gdb -ex 'set pagination off' \
+              -ex 'catch throw' \
+              -ex 'run' \
+              -ex 'bt full' \
+              -ex 'quit' \
+              --args ./tests
 
   linux_gcc:
     name: Linux GCC (${{ matrix.build_type }})
