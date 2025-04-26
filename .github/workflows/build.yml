@@ -107,6 +107,14 @@ jobs:
         working-directory: ./${{ matrix.build_dir }}
         run: ctest --output-on-failure
 
+      - name: Run tests under GDB
+        working-directory: ./${{ matrix.build_dir }}
+        gdb -ex 'set pagination off' \
+          -ex 'run' \
+          -ex 'bt full' \
+          -ex 'quit' \
+          --args ./your_test_executable
+
   linux_gcc:
     name: Linux GCC (${{ matrix.build_type }})
     runs-on: ubuntu-latest
