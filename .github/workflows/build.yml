@@ -1,0 +1,142 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  windows_msvc:
+    name: Windows MSVC (${{ matrix.build_type }})
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        build_type: [Release, Debug]
+        include:
+          - build_type: Release
+            build_dir: build/release
+          - build_type: Debug
+            build_dir: build/debug
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup MSVC Environment
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Configure CMake (${{ matrix.build_type }})
+        run: cmake -G "Ninja" -B ${{ matrix.build_dir }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+
+      - name: Build (${{ matrix.build_type }})
+        run: cmake --build ${{ matrix.build_dir }} --target all
+
+      - name: Run tests
+        working-directory: ./${{ matrix.build_dir }}
+        run: ctest --output-on-failure
+
+  windows_gcc:
+    name: Windows GCC (${{ matrix.build_type }})
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          install: >-
+            base-devel
+            mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+          update: true
+
+      - name: Configure and Build
+        shell: msys2 {0}
+        run: |
+          cmake -S . -B build -G "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          cmake --build build --target all
+
+      - name: Add DLLs to PATH
+        shell: msys2 {0}
+        run: |
+          echo "Adding mingw64 bin to PATH"
+          export PATH="$MSYS2_PATH/mingw64/bin:$PATH"
+
+      - name: Run tests
+        shell: msys2 {0}
+        working-directory: ./build
+        run: ctest --output-on-failure
+
+  linux_clang:
+    name: Linux Clang (${{ matrix.build_type }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+        include:
+          - build_type: Debug
+            build_dir: build/debug
+          - build_type: Release
+            build_dir: build/release
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Clang and OpenGL dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build \
+            libgl1-mesa-dev libglu1-mesa-dev \
+            libxrandr-dev libxinerama-dev libxcursor-dev xorg-dev
+
+      - name: Configure (Clang ${{ matrix.build_type }})
+        run: |
+          CC=clang CXX=clang++ cmake -S . -B ${{ matrix.build_dir }} -G "Ninja" \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -DOPENGL_gl_LIBRARY=/usr/lib/x86_64-linux-gnu/libGL.so \
+            -DOPENGL_glu_LIBRARY=/usr/lib/x86_64-linux-gnu/libGLU.so
+
+      - name: Build (Clang ${{ matrix.build_type }})
+        run: cmake --build ${{ matrix.build_dir }} --target all
+
+      - name: Run tests
+        working-directory: ./${{ matrix.build_dir }}
+        run: ctest --output-on-failure
+
+  linux_gcc:
+    name: Linux GCC (${{ matrix.build_type }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+  
+      - name: Install GCC 14
+        run: |
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+          sudo apt-get update
+          sudo apt-get install -y gcc-14 g++-14
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 100
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-14 100
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y cmake ninja-build libgl1-mesa-dev libglu1-mesa-dev libxrandr-dev libxinerama-dev libxcursor-dev
+
+      - name: Configure (GCC ${{ matrix.build_type }})
+        run: |
+          CC=gcc-14 CXX=g++-14 cmake -S . -B build -G "Ninja" \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+
+      - name: Build (GCC ${{ matrix.build_type }})
+        run: cmake --build build --target all
+
+      - name: Run tests
+        working-directory: ./build
+        run: ctest --output-on-failure
