@@ -93,10 +93,6 @@ function(apply_compile_options)
             target_compile_options(${target} PRIVATE -Wno-language-extension-token
                 "$<$<STREQUAL:$<PLATFORM_ID>,Windows>:-fuse-ld=lld>"            
             )
-            target_link_options(${target} PRIVATE
-                "$<$<STREQUAL:$<PLATFORM_ID>,Windows>:/subsystem:console>"
-                "$<$<STREQUAL:$<PLATFORM_ID>,Windows>:/entry:mainCRTStartup>"
-            )
         endif()
 
         if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
