@@ -140,15 +140,9 @@ set(SOURCES
 # Find OpenGL package
 find_package(OpenGL REQUIRED)
 
-if(TARGET OpenGL::GL)
-  # Get the path from the target
-  get_target_property(OPENGL_LIB_PATH OpenGL::GL IMPORTED_LOCATION)
-  message(STATUS "OpenGL library path: ${OPENGL_LIB_PATH}")
-else()
-  # Fallback to legacy variable (not always reliable)
-  message(STATUS "OpenGL library path: ${OPENGL_gl_LIBRARY}")
-endif()
-
+# Extract the core OpenGL library (first entry in the list)
+list(GET OPENGL_LIBRARIES 0 CORE_OPENGL_LIB)
+message(STATUS "Core OpenGL library: ${CORE_OPENGL_LIB}")
 ####################################################################################################
 # Build Exe 
 ####################################################################################################
