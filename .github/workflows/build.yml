@@ -103,10 +103,6 @@ jobs:
       - name: Build (Clang ${{ matrix.build_type }})
         run: cmake --build ${{ matrix.build_dir }} --target all
 
-      - name: Run tests
-        working-directory: ./${{ matrix.build_dir }}
-        run: ctest --output-on-failure
-
       - name: Run tests under GDB
         working-directory: ./${{ matrix.build_dir }}
         run: |
