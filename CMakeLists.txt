@@ -139,6 +139,7 @@ set(SOURCES
 
 # Find OpenGL package
 find_package(OpenGL REQUIRED)
+message(STATUS "OpenGL library path: ${OPENGL_gl_LIBRARY}")
 
 ####################################################################################################
 # Build Exe 
