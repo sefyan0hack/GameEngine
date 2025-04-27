@@ -139,7 +139,15 @@ set(SOURCES
 
 # Find OpenGL package
 find_package(OpenGL REQUIRED)
-message(STATUS "OpenGL library path: ${OPENGL_gl_LIBRARY}")
+
+if(TARGET OpenGL::GL)
+  # Get the path from the target
+  get_target_property(OPENGL_LIB_PATH OpenGL::GL IMPORTED_LOCATION)
+  message(STATUS "OpenGL library path: ${OPENGL_LIB_PATH}")
+else()
+  # Fallback to legacy variable (not always reliable)
+  message(STATUS "OpenGL library path: ${OPENGL_gl_LIBRARY}")
+endif()
 
 ####################################################################################################
 # Build Exe 
