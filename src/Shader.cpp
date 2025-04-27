@@ -48,13 +48,10 @@ Shader::Shader(const Shader& other)
 }
 
 Shader::Shader(Shader&& other) noexcept
-    : m_Id(other.m_Id)
-    , m_Type(other.m_Type)
-    , m_Content(std::move(other.m_Content))
+    : m_Id(std::exchange(other.m_Id, 0))
+    , m_Type(std::exchange(other.m_Type, 0))
+    , m_Content(std::exchange(other.m_Content, {}))
 {
-    other.m_Id = 0;
-    other.m_Type = 0;
-    other.m_Content.clear();
 }
 
 Shader &Shader::operator=(const Shader& other)

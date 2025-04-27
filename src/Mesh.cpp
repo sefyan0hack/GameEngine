@@ -205,37 +205,24 @@ auto Mesh::operator=(const Mesh& other) -> Mesh&
 }
 
 Mesh::Mesh(Mesh&& other) noexcept
-    : name(other.name)
-    , vertices(other.vertices)
-    , attribs(other.attribs)
-    , VBO(other.VBO)
-    , EBO(other.EBO)
-    , VAO(other.VAO)
+    : name(std::exchange(other.name, {}))
+    , vertices(std::exchange(other.vertices, {}))
+    , attribs(std::exchange(other.attribs, {}))
+    , VBO(std::exchange(other.VBO, 0))
+    , EBO(std::exchange(other.EBO, 0))
+    , VAO(std::exchange(other.VAO, 0))
 {
-    other.name.clear();
-    other.vertices.clear();
-    other.attribs.clear();
-    other.VBO = 0;
-    other.EBO = 0;
-    other.VAO = 0;
 }
 
 auto Mesh::operator=(Mesh &&other) noexcept -> Mesh&
 {
     if(*this != other){
-        this->name = other.name;
-        this->vertices = other.vertices;
-        this->attribs = other.attribs;
-        this->VBO = other.VBO;
-        this->EBO = other.EBO;
-        this->VAO = other.VAO;
-
-        other.name.clear();
-        other.vertices.clear();
-        other.attribs.clear();
-        other.VBO = 0;
-        other.EBO = 0;
-        other.VAO = 0;
+        this->name = std::exchange(other.name, {});
+        this->vertices = std::exchange(other.vertices, {});
+        this->attribs = std::exchange(other.attribs, {});
+        this->VBO = std::exchange(other.VBO, 0);
+        this->EBO = std::exchange(other.EBO, 0);
+        this->VAO = std::exchange(other.VAO, 0);
     }
     return *this;
 }

@@ -63,18 +63,14 @@ Material::Material(const Material& other)
     Info("{}", *this);
 }
 Material::Material(Material&& other) noexcept
-    : m_Id(std::move(other.m_Id))
-    , m_Shaders(std::move(other.m_Shaders))
-    , m_Attribs(std::move(other.m_Attribs))
-    , m_Uniforms(std::move(other.m_Uniforms)) // dnt forget  to check if the id are the same in the new Programe
-    , m_Albedo(std::move(other.m_Albedo))
+    : m_Id(std::exchange(other.m_Id, 0))
+    , m_Shaders(std::exchange(other.m_Shaders, {}))
+    , m_Attribs(std::exchange(other.m_Attribs, {}))
+    , m_Uniforms(std::exchange(other.m_Uniforms, {})) // dnt forget  to check if the id are the same in the new Programe
+    , m_Albedo(std::exchange(other.m_Albedo, {}))
     , m_Previd(Current_Program())
 
 {
-    other.m_Id = 0;
-    other.m_Shaders.clear();
-    other.m_Attribs.clear();
-    other.m_Uniforms.clear();
 }
 
 Material::~Material()

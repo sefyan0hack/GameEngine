@@ -332,38 +332,24 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL
 }
 
 OpenGL::OpenGL(OpenGL &&other) noexcept
-    : m_Context(other.m_Context)
-    , m_MainHDC(other.m_MainHDC)
-    , m_Major(other.m_Major)
-    , m_Minor(other.m_Minor)
-    , m_CreationTime(other.m_CreationTime)
-    , m_Debug(other.m_Debug)
+    : m_Context(std::exchange(other.m_Context, nullptr))
+    , m_MainHDC(std::exchange(other.m_MainHDC, nullptr))
+    , m_Major(std::exchange(other.m_Major, 0))
+    , m_Minor(std::exchange(other.m_Minor, 0))
+    , m_CreationTime(std::exchange(other.m_CreationTime, 0))
+    , m_Debug(std::exchange(other.m_Debug, false))
 {
-    other.m_Context = nullptr;
-    other.m_MainHDC = nullptr;
-    other.m_Major = 0;
-    other.m_Minor = 0;
-    other.m_CreationTime = 0;
-    other.m_Debug = false;
 }
 
 auto OpenGL::operator=(OpenGL &&other) noexcept -> OpenGL
 {
     if(*this != other){
-        this->m_Context = other.m_Context;
-        this->m_MainHDC = other.m_MainHDC;
-        this->m_Major = other.m_Major;
-        this->m_Minor = other.m_Minor;
-        this->m_CreationTime = other.m_CreationTime;
-        this->m_Debug = other.m_Debug;
-        
-        other.m_Context = nullptr;
-        other.m_MainHDC = nullptr;
-        other.m_Major = 0;
-        other.m_Minor = 0;
-        other.m_CreationTime = 0;
-        other.m_Debug = false;
-
+        this->m_Context = std::exchange(other.m_Context, nullptr);
+        this->m_MainHDC = std::exchange(other.m_MainHDC, nullptr);
+        this->m_Major = std::exchange(other.m_Major, 0);
+        this->m_Minor = std::exchange(other.m_Minor, 0);
+        this->m_CreationTime = std::exchange(other.m_CreationTime, 0);
+        this->m_Debug = std::exchange(other.m_Debug, false);
     }
 
     return *this;

@@ -57,6 +57,7 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     EXECUTABLE ctest
     DEPENDS core tests
   )
+  delete_files_by_extension("${CMAKE_BINARY_DIR}" "gcda")
   else()
   message(STATUS "conseder dowing `pip install gcovr` if you want code covegare")
   endif()
