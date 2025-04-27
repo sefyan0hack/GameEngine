@@ -184,6 +184,13 @@ auto Mouse::IsEmpty() const noexcept -> bool
 	return buffer.empty(); 
 }
 
+Mouse::Event::Event( Mouse::Event::Type type, const Mouse& parent ) noexcept
+    : type( type )
+	, leftIsPressed( parent.leftIsPressed )
+	, rightIsPressed( parent.rightIsPressed )
+    , x( parent.x )
+	, y( parent.y ) {}
+
 auto Mouse::Event::GetType() const noexcept -> Mouse::Event::Type 
 {
 	return type;

@@ -14,10 +14,7 @@ private:
 	public:
 		enum class Type { LPress, LRelease, RPress, RRelease, WheelUp, WheelDown, Move, Enter, Leave, };
 	public:
-		Event( Type type,const Mouse& parent ) noexcept
-        :   type( type ),
-			leftIsPressed( parent.leftIsPressed ), rightIsPressed( parent.rightIsPressed ),
-            x( parent.x ), y( parent.y ) {}
+		Event( Type type,const Mouse& parent ) noexcept;
 		auto GetType() const noexcept 			-> Type ;
 		auto GetPos() const noexcept 			-> std::pair<int, int> ;
 		auto GetPosX() const noexcept			-> int ;

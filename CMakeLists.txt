@@ -123,7 +123,6 @@ set(SOURCES
     src/Mesh.cpp
     src/OpenGL.cpp
     src/APP.cpp
-    src/Utils.cpp
     src/GameObject.cpp
     src/Texture.cpp
     src/Scene.cpp

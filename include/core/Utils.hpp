@@ -1,6 +1,5 @@
 #pragma once
 
-
 template <typename T>
 concept Formatable = requires(T t) {
     std::format("{}", t);
@@ -70,9 +69,48 @@ constexpr std::array<char, sizeof(Str.value)> ToUpper<Str>::value;
 
 #define TO_UPPER(str) std::string_view(ToUpper<FixedString{str}>::value.data())
 
-std::future<std::optional<std::vector<char>>> load_file_async(const std::string& filename);
-std::vector<std::string> split(std::string s, const std::string& delimiter);
-std::string replace(std::string s, char c, char with);
+inline std::future<std::optional<std::vector<char>>> load_file_async(const std::string& filename) {
+    using namespace std;
+    return async(launch::async, [filename]() -> optional<vector<char>> {
+        ifstream file(filename, ios::binary | ios::ate);
+        if (!file) {
+            return std::nullopt;
+        }
+        streamsize size = file.tellg();
+        file.seekg(0, ios::beg);
+
+        vector<char> buffer(static_cast<size_t>(size));
+        file.read(buffer.data(), size);
+        return buffer;
+    });
+}
+
+inline std::vector<std::string> split(std::string s, const std::string& delimiter) {
+    using namespace std;
+    if(s.empty()) return {};
+    
+    vector<string> tokens;
+    size_t pos = 0;
+    string token;
+    while ((pos = s.find(delimiter)) != string::npos) {
+        token = s.substr(0, pos);
+        tokens.push_back(token);
+        s.erase(0, pos + delimiter.length());
+    }
+    tokens.push_back(s);
+
+    return tokens;
+}
+
+inline std::string replace(std::string s, char c, char with)
+{
+    if( c == '\0' || with == '\0')
+        return s;
+    for(auto& ch: s)
+        if(ch == c) 
+            ch = with;
+    return s;
+}
 
 template<class T>
 requires std::convertible_to<T, std::string> || Formatable<T>
