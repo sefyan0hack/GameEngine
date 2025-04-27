@@ -69,7 +69,7 @@ class OpenGL
         #ifdef _WIN32
         friend auto __GetProcAddress(LPCSTR module, const char* name) -> void*;
         friend auto rsgl(const char* name) -> void*;
-        inline static LPCSTR OPENGL_MODULE_NAME {"opengl32.dll"};    
+        inline static LPCSTR OPENGL_MODULE_NAME {OPENGL_LIB};    
         auto init_opengl_win32()              -> void ;
         #elif defined(__linux__)
         auto init_opengl_linux(Window window) -> void ;

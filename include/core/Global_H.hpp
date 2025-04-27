@@ -34,3 +34,7 @@
     #define TEXTURE(str) #str
     #define SHADER(str)  #str
 #endif
+
+#ifndef OPENGL_LIB
+    #error "no opengl lib path"
+#endif

@@ -142,7 +142,7 @@ find_package(OpenGL REQUIRED)
 
 # Extract the core OpenGL library (first entry in the list)
 list(GET OPENGL_LIBRARIES 0 CORE_OPENGL_LIB)
-message(STATUS "Core OpenGL library: ${CORE_OPENGL_LIB}")
+
 ####################################################################################################
 # Build Exe 
 ####################################################################################################
@@ -176,6 +176,7 @@ print_target_compile_options(core)
 target_compile_definitions(core
     PUBLIC
         PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
+        OPENGL_LIB="${CORE_OPENGL_LIB}"
         $<$<CONFIG:Debug>:DEBUG>
 )
 
