@@ -123,3 +123,32 @@ function(apply_compile_options)
         endif()
     endforeach()
 endfunction()
+
+function(delete_files_by_extension DIR EXTENSION)
+    file(GLOB_RECURSE FILES_TO_DELETE 
+        LIST_DIRECTORIES false
+        "${DIR}/**.${EXTENSION}"
+        "${DIR}/**/.*.${EXTENSION}"
+    )
+
+    if(NOT FILES_TO_DELETE)
+        message(STATUS "No *.${EXTENSION} files found in ${DIR}")
+        return()
+    endif()
+
+    list(LENGTH FILES_TO_DELETE NUM_FILES)
+    message(STATUS "Deleting ${NUM_FILES} *.${EXTENSION} files...")
+
+    foreach(FILE IN LISTS FILES_TO_DELETE)
+        if(EXISTS "${FILE}")
+            file(REMOVE "${FILE}")
+            if(VERBOSE)
+                message(STATUS "Deleted: ${FILE}")
+            endif()
+        else()
+            if(WARN_ON_MISSING)
+                message(WARNING "File not found: ${FILE}")
+            endif()
+        endif()
+    endforeach()
+endfunction()
