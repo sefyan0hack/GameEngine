@@ -37,8 +37,8 @@ jobs:
           ctest --output-on-failure
           echo ctest_exit_code=%ERRORLEVEL% >> %GITHUB_OUTPUT%
 
-      - name: Upload tests.exe on failure
-        if: steps.run-tests.outputs.ctest_exit_code != '0'
+      - name:  Upload test executable on failure
+        if: ${{ steps.run-tests.outputs.ctest_exit_code != '0' }}
         uses: actions/upload-artifact@v4
         with:
           name: tests-exe-${{ matrix.build_type }}-msvc
@@ -88,7 +88,7 @@ jobs:
           echo "ctest_exit_code=$?" >> $GITHUB_OUTPUT
       
       - name: Upload tests.exe on failure
-        if: steps.run-tests.outputs.ctest_exit_code != '0'
+        if: ${{ steps.run-tests.outputs.ctest_exit_code != '0' }}
         uses: actions/upload-artifact@v4
         with:
           name: tests-exe-${{ matrix.build_type }}-gcc
@@ -132,11 +132,12 @@ jobs:
         id: run-tests
         working-directory: ./${{ matrix.build_dir }}
         run: |
+          set -eo pipefail
           ctest --output-on-failure
           echo "ctest_exit_code=$?" >> $GITHUB_OUTPUT
 
       - name: Upload test executable on failure
-        if: steps.run-tests.outputs.ctest_exit_code != '0'
+        if: ${{ steps.run-tests.outputs.ctest_exit_code != '0' }}
         uses: actions/upload-artifact@v4
         with:
           name: tests-linux-clang-${{ matrix.build_type }}
@@ -177,11 +178,12 @@ jobs:
         id: run-tests
         working-directory: ./build
         run: |
+          set -eo pipefail
           ctest --output-on-failure
           echo "ctest_exit_code=$?" >> $GITHUB_OUTPUT
 
       - name: Upload test executable on failure
-        if: steps.run-tests.outputs.ctest_exit_code != '0'
+        if: ${{ steps.run-tests.outputs.ctest_exit_code != '0' }}
         uses: actions/upload-artifact@v4
         with:
           name: tests-linux-gcc-${{ matrix.build_type }}
