@@ -3,12 +3,13 @@
 #include <fstream>
 
 TEST(load_file_async, exist) {
-    std::ofstream file { "Hello.txt" };
+    auto filename = "Hello.txt";
+    std::ofstream file { filename };
     if(!file.is_open()){
-        return 0;
+        SUCCEED();
     }
     
-    auto r = load_file_async(file).get();
+    auto r = load_file_async(filename).get();
     EXPECT_EQ(r.has_value(), true);
 }
 
