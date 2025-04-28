@@ -29,12 +29,12 @@ jobs:
 
       - name: Build (${{ matrix.build_type }})
         run: cmake --build ${{ matrix.build_dir }} --target all
-  
-      - name: Upload Build Artifacts
+
+      - name: Upload Test Executable
         uses: actions/upload-artifact@v4
         with:
-          name: build-windows-msvc-${{ matrix.build_type }}
-          path: ${{ matrix.build_dir }}
+          name: tests-windows-msvc-${{ matrix.build_type }}
+          path: ${{ matrix.build_dir }}/tests/${{ matrix.build_type }}/tests.exe
           retention-days: 1
 
       - name: Run tests
@@ -73,7 +73,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-windows-gcc-${{ matrix.build_type }}
-          path: build
+          path: build/tests/tests
           retention-days: 1
 
       - name: Add DLLs to PATH
@@ -120,11 +120,11 @@ jobs:
       - name: Build (Clang ${{ matrix.build_type }})
         run: cmake --build ${{ matrix.build_dir }} --target all
 
-      - name: Upload Build Artifacts
+      - name: Upload Test Executable
         uses: actions/upload-artifact@v4
         with:
-          name: build-linux-clang-${{ matrix.build_type }}
-          path: ${{ matrix.build_dir }}
+          name: tests-linux-clang-${{ matrix.build_type }}
+          path: ${{ matrix.build_dir }}/tests/tests
           retention-days: 1
 
       - name: Run tests
@@ -162,11 +162,11 @@ jobs:
       - name: Build (GCC ${{ matrix.build_type }})
         run: cmake --build build --target all
 
-      - name: Upload Build Artifacts
+      - name: Upload Test Executable
         uses: actions/upload-artifact@v4
         with:
-          name: build-linux-gcc-${{ matrix.build_type }}
-          path: build
+          name: tests-linux-gcc-${{ matrix.build_type }}
+          path: build/tests/tests
           retention-days: 1
 
       - name: Run tests
