@@ -23,6 +23,12 @@ TEST(split, empty_string) {
     EXPECT_EQ(r, expect);
 }
 
+TEST(split, empty_null) {
+    auto r = split((const char*)nullptr, " ");
+    decltype(r) expect;
+    EXPECT_EQ(r, expect);
+}
+
 TEST(replace, with_char) {
     auto r = replace("fuzz", 'f', 'b');
     EXPECT_EQ(r, "buzz");

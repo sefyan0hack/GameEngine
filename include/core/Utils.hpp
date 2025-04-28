@@ -85,8 +85,11 @@ inline std::future<std::optional<std::vector<char>>> load_file_async(const std::
     });
 }
 
-inline std::vector<std::string> split(std::string s, const std::string& delimiter) {
+inline std::vector<std::string> split(const char* cstr, const std::string& delimiter) {
     using namespace std;
+    if (cstr == nullptr) return {};
+    string s(cstr);
+    
     if(s.empty()) return {};
     
     vector<string> tokens;
