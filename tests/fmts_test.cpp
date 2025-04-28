@@ -90,11 +90,11 @@ TEST(Formatters, Camera){
 TEST(Formatters, Shader_Mesh_Material_GameObject){
     config::TestFlags();
 
-    cout<< "config::exit_on_error : "<< config::exit_on_error;
-        << "config::show_message_box : "<< config::show_message_box;
-        << "config::show_output : "<< config::show_output
+    cout<< "config::exit_on_error : "    << config::exit_on_error
+        << "config::show_message_box : " << config::show_message_box
+        << "config::show_output : "      << config::show_output
     << endl;
-    
+
     auto shader = Shader();
     auto mesh = Mesh(std::vector<Vertex>());
     auto material = Material(shader, shader);
