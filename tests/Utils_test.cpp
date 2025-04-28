@@ -1,8 +1,14 @@
 #include <gtest/gtest.h>
 #include <core/Utils.hpp>
+#include <fstream>
 
 TEST(load_file_async, exist) {
-    auto r = load_file_async(__FILE__).get();
+    std::ofstream file { "Hello.txt" };
+    if(!file.is_open()){
+        return 0;
+    }
+    
+    auto r = load_file_async(file).get();
     EXPECT_EQ(r.has_value(), true);
 }
 
