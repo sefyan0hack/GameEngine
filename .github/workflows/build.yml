@@ -106,7 +106,7 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
 
       - name: Install LLVM
-        uses: llvm/llvm-action@v2
+        uses: llvm/llvm-action@v1
         with:
           version: '16'
 
