@@ -31,6 +31,7 @@ jobs:
         run: cmake --build ${{ matrix.build_dir }} --target all
 
       - name: Run tests
+        id: run-tests
         working-directory: ./${{ matrix.build_dir }}
         run: ctest --output-on-failure || exit 0
 
@@ -77,6 +78,7 @@ jobs:
           export PATH="$MSYS2_PATH/mingw64/bin:$PATH"
 
       - name: Run tests
+        id: run-tests
         shell: msys2 {0}
         working-directory: ./build
         run: ctest --output-on-failure || exit 0
@@ -123,6 +125,7 @@ jobs:
         run: cmake --build ${{ matrix.build_dir }} --target all
 
       - name: Run tests
+        id: run-tests
         working-directory: ./${{ matrix.build_dir }}
         run: ctest --output-on-failure || true
 
@@ -165,6 +168,7 @@ jobs:
         run: cmake --build build --target all
 
       - name: Run tests
+        id: run-tests
         working-directory: ./build
         run: ctest --output-on-failure || true
 
