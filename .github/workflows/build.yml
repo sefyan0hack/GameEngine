@@ -86,7 +86,46 @@ jobs:
         shell: msys2 {0}
         working-directory: ./build
         run: ctest --output-on-failure
+  windows_clang:
+    name: Windows Clang (${{ matrix.build_type }})
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Release, Debug]
+        include:
+          - build_type: Release
+            build_dir: build/clang-release
+          - build_type: Debug
+            build_dir: build/clang-debug
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
+      - name: Setup MSVC Environment
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install LLVM
+        uses: llvm/llvm-action@v2
+        with:
+          version: '16'
+
+      - name: Configure CMake (${{ matrix.build_type }})
+        run: cmake -G "Ninja" -B ${{ matrix.build_dir }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl
+
+      - name: Build (${{ matrix.build_type }})
+        run: cmake --build ${{ matrix.build_dir }} --target all
+
+      - name: Upload Test Executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: tests-windows-clang-${{ matrix.build_type }}
+          path: ${{ matrix.build_dir }}/tests/tests.exe
+          retention-days: 1
+
+      - name: Run tests
+        working-directory: ./${{ matrix.build_dir }}
+        run: ctest --output-on-failure
   linux_clang:
     name: Linux Clang (${{ matrix.build_type }})
     runs-on: ubuntu-latest
