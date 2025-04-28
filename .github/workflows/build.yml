@@ -29,9 +29,15 @@ jobs:
 
       - name: Build (${{ matrix.build_type }})
         run: cmake --build ${{ matrix.build_dir }} --target all
+  
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-windows-msvc-${{ matrix.build_type }}
+          path: ${{ matrix.build_dir }}
+          retention-days: 1
 
       - name: Run tests
-        id: run-tests
         working-directory: ./${{ matrix.build_dir }}
         run: ctest --output-on-failure
 
@@ -63,6 +69,13 @@ jobs:
           cmake -S . -B build -G "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           cmake --build build --target all
 
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-windows-gcc-${{ matrix.build_type }}
+          path: build
+          retention-days: 1
+
       - name: Add DLLs to PATH
         shell: msys2 {0}
         run: |
@@ -70,7 +83,6 @@ jobs:
           export PATH="$MSYS2_PATH/mingw64/bin:$PATH"
 
       - name: Run tests
-        id: run-tests
         shell: msys2 {0}
         working-directory: ./build
         run: ctest --output-on-failure
@@ -108,8 +120,14 @@ jobs:
       - name: Build (Clang ${{ matrix.build_type }})
         run: cmake --build ${{ matrix.build_dir }} --target all
 
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-linux-clang-${{ matrix.build_type }}
+          path: ${{ matrix.build_dir }}
+          retention-days: 1
+
       - name: Run tests
-        id: run-tests
         working-directory: ./${{ matrix.build_dir }}
         run: ctest --output-on-failure
 
@@ -144,7 +162,13 @@ jobs:
       - name: Build (GCC ${{ matrix.build_type }})
         run: cmake --build build --target all
 
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-linux-gcc-${{ matrix.build_type }}
+          path: build
+          retention-days: 1
+
       - name: Run tests
-        id: run-tests
         working-directory: ./build
         run: ctest --output-on-failure
