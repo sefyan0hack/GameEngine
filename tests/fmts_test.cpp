@@ -90,9 +90,9 @@ TEST(Formatters, Camera){
 TEST(Formatters, Shader_Mesh_Material_GameObject){
     config::TestFlags();
 
-    cout<< "config::exit_on_error : "    << config::exit_on_error
-        << "config::show_message_box : " << config::show_message_box
-        << "config::show_output : "      << config::show_output
+    cout<< "config::exit_on_error : "    << config::exit_on_error    << endl
+        << "config::show_message_box : " << config::show_message_box << endl
+        << "config::show_output : "      << config::show_output      << endl
     << endl;
 
     auto shader = Shader();
