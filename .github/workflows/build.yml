@@ -9,6 +9,7 @@ jobs:
     name: Windows MSVC (${{ matrix.build_type }})
     runs-on: windows-latest
     strategy:
+      fail-fast: false
       matrix:
         build_type: [Release, Debug]
         include:
@@ -37,6 +38,7 @@ jobs:
     name: Windows GCC (${{ matrix.build_type }})
     runs-on: windows-latest
     strategy:
+      fail-fast: false
       matrix:
         build_type: [Debug, Release]
     steps:
@@ -75,6 +77,7 @@ jobs:
     name: Linux Clang (${{ matrix.build_type }})
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         build_type: [Debug, Release]
         include:
@@ -117,6 +120,7 @@ jobs:
     name: Linux GCC (${{ matrix.build_type }})
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         build_type: [Debug, Release]
     steps:
