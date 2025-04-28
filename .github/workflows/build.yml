@@ -34,6 +34,14 @@ jobs:
         working-directory: ./${{ matrix.build_dir }}
         run: ctest --output-on-failure
 
+      - name: Upload tests.exe on failure
+        if: steps.run-tests.outcome == 'failure'
+        uses: actions/upload-artifact@v3
+        with:
+          name: tests-exe-${{ matrix.build_type }}-msvc
+          path: ${{ matrix.build_dir }}/tests/tests.exe
+
+
   windows_gcc:
     name: Windows GCC (${{ matrix.build_type }})
     runs-on: windows-latest
@@ -72,6 +80,14 @@ jobs:
         shell: msys2 {0}
         working-directory: ./build
         run: ctest --output-on-failure
+      
+      - name: Upload tests.exe on failure
+        if: steps.run-tests.outcome == 'failure'
+        uses: actions/upload-artifact@v3
+        with:
+          name: tests-exe-${{ matrix.build_type }}-gcc
+          path: build/tests/tests.exe
+
 
   linux_clang:
     name: Linux Clang (${{ matrix.build_type }})
@@ -106,15 +122,16 @@ jobs:
       - name: Build (Clang ${{ matrix.build_type }})
         run: cmake --build ${{ matrix.build_dir }} --target all
 
-      - name: Run tests under GDB
+      - name: Run tests
         working-directory: ./${{ matrix.build_dir }}
-        run: |
-          gdb -ex 'set pagination off' \
-              -ex 'catch throw' \
-              -ex 'run' \
-              -ex 'bt full' \
-              -ex 'quit' \
-              --args ./tests/tests
+        run: ctest --output-on-failure
+
+      - name: Upload test executable on failure
+        if: steps.run-tests.outcome == 'failure'
+        uses: actions/upload-artifact@v3
+        with:
+          name: tests-linux-clang-${{ matrix.build_type }}
+          path: ${{ matrix.build_dir }}/tests/tests
 
   linux_gcc:
     name: Linux GCC (${{ matrix.build_type }})
@@ -150,3 +167,10 @@ jobs:
       - name: Run tests
         working-directory: ./build
         run: ctest --output-on-failure
+
+      - name: Upload test executable on failure
+        if: steps.run-tests.outcome == 'failure'
+        uses: actions/upload-artifact@v3
+        with:
+          name: tests-linux-gcc-${{ matrix.build_type }}
+          path: build/tests/tests
