@@ -36,7 +36,7 @@ jobs:
 
       - name: Upload tests.exe on failure
         if: steps.run-tests.outcome == 'failure'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: tests-exe-${{ matrix.build_type }}-msvc
           path: ${{ matrix.build_dir }}/tests/tests.exe
@@ -83,7 +83,7 @@ jobs:
       
       - name: Upload tests.exe on failure
         if: steps.run-tests.outcome == 'failure'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: tests-exe-${{ matrix.build_type }}-gcc
           path: build/tests/tests.exe
@@ -128,7 +128,7 @@ jobs:
 
       - name: Upload test executable on failure
         if: steps.run-tests.outcome == 'failure'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: tests-linux-clang-${{ matrix.build_type }}
           path: ${{ matrix.build_dir }}/tests/tests
@@ -170,7 +170,7 @@ jobs:
 
       - name: Upload test executable on failure
         if: steps.run-tests.outcome == 'failure'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: tests-linux-gcc-${{ matrix.build_type }}
           path: build/tests/tests
