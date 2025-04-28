@@ -230,11 +230,11 @@ private:
         if constexpr (std::is_void_v<R>) {
             m_Func(args...);
             err = glGetError();
-            return { {}, err };
+            return std::make_tuple(std::monostate{}, err );
         } else {
             R result = m_Func(args...);
             err = glGetError();
-            return { result, err };
+            return std::make_tuple(result, err );
         }
     }
 
