@@ -1,0 +1,31 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2022, ubuntu-24.04]
+        compiler: [llvm, gcc]
+        include:
+          - os: windows-2022
+            compiler: msvc
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup C++ Tools
+        uses: aminya/setup-cpp@v1
+        with:
+          compiler: ${{ matrix.compiler }}
+          cmake: true
+          ninja: true
+
+      - name: Configure and Build
+        shell: bash
+        run: |
+          mkdir -p build && cd build
+          cmake -G Ninja 
+          cmake --build .
