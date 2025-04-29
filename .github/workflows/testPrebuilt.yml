@@ -1,45 +1,69 @@
-name: CI
+name: Cross-Platform Build
+
 on: [push, pull_request]
 
 jobs:
-  linux-docker-build:
+  linux-build:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
-        compiler: [llvm, gcc]
-        include:
-          - compiler: llvm
-            docker_image: aminya/setup-cpp-ubuntu-llvm:22.04
-          - compiler: gcc
-            docker_image: aminya/setup-cpp-ubuntu-gcc:22.04
-    container: ${{ matrix.docker_image }}
+        compiler: [gcc, llvm]
+    container:
+      image: aminya/setup-cpp-ubuntu:22.04
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build
+      - name: Set up compiler
+        run: |
+          if [ "${{ matrix.compiler }}" = "llvm" ]; then
+            export CC=clang
+            export CXX=clang++
+          else
+            export CC=gcc
+            export CXX=g++
+          fi
+
+      - name: Configure and Build
         run: |
           mkdir -p build && cd build
-          cmake .. -G Ninja
-          cmake --build .
+          cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake --build . --config Release
 
   windows-build:
     runs-on: windows-2022
+    strategy:
+      matrix:
+        compiler: [gcc, msvc, llvm]
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup C++ Tools
         uses: aminya/setup-cpp@v1
         with:
-          compiler: msvc
+          compiler: ${{ matrix.compiler }}
           cmake: true
           ninja: true
-          vcvarsall: true
+          vcpkg: true
+          vcvarsall: ${{ matrix.compiler == 'msvc' }}
+
+      - name: Install Windows OpenGL dependencies
+        if: matrix.compiler != 'msvc'
+        run: |
+          vcpkg install opengl --triplet x64-windows
 
       - name: Configure and Build
         shell: bash
         run: |
           mkdir -p build && cd build
-          cmake .. -G Ninja 
-          cmake --build .
+          cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake --build . --config Release
+
+      - name: Cache vcpkg artifacts
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ env.VCPKG_ROOT }}/installed
+            ${{ env.VCPKG_ROOT }}/downloads
+          key: ${{ runner.os }}-vcpkg-${{ hashFiles('vcpkg.json') }}
