@@ -105,10 +105,10 @@ jobs:
       - name: Setup MSVC Environment
         uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Install LLVM
-        uses: llvm/llvm-action@v1
+      - name: Install LLVM/Clang
+        uses: llvm/setup-llvm@v1
         with:
-          version: '16'
+          version: 16 
 
       - name: Configure CMake (${{ matrix.build_type }})
         run: cmake -G "Ninja" -B ${{ matrix.build_dir }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl
