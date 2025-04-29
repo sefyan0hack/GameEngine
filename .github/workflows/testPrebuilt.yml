@@ -1,5 +1,4 @@
 name: Cross-Platform Build
-
 on: [push, pull_request]
 
 jobs:
@@ -11,24 +10,16 @@ jobs:
     container:
       image: aminya/setup-cpp-ubuntu:22.04
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up compiler
+      - uses: actions/checkout@v4
+      - name: Verify Tools
         run: |
-          if [ "${{ matrix.compiler }}" = "llvm" ]; then
-            export CC=clang
-            export CXX=clang++
-          else
-            export CC=gcc
-            export CXX=g++
-          fi
-
-      - name: Configure and Build
+          cmake --version
+          ninja --version
+      - name: Build
         run: |
           mkdir -p build && cd build
           cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release
-          cmake --build . --config Release
+          cmake --build .
 
   windows-build:
     runs-on: windows-2022
@@ -36,10 +27,8 @@ jobs:
       matrix:
         compiler: [gcc, msvc, llvm]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup C++ Tools
+      - uses: actions/checkout@v4
+      - name: Setup Tools
         uses: aminya/setup-cpp@v1
         with:
           compiler: ${{ matrix.compiler }}
@@ -47,23 +36,27 @@ jobs:
           ninja: true
           vcpkg: true
           vcvarsall: ${{ matrix.compiler == 'msvc' }}
-
-      - name: Install Windows OpenGL dependencies
-        if: matrix.compiler != 'msvc'
-        run: |
-          vcpkg install opengl --triplet x64-windows
-
-      - name: Configure and Build
+      - name: Configure
         shell: bash
         run: |
           mkdir -p build && cd build
-          cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release
-          cmake --build . --config Release
-
-      - name: Cache vcpkg artifacts
+          cmake_flags=(
+            -G Ninja
+            -DCMAKE_BUILD_TYPE=Release
+          )
+          [[ "${{ matrix.compiler }}" = "llvm" ]] && cmake_flags+=(
+            -DCMAKE_C_COMPILER=clang
+            -DCMAKE_CXX_COMPILER=clang++
+            -DCMAKE_CXX_FLAGS="-fms-compatibility-version=19.30"
+          )
+          cmake .. "${cmake_flags[@]}"
+      - name: Build
+        shell: bash
+        run: cmake --build build --config Release
+      - name: Cache
         uses: actions/cache@v3
         with:
           path: |
+            build/**
             ${{ env.VCPKG_ROOT }}/installed
-            ${{ env.VCPKG_ROOT }}/downloads
-          key: ${{ runner.os }}-vcpkg-${{ hashFiles('vcpkg.json') }}
+          key: ${{ runner.os }}-${{ matrix.compiler }}-${{ hashFiles('CMakeLists.txt') }}
