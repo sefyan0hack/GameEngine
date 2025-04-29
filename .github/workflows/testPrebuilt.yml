@@ -27,5 +27,5 @@ jobs:
         shell: bash
         run: |
           mkdir -p build && cd build
-          cmake -G Ninja 
+          cmake .. -G Ninja 
           cmake --build .
