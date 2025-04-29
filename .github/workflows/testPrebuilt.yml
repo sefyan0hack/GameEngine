@@ -2,26 +2,40 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
+  linux-docker-build:
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2022, ubuntu-24.04]
         compiler: [llvm, gcc]
         include:
-          - os: windows-2022
-            compiler: msvc
+          - compiler: llvm
+            docker_image: aminya/setup-cpp-ubuntu-llvm:22.04
+          - compiler: gcc
+            docker_image: aminya/setup-cpp-ubuntu-gcc:22.04
+    container: ${{ matrix.docker_image }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
+      - name: Build
+        run: |
+          mkdir -p build && cd build
+          cmake .. -G Ninja
+          cmake --build .
+
+  windows-build:
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup C++ Tools
         uses: aminya/setup-cpp@v1
         with:
-          compiler: ${{ matrix.compiler }}
+          compiler: msvc
           cmake: true
           ninja: true
+          vcvarsall: true
 
       - name: Configure and Build
         shell: bash
