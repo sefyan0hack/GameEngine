@@ -8,7 +8,8 @@
 #include <X11/Xlib.h>
 
 class CWindow
-{ 
+{
+  FOR_TEST(CWindow)
     public:
         CWindow(int Width, int Height, const char* Title);
         CWindow(const CWindow& other);

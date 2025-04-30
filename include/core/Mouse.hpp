@@ -3,6 +3,7 @@
 class CWindow;
 class Mouse
 {
+	FOR_TEST(Mouse)
     friend class CWindow;
 private:
     struct RawDelta

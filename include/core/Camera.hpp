@@ -9,6 +9,7 @@ class Material;
 
 class Camera
 {
+  FOR_TEST(Camera)
 public:
     friend struct std::formatter<Camera>;
     

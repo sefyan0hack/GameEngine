@@ -5,6 +5,7 @@
 
 class Shader
 {
+  FOR_TEST(Shader)
     public:
         friend struct std::formatter<Shader>;
         Shader();

@@ -40,6 +40,7 @@ extern "C" {
 
 class OpenGL
 {
+  FOR_TEST(OpenGL)
     public:
         explicit OpenGL(WindHandl window, HDC_D hdcd = HDC_D{});
         OpenGL(const OpenGL& other);

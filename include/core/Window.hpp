@@ -11,6 +11,7 @@
 
 class CWindow
 {
+  FOR_TEST(CWindow)
     class WinClass
     {
         private:

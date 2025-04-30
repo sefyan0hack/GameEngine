@@ -75,6 +75,7 @@ function(apply_compile_options)
                 "$<$<CONFIG:Release>:/OPT:ICF>"   # Identical COMDAT folding
                 "$<$<CONFIG:RELEASE>:/INCREMENTAL:NO>"  # Disable incremental linking
             )
+            add_definitions(/FI"core/Global_H.hpp")
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
             target_compile_options(${target} PRIVATE
                 -Wno-cast-function-type -Winit-self -Wcast-qual
@@ -103,6 +104,7 @@ function(apply_compile_options)
                 -Wnull-dereference -Wswitch-enum
                 -Wuninitialized -Wpointer-arith -Wreturn-type -Winline -Wredundant-decls
                 -fno-operator-names
+                -include core/Global_H.hpp
                 # Debug flags
                 "$<$<CONFIG:Debug>:-ggdb>"
                 "$<$<CONFIG:Debug>:-g3>"
@@ -120,6 +122,7 @@ function(apply_compile_options)
                 "$<$<CONFIG:Release>:-ffunction-sections>"
                 "$<$<CONFIG:Release>:-fdata-sections>"
                 )
+                add_definitions(-include "core/Global_H.hpp")
         endif()
     endforeach()
 endfunction()

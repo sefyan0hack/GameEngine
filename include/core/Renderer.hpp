@@ -7,7 +7,8 @@ class Camera;
 class Mesh;
 
 class Renderer
-{    
+{
+  FOR_TEST(Renderer)
     public:
         Renderer();
         ~Renderer();

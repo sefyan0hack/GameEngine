@@ -9,6 +9,7 @@
 
 
 class GameObject {
+  FOR_TEST(GameObject)
 public:
     friend struct std::formatter<GameObject>;
     GameObject(glm::vec3 position, Material& matt, Mesh& mesh, std::string Name = std::format("Obj{}", Count));

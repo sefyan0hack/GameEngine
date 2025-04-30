@@ -11,6 +11,7 @@ enum class ResType{
 
 class ResourceManager
 {
+  FOR_TEST(resourceManager)
 public:
     ResourceManager(const ResourceManager&) = delete;
     ResourceManager& operator=(const ResourceManager&) = delete;

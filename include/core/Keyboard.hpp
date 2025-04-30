@@ -4,6 +4,7 @@ class CWindow;  // Forward declaration if necessary
 
 class Keyboard
 {
+	FOR_TEST(Keyboard)
 	friend class CWindow;
 private:
 	class Event

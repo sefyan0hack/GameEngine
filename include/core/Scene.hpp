@@ -5,6 +5,7 @@
 
 class Scene
 {
+  FOR_TEST(Scene)
 public:
     friend struct std::formatter<Scene>;
     Scene() = default;

@@ -8,6 +8,8 @@
 class APP
 {
 protected:
+    FOR_TEST(APP)
+
     APP();
     ~APP() = default;
 

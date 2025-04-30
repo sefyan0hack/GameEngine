@@ -62,3 +62,8 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
   message(STATUS "conseder dowing `pip install gcovr` if you want code covegare")
   endif()
 endif()
+
+target_compile_definitions(core
+  PUBLIC
+    TESTING
+)

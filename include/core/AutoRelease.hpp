@@ -2,6 +2,8 @@
 
 template <typename T>
 class AutoRelease {
+    FOR_TEST(AutoRelease)
+
 private:
     T resource{};
     std::function<void(T)> deleter;

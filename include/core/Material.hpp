@@ -8,6 +8,8 @@
 
 class Material
 {
+  FOR_TEST(Material)
+
 public:
     friend struct std::formatter<Material>;
     Material(const Shader& vertex, const Shader& fragment);

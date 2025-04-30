@@ -38,3 +38,9 @@
 #ifndef OPENGL_LIB
     #error "no opengl lib path"
 #endif
+
+#ifdef TESTING
+#define FOR_TEST(CLASSNAME) friend class CLASSNAME##_Test;
+#else
+#define FOR_TEST(CLASSNAME)
+#endif

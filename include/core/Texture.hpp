@@ -9,6 +9,7 @@ struct Image {
 
 class Texture
 {
+  FOR_TEST(Texture)
 public:
     friend struct std::formatter<Texture>;
     Texture(GLenum texType);

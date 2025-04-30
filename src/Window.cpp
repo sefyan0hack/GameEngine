@@ -251,11 +251,8 @@ auto CWindow::_init_helper(int Width, int Height, const TCHAR* Title) -> void
 {
     WinClass::Instance();
 
-    RECT WinRect;
-	WinRect.left = 100;
-	WinRect.right = Width + WinRect.left;
-	WinRect.top = 100;
-	WinRect.bottom = Height + WinRect.top;
+    RECT WinRect = { 0, 0, Width, Height };
+
 	if( AdjustWindowRect( &WinRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE ) == 0 )
 	{
 		Error("Addjusting Win");

@@ -25,6 +25,7 @@ class Material;
 
 class Mesh
 {
+  FOR_TEST(Mesh)
 public:
   using VetexData = Vertex;
 
