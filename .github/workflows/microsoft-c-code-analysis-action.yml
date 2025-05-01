@@ -34,6 +34,7 @@ jobs:
           cmakeBuildDirectory: ${{ env.build }}
           buildConfiguration: ${{ env.config }}
           ruleset: NativeRecommendedRules.ruleset
+          ignoredPaths: ${{ env.build }}/_deps
 
       - name: Upload SARIF to GitHub
         uses: github/codeql-action/upload-sarif@v3
