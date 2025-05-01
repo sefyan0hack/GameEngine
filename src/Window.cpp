@@ -405,7 +405,6 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
     XSelectInput(m_Display, m_WindowHandle, ExposureMask | KeyPressMask);
 
     /* Show the window */
-    if(m_Visible)
         XMapWindow(m_Display, m_WindowHandle);
 }
 
@@ -430,6 +429,16 @@ auto CWindow::opengl() const -> std::shared_ptr<OpenGL>
 auto CWindow::Visible() const -> bool
 {
     return m_Visible;
+}
+auto CWindow::Show() -> void
+{
+	XMapWindow(m_Display, m_WindowHandle);
+    m_Visible = true;
+}
+auto CWindow::Hide() -> void
+{
+	XUnmapWindow(m_Display, m_WindowHandle);
+    m_Visible = false;
 }
 
 #endif //_WIN32

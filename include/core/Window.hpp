@@ -100,6 +100,8 @@ class CWindow
         auto Height() const      -> int ;
         auto opengl() const          -> std::shared_ptr<OpenGL> ;
         auto Visible() const        -> bool ;
+        auto Show()             -> void ;
+        auto Hide()             -> void ;
         static auto WindowsCount()  -> unsigned short ;
         auto ProcessMessages() -> void ;
 
