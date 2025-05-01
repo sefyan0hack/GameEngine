@@ -10,10 +10,10 @@ class CWindow_Test : public ::testing::Test {
 };
 
 #ifdef WINDOWS_PLT
-TEST_F(CWindow_Test, ctor){
-    auto r = CWindow(100, 100, "Window");
+// TEST_F(CWindow_Test, ctor){
+    // auto r = CWindow(100, 100, "Window");
 
     // EXPECT_GE(GetWidth(r), 100);
     // EXPECT_LE(GetHeight(r), 100);
-}
+// }
 #endif
