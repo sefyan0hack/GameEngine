@@ -187,7 +187,7 @@ public:
     {
         std::array<std::string, sizeof...(Args)> result;
         int i = 0;
-        std::apply([this, &result, &i](auto&&... args) {
+        std::apply([&result, &i](auto&&... args) {
             ((result[i++] = to_string(args)), ...);
         }, m_ArgsValues);
         return result;

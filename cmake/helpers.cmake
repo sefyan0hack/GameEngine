@@ -98,13 +98,12 @@ function(apply_compile_options)
 
         if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         target_compile_options(${target} PRIVATE
-                -Wall -Wextra -Wpedantic -Wconversion  -Wfloat-equal  -Wwrite-strings
+                -Wall -Wextra -Wpedantic -Wconversion  -Wfloat-equal  -Wwrite-strings -Wno-error=sign-conversion
                 -fno-exceptions
                 -fstack-protector-strong
                 -Wnull-dereference -Wswitch-enum
                 -Wuninitialized -Wpointer-arith -Wreturn-type -Winline -Wredundant-decls
                 -fno-operator-names
-                -include core/Global_H.hpp
                 # Debug flags
                 "$<$<CONFIG:Debug>:-ggdb>"
                 "$<$<CONFIG:Debug>:-g3>"
