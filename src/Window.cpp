@@ -284,8 +284,7 @@ auto CWindow::_init_helper(int Width, int Height, const TCHAR* Title) -> void
 	if(RegisterRawInputDevices(&_rid, 1, sizeof(_rid)) == false){
 		Error("Mouse row data not regesterd");
 	}
-    
-    UpdateWindow(m_WindowHandle);
+
 }
 
 auto CWindow::Hinstance() const -> HINSTANCE
