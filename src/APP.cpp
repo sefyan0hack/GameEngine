@@ -4,12 +4,15 @@
 constexpr auto Wname = "Main";
 
 APP::APP()
-: m_Window(1180, 640, Wname)
-, start_count(0)
-, end_count(0)
-, counts(0)
-, freq(0)
-, fps(60) {}
+    : m_Window(1180, 640, Wname)
+    , start_count(0)
+    , end_count(0)
+    , counts(0)
+    , freq(0)
+    , fps(60) 
+{ 
+    m_Window.Show(); 
+}
 
 auto APP::Run() -> void
 {

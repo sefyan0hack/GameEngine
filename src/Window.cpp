@@ -285,7 +285,6 @@ auto CWindow::_init_helper(int Width, int Height, const TCHAR* Title) -> void
 		Error("Mouse row data not regesterd");
 	}
     
-    ShowWindow(m_WindowHandle, SW_SHOW);
     UpdateWindow(m_WindowHandle);
 }
 
@@ -320,6 +319,16 @@ auto CWindow::opengl() const -> std::shared_ptr<OpenGL>
 auto CWindow::Visible() const -> bool
 {
 	return m_Visible;
+}
+auto CWindow::Show() -> void
+{
+	ShowWindow(m_WindowHandle, SW_SHOW);
+	m_Visible = true;
+}
+auto CWindow::Hide() -> void
+{
+	ShowWindow(m_WindowHandle, SW_HIDE);
+	m_Visible = false;
 }
 #elif defined(LINUX_PLT)
 #include <X11/Xlib.h>
