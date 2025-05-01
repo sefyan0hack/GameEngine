@@ -2,7 +2,7 @@
 #include <core/Log.hpp>
 #include <core/gl.h>
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+#if defined(WINDOWS_PLT)
 
 // CWindow class things///////////////////////////////////
 CWindow::WinClass &CWindow::WinClass::Instance()
@@ -321,7 +321,7 @@ auto CWindow::Visible() const -> bool
 {
 	return m_Visible;
 }
-#elif defined(__linux__)
+#elif defined(LINUX_PLT)
 #include <X11/Xlib.h>
 
 auto CWindow::WindowsCount() -> unsigned short

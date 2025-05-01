@@ -2,7 +2,7 @@
 
 #include <core/gl.h>
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+#if defined(WINDOWS_PLT)
 #ifdef DEBUG
 auto setup_crach_handler() -> void;
 auto resolveSymbol(void* addr, HANDLE proc = GetCurrentProcess()) -> std::string;
@@ -97,7 +97,7 @@ auto Log(
       loc.function_name(), loc.file_name(), loc.line(),
       std::stacktrace::current(1)
     );
-    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+    #if defined(WINDOWS_PLT)
     if(config::show_message_box)
       MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONERROR );
     #endif

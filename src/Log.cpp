@@ -1,6 +1,6 @@
 #include <core/Log.hpp>
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+#if defined(WINDOWS_PLT)
 #include <windows.h>
 #include <dbghelp.h>
 #ifdef DEBUG

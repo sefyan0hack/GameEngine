@@ -13,7 +13,7 @@ APP::APP()
 
 auto APP::Run() -> void
 {
-    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+    #if defined(WINDOWS_PLT)
     QueryPerformanceCounter((LARGE_INTEGER *)&start_count);
     QueryPerformanceFrequency((LARGE_INTEGER *)&freq);
     glClearColor(0.2f, 0.21f, 0.22f, 1.0f);

@@ -2,14 +2,14 @@
 
 #include <core/gl.h>
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+#if defined(WINDOWS_PLT)
 #include <windows.h>
 using WindHandl = HWND;
 using HDC_D     = HDC;
 using GLCTX     = HGLRC;
 auto __GetProcAddress(LPCSTR module, const char* name) -> void*;
 auto rsgl(const char* name) -> void*;
-#elif defined(__linux__)
+#elif defined(LINUX_PLT)
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #ifndef GL_GLEXT_PROTOTYPES
@@ -67,12 +67,12 @@ class OpenGL
         static auto MaxTextureUnits() -> GLint;
 
     private:
-        #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+        #if defined(WINDOWS_PLT)
         friend auto __GetProcAddress(LPCSTR module, const char* name) -> void*;
         friend auto rsgl(const char* name) -> void*;
         inline static LPCSTR OPENGL_MODULE_NAME {OPENGL_LIB};    
         auto init_opengl_win32()              -> void ;
-        #elif defined(__linux__)
+        #elif defined(LINUX_PLT)
         auto init_opengl_linux(Window window) -> void ;
         #endif //_WIN32
 

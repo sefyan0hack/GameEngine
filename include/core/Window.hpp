@@ -5,7 +5,7 @@
 #include <core/Keyboard.hpp>
 #include <core/Mouse.hpp>
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+#if defined(WINDOWS_PLT)
 #include <windows.h>
 #include <tchar.h>
 
@@ -74,7 +74,7 @@ class CWindow
         inline static unsigned short S_WindowsCount = 0;
 };
 
-#elif defined(__linux__)
+#elif defined(LINUX_PLT)
 #include <X11/Xlib.h>
 
 class CWindow

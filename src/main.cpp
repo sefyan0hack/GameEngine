@@ -158,7 +158,7 @@ public:
         Cam.MoseMove();
         if( m_Window.m_Keyboard->KeyIsPressed('W')){
             float speed = 10.0f * delta;
-            #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+            #if defined(WINDOWS_PLT)
             if(m_Window.m_Keyboard->KeyIsPressed(VK_SHIFT))
                 speed *= 10;
             #endif //_WIN32
@@ -202,7 +202,7 @@ public: // distroy hire
 
 
 int main() {
-    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+    #if defined(WINDOWS_PLT)
     #   ifdef DEBUG
         setup_crach_handler();
     #   endif

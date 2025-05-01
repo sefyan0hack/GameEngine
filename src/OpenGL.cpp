@@ -42,7 +42,7 @@
     Info("[{} {}({})] From {} : \n\t- {}", severity_, type_, id, source_, message);
 }
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+#if defined(WINDOWS_PLT)
 auto __GetProcAddress(LPCSTR module, const char* name) -> void* {
     auto lib = LoadLibraryA(module);
     if(lib == nullptr){
@@ -177,7 +177,7 @@ auto OpenGL::init_opengl_win32() -> void
 }
 
 
-#elif defined(__linux__)
+#elif defined(LINUX_PLT)
 
 auto OpenGL::init_opengl_linux(Window window) -> void
 {
@@ -210,7 +210,7 @@ OpenGL::OpenGL(WindHandl window, HDC_D hdcd)
     , m_CreationTime(std::time(nullptr))
     , m_Debug(false)
 {
-    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+    #if defined(WINDOWS_PLT)
     if(hdcd == HDC_D{})
         m_MainHDC = GetDC(window);
     else
@@ -222,7 +222,7 @@ OpenGL::OpenGL(WindHandl window, HDC_D hdcd)
     }
     init_opengl_win32();
     
-    #elif defined(__linux__)
+    #elif defined(LINUX_PLT)
     if(hdcd == HDC_D{})
         Error("invalid HDC_D");
     else
@@ -245,7 +245,7 @@ OpenGL::OpenGL(WindHandl window, HDC_D hdcd)
     if (!isInitialized) {
         m_Vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
         m_Renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
-        #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+        #if defined(WINDOWS_PLT)
         m_Extensions = split(reinterpret_cast<const char*>(wglGetExtensionsStringARB(m_MainHDC)), " ");
         #endif //_WIN32
         
@@ -306,7 +306,7 @@ OpenGL::OpenGL(const OpenGL &other)
     #if _WIN32
     auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
     if(tst != TRUE) Error("couldn't Copy Opengl Context");
-    #elif defined(__linux__)
+    #elif defined(LINUX_PLT)
     #warning "not impl for linux"
     #endif //_WIN32
 }
@@ -324,7 +324,7 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL
         #if _WIN32
         auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
         if(tst != TRUE) Error("couldn't Copy Opengl Context");
-        #elif defined(__linux__)
+        #elif defined(LINUX_PLT)
         #warning "not impl for linux"
         #endif //_WIN32
     }
@@ -372,10 +372,10 @@ OpenGL::operator bool() const
 
 OpenGL::~OpenGL()
 {
-    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+    #if defined(WINDOWS_PLT)
     _wglMakeCurrent(nullptr, nullptr);
     _wglDeleteContext(m_Context);
-    #elif defined(__linux__)
+    #elif defined(LINUX_PLT)
     glXDestroyContext(m_MainHDC, m_Context);
     #endif //_WIN32
 }
