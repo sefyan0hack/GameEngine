@@ -1,5 +1,5 @@
 #include <core/Mouse.hpp>
-#ifdef _WIN32
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #endif
@@ -24,7 +24,7 @@ auto Mouse::GetPosY() const noexcept -> int
 
 auto Mouse::SetPos([[maybe_unused]] int x_, [[maybe_unused]] int y_) -> void
 {
-	#ifdef _WIN32
+	#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 	SetCursorPos(x_, y_);
 	#endif //_WIN32
 }
@@ -164,7 +164,7 @@ auto Mouse::TrimRawInputBuffer() noexcept -> void
 
 auto Mouse::OnWheelDelta([[maybe_unused]] int delta ) noexcept -> void
 {
-	#ifdef _WIN32
+	#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 	wheelDeltaCarry += delta;
 	while( wheelDeltaCarry >= WHEEL_DELTA )
 	{

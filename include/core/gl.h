@@ -3,7 +3,7 @@
 #include <glcorearb.h> // need repl  with glext.h
 
 
-#ifdef _WIN32
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 #include <windows.h>
 [[maybe_unused]] inline static auto _wglMakeCurrent = decltype(&wglMakeCurrent)(nullptr);
 [[maybe_unused]] inline static auto _wglCreateContext =  decltype(&wglCreateContext)(nullptr);

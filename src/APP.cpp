@@ -1,10 +1,5 @@
 #include <core/APP.hpp>
-
-#ifdef _WIN32
 #include <core/Window.hpp>
-#elif defined(__linux__)
-#include <core/XWindow.hpp>
-#endif //_WIN32
 
 constexpr auto Wname = "Main";
 
@@ -18,7 +13,7 @@ APP::APP()
 
 auto APP::Run() -> void
 {
-    #ifdef _WIN32
+    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
     QueryPerformanceCounter((LARGE_INTEGER *)&start_count);
     QueryPerformanceFrequency((LARGE_INTEGER *)&freq);
     glClearColor(0.2f, 0.21f, 0.22f, 1.0f);

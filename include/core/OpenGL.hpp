@@ -2,7 +2,7 @@
 
 #include <core/gl.h>
 
-#ifdef _WIN32
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 #include <windows.h>
 using WindHandl = HWND;
 using HDC_D     = HDC;
@@ -67,7 +67,7 @@ class OpenGL
         static auto MaxTextureUnits() -> GLint;
 
     private:
-        #ifdef _WIN32
+        #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
         friend auto __GetProcAddress(LPCSTR module, const char* name) -> void*;
         friend auto rsgl(const char* name) -> void*;
         inline static LPCSTR OPENGL_MODULE_NAME {OPENGL_LIB};    

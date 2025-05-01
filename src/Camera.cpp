@@ -1,12 +1,7 @@
 #include <core/Camera.hpp>
 #include <core/Log.hpp>
 #include <core/gl.h>
-
-#ifdef _WIN32
 #include <core/Window.hpp>
-#elif defined(__linux__)
-#include <core/XWindow.hpp>
-#endif //_WIN32
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/fast_trigonometry.hpp>
@@ -129,7 +124,7 @@ auto Camera::MoseMove(bool islocked) -> void
         on = !on;
     }
     lastState = currentState;
-    #ifdef _WIN32
+    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
     if(on){
         m_Window->m_Mouse->SetPos(m_Window->Width()/2, m_Window->Height()/2);
         ShowCursor(false);

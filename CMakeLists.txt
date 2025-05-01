@@ -115,7 +115,6 @@ set(SOURCES
     src/Keyboard.cpp
     src/Mouse.cpp
 	src/Window.cpp
-	src/XWindow.cpp
 	src/Renderer.cpp
 	src/Shader.cpp
 	src/Transform.cpp

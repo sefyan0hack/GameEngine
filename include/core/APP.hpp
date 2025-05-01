@@ -1,9 +1,5 @@
 #pragma once
-#ifdef _WIN32
 #include <core/Window.hpp>
-#elif defined(__linux__)
-#include <core/XWindow.hpp>
-#endif //_WIN32
 
 class APP
 {

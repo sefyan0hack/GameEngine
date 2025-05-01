@@ -42,7 +42,7 @@
     Info("[{} {}({})] From {} : \n\t- {}", severity_, type_, id, source_, message);
 }
 
-#ifdef _WIN32
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 auto __GetProcAddress(LPCSTR module, const char* name) -> void* {
     auto lib = LoadLibraryA(module);
     if(lib == nullptr){
@@ -210,7 +210,7 @@ OpenGL::OpenGL(WindHandl window, HDC_D hdcd)
     , m_CreationTime(std::time(nullptr))
     , m_Debug(false)
 {
-    #ifdef _WIN32
+    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
     if(hdcd == HDC_D{})
         m_MainHDC = GetDC(window);
     else
@@ -245,7 +245,7 @@ OpenGL::OpenGL(WindHandl window, HDC_D hdcd)
     if (!isInitialized) {
         m_Vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
         m_Renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
-        #ifdef _WIN32
+        #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
         m_Extensions = split(reinterpret_cast<const char*>(wglGetExtensionsStringARB(m_MainHDC)), " ");
         #endif //_WIN32
         
@@ -372,7 +372,7 @@ OpenGL::operator bool() const
 
 OpenGL::~OpenGL()
 {
-    #ifdef _WIN32
+    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
     _wglMakeCurrent(nullptr, nullptr);
     _wglDeleteContext(m_Context);
     #elif defined(__linux__)
