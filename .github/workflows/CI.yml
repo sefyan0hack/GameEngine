@@ -15,11 +15,13 @@ jobs:
         compiler:
           - llvm
           - gcc
+        build_type: [debug, release]
         include:
           - os: "windows-2022"
             compiler: "msvc"
     steps:
       - uses: actions/checkout@v3
+      
       - name: Cache
         uses: actions/cache@v3
         with:
@@ -36,9 +38,11 @@ jobs:
             ~/Library/Caches/ccache
             ${{ env.LOCALAPPDATA }}/ccache
             ${{ env.XDG_CACHE_HOME }}/ccache
-          key: ${{ runner.os }}-${{ matrix.compiler }}-${{ env.BUILD_TYPE }}-${{ hashFiles('**/CMakeLists.txt', './vcpkg.json') }}
+          key: ${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}-${{ hashFiles('**/CMakeLists.txt', './vcpkg.json') }}
           restore-keys: |
-            ${{ runner.os }}-${{ env.BUILD_TYPE }}-
+            ${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}-
+            ${{ runner.os }}-${{ matrix.build_type }}-
+            ${{ runner.os }}-
 
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
@@ -49,3 +53,29 @@ jobs:
           ninja: true
           vcpkg: true
           cppcheck: true
+
+      - name: Configure CMake (Non-MSVС)
+        if: runner.os != 'Windows' || matrix.compiler != 'msvc'
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+
+      - name: Configure CMake (MSVC)
+        if: runner.os == 'Windows' && matrix.compiler == 'msvc'
+        run: cmake -S . -B build
+
+      - name: Build
+        run: |
+          if [ "${{ runner.os }}" = "Windows" ] && [ "${{ matrix.compiler }}" = "msvc" ]; then
+            cmake --build build --config ${{ matrix.build_type }}
+          else
+            cmake --build build
+          fi
+        shell: bash
+
+      - name: Test
+        run: |
+          if [ "${{ runner.os }}" = "Windows" ] && [ "${{ matrix.compiler }}" = "msvc" ]; then
+            ctest --test-dir build -C ${{ matrix.build_type }}
+          else
+            ctest --test-dir build
+          fi
+        shell: bash
