@@ -16,8 +16,10 @@ jobs:
         include:
           - build_type: Release
             build_dir: build/release
+            sanitizer_flags: ""
           - build_type: Debug
             build_dir: build/debug
+            sanitizer_flags: -DCMAKE_C_FLAGS="/fsanitize=address" -DCMAKE_CXX_FLAGS="/fsanitize=address"
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -26,7 +28,7 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
 
       - name: Configure CMake (${{ matrix.build_type }})
-        run: cmake -G "Ninja" -B ${{ matrix.build_dir }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        run: cmake -G "Ninja" -B ${{ matrix.build_dir }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ${{ matrix.sanitizer_flags }}
 
       - name: Build (${{ matrix.build_type }})
         run: cmake --build ${{ matrix.build_dir }} --target all
@@ -67,7 +69,11 @@ jobs:
       - name: Configure and Build
         shell: msys2 {0}
         run: |
-          cmake -S . -B build -G "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          EXTRA_CMAKE_FLAGS=""
+          if [ "${{ matrix.build_type }}" = "Debug" ]; then
+              EXTRA_CMAKE_FLAGS="-DCMAKE_CXX_FLAGS='-fsanitize=address' -DCMAKE_C_FLAGS='-fsanitize=address' -DCMAKE_EXE_LINKER_FLAGS='-fsanitize=address'"
+          fi
+          cmake -S . -B build -G "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} $EXTRA_CMAKE_FLAGS
           cmake --build build --target all
 
       - name: Upload Build Artifacts
@@ -113,8 +119,13 @@ jobs:
 
       - name: Configure (Clang ${{ matrix.build_type }})
         run: |
+          EXTRA_CMAKE_FLAGS=""
+          if [ "${{ matrix.build_type }}" = "Debug" ]; then
+              EXTRA_CMAKE_FLAGS="-DCMAKE_CXX_FLAGS='-fsanitize=address' -DCMAKE_C_FLAGS='-fsanitize=address' -DCMAKE_EXE_LINKER_FLAGS='-fsanitize=address'"
+          fi
           CC=clang CXX=clang++ cmake -S . -B ${{ matrix.build_dir }} -G "Ninja" \
             -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            $EXTRA_CMAKE_FLAGS \
             -DOPENGL_gl_LIBRARY=/usr/lib/x86_64-linux-gnu/libGL.so \
             -DOPENGL_glu_LIBRARY=/usr/lib/x86_64-linux-gnu/libGLU.so
 
@@ -157,8 +168,13 @@ jobs:
 
       - name: Configure (GCC ${{ matrix.build_type }})
         run: |
+          EXTRA_CMAKE_FLAGS=""
+          if [ "${{ matrix.build_type }}" = "Debug" ]; then
+              EXTRA_CMAKE_FLAGS="-DCMAKE_CXX_FLAGS='-fsanitize=address' -DCMAKE_C_FLAGS='-fsanitize=address' -DCMAKE_EXE_LINKER_FLAGS='-fsanitize=address'"
+          fi
           CC=gcc-14 CXX=g++-14 cmake -S . -B build -G "Ninja" \
-            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            $EXTRA_CMAKE_FLAGS
 
       - name: Build (GCC ${{ matrix.build_type }})
         run: cmake --build build --target all
