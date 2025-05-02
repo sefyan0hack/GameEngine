@@ -12,12 +12,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2022, ubuntu-24.04]
-        compiler: [gcc, llvm, msvc]
-        build_type: [debug, release]
-        exclude:
-          - os: ubuntu-24.04
-            compiler: msvc
+        include:
+          - os: "ubuntu-24.04"
+            compiler: [gcc, llvm]
+            gcc_version: "14"
+            build_type: [debug, release]
+          - os: "windows-2022"
+            compiler: [gcc, llvm, msvc]
+            build_type: [debug, release]
 
     steps:
       - uses: actions/checkout@v3
