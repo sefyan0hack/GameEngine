@@ -18,12 +18,13 @@ jobs:
         compiler:
           - llvm
           - gcc
-          - msvc
         build_type: [debug, release]
         include:
           - os: "ubuntu-24.04"
             compiler: "gcc"
             gcc_version: "14"
+          - os: "windows-2022"
+            compiler: "msvc"
     steps:
       - uses: actions/checkout@v3
       
