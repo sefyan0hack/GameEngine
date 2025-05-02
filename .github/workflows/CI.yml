@@ -25,6 +25,11 @@ jobs:
             gcc_version: "14"
           - os: "windows-2022"
             compiler: "msvc"
+            build_type: debug
+          - os: "windows-2022"
+            compiler: "msvc"
+            build_type: release
+
     steps:
       - uses: actions/checkout@v3
       
