@@ -94,8 +94,9 @@ jobs:
       - name: Run tests
         shell: msys2 {0}
         working-directory: ./build
-        export ASAN_OPTIONS=detect_leaks=0
-        run: ctest --output-on-failure
+        run: |
+          export ASAN_OPTIONS=detect_leaks=0
+          ctest --output-on-failure
 
   linux_clang:
     name: Linux Clang (${{ matrix.build_type }})
