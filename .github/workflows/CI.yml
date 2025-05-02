@@ -15,6 +15,9 @@ jobs:
         os: [windows-2022, ubuntu-24.04]
         compiler: [gcc, llvm, msvc]
         build_type: [debug, release]
+        exclude:
+          - os: ubuntu-24.04
+            compiler: msvc
 
     steps:
       - uses: actions/checkout@v3
