@@ -3,6 +3,9 @@ on:
   pull_request:
   push:
 
+env:
+  TimeOut: 60
+
 jobs:
   Test:
     runs-on: ${{ matrix.os }}
@@ -53,12 +56,10 @@ jobs:
         with:
           compiler: ${{ matrix.compiler }}
           version: ${{ matrix.compiler == 'msvc' && 'latest' || matrix.gcc_version || '' }}
-          # For GCC: Add Ubuntu Toolchain PPA and install specified version
           gccSetup: |
             add-apt-repository -y ppa:ubuntu-toolchain-r/test
             apt-get update -y
             apt-get install -y gcc-${{ matrix.gcc_version }} g++-${{ matrix.gcc_version }}
-          # For MSVC: Use latest VS2022 components
           vs_components: |
             Microsoft.VisualStudio.Component.VC.Tools.x86.x64
             Microsoft.VisualStudio.Component.Windows11SDK.22621
@@ -79,7 +80,7 @@ jobs:
         shell: bash
         run: |
           if [ "${{ matrix.compiler }}" = "msvc" ]; then
-            cmake -S . -B build
+            cmake -S . -B build -G "Visual Studio 17 2022" -A x64
           else
             cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           fi
@@ -88,7 +89,7 @@ jobs:
         shell: bash
         run: |
           if [ "${{ matrix.compiler }}" = "msvc" ]; then
-            cmake --build build --config ${{ matrix.build_type }}
+            cmake --build build --config ${{ matrix.build_type }} --parallel
           else
             cmake --build build --parallel
           fi
@@ -99,5 +100,5 @@ jobs:
           if [ "${{ matrix.compiler }}" = "msvc" ]; then
             ctest --test-dir build -C ${{ matrix.build_type }} --output-on-failure
           else
-            ctest --test-dir build --output-on-failure
+            ctest --test-dir build --output-on-failure --timeout ${{ env.TimeOut }}
           fi
