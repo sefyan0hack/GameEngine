@@ -18,6 +18,7 @@ jobs:
         compiler:
           - llvm
           - gcc
+          - msvc
         build_type: [debug, release]
         include:
           - os: "ubuntu-24.04"
