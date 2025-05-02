@@ -64,6 +64,7 @@ jobs:
             mingw-w64-x86_64-toolchain
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-address-sanitizer
           update: true
 
       - name: Configure and Build
@@ -71,7 +72,7 @@ jobs:
         run: |
           EXTRA_CMAKE_FLAGS=""
           if [ "${{ matrix.build_type }}" = "Debug" ]; then
-              EXTRA_CMAKE_FLAGS="-DCMAKE_CXX_FLAGS='-fsanitize=address' -DCMAKE_C_FLAGS='-fsanitize=address' -DCMAKE_EXE_LINKER_FLAGS='-fsanitize=address'"
+            EXTRA_CMAKE_FLAGS="-DCMAKE_CXX_FLAGS='-fsanitize=address -static-libasan' -DCMAKE_C_FLAGS='-fsanitize=address -static-libasan' -DCMAKE_EXE_LINKER_FLAGS='-fsanitize=address -static-libasan'"
           fi
           cmake -S . -B build -G "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} $EXTRA_CMAKE_FLAGS
           cmake --build build --target all
