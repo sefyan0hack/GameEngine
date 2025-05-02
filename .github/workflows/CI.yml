@@ -15,10 +15,6 @@ jobs:
         os: [windows-2022, ubuntu-24.04]
         compiler: [gcc, llvm, msvc]
         build_type: [debug, release]
-        include:
-          - os: "ubuntu-24.04"
-            compiler: "gcc"
-            gcc_version: "14"
         exclude:
           - os: ubuntu-24.04
             compiler: msvc
