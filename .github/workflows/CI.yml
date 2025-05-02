@@ -83,26 +83,30 @@ jobs:
       - name: Configure CMake
         shell: bash
         run: |
+          BUILD_DIR="build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}"
+          rm -rf "$BUILD_DIR"
           if [ "${{ matrix.compiler }}" = "msvc" ]; then
-            cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+            cmake -S . -B "$BUILD_DIR" -G "Visual Studio 17 2022" -A x64
           else
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+            cmake -S . -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           fi
 
       - name: Build
         shell: bash
         run: |
+          BUILD_DIR="build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}"
           if [ "${{ matrix.compiler }}" = "msvc" ]; then
-            cmake --build build --config ${{ matrix.build_type }} --parallel
+            cmake --build "$BUILD_DIR" --config ${{ matrix.build_type }} --parallel
           else
-            cmake --build build --parallel
+            cmake --build "$BUILD_DIR" --parallel
           fi
 
       - name: Test
         shell: bash
         run: |
+          BUILD_DIR="build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}"
           if [ "${{ matrix.compiler }}" = "msvc" ]; then
-            ctest --test-dir build -C ${{ matrix.build_type }} --output-on-failure
+            ctest --test-dir "$BUILD_DIR" -C ${{ matrix.build_type }} --output-on-failure
           else
-            ctest --test-dir build --output-on-failure --timeout ${{ env.TimeOut }}
+            ctest --test-dir "$BUILD_DIR" --output-on-failure --timeout ${{ env.TimeOut }}
           fi
