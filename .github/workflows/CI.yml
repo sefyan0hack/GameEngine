@@ -68,7 +68,15 @@ jobs:
           vcpkg: true
           cppcheck: true
 
+      - name: Install Linux dependencies
+        if: matrix.os == 'ubuntu-24.04'
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev mesa-common-dev libglu1-mesa-dev
+
       - name: Configure CMake
+        shell: bash
         run: |
           if [ "${{ matrix.compiler }}" = "msvc" ]; then
             cmake -S . -B build
@@ -77,6 +85,7 @@ jobs:
           fi
 
       - name: Build
+        shell: bash
         run: |
           if [ "${{ matrix.compiler }}" = "msvc" ]; then
             cmake --build build --config ${{ matrix.build_type }}
@@ -85,6 +94,7 @@ jobs:
           fi
 
       - name: Test
+        shell: bash
         run: |
           if [ "${{ matrix.compiler }}" = "msvc" ]; then
             ctest --test-dir build -C ${{ matrix.build_type }} --output-on-failure
