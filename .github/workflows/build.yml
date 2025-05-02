@@ -72,7 +72,7 @@ jobs:
         run: |
           EXTRA_CMAKE_FLAGS=""
           if [ "${{ matrix.build_type }}" = "Debug" ]; then
-            EXTRA_CMAKE_FLAGS="-DCMAKE_CXX_FLAGS='-fsanitize=address -static-libasan' -DCMAKE_C_FLAGS='-fsanitize=address -static-libasan' -DCMAKE_EXE_LINKER_FLAGS='-fsanitize=address -static-libasan'"
+            EXTRA_CMAKE_FLAGS="-DCMAKE_CXX_FLAGS='-fsanitize=address -lasan' -DCMAKE_C_FLAGS='-fsanitize=address -lasan' -DCMAKE_EXE_LINKER_FLAGS='-fsanitize=address -lasan'"
           fi
           cmake -S . -B build -G "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} $EXTRA_CMAKE_FLAGS
           cmake --build build --target all
