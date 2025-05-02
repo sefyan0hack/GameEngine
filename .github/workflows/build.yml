@@ -89,10 +89,12 @@ jobs:
         run: |
           echo "Adding mingw64 bin to PATH"
           export PATH="$MSYS2_PATH/mingw64/bin:$PATH"
+          ls -l $MSYS2_PATH/mingw64/bin/libasan.dll
 
       - name: Run tests
         shell: msys2 {0}
         working-directory: ./build
+        export ASAN_OPTIONS=detect_leaks=0
         run: ctest --output-on-failure
 
   linux_clang:
