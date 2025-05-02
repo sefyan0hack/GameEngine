@@ -20,9 +20,6 @@ jobs:
           - gcc
         build_type: [debug, release]
         include:
-          - os: "windows-2022"
-            compiler: "msvc"
-            vs_version: "2022"
           - os: "ubuntu-24.04"
             compiler: "gcc"
             gcc_version: "14"
