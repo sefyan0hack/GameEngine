@@ -17,7 +17,7 @@ jobs:
           - ubuntu-24.04
         compiler:
           - llvm
-          - gcc-14.2.0
+          - gcc-14
         build_type: [debug, release]
         include:
           - os: "windows-2022"
@@ -35,18 +35,13 @@ jobs:
         with:
           path: |
             ./build/
-            ~/vcpkg
-            ~/.cache/vcpkg/archives
-            ${{ env.LOCALAPPDATA }}/vcpkg/archives
-            ${{ env.APPDATA }}/vcpkg/archives
-            ${{ env.XDG_CACHE_HOME }}/vcpkg/archives
             ~/.cache/ccache
             ~/.ccache
             ~/.config/ccache
             ~/Library/Caches/ccache
             ${{ env.LOCALAPPDATA }}/ccache
             ${{ env.XDG_CACHE_HOME }}/ccache
-          key: ${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}-${{ hashFiles('**/CMakeLists.txt', './vcpkg.json') }}
+          key: ${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}-${{ hashFiles('**/CMakeLists.txt') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}-
             ${{ runner.os }}-${{ matrix.build_type }}-
@@ -67,8 +62,8 @@ jobs:
           vcvarsall: true
           cmake: true
           ninja: true
-          vcpkg: true
-          cppcheck: true
+          vcpkg: false
+          cppcheck: false
 
       - name: Install Linux dependencies
         if: matrix.os == 'ubuntu-24.04'
