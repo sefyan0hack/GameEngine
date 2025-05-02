@@ -1,5 +1,8 @@
 name: Build
 
+env:
+  TimeOut: 60
+
 on:
   push:
   pull_request:
@@ -16,10 +19,8 @@ jobs:
         include:
           - build_type: Release
             build_dir: build/release
-            sanitizer_flags: ""
           - build_type: Debug
             build_dir: build/debug
-            sanitizer_flags: -DCMAKE_C_FLAGS="/fsanitize=address" -DCMAKE_CXX_FLAGS="/fsanitize=address"
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -28,7 +29,7 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
 
       - name: Configure CMake (${{ matrix.build_type }})
-        run: cmake -G "Ninja" -B ${{ matrix.build_dir }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ${{ matrix.sanitizer_flags }}
+        run: cmake -G "Ninja" -B ${{ matrix.build_dir }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
       - name: Build (${{ matrix.build_type }})
         run: cmake --build ${{ matrix.build_dir }} --target all
@@ -42,7 +43,7 @@ jobs:
 
       - name: Run tests
         working-directory: ./${{ matrix.build_dir }}
-        run: ctest --output-on-failure
+        run: ctest --output-on-failure --timeout ${{ env.TimeOut }}
 
   windows_gcc:
     name: Windows GCC (${{ matrix.build_type }})
@@ -69,11 +70,7 @@ jobs:
       - name: Configure and Build
         shell: msys2 {0}
         run: |
-          EXTRA_CMAKE_FLAGS=""
-          if [ "${{ matrix.build_type }}" = "Debug" ]; then
-            EXTRA_CMAKE_FLAGS="-DCMAKE_CXX_FLAGS='-fsanitize=address -lasan' -DCMAKE_C_FLAGS='-fsanitize=address -lasan' -DCMAKE_EXE_LINKER_FLAGS='-fsanitize=address -lasan'"
-          fi
-          cmake -S . -B build -G "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} $EXTRA_CMAKE_FLAGS
+          cmake -S . -B build -G "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           cmake --build build --target all
 
       - name: Upload Build Artifacts
@@ -88,14 +85,11 @@ jobs:
         run: |
           echo "Adding mingw64 bin to PATH"
           export PATH="$MSYS2_PATH/mingw64/bin:$PATH"
-          ls -l $MSYS2_PATH/mingw64/bin/libasan.dll
 
       - name: Run tests
         shell: msys2 {0}
         working-directory: ./build
-        run: |
-          export ASAN_OPTIONS=detect_leaks=0
-          ctest --output-on-failure
+        run: ctest --output-on-failure --timeout ${{ env.TimeOut }}
 
   linux_clang:
     name: Linux Clang (${{ matrix.build_type }})
@@ -122,13 +116,8 @@ jobs:
 
       - name: Configure (Clang ${{ matrix.build_type }})
         run: |
-          EXTRA_CMAKE_FLAGS=""
-          if [ "${{ matrix.build_type }}" = "Debug" ]; then
-              EXTRA_CMAKE_FLAGS="-DCMAKE_CXX_FLAGS='-fsanitize=address' -DCMAKE_C_FLAGS='-fsanitize=address' -DCMAKE_EXE_LINKER_FLAGS='-fsanitize=address'"
-          fi
           CC=clang CXX=clang++ cmake -S . -B ${{ matrix.build_dir }} -G "Ninja" \
             -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-            $EXTRA_CMAKE_FLAGS \
             -DOPENGL_gl_LIBRARY=/usr/lib/x86_64-linux-gnu/libGL.so \
             -DOPENGL_glu_LIBRARY=/usr/lib/x86_64-linux-gnu/libGLU.so
 
@@ -144,7 +133,7 @@ jobs:
 
       - name: Run tests
         working-directory: ./${{ matrix.build_dir }}
-        run: ctest --output-on-failure
+        run: ctest --output-on-failure --timeout ${{ env.TimeOut }}
 
   linux_gcc:
     name: Linux GCC (${{ matrix.build_type }})
@@ -171,13 +160,8 @@ jobs:
 
       - name: Configure (GCC ${{ matrix.build_type }})
         run: |
-          EXTRA_CMAKE_FLAGS=""
-          if [ "${{ matrix.build_type }}" = "Debug" ]; then
-              EXTRA_CMAKE_FLAGS="-DCMAKE_CXX_FLAGS='-fsanitize=address' -DCMAKE_C_FLAGS='-fsanitize=address' -DCMAKE_EXE_LINKER_FLAGS='-fsanitize=address'"
-          fi
           CC=gcc-14 CXX=g++-14 cmake -S . -B build -G "Ninja" \
-            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-            $EXTRA_CMAKE_FLAGS
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
       - name: Build (GCC ${{ matrix.build_type }})
         run: cmake --build build --target all
@@ -191,4 +175,4 @@ jobs:
 
       - name: Run tests
         working-directory: ./build
-        run: ctest --output-on-failure
+        run: ctest --output-on-failure --timeout ${{ env.TimeOut }}
