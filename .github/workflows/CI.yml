@@ -15,7 +15,6 @@ jobs:
         os: [windows-2022, ubuntu-24.04]
         compiler: [gcc, llvm, msvc]
         build_type: [debug, release]
-        gcc_version: 14
         exclude:
           - os: ubuntu-24.04
             compiler: msvc
@@ -72,6 +71,8 @@ jobs:
           rm -rf "$BUILD_DIR"
           if [ "${{ matrix.compiler }}" = "msvc" ]; then
             cmake -S . -B "$BUILD_DIR" -G "Visual Studio 17 2022" -A x64
+           elif [ "${{ runner.os }}" = "Windows" ]; then
+            cmake -S . -B "$BUILD_DIR" -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           else
             cmake -S . -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           fi
