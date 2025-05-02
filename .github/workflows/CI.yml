@@ -19,6 +19,10 @@ jobs:
         include:
           - os: "windows-2022"
             compiler: "msvc"
+            vs_version: "2022"
+          - os: "ubuntu-24.04"
+            compiler: "gcc"
+            gcc_version: "14"
     steps:
       - uses: actions/checkout@v3
       
@@ -48,34 +52,42 @@ jobs:
         uses: aminya/setup-cpp@v1
         with:
           compiler: ${{ matrix.compiler }}
+          version: ${{ matrix.compiler == 'msvc' && 'latest' || matrix.gcc_version || '' }}
+          # For GCC: Add Ubuntu Toolchain PPA and install specified version
+          gccSetup: |
+            add-apt-repository -y ppa:ubuntu-toolchain-r/test
+            apt-get update -y
+            apt-get install -y gcc-${{ matrix.gcc_version }} g++-${{ matrix.gcc_version }}
+          # For MSVC: Use latest VS2022 components
+          vs_components: |
+            Microsoft.VisualStudio.Component.VC.Tools.x86.x64
+            Microsoft.VisualStudio.Component.Windows11SDK.22621
           vcvarsall: true
           cmake: true
           ninja: true
           vcpkg: true
           cppcheck: true
 
-      - name: Configure CMake (Non-MSVС)
-        if: runner.os != 'Windows' || matrix.compiler != 'msvc'
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-
-      - name: Configure CMake (MSVC)
-        if: runner.os == 'Windows' && matrix.compiler == 'msvc'
-        run: cmake -S . -B build
+      - name: Configure CMake
+        run: |
+          if [ "${{ matrix.compiler }}" = "msvc" ]; then
+            cmake -S . -B build
+          else
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          fi
 
       - name: Build
         run: |
-          if [ "${{ runner.os }}" = "Windows" ] && [ "${{ matrix.compiler }}" = "msvc" ]; then
+          if [ "${{ matrix.compiler }}" = "msvc" ]; then
             cmake --build build --config ${{ matrix.build_type }}
           else
-            cmake --build build
+            cmake --build build --parallel
           fi
-        shell: bash
 
       - name: Test
         run: |
-          if [ "${{ runner.os }}" = "Windows" ] && [ "${{ matrix.compiler }}" = "msvc" ]; then
-            ctest --test-dir build -C ${{ matrix.build_type }}
+          if [ "${{ matrix.compiler }}" = "msvc" ]; then
+            ctest --test-dir build -C ${{ matrix.build_type }} --output-on-failure
           else
-            ctest --test-dir build
+            ctest --test-dir build --output-on-failure
           fi
-        shell: bash
