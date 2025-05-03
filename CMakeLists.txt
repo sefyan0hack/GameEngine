@@ -198,7 +198,7 @@ target_link_libraries(core
         OpenGL::GL
         stb_image
         $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
-        $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:stdc++exp>
+        $<$<AND:$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>,$<NOT:$<PLATFORM_ID:Windows>>>:stdc++exp>
 )
 target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
 if(MINGW)
