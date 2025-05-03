@@ -70,12 +70,8 @@ jobs:
           BUILD_DIR="build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}"
           cmake --build "$BUILD_DIR" --config ${{ matrix.build_type }} --parallel --target all
 
-      # - name: Test
-      #   shell: bash
-      #   run: |
-      #     BUILD_DIR="build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}"
-      #     if [ "${{ matrix.compiler }}" = "msvc" ]; then
-      #       ctest --test-dir "$BUILD_DIR" -C ${{ matrix.build_type }} --output-on-failure
-      #     else
-      #       ctest --test-dir "$BUILD_DIR" --output-on-failure --timeout ${{ env.TimeOut }}
-      #     fi
+      - name: Test
+        shell: bash
+        run: |
+          BUILD_DIR="build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}"
+          ctest --test-dir "$BUILD_DIR" --output-on-failure --timeout ${{ env.TimeOut }}
