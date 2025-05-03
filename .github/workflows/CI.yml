@@ -4,9 +4,6 @@ on:
   pull_request:
   workflow_dispatch:
 
-env:
-  TimeOut: 60
-
 jobs:
   Build:
     runs-on: ${{ matrix.os }}
@@ -19,7 +16,9 @@ jobs:
         exclude:
           - os: ubuntu-latest
             compiler: msvc
-
+    env:
+      TEST_TIMEOUT: 60
+      BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
     steps:
       - uses: actions/checkout@v3
       
@@ -60,18 +59,22 @@ jobs:
       - name: Configure CMake
         shell: bash
         run: |
-          BUILD_DIR="build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}"
-          rm -rf "$BUILD_DIR"
+          rm -rf "${{ env.BUILD_DIR }}"
           cmake -S . -B "$BUILD_DIR" -G  "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
       - name: Build
         shell: bash
         run: |
-          BUILD_DIR="build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}"
-          cmake --build "$BUILD_DIR" --config ${{ matrix.build_type }} --parallel --target all
+          cmake --build "${{ env.BUILD_DIR }}" --config ${{ matrix.build_type }} --parallel --target all
+
+      - name: Upload Test Executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: tests-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
+          path: ${{ env.BUILD_DIR }}
+          retention-days: 1
 
       - name: Test
         shell: bash
         run: |
-          BUILD_DIR="build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}"
-          ctest --test-dir "$BUILD_DIR" --output-on-failure --timeout ${{ env.TimeOut }}
+          ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
