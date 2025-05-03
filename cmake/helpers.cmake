@@ -101,7 +101,7 @@ function(apply_compile_options)
                 -Wall -Wextra -Wpedantic -Wconversion -Wfloat-equal -Wwrite-strings -Wno-sign-conversion
                 -fstack-protector-strong
                 -Wnull-dereference -Wswitch-enum
-                -Wuninitialized -Wpointer-arith -Wreturn-type -Winline -Wredundant-decls
+                -Wuninitialized -Wpointer-arith -Wreturn-type -Wredundant-decls
                 -fno-operator-names
                 -D_GLIBCXX_HAVE_STACKTRACE
                 # Debug flags
