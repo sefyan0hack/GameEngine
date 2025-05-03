@@ -71,7 +71,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tests-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
-          path: ${{ env.BUILD_DIR }}
+          path: ${{ env.BUILD_DIR }}/tests
           retention-days: 1
 
       - name: Test
