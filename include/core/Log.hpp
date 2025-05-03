@@ -61,8 +61,14 @@ struct ClogPolicy {
 
 struct FilePolicy {
   static auto& get_stream() {
-    static std::ofstream stream("Engine.log", std::ios::app);
-    return stream;
+    static std::unique_ptr<std::ofstream> stream;
+    if (!stream) {
+      stream = std::make_unique<std::ofstream>("Engine.log", std::ios::app);
+      if (!stream->is_open()) {
+        std::cerr << "Couldn't open file : Engine.log\n";
+      }
+    }
+    return *stream;
   }
 };
 
