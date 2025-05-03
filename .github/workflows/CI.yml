@@ -62,21 +62,13 @@ jobs:
         run: |
           BUILD_DIR="build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}"
           rm -rf "$BUILD_DIR"
-          if [ "${{ matrix.compiler }}" = "msvc" ]; then
-            cmake -S . -B "$BUILD_DIR" -G  "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-          else
-            cmake -S . -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-          fi
+          cmake -S . -B "$BUILD_DIR" -G  "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
       - name: Build
         shell: bash
         run: |
           BUILD_DIR="build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}"
-          if [ "${{ matrix.compiler }}" = "msvc" ]; then
-            cmake --build "$BUILD_DIR" --config ${{ matrix.build_type }} --parallel
-          else
-            cmake --build "$BUILD_DIR" --parallel --target all
-          fi
+          cmake --build "$BUILD_DIR" --config ${{ matrix.build_type }} --parallel --target all
 
       # - name: Test
       #   shell: bash
