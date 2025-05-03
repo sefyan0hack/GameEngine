@@ -7,7 +7,9 @@
 #include <string>
 #include <memory>
 #include <algorithm>
+#ifdef HAS_STD_STACKTRACE
 #include <stacktrace>
+#endif
 #include <type_traits>
 #include <csignal>
 #include <cstdint>

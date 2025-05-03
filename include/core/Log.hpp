@@ -95,7 +95,11 @@ auto Log(
       "{}\n",
       formatedTime(), lvl_str, formatted_msg,
       loc.function_name(), loc.file_name(), loc.line(),
+      #ifdef HAS_STD_STACKTRACE
       std::stacktrace::current(1)
+      #else
+      "no_stack_trace"
+      #endif
     );
     #if defined(WINDOWS_PLT)
     if(config::show_message_box)

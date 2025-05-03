@@ -171,11 +171,16 @@ apply_compile_options(TARGETS core ${PROJECT_NAME})
 
 print_target_compile_options(core)
 
+include(CheckCXXSourceCompiles)
+check_cxx_source_compiles("
+#include <stacktrace>
+int main() {auto trace = std::stacktrace::current();}" HAS_STD_STACKTRACE)
+
 target_compile_definitions(core
     PUBLIC
         PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
         OPENGL_LIB="${CORE_OPENGL_LIB}"
-        $<$<CONFIG:Debug>:DEBUG>
+        $<$<BOOL:${HAS_STD_STACKTRACE}>:HAS_STD_STACKTRACE>
 )
 
 ####################################################################################################
