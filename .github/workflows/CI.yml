@@ -71,7 +71,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tests-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
-          path: ${{ env.BUILD_DIR }}/tests
+          path: ${{ env.BUILD_DIR }}/tests/tests${{ matrix.os == 'windows-latest' && '.exe' || '' }}
           retention-days: 1
 
       - name: Test
