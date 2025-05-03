@@ -43,14 +43,6 @@ jobs:
         uses: aminya/setup-cpp@v1
         with:
           compiler: ${{ matrix.compiler }}
-          version: ${{ matrix.compiler == 'msvc' && 'latest' || matrix.gcc_version || '' }}
-          gccSetup: |
-            add-apt-repository -y ppa:ubuntu-toolchain-r/test
-            apt-get update -y
-            apt-get install -y gcc-${{ matrix.gcc_version }} g++-${{ matrix.gcc_version }}
-          vs_components: |
-            Microsoft.VisualStudio.Component.VC.Tools.x86.x64
-            Microsoft.VisualStudio.Component.Windows11SDK.22621
           vcvarsall: true
           cmake: true
           ninja: true
