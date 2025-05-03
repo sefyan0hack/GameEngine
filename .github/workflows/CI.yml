@@ -73,7 +73,7 @@ jobs:
         run: |
           BUILD_DIR="build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}"
           if [ "${{ matrix.compiler }}" = "msvc" ]; then
-            cmake --build "$BUILD_DIR" --config ${{ matrix.build_type }} --parallel --target all
+            cmake --build "$BUILD_DIR" --config ${{ matrix.build_type }} --parallel
           else
             cmake --build "$BUILD_DIR" --parallel --target all
           fi
