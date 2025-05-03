@@ -78,6 +78,10 @@ inline std::future<std::optional<std::vector<char>>> load_file_async(const std::
         }
         streamsize size = file.tellg();
         file.seekg(0, ios::beg);
+        
+        if (static_cast<size_t>(size) > vector<char>().max_size()){
+            return nullopt;
+        }
 
         vector<char> buffer(static_cast<size_t>(size));
         file.read(buffer.data(), size);
