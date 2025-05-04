@@ -72,12 +72,11 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: "cpp"
-          config: |
-            paths-ignore:
-              '**/3party/**'
-              '**/_deps/**'
-              '**/build/_deps/**'
-              '**/${{ env.BUILD_DIR }}/_deps/**'
+          paths-ignore:
+              - '**/3party/**'
+              - '**/_deps/**'
+              - '**/build/_deps/**'
+              - '**/${{ env.BUILD_DIR }}/_deps/**'
 
       - name: Build
         shell: bash
