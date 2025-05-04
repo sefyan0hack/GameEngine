@@ -16,6 +16,7 @@ jobs:
         os: [windows-latest, ubuntu-latest]
         compiler: [gcc, llvm, msvc]
         build_type: [Debug, Release]
+        appext: ${{ matrix.os == 'windows-latest' && '.exe' || '' }}
         language: ['cpp']
         exclude:
           - os: ubuntu-latest
@@ -23,6 +24,7 @@ jobs:
     env:
       TEST_TIMEOUT: 60
       BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
+      TEST_EXEC: tests/tests${{ matrix.test_ext }}
       IS_UBUNTU_LLVM: ${{ contains(matrix.os, 'ubuntu') && contains(matrix.compiler, 'llvm') && matrix.build_type == 'Debug' }}
 
     steps:
@@ -32,13 +34,8 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
-            ./build/
+            ${{ env.BUILD_DIR }}
             ~/.cache/ccache
-            ~/.ccache
-            ~/.config/ccache
-            ~/Library/Caches/ccache
-            ${{ env.LOCALAPPDATA }}/ccache
-            ${{ env.XDG_CACHE_HOME }}/ccache
           key: ${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}-${{ hashFiles('**/CMakeLists.txt') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}-
@@ -67,7 +64,7 @@ jobs:
         shell: bash
         run: |
           rm -rf "${{ env.BUILD_DIR }}"
-          cmake -S . -B "$BUILD_DIR" -G  "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          cmake -S . -B "$BUILD_DIR" -G  "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
       - name: Initialize CodeQL
         if: ${{ env.IS_UBUNTU_LLVM }}
@@ -90,29 +87,35 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tests-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
-          path: ${{ env.BUILD_DIR }}/tests/tests${{ matrix.os == 'windows-latest' && '.exe' || '' }}
+          path: ${{ env.BUILD_DIR }}/tests/tests${{ matrix.appext }}
           retention-days: 1
 
       - name: Test
-        shell: bash
         run: |
-          if [[ "${{ matrix.os }}" == "windows-latest" && "${{ matrix.compiler }}" == "msvc" ]]; then
-            echo "⚙️ Using ctest for MSVC on Windows..."
-            ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
-          else
-            TEST_EXEC="${{ env.BUILD_DIR }}/tests/tests${{ matrix.os == 'windows-latest' && '.exe' || '' }}"
-            
-            if [ ! -f "$TEST_EXEC" ]; then
-              echo "❌ Test executable not found: $TEST_EXEC"
-              exit 1
-            fi
-
-            gdb -ex "set pagination off" \
-                -ex "run" \
-                -ex "bt" \
-                -ex "thread apply all bt" \
-                -ex "quit" \
-                --return-child-result \
-                -batch \
-                --args "$TEST_EXEC"
+          cd "$BUILD_DIR"
+          TEST_PATH="$PWD/$TEST_EXEC"
+          
+          if [ ! -f "$TEST_PATH" ]; then
+            echo "❌ Test executable missing: $TEST_PATH"
+            exit 1
           fi
+
+          ${{ matrix.debugger_cmd }} -nx -batch \
+            -ex "set pagination off" \
+            -ex "set print pretty on" \
+            -ex "run" \
+            -ex "thread apply all bt full" \
+            -ex "info registers" \
+            -ex "x/10i \$pc" \
+            -ex "generate-core-file core.dump" \
+            --return-child-result \
+            --args "$TEST_PATH"
+
+      - name: Capture Diagnostics
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.BUILD_DIR }}-diagnostics
+          path: |
+            ${{ env.BUILD_DIR }}/core.dump
+            ${{ env.BUILD_DIR }}/compile_commands.json
