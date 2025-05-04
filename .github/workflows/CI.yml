@@ -24,7 +24,7 @@ jobs:
       TEST_TIMEOUT: 60
       BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
       APP_EXT: ${{ matrix.os == 'windows-latest' && '.exe' || '' }}
-      TEST_EXEC: ${{ 'tests/tests' + ( matrix.os == 'windows-latest' && '.exe' || '' ) }}
+      TEST_EXEC: tests/tests${{ matrix.os == 'windows-latest' && '.exe' || '' }}
       IS_UBUNTU_LLVM: ${{ contains(matrix.os, 'ubuntu') && contains(matrix.compiler, 'llvm') && matrix.build_type == 'Debug' }}
 
     steps:
