@@ -128,7 +128,7 @@ auto Log(
 
 }
 
-#ifdef 1
+#if 1
 #define Error(...) Log<Log_LvL::ERR>(std::cerr, std::source_location::current(), __VA_ARGS__)
 #define Info(...)  Log<Log_LvL::INFO>(std::clog, std::source_location::current(), __VA_ARGS__)
 #define print(...) Log<Log_LvL::PRT>(std::clog, std::source_location::current(), __VA_ARGS__)
