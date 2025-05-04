@@ -3,18 +3,21 @@
 #include <core/gl.h>
 
 #if defined(WINDOWS_PLT)
+#include <windows.h>
 #ifdef DEBUG
+#include <dbghelp.h>
 auto setup_crach_handler() -> void;
 auto resolveSymbol(void* addr, HANDLE proc = GetCurrentProcess()) -> std::string;
 auto PrintStackTrace(unsigned short skip = 0) -> void;
-#endif //DEBUG
+#endif // DEBUG
 #endif
 
 namespace config {
   inline bool exit_on_error = true;
   inline bool show_message_box = true;
   inline bool show_output = true;
-  inline void TestFlags(){
+  
+  inline void TestFlags() {
     exit_on_error = false;
     show_message_box = false;
     show_output = false;
@@ -46,31 +49,22 @@ constexpr const char* levelToString(Log_LvL level) {
 }
 
 struct CerrPolicy {
-  static auto& get_stream() {
-    static auto& stream = std::cerr;
-    return stream;
-  }
+  static auto& get_stream() { return std::cerr; }
 };
 
 struct ClogPolicy {
-  static auto& get_stream() {
-    static auto& stream = std::clog;
-    return stream;
-  }
+  static auto& get_stream() { return std::clog; }
 };
 
 struct FilePolicy {
   static auto& get_stream() {
-    static std::unique_ptr<std::ofstream> stream;
-    if (!stream) {
-      stream = std::make_unique<std::ofstream>("Engine.log", std::ios::app);
-    }
-    return *stream;
+    static std::ofstream stream("Engine.log", std::ios::app);
+    return stream;
   }
 };
 
 template<class T>
-concept StreamOut = requires(){
+concept StreamOut = requires() {
   { T::get_stream() } -> std::convertible_to<std::ostream&>;
 };
 
@@ -104,9 +98,11 @@ auto Log(
       "no_stack_trace"
       #endif
     );
+    
     #if defined(WINDOWS_PLT)
-    if(config::show_message_box)
-      MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONERROR );
+    if (config::show_message_box){
+      MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONERROR);
+    }
     #endif
   }
   else if constexpr (lvl == Log_LvL::INFO){
@@ -115,13 +111,14 @@ auto Log(
   else if constexpr (lvl == Log_LvL::PRT){
     msg << std::format("{} : {}\n", formatedTime(), formatted_msg);
   }
-  if(config::show_output){
-    out << msg.rdbuf();
+
+  if (config::show_output && out.good()){
+    out << msg.view();
     out.flush();
   }
 
   if constexpr (lvl == Log_LvL::ERR  || lvl == Log_LvL::EXPT){
-    if(config::exit_on_error) exit(EXIT_FAILURE);
+    if (config::exit_on_error) std::exit(EXIT_FAILURE);
   }
 }
 
