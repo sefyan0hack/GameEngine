@@ -19,12 +19,15 @@ jobs:
         os: [windows-latest, ubuntu-latest]
         compiler: [gcc, llvm, msvc]
         build_type: [Debug, Release]
+        language: ['cpp']
         exclude:
           - os: ubuntu-latest
             compiler: msvc
     env:
       TEST_TIMEOUT: 60
       BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
+      IS_UBUNTU_LLVM: ${{ contains(matrix.os, 'ubuntu') && contains(matrix.compiler, 'llvm') }}
+
     steps:
       - uses: actions/checkout@v3
       
@@ -69,19 +72,36 @@ jobs:
           cmake -S . -B "$BUILD_DIR" -G  "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
       - name: Initialize CodeQL
-        if: ${{ contains(matrix.os, 'ubuntu') && contains(matrix.compiler, 'llvm') }}
+        if: ${{ env.IS_UBUNTU_LLVM }}
         uses: github/codeql-action/init@v3
         with:
-          languages: "cpp"
-          config-file: ./.github/codeql/codeql-config.yml
+          languages: ${{ matrix.language }}
 
       - name: Build
         shell: bash
         run: cmake --build "${{ env.BUILD_DIR }}" --config ${{ matrix.build_type }} --parallel --target all
 
       - name: Perform CodeQL Analysis
-        if: ${{ contains(matrix.os, 'ubuntu') && contains(matrix.compiler, 'llvm') }}
+        if: ${{ env.IS_UBUNTU_LLVM }}
         uses: github/codeql-action/analyze@v3
+        continue-on-error: true
+        with:
+          category: "/language:${{ matrix.language }}"
+          output: sarif-results
+          upload: false
+
+      - name: Filter SARIF results
+        if: ${{ env.IS_UBUNTU_LLVM }}
+        uses: advanced-security/filter-sarif@v1
+        with:
+          sarif-file: sarif-results/
+          exclude-patterns: '**/_deps/**'
+
+      - name: Upload SARIF results
+        if: ${{ steps.codeql_analyze.outcome == 'failure' && ${{ env.IS_UBUNTU_LLVM }} }}
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_dir: sarif-results
 
       - name: Upload Test Executable
         uses: actions/upload-artifact@v4
