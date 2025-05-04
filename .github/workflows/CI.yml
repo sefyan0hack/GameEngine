@@ -16,7 +16,6 @@ jobs:
         os: [windows-latest, ubuntu-latest]
         compiler: [gcc, llvm, msvc]
         build_type: [Debug, Release]
-        appext: ${{ matrix.os == 'windows-latest' && '.exe' || '' }}
         language: ['cpp']
         exclude:
           - os: ubuntu-latest
@@ -24,7 +23,8 @@ jobs:
     env:
       TEST_TIMEOUT: 60
       BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
-      TEST_EXEC: tests/tests${{ matrix.test_ext }}
+      APP_EXT: ${{ matrix.os == 'windows-latest' && '.exe' || '' }}
+      TEST_EXEC: tests/tests${{ env.APP_EXT }}
       IS_UBUNTU_LLVM: ${{ contains(matrix.os, 'ubuntu') && contains(matrix.compiler, 'llvm') && matrix.build_type == 'Debug' }}
 
     steps:
@@ -87,7 +87,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tests-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
-          path: ${{ env.BUILD_DIR }}/tests/tests${{ matrix.appext }}
+          path: ${{ env.BUILD_DIR }}/tests/tests${{ env.APP_EXT }}
           retention-days: 1
 
       - name: Test
