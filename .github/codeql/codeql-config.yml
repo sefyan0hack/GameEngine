@@ -1,3 +1,7 @@
+paths:
+  - src
+  - include
+
 paths-ignore:
   - '**/_deps/**'
   - '**/3party/**'
