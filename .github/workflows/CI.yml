@@ -101,7 +101,32 @@ jobs:
             exit 1
           fi
 
-          ${{ matrix.debugger_cmd }} -nx -batch \
+          # Windows-specific GDB setup
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            # Find MinGW GDB in standard locations
+            MINGW_PATHS=(
+              "C:/msys64/mingw64/bin/gdb.exe"
+              "C:/MinGW/bin/gdb.exe"
+              "C:/Strawberry/c/bin/gdb.exe"
+            )
+            
+            for path in "${MINGW_PATHS[@]}"; do
+              if [[ -f "$path" ]]; then
+                GDB_CMD="$path"
+                break
+              fi
+            done
+
+            if [[ -z "$GDB_CMD" ]]; then
+              echo "⚠️ GDB not found in standard paths, trying PATH..."
+              GDB_CMD="gdb.exe"
+            fi
+          else
+            GDB_CMD="gdb"
+          fi
+
+          # Run tests with advanced diagnostics
+          "$GDB_CMD" -nx -batch \
             -ex "set pagination off" \
             -ex "set print pretty on" \
             -ex "run" \
