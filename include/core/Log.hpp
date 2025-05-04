@@ -13,6 +13,7 @@ auto PrintStackTrace(unsigned short skip = 0) -> void;
 #endif
 
 namespace config {
+  constexpr auto LogFileName = "Engine.log";
   inline bool exit_on_error = true;
   inline bool show_message_box = true;
   inline bool show_output = true;
@@ -48,33 +49,34 @@ constexpr const char* levelToString(Log_LvL level) {
   }
 }
 
-struct CerrPolicy {
-  static auto& get_stream() { return std::cerr; }
-};
+// struct CerrPolicy {
+//   static auto get_stream() { return std::cerr; }
+// };
 
-struct ClogPolicy {
-  static auto& get_stream() { return std::clog; }
-};
+// struct ClogPolicy {
+//   static auto get_stream() { return std::clog; }
+// };
 
 struct FilePolicy {
-  static auto& get_stream() {
-    static std::ofstream stream("Engine.log", std::ios::app);
-    return stream;
-  }
+  static auto get_stream() { return std::ofstream(config::LogFileName, std::ios::app); }
 };
 
 template<class T>
-concept StreamOut = requires() {
-  { T::get_stream() } -> std::convertible_to<std::ostream&>;
-};
+concept StreamOut = 
+  std::is_base_of_v<
+    std::basic_ostream<typename std::remove_cvref_t<T>::char_type, 
+    typename std::remove_cvref_t<T>::traits_type>, 
+    std::remove_cvref_t<T>
+  >;
 
 inline auto& get_logger_mutex() {
   static std::mutex mtx;
   return mtx;
 }
 
-template <Log_LvL lvl, StreamOut Out, typename ...Ts>
+template <Log_LvL lvl, typename ...Ts>
 auto Log(
+  [[maybe_unused]] StreamOut auto out,
   [[maybe_unused]] std::source_location loc,
   [[maybe_unused]] const std::format_string<Ts...> fmt,
   [[maybe_unused]] Ts&& ... ts) -> void
@@ -83,7 +85,6 @@ auto Log(
   auto formatted_msg = std::format(fmt, std::forward<Ts>(ts)...);
   auto lvl_str = levelToString(lvl);
   auto msg = std::stringstream{};
-  auto& out = Out::get_stream();
   
   if constexpr (lvl == Log_LvL::ERR || lvl == Log_LvL::EXPT){
     msg << std::format(
@@ -125,14 +126,14 @@ auto Log(
 }
 
 #ifdef DEBUG
-#define Error(...) Log<Log_LvL::ERR, CerrPolicy>(std::source_location::current(), __VA_ARGS__)
-#define Info(...)  Log<Log_LvL::INFO, ClogPolicy>(std::source_location::current(), __VA_ARGS__)
-#define print(...) Log<Log_LvL::PRT, ClogPolicy>(std::source_location::current(), __VA_ARGS__)
-#define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); Log<Log_LvL::EXPT, ClogPolicy>(std::source_location::current(), __VA_ARGS__); } } while (0)
+#define Error(...) Log<Log_LvL::ERR>(std::cerr, std::source_location::current(), __VA_ARGS__)
+#define Info(...)  Log<Log_LvL::INFO>(std::clog, std::source_location::current(), __VA_ARGS__)
+#define print(...) Log<Log_LvL::PRT>(std::clog, std::source_location::current(), __VA_ARGS__)
+#define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); Log<Log_LvL::EXPT>(CerrPolicy::get_stream(), std::source_location::current(), __VA_ARGS__); } } while (0)
 
 #else
-#define Error(...) Log<Log_LvL::ERR, FilePolicy>(std::source_location::current(), __VA_ARGS__)
-#define Info(...)  Log<Log_LvL::INFO, FilePolicy>(std::source_location::current(), __VA_ARGS__)
-#define print(...) Log<Log_LvL::PRT, FilePolicy>(std::source_location::current(), __VA_ARGS__)
-#define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); Log<Log_LvL::EXPT, FilePolicy>(std::source_location::current(), __VA_ARGS__); } } while (0)
+#define Error(...) Log<Log_LvL::ERR>(FilePolicy::get_stream(), std::source_location::current(), __VA_ARGS__)
+#define Info(...)  Log<Log_LvL::INFO>(FilePolicy::get_stream(), std::source_location::current(), __VA_ARGS__)
+#define print(...) Log<Log_LvL::PRT>(FilePolicy::get_stream(), std::source_location::current(), __VA_ARGS__)
+#define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); Log<Log_LvL::EXPT>(FilePolicy::get_stream(), std::source_location::current(), __VA_ARGS__); } } while (0)
 #endif
