@@ -51,7 +51,17 @@ constexpr const char* levelToString(Log_LvL level) {
 
 
 struct FilePolicy {
-  static auto get_stream() { static auto s = std::ofstream(config::LogFileName, std::ios::app); return s; }
+  static auto get_stream() {
+    static std::ios_base::Init io_init;
+    static std::ofstream stream;
+    if (!stream.is_open()) {
+      stream.open(config::LogFileName, std::ios::app);
+      if (!stream) {
+        std::abort();
+      }
+    }
+    return stream;
+  }
 };
 
 template<class T>
