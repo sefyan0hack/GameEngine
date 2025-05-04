@@ -104,6 +104,7 @@ function(apply_compile_options)
                 -Wuninitialized -Wpointer-arith -Wreturn-type -Wredundant-decls
                 -fno-operator-names
                 -D_GLIBCXX_HAVE_STACKTRACE
+                -static-libstdc++
                 # Debug flags
                 "$<$<CONFIG:Debug>:-ggdb>"
                 "$<$<CONFIG:Debug>:-g3>"

@@ -26,7 +26,7 @@ jobs:
     env:
       TEST_TIMEOUT: 60
       BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
-      IS_UBUNTU_LLVM: ${{ contains(matrix.os, 'ubuntu') && contains(matrix.compiler, 'llvm') }}
+      IS_UBUNTU_LLVM: ${{ contains(matrix.os, 'ubuntu') && contains(matrix.compiler, 'llvm') && matrix.build_type == 'Debug' }}
 
     steps:
       - uses: actions/checkout@v3
@@ -63,7 +63,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-dev mesa-common-dev libglu1-mesa-dev
+          sudo apt-get install -y libgl1-mesa-dev mesa-common-dev libglu1-mesa-dev gdb
 
       - name: Configure CMake
         shell: bash
