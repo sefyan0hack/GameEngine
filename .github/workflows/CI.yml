@@ -72,6 +72,9 @@ jobs:
         uses: github/codeql-action/init@v2
         with:
           languages: "cpp"
+          config: |
+            paths-ignore:
+              - ${{ env.BUILD_DIR }}/_deps/**
 
       - name: Build
         shell: bash
