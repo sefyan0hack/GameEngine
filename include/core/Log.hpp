@@ -88,7 +88,7 @@ inline auto& get_logger_mutex() {
 
 template <Log_LvL lvl, typename ...Ts>
 auto Log(
-  [[maybe_unused]] StreamOut auto out,
+  [[maybe_unused]] StreamOut auto& out,
   [[maybe_unused]] std::source_location loc,
   [[maybe_unused]] const std::format_string<Ts...> fmt,
   [[maybe_unused]] Ts&& ... ts) -> void
