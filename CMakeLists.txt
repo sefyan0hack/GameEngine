@@ -34,14 +34,14 @@ endif()
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID} (${CMAKE_CXX_COMPILER_VERSION})")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "14.2")
-    message(STATUS "Compiler version old for this project. Please upgrade your compiler to version 14.2 or higher.")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "13")
+    message(FATAL_ERROR "Compiler version old for this project. Please upgrade your compiler to version 13 or higher.")
   endif()
 endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "19.40")
-    message(STATUS "MSVC version old for this project. Please upgrade to Visual Studio 2022 or later.")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "16.10")
+    message(FATAL_ERROR "MSVC version old for this project. Please upgrade to Visual Studio 2019 or later.")
   endif()
 endif()
 
