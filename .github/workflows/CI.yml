@@ -68,7 +68,7 @@ jobs:
           cmake -S . -B "$BUILD_DIR" -G  "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
       - name: Initialize CodeQL
-        if: ${{ contains(matrix.os, 'ubuntu') && contains(matrix.compiler, 'llvm') && matrix.build_type == debug }}
+        if: ${{ contains(matrix.os, 'ubuntu') && contains(matrix.compiler, 'llvm') && matrix.build_type == 'debug' }}
         uses: github/codeql-action/init@v2
         with:
           languages: "cpp"
@@ -79,7 +79,7 @@ jobs:
           cmake --build "${{ env.BUILD_DIR }}" --config ${{ matrix.build_type }} --parallel --target all
 
       - name: Perform CodeQL Analysis
-        if: ${{ contains(matrix.os, 'ubuntu') && contains(matrix.compiler, 'llvm') && matrix.build_type == debug }}
+        if: ${{ contains(matrix.os, 'ubuntu') && contains(matrix.compiler, 'llvm') && matrix.build_type == 'debug' }}
         uses: github/codeql-action/analyze@v2
 
       - name: Upload Test Executable
