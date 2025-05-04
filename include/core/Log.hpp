@@ -128,11 +128,11 @@ auto Log(
 
 }
 
-#ifdef DEBUG
+#ifdef 1
 #define Error(...) Log<Log_LvL::ERR>(std::cerr, std::source_location::current(), __VA_ARGS__)
 #define Info(...)  Log<Log_LvL::INFO>(std::clog, std::source_location::current(), __VA_ARGS__)
 #define print(...) Log<Log_LvL::PRT>(std::clog, std::source_location::current(), __VA_ARGS__)
-#define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); Log<Log_LvL::EXPT>(CerrPolicy::get_stream(), std::source_location::current(), __VA_ARGS__); } } while (0)
+#define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); Log<Log_LvL::EXPT>(std::cerr, std::source_location::current(), __VA_ARGS__); } } while (0)
 
 #else
 #define Error(...) Log<Log_LvL::ERR>(FilePolicy::get_stream(), std::source_location::current(), __VA_ARGS__)
