@@ -49,16 +49,9 @@ constexpr const char* levelToString(Log_LvL level) {
   }
 }
 
-// struct CerrPolicy {
-//   static auto get_stream() { return std::cerr; }
-// };
-
-// struct ClogPolicy {
-//   static auto get_stream() { return std::clog; }
-// };
 
 struct FilePolicy {
-  static auto get_stream() { return std::ofstream(config::LogFileName, std::ios::app); }
+  static auto get_stream() { static auto s = std::ofstream(config::LogFileName, std::ios::app); return s; }
 };
 
 template<class T>
