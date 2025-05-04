@@ -57,13 +57,14 @@ jobs:
           ninja: true
           vcpkg: false
           cppcheck: false
+          tools: gdb
 
       - name: Install Linux dependencies
         if: matrix.os == 'ubuntu-latest'
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-dev mesa-common-dev libglu1-mesa-dev gdb
+          sudo apt-get install -y libgl1-mesa-dev mesa-common-dev libglu1-mesa-dev
 
       - name: Configure CMake
         shell: bash
@@ -97,4 +98,24 @@ jobs:
 
       - name: Test
         shell: bash
-        run: ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
+        run: |
+          if [[ "${{ matrix.os }}" == "windows-latest" && "${{ matrix.compiler }}" == "msvc" ]]; then
+            echo "⚙️ Using ctest for MSVC on Windows..."
+            ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
+          else
+            TEST_EXEC="${{ env.BUILD_DIR }}/tests/tests${{ matrix.os == 'windows-latest' && '.exe' || '' }}"
+            
+            if [ ! -f "$TEST_EXEC" ]; then
+              echo "❌ Test executable not found: $TEST_EXEC"
+              exit 1
+            fi
+
+            gdb -ex "set pagination off" \
+                -ex "run" \
+                -ex "bt" \
+                -ex "thread apply all bt" \
+                -ex "quit" \
+                --return-child-result \
+                -batch \
+                --args "$TEST_EXEC"
+          fi
