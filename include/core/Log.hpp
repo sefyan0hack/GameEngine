@@ -49,38 +49,6 @@ constexpr const char* levelToString(Log_LvL level) {
   }
 }
 
-std::ostream& safe_cerr() {
-  static std::ios_base::Init init;
-  return std::cerr;
-}
-
-std::ostream& safe_clog() {
-  static std::ios_base::Init init;
-  return std::clog;
-}
-
-struct FilePolicy {
-  static auto& get_stream() {
-    static std::ios_base::Init io_init;
-    static std::ofstream stream;
-    if (!stream.is_open()) {
-      stream.open(config::LogFileName, std::ios::app);
-      if (!stream) {
-        std::abort();
-      }
-    }
-    return stream;
-  }
-};
-
-template<class T>
-concept StreamOut = 
-  std::is_base_of_v<
-    std::basic_ostream<typename std::remove_cvref_t<T>::char_type, 
-    typename std::remove_cvref_t<T>::traits_type>, 
-    std::remove_cvref_t<T>
-  >;
-
 inline auto& get_logger_mutex() {
   static std::mutex mtx;
   return mtx;
@@ -88,7 +56,6 @@ inline auto& get_logger_mutex() {
 
 template <Log_LvL lvl, typename ...Ts>
 auto Log(
-  [[maybe_unused]] StreamOut auto& out,
   [[maybe_unused]] std::source_location loc,
   [[maybe_unused]] const std::format_string<Ts...> fmt,
   [[maybe_unused]] Ts&& ... ts) -> void
@@ -125,9 +92,8 @@ auto Log(
     msg << std::format("{} : {}\n", formatedTime(), formatted_msg);
   }
 
-  if (config::show_output && out.good()){
-    out << msg.view();
-    out.flush();
+  if (config::show_output){
+    std::cout << msg.view();
   }
 
   if constexpr (lvl == Log_LvL::ERR  || lvl == Log_LvL::EXPT){
@@ -137,15 +103,7 @@ auto Log(
 
 }
 
-#if 1
-#define Error(...) Log<Log_LvL::ERR>(safe_cerr(), std::source_location::current(), __VA_ARGS__)
-#define Info(...)  Log<Log_LvL::INFO>(safe_clog(), std::source_location::current(), __VA_ARGS__)
-#define print(...) Log<Log_LvL::PRT>(safe_clog(), std::source_location::current(), __VA_ARGS__)
-#define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); Log<Log_LvL::EXPT>(safe_cerr(), std::source_location::current(), __VA_ARGS__); } } while (0)
-
-#else
-#define Error(...) Log<Log_LvL::ERR>(FilePolicy::get_stream(), std::source_location::current(), __VA_ARGS__)
-#define Info(...)  Log<Log_LvL::INFO>(FilePolicy::get_stream(), std::source_location::current(), __VA_ARGS__)
-#define print(...) Log<Log_LvL::PRT>(FilePolicy::get_stream(), std::source_location::current(), __VA_ARGS__)
-#define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); Log<Log_LvL::EXPT>(FilePolicy::get_stream(), std::source_location::current(), __VA_ARGS__); } } while (0)
-#endif
+#define Error(...) Log<Log_LvL::ERR>(std::source_location::current(), __VA_ARGS__)
+#define Info(...)  Log<Log_LvL::INFO>(std::source_location::current(), __VA_ARGS__)
+#define print(...) Log<Log_LvL::PRT>(std::source_location::current(), __VA_ARGS__)
+#define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); Log<Log_LvL::EXPT>(std::source_location::current(), __VA_ARGS__); } } while (0)
