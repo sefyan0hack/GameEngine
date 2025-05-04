@@ -74,7 +74,10 @@ jobs:
           languages: "cpp"
           config: |
             paths-ignore:
-              - ${{ env.BUILD_DIR }}/_deps/**
+              3party/**
+              _deps/**
+              build/_deps/**
+              ${{ env.BUILD_DIR }}/_deps/**
 
       - name: Build
         shell: bash
