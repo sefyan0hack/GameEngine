@@ -91,6 +91,7 @@ jobs:
           retention-days: 1
 
       - name: Test
+        shell: bash
         run: |
           cd "$BUILD_DIR"
           TEST_PATH="$PWD/$TEST_EXEC"
@@ -115,7 +116,7 @@ jobs:
         if: ${{ failure() }}
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.BUILD_DIR }}-diagnostics
+          name: ${{ format('diag-{0}-{1}-{2}', matrix.os, matrix.compiler, matrix.build_type) }}
           path: |
             ${{ env.BUILD_DIR }}/core.dump
             ${{ env.BUILD_DIR }}/compile_commands.json
