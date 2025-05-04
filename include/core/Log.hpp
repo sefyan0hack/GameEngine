@@ -49,6 +49,15 @@ constexpr const char* levelToString(Log_LvL level) {
   }
 }
 
+std::ostream& safe_cerr() {
+  static std::ios_base::Init init;
+  return std::cerr;
+}
+
+std::ostream& safe_clog() {
+  static std::ios_base::Init init;
+  return std::clog;
+}
 
 struct FilePolicy {
   static auto& get_stream() {
@@ -79,7 +88,7 @@ inline auto& get_logger_mutex() {
 
 template <Log_LvL lvl, typename ...Ts>
 auto Log(
-  [[maybe_unused]] StreamOut auto& out,
+  [[maybe_unused]] StreamOut auto out,
   [[maybe_unused]] std::source_location loc,
   [[maybe_unused]] const std::format_string<Ts...> fmt,
   [[maybe_unused]] Ts&& ... ts) -> void
@@ -129,10 +138,10 @@ auto Log(
 }
 
 #if 1
-#define Error(...) Log<Log_LvL::ERR>(std::cerr, std::source_location::current(), __VA_ARGS__)
-#define Info(...)  Log<Log_LvL::INFO>(std::clog, std::source_location::current(), __VA_ARGS__)
-#define print(...) Log<Log_LvL::PRT>(std::clog, std::source_location::current(), __VA_ARGS__)
-#define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); Log<Log_LvL::EXPT>(std::cerr, std::source_location::current(), __VA_ARGS__); } } while (0)
+#define Error(...) Log<Log_LvL::ERR>(safe_cerr(), std::source_location::current(), __VA_ARGS__)
+#define Info(...)  Log<Log_LvL::INFO>(safe_clog(), std::source_location::current(), __VA_ARGS__)
+#define print(...) Log<Log_LvL::PRT>(safe_clog(), std::source_location::current(), __VA_ARGS__)
+#define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); Log<Log_LvL::EXPT>(safe_cerr(), std::source_location::current(), __VA_ARGS__); } } while (0)
 
 #else
 #define Error(...) Log<Log_LvL::ERR>(FilePolicy::get_stream(), std::source_location::current(), __VA_ARGS__)
