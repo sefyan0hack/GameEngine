@@ -51,7 +51,7 @@ constexpr const char* levelToString(Log_LvL level) {
 
 
 struct FilePolicy {
-  static auto get_stream() {
+  static auto& get_stream() {
     static std::ios_base::Init io_init;
     static std::ofstream stream;
     if (!stream.is_open()) {
@@ -79,7 +79,7 @@ inline auto& get_logger_mutex() {
 
 template <Log_LvL lvl, typename ...Ts>
 auto Log(
-  [[maybe_unused]] StreamOut auto out,
+  [[maybe_unused]] StreamOut auto& out,
   [[maybe_unused]] std::source_location loc,
   [[maybe_unused]] const std::format_string<Ts...> fmt,
   [[maybe_unused]] Ts&& ... ts) -> void
