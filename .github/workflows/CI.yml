@@ -54,12 +54,6 @@ jobs:
           choco: true
           tools: gdb
 
-      - name: Install Windows dependencies
-        if: matrix.os == 'windows-latest'
-        shell: powershell
-        run: |
-          choco install windows-sdk-10.0 --version 10.0.19041.0 --params="/Features DebuggingTools"
-
       - name: Install Linux dependencies
         if: matrix.os == 'ubuntu-latest'
         shell: bash
