@@ -26,6 +26,7 @@ jobs:
       APP_EXT: ${{ matrix.os == 'windows-latest' && '.exe' || '' }}
       TEST_EXEC: tests/tests${{ matrix.os == 'windows-latest' && '.exe' || '' }}
       IS_UBUNTU_LLVM: ${{ contains(matrix.os, 'ubuntu') && contains(matrix.compiler, 'llvm') && matrix.build_type == 'Debug' }}
+      IS_UBUNTU_GCC: ${{ contains(matrix.os, 'ubuntu') && contains(matrix.compiler, 'gcc') && matrix.build_type == 'Debug' }}
 
     steps:
       - uses: actions/checkout@v3
@@ -53,6 +54,14 @@ jobs:
           cppcheck: false
           choco: true
           tools: gdb
+      - name: Install Dependencies
+        shell: bash
+        run: |
+          if [[ "${{ matrix.os }}" == 'ubuntu-latest' ]]; then
+            sudo apt-get update
+            sudo apt-get install -y libgl1-mesa-dev libxi-dev gcovr
+          elif [[ "${{ matrix.os }}" == 'windows-latest' ]]; then
+          fi
 
       - name: Install Linux dependencies
         if: matrix.os == 'ubuntu-latest'
@@ -84,17 +93,6 @@ jobs:
         with:
           category: "/language:${{ matrix.language }}"
 
-      - name: SonarCloud Scan
-        if: ${{ env.IS_UBUNTU_LLVM == 'true' }}
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.cfamily.build-wrapper-output=${{ env.BUILD_DIR }}/bw-output
-            # -Dsonar.coverageReportPaths=${{ env.BUILD_DIR }}/coverage.xml
-
       - name: Upload Test Executable
         uses: actions/upload-artifact@v4
         with:
@@ -105,3 +103,22 @@ jobs:
       - name: Test
         shell: bash
         run: ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
+
+      - name: Code Coverage
+        if: ${{ env.IS_UBUNTU_GCC == 'true' }}
+        shell: bash
+        run: gcovr --exclude tests/ 3party/ --xml-pretty -o $BUILD_DIR/coverage.xml
+
+      - name: SonarCloud Scan
+        if: ${{ env.IS_UBUNTU_GCC == 'true' }}
+        uses: SonarSource/sonarcloud-github-action@v5.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          scan-properties: |
+            sonar.cfamily.build-wrapper-output=${{ env.BUILD_DIR }}/bw-output
+            sonar.coverageReportPaths=${{ env.BUILD_DIR }}/coverage.
+            sonar.cfamily.cache.enabled=true
+            sonar.cfamily.cache.path=.sonar/cache
+            sonar.scanner.metadataFilePath=${{ env.BUILD_DIR }}/sonar-report.txt
