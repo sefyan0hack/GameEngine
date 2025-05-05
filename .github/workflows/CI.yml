@@ -93,55 +93,9 @@ jobs:
       - name: Test
         shell: bash
         run: |
-          cd "$BUILD_DIR"
-          TEST_PATH="$PWD/$TEST_EXEC"
-          
-          # Enhanced executable verification
-          if [ ! -f "$TEST_PATH" ]; then
-            echo "❌ Test executable missing: $TEST_PATH"
-            find . -name "tests*" -exec ls -lh {} \;
-            exit 1
+          EXEC="${{ env.BUILD_DIR }}/${{ env.TEST_EXEC }}"
+          if [[ "${{ matrix.compiler }}" != "msvc" ]]; then
+            gdb --ex run --ex bt --ex quit --batch "$EXEC"
+          else
+            "$EXEC"
           fi
-
-          # Windows-specific debug setup
-          if [[ "${{ runner.os }}" == "Windows" ]]; then
-            # Use WSL-based GDB for better compatibility
-            echo "::group::Windows Debug Environment Setup"
-            winget install -e --id GNU.GDB
-            export PATH="/c/Program Files/GNU/GDB/bin:$PATH"
-            gdb --version
-            echo "::endgroup::"
-          fi
-
-          # Enhanced GDB command script
-          gdb_script=$(cat <<EOF
-          set pagination off
-          set print pretty on
-          catch throw
-          catch signal
-          run
-          thread apply all bt full
-          info sharedlibrary
-          info registers
-          x/10i \$pc
-          generate-core-file core.dump || echo "Core dump generation failed"
-          quit
-          EOF
-          )
-
-          # Run tests with enhanced diagnostics
-          gdb -nx -batch \
-            -ex "$gdb_script" \
-            --return-child-result \
-            --args "$TEST_PATH" \
-            || (echo "::error::GDB execution failed"; exit 1)
-
-
-      - name: Capture Diagnostics
-        if: ${{ failure() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ format('diag-{0}-{1}-{2}', matrix.os, matrix.compiler, matrix.build_type) }}
-          path: |
-            ${{ env.BUILD_DIR }}/core.dump
-            ${{ env.BUILD_DIR }}/compile_commands.json
