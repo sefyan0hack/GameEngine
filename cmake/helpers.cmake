@@ -81,14 +81,6 @@ function(apply_compile_options)
                 -Wno-cast-function-type -Winit-self -Wcast-qual
                 -Wsuggest-final-types -Wsuggest-final-methods
                 -fdevirtualize -ftree-vectorize
-                )
-            target_link_options(${target} PRIVATE
-                -static-libstdc++
-                "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
-                "$<$<CONFIG:Release>:-flto>"
-                "$<$<CONFIG:Release>:-Wl,--as-needed>"
-                "$<$<CONFIG:Release>:-Wl,--gc-sections>"
-                "$<$<CONFIG:Release>:-Wl,-Bsymbolic-functions>"
             )
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             target_compile_options(${target} PRIVATE -Wno-language-extension-token
@@ -98,30 +90,32 @@ function(apply_compile_options)
 
         if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         target_compile_options(${target} PRIVATE
-                -Wall -Wextra -Wpedantic -Wconversion -Wfloat-equal -Wwrite-strings -Wno-sign-conversion
-                -fstack-protector-strong
-                -Wnull-dereference -Wswitch-enum
-                -Wuninitialized -Wpointer-arith -Wreturn-type -Wredundant-decls
-                -fno-operator-names
-                -D_GLIBCXX_HAVE_STACKTRACE
-                # Debug flags
-                "$<$<CONFIG:Debug>:-ggdb>"
-                "$<$<CONFIG:Debug>:-g3>"
-                "$<$<CONFIG:Debug>:-O0>"
-                "$<$<CONFIG:Debug>:-fno-inline>"
-
-                # Release flags
-                "$<$<CONFIG:Release>:-O3>"
-                "$<$<CONFIG:Release>:-g1>"
-                # "$<$<CONFIG:Release>:-march=native>"  #enable when dnt need to send the app
-                "$<$<CONFIG:Release>:-DNDEBUG>"
-                "$<$<CONFIG:Release>:-fno-omit-frame-pointer>"
-                "$<$<CONFIG:Release>:-funwind-tables>"
-                "$<$<CONFIG:Release>:-fasynchronous-unwind-tables>"
-                "$<$<CONFIG:Release>:-ffunction-sections>"
-                "$<$<CONFIG:Release>:-fdata-sections>"
-                )
-                add_definitions(-include "core/Global_H.hpp")
+            -Wall -Wextra -Wpedantic -Wconversion -Wfloat-equal -Wwrite-strings -Wno-sign-conversion
+            -fstack-protector-strong
+            -Wnull-dereference -Wswitch-enum
+            -Wuninitialized -Wpointer-arith -Wreturn-type -Wredundant-decls
+            -fno-operator-names
+            # Debug flags
+            "$<$<CONFIG:Debug>:-ggdb>"
+            "$<$<CONFIG:Debug>:-g3>"
+            "$<$<CONFIG:Debug>:-O0>"
+            "$<$<CONFIG:Debug>:-fno-inline>"
+            # Release flags
+            "$<$<CONFIG:Release>:-O3>"
+            "$<$<CONFIG:Release>:-g1>"
+            # "$<$<CONFIG:Release>:-march=native>"  #enable when dnt need to send the app
+            "$<$<CONFIG:Release>:-DNDEBUG>"
+            "$<$<CONFIG:Release>:-fno-omit-frame-pointer>"
+            "$<$<CONFIG:Release>:-funwind-tables>"
+            "$<$<CONFIG:Release>:-fasynchronous-unwind-tables>"
+            "$<$<CONFIG:Release>:-ffunction-sections>"
+            "$<$<CONFIG:Release>:-fdata-sections>"
+        )
+        target_link_options(${target} PRIVATE
+            -static-libstdc++
+            "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
+        )
+        add_definitions(-include "core/Global_H.hpp")
         endif()
     endforeach()
 endfunction()
