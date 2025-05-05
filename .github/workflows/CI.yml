@@ -96,46 +96,46 @@ jobs:
           cd "$BUILD_DIR"
           TEST_PATH="$PWD/$TEST_EXEC"
           
+          # Enhanced executable verification
           if [ ! -f "$TEST_PATH" ]; then
             echo "❌ Test executable missing: $TEST_PATH"
+            find . -name "tests*" -exec ls -lh {} \;
             exit 1
           fi
 
-          # Windows-specific GDB setup
+          # Windows-specific debug setup
           if [[ "${{ runner.os }}" == "Windows" ]]; then
-            # Find MinGW GDB in standard locations
-            MINGW_PATHS=(
-              "C:/msys64/mingw64/bin/gdb.exe"
-              "C:/MinGW/bin/gdb.exe"
-              "C:/Strawberry/c/bin/gdb.exe"
-            )
-            
-            for path in "${MINGW_PATHS[@]}"; do
-              if [[ -f "$path" ]]; then
-                GDB_CMD="$path"
-                break
-              fi
-            done
-
-            if [[ -z "$GDB_CMD" ]]; then
-              echo "⚠️ GDB not found in standard paths, trying PATH..."
-              GDB_CMD="gdb.exe"
-            fi
-          else
-            GDB_CMD="gdb"
+            # Use WSL-based GDB for better compatibility
+            echo "::group::Windows Debug Environment Setup"
+            winget install -e --id GNU.GDB
+            export PATH="/c/Program Files/GNU/GDB/bin:$PATH"
+            gdb --version
+            echo "::endgroup::"
           fi
 
-          # Run tests with advanced diagnostics
-          "$GDB_CMD" -nx -batch \
-            -ex "set pagination off" \
-            -ex "set print pretty on" \
-            -ex "run" \
-            -ex "thread apply all bt full" \
-            -ex "info registers" \
-            -ex "x/10i \$pc" \
-            -ex "generate-core-file core.dump" \
+          # Enhanced GDB command script
+          gdb_script=$(cat <<EOF
+          set pagination off
+          set print pretty on
+          catch throw
+          catch signal
+          run
+          thread apply all bt full
+          info sharedlibrary
+          info registers
+          x/10i \$pc
+          generate-core-file core.dump || echo "Core dump generation failed"
+          quit
+          EOF
+          )
+
+          # Run tests with enhanced diagnostics
+          gdb -nx -batch \
+            -ex "$gdb_script" \
             --return-child-result \
-            --args "$TEST_PATH"
+            --args "$TEST_PATH" \
+            || (echo "::error::GDB execution failed"; exit 1)
+
 
       - name: Capture Diagnostics
         if: ${{ failure() }}
