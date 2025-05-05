@@ -112,9 +112,9 @@ function(apply_compile_options)
             "$<$<CONFIG:Release>:-fdata-sections>"
         )
         target_link_options(${target} PRIVATE
-            -static-libstdc++
             "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
         )
+        add_link_options(-static-libstdc++)
         add_definitions(-include "core/Global_H.hpp")
         endif()
     endforeach()
