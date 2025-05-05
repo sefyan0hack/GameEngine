@@ -83,7 +83,7 @@ function(apply_compile_options)
                 -fdevirtualize -ftree-vectorize
                 )
             target_link_options(${target} PRIVATE
-                
+                -static-libstdc++
                 "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
                 "$<$<CONFIG:Release>:-flto>"
                 "$<$<CONFIG:Release>:-Wl,--as-needed>"
@@ -104,7 +104,6 @@ function(apply_compile_options)
                 -Wuninitialized -Wpointer-arith -Wreturn-type -Wredundant-decls
                 -fno-operator-names
                 -D_GLIBCXX_HAVE_STACKTRACE
-                -static-libstdc++
                 # Debug flags
                 "$<$<CONFIG:Debug>:-ggdb>"
                 "$<$<CONFIG:Debug>:-g3>"
