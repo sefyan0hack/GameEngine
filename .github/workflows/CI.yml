@@ -68,7 +68,7 @@ jobs:
           cmake -S . -B "$BUILD_DIR" -G  "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
       - name: Initialize CodeQL
-        if: ${{ env.IS_UBUNTU_LLVM }}
+        if: ${{ env.IS_UBUNTU_LLVM == 'true' }}
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
@@ -78,7 +78,7 @@ jobs:
         run: cmake --build "${{ env.BUILD_DIR }}" --config ${{ matrix.build_type }} --parallel --target all
 
       - name: Perform CodeQL Analysis
-        if: ${{ env.IS_UBUNTU_LLVM }}
+        if: ${{ env.IS_UBUNTU_LLVM == 'true' }}
         uses: github/codeql-action/analyze@v3
         continue-on-error: true
         with:
