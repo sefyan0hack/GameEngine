@@ -3,13 +3,11 @@
 #include <core/gl.h>
 
 #if defined(WINDOWS_PLT)
-#include <windows.h>
 #ifdef DEBUG
-#include <dbghelp.h>
 auto setup_crach_handler() -> void;
 auto resolveSymbol(void* addr, HANDLE proc = GetCurrentProcess()) -> std::string;
 auto PrintStackTrace(unsigned short skip = 0) -> void;
-#endif // DEBUG
+#endif //DEBUG
 #endif
 
 namespace config {
@@ -17,7 +15,7 @@ namespace config {
   inline bool exit_on_error = true;
   inline bool show_message_box = true;
   inline bool show_output = true;
-  
+
   inline void TestFlags() {
     exit_on_error = false;
     show_message_box = false;
@@ -49,12 +47,40 @@ constexpr const char* levelToString(Log_LvL level) {
   }
 }
 
+struct CerrPolicy {
+  static std::ostream& get_stream() {
+    return std::cerr;
+  }
+};
+
+struct ClogPolicy {
+  static std::ostream& get_stream() {
+    return std::clog;
+  }
+};
+
+struct FilePolicy {
+  static std::ostream& get_stream() {
+    static std::ofstream stream(config::LogFileName, std::ios::app);
+    if (!stream.is_open()) {
+      std::cerr << "Couldn't open file : " << config::LogFileName << std::endl;
+      return std::cout;
+    }
+    return stream;
+  }
+};
+
+template<class T>
+concept StreamOut = requires(){
+  { T::get_stream() } -> std::convertible_to<std::ostream&>;
+};
+
 inline auto& get_logger_mutex() {
   static std::mutex mtx;
   return mtx;
 }
 
-template <Log_LvL lvl, typename ...Ts>
+template <Log_LvL lvl, StreamOut Out, typename ...Ts>
 auto Log(
   [[maybe_unused]] std::source_location loc,
   [[maybe_unused]] const std::format_string<Ts...> fmt,
@@ -64,6 +90,7 @@ auto Log(
   auto formatted_msg = std::format(fmt, std::forward<Ts>(ts)...);
   auto lvl_str = levelToString(lvl);
   auto msg = std::stringstream{};
+  auto& out = Out::get_stream();
   
   if constexpr (lvl == Log_LvL::ERR || lvl == Log_LvL::EXPT){
     msg << std::format(
@@ -78,11 +105,9 @@ auto Log(
       "no_stack_trace"
       #endif
     );
-    
     #if defined(WINDOWS_PLT)
-    if (config::show_message_box){
-      MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONERROR);
-    }
+    if(config::show_message_box)
+      MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONERROR );
     #endif
   }
   else if constexpr (lvl == Log_LvL::INFO){
@@ -91,19 +116,27 @@ auto Log(
   else if constexpr (lvl == Log_LvL::PRT){
     msg << std::format("{} : {}\n", formatedTime(), formatted_msg);
   }
-
-  if (config::show_output){
-    std::cout << msg.view();
+  if(config::show_output){
+    out << msg.rdbuf();
+    out.flush();
   }
 
   if constexpr (lvl == Log_LvL::ERR  || lvl == Log_LvL::EXPT){
-    if (config::exit_on_error) std::exit(EXIT_FAILURE);
+    if(config::exit_on_error) exit(EXIT_FAILURE);
   }
 }
 
 }
 
-#define Error(...) Log<Log_LvL::ERR>(std::source_location::current(), __VA_ARGS__)
-#define Info(...)  Log<Log_LvL::INFO>(std::source_location::current(), __VA_ARGS__)
-#define print(...) Log<Log_LvL::PRT>(std::source_location::current(), __VA_ARGS__)
-#define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); Log<Log_LvL::EXPT>(std::source_location::current(), __VA_ARGS__); } } while (0)
+#ifdef DEBUG
+#define Error(...) Log<Log_LvL::ERR, CerrPolicy>(std::source_location::current(), __VA_ARGS__)
+#define Info(...)  Log<Log_LvL::INFO, ClogPolicy>(std::source_location::current(), __VA_ARGS__)
+#define print(...) Log<Log_LvL::PRT, ClogPolicy>(std::source_location::current(), __VA_ARGS__)
+#define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); Log<Log_LvL::EXPT, ClogPolicy>(std::source_location::current(), __VA_ARGS__); } } while (0)
+
+#else
+#define Error(...) Log<Log_LvL::ERR, FilePolicy>(std::source_location::current(), __VA_ARGS__)
+#define Info(...)  Log<Log_LvL::INFO, FilePolicy>(std::source_location::current(), __VA_ARGS__)
+#define print(...) Log<Log_LvL::PRT, FilePolicy>(std::source_location::current(), __VA_ARGS__)
+#define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); Log<Log_LvL::EXPT, FilePolicy>(std::source_location::current(), __VA_ARGS__); } } while (0)
+#endif
