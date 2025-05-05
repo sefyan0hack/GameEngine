@@ -68,12 +68,12 @@ function(apply_compile_options)
                 "$<$<CONFIG:Release>:/DNDEBUG>"
             )
             target_link_options(${target} PRIVATE
-                "$<$<CONFIG:Debug>:/DEBUG>"       # Debugger-optimized linking (Debug)
-                "$<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>" # no terminale
-                "$<$<CONFIG:Release>:/ENTRY:mainCRTStartup>" # entry
-                "$<$<CONFIG:Release>:/OPT:REF>"   # Optimize unused functions
-                "$<$<CONFIG:Release>:/OPT:ICF>"   # Identical COMDAT folding
-                "$<$<CONFIG:RELEASE>:/INCREMENTAL:NO>"  # Disable incremental linking
+                "$<$<CONFIG:Debug>:/DEBUG>"                     # Debugger-optimized linking (Debug)
+                "$<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>"       # no terminale
+                "$<$<CONFIG:Release>:/ENTRY:mainCRTStartup>"    # entry
+                "$<$<CONFIG:Release>:/OPT:REF>"                 # Optimize unused functions
+                "$<$<CONFIG:Release>:/OPT:ICF>"                 # Identical COMDAT folding
+                "$<$<CONFIG:RELEASE>:/INCREMENTAL:NO>"          # Disable incremental linking
             )
             add_definitions(/FI"core/Global_H.hpp")
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
