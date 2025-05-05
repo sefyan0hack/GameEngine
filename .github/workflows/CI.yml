@@ -93,6 +93,4 @@ jobs:
 
       - name: Test
         shell: bash
-        run: |
-          EXEC="${{ env.BUILD_DIR }}/${{ env.TEST_EXEC }}"
-          gdb --batch --ex "run" --ex "bt full" --ex "quit" -return-child-result --args "$EXEC"
+        run: ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
