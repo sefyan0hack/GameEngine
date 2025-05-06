@@ -116,8 +116,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Required for PR decoration
         with:
           args: >
-            -Dsonar.organization=<your-sonarcloud-org>
-            -Dsonar.projectKey=<your-project-key>
+            -Dsonar.organization=sefyan0hack
+            -Dsonar.projectKey=sefyan0hack
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.cfamily.build-wrapper-output=${{ env.BUILD_DIR }}/bw-output
             -Dsonar.coverageReportPaths=${{ env.BUILD_DIR }}/coverage.xml
