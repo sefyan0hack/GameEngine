@@ -104,14 +104,12 @@ function(apply_compile_options)
             "$<$<CONFIG:Debug>:-g3>"
             "$<$<CONFIG:Debug>:-O0>"
             "$<$<CONFIG:Debug>:-fno-inline>"
-            "$<$<AND:$<BOOL:${SANITIZE_ADDRESS}>,$<CONFIG:Debug>>:-fsanitize=address>"
-            "$<$<AND:$<BOOL:${SANITIZE_ADDRESS}>,$<CONFIG:Debug>>:-fsanitize=undefined>"
+            "$<$<AND:$<BOOL:${SANITIZE_ADDRESS}>,$<CONFIG:Debug>>:-fsanitize=address, undefined>"
             # Release flags
             "$<$<CONFIG:Release>:-O3>"
             "$<$<CONFIG:Release>:-g1>"
             # "$<$<CONFIG:Release>:-march=native>"  #enable when dnt need to send the app
             "$<$<CONFIG:Release>:-DNDEBUG>"
-            "$<$<CONFIG:Release>:-fno-omit-frame-pointer>"
             "$<$<CONFIG:Release>:-funwind-tables>"
             "$<$<CONFIG:Release>:-fasynchronous-unwind-tables>"
             "$<$<CONFIG:Release>:-ffunction-sections>"
@@ -119,8 +117,7 @@ function(apply_compile_options)
         )
         target_link_options(${target} PRIVATE
             "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
-            "$<$<AND:$<BOOL:${SANITIZE_ADDRESS}>,$<CONFIG:Debug>>:-fsanitize=address>"
-            "$<$<AND:$<BOOL:${SANITIZE_ADDRESS}>,$<CONFIG:Debug>>:-fsanitize=undefined>"
+            "$<$<AND:$<BOOL:${SANITIZE_ADDRESS}>,$<CONFIG:Debug>>:-fsanitize=address, undefined>"
         )
         
         add_link_options("$<$<CONFIG:Release>:-static-libstdc++>")

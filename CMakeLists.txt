@@ -208,6 +208,8 @@ target_link_libraries(core
         stb_image
         $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
         $<$<AND:$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>,$<NOT:$<PLATFORM_ID:Windows>>>:stdc++exp>
+        $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU,Clang>>:-fsanitize=address -fsanitize=undefined>
+        $<$<AND:$<BOOL:${SANITIZE_ADDRESS}>,$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU,Clang>>:-lasan;-lubsan>
 )
 target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
 if(MINGW)
