@@ -106,7 +106,7 @@ jobs:
       - name: Code Coverage
         if: ${{ env.IS_UBUNTU_GCC == 'true' }}
         shell: bash
-        run: gcovr --exclude tests/ --xml-pretty -o $BUILD_DIR/coverage.xml
+        run: GCOV=gcov-14 gcovr --exclude tests/ --xml-pretty -o $BUILD_DIR/coverage.xml
 
       - name: SonarCloud Scan
         if: ${{ env.IS_UBUNTU_GCC == 'true' }}
