@@ -51,12 +51,20 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
   if(GCOVR_PATH)
     set(GCOVR_ADDITIONAL_ARGS "--calls;--branches;--decisions;--exclude-function-lines;--exclude-noncode-lines;--exclude-unreachable-branches;--exclude-throw-branches;--delete")
     set(COVERAGE_EXCLUDES "${CMAKE_SOURCE_DIR}/3party/*" "${CMAKE_SOURCE_DIR}/tests/*")
+    append_coverage_compiler_flags()
+    append_coverage_compiler_flags_to_target(core)
+    message(STATUS "[Code Coverage `ON`]")
     setup_target_for_coverage_gcovr_html(
-      NAME coverage
+      NAME coverage_html
       EXECUTABLE ctest
       DEPENDS core tests
     )
-    delete_files_by_extension("${CMAKE_BINARY_DIR}" "gcda")
+    setup_target_for_coverage_gcovr_xml(
+      NAME coverage_xml
+      EXECUTABLE ctest
+      DEPENDS core tests
+    )
+    # delete_files_by_extension("${CMAKE_BINARY_DIR}" "gcda")
   else()
   message(STATUS "conseder dowing `pip install gcovr` if you want code covegare")
   endif()
