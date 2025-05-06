@@ -53,7 +53,7 @@ jobs:
           vcpkg: false
           cppcheck: false
           choco: true
-          tools: gdb
+
       - name: Install Dependencies
         shell: bash
         run: |

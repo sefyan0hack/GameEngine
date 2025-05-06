@@ -1,17 +1,10 @@
 # GameEngine
-
+[![CodeCov](https://codecov.io/github/sefyan0hack/GameEngine/graph/badge.svg?token=FXDLJT6XHA)](https://codecov.io/github/sefyan0hack/GameEngine)[![CI](https://github.com/sefyan0hack/GameEngine/actions/workflows/CI.yml/badge.svg)](https://github.com/sefyan0hack/GameEngine/actions/workflows/CI.yml)
 **A high-performance C++ game engine**  
 Welcome to the **GameEngine** repository! This engine is designed to provide a solid foundation for building games and interactive applications. It leverages modern C++ standards, powerful libraries, and intuitive tools to help you create amazing experiences.
 
 ### CDash
 https://my.cdash.org/index.php?project=GameEngine
-
-|             | **GCC**                                                                 | **MSVC**                                                                 | **Clang**                                                               |
-|-------------|:-----------------------------------------------------------------------:|:-------------------------------------------------------------------------:|:-----------------------------------------------------------------------:|
-| **Windows** | [![Windows GCC](https://github.com/sefyan0hack/GameEngine/actions/workflows/build.yml/badge.svg?event=push&job=windows_gcc)](https://github.com/sefyan0hack/GameEngine/actions/workflows/build.yml) | [![Windows MSVC](https://github.com/sefyan0hack/GameEngine/actions/workflows/build.yml/badge.svg?event=push&job=windows_msvc)](https://github.com/sefyan0hack/GameEngine/actions/workflows/build.yml) | –                                                                      |
-| **Linux**   | [![Linux GCC](https://github.com/sefyan0hack/GameEngine/actions/workflows/build.yml/badge.svg?event=push&job=linux_gcc)](https://github.com/sefyan0hack/GameEngine/actions/workflows/build.yml) | –                                                                         | [![Linux Clang](https://github.com/sefyan0hack/GameEngine/actions/workflows/build.yml/badge.svg?event=push&job=linux_clang)](https://github.com/sefyan0hack/GameEngine/actions/workflows/build.yml) |
-
-
 
 ## Features
 
