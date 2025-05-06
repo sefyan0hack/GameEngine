@@ -14,9 +14,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ubuntu-latest
-        compiler: gcc
-        language: ['cpp']
+        os: 'ubuntu-latest'
+        compiler: 'gcc'
+        language: 'cpp'
 
     env:
       TEST_TIMEOUT: 60
