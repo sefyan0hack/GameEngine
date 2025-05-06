@@ -231,8 +231,8 @@ include(CTest)
 add_subdirectory(tests)
 
 if(SANITIZE_ADDRESS)
+    message(STATUS "[Address Sanitizer `ON`]")
     if(CMAKE_BUILD_TYPE MATCHES "Debug" AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-        message(STATUS "[Address Sanitizer `ON`]")
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -fsanitize=undefined -fsanitize=address")
 
         target_link_options(core BEFORE PUBLIC -fsanitize=undefined PUBLIC -fsanitize=address)
