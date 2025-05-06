@@ -107,22 +107,3 @@ jobs:
         if: ${{ env.IS_UBUNTU_GCC == 'true' }}
         shell: bash
         run: GCOV=gcov-14 gcovr --exclude tests/ --xml-pretty -o $BUILD_DIR/coverage.
-
-      - name: SonarCloud Scan
-        if: ${{ env.IS_UBUNTU_GCC == 'true' }}
-        uses: SonarSource/sonarqube-scan-action@v5.0.0
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Required for PR decoration
-        with:
-          args: >
-            -Dsonar.organization=sefyan0hack
-            -Dsonar.projectKey=sefyan0hack
-            -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.cfamily.build-wrapper-output=${{ env.BUILD_DIR }}/bw-output
-            -Dsonar.coverageReportPaths=${{ env.BUILD_DIR }}/coverage.xml
-            -Dsonar.cfamily.cache.enabled=true
-            -Dsonar.cfamily.cache.path=.sonar/cache
-            -Dsonar.scanner.metadataFilePath=${{ env.BUILD_DIR }}/sonar-report.txt
-            -Dsonar.cfamily.llvm-cov.reportPath=${{ env.BUILD_DIR }}/coverage.xml
-            -Dsonar.working.directory=${{ env.BUILD_DIR }}/.sonar
