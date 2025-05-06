@@ -118,9 +118,6 @@ private:
     , cubeMesh({cubeMeshVert, indices})
     , Cam(m_Window)
     {
-        char *x = new char[10];
-        delete[] x;
-        delete[] x;
         ResManager.load(TEXTURE(brik.jpg), ResType::Texture2D);
         ResManager.load(TEXTURE(brik.png), ResType::Texture2D);
         ResManager.load(TEXTURE(annie_spratt.jpg), ResType::Texture2D);
