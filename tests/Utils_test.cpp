@@ -52,9 +52,10 @@ TEST(replace, with_not_exist_char) {
 }
 
 TEST(replace, c_null) {
-    char *x = new char[10];
-    delete[] x;
-    delete[] x;
+    char *x = new char;
+    delete x;
+
+    *x = '1';
     auto r = replace("fuzz", '\0', 'b');
     EXPECT_EQ(r, "fuzz");
 }
