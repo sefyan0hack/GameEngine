@@ -240,9 +240,10 @@ endif()
 
 if(SANITIZE_ADDRESS)
     message(STATUS "[Address Sanitizer `ON`]")
-    if(CMAKE_BUILD_TYPE MATCHES "Debug" AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -fsanitize=undefined -fsanitize=address")
-
-        target_link_options(core BEFORE PUBLIC -fsanitize=undefined PUBLIC -fsanitize=address)
-    endif()
+    target_compile_options(core PRIVATE
+        $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU,Clang>>:-fsanitize=address -fsanitize=undefined>
+    )
+    target_link_options(core PRIVATE
+        $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU,Clang>>:-fsanitize=address -fsanitize=undefined>
+    )
 endif()
