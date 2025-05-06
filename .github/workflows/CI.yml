@@ -107,3 +107,10 @@ jobs:
         if: ${{ env.IS_UBUNTU_GCC == 'true' }}
         shell: bash
         run: GCOV=gcov-14 gcovr --exclude tests/ --xml-pretty -o $BUILD_DIR/coverage.
+      
+      - name: Upload to Codecov
+        if: ${{ env.IS_UBUNTU_GCC == 'true' }}
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ${{ env.BUILD_DIR }}/coverage.xml
