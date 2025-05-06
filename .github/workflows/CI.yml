@@ -16,7 +16,6 @@ jobs:
         os: [windows-latest, ubuntu-latest]
         compiler: [gcc, llvm, msvc]
         build_type: [Debug, Release]
-        language: ['cpp']
         exclude:
           - os: ubuntu-latest
             compiler: msvc
@@ -24,9 +23,6 @@ jobs:
       TEST_TIMEOUT: 60
       BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
       APP_EXT: ${{ matrix.os == 'windows-latest' && '.exe' || '' }}
-      TEST_EXEC: tests/tests${{ matrix.os == 'windows-latest' && '.exe' || '' }}
-      IS_UBUNTU_LLVM: ${{ contains(matrix.os, 'ubuntu') && contains(matrix.compiler, 'llvm') && matrix.build_type == 'Debug' }}
-      IS_UBUNTU_GCC: ${{ contains(matrix.os, 'ubuntu') && contains(matrix.compiler, 'gcc') && matrix.build_type == 'Debug' }}
 
     steps:
       - uses: actions/checkout@v3
@@ -59,15 +55,8 @@ jobs:
         run: |
           if [[ "${{ matrix.os }}" == 'ubuntu-latest' ]]; then
             sudo apt-get update
-            sudo apt-get install -y libgl1-mesa-dev libxi-dev gcovr
+            sudo apt-get install -y libgl1-mesa-dev libxi-dev  mesa-common-dev  gcovr
           fi
-
-      - name: Install Linux dependencies
-        if: matrix.os == 'ubuntu-latest'
-        shell: bash
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-dev mesa-common-dev libglu1-mesa-dev gdb
 
       - name: Configure CMake
         shell: bash
@@ -75,22 +64,9 @@ jobs:
           rm -rf "${{ env.BUILD_DIR }}"
           cmake -S . -B "$BUILD_DIR" -G  "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
-      - name: Initialize CodeQL
-        if: ${{ env.IS_UBUNTU_LLVM == 'true' }}
-        uses: github/codeql-action/init@v3
-        with:
-          languages: ${{ matrix.language }}
-
       - name: Build
         shell: bash
         run: cmake --build "${{ env.BUILD_DIR }}" --config ${{ matrix.build_type }} --parallel --target all
-
-      - name: Perform CodeQL Analysis
-        if: ${{ env.IS_UBUNTU_LLVM == 'true' }}
-        uses: github/codeql-action/analyze@v3
-        continue-on-error: true
-        with:
-          category: "/language:${{ matrix.language }}"
 
       - name: Upload Test Executable
         uses: actions/upload-artifact@v4
@@ -102,15 +78,3 @@ jobs:
       - name: Test
         shell: bash
         run: ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
-
-      - name: Code Coverage
-        if: ${{ env.IS_UBUNTU_GCC == 'true' }}
-        shell: bash
-        run: GCOV=gcov-14 cmake --build "${{ env.BUILD_DIR }}" --target coverage_xml
-
-      - name: Upload to Codecov
-        if: ${{ env.IS_UBUNTU_GCC == 'true' }}
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ${{ env.BUILD_DIR }}/coverage_xml.xml

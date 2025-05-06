@@ -1,0 +1,77 @@
+name: ci
+on:  
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  Build:
+    runs-on: ${{ matrix.os }}
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ubuntu-latest
+        compiler: gcc
+        language: ['cpp']
+
+    env:
+      TEST_TIMEOUT: 60
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Cpp
+        uses: aminya/setup-cpp@v1
+        with:
+          compiler: ${{ matrix.compiler }}
+          vcvarsall: false
+          cmake: true
+          ninja: true
+          vcpkg: false
+          cppcheck: false
+          choco: true
+
+      - name: Install Dependencies
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev  mesa-common-dev libxi-dev gcovr
+
+      - name: Configure CMake
+        shell: bash
+        run: |
+          rm -rf build
+          cmake -S . -B build -G  "Ninja" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: Build
+        shell: bash
+        run: cmake --build build --config Debug --parallel --target all
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        continue-on-error: true
+        with:
+          category: "/language:${{ matrix.language }}"
+
+      - name: Test
+        shell: bash
+        run: ctest --test-dir build --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
+
+      - name: Code Coverage
+        shell: bash
+        run: GCOV=gcov-14 cmake --build build --target coverage_xml
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: build/coverage_xml.xml
