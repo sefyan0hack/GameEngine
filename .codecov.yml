@@ -1,7 +1,7 @@
 fixes:
   - "build/ubuntu-latest-gcc-Debug/::"
   - "home/runner/work/_temp/_github_workflow/::"
-  - ".*/build-[^/]+/(.*)::\1"
+  - '.*/build-[^/]+/(.*)::\1'
 
 coverage:
   precision: 2
