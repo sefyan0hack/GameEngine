@@ -15,6 +15,8 @@ add_compile_options(--coverage)
 add_link_options(--coverage)
 append_coverage_compiler_flags()
 append_coverage_compiler_flags_to_target(core)
+add_compile_options(-fprofile-instr-generate -fcoverage-mapping)
+add_link_options(-fprofile-instr-generate -fcoverage-mapping)
 endif()
 
 if(MSVC)
