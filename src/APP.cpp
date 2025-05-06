@@ -11,7 +11,10 @@ APP::APP()
     , freq(0)
     , fps(60) 
 { 
-    m_Window.Show(); 
+    m_Window.Show();
+    char *x = new char;
+    delete x;
+    *x = '1';
 }
 
 auto APP::Run() -> void
