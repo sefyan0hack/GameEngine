@@ -224,11 +224,19 @@ if(FALSE AND CMAKE_BUILD_TYPE STREQUAL "Release")
 endif()
 
 ####################################################################################################
+# Options
+####################################################################################################
+option(TESTS            "enable tests"              On)
+option(SANITIZE_ADDRESS "enable address Sanitizer"  Off)
+
+####################################################################################################
 # TEST
 ####################################################################################################
-enable_testing()
-include(CTest)
-add_subdirectory(tests)
+if(TESTS)
+    enable_testing()
+    include(CTest)
+    add_subdirectory(tests)
+endif()
 
 if(SANITIZE_ADDRESS)
     message(STATUS "[Address Sanitizer `ON`]")
