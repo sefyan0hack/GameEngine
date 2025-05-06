@@ -73,7 +73,7 @@ jobs:
         shell: bash
         run: |
           rm -rf "${{ env.BUILD_DIR }}"
-          cmake -S . -B "$BUILD_DIR" -G  "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+          cmake -S . -B "$BUILD_DIR" -G  "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DENABLE_COVERAGE=ON
 
       - name: Initialize CodeQL
         if: ${{ env.IS_UBUNTU_LLVM == 'true' }}
