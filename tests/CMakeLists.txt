@@ -6,7 +6,14 @@ add_executable(tests ${TEST_SOURCES})
 target_link_libraries(tests PRIVATE core gtest gtest_main)
 
 include(GoogleTest)
+include(CodeCoverage)
+
 gtest_discover_tests(tests)
+
+if(ENABLE_COVERAGE)
+append_coverage_compiler_flags()
+append_coverage_compiler_flags_to_target(core)
+endif()
 
 if(MSVC)
   find_program(OPENCPPCOVERAGE_PATH OpenCppCoverage.exe)
@@ -47,17 +54,14 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     find_program(GCOVR_PATH gcovr)
   endif()
   if(GCOVR_PATH)
-  include(CodeCoverage)
-  append_coverage_compiler_flags()
-  append_coverage_compiler_flags_to_target(core)
-  set(GCOVR_ADDITIONAL_ARGS "--calls;--branches;--decisions;--exclude-function-lines;--exclude-noncode-lines;--exclude-unreachable-branches;--exclude-throw-branches;--delete")
-  set(COVERAGE_EXCLUDES "${CMAKE_SOURCE_DIR}/3party/*" "${CMAKE_SOURCE_DIR}/tests/*")
-  setup_target_for_coverage_gcovr_html(
-    NAME coverage
-    EXECUTABLE ctest
-    DEPENDS core tests
-  )
-  delete_files_by_extension("${CMAKE_BINARY_DIR}" "gcda")
+    set(GCOVR_ADDITIONAL_ARGS "--calls;--branches;--decisions;--exclude-function-lines;--exclude-noncode-lines;--exclude-unreachable-branches;--exclude-throw-branches;--delete")
+    set(COVERAGE_EXCLUDES "${CMAKE_SOURCE_DIR}/3party/*" "${CMAKE_SOURCE_DIR}/tests/*")
+    setup_target_for_coverage_gcovr_html(
+      NAME coverage
+      EXECUTABLE ctest
+      DEPENDS core tests
+    )
+    delete_files_by_extension("${CMAKE_BINARY_DIR}" "gcda")
   else()
   message(STATUS "conseder dowing `pip install gcovr` if you want code covegare")
   endif()
