@@ -1,4 +1,4 @@
-name: ci
+name: Daily
 on:  
   schedule:
     - cron: '0 0 * * *'
