@@ -115,4 +115,4 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ${{ env.BUILD_DIR }}/coverage.xml
           verbose: true
-          yml: .codecov.yml
+          codecov_yml_path: .codecov.yml
