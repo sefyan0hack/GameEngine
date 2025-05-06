@@ -48,6 +48,7 @@ function(apply_compile_options)
         endif()
         
         if(MSVC)
+            message(STATUS "++++++[MSVC]++++++ flags")
             target_compile_options(${target} PRIVATE
                 /W4
                 /bigobj
@@ -77,18 +78,21 @@ function(apply_compile_options)
             )
             add_definitions(/FI"core/Global_H.hpp")
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            message(STATUS "++++++[GNU]++++++ flags")
             target_compile_options(${target} PRIVATE
                 -Wno-cast-function-type -Winit-self -Wcast-qual
                 -Wsuggest-final-types -Wsuggest-final-methods
                 -fdevirtualize -ftree-vectorize
             )
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+            message(STATUS "++++++[Clang]++++++ flags")
             target_compile_options(${target} PRIVATE -Wno-language-extension-token
                 "$<$<STREQUAL:$<PLATFORM_ID>,Windows>:-fuse-ld=lld>"            
             )
         endif()
 
         if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        message(STATUS "++++++[GNU|Clang]++++++ flags")
         target_compile_options(${target} PRIVATE
             -Wall -Wextra -Wpedantic -Wconversion -Wfloat-equal -Wwrite-strings -Wno-sign-conversion
             -fstack-protector-strong
@@ -100,6 +104,8 @@ function(apply_compile_options)
             "$<$<CONFIG:Debug>:-g3>"
             "$<$<CONFIG:Debug>:-O0>"
             "$<$<CONFIG:Debug>:-fno-inline>"
+            "$<$<AND:$<BOOL:${SANITIZE_ADDRESS}>,$<CONFIG:Debug>>:-fsanitize=address>"
+            "$<$<AND:$<BOOL:${SANITIZE_ADDRESS}>,$<CONFIG:Debug>>:-fsanitize=undefined>"
             # Release flags
             "$<$<CONFIG:Release>:-O3>"
             "$<$<CONFIG:Release>:-g1>"
@@ -113,7 +119,10 @@ function(apply_compile_options)
         )
         target_link_options(${target} PRIVATE
             "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
+            "$<$<AND:$<BOOL:${SANITIZE_ADDRESS}>,$<CONFIG:Debug>>:-fsanitize=address>"
+            "$<$<AND:$<BOOL:${SANITIZE_ADDRESS}>,$<CONFIG:Debug>>:-fsanitize=undefined>"
         )
+        
         add_link_options("$<$<CONFIG:Release>:-static-libstdc++>")
         add_definitions(-include "core/Global_H.hpp")
         endif()

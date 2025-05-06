@@ -2,9 +2,20 @@ cmake_minimum_required(VERSION 3.28)
 
 project(Engine LANGUAGES C CXX)
 
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
+endif()
+
 if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
     message(FATAL_ERROR "Create a build directory and run CMake from there.")
 endif()
+
+####################################################################################################
+# Options
+####################################################################################################
+option(TESTS            "enable tests"              On)
+option(SANITIZE_ADDRESS "enable address Sanitizer"  Off)
+
 ####################################################################################################
 # Futures 
 ####################################################################################################
@@ -169,8 +180,6 @@ target_include_directories(stb_image SYSTEM INTERFACE ${STB_IMG_HEADER})
 
 apply_compile_options(TARGETS core ${PROJECT_NAME})
 
-print_target_compile_options(core)
-
 include(CheckCXXSourceCompiles)
 check_cxx_source_compiles("
 #include <stacktrace>
@@ -224,12 +233,6 @@ if(FALSE AND CMAKE_BUILD_TYPE STREQUAL "Release")
 endif()
 
 ####################################################################################################
-# Options
-####################################################################################################
-option(TESTS            "enable tests"              On)
-option(SANITIZE_ADDRESS "enable address Sanitizer"  Off)
-
-####################################################################################################
 # TEST
 ####################################################################################################
 if(TESTS)
@@ -238,12 +241,5 @@ if(TESTS)
     add_subdirectory(tests)
 endif()
 
-if(SANITIZE_ADDRESS)
-    message(STATUS "[Address Sanitizer `ON`]")
-    target_compile_options(core PRIVATE
-        $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU,Clang>>:-fsanitize=address -fsanitize=undefined>
-    )
-    target_link_options(core PRIVATE
-        $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU,Clang>>:-fsanitize=address -fsanitize=undefined>
-    )
-endif()
+print_target_compile_options(core)
+print_target_compile_options(${PROJECT_NAME})
