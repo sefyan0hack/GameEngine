@@ -106,12 +106,13 @@ jobs:
       - name: Code Coverage
         if: ${{ env.IS_UBUNTU_GCC == 'true' }}
         shell: bash
-        run: GCOV=gcov-14 gcovr --exclude tests/ --xml-pretty -o "$GITHUB_WORKSPACE/${{ env.BUILD_DIR }}/coverage.xml"
+        run: GCOV=gcov-14 gcovr --exclude tests/ --xml-pretty -o ${{ env.BUILD_DIR }}/coverage.xml
       
       - name: Upload to Codecov
         if: ${{ env.IS_UBUNTU_GCC == 'true' }}
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: "${{ github.workspace }}/${{ env.BUILD_DIR }}/coverage.xml"
+          files: ${{ env.BUILD_DIR }}/coverage.xml
           verbose: true
+          yml: .codecov.yml

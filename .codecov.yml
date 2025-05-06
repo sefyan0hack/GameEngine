@@ -1,0 +1,13 @@
+fixes:
+  - "build/ubuntu-latest-gcc-Debug/::"
+  - "home/runner/work/_temp/_github_workflow/::"
+  - ".*/build-[^/]+/(.*)::\1"
+
+coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+
+comment:
+  layout: "reach,diff,flags,files,footer"
+  require_changes: false
