@@ -8,7 +8,10 @@ target_link_libraries(tests PRIVATE core gtest gtest_main)
 include(GoogleTest)
 include(CodeCoverage)
 
-gtest_discover_tests(tests)
+gtest_discover_tests(tests
+  PROPERTIES
+    ENVIRONMENT "ASAN_OPTIONS=verify_asan_link_order=0"
+)
 
 if(MSVC)
   find_program(OPENCPPCOVERAGE_PATH OpenCppCoverage.exe)
