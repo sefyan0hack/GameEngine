@@ -87,7 +87,8 @@ function(apply_compile_options)
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             message(STATUS "++++++[Clang]++++++ flags")
             target_compile_options(${target} PRIVATE -Wno-language-extension-token
-                "$<$<STREQUAL:$<PLATFORM_ID>,Windows>:-fuse-ld=lld>"            
+                "$<$<STREQUAL:$<PLATFORM_ID>,Windows>:-fuse-ld=lld>"
+                "$<$<STREQUAL:$<PLATFORM_ID>,Windows>:-stdlib=libc++>"      
             )
         endif()
 
