@@ -111,9 +111,6 @@ inline std::vector<std::string> split(const char* cstr, const std::string& delim
 
 inline std::string replace(std::string s, char c, char with)
 {
-    char *x = new char;
-    delete x;
-    *x = '1';
     if( c == '\0' || with == '\0')
         return s;
     for(auto& ch: s)
