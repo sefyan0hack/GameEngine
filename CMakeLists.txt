@@ -244,7 +244,7 @@ endif()
 
 find_library(ASAN_LIBRARY NAMES asan libasan.so.8 libasan.so.7 libasan.so.6 libasan.so.5)
 if (ASAN_LIBRARY)
-    link_libraries(${ASAN_LIBRARY})
+    target_link_libraries(core PUBLIC ${ASAN_LIBRARY})
 endif()
 print_target_compile_options(core)
 print_target_compile_options(${PROJECT_NAME})
