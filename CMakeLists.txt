@@ -26,8 +26,8 @@ option(SANITIZE_ADDRESS "enable address Sanitizer"  Off)
 
 if(SANITIZE_ADDRESS)
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-        add_compile_options(-fsanitize=address,leak,undefined,thread,memory)
-        add_link_options(-fsanitize=address,leak,undefined,thread,memory)
+        add_compile_options(-fsanitize=address,leak,undefined)
+        add_link_options(-fsanitize=address,leak,undefined)
     endif()
 endif()
 
