@@ -107,7 +107,6 @@ function(apply_compile_options)
             "$<$<CONFIG:Debug>:-fno-inline>"
             "$<$<AND:$<BOOL:${SANITIZE_ADDRESS}>,$<CONFIG:Debug>>:-fsanitize=address,undefined>"
             "$<$<AND:$<BOOL:${SANITIZE_ADDRESS}>,$<CONFIG:Debug>>:-static-libsan>"
-            "$<$<AND:$<BOOL:${SANITIZE_ADDRESS}>,$<CONFIG:Debug>>:-l:libasan>"
             # Release flags
             "$<$<CONFIG:Release>:-O3>"
             "$<$<CONFIG:Release>:-g1>"
