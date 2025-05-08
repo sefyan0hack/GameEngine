@@ -8,16 +8,9 @@ target_link_libraries(tests PRIVATE core gtest gtest_main)
 include(GoogleTest)
 include(CodeCoverage)
 
-execute_process(
-  COMMAND ${CMAKE_C_COMPILER} -print-file-name=libasan.so
-  OUTPUT_VARIABLE ASAN_LIB_PATH
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-  ERROR_QUIET
-)
-
 gtest_discover_tests(tests
   PROPERTIES
-    ENVIRONMENT "LD_PRELOAD=${ASAN_LIB_PATH}:ASAN_OPTIONS=verify_asan_link_order=0"
+    ENVIRONMENT "ASAN_OPTIONS=verify_asan_link_order=0"
 )
 
 if(MSVC)
