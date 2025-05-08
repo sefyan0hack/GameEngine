@@ -25,11 +25,10 @@ option(TESTS            "enable tests"              On)
 option(SANITIZE_ADDRESS "enable address Sanitizer"  Off)
 
 if(SANITIZE_ADDRESS)
-include(sanitizers)
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-        add_sanitizer_support(address leak)
+        add_compile_options(-fsanitize=address,leak)
+        add_link_options(-fsanitize=address,leak)
     endif()
-
 endif()
 
 ####################################################################################################
