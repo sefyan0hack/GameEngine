@@ -26,8 +26,8 @@ option(SANITIZE_ADDRESS "enable address Sanitizer"  Off)
 
 if(SANITIZE_ADDRESS)
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-        add_compile_options(-fsanitize=address,leak)
-        add_link_options(-fsanitize=address,leak)
+        add_compile_options(-fsanitize=address,leak,undefined,thread,memory)
+        add_link_options(-fsanitize=address,leak,undefined,thread,memory)
     endif()
 endif()
 
@@ -215,7 +215,6 @@ target_link_libraries(core
         stb_image
         $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
         $<$<AND:$<CXX_COMPILER_ID:GNU,Clang>,$<NOT:$<PLATFORM_ID:Windows>>>:stdc++exp>
-        # $<$<AND:$<BOOL:${SANITIZE_ADDRESS}>,$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU,Clang>>:-lasan;-lubsan>
 )
 target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
 if(MINGW)
