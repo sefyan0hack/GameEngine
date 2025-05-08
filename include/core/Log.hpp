@@ -11,18 +11,14 @@ auto PrintStackTrace(unsigned short skip = 0) -> void;
 #endif
 
 namespace config {
-  constexpr auto LogFileName = "Engine.log";
-  inline bool exit_on_error = true;
-  inline bool show_message_box = true;
-  inline bool show_output = true;
+    constexpr auto LogFileName = "Engine.log";
+    extern bool exit_on_error;
+    extern bool show_message_box;
+    extern bool show_output;
+    extern bool use_exception;
 
-  inline void TestFlags() {
-    exit_on_error = false;
-    show_message_box = false;
-    show_output = false;
-  }
+    void TestFlags();
 }
-
 namespace {
 
 enum class Log_LvL : char {
@@ -106,7 +102,7 @@ auto Log(
       #endif
     );
     #if defined(WINDOWS_PLT)
-    if(config::show_message_box)
+    if(config::show_message_box && !config::use_exception)
       MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONERROR );
     #endif
   }
@@ -116,13 +112,18 @@ auto Log(
   else if constexpr (lvl == Log_LvL::PRT){
     msg << std::format("{} : {}\n", formatedTime(), formatted_msg);
   }
-  if(config::show_output){
+
+  if(config::show_output && !config::use_exception){
     out << msg.rdbuf();
     out.flush();
   }
 
   if constexpr (lvl == Log_LvL::ERR  || lvl == Log_LvL::EXPT){
-    if(config::exit_on_error) exit(EXIT_FAILURE);
+    if(config::use_exception){
+      throw std::runtime_error(msg.str());
+    }else if(config::exit_on_error){
+        exit(EXIT_FAILURE);
+    }
   }
 }
 

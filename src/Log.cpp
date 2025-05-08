@@ -233,3 +233,17 @@ auto setup_crach_handler() -> void
 
 #endif //DEBUG
 #endif //_WIN32
+
+namespace config {
+    bool exit_on_error = true;
+    bool show_message_box = true;
+    bool show_output = true;
+    bool use_exception = false;
+
+    void TestFlags() {
+        exit_on_error = false;
+        show_message_box = false;
+        show_output = false;
+        use_exception = true;
+    }
+}
