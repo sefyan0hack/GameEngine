@@ -70,10 +70,6 @@ constexpr std::array<char, sizeof(Str.value)> ToUpper<Str>::value;
 #define TO_UPPER(str) std::string_view(ToUpper<FixedString{str}>::value.data())
 
 inline std::future<std::optional<std::vector<char>>> load_file_async(const std::string& filename) {
-    auto x = new int;
-    delete x;
-    delete x;
-
     using namespace std;
     return async(launch::async, [filename]() -> optional<vector<char>> {
         ifstream file(filename, ios::binary | ios::ate);
