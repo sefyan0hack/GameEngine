@@ -122,7 +122,7 @@ function(apply_compile_options)
             # "$<$<AND:$<BOOL:${SANITIZE_ADDRESS}>,$<CONFIG:Debug>>:-fsanitize=address,undefined>"
         )
         
-        # add_link_options("$<$<CONFIG:Release>:-static-libstdc++>")
+        add_link_options("$<$<CONFIG:Release>:-static-libstdc++>")
         add_definitions(-include "core/Global_H.hpp")
         endif()
     endforeach()
