@@ -2,6 +2,14 @@ cmake_minimum_required(VERSION 3.28)
 
 project(Engine LANGUAGES C CXX)
 
+####################################################################################################
+# Futures 
+####################################################################################################
+
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_SUPPRESS_REGENERATION true)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
 endif()
@@ -23,14 +31,6 @@ include(sanitizers)
     endif()
 
 endif()
-
-####################################################################################################
-# Futures 
-####################################################################################################
-
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_SUPPRESS_REGENERATION true)
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 ####################################################################################################
 # WIN32 defines 
