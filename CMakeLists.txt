@@ -16,6 +16,14 @@ endif()
 option(TESTS            "enable tests"              On)
 option(SANITIZE_ADDRESS "enable address Sanitizer"  Off)
 
+if(SANITIZE_ADDRESS)
+include(sanitizers)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        add_sanitizer_support(address leak)
+    endif()
+
+endif()
+
 ####################################################################################################
 # Futures 
 ####################################################################################################
@@ -240,14 +248,6 @@ if(TESTS)
     enable_testing()
     include(CTest)
     add_subdirectory(tests)
-endif()
-
-if(SANITIZE_ADDRESS)
-include(sanitizers)
-    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-        add_sanitizer_support(address leak)
-    endif()
-
 endif()
 
 print_target_compile_options(core)
