@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        sanitizers: ["address", "leak", "memory", "thread", "undefined", "integer", "implicit-conversion", "nullability", "safe-stack", "hwaddress"]
+        sanitizers: ["address", "leak", "memory", "thread", "undefined", "type", "dataflow", "integer", "implicit-conversion", "nullability", "safe-stack", "hwaddress", "realtime"]
 
     steps:
       - uses: actions/checkout@v3
@@ -18,7 +18,14 @@ jobs:
         run: sudo apt-get install -y ninja-build libgl1-mesa-dev  mesa-common-dev libxi-dev libc++-dev libc++abi-dev
 
       - name: Generate
-        run: cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_CXX_FLAGS="-fsanitize=${{ matrix.sanitizers }} -fno-omit-frame-pointer -fPIE -stdlib=libc++ " -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=${{ matrix.sanitizers }} -stdlib=libc++"
+        run: |
+          cmake -B build -S . -G Ninja \
+          -DCMAKE_BUILD_TYPE=Debug \
+          -DCMAKE_C_COMPILER=clang \
+          -DCMAKE_CXX_COMPILER=clang++ \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+          -DCMAKE_CXX_FLAGS="-fsanitize=${{ matrix.sanitizers }} -fno-omit-frame-pointer -fPIE -stdlib=libc++ " \
+          -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=${{ matrix.sanitizers }} -stdlib=libc++"
 
       - name: Build
         run: cmake --build build --config Debug
