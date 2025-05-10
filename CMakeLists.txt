@@ -224,7 +224,7 @@ target_link_libraries(core
         $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
         $<$<AND:$<CXX_COMPILER_ID:GNU,Clang>,$<NOT:$<PLATFORM_ID:Windows>>>:stdc++exp>
 )
-target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
+# target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
 if(MINGW)
     target_compile_options(core PRIVATE -fno-keep-inline-dllexport)
 endif()

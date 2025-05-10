@@ -77,6 +77,7 @@ function(apply_compile_options)
                 "$<$<CONFIG:RELEASE>:/INCREMENTAL:NO>"          # Disable incremental linking
             )
             add_definitions(/FI"core/Global_H.hpp")
+            add_definitions(/FI"pch.h")
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
             message(STATUS "++++++[GNU]++++++ flags")
             target_compile_options(${target} PRIVATE
@@ -123,6 +124,7 @@ function(apply_compile_options)
         
         add_link_options("$<$<CONFIG:Release>:-static-libstdc++>")
         add_definitions(-include "core/Global_H.hpp")
+        add_definitions(-include "pch.h")
         endif()
     endforeach()
 endfunction()
