@@ -210,7 +210,7 @@ auto CWindow::WindowsCount() -> unsigned short
 }
 CWindow::CWindow(int m_Width, int m_Height, const TCHAR* Title) 
 	: m_Instance( GetModuleHandleA( nullptr ) )
-	, m_Visible(true)
+	, m_Visible(false)
 	, m_Keyboard(std::make_shared<Keyboard>())
 	, m_Mouse(std::make_shared<Mouse>())
 {
