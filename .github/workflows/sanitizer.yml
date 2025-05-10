@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Install
-        run: sudo apt-get install -y ninja-build libgl1-mesa-dev  mesa-common-dev libxi-dev clang libc++-dev libc++abi-dev
+        run: sudo apt-get install -y ninja-build libgl1-mesa-dev  mesa-common-dev libxi-dev libclang-19-dev libc++-19-dev libc++abi-19-dev
 
       - name: Generate
         run: |
