@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        sanitizers: ["address", "thread", "undefined", "integer", "implicit-conversion", "nullability", "safe-stack"]
+        sanitizers: ["address", "leak", "memory", "thread", "undefined", "integer", "implicit-conversion", "nullability", "safe-stack", "hwaddress"]
 
     steps:
       - uses: actions/checkout@v3
@@ -18,10 +18,10 @@ jobs:
         run: sudo apt-get install -y ninja-build libgl1-mesa-dev  mesa-common-dev libxi-dev
 
       - name: Generate
-        run: cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_CXX_FLAGS="-fsanitize=${{ matrix.sanitizers }}"
+        run: cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_CXX_FLAGS="-fsanitize=${{ matrix.sanitizers }} -fno-omit-frame-pointer"
 
       - name: Build
-        run: cmake --build build
+        run: cmake --build build --config Debug
 
       - name: Test
         run: ctest --test-dir build --no-tests=error
