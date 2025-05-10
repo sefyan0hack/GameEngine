@@ -1,7 +1,9 @@
 #include <gtest/gtest.h>
 #include <core/Window.hpp>
 #include <iostream>
-
+#ifdef WINDOWS_PLT
+#include <windows.h>
+#endif
 using namespace std;
 class CWindow_Test : public ::testing::Test {
     public:
