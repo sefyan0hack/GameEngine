@@ -243,10 +243,13 @@ OpenGL::OpenGL(WindHandl window, HDC_D hdcd)
     
     static bool isInitialized = false;
     if (!isInitialized) {
-        m_Vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
-        m_Renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+        auto vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+        auto renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+        m_Vendor = vendor ? vendor : "unknown";
+        m_Renderer = renderer ? renderer : "unknown";
         #if defined(WINDOWS_PLT)
-        m_Extensions = split(reinterpret_cast<const char*>(wglGetExtensionsStringARB(m_MainHDC)), " ");
+        auto exts = reinterpret_cast<const char*>(wglGetExtensionsStringARB(m_MainHDC));
+        m_Extensions = exts ? split(exts, " ") : decltype(m_Extensions){} ;
         #endif //_WIN32
         
         GLint nGlslv = 0;
