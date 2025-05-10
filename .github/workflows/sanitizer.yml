@@ -27,7 +27,7 @@ jobs:
           -DCMAKE_CXX_STANDARD_REQUIRED=ON \
           -DCMAKE_CXX_EXTENSIONS=OFF \
           -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-          -DCMAKE_CXX_FLAGS="-fsanitize=${{ matrix.sanitizers }} -fno-omit-frame-pointer -fPIE -stdlib=libc++ " \
+          -DCMAKE_CXX_FLAGS="-fsanitize=${{ matrix.sanitizers }} -fno-omit-frame-pointer -fPIE " \
           -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=${{ matrix.sanitizers }}"
 
       - name: Build
