@@ -3,7 +3,6 @@
 #include <iostream>
 #ifdef WINDOWS_PLT
 #include <windows.h>
-#endif
 using namespace std;
 class CWindow_Test : public ::testing::Test {
     public:
@@ -17,7 +16,6 @@ class CWindow_Test : public ::testing::Test {
     static auto WindowsCount()                  -> unsigned short { return CWindow::S_WindowsCount; }
 };
 
-#ifdef WINDOWS_PLT
 TEST_F(CWindow_Test, ctor){
     auto r = CWindow(100, 100, "Window");
 
