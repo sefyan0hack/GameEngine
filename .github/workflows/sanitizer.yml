@@ -17,18 +17,20 @@ jobs:
       - name: Install
         run: sudo apt-get install -y ninja-build libgl1-mesa-dev  mesa-common-dev libxi-dev libclang-19-dev libc++-19-dev libc++abi-19-dev
 
+      - name: Setup Compilers
+        run: |
+          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-19 100
+          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-19 100
+
       - name: Generate
         run: |
           cmake -B build -S . -G Ninja \
           -DCMAKE_BUILD_TYPE=Debug \
-          -DCMAKE_C_COMPILER=clang \
-          -DCMAKE_CXX_COMPILER=clang++ \
-          -DCMAKE_CXX_STANDARD=23 \
-          -DCMAKE_CXX_STANDARD_REQUIRED=ON \
-          -DCMAKE_CXX_EXTENSIONS=OFF \
+          -DCMAKE_C_COMPILER=clang-19 \
+          -DCMAKE_CXX_COMPILER=clang++-19 \
           -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-          -DCMAKE_CXX_FLAGS="-fsanitize=${{ matrix.sanitizers }} -fno-omit-frame-pointer -fPIE " \
-          -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=${{ matrix.sanitizers }}"
+          -DCMAKE_CXX_FLAGS="-fsanitize=${{ matrix.sanitizers }} -fno-omit-frame-pointer" \
+          -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=${{ matrix.sanitizers }} -lc++abi"
 
       - name: Build
         run: cmake --build build --config Debug
