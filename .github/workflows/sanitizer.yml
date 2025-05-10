@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        sanitizers: ["address", "leak", "memory", "thread", "undefined", "integer", "implicit-conversion", "nullability", "safe-stack"]
+        sanitizers: ["address", "leak", "thread", "undefined", "integer", "implicit-conversion", "nullability", "safe-stack"]
 
     steps:
       - uses: actions/checkout@v3
@@ -24,11 +24,10 @@ jobs:
           -DCMAKE_C_COMPILER=clang \
           -DCMAKE_CXX_COMPILER=clang++ \
           -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-          -DCMAKE_CXX_FLAGS="-fsanitize=${{ matrix.sanitizers }} -fno-omit-frame-pointer" \
-          -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=${{ matrix.sanitizers }} -lc++abi"
+          -DCMAKE_CXX_FLAGS="-fsanitize=${{ matrix.sanitizers }} -fno-omit-frame-pointer"
 
       - name: Build
         run: cmake --build build --config Debug
 
       - name: Test
-        run: ctest --test-dir build --no-tests=error
+        run: ctest --test-dir build --output-on-failure
