@@ -17,11 +17,6 @@ jobs:
       - name: Install
         run: sudo apt-get install -y ninja-build libgl1-mesa-dev  mesa-common-dev libxi-dev libclang-19-dev libc++-19-dev libc++abi-19-dev
 
-      - name: Setup Compilers
-        run: |
-          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-19 100
-          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-19 100
-
       - name: Generate
         run: |
           cmake -B build -S . -G Ninja \
