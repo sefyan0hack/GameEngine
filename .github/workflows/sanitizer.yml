@@ -15,10 +15,10 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Install
-        run: sudo apt-get install -y ninja-build libgl1-mesa-dev  mesa-common-dev libxi-dev
+        run: sudo apt-get install -y ninja-build libgl1-mesa-dev  mesa-common-dev libxi-dev libc++-dev libc++abi-dev
 
       - name: Generate
-        run: cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_CXX_FLAGS="-fsanitize=${{ matrix.sanitizers }} -fno-omit-frame-pointer -fPIE -pie"
+        run: cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_CXX_FLAGS="-fsanitize=${{ matrix.sanitizers }} -fno-omit-frame-pointer -fPIE -stdlib=libc++ " -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=${{ matrix.sanitizers }} -stdlib=libc++"
 
       - name: Build
         run: cmake --build build --config Debug
