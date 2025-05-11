@@ -194,16 +194,16 @@ auto OpenGL::init_opengl_win32() -> void
 auto OpenGL::init_opengl_linux(Window window) -> void
 {
     static int visualAttribs[] = {
-        GLX_X_RENDERABLE,  True,
-        GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
-        GLX_RENDER_TYPE,   GLX_RGBA_BIT,
-        GLX_DOUBLEBUFFER,  True,
+        GLX_X_RENDERABLE,  true,
+        GLX_DRAWABLE_TYPE, 0x00000001,
+        GLX_RENDER_TYPE,   0x00000001,
+        GLX_DOUBLEBUFFER,  true,
         GLX_RED_SIZE,       8,
         GLX_GREEN_SIZE,     8,
         GLX_BLUE_SIZE,      8,
         GLX_ALPHA_SIZE,     8,
         GLX_DEPTH_SIZE,     24,
-        None
+        0
     };
 
     int fbcount;

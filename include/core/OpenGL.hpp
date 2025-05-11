@@ -15,27 +15,26 @@ auto rsgl(const char* name) -> void*;
 #ifndef GL_GLEXT_PROTOTYPES
 #undef GL_GLEXT_PROTOTYPES
 #endif
-#include <GL/glx.h>
 #include <GL/glext.h>
 struct __GLXcontextRec;
 using WindHandl = Window;
 using HDC_D     = Display*;
 using GLCTX     = __GLXcontextRec*;
 
-// typedef XID GLXPixmap;
-// typedef XID GLXDrawable;
-// /* GLX 1.3 and later */
-// typedef struct __GLXFBConfigRec *GLXFBConfig;
-// typedef XID GLXFBConfigID;
-// typedef XID GLXContextID;
-// typedef XID GLXWindow;
-// typedef XID GLXPbuffer;
-// extern "C" {
-//     extern GLCTX glXCreateContext( Display *dpy, XVisualInfo *vis, GLCTX shareList, Bool direct );
-//     extern Bool  glXMakeCurrent( Display *dpy, GLXDrawable drawable, GLCTX ctx);
-//     extern void  glXDestroyContext( Display *dpy, GLCTX ctx );
-//     extern void* glXGetProcAddress(const GLubyte * procName);
-// }
+typedef XID GLXPixmap;
+typedef XID GLXDrawable;
+/* GLX 1.3 and later */
+typedef struct __GLXFBConfigRec *GLXFBConfig;
+typedef XID GLXFBConfigID;
+typedef XID GLXContextID;
+typedef XID GLXWindow;
+typedef XID GLXPbuffer;
+extern "C" {
+    extern GLCTX glXCreateContext( Display *dpy, XVisualInfo *vis, GLCTX shareList, Bool direct );
+    extern Bool  glXMakeCurrent( Display *dpy, GLXDrawable drawable, GLCTX ctx);
+    extern void  glXDestroyContext( Display *dpy, GLCTX ctx );
+    extern void* glXGetProcAddress(const GLubyte * procName);
+}
 
 #endif
 
@@ -112,11 +111,16 @@ class OpenGL
             WGL_CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB = 0x8256,
             GL_ALL_ATTRIB_BITS               = 0x000fffff,
             #elif defined(LINUX_PLT)
-            // GLX_X_RENDERABLE                = 0x8012
-            // GLX_DRAWABLE_TYPE               = 0x8010
-            // GLX_RENDER_TYPE                 = 0x8011
-            // GLX_DOUBLEBUFFER                = 5
-            XxXxX
+            GLX_NONE        			    = 0x8000
+            GLX_DRAWABLE_TYPE               = 0x8010
+            GLX_RENDER_TYPE                 = 0x8011
+            GLX_X_RENDERABLE                = 0x8012
+            GLX_DOUBLEBUFFER                = 5
+            GLX_RED_SIZE		            = 8
+            GLX_GREEN_SIZE		            = 9
+            GLX_BLUE_SIZE		            = 10
+            GLX_ALPHA_SIZE		            = 11
+            GLX_DEPTH_SIZE		            = 12
             #endif 
         };
 };
