@@ -95,7 +95,7 @@ class CWindow
     public:
         // auto Hinstance() const   -> HINSTANCE ;
         auto WindowHandle() const        -> Window ;
-        // auto DrawContext() const         -> HDC ;
+        auto DrawContext() const         -> Display* ;
         auto Width() const       -> int ;
         auto Height() const      -> int ;
         auto opengl() const          -> std::shared_ptr<OpenGL> ;

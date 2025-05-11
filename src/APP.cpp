@@ -1,6 +1,13 @@
 #include <core/APP.hpp>
 #include <core/Window.hpp>
 
+#if defined(WINDOWS_PLT)
+#include <windows.h>
+#elif defined(LINUX_PLT)
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <sys/time.h>
+#endif
 constexpr auto Wname = "Main";
 
 APP::APP()
@@ -35,6 +42,69 @@ auto APP::Run() -> void
         counts = end_count - start_count;
         start_count = end_count;
         fps = freq / counts;
+    }
+    #elif defined(LINUX_PLT)
+    Display* display = m_Window.DrawContext();
+    Window xid = m_Window.WindowHandle();
+    Atom wmDeleteMessage = XInternAtom(display, "WM_DELETE_WINDOW", false);
+    XSetWMProtocols(display, xid, &wmDeleteMessage, 1);
+
+    struct timespec start_time, end_time;
+    clock_gettime(CLOCK_MONOTONIC, &start_time);
+    
+    glClearColor(0.2f, 0.21f, 0.22f, 1.0f);
+    
+    while (CWindow::WindowsCount() != 0) {
+        while (XPending(display)) {
+            XEvent event;
+            XNextEvent(display, &event);
+            
+            switch (event.type) {
+                case Expose:
+                    // Handle window expose event
+                    break;
+                    
+                case ConfigureNotify:
+                    // Handle window resize
+                    // m_Window.SetDims(event.xconfigure.width, event.xconfigure.height);
+                    break;
+                    
+                case KeyPress:
+                    // Handle keyboard input
+                    break;
+                    
+                case ClientMessage:
+                    if (event.xclient.data.l[0] == wmDeleteMessage)
+                        // m_Window.Destroy();
+                    break;
+            }
+        }
+
+        // Rendering
+        glViewport(0, 0, m_Window.Width(), m_Window.Height());
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        Update(1/static_cast<float>(fps));
+
+        // Swap buffers
+        glXSwapBuffers(display, xid);
+
+        // Frame timing
+        clock_gettime(CLOCK_MONOTONIC, &end_time);
+        long ns_diff = (end_time.tv_sec - start_time.tv_sec) * 1000000000L 
+                     + (end_time.tv_nsec - start_time.tv_nsec);
+        float delta = ns_diff / 1000000000.0f;
+        
+        // Maintain 60 FPS
+        if (delta < 1.0f/fps) {
+            timespec sleep_time{
+                0,
+                static_cast<long>((1.0f/fps - delta) * 1000000000L)
+            };
+            nanosleep(&sleep_time, nullptr);
+        }
+        
+        clock_gettime(CLOCK_MONOTONIC, &start_time);
     }
     #endif
 }

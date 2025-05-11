@@ -412,6 +412,11 @@ auto CWindow::WindowHandle() const -> Window
     return m_WindowHandle;
 }
 
+auto CWindow::DrawContext() const -> Display*
+{
+    return m_Display;
+}
+
 auto CWindow::Width() const -> int
 {
     return m_Width;
