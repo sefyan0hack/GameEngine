@@ -42,7 +42,7 @@
     Info("[{} {}({})] From {} : \n\t- {}", severity_, type_, id, source_, message);
 }
 
-#if defined(WINDOWS_PLT)
+if defined(WINDOWS_PLT)
 auto __GetProcAddress(LPCSTR module, const char* name) -> void* {
     auto lib = LoadLibraryA(module);
     if(lib == nullptr){
@@ -59,6 +59,8 @@ auto __GetProcAddress(LPCSTR module, const char* name) -> void* {
         return nullptr;
     }
 }
+#endif
+
 auto rsgl(const char* name) -> void* {
     if defined(WINDOWS_PLT)
     void *address = (void *)_wglGetProcAddress(name);
@@ -79,13 +81,14 @@ auto rsgl(const char* name) -> void* {
     void *address = (void *)glXGetProcAddress(name);
     if(address == nullptr){
         Error("Couldnt load opengl function `{}` reason: {}", name, GetLastError());
-    } 
+    }
     #endif
 
     Info("load opengl function `{}` at : {}", name, address);
     return address;
 }
 
+#if defined(WINDOWS_PLT)
 
 auto OpenGL::init_opengl_win32() -> void
 {
