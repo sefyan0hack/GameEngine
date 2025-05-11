@@ -189,7 +189,6 @@ auto OpenGL::init_opengl_win32() -> void
 
 
 #elif defined(LINUX_PLT)
-#include <GL/glx.h>
 
 auto OpenGL::init_opengl_linux(Window window) -> void
 {
