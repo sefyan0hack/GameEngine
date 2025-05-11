@@ -42,7 +42,7 @@
     Info("[{} {}({})] From {} : \n\t- {}", severity_, type_, id, source_, message);
 }
 
-if defined(WINDOWS_PLT)
+#if defined(WINDOWS_PLT)
 auto __GetProcAddress(LPCSTR module, const char* name) -> void* {
     auto lib = LoadLibraryA(module);
     if(lib == nullptr){
@@ -62,7 +62,7 @@ auto __GetProcAddress(LPCSTR module, const char* name) -> void* {
 #endif
 
 auto rsgl(const char* name) -> void* {
-    if defined(WINDOWS_PLT)
+    #if defined(WINDOWS_PLT)
     void *address = (void *)_wglGetProcAddress(name);
 
     if(address == nullptr
