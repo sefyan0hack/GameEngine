@@ -76,7 +76,7 @@ function(apply_compile_options)
                 "$<$<CONFIG:Release>:/OPT:ICF>"                 # Identical COMDAT folding
                 "$<$<CONFIG:RELEASE>:/INCREMENTAL:NO>"          # Disable incremental linking
             )
-            add_definitions(/FI"core/Global_H.hpp")
+            add_definitions(/FI"${CMAKE_SOURCE_DIR}/include/core/Global_H.hpp")
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
             message(STATUS "++++++[GNU]++++++ flags")
             target_compile_options(${target} PRIVATE
@@ -120,7 +120,7 @@ function(apply_compile_options)
         )
         
         add_link_options("$<$<CONFIG:Release>:-static-libstdc++>")
-        add_definitions(-include "core/Global_H.hpp")
+        add_definitions(-include "${CMAKE_SOURCE_DIR}/include/core/Global_H.hpp")
         endif()
     endforeach()
 endfunction()

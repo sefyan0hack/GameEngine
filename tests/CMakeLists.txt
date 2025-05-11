@@ -3,15 +3,21 @@ file(GLOB TEST_SOURCES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/" "*_test.cpp")
 
 add_executable(tests ${TEST_SOURCES})
 
+if(ONLINE)
+  CPMAddPackage("gh:google/googletest@1.16.0")
+else()
+  add_subdirectory(
+    ${CMAKE_SOURCE_DIR}/3party/googletest-1.16.0
+    ${CMAKE_CURRENT_BINARY_DIR}/googletest-1.16.0-build
+  )
+endif()
+
 target_link_libraries(tests PRIVATE core gtest gtest_main)
 
 include(GoogleTest)
-include(CodeCoverage)
+gtest_discover_tests(tests)
 
-gtest_discover_tests(tests
-  PROPERTIES
-    ENVIRONMENT "ASAN_OPTIONS=verify_asan_link_order=0"
-)
+include(CodeCoverage)
 
 if(MSVC)
   find_program(OPENCPPCOVERAGE_PATH OpenCppCoverage.exe)
@@ -69,7 +75,7 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     )
     # delete_files_by_extension("${CMAKE_BINARY_DIR}" "gcda")
   else()
-  message(STATUS "conseder dowing `pip install gcovr` if you want code covegare")
+  message(STATUS "conseder doing `pip install gcovr` if you want code covegare")
   endif()
 endif()
 

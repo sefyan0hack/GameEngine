@@ -21,7 +21,7 @@ endif()
 ####################################################################################################
 # Options
 ####################################################################################################
-option(TESTS            "enable tests"              On)
+option(TESTS            "enable tests"              OFF)
 set(SANITIZER "" CACHE STRING "Enable sanitizers (address, undefined, etc.)")
 
 if(NOT "${SANITIZER}" STREQUAL "")
@@ -86,7 +86,6 @@ include(get_cpm)
 
     # add glm 1.0.1
 CPMAddPackage("gh:g-truc/glm#1.0.1")
-CPMAddPackage("gh:google/googletest@1.16.0")
 
     # stb_image v2.30
 CPMAddPackage(
@@ -126,7 +125,6 @@ include_directories(
 )
 else()
 add_subdirectory(3party/glm)
-add_subdirectory(3party/googletest-1.16.0)
 endif()
 
 ####################################################################################################
@@ -196,11 +194,10 @@ check_cxx_source_compiles("
 #include <stacktrace>
 int main() {auto trace = std::stacktrace::current();}" HAS_STD_STACKTRACE)
 
-target_compile_definitions(core
-    PUBLIC
-        PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
-        OPENGL_LIB="${CORE_OPENGL_LIB}"
-        $<$<BOOL:${HAS_STD_STACKTRACE}>:HAS_STD_STACKTRACE>
+add_compile_definitions(
+    PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
+    OPENGL_LIB="${CORE_OPENGL_LIB}"
+    $<$<BOOL:${HAS_STD_STACKTRACE}>:HAS_STD_STACKTRACE>
 )
 
 ####################################################################################################
