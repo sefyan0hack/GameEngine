@@ -216,12 +216,16 @@ auto OpenGL::init_opengl_linux(Window window) -> void
         XFree(fbc);
         Error("Failed to get visual info.");
     }
+    
+    #define GLX_CONTEXT_MAJOR_VERSION_ARB     0x2091
+    #define GLX_CONTEXT_MINOR_VERSION_ARB     0x2092
+    #define GLX_CONTEXT_FLAGS_ARB             0x2094
 
     int contextAttribs[] = {
         GLX_CONTEXT_MAJOR_VERSION_ARB, 4,
         GLX_CONTEXT_MINOR_VERSION_ARB, 4,
-        GLX_CONTEXT_PROFILE_MASK_ARB,  GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
-        None
+        GLX_CONTEXT_PROFILE_MASK_ARB,  0x00000001,
+        0
     };
 
     PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB = 
