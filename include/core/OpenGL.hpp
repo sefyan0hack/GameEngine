@@ -15,27 +15,27 @@ auto rsgl(const char* name) -> void*;
 #ifndef GL_GLEXT_PROTOTYPES
 #undef GL_GLEXT_PROTOTYPES
 #endif
-// #include <GL/gl.h>
+#include <GL/glx.h>
 #include <GL/glext.h>
 struct __GLXcontextRec;
 using WindHandl = Window;
 using HDC_D     = Display*;
 using GLCTX     = __GLXcontextRec*;
 
-typedef XID GLXPixmap;
-typedef XID GLXDrawable;
-/* GLX 1.3 and later */
-typedef struct __GLXFBConfigRec *GLXFBConfig;
-typedef XID GLXFBConfigID;
-typedef XID GLXContextID;
-typedef XID GLXWindow;
-typedef XID GLXPbuffer;
-extern "C" {
-    extern GLCTX glXCreateContext( Display *dpy, XVisualInfo *vis, GLCTX shareList, Bool direct );
-    extern Bool  glXMakeCurrent( Display *dpy, GLXDrawable drawable, GLCTX ctx);
-    extern void  glXDestroyContext( Display *dpy, GLCTX ctx );
-    extern void* glXGetProcAddress(const GLubyte * procName);
-}
+// typedef XID GLXPixmap;
+// typedef XID GLXDrawable;
+// /* GLX 1.3 and later */
+// typedef struct __GLXFBConfigRec *GLXFBConfig;
+// typedef XID GLXFBConfigID;
+// typedef XID GLXContextID;
+// typedef XID GLXWindow;
+// typedef XID GLXPbuffer;
+// extern "C" {
+//     extern GLCTX glXCreateContext( Display *dpy, XVisualInfo *vis, GLCTX shareList, Bool direct );
+//     extern Bool  glXMakeCurrent( Display *dpy, GLXDrawable drawable, GLCTX ctx);
+//     extern void  glXDestroyContext( Display *dpy, GLCTX ctx );
+//     extern void* glXGetProcAddress(const GLubyte * procName);
+// }
 
 #endif
 
