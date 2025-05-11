@@ -25,7 +25,7 @@ option(TESTS            "enable tests"              On)
 set(SANITIZER "" CACHE STRING "Enable sanitizers (address, undefined, etc.)")
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    if(NOT "${SANITIZER}" STREQUAL "")
+    if(NOT "${SANITIZER}" STREQUAL "" AND NOT MSVC)
         message(STATUS "SANITIZER ${SANITIZER}")
         add_compile_options(-fsanitize=${SANITIZER})
         add_link_options(-fsanitize=${SANITIZER})
