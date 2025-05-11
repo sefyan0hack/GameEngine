@@ -189,17 +189,6 @@ target_include_directories(stb_image SYSTEM INTERFACE ${STB_IMG_HEADER})
 
 apply_compile_options(TARGETS core ${PROJECT_NAME})
 
-include(CheckCXXSourceCompiles)
-check_cxx_source_compiles("
-#include <stacktrace>
-int main() {auto trace = std::stacktrace::current();}" HAS_STD_STACKTRACE)
-
-add_compile_definitions(
-    PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
-    OPENGL_LIB="${CORE_OPENGL_LIB}"
-    $<$<BOOL:${HAS_STD_STACKTRACE}>:HAS_STD_STACKTRACE>
-)
-
 ####################################################################################################
 # Link Libs 
 ####################################################################################################
@@ -221,6 +210,19 @@ target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
 if(MINGW)
     target_compile_options(core PRIVATE -fno-keep-inline-dllexport)
 endif()
+
+
+include(CheckCXXSourceCompiles)
+check_cxx_source_compiles("
+#include <stacktrace>
+int main() {auto trace = std::stacktrace::current();}" HAS_STD_STACKTRACE)
+
+add_compile_definitions(
+    PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
+    OPENGL_LIB="${CORE_OPENGL_LIB}"
+    $<$<BOOL:${HAS_STD_STACKTRACE}>:HAS_STD_STACKTRACE>
+)
+
 ####################################################################################################
 # Separate debug symbols from release buld (GNU or Clang)
 ####################################################################################################
