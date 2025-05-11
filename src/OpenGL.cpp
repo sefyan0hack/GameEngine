@@ -78,7 +78,7 @@ auto rsgl(const char* name) -> void* {
     }
 
     #elif defined(LINUX_PLT)
-    void *address = (void *)glXGetProcAddress(name);
+    void *address = (void *)glXGetProcAddress((GLubyte *)name);
     if(address == nullptr){
         Error("Couldnt load opengl function `{}` reason: {}", name, GetLastError());
     }
