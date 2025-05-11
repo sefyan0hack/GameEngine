@@ -44,7 +44,10 @@
 
 #if defined(WINDOWS_PLT)
 auto __GetProcAddress(LPCSTR module, const char* name) -> void* {
-    auto lib = LoadLibraryA(module);
+    auto lib = GetModuleHandleA(module);
+    if (lib == nullptr) {
+        lib = LoadLibraryA(module);
+    }
     if(lib == nullptr){
         Error("Couldnt load lib opengl32 reason: {}", GetLastError());
         return nullptr;
