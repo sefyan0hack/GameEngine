@@ -234,8 +234,6 @@ auto OpenGL::init_opengl_linux(Window window) -> void
         0
     };
 
-    Expect(&glXGetProcAddressARB != nullptr, "glXGetProcAddressARB is null");
-
     glXCreateContextAttribsARB = (decltype(glXCreateContextAttribsARB))glXGetProcAddress((const GLubyte*)"glXCreateContextAttribsARB");
 
     Expect(&glXCreateContextAttribsARB != nullptr, "glXCreateContextAttribsARB is null");
