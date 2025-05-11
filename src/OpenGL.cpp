@@ -292,27 +292,24 @@ OpenGL::OpenGL(WindHandl window, HDC_D hdcd)
     glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
     m_Debug = !!(flags & GL_CONTEXT_FLAG_DEBUG_BIT);
     
-    static bool isInitialized = false;
-    if (!isInitialized) {
-        auto vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
-        auto renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
-        m_Vendor = vendor ? vendor : "unknown";
-        m_Renderer = renderer ? renderer : "unknown";
-        #if defined(WINDOWS_PLT)
-        auto exts = reinterpret_cast<const char*>(wglGetExtensionsStringARB(m_MainHDC));
-        m_Extensions = exts ? split(exts, " ") : decltype(m_Extensions){} ;
-        #endif //_WIN32
+    auto vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+    auto renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+    m_Vendor = vendor ? vendor : "unknown";
+    m_Renderer = renderer ? renderer : "unknown";
+    #if defined(WINDOWS_PLT)
+    auto exts = reinterpret_cast<const char*>(wglGetExtensionsStringARB(m_MainHDC));
+    m_Extensions = exts ? split(exts, " ") : decltype(m_Extensions){} ;
+    #endif //_WIN32
         
-        GLint nGlslv = 0;
-        glGetIntegerv(GL_NUM_SHADING_LANGUAGE_VERSIONS, &nGlslv);
+    GLint nGlslv = 0;
+    glGetIntegerv(GL_NUM_SHADING_LANGUAGE_VERSIONS, &nGlslv);
 
-        for(GLint i = 0; i < nGlslv; i++){
-            auto r = reinterpret_cast<const char*>(glGetStringi(GL_SHADING_LANGUAGE_VERSION, static_cast<GLuint>(i)));
-            if(r) m_GlslVersions.push_back(r);
-        }
-
-        glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_MaxTextureUnits);
+    for(GLint i = 0; i < nGlslv; i++){
+        auto r = reinterpret_cast<const char*>(glGetStringi(GL_SHADING_LANGUAGE_VERSION, static_cast<GLuint>(i)));
+        if(r) m_GlslVersions.push_back(r);
     }
+
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_MaxTextureUnits);
     
 
     // glEnable(GL_CULL_FACE);
