@@ -45,7 +45,7 @@ jobs:
         shell: bash
         run: |
           rm -rf build
-          cmake -S . -B build -G  "Ninja" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+          cmake -S . -B build -G  "Ninja" -DCMAKE_BUILD_TYPE=Debug -DTESTS=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3

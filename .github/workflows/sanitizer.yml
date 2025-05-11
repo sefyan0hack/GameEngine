@@ -19,7 +19,7 @@ jobs:
 
       - name: Generate
         run: |
-          cmake -B build -S . -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DSANITIZER=${{ matrix.sanitizers }}
+          cmake -B build -S . -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DTESTS=ON -DSANITIZER=${{ matrix.sanitizers }}
 
       - name: Build
         run: cmake --build build --config Debug
