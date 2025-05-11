@@ -192,26 +192,52 @@ auto OpenGL::init_opengl_win32() -> void
 
 auto OpenGL::init_opengl_linux(Window window) -> void
 {
-    XWindowAttributes win_attr{};
-    if (!XGetWindowAttributes(m_MainHDC, window, &win_attr)) {
-        Error("Failed to get window attributes.");
-    }
-    
-    XVisualInfo visual_info_template{};
-    visual_info_template.visualid = win_attr.visual->visualid;
-    int num_visuals = 0;
-    XVisualInfo* visual_info_list = XGetVisualInfo(m_MainHDC, VisualIDMask, &visual_info_template, &num_visuals);
-    if (num_visuals == 0) {
-        Error("No matching XVisualInfo found.");
-    }
-    
-    m_Context = glXCreateContext(m_MainHDC, visual_info_list, nullptr, GL_TRUE);
-    XFree(visual_info_list);
-        
-    if (!glXMakeCurrent(m_MainHDC, window, m_Context)) {
-        Error("Failed to make context current.");
+    static int visualAttribs[] = {
+        GLX_X_RENDERABLE,  True,
+        GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+        GLX_RENDER_TYPE,   GLX_RGBA_BIT,
+        GLX_DOUBLEBUFFER,  True,
+        GLX_RED_SIZE,       8,
+        GLX_GREEN_SIZE,     8,
+        GLX_BLUE_SIZE,      8,
+        GLX_ALPHA_SIZE,     8,
+        GLX_DEPTH_SIZE,     24,
+        None
+    };
+
+    int fbcount;
+    GLXFBConfig* fbc = glXChooseFBConfig(m_Display, DefaultScreen(m_Display), visualAttribs, &fbcount);
+    if (!fbc || fbcount == 0) {
+        Error("Failed to get framebuffer config.");
     }
 
+    XVisualInfo* visInfo = glXGetVisualFromFBConfig(m_Display, fbc[0]);
+    if (!visInfo) {
+        XFree(fbc);
+        Error("Failed to get visual info.");
+    }
+
+    int contextAttribs[] = {
+        GLX_CONTEXT_MAJOR_VERSION_ARB, 4,
+        GLX_CONTEXT_MINOR_VERSION_ARB, 4,
+        GLX_CONTEXT_PROFILE_MASK_ARB,  GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
+        None
+    };
+
+    PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB = 
+        (PFNGLXCREATECONTEXTATTRIBSARBPROC)glXGetProcAddressARB((const GLubyte*)"glXCreateContextAttribsARB");
+
+    m_Context = glXCreateContextAttribsARB(m_Display, fbc[0], nullptr, True, contextAttribs);
+    XFree(fbc);
+    XFree(visInfo);
+
+    if (!m_Context) {
+        Error("Failed to create GLX context.");
+    }
+
+    if (!glXMakeCurrent(m_Display, window, m_Context)) {
+        Error("Failed to make context current.");
+    }
 }
 #endif //_WIN32
 
