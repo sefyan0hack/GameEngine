@@ -36,6 +36,7 @@ extern "C" {
     extern void* glXGetProcAddress(const GLubyte * procName);
     extern GLXFBConfig *glXChooseFBConfig( Display *dpy, int screen, const int *attribList, int *nitems );
     extern XVisualInfo *glXGetVisualFromFBConfig( Display *dpy, GLXFBConfig config );
+    extern void glXSwapBuffers(	Display * dpy, GLXDrawable drawable);   
     [[maybe_unused]] inline static auto glXCreateContextAttribsARB = (GLCTX(*)(Display *dpy, GLXFBConfig config, GLCTX share_context, Bool direct, const int *attrib_list))(nullptr);
 }
 
