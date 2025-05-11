@@ -249,6 +249,19 @@ auto OpenGL::init_opengl_linux(Window window) -> void
     if (!glXMakeCurrent(m_MainHDC, window, m_Context)) {
         Error("Failed to make context current.");
     }
+    glGetError = reinterpret_cast<decltype(glGetError)>(rsgl("glGetError"));
+
+    #ifdef DEBUG
+    #   define RESOLVEGL(type, name)\
+        name = Function<type>{};\
+        name.m_Func = reinterpret_cast<type>(rsgl(#name));\
+        name.m_Name = #name;
+    #else
+    #   define RESOLVEGL(type, name)\
+        name = reinterpret_cast<type>(rsgl(#name))
+    #endif
+
+	GLFUNCS(RESOLVEGL)
 }
 #endif //_WIN32
 
