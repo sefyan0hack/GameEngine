@@ -206,12 +206,12 @@ auto OpenGL::init_opengl_linux(Window window) -> void
     };
 
     int fbcount;
-    GLXFBConfig* fbc = glXChooseFBConfig(m_Display, DefaultScreen(m_Display), visualAttribs, &fbcount);
+    GLXFBConfig* fbc = glXChooseFBConfig(m_MainHDC, DefaultScreen(m_MainHDC), visualAttribs, &fbcount);
     if (!fbc || fbcount == 0) {
         Error("Failed to get framebuffer config.");
     }
 
-    XVisualInfo* visInfo = glXGetVisualFromFBConfig(m_Display, fbc[0]);
+    XVisualInfo* visInfo = glXGetVisualFromFBConfig(m_MainHDC, fbc[0]);
     if (!visInfo) {
         XFree(fbc);
         Error("Failed to get visual info.");
@@ -227,7 +227,7 @@ auto OpenGL::init_opengl_linux(Window window) -> void
     PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB = 
         (PFNGLXCREATECONTEXTATTRIBSARBPROC)glXGetProcAddressARB((const GLubyte*)"glXCreateContextAttribsARB");
 
-    m_Context = glXCreateContextAttribsARB(m_Display, fbc[0], nullptr, True, contextAttribs);
+    m_Context = glXCreateContextAttribsARB(m_MainHDC, fbc[0], nullptr, True, contextAttribs);
     XFree(fbc);
     XFree(visInfo);
 
@@ -235,7 +235,7 @@ auto OpenGL::init_opengl_linux(Window window) -> void
         Error("Failed to create GLX context.");
     }
 
-    if (!glXMakeCurrent(m_Display, window, m_Context)) {
+    if (!glXMakeCurrent(m_MainHDC, window, m_Context)) {
         Error("Failed to make context current.");
     }
 }
