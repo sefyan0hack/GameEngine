@@ -92,6 +92,7 @@ class OpenGL
         inline static GLint m_MaxTextureUnits;
 
         enum {
+            #if defined(WINDOWS_PLT)
             WGL_DRAW_TO_WINDOW_ARB           = 0x2001,
             WGL_ACCELERATION_ARB             = 0x2003,
             WGL_SUPPORT_OPENGL_ARB           = 0x2010,
@@ -109,8 +110,13 @@ class OpenGL
             ERROR_INVALID_VERSION_ARB        = 0x2095,
             ERROR_INVALID_PROFILE_ARB        = 0x2096,
             WGL_CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB = 0x8256,
-            #ifndef __linux__
             GL_ALL_ATTRIB_BITS               = 0x000fffff,
-            #endif //__linux__
+            #elif defined(LINUX_PLT)
+            // GLX_X_RENDERABLE                = 0x8012
+            // GLX_DRAWABLE_TYPE               = 0x8010
+            // GLX_RENDER_TYPE                 = 0x8011
+            // GLX_DOUBLEBUFFER                = 5
+            XxXxX
+            #endif 
         };
 };
