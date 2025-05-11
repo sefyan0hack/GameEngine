@@ -15,7 +15,7 @@ auto rsgl(const char* name) -> void*;
 #ifndef GL_GLEXT_PROTOTYPES
 #undef GL_GLEXT_PROTOTYPES
 #endif
-#include <GL/glext.h>
+#include <GL/glxext.h>
 struct __GLXcontextRec;
 using WindHandl = Window;
 using HDC_D     = Display*;
@@ -34,6 +34,8 @@ extern "C" {
     extern Bool  glXMakeCurrent( Display *dpy, GLXDrawable drawable, GLCTX ctx);
     extern void  glXDestroyContext( Display *dpy, GLCTX ctx );
     extern void* glXGetProcAddress(const GLubyte * procName);
+    extern GLXFBConfig *glXChooseFBConfig( Display *dpy, int screen, const int *attribList, int *nitems );
+    extern XVisualInfo *glXGetVisualFromFBConfig( Display *dpy, GLXFBConfig config );
 }
 
 #endif
