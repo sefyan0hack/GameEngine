@@ -37,7 +37,7 @@ extern "C" {
     extern GLXFBConfig *glXChooseFBConfig( Display *dpy, int screen, const int *attribList, int *nitems );
     extern XVisualInfo *glXGetVisualFromFBConfig( Display *dpy, GLXFBConfig config );
     extern void* glXGetProcAddressARB(const GLubyte *procName);
-    [[maybe_unused]] inline static auto glXCreateContextAttribsARB = (GLCTX(Display *dpy, GLXFBConfig config, GLCTX share_context, Bool direct, const int *attrib_list))(nullptr);
+    [[maybe_unused]] inline static auto glXCreateContextAttribsARB = (GLCTX(*)(Display *dpy, GLXFBConfig config, GLCTX share_context, Bool direct, const int *attrib_list))(nullptr);
 
     // extern GLCTX glXCreateContextAttribsARB(Display *dpy, GLXFBConfig config, GLCTX share_context, Bool direct, const int *attrib_list);
 }
