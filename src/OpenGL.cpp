@@ -60,6 +60,7 @@ auto __GetProcAddress(LPCSTR module, const char* name) -> void* {
     }
 }
 auto rsgl(const char* name) -> void* {
+    if defined(WINDOWS_PLT)
     void *address = (void *)_wglGetProcAddress(name);
 
     if(address == nullptr
@@ -71,8 +72,15 @@ auto rsgl(const char* name) -> void* {
         address = __GetProcAddress(OpenGL::OPENGL_MODULE_NAME, name);
         if(address == nullptr){
             Error("Couldnt load opengl function `{}` reason: {}", name, GetLastError());
-        }  
+        }
     }
+
+    #elif defined(LINUX_PLT)
+    void *address = (void *)glXGetProcAddress(name);
+    if(address == nullptr){
+        Error("Couldnt load opengl function `{}` reason: {}", name, GetLastError());
+    } 
+    #endif
 
     Info("load opengl function `{}` at : {}", name, address);
     return address;
