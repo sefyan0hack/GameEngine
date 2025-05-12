@@ -13,12 +13,14 @@ CWindow::CWindow(int m_Width, int m_Height, const char* Title)
 	, m_Keyboard(std::make_shared<Keyboard>())
 	, m_Mouse(std::make_shared<Mouse>())
 {
-    _init_helper(m_Width, m_Height, Title);
 	#if defined(WINDOWS_PLT)
+	_init_helper(m_Width, m_Height, Title);
 	m_DrawContext = GetDC(m_WindowHandle);
 	#elif defined(LINUX_PLT)
 	m_DrawContext = XOpenDisplay(nullptr);
+	_init_helper(m_Width, m_Height, Title);
 	#endif
+
     S_WindowsCount++;
     m_OpenGl = std::make_shared<OpenGL>(m_WindowHandle, m_DrawContext);
 }
