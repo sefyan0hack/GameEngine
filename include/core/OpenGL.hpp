@@ -8,7 +8,7 @@ class OpenGL
 {
   FOR_TEST(OpenGL)
     public:
-        explicit OpenGL(WindHandl window);
+        explicit OpenGL(WindHandl window, HDC_D drawContext);
         OpenGL(const OpenGL& other);
         OpenGL(OpenGL&& other) noexcept;
         ~OpenGL();

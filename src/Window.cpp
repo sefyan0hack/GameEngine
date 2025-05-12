@@ -20,7 +20,7 @@ CWindow::CWindow(int m_Width, int m_Height, const char* Title)
 	m_DrawContext = XOpenDisplay(nullptr);
 	#endif
     S_WindowsCount++;
-    m_OpenGl = std::make_shared<OpenGL>(m_WindowHandle);
+    m_OpenGl = std::make_shared<OpenGL>(m_WindowHandle, m_DrawContext);
 }
 
 CWindow::CWindow(const CWindow& other)
@@ -316,11 +316,6 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 
 auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 {
-    /* Open connection to X server */
-    m_DrawContext = XOpenDisplay(nullptr);
-    if (m_DrawContext == nullptr) {
-        Error("Cannot open display");
-    }
     
     int screen = DefaultScreen(m_DrawContext);
 
