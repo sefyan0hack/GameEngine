@@ -100,6 +100,8 @@ function(apply_compile_options)
             -Wnull-dereference -Wswitch-enum
             -Wuninitialized -Wpointer-arith -Wreturn-type -Wredundant-decls
             -fno-operator-names
+            -frtti
+            
             # Debug flags
             "$<$<CONFIG:Debug>:-ggdb>"
             "$<$<CONFIG:Debug>:-g3>"

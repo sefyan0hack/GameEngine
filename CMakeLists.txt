@@ -213,10 +213,6 @@ target_link_libraries(core
         $<$<AND:$<CXX_COMPILER_ID:GNU,Clang>,$<NOT:$<PLATFORM_ID:Windows>>>:stdc++exp>
 )
 target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
-if(MINGW)
-    target_compile_options(core PRIVATE -fno-keep-inline-dllexport)
-endif()
-
 
 include(CheckCXXSourceCompiles)
 check_cxx_source_compiles("
