@@ -5,22 +5,43 @@
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>
-[[maybe_unused]] inline static auto _wglMakeCurrent = decltype(&wglMakeCurrent)(nullptr);
-[[maybe_unused]] inline static auto _wglCreateContext =  decltype(&wglCreateContext)(nullptr);
-[[maybe_unused]] inline static auto _wglGetProcAddress = decltype(&wglGetProcAddress)(nullptr);
-[[maybe_unused]] inline static auto _wglDeleteContext = decltype(&wglDeleteContext)(nullptr);
-[[maybe_unused]] inline static auto _wglCopyContext = decltype(&wglCopyContext)(nullptr);
-[[maybe_unused]] inline static auto _wglCreateLayerContext = decltype(&wglCreateLayerContext)(nullptr);
-[[maybe_unused]] inline static auto _wglGetCurrentContext = decltype(&wglGetCurrentContext)(nullptr);
-[[maybe_unused]] inline static auto _wglGetCurrentDC = decltype(&wglGetCurrentDC)(nullptr);
-[[maybe_unused]] inline static auto _wglShareLists = decltype(&wglShareLists)(nullptr);
-[[maybe_unused]] inline static auto _wglUseFontBitmapsA = decltype(&wglUseFontBitmapsA)(nullptr);
-[[maybe_unused]] inline static auto _wglUseFontBitmapsW = decltype(&wglUseFontBitmapsW)(nullptr);
+using WindHandl = HWND;
+using HDC_D     = HDC;
+using GLCTX     = HGLRC;
 
-[[maybe_unused]] inline static auto wglCreateContextAttribsARB = (HGLRC(WINAPI*)(HDC, HGLRC, const int*))(nullptr);
-[[maybe_unused]] inline static auto wglGetExtensionsStringARB = (const char *(WINAPI*)(HDC))(nullptr);
+[[maybe_unused]] inline static auto wglCreateContextAttribsARB = (GLCTX(WINAPI*)(HDC_D, GLCTX, const int*))(nullptr);
+[[maybe_unused]] inline static auto wglGetExtensionsStringARB = (const char *(WINAPI*)(HDC_D))(nullptr);
 [[maybe_unused]] inline static auto wglSwapIntervalEXT = (BOOL(APIENTRY*)(int))(nullptr);
 
+#elif defined(LINUX_PLT)
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+
+struct __GLXcontextRec;
+using WindHandl = Window;
+using HDC_D     = Display*;
+using GLCTX     = __GLXcontextRec*;
+
+typedef XID GLXPixmap;
+typedef XID GLXDrawable;
+/* GLX 1.3 and later */
+typedef struct __GLXFBConfigRec *GLXFBConfig;
+typedef XID GLXFBConfigID;
+typedef XID GLXContextID;
+typedef XID GLXWindow;
+typedef XID GLXPbuffer;
+extern "C" {
+    extern GLCTX glXCreateContext( HDC_D *dpy, XVisualInfo *vis, GLCTX shareList, Bool direct );
+    extern Bool  glXMakeCurrent( HDC_D *dpy, GLXDrawable drawable, GLCTX ctx);
+    extern void  glXDestroyContext( HDC_D *dpy, GLCTX ctx );
+    extern void* glXGetProcAddress(const GLubyte * procName);
+    extern GLXFBConfig *glXChooseFBConfig( HDC_D *dpy, int screen, const int *attribList, int *nitems );
+    extern XVisualInfo *glXGetVisualFromFBConfig( HDC_D *dpy, GLXFBConfig config );
+    extern void glXSwapBuffers(	HDC_D * dpy, GLXDrawable drawable);
+    extern const char * glXQueryExtensionsString(HDC_D * dpy, int screen);
+}
+
+[[maybe_unused]] inline static auto glXCreateContextAttribsARB = (GLCTX(*)(HDC_D *dpy, GLXFBConfig config, GLCTX share_context, Bool direct, const int *attrib_list))(nullptr);
 #endif 
 
 #ifdef __GNUG__

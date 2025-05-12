@@ -66,7 +66,7 @@ auto __GetProcAddress(LPCSTR module, const char* name) -> void* {
 
 auto rsgl(const char* name) -> void* {
     #if defined(WINDOWS_PLT)
-    void *address = (void *)_wglGetProcAddress(name);
+    void *address = (void *)wglGetProcAddress(name);
 
     if(address == nullptr
     || address == reinterpret_cast<void*>(0x1)
@@ -115,28 +115,14 @@ auto OpenGL::init_opengl_win32() -> void
         Error("Failed to set the pixel format.");
     }
 
-    _wglMakeCurrent     = (decltype(_wglMakeCurrent))__GetProcAddress(OPENGL_MODULE_NAME, "wglMakeCurrent");
-    _wglCreateContext   = (decltype(_wglCreateContext))__GetProcAddress(OPENGL_MODULE_NAME, "wglCreateContext");
-    _wglGetProcAddress  = (decltype(_wglGetProcAddress))__GetProcAddress(OPENGL_MODULE_NAME, "wglGetProcAddress");
-    _wglDeleteContext   = (decltype(_wglDeleteContext))__GetProcAddress(OPENGL_MODULE_NAME, "wglDeleteContext");
-    _wglCopyContext     = (decltype(_wglCopyContext))__GetProcAddress(OPENGL_MODULE_NAME, "wglCopyContext");
-
-    if (!_wglMakeCurrent
-        || !_wglCreateContext
-        || !_wglGetProcAddress
-        || !_wglDeleteContext) {
-        Error("Failed to load required WGL function.");
-    }
-
-
     GLCTX dummy_context = nullptr;
 
-    dummy_context = _wglCreateContext(m_MainHDC);
+    dummy_context = wglCreateContext(m_MainHDC);
     if (!dummy_context) {
         Error("Failed to create a dummy OpenGL rendering context.");
     }
 
-    if (!_wglMakeCurrent(m_MainHDC, dummy_context)) {
+    if (!wglMakeCurrent(m_MainHDC, dummy_context)) {
         Error("Failed to activate dummy OpenGL rendering context.");
     }
 
@@ -161,7 +147,7 @@ auto OpenGL::init_opengl_win32() -> void
 
     GLCTX opengl_context = nullptr;
     if (nullptr == (opengl_context = wglCreateContextAttribsARB(m_MainHDC, nullptr, gl_attribs))) {
-        _wglDeleteContext(dummy_context);
+        wglDeleteContext(dummy_context);
         m_Context = nullptr;
 
         if (GetLastError() == ERROR_INVALID_VERSION_ARB){ // ?
@@ -170,8 +156,8 @@ auto OpenGL::init_opengl_win32() -> void
         Error("Failed to create the final rendering context!");
     }
 
-    _wglMakeCurrent(m_MainHDC, opengl_context); // conseder to make it curent in window.hpp maybe
-    _wglDeleteContext(dummy_context);
+    wglMakeCurrent(m_MainHDC, opengl_context); // conseder to make it curent in window.hpp maybe
+    wglDeleteContext(dummy_context);
 
     m_Context =  opengl_context;
 
@@ -307,10 +293,14 @@ OpenGL::OpenGL(WindHandl window, HDC_D hdcd)
     auto renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
     m_Vendor = vendor ? vendor : "unknown";
     m_Renderer = renderer ? renderer : "unknown";
+
     #if defined(WINDOWS_PLT)
     auto exts = reinterpret_cast<const char*>(wglGetExtensionsStringARB(m_MainHDC));
+    #elif defined(LINUX_PLT)
+    auto exts = reinterpret_cast<const char*>(glXQueryExtensionsString(m_MainHDC, DefaultScreen(m_MainHDC)));
+    #endif
+
     m_Extensions = exts ? split(exts, " ") : decltype(m_Extensions){} ;
-    #endif //_WIN32
         
     GLint nGlslv = 0;
     glGetIntegerv(GL_NUM_SHADING_LANGUAGE_VERSIONS, &nGlslv);
@@ -435,8 +425,8 @@ OpenGL::operator bool() const
 OpenGL::~OpenGL()
 {
     #if defined(WINDOWS_PLT)
-    _wglMakeCurrent(nullptr, nullptr);
-    _wglDeleteContext(m_Context);
+    wglMakeCurrent(nullptr, nullptr);
+    wglDeleteContext(m_Context);
     #elif defined(LINUX_PLT)
     glXDestroyContext(m_MainHDC, m_Context);
     #endif //_WIN32

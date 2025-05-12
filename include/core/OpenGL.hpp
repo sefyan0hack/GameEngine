@@ -3,44 +3,10 @@
 #include <core/gl.h>
 
 #if defined(WINDOWS_PLT)
-#include <windows.h>
-using WindHandl = HWND;
-using HDC_D     = HDC;
-using GLCTX     = HGLRC;
 auto __GetProcAddress(LPCSTR module, const char* name) -> void*;
+#endif
+
 auto rsgl(const char* name) -> void*;
-#elif defined(LINUX_PLT)
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#ifndef GL_GLEXT_PROTOTYPES
-#undef GL_GLEXT_PROTOTYPES
-#endif
-// #include <GL/glxext.h>
-struct __GLXcontextRec;
-using WindHandl = Window;
-using HDC_D     = Display*;
-using GLCTX     = __GLXcontextRec*;
-
-typedef XID GLXPixmap;
-typedef XID GLXDrawable;
-/* GLX 1.3 and later */
-typedef struct __GLXFBConfigRec *GLXFBConfig;
-typedef XID GLXFBConfigID;
-typedef XID GLXContextID;
-typedef XID GLXWindow;
-typedef XID GLXPbuffer;
-extern "C" {
-    extern GLCTX glXCreateContext( Display *dpy, XVisualInfo *vis, GLCTX shareList, Bool direct );
-    extern Bool  glXMakeCurrent( Display *dpy, GLXDrawable drawable, GLCTX ctx);
-    extern void  glXDestroyContext( Display *dpy, GLCTX ctx );
-    extern void* glXGetProcAddress(const GLubyte * procName);
-    extern GLXFBConfig *glXChooseFBConfig( Display *dpy, int screen, const int *attribList, int *nitems );
-    extern XVisualInfo *glXGetVisualFromFBConfig( Display *dpy, GLXFBConfig config );
-    extern void glXSwapBuffers(	Display * dpy, GLXDrawable drawable);   
-    [[maybe_unused]] inline static auto glXCreateContextAttribsARB = (GLCTX(*)(Display *dpy, GLXFBConfig config, GLCTX share_context, Bool direct, const int *attrib_list))(nullptr);
-}
-
-#endif
 
 class OpenGL
 {
