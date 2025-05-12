@@ -22,6 +22,8 @@ endif()
 # Options
 ####################################################################################################
 option(TESTS            "enable tests"              OFF)
+option(STATIC_LINK_CXX  "link dependencies"         ON)
+
 set(SANITIZER "" CACHE STRING "Enable sanitizers (address, undefined, etc.)")
 
 if(NOT "${SANITIZER}" STREQUAL "")
@@ -33,6 +35,10 @@ if(NOT "${SANITIZER}" STREQUAL "")
         add_compile_options(-fsanitize=${SANITIZER})
         add_link_options(-fsanitize=${SANITIZER})
     endif()
+endif()
+
+if(STATIC_LINK_CXX)
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++")
 endif()
 
 ####################################################################################################

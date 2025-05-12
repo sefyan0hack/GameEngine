@@ -212,7 +212,7 @@ auto OpenGL::init_opengl_linux() -> void
 }
 #endif
 
-OpenGL::OpenGL(WindHandl window, HDC_D drawContext)
+OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     : m_Context(nullptr)
     , m_DrawContext(drawContext)
     , m_Major(0)
