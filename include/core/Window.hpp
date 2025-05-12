@@ -63,7 +63,7 @@ class CWindow
         static auto CALLBACK WinProcSetup2(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT ;
         auto CALLBACK WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)           -> LRESULT ;
         #endif
-        auto _init_helper(int Width, int Height, const TCHAR* Title)                         -> void ;
+        auto _init_helper(int Width, int Height, const char* Title)                         -> void ;
     private:
         WindHandl m_WindowHandle;
         HDC_D m_DrawContext;

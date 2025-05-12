@@ -17,7 +17,7 @@ CWindow::CWindow(int m_Width, int m_Height, const char* Title)
 	#if defined(WINDOWS_PLT)
 	m_DrawContext = GetDC(m_WindowHandle);
 	#elif defined(LINUX_PLT)
-	m_DrawContext = XOpenDisplay(nullptr)
+	m_DrawContext = XOpenDisplay(nullptr);
 	#endif
     S_WindowsCount++;
     m_OpenGl = std::make_shared<OpenGL>(m_WindowHandle);
@@ -273,7 +273,7 @@ auto CWindow::ProcessMessages() -> void
     // }
 	#endif
 }
-auto CWindow::_init_helper(int Width, int Height, const TCHAR* Title) -> void
+auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 {
     WinClass::Instance();
 
