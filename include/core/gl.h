@@ -31,17 +31,17 @@ typedef XID GLXContextID;
 typedef XID GLXWindow;
 typedef XID GLXPbuffer;
 extern "C" {
-    extern GLCTX glXCreateContext( HDC_D *dpy, XVisualInfo *vis, GLCTX shareList, Bool direct );
-    extern Bool  glXMakeCurrent( HDC_D *dpy, GLXDrawable drawable, GLCTX ctx);
-    extern void  glXDestroyContext( HDC_D *dpy, GLCTX ctx );
+    extern GLCTX glXCreateContext( HDC_D dpy, XVisualInfo *vis, GLCTX shareList, Bool direct );
+    extern Bool  glXMakeCurrent( HDC_D dpy, GLXDrawable drawable, GLCTX ctx);
+    extern void  glXDestroyContext( HDC_D dpy, GLCTX ctx );
     extern void* glXGetProcAddress(const GLubyte * procName);
-    extern GLXFBConfig *glXChooseFBConfig( HDC_D *dpy, int screen, const int *attribList, int *nitems );
-    extern XVisualInfo *glXGetVisualFromFBConfig( HDC_D *dpy, GLXFBConfig config );
-    extern void glXSwapBuffers(	HDC_D * dpy, GLXDrawable drawable);
-    extern const char * glXQueryExtensionsString(HDC_D * dpy, int screen);
+    extern GLXFBConfig *glXChooseFBConfig( HDC_D dpy, int screen, const int *attribList, int *nitems );
+    extern XVisualInfo *glXGetVisualFromFBConfig( HDC_D dpy, GLXFBConfig config );
+    extern void glXSwapBuffers(	HDC_D dpy, GLXDrawable drawable);
+    extern const char * glXQueryExtensionsString(HDC_D dpy, int screen);
 }
 
-[[maybe_unused]] inline static auto glXCreateContextAttribsARB = (GLCTX(*)(HDC_D *dpy, GLXFBConfig config, GLCTX share_context, Bool direct, const int *attrib_list))(nullptr);
+[[maybe_unused]] inline static auto glXCreateContextAttribsARB = (GLCTX(*)(HDC_D dpy, GLXFBConfig config, GLCTX share_context, Bool direct, const int *attrib_list))(nullptr);
 #endif 
 
 #ifdef __GNUG__
