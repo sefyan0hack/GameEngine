@@ -2,17 +2,13 @@
 
 #include <core/gl.h>
 
-#if defined(WINDOWS_PLT)
-auto __GetProcAddress(LPCSTR module, const char* name) -> void*;
-#endif
-
-auto rsgl(const char* name) -> void*;
+constexpr const char* OPENGL_MODULE_NAME {OPENGL_LIB};
 
 class OpenGL
 {
   FOR_TEST(OpenGL)
     public:
-        explicit OpenGL(WindHandl window, HDC_D hdcd = HDC_D{});
+        explicit OpenGL(WindHandl window);
         OpenGL(const OpenGL& other);
         OpenGL(OpenGL&& other) noexcept;
         ~OpenGL();
@@ -23,6 +19,7 @@ class OpenGL
         operator bool () const;
 
     public:
+        auto Context() const -> GLCTX;
         auto DrawContext() const -> HDC_D;
         auto MajorV() const -> GLint;
         auto MinorV() const -> GLint;
@@ -37,18 +34,17 @@ class OpenGL
         static auto MaxTextureUnits() -> GLint;
 
     private:
+        friend auto rsgl(const char* name) -> void*;
         #if defined(WINDOWS_PLT)
         friend auto __GetProcAddress(LPCSTR module, const char* name) -> void*;
-        friend auto rsgl(const char* name) -> void*;
-        inline static LPCSTR OPENGL_MODULE_NAME {OPENGL_LIB};    
         auto init_opengl_win32()              -> void ;
         #elif defined(LINUX_PLT)
-        auto init_opengl_linux(Window window) -> void ;
+        auto init_opengl_linux()              -> void ;
         #endif //_WIN32
 
     private:
         GLCTX m_Context;
-        HDC_D m_MainHDC;
+        HDC_D m_DrawContext;
         GLint m_Major;
         GLint m_Minor;
         std::time_t m_CreationTime;
@@ -69,7 +65,7 @@ class OpenGL
             CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB  = 0x8256,
             CONTEXT_PROFILE_MASK_ARB      = 0x9126,
             GL_ALL_ATTRIB_BITS               = 0x000fffff,
-            
+
             #if defined(WINDOWS_PLT)
             WGL_DRAW_TO_WINDOW_ARB           = 0x2001,
             WGL_ACCELERATION_ARB             = 0x2003,

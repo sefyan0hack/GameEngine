@@ -44,10 +44,8 @@
 
 #if defined(WINDOWS_PLT)
 auto __GetProcAddress(LPCSTR module, const char* name) -> void* {
-    auto lib = GetModuleHandleA(module);
-    if (lib == nullptr) {
-        lib = LoadLibraryA(module);
-    }
+    auto lib = LoadLibraryA(module);
+
     if(lib == nullptr){
         Error("Couldnt load lib opengl32 reason: {}", GetLastError());
         return nullptr;
@@ -74,7 +72,7 @@ auto rsgl(const char* name) -> void* {
     || address == reinterpret_cast<void*>(0x3)
     || address == reinterpret_cast<void*>(-1))
     {
-        address = __GetProcAddress(OpenGL::OPENGL_MODULE_NAME, name);
+        address = __GetProcAddress(OPENGL_MODULE_NAME, name);
         if(address == nullptr){
             Error("Couldnt load opengl function `{}` reason: {}", name, GetLastError());
         }
@@ -107,22 +105,22 @@ auto OpenGL::init_opengl_win32() -> void
     pfd.cStencilBits = 8;
     pfd.iLayerType = PFD_MAIN_PLANE;
 
-    auto pixel_format = ChoosePixelFormat(m_MainHDC, &pfd);
+    auto pixel_format = ChoosePixelFormat(m_DrawContext, &pfd);
     if (!pixel_format) {
         Error("Failed to find a suitable pixel format.");
     }
-    if (!SetPixelFormat(m_MainHDC, pixel_format, &pfd)) {
+    if (!SetPixelFormat(m_DrawContext, pixel_format, &pfd)) {
         Error("Failed to set the pixel format.");
     }
 
     GLCTX dummy_context = nullptr;
 
-    dummy_context = wglCreateContext(m_MainHDC);
+    dummy_context = wglCreateContext(m_DrawContext);
     if (!dummy_context) {
         Error("Failed to create a dummy OpenGL rendering context.");
     }
 
-    if (!wglMakeCurrent(m_MainHDC, dummy_context)) {
+    if (!wglMakeCurrent(m_DrawContext, dummy_context)) {
         Error("Failed to activate dummy OpenGL rendering context.");
     }
 
@@ -146,7 +144,7 @@ auto OpenGL::init_opengl_win32() -> void
 
 
     GLCTX opengl_context = nullptr;
-    if (nullptr == (opengl_context = wglCreateContextAttribsARB(m_MainHDC, nullptr, gl_attribs))) {
+    if (nullptr == (opengl_context = wglCreateContextAttribsARB(m_DrawContext, nullptr, gl_attribs))) {
         wglDeleteContext(dummy_context);
         m_Context = nullptr;
 
@@ -156,30 +154,15 @@ auto OpenGL::init_opengl_win32() -> void
         Error("Failed to create the final rendering context!");
     }
 
-    wglMakeCurrent(m_MainHDC, opengl_context); // conseder to make it curent in window.hpp maybe
     wglDeleteContext(dummy_context);
 
     m_Context =  opengl_context;
-
-    glGetError = reinterpret_cast<decltype(glGetError)>(rsgl("glGetError"));
-
-    #ifdef DEBUG
-    #   define RESOLVEGL(type, name)\
-        name = Function<type>{};\
-        name.m_Func = reinterpret_cast<type>(rsgl(#name));\
-        name.m_Name = #name;
-    #else
-    #   define RESOLVEGL(type, name)\
-        name = reinterpret_cast<type>(rsgl(#name))
-    #endif
-
-	GLFUNCS(RESOLVEGL)
 }
 
 
 #elif defined(LINUX_PLT)
 
-auto OpenGL::init_opengl_linux(Window window) -> void
+auto OpenGL::init_opengl_linux() -> void
 {
     static int visualAttribs[] = {
         GLX_X_RENDERABLE,  true,
@@ -195,12 +178,12 @@ auto OpenGL::init_opengl_linux(Window window) -> void
     };
 
     int fbcount;
-    GLXFBConfig* fbc = glXChooseFBConfig(m_MainHDC, DefaultScreen(m_MainHDC), visualAttribs, &fbcount);
+    GLXFBConfig* fbc = glXChooseFBConfig(m_DrawContext, DefaultScreen(m_DrawContext), visualAttribs, &fbcount);
     if (!fbc || fbcount == 0) {
         Error("Failed to get framebuffer config.");
     }
 
-    XVisualInfo* visInfo = glXGetVisualFromFBConfig(m_MainHDC, fbc[0]);
+    XVisualInfo* visInfo = glXGetVisualFromFBConfig(m_DrawContext, fbc[0]);
     if (!visInfo) {
         XFree(fbc);
         Error("Failed to get visual info.");
@@ -219,17 +202,37 @@ auto OpenGL::init_opengl_linux(Window window) -> void
 
     glXCreateContextAttribsARB = (decltype(glXCreateContextAttribsARB))glXGetProcAddress((const GLubyte*)"glXCreateContextAttribsARB");
 
-    m_Context = glXCreateContextAttribsARB(m_MainHDC, fbc[0], nullptr, True, contextAttribs);
+    m_Context = glXCreateContextAttribsARB(m_DrawContext, fbc[0], nullptr, True, contextAttribs);
     XFree(fbc);
     XFree(visInfo);
 
     if (!m_Context) {
         Error("Failed to create GLX context.");
     }
+}
+#endif
 
-    if (!glXMakeCurrent(m_MainHDC, window, m_Context)) {
+OpenGL::OpenGL(WindHandl window)
+    : m_Context(nullptr)
+    , m_DrawContext(GetDC(window))
+    , m_Major(0)
+    , m_Minor(0)
+    , m_CreationTime(std::time(nullptr))
+    , m_Debug(false)
+{
+    #if defined(WINDOWS_PLT)
+    init_opengl_win32();
+    if (!wglMakeCurrent(m_DrawContext, m_Context)){
+		Error("Failed to make context current.");
+	}
+    #elif defined(LINUX_PLT)
+    init_opengl_linux();
+    if (!glXMakeCurrent(m_DrawContext, window, m_Context)) {
         Error("Failed to make context current.");
     }
+    #endif //_WIN32
+
+
     glGetError = reinterpret_cast<decltype(glGetError)>(rsgl("glGetError"));
 
     #ifdef DEBUG
@@ -243,40 +246,6 @@ auto OpenGL::init_opengl_linux(Window window) -> void
     #endif
 
 	GLFUNCS(RESOLVEGL)
-}
-#endif //_WIN32
-
-OpenGL::OpenGL(WindHandl window, HDC_D hdcd)
-    : m_Context(nullptr)
-    , m_Major(0)
-    , m_Minor(0)
-    , m_CreationTime(std::time(nullptr))
-    , m_Debug(false)
-{
-    #if defined(WINDOWS_PLT)
-    if(hdcd == HDC_D{})
-        m_MainHDC = GetDC(window);
-    else
-        m_MainHDC = hdcd;
-
-    
-    if( m_MainHDC == nullptr){
-        Error("HDC not valid");
-    }
-    init_opengl_win32();
-    
-    #elif defined(LINUX_PLT)
-    if(hdcd == HDC_D{})
-        Error("invalid HDC_D");
-    else
-        m_MainHDC = hdcd;
-
-    if( m_MainHDC == nullptr){
-        Error("HDC not valid");
-    }
-
-    init_opengl_linux(window);
-    #endif //_WIN32
 
     glGetIntegerv(GL_MAJOR_VERSION, &m_Major);
     glGetIntegerv(GL_MINOR_VERSION, &m_Minor);
@@ -290,9 +259,9 @@ OpenGL::OpenGL(WindHandl window, HDC_D hdcd)
     m_Renderer = renderer ? renderer : "unknown";
 
     #if defined(WINDOWS_PLT)
-    auto exts = reinterpret_cast<const char*>(wglGetExtensionsStringARB(m_MainHDC));
+    auto exts = reinterpret_cast<const char*>(wglGetExtensionsStringARB(m_DrawContext));
     #elif defined(LINUX_PLT)
-    auto exts = reinterpret_cast<const char*>(glXQueryExtensionsString(m_MainHDC, DefaultScreen(m_MainHDC)));
+    auto exts = reinterpret_cast<const char*>(glXQueryExtensionsString(m_DrawContext, DefaultScreen(m_DrawContext)));
     #endif
 
     m_Extensions = exts ? split(exts, " ") : decltype(m_Extensions){} ;
@@ -344,7 +313,7 @@ OpenGL::OpenGL(WindHandl window, HDC_D hdcd)
 
 OpenGL::OpenGL(const OpenGL &other)
     : m_Context(nullptr)
-    , m_MainHDC(other.m_MainHDC)
+    , m_DrawContext(other.m_DrawContext)
     , m_Major(other.m_Major)
     , m_Minor(other.m_Minor)
     , m_CreationTime(std::time(nullptr))
@@ -354,7 +323,7 @@ OpenGL::OpenGL(const OpenGL &other)
     auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
     if(tst != TRUE) Error("couldn't Copy Opengl Context");
     #elif defined(LINUX_PLT)
-    glXCopyContext(this->m_MainHDC, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
+    glXCopyContext(this->m_DrawContext, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
     // no error check for now  ` X11 ` Shit
     #endif
 }
@@ -363,7 +332,7 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL
 {
     if(*this != other){
         this->m_Context = nullptr;
-        this->m_MainHDC = other.m_MainHDC;    
+        this->m_DrawContext = other.m_DrawContext;    
         this->m_Major = other.m_Major;
         this->m_Minor = other.m_Minor;
         this->m_CreationTime = std::time(nullptr);
@@ -373,7 +342,7 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL
         auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
         if(tst != TRUE) Error("couldn't Copy Opengl Context");
         #elif defined(LINUX_PLT)
-        glXCopyContext(this->m_MainHDC, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
+        glXCopyContext(this->m_DrawContext, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
         // no error check for now  ` X11 ` Shit
         #endif //_WIN32
     }
@@ -382,7 +351,7 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL
 
 OpenGL::OpenGL(OpenGL &&other) noexcept
     : m_Context(std::exchange(other.m_Context, nullptr))
-    , m_MainHDC(std::exchange(other.m_MainHDC, nullptr))
+    , m_DrawContext(std::exchange(other.m_DrawContext, nullptr))
     , m_Major(std::exchange(other.m_Major, 0))
     , m_Minor(std::exchange(other.m_Minor, 0))
     , m_CreationTime(std::exchange(other.m_CreationTime, 0))
@@ -394,7 +363,7 @@ auto OpenGL::operator=(OpenGL &&other) noexcept -> OpenGL
 {
     if(*this != other){
         this->m_Context = std::exchange(other.m_Context, nullptr);
-        this->m_MainHDC = std::exchange(other.m_MainHDC, nullptr);
+        this->m_DrawContext = std::exchange(other.m_DrawContext, nullptr);
         this->m_Major = std::exchange(other.m_Major, 0);
         this->m_Minor = std::exchange(other.m_Minor, 0);
         this->m_CreationTime = std::exchange(other.m_CreationTime, 0);
@@ -425,14 +394,19 @@ OpenGL::~OpenGL()
     wglMakeCurrent(nullptr, nullptr);
     wglDeleteContext(m_Context);
     #elif defined(LINUX_PLT)
-    glXMakeCurrent(m_MainHDC, Window{},  GLCTX{});
-    glXDestroyContext(m_MainHDC, m_Context);
+    glXMakeCurrent(m_DrawContext, Window{},  GLCTX{});
+    glXDestroyContext(m_DrawContext, m_Context);
     #endif
+}
+
+auto OpenGL::Context() const -> GLCTX
+{
+    return m_Context;
 }
 
 auto OpenGL::DrawContext() const -> HDC_D
 {
-    return m_MainHDC;
+    return m_DrawContext;
 }
 
 auto OpenGL::MajorV() const -> GLint

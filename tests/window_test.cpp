@@ -6,7 +6,6 @@
 using namespace std;
 // class CWindow_Test : public ::testing::Test {
 //     public:
-//     static auto Hinstance(const CWindow& w)     -> HINSTANCE { return w.m_Instance; }
 //     static auto WindowHandle(const CWindow& w)  -> HWND      { return w.m_WindowHandle; }
 //     static auto DrawContext(const CWindow& w)   -> HDC       { return w.m_HDC; }
 //     static auto Width(const CWindow& w)         -> int       { return w.m_Width; }
