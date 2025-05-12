@@ -221,6 +221,7 @@ add_compile_definitions(
     PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
     OPENGL_LIB="${CORE_OPENGL_LIB}"
     $<$<BOOL:${HAS_STD_STACKTRACE}>:HAS_STD_STACKTRACE>
+    $<$<CONFIG:Debug>:DEBUG>
 )
 
 ####################################################################################################
