@@ -61,6 +61,13 @@ class OpenGL
         inline static GLint m_MaxTextureUnits;
 
         enum {
+            CONTEXT_MAJOR_VERSION_ARB     = 0x2091,
+            CONTEXT_MINOR_VERSION_ARB     = 0x2092,
+            CONTEXT_FLAGS_ARB             = 0x2094,
+            CONTEXT_CORE_PROFILE_BIT_ARB  = 0x00000001,
+            CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB = 0x00000002,
+            CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB  = 0x8256,
+            CONTEXT_PROFILE_MASK_ARB      = 0x9126,
             #if defined(WINDOWS_PLT)
             WGL_DRAW_TO_WINDOW_ARB           = 0x2001,
             WGL_ACCELERATION_ARB             = 0x2003,
@@ -72,13 +79,8 @@ class OpenGL
             WGL_STENCIL_BITS_ARB             = 0x2023,
             WGL_FULL_ACCELERATION_ARB        = 0x2027,
             WGL_TYPE_RGBA_ARB                = 0x202B,
-            WGL_CONTEXT_MAJOR_VERSION_ARB    = 0x2091,
-            WGL_CONTEXT_MINOR_VERSION_ARB    = 0x2092,
-            WGL_CONTEXT_FLAGS_ARB            = 0x2094,
-            WGL_CONTEXT_PROFILE_MASK_ARB     = 0x9126,
             ERROR_INVALID_VERSION_ARB        = 0x2095,
             ERROR_INVALID_PROFILE_ARB        = 0x2096,
-            WGL_CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB = 0x8256,
             GL_ALL_ATTRIB_BITS               = 0x000fffff,
             #elif defined(LINUX_PLT)
             GLX_NONE        			    = 0x8000,
