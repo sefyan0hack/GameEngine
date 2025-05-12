@@ -38,7 +38,15 @@ if(NOT "${SANITIZER}" STREQUAL "")
 endif()
 
 if(STATIC_LINK_CXX)
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++")
+    if(MSVC)
+        foreach(flag_var
+            CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
+            CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE)
+            set(${flag_var}  "${flag_var} /MT ")
+        endforeach()
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static -static-libgcc -static-libstdc++")
+    endif()
 endif()
 
 ####################################################################################################
