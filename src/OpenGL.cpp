@@ -427,7 +427,7 @@ OpenGL::~OpenGL()
     wglMakeCurrent(nullptr, nullptr);
     wglDeleteContext(m_Context);
     #elif defined(LINUX_PLT)
-    glXMakeCurrent(m_MainHDC, nullptr, nullptr);
+    glXMakeCurrent(m_MainHDC, Window{},  GLCTX{});
     glXDestroyContext(m_MainHDC, m_Context);
     #endif
 }
