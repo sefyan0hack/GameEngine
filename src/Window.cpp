@@ -24,8 +24,8 @@ CWindow::CWindow(int m_Width, int m_Height, const char* Title)
 }
 
 CWindow::CWindow(const CWindow& other)
-	: m_DrawContext(other.m_DrawContext)
-	, m_WindowHandle(other.m_WindowHandle)
+	: m_WindowHandle(other.m_WindowHandle)
+	, m_DrawContext(other.m_DrawContext)
 	, m_Width(other.m_Width)
 	, m_Height(other.m_Height)
 	, m_Visible(other.m_Visible)
