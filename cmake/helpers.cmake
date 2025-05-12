@@ -66,7 +66,6 @@ function(apply_compile_options)
                 "$<$<CONFIG:Release>:/Zi>"
                 "$<$<CONFIG:Release>:/Zo>"
                 "$<$<CONFIG:Release>:/Oy->"
-                "$<$<CONFIG:Release>:/DNDEBUG>"
             )
             target_link_options(${target} PRIVATE
                 "$<$<CONFIG:Debug>:/DEBUG>"                     # Debugger-optimized linking (Debug)
@@ -111,7 +110,6 @@ function(apply_compile_options)
             "$<$<CONFIG:Release>:-O3>"
             "$<$<CONFIG:Release>:-g1>"
             # "$<$<CONFIG:Release>:-march=native>"  #enable when dnt need to send the app
-            "$<$<CONFIG:Release>:-DNDEBUG>"
             "$<$<CONFIG:Release>:-funwind-tables>"
             "$<$<CONFIG:Release>:-fasynchronous-unwind-tables>"
             "$<$<CONFIG:Release>:-ffunction-sections>"
