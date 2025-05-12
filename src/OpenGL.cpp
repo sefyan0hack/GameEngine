@@ -354,10 +354,11 @@ OpenGL::OpenGL(const OpenGL &other)
 {
     #if defined(WINDOWS_PLT)
     auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
-    #elif defined(LINUX_PLT)
-    auto tst = glXCopyContext(this->m_MainHDC, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
-    #endif
     if(tst != TRUE) Error("couldn't Copy Opengl Context");
+    #elif defined(LINUX_PLT)
+    glXCopyContext(this->m_MainHDC, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
+    // no error check for now  ` X11 ` Shit
+    #endif
 }
 
 auto OpenGL::operator=(const OpenGL &other) -> OpenGL
@@ -372,10 +373,11 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL
 
         #if defined(WINDOWS_PLT)
         auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
-        #elif defined(LINUX_PLT)
-        auto tst = glXCopyContext(this->m_MainHDC, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
-        #endif //_WIN32
         if(tst != TRUE) Error("couldn't Copy Opengl Context");
+        #elif defined(LINUX_PLT)
+        glXCopyContext(this->m_MainHDC, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
+        // no error check for now  ` X11 ` Shit
+        #endif //_WIN32
     }
     return *this;
 }
