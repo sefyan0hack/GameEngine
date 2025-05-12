@@ -39,6 +39,7 @@ extern "C" {
     extern XVisualInfo *glXGetVisualFromFBConfig( HDC_D dpy, GLXFBConfig config );
     extern void glXSwapBuffers(	HDC_D dpy, GLXDrawable drawable);
     extern const char * glXQueryExtensionsString(HDC_D dpy, int screen);
+    extern void glXCopyContext( HDC_D dpy, GLCTX src, GLCTX dst, unsigned long mask);
 }
 
 [[maybe_unused]] inline static auto glXCreateContextAttribsARB = (GLCTX(*)(HDC_D dpy, GLXFBConfig config, GLCTX share_context, Bool direct, const int *attrib_list))(nullptr);

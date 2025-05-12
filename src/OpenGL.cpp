@@ -352,12 +352,12 @@ OpenGL::OpenGL(const OpenGL &other)
     , m_CreationTime(std::time(nullptr))
     , m_Debug(other.m_Debug)
 {
-    #if _WIN32
+    #if defined(WINDOWS_PLT)
     auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
-    if(tst != TRUE) Error("couldn't Copy Opengl Context");
     #elif defined(LINUX_PLT)
-    #warning "not impl for linux"
-    #endif //_WIN32
+    auto tst = glXCopyContext(this->m_MainHDC, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
+    #endif
+    if(tst != TRUE) Error("couldn't Copy Opengl Context");
 }
 
 auto OpenGL::operator=(const OpenGL &other) -> OpenGL
@@ -370,12 +370,12 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL
         this->m_CreationTime = std::time(nullptr);
         this->m_Debug = other.m_Debug;
 
-        #if _WIN32
+        #if defined(WINDOWS_PLT)
         auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
-        if(tst != TRUE) Error("couldn't Copy Opengl Context");
         #elif defined(LINUX_PLT)
-        #warning "not impl for linux"
+        auto tst = glXCopyContext(this->m_MainHDC, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
         #endif //_WIN32
+        if(tst != TRUE) Error("couldn't Copy Opengl Context");
     }
     return *this;
 }
@@ -425,8 +425,9 @@ OpenGL::~OpenGL()
     wglMakeCurrent(nullptr, nullptr);
     wglDeleteContext(m_Context);
     #elif defined(LINUX_PLT)
+    glXMakeCurrent(m_MainHDC, nullptr, nullptr);
     glXDestroyContext(m_MainHDC, m_Context);
-    #endif //_WIN32
+    #endif
 }
 
 auto OpenGL::DrawContext() const -> HDC_D

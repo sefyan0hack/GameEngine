@@ -68,6 +68,8 @@ class OpenGL
             CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB = 0x00000002,
             CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB  = 0x8256,
             CONTEXT_PROFILE_MASK_ARB      = 0x9126,
+            GL_ALL_ATTRIB_BITS               = 0x000fffff,
+            
             #if defined(WINDOWS_PLT)
             WGL_DRAW_TO_WINDOW_ARB           = 0x2001,
             WGL_ACCELERATION_ARB             = 0x2003,
@@ -81,7 +83,6 @@ class OpenGL
             WGL_TYPE_RGBA_ARB                = 0x202B,
             ERROR_INVALID_VERSION_ARB        = 0x2095,
             ERROR_INVALID_PROFILE_ARB        = 0x2096,
-            GL_ALL_ATTRIB_BITS               = 0x000fffff,
             #elif defined(LINUX_PLT)
             GLX_NONE        			    = 0x8000,
             GLX_DRAWABLE_TYPE               = 0x8010,
