@@ -214,7 +214,11 @@ auto OpenGL::init_opengl_linux() -> void
 
 OpenGL::OpenGL(WindHandl window)
     : m_Context(nullptr)
+    #if defined(WINDOWS_PLT)
     , m_DrawContext(GetDC(window))
+    #elif defined(LINUX_PLT)
+    , m_DrawContext(XOpenDisplay(nullptr))
+    #endif
     , m_Major(0)
     , m_Minor(0)
     , m_CreationTime(std::time(nullptr))
