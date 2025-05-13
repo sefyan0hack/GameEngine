@@ -63,8 +63,7 @@ function(apply_compile_options)
             )
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             message(STATUS "_:_:_: [Clang] :_:_:_")
-            target_compile_options(${target} PRIVATE -Wno-language-extension-token
-            )
+            target_compile_options(${target} PRIVATE -Wno-language-extension-token)
         endif()
 
         if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -92,7 +91,6 @@ function(apply_compile_options)
             "$<$<CONFIG:Release>:-fdata-sections>"
         )
         target_link_options(${target} PRIVATE
-            --noinhibit-exec
             "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
         )
         
