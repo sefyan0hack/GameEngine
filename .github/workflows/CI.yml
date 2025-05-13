@@ -13,16 +13,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: [windows-2022, windows-11-arm, ubuntu-24.04, ubuntu-22.04-arm]
         compiler: [gcc, llvm, msvc]
         build_type: [Debug, Release]
         exclude:
-          - os: ubuntu-latest
+          - os: [ubuntu-24.04, ubuntu-22.04-arm]
             compiler: msvc
     env:
       TEST_TIMEOUT: 60
       BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
-      APP_EXT: ${{ matrix.os == 'windows-latest' && '.exe' || '' }}
+      APP_EXT: ${{ contains(matrix.os, 'windows' )} && '.exe' || '' }}
 
     steps:
       - uses: actions/checkout@v3
@@ -41,7 +41,7 @@ jobs:
       - name: Install Dependencies
         shell: bash
         run: |
-          if [[ "${{ matrix.os }}" == 'ubuntu-latest' ]]; then
+          if [[ contains(matrix.os, 'ubuntu' )} ]]; then
             sudo apt-get update
             sudo apt-get install -y libgl1-mesa-dev libxi-dev  mesa-common-dev  gcovr libasan8
           fi
