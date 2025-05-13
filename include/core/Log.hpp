@@ -100,7 +100,7 @@ auto Log_msg(
       formatedTime(), lvl_str, formatted_msg,
       loc.function_name(), loc.file_name(), loc.line(),
       #ifdef __cpp_lib_stacktrace
-      std::stacktrace::current(1)
+      std::stacktrace::current(2)
       #else
       "no_stack_trace"
       #endif
