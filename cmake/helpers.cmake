@@ -59,6 +59,7 @@ function(apply_compile_options)
                 -Wno-cast-function-type -Winit-self -Wcast-qual
                 -Wsuggest-final-types -Wsuggest-final-methods
                 -fdevirtualize -ftree-vectorize
+                -static-libstdc++
             )
         elseif(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*")
             message(STATUS "++++++[Clang]++++++ flags")
