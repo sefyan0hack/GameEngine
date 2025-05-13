@@ -96,7 +96,6 @@ function(apply_compile_options)
             "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
         )
         
-        add_link_options("$<$<CONFIG:Release>:-static-libstdc++>")
         add_definitions(-include "${CMAKE_SOURCE_DIR}/include/core/Global_H.hpp")
         endif()
     endforeach()

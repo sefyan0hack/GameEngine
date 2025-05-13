@@ -107,7 +107,7 @@ auto Shader::LoadFile(const char* filename) -> std::vector<GLchar>
         memcpy(result.data(), str.data(), str.size());
         Info("Loding {} ", filename);
     }else{
-        Error("Couldnt open file {} : {}", filename, errno);
+        Error("Couldnt open file {} : {}", filename, std::strerror(errno));
     }
 
     file.close();

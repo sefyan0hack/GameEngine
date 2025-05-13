@@ -44,3 +44,4 @@
 #include <initializer_list>
 #include <ctime>
 #include <future>
+#include <cstring>
