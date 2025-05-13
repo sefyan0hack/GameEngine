@@ -56,12 +56,20 @@ struct ClogPolicy {
 
 struct FilePolicy {
   static std::ostream& get_stream() {
-    static std::ofstream stream(config::LogFileName, std::ios::app);
-    if (!stream.is_open()) {
-      std::cerr << "Couldn't open file : " << config::LogFileName << std::endl;
-      return std::cout;
+    static std::ofstream stream;
+    static bool initialized = false;
+    static bool open_failed = false;
+
+    if (!initialized) {
+      initialized = true;
+      stream.open(config::LogFileName, std::ios::app);
+      if (!stream.is_open()) {
+        std::cerr << "Couldn't open file: " << config::LogFileName << std::endl;
+        open_failed = true;
+      }
     }
-    return stream;
+
+    return open_failed ? std::clog : stream;
   }
 };
 
