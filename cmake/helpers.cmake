@@ -60,14 +60,14 @@ function(apply_compile_options)
                 -Wsuggest-final-types -Wsuggest-final-methods
                 -fdevirtualize -ftree-vectorize
             )
-        elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang.*")
+        elseif(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*")
             message(STATUS "++++++[Clang]++++++ flags")
             target_compile_options(${target} PRIVATE -Wno-language-extension-token
                 "$<$<STREQUAL:$<PLATFORM_ID>,Windows>:-fuse-ld=lld>"
             )
         endif()
 
-        if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang.*")
+        if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|.*Clang.*")
         message(STATUS "++++++[GNU|Clang]++++++ flags")
         target_compile_options(${target} PRIVATE
             -Wall -Wextra -Wpedantic -Wconversion -Wfloat-equal -Wwrite-strings -Wno-sign-conversion

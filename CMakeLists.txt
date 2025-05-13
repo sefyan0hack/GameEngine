@@ -199,13 +199,17 @@ target_include_directories(core PUBLIC ${X11_INCLUDE_DIR})
 target_link_libraries(core PUBLIC ${X11_LIBRARIES})
 endif()
 
+if(NOT WIN32)
+target_link_libraries(core $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
+endif()
+
 target_link_libraries(core
     PUBLIC
         glm::glm
         OpenGL::GL
         stb_image
         $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
-        $<$<CXX_COMPILER_ID:GNU,Clang>:stdc++exp>
+        $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
 )
 target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
 
@@ -221,7 +225,7 @@ add_compile_definitions(
 ####################################################################################################
 
 if(FALSE AND CMAKE_BUILD_TYPE STREQUAL "Release")
-    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|.*Clang.*")
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_OBJCOPY} --only-keep-debug 
         $<TARGET_FILE:${PROJECT_NAME}>
