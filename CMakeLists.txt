@@ -205,15 +205,11 @@ target_link_libraries(core
         OpenGL::GL
         stb_image
         $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
-        $<$<AND:$<CXX_COMPILER_ID:GNU,Clang>,$<NOT:$<PLATFORM_ID:Windows>>>:stdc++exp>
+        $<$<CXX_COMPILER_ID:GNU,Clang>:stdc++exp>
 )
 target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
 
-include(CheckCXXSourceCompiles)
-check_cxx_source_compiles("
-#include <stacktrace>
-int main() {auto trace = std::stacktrace::current();}" HAS_STD_STACKTRACE)
-
+message(STATUS "--s-s-s--s-s- ${STACKTRACE}")
 add_compile_definitions(
     PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
     OPENGL_LIB="${CORE_OPENGL_LIB}"

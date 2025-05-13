@@ -1,5 +1,6 @@
 #pragma once
 
+#include <version>
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -7,8 +8,8 @@
 #include <string>
 #include <memory>
 #include <algorithm>
-#ifdef HAS_STD_STACKTRACE
-#include <stacktrace>
+#if __has_include(<stacktrace>)
+#   include <stacktrace>
 #endif
 #include <type_traits>
 #include <csignal>
@@ -24,7 +25,7 @@
 #include <utility>
 #include <functional>
 #if __has_include(<format>)
-#include <format>
+#   include <format>
 #else
 #error "This project uses <format>, and it need's modern compiler with -std=c++23"
 #endif

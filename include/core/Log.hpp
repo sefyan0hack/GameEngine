@@ -99,7 +99,7 @@ auto Log_msg(
       "{}\n",
       formatedTime(), lvl_str, formatted_msg,
       loc.function_name(), loc.file_name(), loc.line(),
-      #ifdef HAS_STD_STACKTRACE
+      #ifdef __cpp_lib_stacktrace
       std::stacktrace::current(1)
       #else
       "no_stack_trace"
