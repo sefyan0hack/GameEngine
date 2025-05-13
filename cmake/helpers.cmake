@@ -54,21 +54,21 @@ function(apply_compile_options)
             )
             add_definitions(/FI"${CMAKE_SOURCE_DIR}/include/core/Global_H.hpp")
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-            message(STATUS "++++++[GNU]++++++ flags")
+            message(STATUS "_:_:_: [GNU] :_:_:_")
             target_compile_options(${target} PRIVATE
                 -Wno-cast-function-type -Winit-self -Wcast-qual
                 -Wsuggest-final-types -Wsuggest-final-methods
                 -fdevirtualize -ftree-vectorize
                 -static-libstdc++
             )
-        elseif(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*")
-            message(STATUS "++++++[Clang]++++++ flags")
+        elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+            message(STATUS "_:_:_: [Clang] :_:_:_")
             target_compile_options(${target} PRIVATE -Wno-language-extension-token
             )
         endif()
 
-        if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|.*Clang.*")
-        message(STATUS "++++++[GNU|Clang]++++++ flags")
+        if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        message(STATUS "_:_:_: [GNU|Clang] :_:_:_")
         target_compile_options(${target} PRIVATE
             -Wall -Wextra -Wpedantic -Wconversion -Wfloat-equal -Wwrite-strings -Wno-sign-conversion
             -fstack-protector-strong
@@ -92,7 +92,7 @@ function(apply_compile_options)
             "$<$<CONFIG:Release>:-fdata-sections>"
         )
         target_link_options(${target} PRIVATE
-            -Wl,--noinhibit-exec
+            --noinhibit-exec
             "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
         )
         

@@ -225,7 +225,7 @@ add_compile_definitions(
 ####################################################################################################
 
 if(FALSE AND CMAKE_BUILD_TYPE STREQUAL "Release")
-    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|.*Clang.*")
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_OBJCOPY} --only-keep-debug 
         $<TARGET_FILE:${PROJECT_NAME}>
