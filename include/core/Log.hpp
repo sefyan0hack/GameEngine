@@ -54,20 +54,23 @@ struct ClogPolicy {
 
 struct FilePolicy {
   static std::ostream& get_stream() {
-    static std::ofstream stream;
-    static bool initialized = false;
+    static std::unique_ptr<std::ofstream> stream;
+    static std::once_flag once_flag;
     static bool open_failed = false;
 
-    if (!initialized) {
-      initialized = true;
-      stream.open(config::LogFileName, std::ios::app);
-      if (!stream.is_open()) {
-        std::cerr << "Couldn't open file: " << config::LogFileName << std::endl;
+    std::call_once(once_flag, []() {
+      stream = std::make_unique<std::ofstream>(
+        config::LogFileName, 
+        std::ios::app
+      );
+      if (!stream->is_open()) {
+        std::cerr << "Failed to open log file: " << config::LogFileName << "\n";
         open_failed = true;
+        stream.reset();
       }
-    }
+    });
 
-    return open_failed ? std::clog : stream;
+    return (open_failed || !stream) ? std::clog : *stream;
   }
 };
 
