@@ -1,8 +1,7 @@
 #pragma once
 
-#include <core/gl.h>
-
 #if defined(WINDOWS_PLT)
+#include <windows.h>
 #ifdef DEBUG
 auto setup_crach_handler() -> void;
 auto resolveSymbol(void* addr, HANDLE proc = GetCurrentProcess()) -> std::string;
