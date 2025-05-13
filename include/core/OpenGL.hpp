@@ -34,7 +34,7 @@ class OpenGL
         static auto MaxTextureUnits() -> GLint;
 
     private:
-        friend auto rsgl(const char* name) -> void*;
+        friend auto resolve_opengl_fn(const char* name) -> void*;
         #if defined(WINDOWS_PLT)
         friend auto __GetProcAddress(LPCSTR module, const char* name) -> void*;
         auto init_opengl_win32()              -> void ;

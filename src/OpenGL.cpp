@@ -47,13 +47,14 @@ auto __GetProcAddress(LPCSTR module, const char* name) -> void* {
     auto lib = LoadLibraryA(module);
 
     if(lib == nullptr){
-        Error("Couldnt load lib opengl32 reason: {}", GetLastError());
+        Error("Couldnt load lib {} reason: {}", module, GetLastError());
         return nullptr;
     }
 
     void *address = (void *)GetProcAddress(lib, name);
     if(address != nullptr)
     {
+        Info("from LIB:`{}`: load function `{}` at : {}", module, name, address);
         return address;
     }else{
         Error("Couldnt load function `{}` from module : {}", name, module);
@@ -62,7 +63,7 @@ auto __GetProcAddress(LPCSTR module, const char* name) -> void* {
 }
 #endif
 
-auto rsgl(const char* name) -> void* {
+auto resolve_opengl_fn(const char* name) -> void* {
     #if defined(WINDOWS_PLT)
     void *address = (void *)wglGetProcAddress(name);
 
@@ -76,16 +77,19 @@ auto rsgl(const char* name) -> void* {
         if(address == nullptr){
             Error("Couldnt load opengl function `{}` reason: {}", name, GetLastError());
         }
+    }else{
+        Info("from LIB:`opengl32`: load function `{}` at : {}", name, address);
     }
 
     #elif defined(LINUX_PLT)
     void *address = (void *)glXGetProcAddress((GLubyte *)name);
     if(address == nullptr){
         Error("Couldnt load opengl function `{}`", name);
+    }else{
+        Info("from LIB:`opengl32`: load function `{}` at : {}", name, address);
     }
     #endif
 
-    Info("load opengl function `{}` at : {}", name, address);
     return address;
 }
 
@@ -124,8 +128,8 @@ auto OpenGL::init_opengl_win32() -> void
         Error("Failed to activate dummy OpenGL rendering context.");
     }
 
-    wglCreateContextAttribsARB  = (decltype(wglCreateContextAttribsARB))rsgl("wglCreateContextAttribsARB");
-    wglGetExtensionsStringARB   = (decltype(wglGetExtensionsStringARB))rsgl("wglGetExtensionsStringARB");
+    wglCreateContextAttribsARB  = (decltype(wglCreateContextAttribsARB))resolve_opengl_fn("wglCreateContextAttribsARB");
+    wglGetExtensionsStringARB   = (decltype(wglGetExtensionsStringARB))resolve_opengl_fn("wglGetExtensionsStringARB");
 
     if (!wglGetExtensionsStringARB || !wglCreateContextAttribsARB) {
         Error("Failed to load required WGL extensions.");
@@ -233,16 +237,16 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     #endif //_WIN32
 
 
-    glGetError = reinterpret_cast<decltype(glGetError)>(rsgl("glGetError"));
+    glGetError = reinterpret_cast<decltype(glGetError)>(resolve_opengl_fn("glGetError"));
 
     #ifdef DEBUG
     #   define RESOLVEGL(type, name)\
         name = Function<type>{};\
-        name.m_Func = reinterpret_cast<type>(rsgl(#name));\
+        name.m_Func = reinterpret_cast<type>(resolve_opengl_fn(#name));\
         name.m_Name = #name;
     #else
     #   define RESOLVEGL(type, name)\
-        name = reinterpret_cast<type>(rsgl(#name))
+        name = reinterpret_cast<type>(resolve_opengl_fn(#name))
     #endif
 
 	GLFUNCS(RESOLVEGL)
