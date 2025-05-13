@@ -11,8 +11,6 @@ auto PrintStackTrace(unsigned short skip = 0) -> void;
 
 namespace config {
     constexpr auto LogFileName = "Engine.log";
-    extern bool exit_on_error;
-    extern bool show_message_box;
     extern bool show_output;
     extern bool use_exception;
 
@@ -83,17 +81,16 @@ inline auto& get_logger_mutex() {
   return mtx;
 }
 
-template <Log_LvL lvl, StreamOut Out, typename ...Ts>
-auto Log(
-  [[maybe_unused]] std::source_location loc,
-  [[maybe_unused]] const std::format_string<Ts...> fmt,
-  [[maybe_unused]] Ts&& ... ts) -> void
+template <Log_LvL lvl, typename ...Ts>
+auto Log_msg(
+  [[maybe_unused]] const std::source_location loc,
+  [[maybe_unused]] const std::format_string<Ts...>& fmt,
+  [[maybe_unused]] Ts&& ... ts) -> std::string
 {
   std::scoped_lock lock(get_logger_mutex());
   auto formatted_msg = std::format(fmt, std::forward<Ts>(ts)...);
   auto lvl_str = levelToString(lvl);
   auto msg = std::stringstream{};
-  auto& out = Out::get_stream();
   
   if constexpr (lvl == Log_LvL::ERR || lvl == Log_LvL::EXPT){
     msg << std::format(
@@ -108,10 +105,6 @@ auto Log(
       "no_stack_trace"
       #endif
     );
-    #if defined(WINDOWS_PLT)
-    if(config::show_message_box && !config::use_exception)
-      MessageBoxA(nullptr, msg.str().c_str(), "ERROR", MB_YESNO | MB_ICONERROR );
-    #endif
   }
   else if constexpr (lvl == Log_LvL::INFO){
     msg << std::format("{} : [{}] ``{}``\n", formatedTime(), lvl_str, formatted_msg);
@@ -119,17 +112,27 @@ auto Log(
   else if constexpr (lvl == Log_LvL::PRT){
     msg << std::format("{} : {}\n", formatedTime(), formatted_msg);
   }
+  
+  return msg.str();
+}
+template <Log_LvL lvl, StreamOut Out, typename ...Ts>
+auto Log(
+  [[maybe_unused]] const std::source_location loc,
+  [[maybe_unused]] const std::format_string<Ts...>& fmt,
+  [[maybe_unused]] Ts&& ... ts) -> void
+{
+  if(!config::show_output) return;
 
-  if(config::show_output && !config::use_exception){
-    out << msg.rdbuf();
-    out.flush();
-  }
+  auto& out = Out::get_stream();
+  auto msg = Log_msg<lvl>(loc, fmt, std::forward<Ts>(ts)...);
 
-  if constexpr (lvl == Log_LvL::ERR  || lvl == Log_LvL::EXPT){
-    if(config::use_exception){
-      throw std::runtime_error(msg.str());
-    }else if(config::exit_on_error){
-        exit(EXIT_FAILURE);
+  if(!config::use_exception) out << msg;
+
+  if constexpr (lvl == Log_LvL::ERR || lvl == Log_LvL::EXPT){
+    if(!config::use_exception){
+      std::terminate();
+    }else{
+      throw std::runtime_error(msg);
     }
   }
 }
