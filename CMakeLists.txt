@@ -209,7 +209,6 @@ target_link_libraries(core
 )
 target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
 
-message(STATUS "--s-s-s--s-s- ${STACKTRACE}")
 add_compile_definitions(
     PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
     OPENGL_LIB="${CORE_OPENGL_LIB}"
