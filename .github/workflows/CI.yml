@@ -22,7 +22,7 @@ jobs:
     env:
       TEST_TIMEOUT: 60
       BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
-      APP_EXT: ${{ contains(matrix.os, 'windows' )} && '.exe' || '' }}
+      APP_EXT: ${{ contains(matrix.os, 'windows' ) && '.exe' || '' }}
 
     steps:
       - uses: actions/checkout@v3
