@@ -44,11 +44,15 @@
 
 #if defined(WINDOWS_PLT)
 auto __GetProcAddress(LPCSTR module, const char* name) -> void* {
-    auto lib = LoadLibraryA(module);
+    auto lib = GetModuleHandleA(module);
 
     if(lib == nullptr){
-        Error("Couldnt load lib {} reason: {}", module, GetLastError());
-        return nullptr;
+        auto lib = LoadLibraryA(module);
+        
+        if(lib == nullptr){
+            Error("Couldnt load lib {} reason: {}", module, GetLastError());
+            return nullptr;
+        }
     }
 
     void *address = (void *)GetProcAddress(lib, name);
