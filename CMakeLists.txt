@@ -200,7 +200,7 @@ target_link_libraries(core PUBLIC ${X11_LIBRARIES})
 endif()
 
 if(NOT WIN32)
-target_link_libraries(core $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
+target_link_libraries(core PUBLIC $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
 endif()
 
 target_link_libraries(core
