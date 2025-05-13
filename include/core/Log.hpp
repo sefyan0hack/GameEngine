@@ -121,12 +121,10 @@ auto Log(
   [[maybe_unused]] const std::format_string<Ts...>& fmt,
   [[maybe_unused]] Ts&& ... ts) -> void
 {
-  if(!config::show_output) return;
-
   auto& out = Out::get_stream();
   auto msg = Log_msg<lvl>(loc, fmt, std::forward<Ts>(ts)...);
 
-  if(!config::use_exception) out << msg;
+  if(config::show_output && !config::use_exception) out << msg;
 
   if constexpr (lvl == Log_LvL::ERR || lvl == Log_LvL::EXPT){
     if(!config::use_exception){
