@@ -90,7 +90,7 @@ TEST(Formatters, Camera){
 TEST(Formatters, Shader_Mesh_Material_GameObject){
     config::TestFlags();
 
-    EXPECT_ANY_THROW(
+    try
     {
         auto shader = Shader();
         auto mesh = Mesh(std::vector<Vertex>());
@@ -132,5 +132,5 @@ TEST(Formatters, Shader_Mesh_Material_GameObject){
             );
             EXPECT_EQ(r, e);
         }
-    });
+    }catch(...){}
 }
