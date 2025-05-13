@@ -64,7 +64,6 @@ function(apply_compile_options)
             message(STATUS "++++++[Clang]++++++ flags")
             target_compile_options(${target} PRIVATE -Wno-language-extension-token
                 "$<$<STREQUAL:$<PLATFORM_ID>,Windows>:-fuse-ld=lld>"
-                "$<$<STREQUAL:$<PLATFORM_ID>,Windows>:-stdlib=libc++>"      
             )
         endif()
 
@@ -93,6 +92,7 @@ function(apply_compile_options)
             "$<$<CONFIG:Release>:-fdata-sections>"
         )
         target_link_options(${target} PRIVATE
+            -Wl,--noinhibit-exec
             "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
         )
         
