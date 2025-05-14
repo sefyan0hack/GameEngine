@@ -88,8 +88,7 @@ TEST(Formatters, Camera){
 
 
 TEST(Formatters, Shader_Mesh_Material_GameObject){
-    config::TestFlags();
-
+    
     try
     {
         auto shader = Shader();
