@@ -8,7 +8,7 @@
 #include <string>
 #include <memory>
 #include <algorithm>
-#if __has_include(<stacktrace>)
+#ifdef __cpp_lib_stacktrace
 #   include <stacktrace>
 #endif
 #include <type_traits>
@@ -24,7 +24,7 @@
 #include <cstddef>
 #include <utility>
 #include <functional>
-#if __has_include(<format>)
+#ifdef __cpp_lib_format
 #   include <format>
 #else
 #error "This project uses <format>, and it need's modern compiler with -std=c++23"
