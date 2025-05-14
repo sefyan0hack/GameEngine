@@ -243,6 +243,7 @@ endif()
 # TEST
 ####################################################################################################
 if(TESTS)
+    add_definitions(-DTESTING)
     enable_testing()
     include(CTest)
     add_subdirectory(tests)
