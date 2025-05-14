@@ -136,14 +136,13 @@ auto Log(
 }
 
 #ifdef DEBUG
-#define Error(...) Log<Log_LvL::ERR, CerrPolicy>(std::source_location::current(), __VA_ARGS__)
-#define Info(...)  Log<Log_LvL::INFO, ClogPolicy>(std::source_location::current(), __VA_ARGS__)
-#define print(...) Log<Log_LvL::PRT, ClogPolicy>(std::source_location::current(), __VA_ARGS__)
-#define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); Log<Log_LvL::EXPT, ClogPolicy>(std::source_location::current(), __VA_ARGS__); } } while (0)
-
+#define LOGPolicy ClogPolicy
 #else
-#define Error(...) Log<Log_LvL::ERR, FilePolicy>(std::source_location::current(), __VA_ARGS__)
-#define Info(...)  Log<Log_LvL::INFO, FilePolicy>(std::source_location::current(), __VA_ARGS__)
-#define print(...) Log<Log_LvL::PRT, FilePolicy>(std::source_location::current(), __VA_ARGS__)
-#define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); Log<Log_LvL::EXPT, FilePolicy>(std::source_location::current(), __VA_ARGS__); } } while (0)
+#define LOGPolicy FilePolicy
 #endif
+
+
+#define Error(...) Log<Log_LvL::ERR, LOGPolicy>(std::source_location::current(), __VA_ARGS__)
+#define Info(...)  Log<Log_LvL::INFO, LOGPolicy>(std::source_location::current(), __VA_ARGS__)
+#define print(...) Log<Log_LvL::PRT, LOGPolicy>(std::source_location::current(), __VA_ARGS__)
+#define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); Log<Log_LvL::EXPT, LOGPolicy>(std::source_location::current(), __VA_ARGS__); } } while (0)
