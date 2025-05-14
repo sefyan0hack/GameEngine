@@ -50,7 +50,7 @@ extern "C" {
 #include <cstdlib>
 #include <memory>
 
-inline static auto demangle(const char* name) -> std::string
+inline static auto __demangle(const char* name) -> std::string
 {
     int status = -1;
     std::unique_ptr<char, void(*)(void*)> res {
@@ -315,7 +315,7 @@ private:
     static auto demangle(const char* name) -> std::string
     {
     #ifdef __GNUG__
-        return demangle(name);
+        return __demangle(name);
     #else
         return name;
     #endif
