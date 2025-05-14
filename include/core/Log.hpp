@@ -123,10 +123,13 @@ auto Log(
   auto& out = Out::get_stream();
   auto msg = Log_msg<lvl>(loc, fmt, std::forward<Ts>(ts)...);
   
-  out << msg;
-
   if constexpr (lvl == Log_LvL::ERR || lvl == Log_LvL::EXPT){
+    #ifndef DEBUG
+    out << msg;
+    #endif
     throw std::runtime_error(msg);
+  }else{
+    out << msg;
   }
 }
 
