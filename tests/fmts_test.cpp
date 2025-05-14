@@ -88,59 +88,61 @@ TEST(Formatters, Camera){
 
 
 TEST(Formatters, Shader){
-    auto shader = Shader();
-
-    {
+    EXPECT_ANY_THROW({ 
+        auto shader = Shader(SHADER(skybox)".vert", GL_VERTEX_SHADER);
+        
         auto r = std::format("{}", shader);
         auto e = format(
             R"({{ "id": {}, "type": "{}" }})",
             shader.id(), shader.TypeName()
         );
         EXPECT_EQ(r, e);
-    }
+    });
 }
 
 TEST(Formatters, Mesh){
-    auto mesh = Mesh(std::vector<Vertex>());
-
-    {
+    EXPECT_ANY_THROW({
+        auto mesh = Mesh(std::vector<Vertex>());
+        
         auto r = std::format("{}", mesh);
         auto e = format(
             R"({{ "name": "{}", "VAO": {}, "VBO": {}, "EBO": {}, "verticesSize": {} }})",
             mesh.name, mesh.VAO, mesh.VBO, mesh.EBO, mesh.VextexSize()
         );
         EXPECT_EQ(r, e);
-    }
+    });
 }
 
 TEST(Formatters, Material){
-    auto shader_vert = Shader();
-    auto shader_frag = Shader();
-    auto material = Material(shader_vert, shader_frag);
-    {
+    EXPECT_ANY_THROW({
+        auto shader_vert = Shader(SHADER(skybox)".vert", GL_VERTEX_SHADER);
+        auto shader_frag = Shader(SHADER(skybox)".frag", GL_FRAGMENT_SHADER);
+
+        auto material = Material(shader_vert, shader_frag);
+
         auto r = std::format("{}", material);
         auto e = format(
             R"({{ "id": {}, "attribs": {}, "uniforms": {} }})",
             material.id(), MapWrapper{material.Attribs()}, MapWrapper{material.Uniforms()}
         );
         EXPECT_EQ(r, e);
-    }
+    });
 }
 
 TEST(Formatters, GameObject){
-    auto shader_vert = Shader();
-    auto shader_frag = Shader();
-    auto mesh = Mesh(std::vector<Vertex>());
-    auto material = Material(shader_vert, shader_frag);
-
-    auto gameobj = GameObject(vec3(), material, mesh);
-
-    {
+    EXPECT_ANY_THROW({
+        auto shader_vert = Shader(SHADER(skybox)".vert", GL_VERTEX_SHADER);
+        auto shader_frag = Shader(SHADER(skybox)".frag", GL_FRAGMENT_SHADER);
+        auto mesh = Mesh(std::vector<Vertex>());
+        auto material = Material(shader_vert, shader_frag);
+        
+        auto gameobj = GameObject(vec3(), material, mesh);
+        
         auto r = std::format("{}", gameobj);
         auto e = format(
             R"({{"name": "{}", "transform": {}, "material": {}, "mesh": {} }})",
             gameobj.Name(), gameobj.transform(), *gameobj.material(), *gameobj.mesh()
         );
         EXPECT_EQ(r, e);
-    }
+    });
 }
