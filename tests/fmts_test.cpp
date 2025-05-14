@@ -126,13 +126,14 @@ TEST(Formatters, Material){
         EXPECT_EQ(r, e);
     }
 }
+
 TEST(Formatters, GameObject){
     auto shader_vert = Shader();
     auto shader_frag = Shader();
     auto mesh = Mesh(std::vector<Vertex>());
     auto material = Material(shader_vert, shader_frag);
 
-    auto gameobj = GameObject(vec3(), material, *mesh);
+    auto gameobj = GameObject(vec3(), material, mesh);
 
     {
         auto r = std::format("{}", gameobj);
