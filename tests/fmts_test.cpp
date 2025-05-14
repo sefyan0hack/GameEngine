@@ -93,7 +93,7 @@ protected:
     Material material;
     GameObject gameobj;
 
-    Formatters()
+    FormattersFix()
     : shader(Shader())
     , mesh(Mesh(std::vector<Vertex>()))
     , material(Material(shader, shader))
