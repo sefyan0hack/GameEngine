@@ -125,6 +125,7 @@ auto Shader::checkShaderCompileStatus(const GLuint &shader) -> void
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success) {
         GLchar infoLog[512];
+        std::memset(infoLog, '\0', 512);
         glGetShaderInfoLog(shader, 512, NULL, infoLog);
         glDeleteShader(shader);
         Error("SHADER::COMPILATION_FAILED {}", infoLog);

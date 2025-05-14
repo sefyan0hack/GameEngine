@@ -152,6 +152,7 @@ auto Material::checkProgramLinkStatus() const -> void
     glGetProgramiv(m_Id, GL_LINK_STATUS, &success);
     if (!success) {
         GLchar infoLog[512];
+        std::memset(infoLog, '\0', 512);
         glGetProgramInfoLog(m_Id, 512, NULL, infoLog);
         Error("PROGRAM LINKING_FAILED {}", infoLog);
     }
