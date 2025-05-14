@@ -90,7 +90,7 @@ TEST(Formatters, Camera){
 TEST(Formatters, Shader){
     EXPECT_ANY_THROW({ 
         auto shader = Shader(SHADER(skybox)".vert", GL_VERTEX_SHADER);
-        
+
         auto r = std::format("{}", shader);
         auto e = format(
             R"({{ "id": {}, "type": "{}" }})",
@@ -101,16 +101,14 @@ TEST(Formatters, Shader){
 }
 
 TEST(Formatters, Mesh){
-    EXPECT_ANY_THROW({
-        auto mesh = Mesh(std::vector<Vertex>());
+    auto mesh = Mesh(std::vector<Vertex>());
         
-        auto r = std::format("{}", mesh);
-        auto e = format(
-            R"({{ "name": "{}", "VAO": {}, "VBO": {}, "EBO": {}, "verticesSize": {} }})",
-            mesh.name, mesh.VAO, mesh.VBO, mesh.EBO, mesh.VextexSize()
-        );
-        EXPECT_EQ(r, e);
-    });
+    auto r = std::format("{}", mesh);
+    auto e = format(
+        R"({{ "name": "{}", "VAO": {}, "VBO": {}, "EBO": {}, "verticesSize": {} }})",
+        mesh.name, mesh.VAO, mesh.VBO, mesh.EBO, mesh.VextexSize()
+    );
+    EXPECT_EQ(r, e);
 }
 
 TEST(Formatters, Material){
