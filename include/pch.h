@@ -45,3 +45,5 @@
 #include <ctime>
 #include <future>
 #include <cstring>
+#include <exception>
+#include <stdexcept>

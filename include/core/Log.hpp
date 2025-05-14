@@ -11,10 +11,6 @@ auto PrintStackTrace(unsigned short skip = 0) -> void;
 
 namespace config {
     constexpr auto LogFileName = "Engine.log";
-    extern bool show_output;
-    extern bool use_exception;
-
-    void TestFlags();
 }
 namespace {
 
@@ -126,15 +122,11 @@ auto Log(
 {
   auto& out = Out::get_stream();
   auto msg = Log_msg<lvl>(loc, fmt, std::forward<Ts>(ts)...);
-
-  if(config::show_output && !config::use_exception) out << msg;
+  
+  out << msg;
 
   if constexpr (lvl == Log_LvL::ERR || lvl == Log_LvL::EXPT){
-    if(!config::use_exception){
-      std::terminate();
-    }else{
-      throw std::runtime_error(msg);
-    }
+    throw std::runtime_error(msg);
   }
 }
 
