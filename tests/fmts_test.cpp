@@ -97,8 +97,8 @@ protected:
         try{
             shader = new Shader();
             mesh = new Mesh(std::vector<Vertex>());
-            material = new Material(shader, shader);
-            gameobj = new GameObject(vec3(), material, mesh);
+            material = new Material(*shader, *shader);
+            gameobj = new GameObject(vec3(), *material, *mesh);
         }catch(...){}
     }
 
