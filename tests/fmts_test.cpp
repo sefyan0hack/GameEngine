@@ -86,50 +86,108 @@ TEST(Formatters, Camera){
     EXPECT_EQ(r, e);
 }
 
+class FormattersFix : public testing::Test {
+protected:
+    Shader shader;
+    Mesh mesh;
+    Material material;
+    GameObject gameobj;
 
-TEST(Formatters, Shader_Mesh_Material_GameObject){
-    
-    try
+    Formatters()
+    : shader(Shader())
+    , mesh(Mesh(std::vector<Vertex>()))
+    , material(Material(shader, shader))
+    , gameobj(GameObject(vec3(), material, mesh)){}
+
+};
+
+TEST_F(FormattersFix, Shader){
     {
-        auto shader = Shader();
-        auto mesh = Mesh(std::vector<Vertex>());
-        auto material = Material(shader, shader);
-        auto gameobj =  GameObject(vec3(), material, mesh);
-        //Shader
-        {
-            auto r = std::format("{}", shader);
-            auto e = format(
-                R"({{ "id": {}, "type": "{}" }})",
-                shader.id(), shader.TypeName()
-            );
-            EXPECT_EQ(r, e);
-        }
-        // Mesh
-        {
-            auto r = std::format("{}", mesh);
-            auto e = format(
-                R"({{ "name": "{}", "VAO": {}, "VBO": {}, "EBO": {}, "verticesSize": {} }})",
-                mesh.name, mesh.VAO, mesh.VBO, mesh.EBO, mesh.VextexSize()
-            );
-            EXPECT_EQ(r, e);
-        }
-        // Material
-        {
-            auto r = std::format("{}", material);
-            auto e = format(
-                R"({{ "id": {}, "attribs": {}, "uniforms": {} }})",
-                material.id(), MapWrapper{material.Attribs()}, MapWrapper{material.Uniforms()}
-            );
-            EXPECT_EQ(r, e);
-        }
-        // GameObject
-        {
-            auto r = std::format("{}", gameobj);
-            auto e = format(
-                R"({{"name": "{}", "transform": {}, "material": {}, "mesh": {} }})",
-                gameobj.Name(), gameobj.transform(), *gameobj.material(), *gameobj.mesh()
-            );
-            EXPECT_EQ(r, e);
-        }
-    }catch(...){}
+        auto r = std::format("{}", shader);
+        auto e = format(
+            R"({{ "id": {}, "type": "{}" }})",
+            shader.id(), shader.TypeName()
+        );
+        EXPECT_EQ(r, e);
+    }
 }
+
+TEST_F(FormattersFix, Mesh){
+    {
+        auto r = std::format("{}", mesh);
+        auto e = format(
+            R"({{ "name": "{}", "VAO": {}, "VBO": {}, "EBO": {}, "verticesSize": {} }})",
+            mesh.name, mesh.VAO, mesh.VBO, mesh.EBO, mesh.VextexSize()
+        );
+        EXPECT_EQ(r, e);
+    }
+}
+
+TEST_F(FormattersFix, Material){
+    {
+        auto r = std::format("{}", material);
+        auto e = format(
+            R"({{ "id": {}, "attribs": {}, "uniforms": {} }})",
+            material.id(), MapWrapper{material.Attribs()}, MapWrapper{material.Uniforms()}
+        );
+        EXPECT_EQ(r, e);
+    }
+}
+TEST_F(FormattersFix, GameObject){
+    {
+        auto r = std::format("{}", gameobj);
+        auto e = format(
+            R"({{"name": "{}", "transform": {}, "material": {}, "mesh": {} }})",
+            gameobj.Name(), gameobj.transform(), *gameobj.material(), *gameobj.mesh()
+        );
+        EXPECT_EQ(r, e);
+    }
+}
+
+
+// TEST(Formatters, Shader_Mesh_Material_GameObject){
+
+//     try
+//     {
+//         auto shader = Shader();
+//         auto mesh = Mesh(std::vector<Vertex>());
+//         auto material = Material(shader, shader);
+//         auto gameobj =  GameObject(vec3(), material, mesh);
+//         //Shader
+//         {
+//             auto r = std::format("{}", shader);
+//             auto e = format(
+//                 R"({{ "id": {}, "type": "{}" }})",
+//                 shader.id(), shader.TypeName()
+//             );
+//             EXPECT_EQ(r, e);
+//         }
+//         // Mesh
+//         {
+//             auto r = std::format("{}", mesh);
+//             auto e = format(
+//                 R"({{ "name": "{}", "VAO": {}, "VBO": {}, "EBO": {}, "verticesSize": {} }})",
+//                 mesh.name, mesh.VAO, mesh.VBO, mesh.EBO, mesh.VextexSize()
+//             );
+//             EXPECT_EQ(r, e);
+//         }
+//         // Material
+//         {
+//             auto r = std::format("{}", material);
+//             auto e = format(
+//                 R"({{ "id": {}, "attribs": {}, "uniforms": {} }})",
+//                 material.id(), MapWrapper{material.Attribs()}, MapWrapper{material.Uniforms()}
+//             );
+//             EXPECT_EQ(r, e);
+//         }
+//         // GameObject
+//         {
+//             auto r = std::format("{}", gameobj);
+//             auto e = format(
+//                 R"({{"name": "{}", "transform": {}, "material": {}, "mesh": {} }})",
+//                 gameobj.Name(), gameobj.transform(), *gameobj.material(), *gameobj.mesh()
+//             );
+//             EXPECT_EQ(r, e);
+//         }
+//     }catch(...){}
+// }

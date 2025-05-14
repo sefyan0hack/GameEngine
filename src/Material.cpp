@@ -153,7 +153,6 @@ auto Material::checkProgramLinkStatus() const -> void
     if (!success) {
         GLchar infoLog[512];
         glGetProgramInfoLog(m_Id, 512, NULL, infoLog);
-	    glDeleteProgram(id);
         Error("PROGRAM LINKING_FAILED {}", infoLog);
     }
 }
