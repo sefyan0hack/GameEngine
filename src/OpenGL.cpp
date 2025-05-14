@@ -86,7 +86,7 @@ auto resolve_opengl_fn(const char* name) -> void* {
     }
 
     #elif defined(LINUX_PLT)
-    void *address = (void *)glXGetProcAddress((GLubyte *)name);
+    void *address = (void *)glXGetProcAddress((const GLubyte *)name);
     if(address == nullptr){
         Error("Couldnt load opengl function `{}`", name);
     }else{
