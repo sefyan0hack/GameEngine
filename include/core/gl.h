@@ -49,6 +49,16 @@ extern "C" {
 #include <cxxabi.h>
 #include <cstdlib>
 #include <memory>
+
+inline static auto demangle(const char* name) -> std::string
+{
+    int status = -1;
+    std::unique_ptr<char, void(*)(void*)> res {
+        abi::__cxa_demangle(name, nullptr, nullptr, &status),
+        std::free
+    };
+    return (status == 0) ? res.get() : name;
+}
 #endif
 
 inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
@@ -305,12 +315,7 @@ private:
     static auto demangle(const char* name) -> std::string
     {
     #ifdef __GNUG__
-        int status = -1;
-        std::unique_ptr<char, void(*)(void*)> res {
-            abi::__cxa_demangle(name, nullptr, nullptr, &status),
-            std::free
-        };
-        return (status == 0) ? res.get() : name;
+        return demangle(name);
     #else
         return name;
     #endif
