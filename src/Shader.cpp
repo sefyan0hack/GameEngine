@@ -121,13 +121,12 @@ auto Shader::Compile(GLuint shader) -> void
 
 auto Shader::checkShaderCompileStatus(const GLuint &shader) -> void
 {
-    GLint success;
+    GLint success = 0;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success) {
         GLchar infoLog[512];
         glGetShaderInfoLog(shader, 512, NULL, infoLog);
-        // ERR("SHADER::COMPILATION_FAILED\n" << infoLog );
-        glDeleteShader(shader); // Don't leak the shader.
+        glDeleteShader(shader);
         Error("SHADER::COMPILATION_FAILED {}", infoLog);
     }
 }

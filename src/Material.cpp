@@ -148,12 +148,12 @@ auto Material::AttribLocation_Prv(const char *name) const -> GLuint
 
 auto Material::checkProgramLinkStatus() const -> void
 {
-    GLint success;
+    GLint success = 0;
     glGetProgramiv(m_Id, GL_LINK_STATUS, &success);
     if (!success) {
         GLchar infoLog[512];
         glGetProgramInfoLog(m_Id, 512, NULL, infoLog);
-	    // glDeleteProgram(id);
+	    glDeleteProgram(id);
         Error("PROGRAM LINKING_FAILED {}", infoLog);
     }
 }
