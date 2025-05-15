@@ -43,9 +43,8 @@ function(apply_compile_options)
                 "$<$<CONFIG:Release>:/Zi>"
                 "$<$<CONFIG:Release>:/Zo>"
                 "$<$<CONFIG:Release>:/Oy->"
-            )
-            target_link_options(${target} PRIVATE
-                "$<$<CONFIG:Debug>:/DEBUG>"                     # Debugger-optimized linking (Debug)
+                )
+                target_link_options(${target} PRIVATE
                 "$<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>"       # no terminale
                 "$<$<CONFIG:Release>:/ENTRY:mainCRTStartup>"    # entry
                 "$<$<CONFIG:Release>:/OPT:REF>"                 # Optimize unused functions
@@ -87,10 +86,10 @@ function(apply_compile_options)
             "$<$<CONFIG:Release>:-fdata-sections>"
         )
         target_link_options(${target} PRIVATE
-            -static-libgcc -static-libstdc++
             "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
         )
-        
+
+        add_link_options(-static-libgcc -static-libstdc++)
         add_definitions(-include "${CMAKE_SOURCE_DIR}/include/core/Global_H.hpp")
         endif()
     endforeach()
