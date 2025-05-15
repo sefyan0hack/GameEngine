@@ -74,20 +74,23 @@ function(apply_compile_options)
             
             # Debug flags
             "$<$<CONFIG:Debug>:-ggdb>"
-            "$<$<CONFIG:Debug>:-g3>"
+            "$<$<CONFIG:Debug>:-g>"
             "$<$<CONFIG:Debug>:-O0>"
+            "$<$<CONFIG:Debug>:-fno-eliminate-unused-debug-symbols>"
+            "$<$<CONFIG:Debug>:-fvar-tracking>"
+            "$<$<CONFIG:Debug>:-fvar-tracking-assignments>"
             "$<$<CONFIG:Debug>:-fno-inline>"
             # Release flags
             "$<$<CONFIG:Release>:-O3>"
             "$<$<CONFIG:Release>:-g1>"
-            # "$<$<CONFIG:Release>:-march=native>"  #enable when dnt need to send the app
+            "$<$<CONFIG:Release>:-march=native>"  #enable when dnt need to send the app
             "$<$<CONFIG:Release>:-funwind-tables>"
             "$<$<CONFIG:Release>:-fasynchronous-unwind-tables>"
             "$<$<CONFIG:Release>:-ffunction-sections>"
             "$<$<CONFIG:Release>:-fdata-sections>"
         )
         target_link_options(${target} PRIVATE
-            -static-libstdc++
+            -static-libgcc -static-libstdc++
             "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
         )
         
