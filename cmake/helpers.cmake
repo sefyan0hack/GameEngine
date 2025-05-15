@@ -70,7 +70,6 @@ function(apply_compile_options)
             -Wuninitialized -Wpointer-arith -Wreturn-type -Wredundant-decls
             -fno-operator-names
             -frtti
-            -fvisibility-inlines-hidden
             # Debug flags
             "$<$<CONFIG:Debug>:-ggdb>"
             "$<$<CONFIG:Debug>:-g>"
@@ -89,7 +88,7 @@ function(apply_compile_options)
             "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
         )
 
-        add_link_options(-static-libgcc -static-libstdc++)
+        add_link_options(-static-libgcc -static-libstdc++ -fvisibility-inlines-hidden)
         add_definitions(-include "${CMAKE_SOURCE_DIR}/include/core/Global_H.hpp")
         endif()
     endforeach()
