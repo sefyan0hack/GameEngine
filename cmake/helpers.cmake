@@ -89,8 +89,11 @@ function(apply_compile_options)
         )
 
         add_link_options(
-            -static-libgcc
+            -static-libasan -static-libtsan -static-liblsan -static-libubsan
+            "$<$<CONFIG:Release>:-static-libgcc>"
             "$<$<CONFIG:Release>:-static-libstdc++>"
+            "$<$<CONFIG:Debug>:-shared-libgcc>"
+            "$<$<CONFIG:Debug>:-shared-libstdc++>"
         )
         add_definitions(-include "${CMAKE_SOURCE_DIR}/include/core/Global_H.hpp")
         endif()
