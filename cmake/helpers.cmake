@@ -70,11 +70,11 @@ function(apply_compile_options)
             -Wuninitialized -Wpointer-arith -Wreturn-type -Wredundant-decls
             -fno-operator-names
             -frtti
+
             # Debug flags
             "$<$<CONFIG:Debug>:-ggdb>"
             "$<$<CONFIG:Debug>:-g>"
             "$<$<CONFIG:Debug>:-O0>"
-            "$<$<CONFIG:Debug>:-fno-inline>"
             # Release flags
             "$<$<CONFIG:Release>:-O3>"
             "$<$<CONFIG:Release>:-g1>"
@@ -88,7 +88,10 @@ function(apply_compile_options)
             "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
         )
 
-        add_link_options(-static-libgcc -static-libstdc++ -fvisibility-inlines-hidden)
+        add_link_options(
+            "$<$<CONFIG:Release>:-static-libgcc>"
+            "$<$<CONFIG:Release>:-static-libstdc++>"
+        )
         add_definitions(-include "${CMAKE_SOURCE_DIR}/include/core/Global_H.hpp")
         endif()
     endforeach()
