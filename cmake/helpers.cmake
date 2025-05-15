@@ -58,6 +58,9 @@ function(apply_compile_options)
                 -Wsuggest-final-types -Wsuggest-final-methods
                 -fdevirtualize -ftree-vectorize
             )
+            add_link_options(
+                -static-libasan -static-libtsan -static-liblsan -static-libubsan
+            )
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             target_compile_options(${target} PRIVATE -Wno-language-extension-token)
         endif()
@@ -89,7 +92,6 @@ function(apply_compile_options)
         )
 
         add_link_options(
-            -static-libasan -static-libtsan -static-liblsan -static-libubsan
             "$<$<CONFIG:Release>:-static-libgcc>"
             "$<$<CONFIG:Release>:-static-libstdc++>"
             "$<$<CONFIG:Debug>:-shared-libgcc>"
