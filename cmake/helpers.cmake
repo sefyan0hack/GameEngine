@@ -89,7 +89,7 @@ function(apply_compile_options)
         )
 
         add_link_options(
-            "$<$<CONFIG:Release>:-static-libgcc>"
+            -static-libgcc
             "$<$<CONFIG:Release>:-static-libstdc++>"
         )
         add_definitions(-include "${CMAKE_SOURCE_DIR}/include/core/Global_H.hpp")
