@@ -71,7 +71,7 @@ function(apply_compile_options)
             -Wuninitialized -Wpointer-arith -Wreturn-type -Wredundant-decls
             -fno-operator-names
             -frtti
-            
+            -fvisibility-inlines-hidden
             # Debug flags
             "$<$<CONFIG:Debug>:-ggdb>"
             "$<$<CONFIG:Debug>:-g>"
