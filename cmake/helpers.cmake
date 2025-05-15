@@ -60,6 +60,10 @@ function(apply_compile_options)
             )
             add_link_options(
                 -static-libasan -static-libtsan -static-liblsan -static-libubsan
+                "$<$<CONFIG:Release>:-static-libgcc>"
+                "$<$<CONFIG:Release>:-static-libstdc++>"
+                "$<$<CONFIG:Debug>:-shared-libgcc>"
+                "$<$<CONFIG:Debug>:-shared-libstdc++>"
             )
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             target_compile_options(${target} PRIVATE -Wno-language-extension-token)
@@ -91,12 +95,6 @@ function(apply_compile_options)
             "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
         )
 
-        add_link_options(
-            "$<$<CONFIG:Release>:-static-libgcc>"
-            "$<$<CONFIG:Release>:-static-libstdc++>"
-            "$<$<CONFIG:Debug>:-shared-libgcc>"
-            "$<$<CONFIG:Debug>:-shared-libstdc++>"
-        )
         add_definitions(-include "${CMAKE_SOURCE_DIR}/include/core/Global_H.hpp")
         endif()
     endforeach()
