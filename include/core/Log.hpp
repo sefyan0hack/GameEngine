@@ -55,7 +55,7 @@ struct FilePolicy {
     static bool open_failed = false;
 
     std::call_once(once_flag, []() {
-      (void)std::locale::classic();
+      static std::ios_base::Init init_guard;
       stream = std::make_unique<std::ofstream>(
         config::LogFileName, 
         std::ios::app
