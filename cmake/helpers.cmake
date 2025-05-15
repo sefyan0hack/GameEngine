@@ -77,8 +77,6 @@ function(apply_compile_options)
             "$<$<CONFIG:Debug>:-g>"
             "$<$<CONFIG:Debug>:-O0>"
             "$<$<CONFIG:Debug>:-fno-eliminate-unused-debug-symbols>"
-            "$<$<CONFIG:Debug>:-fvar-tracking>"
-            "$<$<CONFIG:Debug>:-fvar-tracking-assignments>"
             "$<$<CONFIG:Debug>:-fno-inline>"
             # Release flags
             "$<$<CONFIG:Release>:-O3>"
