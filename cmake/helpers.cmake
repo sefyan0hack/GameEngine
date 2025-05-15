@@ -59,11 +59,8 @@ function(apply_compile_options)
                 -fdevirtualize -ftree-vectorize
             )
             add_link_options(
-                -static-libasan -static-libtsan -static-liblsan -static-libubsan
-                "$<$<CONFIG:Release>:-static-libgcc>"
-                "$<$<CONFIG:Release>:-static-libstdc++>"
-                "$<$<CONFIG:Debug>:-shared-libgcc>"
-                "$<$<CONFIG:Debug>:-shared-libstdc++>"
+                -static-libasan -static-libtsan -static-liblsan -static-libubsan 
+                -static-libgcc -static-libstdc++
             )
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             target_compile_options(${target} PRIVATE -Wno-language-extension-token)
