@@ -35,8 +35,8 @@ class OpenGL
 
     private:
         friend auto resolve_opengl_fn(const char* name) -> void*;
+        friend auto __GetProcAddress(const char* module, const char* name) -> void*;
         #if defined(WINDOWS_PLT)
-        friend auto __GetProcAddress(LPCSTR module, const char* name) -> void*;
         auto init_opengl_win32()              -> void ;
         #elif defined(LINUX_PLT)
         auto init_opengl_linux()              -> void ;

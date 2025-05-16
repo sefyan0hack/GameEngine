@@ -42,8 +42,7 @@
     Info("[{} {}({})] From {} : \n\t- {}", severity_, type_, id, source_, message);
 }
 
-#if defined(WINDOWS_PLT)
-auto __GetProcAddress(LPCSTR module, const char* name) -> void* {
+auto __GetProcAddress(const char* module, const char* name) -> void* {
     #if defined(WINDOWS_PLT)
     auto lib = GetModuleHandleA(module);
 
@@ -81,7 +80,6 @@ auto __GetProcAddress(LPCSTR module, const char* name) -> void* {
         return nullptr;
     }
 }
-#endif
 
 auto resolve_opengl_fn(const char* name) -> void* {
     #if defined(WINDOWS_PLT)
