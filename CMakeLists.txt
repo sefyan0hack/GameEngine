@@ -213,18 +213,21 @@ set(CMAKE_FIND_LIBRARY_SUFFIXES .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
 set(CMAKE_FIND_LIBRARY_PREFERS_STATIC ON)
 
 find_package(X11 REQUIRED)
-# Find additional dependencies required by static X11
+
 find_library(XCB_LIBRARY xcb)
 find_library(XAU_LIBRARY Xau)
 find_library(XDMCP_LIBRARY Xdmcp)
 
-# Check if libraries were found
 if(NOT XCB_LIBRARY OR NOT XAU_LIBRARY OR NOT XDMCP_LIBRARY)
     message(FATAL_ERROR "Required X11 dependencies not found")
 endif()
 
 message(STATUS "X11 Lib: ${X11_LIBRARIES}")
 message(STATUS "X11 include: ${X11_INCLUDE_DIR}")
+message(STATUS "xcb Lib: ${XCB_LIBRARY}")
+message(STATUS "Xau Lib: ${XAU_LIBRARY}")
+message(STATUS "Xdmcp Lib: ${XDMCP_LIBRARY}")
+
 set(CMAKE_FIND_LIBRARY_SUFFIXES ${ORIGINAL_SUFFIXES})
 
 target_include_directories(core PUBLIC ${X11_INCLUDE_DIR})
