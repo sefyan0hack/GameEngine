@@ -202,6 +202,8 @@ auto OpenGL::init_opengl_linux() -> void
     _glXDestroyContext        = (decltype(_glXDestroyContext))__GetProcAddress(OPENGL_MODULE_NAME, "glXDestroyContext");
     _glXGetProcAddress        = (decltype(_glXGetProcAddress))__GetProcAddress(OPENGL_MODULE_NAME, "glXGetProcAddress");
     _glXChooseFBConfig        = (decltype(_glXChooseFBConfig))__GetProcAddress(OPENGL_MODULE_NAME, "glXChooseFBConfig");
+    _glXGetFBConfigAttrib     = (decltype(_glXGetFBConfigAttrib))__GetProcAddress(OPENGL_MODULE_NAME, "glXGetFBConfigAttrib");
+    _glXGetFBConfigs          = (decltype(_glXGetFBConfigs))__GetProcAddress(OPENGL_MODULE_NAME, "glXGetFBConfigs");
     _glXGetVisualFromFBConfig = (decltype(_glXGetVisualFromFBConfig))__GetProcAddress(OPENGL_MODULE_NAME, "glXGetVisualFromFBConfig");
     _glXSwapBuffers           = (decltype(_glXSwapBuffers))__GetProcAddress(OPENGL_MODULE_NAME, "glXSwapBuffers");
     _glXQueryExtensionsString = (decltype(_glXQueryExtensionsString))__GetProcAddress(OPENGL_MODULE_NAME, "glXQueryExtensionsString");
@@ -209,8 +211,6 @@ auto OpenGL::init_opengl_linux() -> void
 
     static int visualAttribs[] = {
         GLX_X_RENDERABLE,  true,
-        // GLX_DRAWABLE_TYPE, 0x00000001,
-        // GLX_RENDER_TYPE,   0x00000001,
         GLX_DOUBLEBUFFER,  true,
         GLX_RED_SIZE,       8,
         GLX_GREEN_SIZE,     8,
@@ -219,6 +219,23 @@ auto OpenGL::init_opengl_linux() -> void
         GLX_DEPTH_SIZE,     24,
         0
     };
+
+    int totalFbConfigs = 0;
+    GLXFBConfig* allConfigs = _glXGetFBConfigs(m_DrawContext, DefaultScreen(m_DrawContext), &totalFbConfigs);
+
+    if (!allConfigs || totalFbConfigs == 0) {
+        Error("No FBConfigs available on this system.");
+        return;
+    }
+
+    // Log attributes of the first 5 configs
+    for (int i = 0; i < std::min(5, totalFbConfigs); i++) {
+        int red, depth;
+        _glXGetFBConfigAttrib(m_DrawContext, allConfigs[i], GLX_RED_SIZE, &red);
+        _glXGetFBConfigAttrib(m_DrawContext, allConfigs[i], GLX_DEPTH_SIZE, &depth);
+        Info("Config {}: R={}, Depth={}", i, red, depth);
+    }
+
 
     int fbcount;
     GLXFBConfig* fbc = _glXChooseFBConfig(m_DrawContext, DefaultScreen(m_DrawContext), visualAttribs, &fbcount);

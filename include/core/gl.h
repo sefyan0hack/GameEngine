@@ -53,6 +53,8 @@ extern "C" {
     extern void glXSwapBuffers(	HDC_D dpy, GLXDrawable drawable);
     extern const char * glXQueryExtensionsString(HDC_D dpy, int screen);
     extern void glXCopyContext( HDC_D dpy, GLCTX src, GLCTX dst, unsigned long mask);
+    extern int glXGetFBConfigAttrib( HDC_D dpy, GLXFBConfig config, int attribute, int * value);
+    extern GLXFBConfig * glXGetFBConfigs( HDC_D dpy, int screen, int * nelements);
 }
 
 [[maybe_unused]] inline static auto _glXCreateContext = (decltype(&glXCreateContext))(nullptr);
@@ -60,6 +62,8 @@ extern "C" {
 [[maybe_unused]] inline static auto _glXDestroyContext = (decltype(&glXDestroyContext))(nullptr);
 [[maybe_unused]] inline static auto _glXGetProcAddress = (decltype(&glXGetProcAddress))(nullptr);
 [[maybe_unused]] inline static auto _glXChooseFBConfig = (decltype(&glXChooseFBConfig))(nullptr);
+[[maybe_unused]] inline static auto _glXGetFBConfigAttrib = (decltype(&glXGetFBConfigAttrib))(nullptr);
+[[maybe_unused]] inline static auto _glXGetFBConfigs = (decltype(&glXGetFBConfigs))(nullptr);
 [[maybe_unused]] inline static auto _glXGetVisualFromFBConfig = (decltype(&glXGetVisualFromFBConfig))(nullptr);
 [[maybe_unused]] inline static auto _glXSwapBuffers = (decltype(&glXSwapBuffers))(nullptr);
 [[maybe_unused]] inline static auto _glXQueryExtensionsString = (decltype(&glXQueryExtensionsString))(nullptr);
