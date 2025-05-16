@@ -243,9 +243,9 @@ auto OpenGL::init_opengl_linux() -> void
         0
     };
 
-    _glXCreateContextAttribsARB = (decltype(_glXCreateContextAttribsARB))_glXGetProcAddress((const GLubyte*)"glXCreateContextAttribsARB");
+    glXCreateContextAttribsARB = (decltype(glXCreateContextAttribsARB))_glXGetProcAddress((const GLubyte*)"glXCreateContextAttribsARB");
 
-    m_Context = _glXCreateContextAttribsARB(m_DrawContext, fbc[0], nullptr, True, contextAttribs);
+    m_Context = glXCreateContextAttribsARB(m_DrawContext, fbc[0], nullptr, True, contextAttribs);
     XFree(fbc);
     XFree(visInfo);
 
