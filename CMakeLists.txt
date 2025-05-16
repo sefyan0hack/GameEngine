@@ -210,6 +210,7 @@ target_link_libraries(core
 if(UNIX)
 find_package(X11 REQUIRED)
 target_include_directories(core PUBLIC ${X11_INCLUDE_DIR})
+message(STATUS "${X11_LIBRARIES}  |   ${X11_X11_LIB} | ${X11_SM_LIB} | ${X11_ICE_LIB} | ${X11_Xt_LIB} | ${X11_Xext_LIB}")
 target_link_libraries(core PUBLIC -Wl,-Bstatic ${X11_LIBRARIES})
 endif()
 
