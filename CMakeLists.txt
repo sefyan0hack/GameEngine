@@ -201,7 +201,6 @@ endif()
 target_link_libraries(core
     PUBLIC
         glm::glm
-        OpenGL::GL
         stb_image
         $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
         $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
@@ -231,7 +230,7 @@ message(STATUS "Xdmcp Lib: ${XDMCP_LIBRARY}")
 set(CMAKE_FIND_LIBRARY_SUFFIXES ${ORIGINAL_SUFFIXES})
 
 target_include_directories(core PUBLIC ${X11_INCLUDE_DIR})
-target_link_libraries(core PUBLIC ${X11_LIBRARIES} ${XCB_LIBRARY}  ${XAU_LIBRARY}  ${XDMCP_LIBRARY})
+target_link_libraries(core PUBLIC ${X11_LIBRARIES} ${XCB_LIBRARY} ${XAU_LIBRARY} ${XDMCP_LIBRARY})
 endif()
 
 target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
