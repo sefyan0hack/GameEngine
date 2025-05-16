@@ -158,6 +158,10 @@ set(SOURCES
 
 # Find OpenGL package
 find_package(OpenGL REQUIRED)
+# Find X11 package
+if(UNIX)
+find_package(X11 REQUIRED)
+endif()
 
 # Extract the core OpenGL library (first entry in the list)
 # list(GET OPENGL_LIBRARIES 0 CORE_OPENGL_LIB)
@@ -172,7 +176,10 @@ target_link_libraries(${PROJECT_NAME} PRIVATE core)
 # Include Dirs 
 ####################################################################################################
 
-target_include_directories(core PUBLIC "${CMAKE_SOURCE_DIR}/include")
+target_include_directories(core PUBLIC 
+    "${CMAKE_SOURCE_DIR}/include"
+    $<$<STREQUAL:$<PLATFORM_ID>,Linux>:${X11_INCLUDE_DIR}>
+)
 
 if(ONLINE)
     set(STB_IMG_HEADER ${stb_image_header_SOURCE_DIR})
@@ -202,18 +209,12 @@ target_link_libraries(core
     PUBLIC
         glm::glm
         stb_image
-        OpenGL
+        ${OPENGL_LIBRARIES}
         $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
-        $<$<STREQUAL:$<PLATFORM_ID>,Linux>:dl>
+        $<$<STREQUAL:$<PLATFORM_ID>,Linux>:dl;${X11_LIBRARIES}>
         $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
 )
 
-if(UNIX)
-find_package(X11 REQUIRED)
-
-target_include_directories(core PUBLIC ${X11_INCLUDE_DIR})
-target_link_libraries(core PUBLIC ${X11_LIBRARIES})
-endif()
 
 target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
 
