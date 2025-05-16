@@ -208,9 +208,9 @@ target_link_libraries(core
 )
 
 if(UNIX)
+set(CMAKE_FIND_LIBRARY_SUFFIXES .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
 find_package(X11 REQUIRED)
 target_include_directories(core PUBLIC ${X11_INCLUDE_DIR})
-set(CMAKE_FIND_LIBRARY_SUFFIXES .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
 message(STATUS "${X11_LIBRARIES}  |   ${X11_X11_LIB} | ${X11_SM_LIB} | ${X11_ICE_LIB} | ${X11_Xt_LIB} | ${X11_Xext_LIB}")
 target_link_libraries(core PUBLIC -Wl,-Bstatic ${X11_LIBRARIES})
 endif()
