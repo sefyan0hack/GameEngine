@@ -193,11 +193,6 @@ apply_compile_options(TARGETS core ${PROJECT_NAME})
 ####################################################################################################
 # Link Libs 
 ####################################################################################################
-if(UNIX)
-find_package(X11 REQUIRED)
-target_include_directories(core PUBLIC ${X11_INCLUDE_DIR})
-target_link_libraries(core PUBLIC ${X11_LIBRARIES})
-endif()
 
 if(NOT WIN32)
 target_link_libraries(core PUBLIC $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
@@ -211,6 +206,13 @@ target_link_libraries(core
         $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
         $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
 )
+
+if(UNIX)
+find_package(X11 REQUIRED)
+target_include_directories(core PUBLIC ${X11_INCLUDE_DIR})
+target_link_libraries(core PUBLIC -Wl,-Bstatic ${X11_LIBRARIES})
+endif()
+
 target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
 
 add_compile_definitions(
