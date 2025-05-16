@@ -211,12 +211,12 @@ auto OpenGL::init_opengl_linux() -> void
 
     static int visualAttribs[] = {
         GLX_X_RENDERABLE,  true,
-        GLX_DOUBLEBUFFER,  true,
-        GLX_RED_SIZE,       8,
-        GLX_GREEN_SIZE,     8,
-        GLX_BLUE_SIZE,      8,
-        GLX_ALPHA_SIZE,     8,
-        GLX_DEPTH_SIZE,     24,
+        // GLX_DOUBLEBUFFER,  true,
+        // GLX_RED_SIZE,       8,
+        // GLX_GREEN_SIZE,     8,
+        // GLX_BLUE_SIZE,      8,
+        // GLX_ALPHA_SIZE,     8,
+        // GLX_DEPTH_SIZE,     24,
         0
     };
 
