@@ -32,6 +32,11 @@ To build and use GameEngine, you’ll need the following:
 
 #### if you Want Auto fetch debs [`Good Connection`] :
 ```bash
+# linux
+$ sudo apt-get update
+$ sudo apt-get install -y libgl1-mesa-dev libxi-dev mesa-common-dev
+$ sudo apt-get install -y libx11-dev libxcb1-dev libxau-dev libxdmcp-dev
+#end
 $ git clone https://github.com/sefyan0hack/GameEngine.git
 $ cd GameEngine
    

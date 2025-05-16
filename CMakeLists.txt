@@ -195,8 +195,10 @@ apply_compile_options(TARGETS core ${PROJECT_NAME})
 ####################################################################################################
 if(UNIX)
 find_package(X11 REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(X11_STATIC REQUIRED IMPORTED_TARGET "x11" --static)
 target_include_directories(core PUBLIC ${X11_INCLUDE_DIR})
-target_link_libraries(core PUBLIC ${X11_LIBRARIES})
+target_link_libraries(core PUBLIC ${X11_STATIC})
 endif()
 
 if(NOT WIN32)
