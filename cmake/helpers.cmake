@@ -92,6 +92,8 @@ function(apply_compile_options)
         )
         add_link_options(
             -static-libgcc -static-libstdc++
+            -Wl,--as-needed
+            -Wl,--no-undefined
         )
         add_definitions(-include "${CMAKE_SOURCE_DIR}/include/core/Global_H.hpp")
         endif()
