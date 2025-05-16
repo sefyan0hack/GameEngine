@@ -203,7 +203,7 @@ target_link_libraries(core
         glm::glm
         stb_image
         $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
-        $<$<STREQUAL:$<PLATFORM_ID>,Linux>:dl;OpenGL::GLX>
+        $<$<STREQUAL:$<PLATFORM_ID>,Linux>:dl;${OPENGL_glx_LIBRARY}>
         $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
 )
 
