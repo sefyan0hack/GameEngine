@@ -209,8 +209,8 @@ auto OpenGL::init_opengl_linux() -> void
 
     static int visualAttribs[] = {
         GLX_X_RENDERABLE,  true,
-        GLX_DRAWABLE_TYPE, 0x00000001,
-        GLX_RENDER_TYPE,   0x00000001,
+        // GLX_DRAWABLE_TYPE, 0x00000001,
+        // GLX_RENDER_TYPE,   0x00000001,
         GLX_DOUBLEBUFFER,  true,
         GLX_RED_SIZE,       8,
         GLX_GREEN_SIZE,     8,
