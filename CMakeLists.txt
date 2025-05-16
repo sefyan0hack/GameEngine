@@ -202,38 +202,17 @@ target_link_libraries(core
     PUBLIC
         glm::glm
         stb_image
+        OpenGL
         $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
-        $<$<STREQUAL:$<PLATFORM_ID>,Linux>:dl;${OPENGL_glx_LIBRARY}>
+        $<$<STREQUAL:$<PLATFORM_ID>,Linux>:dl>
         $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
 )
 
 if(UNIX)
-set(ORIGINAL_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES})
-set(CMAKE_FIND_LIBRARY_SUFFIXES .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
-set(CMAKE_FIND_LIBRARY_PREFERS_STATIC ON)
-
 find_package(X11 REQUIRED)
 
-find_library(XCB_LIBRARY xcb)
-find_library(XAU_LIBRARY Xau)
-find_library(XDMCP_LIBRARY Xdmcp)
-find_library(GL_LIBRARY GL)
-
-if(NOT XCB_LIBRARY OR NOT XAU_LIBRARY OR NOT XDMCP_LIBRARY)
-    message(FATAL_ERROR "Required X11 dependencies not found")
-endif()
-
-message(STATUS "X11 Lib: ${X11_LIBRARIES}")
-message(STATUS "X11 include: ${X11_INCLUDE_DIR}")
-message(STATUS "xcb Lib: ${XCB_LIBRARY}")
-message(STATUS "Xau Lib: ${XAU_LIBRARY}")
-message(STATUS "Xdmcp Lib: ${XDMCP_LIBRARY}")
-message(STATUS "GL Lib: ${GL_LIBRARY}")
-
-set(CMAKE_FIND_LIBRARY_SUFFIXES ${ORIGINAL_SUFFIXES})
-
 target_include_directories(core PUBLIC ${X11_INCLUDE_DIR})
-target_link_libraries(core PUBLIC ${X11_LIBRARIES} ${XCB_LIBRARY} ${XAU_LIBRARY} ${XDMCP_LIBRARY})
+target_link_libraries(core PUBLIC ${X11_LIBRARIES})
 endif()
 
 target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
