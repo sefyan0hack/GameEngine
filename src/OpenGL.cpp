@@ -197,18 +197,6 @@ auto OpenGL::init_opengl_win32() -> void
 
 auto OpenGL::init_opengl_linux() -> void
 {
-    // _glXCreateContext         = (decltype(_glXCreateContext))__GetProcAddress(OPENGL_MODULE_NAME, "glXCreateContext");
-    // _glXMakeCurrent           = (decltype(_glXMakeCurrent))__GetProcAddress(OPENGL_MODULE_NAME, "glXMakeCurrent");
-    // _glXDestroyContext        = (decltype(_glXDestroyContext))__GetProcAddress(OPENGL_MODULE_NAME, "glXDestroyContext");
-    // _glXGetProcAddress        = (decltype(_glXGetProcAddress))__GetProcAddress(OPENGL_MODULE_NAME, "glXGetProcAddress");
-    // _glXChooseFBConfig        = (decltype(_glXChooseFBConfig))__GetProcAddress(OPENGL_MODULE_NAME, "glXChooseFBConfig");
-    // _glXGetFBConfigAttrib     = (decltype(_glXGetFBConfigAttrib))__GetProcAddress(OPENGL_MODULE_NAME, "glXGetFBConfigAttrib");
-    // _glXGetFBConfigs          = (decltype(_glXGetFBConfigs))__GetProcAddress(OPENGL_MODULE_NAME, "glXGetFBConfigs");
-    // _glXGetVisualFromFBConfig = (decltype(_glXGetVisualFromFBConfig))__GetProcAddress(OPENGL_MODULE_NAME, "glXGetVisualFromFBConfig");
-    // _glXSwapBuffers           = (decltype(_glXSwapBuffers))__GetProcAddress(OPENGL_MODULE_NAME, "glXSwapBuffers");
-    // _glXQueryExtensionsString = (decltype(_glXQueryExtensionsString))__GetProcAddress(OPENGL_MODULE_NAME, "glXQueryExtensionsString");
-    // _glXCopyContext           = (decltype(_glXCopyContext))__GetProcAddress(OPENGL_MODULE_NAME, "glXCopyContext");
-
     static int visualAttribs[] = {
         GLX_X_RENDERABLE,  true,
         GLX_DOUBLEBUFFER,  true,
@@ -221,7 +209,7 @@ auto OpenGL::init_opengl_linux() -> void
     };
 
     int totalFbConfigs = 0;
-    GLXFBConfig* allConfigs = _glXGetFBConfigs(m_DrawContext, DefaultScreen(m_DrawContext), &totalFbConfigs);
+    GLXFBConfig* allConfigs = glXGetFBConfigs(m_DrawContext, DefaultScreen(m_DrawContext), &totalFbConfigs);
 
     if (!allConfigs || totalFbConfigs == 0) {
         Error("No FBConfigs available on this system.");
@@ -231,19 +219,19 @@ auto OpenGL::init_opengl_linux() -> void
     // Log attributes of the first 5 configs
     for (int i = 0; i < std::min(5, totalFbConfigs); i++) {
         int red, depth;
-        _glXGetFBConfigAttrib(m_DrawContext, allConfigs[i], GLX_RED_SIZE, &red);
-        _glXGetFBConfigAttrib(m_DrawContext, allConfigs[i], GLX_DEPTH_SIZE, &depth);
+        glXGetFBConfigAttrib(m_DrawContext, allConfigs[i], GLX_RED_SIZE, &red);
+        glXGetFBConfigAttrib(m_DrawContext, allConfigs[i], GLX_DEPTH_SIZE, &depth);
         Info("Config {}: R={}, Depth={}", i, red, depth);
     }
 
 
     int fbcount;
-    GLXFBConfig* fbc = _glXChooseFBConfig(m_DrawContext, DefaultScreen(m_DrawContext), visualAttribs, &fbcount);
+    GLXFBConfig* fbc = glXChooseFBConfig(m_DrawContext, DefaultScreen(m_DrawContext), visualAttribs, &fbcount);
     if (!fbc || fbcount == 0) {
         Error("Failed to get framebuffer config.");
     }
 
-    XVisualInfo* visInfo = _glXGetVisualFromFBConfig(m_DrawContext, fbc[0]);
+    XVisualInfo* visInfo = glXGetVisualFromFBConfig(m_DrawContext, fbc[0]);
     if (!visInfo) {
         XFree(fbc);
         Error("Failed to get visual info.");
@@ -260,7 +248,7 @@ auto OpenGL::init_opengl_linux() -> void
         0
     };
 
-    glXCreateContextAttribsARB = (decltype(glXCreateContextAttribsARB))_glXGetProcAddress((const GLubyte*)"glXCreateContextAttribsARB");
+    glXCreateContextAttribsARB = (decltype(glXCreateContextAttribsARB))glXGetProcAddress((const GLubyte*)"glXCreateContextAttribsARB");
 
     m_Context = glXCreateContextAttribsARB(m_DrawContext, fbc[0], nullptr, True, contextAttribs);
     XFree(fbc);
@@ -287,7 +275,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
 	}
     #elif defined(LINUX_PLT)
     init_opengl_linux();
-    if (!_glXMakeCurrent(m_DrawContext, window, m_Context)) {
+    if (!glXMakeCurrent(m_DrawContext, window, m_Context)) {
         Error("Failed to make context current.");
     }
     #endif //_WIN32
@@ -321,7 +309,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     #if defined(WINDOWS_PLT)
     auto exts = reinterpret_cast<const char*>(wglGetExtensionsStringARB(m_DrawContext));
     #elif defined(LINUX_PLT)
-    auto exts = reinterpret_cast<const char*>(_glXQueryExtensionsString(m_DrawContext, DefaultScreen(m_DrawContext)));
+    auto exts = reinterpret_cast<const char*>(glXQueryExtensionsString(m_DrawContext, DefaultScreen(m_DrawContext)));
     #endif
 
     m_Extensions = exts ? split(exts, " ") : decltype(m_Extensions){} ;
@@ -383,7 +371,7 @@ OpenGL::OpenGL(const OpenGL &other)
     auto tst = _wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
     if(tst != TRUE) Error("couldn't Copy Opengl Context");
     #elif defined(LINUX_PLT)
-    _glXCopyContext(this->m_DrawContext, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
+    glXCopyContext(this->m_DrawContext, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
     // no error check for now  ` X11 ` Shit
     #endif
 }
@@ -402,7 +390,7 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL
         auto tst = _wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
         if(tst != TRUE) Error("couldn't Copy Opengl Context");
         #elif defined(LINUX_PLT)
-        _glXCopyContext(this->m_DrawContext, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
+        glXCopyContext(this->m_DrawContext, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
         // no error check for now  ` X11 ` Shit
         #endif //_WIN32
     }
@@ -454,8 +442,8 @@ OpenGL::~OpenGL()
     _wglMakeCurrent(nullptr, nullptr);
     _wglDeleteContext(m_Context);
     #elif defined(LINUX_PLT)
-    _glXMakeCurrent(m_DrawContext, Window{},  GLCTX{});
-    _glXDestroyContext(m_DrawContext, m_Context);
+    glXMakeCurrent(m_DrawContext, Window{},  GLCTX{});
+    glXDestroyContext(m_DrawContext, m_Context);
     #endif
 }
 
