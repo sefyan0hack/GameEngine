@@ -57,17 +57,29 @@ extern "C" {
     extern GLXFBConfig * glXGetFBConfigs( HDC_D dpy, int screen, int * nelements);
 }
 
-[[maybe_unused]] inline static auto _glXCreateContext = (decltype(&glXCreateContext))(nullptr);
-[[maybe_unused]] inline static auto _glXMakeCurrent = (decltype(&glXMakeCurrent))(nullptr);
-[[maybe_unused]] inline static auto _glXDestroyContext = (decltype(&glXDestroyContext))(nullptr);
-[[maybe_unused]] inline static auto _glXGetProcAddress = (decltype(&glXGetProcAddress))(nullptr);
-[[maybe_unused]] inline static auto _glXChooseFBConfig = (decltype(&glXChooseFBConfig))(nullptr);
-[[maybe_unused]] inline static auto _glXGetFBConfigAttrib = (decltype(&glXGetFBConfigAttrib))(nullptr);
-[[maybe_unused]] inline static auto _glXGetFBConfigs = (decltype(&glXGetFBConfigs))(nullptr);
-[[maybe_unused]] inline static auto _glXGetVisualFromFBConfig = (decltype(&glXGetVisualFromFBConfig))(nullptr);
-[[maybe_unused]] inline static auto _glXSwapBuffers = (decltype(&glXSwapBuffers))(nullptr);
-[[maybe_unused]] inline static auto _glXQueryExtensionsString = (decltype(&glXQueryExtensionsString))(nullptr);
-[[maybe_unused]] inline static auto _glXCopyContext = (decltype(&glXCopyContext))(nullptr);
+[[maybe_unused]] inline static auto _glXCreateContext = &glXCreateContext
+[[maybe_unused]] inline static auto _glXMakeCurrent = &glXMakeCurrent
+[[maybe_unused]] inline static auto _glXDestroyContext = &glXDestroyContext
+[[maybe_unused]] inline static auto _glXGetProcAddress = &glXGetProcAddress
+[[maybe_unused]] inline static auto _glXChooseFBConfig = &glXChooseFBConfig
+[[maybe_unused]] inline static auto _glXGetFBConfigAttrib = &glXGetFBConfigAttrib
+[[maybe_unused]] inline static auto _glXGetFBConfigs = &glXGetFBConfigs
+[[maybe_unused]] inline static auto _glXGetVisualFromFBConfig = &glXGetVisualFromFBConfig
+[[maybe_unused]] inline static auto _glXSwapBuffers = &glXSwapBuffers
+[[maybe_unused]] inline static auto _glXQueryExtensionsString = &glXQueryExtensionsString
+[[maybe_unused]] inline static auto _glXCopyContext = &glXCopyContext
+
+// [[maybe_unused]] inline static auto _glXCreateContext = (decltype(&glXCreateContext))(nullptr);
+// [[maybe_unused]] inline static auto _glXMakeCurrent = (decltype(&glXMakeCurrent))(nullptr);
+// [[maybe_unused]] inline static auto _glXDestroyContext = (decltype(&glXDestroyContext))(nullptr);
+// [[maybe_unused]] inline static auto _glXGetProcAddress = (decltype(&glXGetProcAddress))(nullptr);
+// [[maybe_unused]] inline static auto _glXChooseFBConfig = (decltype(&glXChooseFBConfig))(nullptr);
+// [[maybe_unused]] inline static auto _glXGetFBConfigAttrib = (decltype(&glXGetFBConfigAttrib))(nullptr);
+// [[maybe_unused]] inline static auto _glXGetFBConfigs = (decltype(&glXGetFBConfigs))(nullptr);
+// [[maybe_unused]] inline static auto _glXGetVisualFromFBConfig = (decltype(&glXGetVisualFromFBConfig))(nullptr);
+// [[maybe_unused]] inline static auto _glXSwapBuffers = (decltype(&glXSwapBuffers))(nullptr);
+// [[maybe_unused]] inline static auto _glXQueryExtensionsString = (decltype(&glXQueryExtensionsString))(nullptr);
+// [[maybe_unused]] inline static auto _glXCopyContext = (decltype(&glXCopyContext))(nullptr);
 
 [[maybe_unused]] inline static auto glXCreateContextAttribsARB = (GLCTX(*)(HDC_D dpy, GLXFBConfig config, GLCTX share_context, Bool direct, const int *attrib_list))(nullptr);
 #endif 

@@ -197,17 +197,17 @@ auto OpenGL::init_opengl_win32() -> void
 
 auto OpenGL::init_opengl_linux() -> void
 {
-    _glXCreateContext         = (decltype(_glXCreateContext))__GetProcAddress(OPENGL_MODULE_NAME, "glXCreateContext");
-    _glXMakeCurrent           = (decltype(_glXMakeCurrent))__GetProcAddress(OPENGL_MODULE_NAME, "glXMakeCurrent");
-    _glXDestroyContext        = (decltype(_glXDestroyContext))__GetProcAddress(OPENGL_MODULE_NAME, "glXDestroyContext");
-    _glXGetProcAddress        = (decltype(_glXGetProcAddress))__GetProcAddress(OPENGL_MODULE_NAME, "glXGetProcAddress");
-    _glXChooseFBConfig        = (decltype(_glXChooseFBConfig))__GetProcAddress(OPENGL_MODULE_NAME, "glXChooseFBConfig");
-    _glXGetFBConfigAttrib     = (decltype(_glXGetFBConfigAttrib))__GetProcAddress(OPENGL_MODULE_NAME, "glXGetFBConfigAttrib");
-    _glXGetFBConfigs          = (decltype(_glXGetFBConfigs))__GetProcAddress(OPENGL_MODULE_NAME, "glXGetFBConfigs");
-    _glXGetVisualFromFBConfig = (decltype(_glXGetVisualFromFBConfig))__GetProcAddress(OPENGL_MODULE_NAME, "glXGetVisualFromFBConfig");
-    _glXSwapBuffers           = (decltype(_glXSwapBuffers))__GetProcAddress(OPENGL_MODULE_NAME, "glXSwapBuffers");
-    _glXQueryExtensionsString = (decltype(_glXQueryExtensionsString))__GetProcAddress(OPENGL_MODULE_NAME, "glXQueryExtensionsString");
-    _glXCopyContext           = (decltype(_glXCopyContext))__GetProcAddress(OPENGL_MODULE_NAME, "glXCopyContext");
+    // _glXCreateContext         = (decltype(_glXCreateContext))__GetProcAddress(OPENGL_MODULE_NAME, "glXCreateContext");
+    // _glXMakeCurrent           = (decltype(_glXMakeCurrent))__GetProcAddress(OPENGL_MODULE_NAME, "glXMakeCurrent");
+    // _glXDestroyContext        = (decltype(_glXDestroyContext))__GetProcAddress(OPENGL_MODULE_NAME, "glXDestroyContext");
+    // _glXGetProcAddress        = (decltype(_glXGetProcAddress))__GetProcAddress(OPENGL_MODULE_NAME, "glXGetProcAddress");
+    // _glXChooseFBConfig        = (decltype(_glXChooseFBConfig))__GetProcAddress(OPENGL_MODULE_NAME, "glXChooseFBConfig");
+    // _glXGetFBConfigAttrib     = (decltype(_glXGetFBConfigAttrib))__GetProcAddress(OPENGL_MODULE_NAME, "glXGetFBConfigAttrib");
+    // _glXGetFBConfigs          = (decltype(_glXGetFBConfigs))__GetProcAddress(OPENGL_MODULE_NAME, "glXGetFBConfigs");
+    // _glXGetVisualFromFBConfig = (decltype(_glXGetVisualFromFBConfig))__GetProcAddress(OPENGL_MODULE_NAME, "glXGetVisualFromFBConfig");
+    // _glXSwapBuffers           = (decltype(_glXSwapBuffers))__GetProcAddress(OPENGL_MODULE_NAME, "glXSwapBuffers");
+    // _glXQueryExtensionsString = (decltype(_glXQueryExtensionsString))__GetProcAddress(OPENGL_MODULE_NAME, "glXQueryExtensionsString");
+    // _glXCopyContext           = (decltype(_glXCopyContext))__GetProcAddress(OPENGL_MODULE_NAME, "glXCopyContext");
 
     static int visualAttribs[] = {
         GLX_X_RENDERABLE,  true,
