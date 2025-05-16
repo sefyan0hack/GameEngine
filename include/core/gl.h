@@ -28,6 +28,7 @@ using GLCTX     = HGLRC;
 #elif defined(LINUX_PLT)
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <dlfcn.h>
 
 struct __GLXcontextRec;
 using WindHandl = Window;
