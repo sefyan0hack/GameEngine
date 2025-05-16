@@ -203,6 +203,7 @@ target_link_libraries(core
         glm::glm
         stb_image
         $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
+        $<$<STREQUAL:$<PLATFORM_ID>,Linux>:dl>
         $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
 )
 

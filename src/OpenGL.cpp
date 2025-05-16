@@ -44,6 +44,7 @@
 
 #if defined(WINDOWS_PLT)
 auto __GetProcAddress(LPCSTR module, const char* name) -> void* {
+    #if defined(WINDOWS_PLT)
     auto lib = GetModuleHandleA(module);
 
     if(lib == nullptr){
@@ -56,6 +57,21 @@ auto __GetProcAddress(LPCSTR module, const char* name) -> void* {
     }
 
     void *address = (void *)GetProcAddress(lib, name);
+    #elif defined(LINUX_PLT)
+    void* lib = dlopen(module, RTLD_LAZY | RTLD_NOLOAD);
+    
+    if(lib == nullptr) {
+        lib = dlopen(module, RTLD_LAZY);
+        if(lib == nullptr) {
+            Error("Couldn't load lib {} reason: {}", module, dlerror());
+            return nullptr;
+        }
+    }
+
+    dlerror();
+    void* address = (void *)dlsym(lib, name);
+    #endif
+
     if(address != nullptr)
     {
         Info("from LIB:`{}`: load function `{}` at : {}", module, name, address);
@@ -82,11 +98,11 @@ auto resolve_opengl_fn(const char* name) -> void* {
             Error("Couldnt load opengl function `{}` reason: {}", name, GetLastError());
         }
     }else{
-        Info("from LIB:`opengl32`: load function `{}` at : {}", name, address);
+        Info("from LIB:`{}`: load function `{}` at : {}", OPENGL_MODULE_NAME, name, address);
     }
 
     #elif defined(LINUX_PLT)
-    void *address = (void *)glXGetProcAddress((const GLubyte *)name);
+    void *address = (void *)__GetProcAddress(OPENGL_MODULE_NAME, name);
     if(address == nullptr){
         Error("Couldnt load opengl function `{}`", name);
     }else{
