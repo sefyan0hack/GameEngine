@@ -217,7 +217,7 @@ find_package(X11 REQUIRED)
 set(CMAKE_FIND_LIBRARY_SUFFIXES ${ORIGINAL_SUFFIXES})
 
 target_include_directories(core PUBLIC ${X11_INCLUDE_DIR})
-target_link_libraries(core PUBLIC -Wl,-Bstatic -Wl,--start-group ${X11_LIBRARIES} -Wl,--end-group )
+target_link_libraries(core PUBLIC -Wl,-Bstatic ${X11_LIBRARIES} )
 endif()
 
 target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
