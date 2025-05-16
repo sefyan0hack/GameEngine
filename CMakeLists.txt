@@ -160,7 +160,7 @@ set(SOURCES
 find_package(OpenGL REQUIRED)
 
 # Extract the core OpenGL library (first entry in the list)
-list(GET OPENGL_LIBRARIES 0 CORE_OPENGL_LIB)
+# list(GET OPENGL_LIBRARIES 0 CORE_OPENGL_LIB)
 
 ####################################################################################################
 # Build Exe 
@@ -217,6 +217,7 @@ find_package(X11 REQUIRED)
 find_library(XCB_LIBRARY xcb)
 find_library(XAU_LIBRARY Xau)
 find_library(XDMCP_LIBRARY Xdmcp)
+find_library(GL_LIBRARY GL)
 
 if(NOT XCB_LIBRARY OR NOT XAU_LIBRARY OR NOT XDMCP_LIBRARY)
     message(FATAL_ERROR "Required X11 dependencies not found")
@@ -227,6 +228,7 @@ message(STATUS "X11 include: ${X11_INCLUDE_DIR}")
 message(STATUS "xcb Lib: ${XCB_LIBRARY}")
 message(STATUS "Xau Lib: ${XAU_LIBRARY}")
 message(STATUS "Xdmcp Lib: ${XDMCP_LIBRARY}")
+message(STATUS "GL Lib: ${GL_LIBRARY}")
 
 set(CMAKE_FIND_LIBRARY_SUFFIXES ${ORIGINAL_SUFFIXES})
 
@@ -238,7 +240,8 @@ target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
 
 add_compile_definitions(
     PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
-    OPENGL_LIB="${CORE_OPENGL_LIB}"
+    $<$<STREQUAL:$<PLATFORM_ID>,Windows>:OPENGL_LIB="${OPENGL_gl_LIBRARY}">
+    $<$<STREQUAL:$<PLATFORM_ID>,Linux>:OPENGL_LIB="${GL_LIBRARY}">
     $<$<BOOL:${HAS_STD_STACKTRACE}>:HAS_STD_STACKTRACE>
     $<$<CONFIG:Debug>:DEBUG>
     $<$<CONFIG:Release>:NDEBUG>
