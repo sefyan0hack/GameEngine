@@ -60,7 +60,6 @@ function(apply_compile_options)
             )
             add_link_options(
                 -static-libasan -static-libtsan -static-liblsan -static-libubsan 
-                -static-libgcc -static-libstdc++
             )
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             target_compile_options(${target} PRIVATE -Wno-language-extension-token)
@@ -91,7 +90,9 @@ function(apply_compile_options)
         target_link_options(${target} PRIVATE
             "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
         )
-
+        add_link_options(
+            -static -static-libgcc -static-libstdc++
+        )
         add_definitions(-include "${CMAKE_SOURCE_DIR}/include/core/Global_H.hpp")
         endif()
     endforeach()
