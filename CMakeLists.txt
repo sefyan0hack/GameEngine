@@ -215,11 +215,11 @@ set(CMAKE_FIND_LIBRARY_PREFERS_STATIC ON)
 find_package(X11 REQUIRED)
 
 message(STATUS "X11 Lib: ${X11_LIBRARIES}")
-message(STATUS "X11 include: ${ORIGINAL_SUFFIXES}")
+message(STATUS "X11 include: ${X11_INCLUDE_DIR}")
 set(CMAKE_FIND_LIBRARY_SUFFIXES ${ORIGINAL_SUFFIXES})
 
 target_include_directories(core PUBLIC ${X11_INCLUDE_DIR})
-target_link_libraries(core PUBLIC -Wl,-Bstatic ${X11_LIBRARIES} )
+target_link_libraries(core PUBLIC ${X11_LIBRARIES} )
 endif()
 
 target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
