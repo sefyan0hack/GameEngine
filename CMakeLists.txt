@@ -208,10 +208,16 @@ target_link_libraries(core
 )
 
 if(UNIX)
+set(ORIGINAL_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES})
 set(CMAKE_FIND_LIBRARY_SUFFIXES .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
+set(CMAKE_FIND_LIBRARY_PREFERS_STATIC ON)
+
 find_package(X11 REQUIRED)
+
+set(CMAKE_FIND_LIBRARY_SUFFIXES ${ORIGINAL_SUFFIXES})
+
 target_include_directories(core PUBLIC ${X11_INCLUDE_DIR})
-message(STATUS "${X11_LIBRARIES}  |   ${X11_X11_LIB} | ${X11_SM_LIB} | ${X11_ICE_LIB} | ${X11_Xt_LIB} | ${X11_Xext_LIB}")
+message(STATUS "X11 : ${X11_LIBRARIES} | ${X11_X11_LIB} | ${X11_SM_LIB} | ${X11_ICE_LIB} | ${X11_Xt_LIB} | ${X11_Xext_LIB}")
 target_link_libraries(core PUBLIC -Wl,-Bstatic ${X11_LIBRARIES})
 endif()
 
