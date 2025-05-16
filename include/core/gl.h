@@ -54,6 +54,16 @@ extern "C" {
     extern void glXCopyContext( HDC_D dpy, GLCTX src, GLCTX dst, unsigned long mask);
 }
 
+[[maybe_unused]] inline static auto _glXCreateContext = (decltype(&glXCreateContext))(nullptr);
+[[maybe_unused]] inline static auto _glXMakeCurrent = (decltype(&glXMakeCurrent))(nullptr);
+[[maybe_unused]] inline static auto _glXDestroyContext = (decltype(&glXDestroyContext))(nullptr);
+[[maybe_unused]] inline static auto _glXGetProcAddress = (decltype(&glXGetProcAddress))(nullptr);
+[[maybe_unused]] inline static auto _glXChooseFBConfig = (decltype(&glXChooseFBConfig))(nullptr);
+[[maybe_unused]] inline static auto _glXGetVisualFromFBConfig = (decltype(&glXGetVisualFromFBConfig))(nullptr);
+[[maybe_unused]] inline static auto _glXSwapBuffers = (decltype(&glXSwapBuffers))(nullptr);
+[[maybe_unused]] inline static auto _glXQueryExtensionsString = (decltype(&glXQueryExtensionsString))(nullptr);
+[[maybe_unused]] inline static auto _glXCopyContext = (decltype(&glXCopyContext))(nullptr);
+
 [[maybe_unused]] inline static auto glXCreateContextAttribsARB = (GLCTX(*)(HDC_D dpy, GLXFBConfig config, GLCTX share_context, Bool direct, const int *attrib_list))(nullptr);
 #endif 
 

@@ -87,7 +87,7 @@ auto APP::Run() -> void
         Update(1/static_cast<float>(fps));
 
         // Swap buffers
-        glXSwapBuffers(display, xid);
+        _glXSwapBuffers(display, xid);
 
         // Frame timing
         clock_gettime(CLOCK_MONOTONIC, &end_time);
