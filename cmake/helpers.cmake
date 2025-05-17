@@ -43,7 +43,7 @@ function(apply_compile_options)
                 "$<$<CONFIG:Release>:/Zo>"
                 "$<$<CONFIG:Release>:/Oy->"
                 )
-                target_link_options(${target} PRIVATE
+            target_link_options(${target} PRIVATE
                 "$<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>"       # no terminale
                 "$<$<CONFIG:Release>:/ENTRY:mainCRTStartup>"    # entry
                 "$<$<CONFIG:Release>:/OPT:REF>"                 # Optimize unused functions
@@ -90,7 +90,7 @@ function(apply_compile_options)
             "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
         )
         add_link_options(
-            -static-libgcc -static-libstdc++
+            "$<$<CONFIG:Release>:-static-libgcc;-static-libstdc++>"
             -Wl,--as-needed
             -Wl,--no-undefined
         )
