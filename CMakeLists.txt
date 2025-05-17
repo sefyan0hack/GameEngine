@@ -305,20 +305,23 @@ if(TESTS)
                 foreach(EXCLUDE ${COVERAGE_EXCLUDES})
                     list(APPEND GCOVR_EXCLUDE_ARGS "--exclude=${EXCLUDE}")
                 endforeach()
-
-                set(GCOV_BIN "gcov-14")
-
+                
                 set(GCOVR_COMMON_ARGS
                     --verbose
-                    --gcov-executable ${GCOV_BIN}
                     --root=${CMAKE_SOURCE_DIR}
                     --object-directory=${CMAKE_BINARY_DIR}
                     ${GCOVR_EXCLUDE_ARGS}
                     ${GCOVR_ADDITIONAL_ARGS}
                 )
-                set(GCOVR_ENV_VARS
-                    COMMAND ${CMAKE_COMMAND} -E env "GCOV=${GCOV_BIN} -o ${CMAKE_BINARY_DIR}"
-                )
+
+                if(UNIX)
+                    set(GCOV_BIN "gcov-14")
+                    set(GCOVR_ENV_VARS
+                        COMMAND ${CMAKE_COMMAND} -E env "GCOV=${GCOV_BIN} -o ${CMAKE_BINARY_DIR}"
+                    )
+                    list(APPEND GCOVR_COMMON_ARGS --gcov-executable ${GCOV_BIN})
+                endif()
+                
                 # XML Target
                 add_custom_target(coverage_xml
                     COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${PROJECT_BINARY_DIR} --output-on-failure
