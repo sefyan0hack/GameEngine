@@ -25,7 +25,6 @@ function(apply_compile_options)
         endif()
         
         if(MSVC)
-            message(STATUS "++++++[MSVC]++++++ flags")
             target_compile_options(${target} PRIVATE
                 /W4
                 /bigobj

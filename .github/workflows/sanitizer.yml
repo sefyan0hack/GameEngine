@@ -17,7 +17,6 @@ jobs:
       - name: Install
         run: |
           sudo apt-get install -y ninja-build libgl1-mesa-dev  mesa-common-dev libxi-dev libc++-18-dev libc++abi-18-dev
-          sudo apt-get install -y libx11-dev libxcb1-dev libxau-dev libxdmcp-dev
 
       - name: Generate
         run: |

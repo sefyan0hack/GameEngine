@@ -40,13 +40,12 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libgl1-mesa-dev  mesa-common-dev libxi-dev gcovr
-          sudo apt-get install -y libx11-dev libxcb1-dev libxau-dev libxdmcp-dev
 
       - name: Configure CMake
         shell: bash
         run: |
           rm -rf build
-          cmake -S . -B build -G  "Ninja" -DCMAKE_BUILD_TYPE=Debug -DTESTS=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+          cmake -S . -B build -G  "Ninja" -DCMAKE_BUILD_TYPE=Debug -DTESTS=ON -DCODECOVERAGE=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
@@ -63,10 +62,6 @@ jobs:
         with:
           category: "/language:${{ matrix.language }}"
 
-      - name: Test
-        shell: bash
-        run: ctest --test-dir build --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
-
       - name: Code Coverage
         shell: bash
         run: GCOV=gcov-14 cmake --build build --target coverage_xml
@@ -75,4 +70,4 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: build/coverage_xml.xml
+          files: build/coverage.xml
