@@ -306,15 +306,18 @@ if(TESTS)
                     list(APPEND GCOVR_EXCLUDE_ARGS "--exclude=${EXCLUDE}")
                 endforeach()
 
+                set(GCOV_BIN "gcov-14")
+
                 set(GCOVR_COMMON_ARGS
                     --verbose
+                    --gcov-executable ${GCOV_BIN}
                     --root=${CMAKE_SOURCE_DIR}
                     --object-directory=${CMAKE_BINARY_DIR}
                     ${GCOVR_EXCLUDE_ARGS}
                     ${GCOVR_ADDITIONAL_ARGS}
                 )
                 set(GCOVR_ENV_VARS
-                    COMMAND ${CMAKE_COMMAND} -E env "GCOV=gcov -o ${CMAKE_BINARY_DIR}"
+                    COMMAND ${CMAKE_COMMAND} -E env "GCOV=${GCOV_BIN} -o ${CMAKE_BINARY_DIR}"
                 )
                 # XML Target
                 add_custom_target(coverage_xml
