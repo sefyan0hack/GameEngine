@@ -315,18 +315,7 @@ if(TESTS)
                     ${GCOVR_EXCLUDE_ARGS}
                     ${GCOVR_ADDITIONAL_ARGS}
                 )
-                set(GCOVR_COMMON_ARGS
-                    --verbose
-                    --root=${CMAKE_SOURCE_DIR}
-                    --exclude=${PARTY_EXCLUDE}
-                    --exclude=${TESTS_EXCLUDE}
-                    --exclude=${BUILD_EXCLUDE}
-                    --exclude=".*/CMakeFiles/.*"
-                    --exclude=".*cmake_pch.*"
-                    --object-directory=${CMAKE_BINARY_DIR}
 
-                    ${GCOVR_ADDITIONAL_ARGS}
-                )
                 # XML Target
                 add_custom_target(coverage_xml
                     COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${PROJECT_BINARY_DIR} --output-on-failure
