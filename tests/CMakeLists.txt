@@ -19,6 +19,6 @@ else()
 endif()
 
 target_link_libraries(tests PRIVATE core gtest gtest_main)
-
+set_target_properties(tests PROPERTIES CXX_VISIBILITY_PRESET hidden)
 include(GoogleTest)
 gtest_discover_tests(tests)

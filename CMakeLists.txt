@@ -221,7 +221,8 @@ target_link_libraries(core
         $<$<STREQUAL:$<PLATFORM_ID>,Linux>:dl;${X11_LIBRARIES}>
         $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
 )
-
+set_target_properties(core PROPERTIES CXX_VISIBILITY_PRESET hidden)
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
 target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
 
