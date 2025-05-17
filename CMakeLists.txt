@@ -38,7 +38,6 @@ if(NOT "${SANITIZER}" STREQUAL "")
 endif()
 
 if(CODECOVERAGE)
-        message(STATUS "[Code Coverage `ON`]")
         add_compile_options($<$<CXX_COMPILER_ID:GNU,Clang>:--coverage>)
         add_link_options($<$<CXX_COMPILER_ID:GNU,Clang>:--coverage>)
         link_libraries($<$<CXX_COMPILER_ID:GNU>:gcov>)
@@ -247,6 +246,8 @@ if(TESTS)
     add_subdirectory(tests)
 
     if(CODECOVERAGE)
+        message(STATUS "[Code Coverage `ON`]")
+
         if(WIN32 AND MSVC)
             find_program(OPENCPPCOVERAGE_PATH OpenCppCoverage.exe)
             if(OPENCPPCOVERAGE_PATH)
@@ -284,6 +285,7 @@ if(TESTS)
                 if(GCOVR_PATH)
 
                 set(GCOVR_ADDITIONAL_ARGS "--calls;--branches;--decisions;--exclude-function-lines;--exclude-noncode-lines;--exclude-unreachable-branches;--exclude-throw-branches;--delete")
+                file(TO_NATIVE_PATH "${CMAKE_BINARY_DIR}/*" BUILD_EXCLUDE)
                 file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/3party/*" PARTY_EXCLUDE)
                 file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/tests/*" TESTS_EXCLUDE)
                 set(GCOVR_COMMON_ARGS
@@ -291,7 +293,7 @@ if(TESTS)
                     --root=${CMAKE_SOURCE_DIR}
                     --exclude=${PARTY_EXCLUDE}
                     --exclude=${TESTS_EXCLUDE}
-                    --exclude=".*cmake_pch.*"
+                    --exclude=${BUILD_EXCLUDE}
                     ${GCOVR_ADDITIONAL_ARGS}
                 )
                 # XML Target
