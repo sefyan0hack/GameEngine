@@ -40,8 +40,14 @@ if(NOT "${SANITIZER}" STREQUAL "")
 endif()
 
 if(CODECOVERAGE)
-        add_compile_options($<$<CXX_COMPILER_ID:GNU,Clang>:--coverage; -fcondition-coverage >)
-        add_link_options($<$<CXX_COMPILER_ID:GNU,Clang>:--coverage; -fcondition-coverage >)
+        add_compile_options(
+            "$<$<CXX_COMPILER_ID:GNU,Clang>:--coverage>"
+            "$<$<CXX_COMPILER_ID:GNU,Clang>:-fcondition-coverage>"
+        )
+        add_link_options(
+            "$<$<CXX_COMPILER_ID:GNU,Clang>:--coverage>"
+            "$<$<CXX_COMPILER_ID:GNU,Clang>:-fcondition-coverage>"
+        )
         link_libraries($<$<CXX_COMPILER_ID:GNU>:gcov>)
 endif()
 
