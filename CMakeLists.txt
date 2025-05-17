@@ -216,7 +216,7 @@ endif()
 
 target_link_libraries(core
     PUBLIC
-        glm::glm
+        glm::glm-header-only
         stb_image
         ${OPENGL_LIBRARIES}
         $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
