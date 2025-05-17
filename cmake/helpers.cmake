@@ -56,6 +56,7 @@ function(apply_compile_options)
                 -Wno-cast-function-type -Winit-self -Wcast-qual
                 -Wsuggest-final-types -Wsuggest-final-methods
                 -fdevirtualize -ftree-vectorize
+                -fhardened
             )
             add_link_options(
                 -static-libasan -static-libtsan -static-liblsan -static-libubsan 
