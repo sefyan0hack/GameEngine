@@ -296,6 +296,7 @@ if(TESTS)
                     --exclude=${BUILD_EXCLUDE}
                     --exclude=".*/CMakeFiles/.*"
                     --exclude=".*cmake_pch.*"
+                    --object-directory=${CMAKE_BINARY_DIR}
                     ${GCOVR_ADDITIONAL_ARGS}
                 )
                 # XML Target
