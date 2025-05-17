@@ -54,7 +54,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: cmake --build build --config Debug --parallel --target all
+        run: cmake --build build --config Debug --parallel
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
