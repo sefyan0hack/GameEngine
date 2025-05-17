@@ -314,7 +314,9 @@ if(TESTS)
                     ${GCOVR_EXCLUDE_ARGS}
                     ${GCOVR_ADDITIONAL_ARGS}
                 )
-
+                set(GCOVR_ENV_VARS
+                    COMMAND ${CMAKE_COMMAND} -E env "GCOV=gcov -o ${CMAKE_BINARY_DIR}"
+                )
                 # XML Target
                 add_custom_target(coverage_xml
                     COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${PROJECT_BINARY_DIR} --output-on-failure
