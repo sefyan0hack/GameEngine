@@ -288,6 +288,7 @@ if(TESTS)
                 file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/3party/*" PARTY_EXCLUDE)
                 file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/tests/*" TESTS_EXCLUDE)
                 set(GCOVR_COMMON_ARGS
+                    --verbose
                     --filter=${SRC_DIR}
                     --root=${CMAKE_SOURCE_DIR}
                     --exclude=${PARTY_EXCLUDE}
