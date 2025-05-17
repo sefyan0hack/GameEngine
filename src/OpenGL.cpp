@@ -83,7 +83,7 @@ auto __GetProcAddress(const char* module, const char* name) -> void* {
 
 auto resolve_opengl_fn(const char* name) -> void* {
     #if defined(WINDOWS_PLT)
-    void *address = (void *)_wglGetProcAddress(name);
+    void *address = (void *)wglGetProcAddress(name);
 
     if(address == nullptr
     || address == reinterpret_cast<void*>(0x1)
@@ -115,18 +115,6 @@ auto resolve_opengl_fn(const char* name) -> void* {
 
 auto OpenGL::init_opengl_win32() -> void
 {
-    _wglMakeCurrent        = (decltype(_wglMakeCurrent))__GetProcAddress(OPENGL_MODULE_NAME, "wglMakeCurrent");
-    _wglCreateContext      = (decltype(_wglCreateContext))__GetProcAddress(OPENGL_MODULE_NAME, "wglCreateContext");
-    _wglGetProcAddress     = (decltype(_wglGetProcAddress))__GetProcAddress(OPENGL_MODULE_NAME, "wglGetProcAddress");
-    _wglDeleteContext      = (decltype(_wglDeleteContext))__GetProcAddress(OPENGL_MODULE_NAME, "wglDeleteContext");
-    _wglCopyContext        = (decltype(_wglCopyContext))__GetProcAddress(OPENGL_MODULE_NAME, "wglCopyContext");
-    _wglCreateLayerContext = (decltype(_wglCreateLayerContext))__GetProcAddress(OPENGL_MODULE_NAME, "wglCreateLayerContext");
-    _wglGetCurrentContext  = (decltype(_wglGetCurrentContext))__GetProcAddress(OPENGL_MODULE_NAME, "wglGetCurrentContext");
-    _wglGetCurrentDC       = (decltype(_wglGetCurrentDC))__GetProcAddress(OPENGL_MODULE_NAME, "wglGetCurrentDC");
-    _wglShareLists         = (decltype(_wglShareLists))__GetProcAddress(OPENGL_MODULE_NAME, "wglShareLists");
-    _wglUseFontBitmapsA    = (decltype(_wglUseFontBitmapsA))__GetProcAddress(OPENGL_MODULE_NAME, "wglUseFontBitmapsA");
-    _wglUseFontBitmapsW    = (decltype(_wglUseFontBitmapsW))__GetProcAddress(OPENGL_MODULE_NAME, "wglUseFontBitmapsW");
-
     PIXELFORMATDESCRIPTOR pfd {};
     pfd.nSize = sizeof(pfd);
     pfd.nVersion = 1;
@@ -148,12 +136,12 @@ auto OpenGL::init_opengl_win32() -> void
 
     GLCTX dummy_context = nullptr;
 
-    dummy_context = _wglCreateContext(m_DrawContext);
+    dummy_context = wglCreateContext(m_DrawContext);
     if (!dummy_context) {
         Error("Failed to create a dummy OpenGL rendering context.");
     }
 
-    if (!_wglMakeCurrent(m_DrawContext, dummy_context)) {
+    if (!wglMakeCurrent(m_DrawContext, dummy_context)) {
         Error("Failed to activate dummy OpenGL rendering context.");
     }
 
@@ -178,7 +166,7 @@ auto OpenGL::init_opengl_win32() -> void
 
     GLCTX opengl_context = nullptr;
     if (nullptr == (opengl_context = wglCreateContextAttribsARB(m_DrawContext, nullptr, gl_attribs))) {
-        _wglDeleteContext(dummy_context);
+        wglDeleteContext(dummy_context);
         m_Context = nullptr;
 
         if (GetLastError() == ERROR_INVALID_VERSION_ARB){ // ?
@@ -187,7 +175,7 @@ auto OpenGL::init_opengl_win32() -> void
         Error("Failed to create the final rendering context!");
     }
 
-    _wglDeleteContext(dummy_context);
+    wglDeleteContext(dummy_context);
 
     m_Context =  opengl_context;
 }
@@ -270,7 +258,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
 {
     #if defined(WINDOWS_PLT)
     init_opengl_win32();
-    if (!_wglMakeCurrent(m_DrawContext, m_Context)){
+    if (!wglMakeCurrent(m_DrawContext, m_Context)){
 		Error("Failed to make context current.");
 	}
     #elif defined(LINUX_PLT)
@@ -368,7 +356,7 @@ OpenGL::OpenGL(const OpenGL &other)
     , m_Debug(other.m_Debug)
 {
     #if defined(WINDOWS_PLT)
-    auto tst = _wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
+    auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
     if(tst != TRUE) Error("couldn't Copy Opengl Context");
     #elif defined(LINUX_PLT)
     glXCopyContext(this->m_DrawContext, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
@@ -387,7 +375,7 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL
         this->m_Debug = other.m_Debug;
 
         #if defined(WINDOWS_PLT)
-        auto tst = _wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
+        auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
         if(tst != TRUE) Error("couldn't Copy Opengl Context");
         #elif defined(LINUX_PLT)
         glXCopyContext(this->m_DrawContext, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
@@ -439,8 +427,8 @@ OpenGL::operator bool() const
 OpenGL::~OpenGL()
 {
     #if defined(WINDOWS_PLT)
-    _wglMakeCurrent(nullptr, nullptr);
-    _wglDeleteContext(m_Context);
+    wglMakeCurrent(nullptr, nullptr);
+    wglDeleteContext(m_Context);
     #elif defined(LINUX_PLT)
     glXMakeCurrent(m_DrawContext, Window{},  GLCTX{});
     glXDestroyContext(m_DrawContext, m_Context);

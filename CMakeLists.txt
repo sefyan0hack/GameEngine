@@ -220,8 +220,7 @@ target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
 
 add_compile_definitions(
     PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
-    $<$<STREQUAL:$<PLATFORM_ID>,Windows>:OPENGL_LIB="${OPENGL_gl_LIBRARY}">
-    $<$<STREQUAL:$<PLATFORM_ID>,Linux>:OPENGL_LIB="${CORE_OPENGL_LIB}">
+    OPENGL_LIB="${CORE_OPENGL_LIB}"
     $<$<BOOL:${HAS_STD_STACKTRACE}>:HAS_STD_STACKTRACE>
     $<$<CONFIG:Debug>:DEBUG>
     $<$<CONFIG:Release>:NDEBUG>
