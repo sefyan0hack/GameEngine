@@ -284,10 +284,37 @@ if(TESTS)
 
                 if(GCOVR_PATH)
 
-                set(GCOVR_ADDITIONAL_ARGS "--calls;--branches;--decisions;--exclude-function-lines;--exclude-noncode-lines;--exclude-unreachable-branches;--exclude-throw-branches;--delete")
-                file(TO_NATIVE_PATH "${CMAKE_BINARY_DIR}/*" BUILD_EXCLUDE)
-                file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/3party/*" PARTY_EXCLUDE)
-                file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/tests/*" TESTS_EXCLUDE)
+                set(GCOVR_ADDITIONAL_ARGS 
+                    "--calls"
+                    "--branches"
+                    "--decisions"
+                    "--exclude-function-lines"
+                    "--exclude-noncode-lines"
+                    "--exclude-unreachable-branches"
+                    "--exclude-throw-branches"
+                    "--delete"
+                )
+
+                set(COVERAGE_EXCLUDES
+                    "${CMAKE_BINARY_DIR}/.*"       
+                    "${CMAKE_SOURCE_DIR}/3party/.*"
+                    "${CMAKE_SOURCE_DIR}/tests/.*" 
+                    ".*/CMakeFiles/.*"             
+                    ".*cmake_pch.*"                
+                )
+                set(GCOVR_EXCLUDE_ARGS "")
+                foreach(EXCLUDE ${COVERAGE_EXCLUDES})
+                    list(APPEND GCOVR_EXCLUDE_ARGS "--exclude=${EXCLUDE}")
+                endforeach()
+
+                set(GCOVR_COMMON_ARGS
+                    --verbose
+                    --root=${CMAKE_SOURCE_DIR}
+                    --object-directory=${CMAKE_BINARY_DIR}
+                    --gcov-args="-o ${CMAKE_BINARY_DIR}"
+                    ${GCOVR_EXCLUDE_ARGS}
+                    ${GCOVR_ADDITIONAL_ARGS}
+                )
                 set(GCOVR_COMMON_ARGS
                     --verbose
                     --root=${CMAKE_SOURCE_DIR}
@@ -297,7 +324,7 @@ if(TESTS)
                     --exclude=".*/CMakeFiles/.*"
                     --exclude=".*cmake_pch.*"
                     --object-directory=${CMAKE_BINARY_DIR}
-                    --gcov-args "-o ${CMAKE_BINARY_DIR}"
+
                     ${GCOVR_ADDITIONAL_ARGS}
                 )
                 # XML Target
