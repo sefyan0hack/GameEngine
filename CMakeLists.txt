@@ -296,7 +296,6 @@ if(TESTS)
                 )
 
                 set(COVERAGE_EXCLUDES
-                    "${CMAKE_BINARY_DIR}/.*"       
                     "${CMAKE_SOURCE_DIR}/3party/.*"
                     "${CMAKE_SOURCE_DIR}/tests/.*" 
                     ".*/CMakeFiles/.*"             
