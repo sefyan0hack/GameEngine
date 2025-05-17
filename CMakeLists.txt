@@ -291,11 +291,11 @@ if(TESTS)
                 set(GCOVR_COMMON_ARGS
                     --verbose
                     --root=${CMAKE_SOURCE_DIR}
-                    --exclude=${PARTY_EXCLUDE}
-                    --exclude=${TESTS_EXCLUDE}
-                    --exclude=${BUILD_EXCLUDE}
-                    --exclude=".*/CMakeFiles/.*"
-                    --exclude=".*cmake_pch.*"
+                    # --exclude=${PARTY_EXCLUDE}
+                    # --exclude=${TESTS_EXCLUDE}
+                    # --exclude=${BUILD_EXCLUDE}
+                    # --exclude=".*/CMakeFiles/.*"
+                    # --exclude=".*cmake_pch.*"
                     --object-directory=${CMAKE_BINARY_DIR}
                     ${GCOVR_ADDITIONAL_ARGS}
                 )
