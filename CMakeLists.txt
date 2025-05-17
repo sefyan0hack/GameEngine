@@ -311,7 +311,6 @@ if(TESTS)
                     --verbose
                     --root=${CMAKE_SOURCE_DIR}
                     --object-directory=${CMAKE_BINARY_DIR}
-                    --gcov-args=-o ${CMAKE_BINARY_DIR}
                     ${GCOVR_EXCLUDE_ARGS}
                     ${GCOVR_ADDITIONAL_ARGS}
                 )
