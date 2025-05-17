@@ -292,6 +292,7 @@ if(TESTS)
                     --root=${CMAKE_SOURCE_DIR}
                     --exclude=${PARTY_EXCLUDE}
                     --exclude=${TESTS_EXCLUDE}
+                    --exclude=".*cmake_pch.*"
                     ${GCOVR_ADDITIONAL_ARGS}
                 )
                 # XML Target
