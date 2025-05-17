@@ -9,9 +9,12 @@ if(ONLINE)
     GITHUB_REPOSITORY google/googletest
     VERSION 1.16.0
     OPTIONS "BUILD_GMOCK OFF"
+            "INSTALL_GTEST OFF"
   )
 else()
-  set(BUILD_GMOCK OFF CACHE BOOL "Disable GMock build" FORCE)
+  set(BUILD_GMOCK OFF CACHE BOOL   "Disable GMock build" FORCE)
+  set(INSTALL_GTEST OFF CACHE BOOL "Disable GTEST INSTALL" FORCE)
+
   add_subdirectory(
     ${CMAKE_SOURCE_DIR}/3party/googletest-1.16.0
     ${CMAKE_CURRENT_BINARY_DIR}/googletest-1.16.0-build
