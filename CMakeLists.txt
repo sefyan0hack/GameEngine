@@ -284,12 +284,10 @@ if(TESTS)
                 if(GCOVR_PATH)
 
                 set(GCOVR_ADDITIONAL_ARGS "--calls;--branches;--decisions;--exclude-function-lines;--exclude-noncode-lines;--exclude-unreachable-branches;--exclude-throw-branches;--delete")
-                file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/src" SRC_DIR)
                 file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/3party/*" PARTY_EXCLUDE)
                 file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/tests/*" TESTS_EXCLUDE)
                 set(GCOVR_COMMON_ARGS
                     --verbose
-                    --filter=${SRC_DIR}
                     --root=${CMAKE_SOURCE_DIR}
                     --exclude=${PARTY_EXCLUDE}
                     --exclude=${TESTS_EXCLUDE}
