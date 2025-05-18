@@ -16,7 +16,7 @@ public:
     Camera();
     Camera(CWindow &window);
     ~Camera();
-    auto SetViewMat(const glm::mat4 &mat) -> void ;
+
     auto SetFrontVector(glm::vec3 front)  -> void ;
     auto SetUpVector(glm::vec3 up)        -> void ;
     auto SetRightVector(glm::vec3 right)  -> void ;
