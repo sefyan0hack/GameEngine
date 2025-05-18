@@ -138,7 +138,7 @@ auto Camera::MoseMove(bool islocked) -> void
 }
 
 auto Camera::SetFrontVector(glm::vec3 front)  -> void { m_FrontDir = front; }
-auto Camera::SetUpVector(glm::vec3 up)        -> void { m_FrontDir = up; }
+auto Camera::SetUpVector(glm::vec3 up)        -> void { m_UpDir = up; }
 auto Camera::SetRightVector(glm::vec3 right)  -> void { m_RightDir = right; }
 
 auto Camera::Position() const -> glm::vec3 { return m_Position; }
