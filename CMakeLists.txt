@@ -212,6 +212,8 @@ target_include_directories(stb_image SYSTEM INTERFACE ${STB_IMG_HEADER})
 ####################################################################################################
 
 if(HARDEN)
+    include(Hardening)
+    message(STATUS "[Hardening `ON`]")
     harden(core)
 endif()
 
