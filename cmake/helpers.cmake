@@ -69,7 +69,6 @@ function(apply_compile_options)
         if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         target_compile_options(${target} PRIVATE
             -Wall -Wextra -Wpedantic -Wconversion -Wfloat-equal -Wwrite-strings -Wno-sign-conversion
-            -fstack-protector-strong
             -Wnull-dereference -Wswitch-enum
             -Wuninitialized -Wpointer-arith -Wreturn-type -Wredundant-decls
             -fno-operator-names
