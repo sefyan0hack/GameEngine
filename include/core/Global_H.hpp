@@ -50,3 +50,11 @@
 #elif defined(__linux__)
 #   define LINUX_PLT
 #endif
+
+#ifndef MEMBER_VAR
+#   define MEMBER_VAR(Var) const decltype(member.Var)& Var = member.Var
+#endif
+
+#ifndef MEMBER_FUN
+#   define MEMBER_FUN(R, Name, ARGS) R Name(auto&&... args) { return (member.*static_cast<R(decltype(member)::*)ARGS>(&decltype(member)::Name))(std::forward<decltype(args)>(args)...); }
+#endif
