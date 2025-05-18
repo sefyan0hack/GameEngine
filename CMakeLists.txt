@@ -24,7 +24,8 @@ endif()
 # Options
 ####################################################################################################
 option(TESTS            "enable tests"              OFF)
-option(CODECOVERAGE     "enable code coverage"     OFF)
+option(CODECOVERAGE     "enable code coverage"      OFF)
+option(HARDEN           "enable Hardening"          OFF)
 
 set(SANITIZER "" CACHE STRING "Enable sanitizers (address, undefined, etc.)")
 
@@ -209,6 +210,10 @@ target_include_directories(stb_image SYSTEM INTERFACE ${STB_IMG_HEADER})
 ####################################################################################################
 # Compile Flags 
 ####################################################################################################
+
+if(HARDEN)
+    harden(core)
+endif()
 
 apply_compile_options(TARGETS core ${PROJECT_NAME})
 

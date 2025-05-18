@@ -55,9 +55,7 @@ function(apply_compile_options)
             target_compile_options(${target} PRIVATE
                 -Wno-cast-function-type -Winit-self -Wcast-qual
                 -Wsuggest-final-types -Wsuggest-final-methods
-                -fdevirtualize -ftree-vectorize
-                
-                "$<$<CONFIG:Release>:-fhardened>"
+                -fdevirtualize -ftree-vectorize                
             )
             add_link_options(
                 -static-libasan -static-libtsan -static-liblsan -static-libubsan 
