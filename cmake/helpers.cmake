@@ -48,7 +48,7 @@ function(apply_compile_options)
                 "$<$<CONFIG:Release>:/ENTRY:mainCRTStartup>"    # entry
                 "$<$<CONFIG:Release>:/OPT:REF>"                 # Optimize unused functions
                 "$<$<CONFIG:Release>:/OPT:ICF>"                 # Identical COMDAT folding
-                "$<$<CONFIG:RELEASE>:/INCREMENTAL:NO>"          # Disable incremental linking
+                "$<$<CONFIG:Release>:/INCREMENTAL:NO>"          # Disable incremental linking
             )
             add_definitions(/FI"${CMAKE_SOURCE_DIR}/include/core/Global_H.hpp")
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -56,7 +56,8 @@ function(apply_compile_options)
                 -Wno-cast-function-type -Winit-self -Wcast-qual
                 -Wsuggest-final-types -Wsuggest-final-methods
                 -fdevirtualize -ftree-vectorize
-                -fhardened
+                
+                "$<$<CONFIG:Release>:-fhardened>"
             )
             add_link_options(
                 -static-libasan -static-libtsan -static-liblsan -static-libubsan 
@@ -83,7 +84,7 @@ function(apply_compile_options)
             "$<$<CONFIG:Release>:-g1>"
             "$<$<CONFIG:Release>:-march=native>"  #enable when dnt need to send the app
             "$<$<CONFIG:Release>:-funwind-tables>"
-            "$<$<CONFIG:Release>:-fasynchronous-unwind-tables>"
+            # "$<$<CONFIG:Release>:-fasynchronous-unwind-tables>" # seems to be causing issues
             "$<$<CONFIG:Release>:-ffunction-sections>"
             "$<$<CONFIG:Release>:-fdata-sections>"
         )
