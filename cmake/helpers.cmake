@@ -154,9 +154,7 @@ function(apply_harden_options)
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        target_compile_options(${target} PRIVATE
-            -fcf-runtime-abi=full -ffp-exception-behavior=strict -mcet -mbranch-protection=standard -mbranch-protection=pac-ret+leaf -mbranch-protection=bti -mindirect-branch -mindirect-branch-loop -mindirect-return -mretpoline -x86-speculative-load-hardening -mindirect-branch=thunk-extern -mfunction-return=thunk-extern
-        )
+
         endif()
 
         if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")

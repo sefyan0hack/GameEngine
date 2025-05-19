@@ -212,7 +212,10 @@ target_include_directories(stb_image SYSTEM INTERFACE ${STB_IMG_HEADER})
 ####################################################################################################
 
 apply_compile_options(TARGETS core ${PROJECT_NAME})
-apply_harden_options(TARGETS core ${PROJECT_NAME})
+
+if(HARDEN)
+    apply_harden_options(TARGETS core ${PROJECT_NAME})
+endif()
 
 ####################################################################################################
 # Link Libs 
