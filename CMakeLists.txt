@@ -211,13 +211,8 @@ target_include_directories(stb_image SYSTEM INTERFACE ${STB_IMG_HEADER})
 # Compile Flags 
 ####################################################################################################
 
-if(HARDEN)
-    include(Hardening)
-    message(STATUS "[Hardening `ON`]")
-    harden(core)
-endif()
-
 apply_compile_options(TARGETS core ${PROJECT_NAME})
+apply_harden_options(TARGETS core ${PROJECT_NAME})
 
 ####################################################################################################
 # Link Libs 
@@ -372,5 +367,11 @@ if(TESTS)
     endif()
 endif()
 
-print_target_compile_options(core)
-print_target_compile_options(${PROJECT_NAME})
+# print_target_compile_options(core)
+# print_target_compile_options(${PROJECT_NAME})
+
+file(GENERATE OUTPUT "${CMAKE_BINARY_DIR}/GeneratedFlags.txt" CONTENT [=[
+Compile Flags: $<JOIN:$<TARGET_PROPERTY:core,COMPILE_OPTIONS>, >
+Link Flags: $<JOIN:$<TARGET_PROPERTY:core,LINK_OPTIONS>, >
+]=]
+)

@@ -42,7 +42,7 @@ function(apply_compile_options)
                 "$<$<CONFIG:Release>:/Zi>"
                 "$<$<CONFIG:Release>:/Zo>"
                 "$<$<CONFIG:Release>:/Oy->"
-                )
+            )
             target_link_options(${target} PRIVATE
                 "$<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>"       # no terminale
                 "$<$<CONFIG:Release>:/ENTRY:mainCRTStartup>"    # entry
@@ -55,7 +55,8 @@ function(apply_compile_options)
             target_compile_options(${target} PRIVATE
                 -Wno-cast-function-type -Winit-self -Wcast-qual
                 -Wsuggest-final-types -Wsuggest-final-methods
-                -fdevirtualize -ftree-vectorize                
+                -fdevirtualize -ftree-vectorize 
+               
             )
             add_link_options(
                 -static-libasan -static-libtsan -static-liblsan -static-libubsan 
@@ -124,5 +125,61 @@ function(delete_files_by_extension DIR EXTENSION)
                 message(WARNING "File not found: ${FILE}")
             endif()
         endif()
+    endforeach()
+endfunction()
+
+
+function(apply_harden_options)
+    set(options)
+    set(oneValueArgs)
+    set(multiValueArgs TARGETS)
+    cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    foreach(target IN LISTS ARG_TARGETS)
+        # check if the target is an ALIAS
+        get_target_property(original_target ${target} ALIASED_TARGET)
+        get_target_property(type ${target} TYPE)
+
+        if (original_target)
+            message(STATUS "Applying compile options to alias target '${target}' (original: '${original_target}')")
+            set(target ${original_target})
+        endif()
+        
+        if(MSVC)
+            target_compile_options(${target} PRIVATE
+                /sdl /GS /SafeSEH /guard:cf /HIGHENTROPYVA /dynamicbase
+            )
+            target_link_options(${target} PRIVATE
+                /guard:cf
+            )
+        elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
+        elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+
+        endif()
+
+        if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+
+            target_compile_options(${target} PRIVATE
+                "$<$<STREQUAL:$<TARGET_PROPERTY:${target},TYPE>,EXECUTABLE>:-fPIE>"
+                "$<$<NOT:$<STREQUAL:$<TARGET_PROPERTY:${target},TYPE>,EXECUTABLE>>:-fPIC>"
+
+                -Wformat -Wformat-security -Werror=format-security -fno-strict-aliasing -fno-common
+                -fzero-call-used-regs=all -mharden-sls=all  -ftrivial-auto-var-init=pattern -lvi-load-hardening -lvi-cfi -ehcontguard
+                -mindirect-branch=thunk-inline -fcf-protection=none -mindirect-branch-register  -mno-indirect-branch-register
+                -ftrapv
+                "$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-fstack-protector;-fstack-protector-strong>"
+                "$<$<NOT:$<AND:$<CXX_COMPILER_ID:GNU>,$<PLATFORM_ID:Windows>>>:-fcf-runtime-abi=full;-ffp-exception-behavior=strict;-mcet;-mbranch-protection=standard;-mbranch-protection=pac-ret+leaf;-mbranch-protection=bti;-mindirect-branch;-mindirect-branch-loop;-mindirect-return;-mretpoline;-x86-speculative-load-hardening;-mindirect-branch=thunk-extern;-mfunction-return=thunk-extern>"
+            )
+
+            target_link_options(${target} PRIVATE
+                -Wl,-O1 -Wl,-flto -fstack-clash-protection
+                "$<$<STREQUAL:$<TARGET_PROPERTY:${target},TYPE>,EXECUTABLE>:-pie;-Wl,-pie>"
+                "$<$<STREQUAL:$<PLATFORM_ID>,Windows>:-Wl,--export-all-symbols;-Wl,--nxcompat;-Wl,--dynamicbase>"
+                "$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-Wl,--sort-common;-Wl,--as-needed>"
+                "$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-Wl,-z,relro;-Wl,-z,now;-Wl,-z,ibtplt;-Wl,-z,ibt;-Wl,-z,shstk;-Wl,-z,notext;-Wl,-z-noexecstack;-Wl,-z,noexecheap>"
+            )
+            add_definitions("-D_FORTIFY_SOURCE=2  -D_GLIBCXX_ASSERTIONS")
+        endif()
+
     endforeach()
 endfunction()
