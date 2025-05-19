@@ -163,6 +163,7 @@ function(apply_harden_options)
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE) 
             target_compile_options(${target} PRIVATE
+                -flto
                 -fvisibility=default
                 -fsanitize=cfi -fsanitize=cfi-icall -fsanitize=cfi-mfcall -fsanitize=safe-stack
                 -ftrivial-auto-var-init=zero
