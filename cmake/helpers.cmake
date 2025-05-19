@@ -147,7 +147,7 @@ function(apply_harden_options)
         
         if(MSVC)
             target_compile_options(${target} PRIVATE
-                /sdl /GS /SafeSEH /guard:cf /HIGHENTROPYVA /dynamicbase
+                /sdl /GS /SafeSEH /guard:cf /dynamicbase
             )
             target_link_options(${target} PRIVATE
                 /guard:cf
