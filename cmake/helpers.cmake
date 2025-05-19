@@ -159,7 +159,13 @@ function(apply_harden_options)
             )
 
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-
+        target_compile_options(${target} PRIVATE
+            -flto
+            -fvisibility=default
+            -fsanitize=cfi -fsanitize=cfi-icall -fsanitize=cfi-mfcall -fsanitize=safe-stack
+            -ftrivial-auto-var-init=zero
+            -mretpoline 
+        )
         endif()
 
         if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -181,7 +187,8 @@ function(apply_harden_options)
                 "$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-Wl,--sort-common;-Wl,--as-needed>"
                 "$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-Wl,-z,relro;-Wl,-z,now;-Wl,-z,ibtplt;-Wl,-z,ibt;-Wl,-z,shstk;-Wl,-z,notext;-Wl,-z-noexecstack;-Wl,-z,noexecheap>"
             )
-            add_definitions("-D_FORTIFY_SOURCE=2  -D_GLIBCXX_ASSERTIONS")
+            add_definitions(-D_FORTIFY_SOURCE=2)
+            add_definitions(-D_GLIBCXX_ASSERTIONS)
         endif()
 
     endforeach()
