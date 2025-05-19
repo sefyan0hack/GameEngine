@@ -162,11 +162,15 @@ function(apply_harden_options)
             )
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         target_compile_options(${target} PRIVATE
+            -flto
             -fvisibility=default
             -fsanitize=cfi -fsanitize=cfi-icall -fsanitize=cfi-mfcall -fsanitize=safe-stack
             -ftrivial-auto-var-init=zero
             -mretpoline
         )
+            target_link_options(${target} PRIVATE
+                -fuse-ld=lld
+            )
         endif()
 
         if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
