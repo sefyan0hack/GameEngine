@@ -130,6 +130,7 @@ endfunction()
 
 
 function(apply_harden_options)
+    if(NOT CMAKE_BUILD_TYPE MATCHES "Release")
     set(options)
     set(oneValueArgs)
     set(multiValueArgs TARGETS)
@@ -153,12 +154,7 @@ function(apply_harden_options)
             )
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
             target_compile_options(${target} PRIVATE
-                -mindirect-branch=thunk-inline -mindirect-branch-register
-                -mno-indirect-branch-register -lvi-load-hardening -lvi-cfi
-                -ehcontguard
-            )
-            target_link_options(${target} PRIVATE
-                "$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-Wl,-z,ibtplt;-Wl,-z,ibt;-Wl,-z-noexecstack;-Wl,-z,noexecheap>"
+                -fhardened
             )
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE) 
@@ -166,12 +162,6 @@ function(apply_harden_options)
                 -fvisibility=default
                 -ftrivial-auto-var-init=zero
                 -mretpoline
-            )
-        endif()
-
-        if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-
-            target_compile_options(${target} PRIVATE
                 "$<$<STREQUAL:$<TARGET_PROPERTY:${target},TYPE>,EXECUTABLE>:-fPIE>"
                 "$<$<NOT:$<STREQUAL:$<TARGET_PROPERTY:${target},TYPE>,EXECUTABLE>>:-fPIC>"
 
@@ -180,7 +170,6 @@ function(apply_harden_options)
                 -fcf-protection=none -ftrapv
                 -fstack-protector -fstack-protector-strong
             )
-
             target_link_options(${target} PRIVATE
                 -Wl,-O1 -Wl,-flto -fstack-clash-protection
                 "$<$<STREQUAL:$<TARGET_PROPERTY:${target},TYPE>,EXECUTABLE>:-pie;-Wl,-pie>"
@@ -188,9 +177,13 @@ function(apply_harden_options)
                 "$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-Wl,--sort-common;-Wl,--as-needed>"
                 "$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-Wl,-z,relro;-Wl,-z,now;-Wl,-z,shstk;-Wl,-z,notext>"
             )
+        endif()
+
+        if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
             add_definitions(-D_FORTIFY_SOURCE=2)
             add_definitions(-D_GLIBCXX_ASSERTIONS)
         endif()
 
     endforeach()
+    endif()
 endfunction()
