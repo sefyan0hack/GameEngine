@@ -157,14 +157,17 @@ function(apply_harden_options)
                 -mno-indirect-branch-register -lvi-load-hardening -lvi-cfi
                 -ehcontguard
             )
-
+            target_link_options(${target} PRIVATE
+                "$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-Wl,-z-noexecstack;-Wl,-z,noexecheap>"
+            )
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         target_compile_options(${target} PRIVATE
             -flto
             -fvisibility=default
             -fsanitize=cfi -fsanitize=cfi-icall -fsanitize=cfi-mfcall -fsanitize=safe-stack
             -ftrivial-auto-var-init=zero
-            -mretpoline 
+            -mretpoline
+            -fno-opaque-pointers
         )
         endif()
 
@@ -185,7 +188,7 @@ function(apply_harden_options)
                 "$<$<STREQUAL:$<TARGET_PROPERTY:${target},TYPE>,EXECUTABLE>:-pie;-Wl,-pie>"
                 "$<$<STREQUAL:$<PLATFORM_ID>,Windows>:-Wl,--export-all-symbols;-Wl,--nxcompat;-Wl,--dynamicbase>"
                 "$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-Wl,--sort-common;-Wl,--as-needed>"
-                "$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-Wl,-z,relro;-Wl,-z,now;-Wl,-z,ibtplt;-Wl,-z,ibt;-Wl,-z,shstk;-Wl,-z,notext;-Wl,-z-noexecstack;-Wl,-z,noexecheap>"
+                "$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-Wl,-z,relro;-Wl,-z,now;-Wl,-z,ibtplt;-Wl,-z,ibt;-Wl,-z,shstk;-Wl,-z,notext>"
             )
             add_definitions(-D_FORTIFY_SOURCE=2)
             add_definitions(-D_GLIBCXX_ASSERTIONS)

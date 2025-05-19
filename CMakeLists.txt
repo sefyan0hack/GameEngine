@@ -370,11 +370,5 @@ if(TESTS)
     endif()
 endif()
 
-# print_target_compile_options(core)
-# print_target_compile_options(${PROJECT_NAME})
-
-file(GENERATE OUTPUT "${CMAKE_BINARY_DIR}/GeneratedFlags.txt" CONTENT [=[
-Compile Flags: $<JOIN:$<TARGET_PROPERTY:core,COMPILE_OPTIONS>, >
-Link Flags: $<JOIN:$<TARGET_PROPERTY:core,LINK_OPTIONS>, >
-]=]
-)
+print_target_compile_options(core)
+print_target_compile_options(${PROJECT_NAME})
