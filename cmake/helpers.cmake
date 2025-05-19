@@ -154,7 +154,7 @@ function(apply_harden_options)
             )
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
             target_compile_options(${target} PRIVATE
-                -fhardened
+                -fhardened -Wno-hardened
             )
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE) 
