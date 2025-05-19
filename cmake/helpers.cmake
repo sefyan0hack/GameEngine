@@ -158,15 +158,6 @@ function(apply_harden_options)
             )
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE) 
-            if(UNIX)
-                target_compile_options(${target} PRIVATE
-                    "$<$<STREQUAL:$<TARGET_PROPERTY:${target},TYPE>,EXECUTABLE>:-fPIE>"
-                    "$<$<NOT:$<STREQUAL:$<TARGET_PROPERTY:${target},TYPE>,EXECUTABLE>>:-fPIC>"
-                )
-                target_link_options(${target} PRIVATE
-                    "$<$<STREQUAL:$<TARGET_PROPERTY:${target},TYPE>,EXECUTABLE>:-pie;-Wl,-pie>"
-                )
-            endif()
             
             target_compile_options(${target} PRIVATE
                 -fvisibility=default
@@ -186,6 +177,7 @@ function(apply_harden_options)
                 "$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-Wl,-z,relro;-Wl,-z,now;-Wl,-z,shstk;-Wl,-z,notext>"
             )
         endif()
+        set_target_properties(${target}  PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
         if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
             add_definitions(-D_FORTIFY_SOURCE=2)
