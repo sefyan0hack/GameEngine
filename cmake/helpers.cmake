@@ -152,6 +152,11 @@ function(apply_harden_options)
                 /guard:cf
             )
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            target_compile_options(${target} PRIVATE
+                -mindirect-branch=thunk-inline -mindirect-branch-register
+                -mno-indirect-branch-register -lvi-load-hardening -lvi-cfi
+                -ehcontguard
+            )
 
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 
@@ -164,10 +169,9 @@ function(apply_harden_options)
                 "$<$<NOT:$<STREQUAL:$<TARGET_PROPERTY:${target},TYPE>,EXECUTABLE>>:-fPIC>"
 
                 -Wformat -Wformat-security -Werror=format-security -fno-strict-aliasing -fno-common
-                -fzero-call-used-regs=all -mharden-sls=all  -ftrivial-auto-var-init=pattern -lvi-load-hardening -lvi-cfi -ehcontguard
-                -mindirect-branch=thunk-inline -fcf-protection=none -mindirect-branch-register  -mno-indirect-branch-register
-                -ftrapv
-                "$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-fstack-protector;-fstack-protector-strong>"
+                -fzero-call-used-regs=all -mharden-sls=all -ftrivial-auto-var-init=pattern 
+                -fcf-protection=none -ftrapv
+                -fstack-protector -fstack-protector-strong
             )
 
             target_link_options(${target} PRIVATE
