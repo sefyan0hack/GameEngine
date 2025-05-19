@@ -26,6 +26,7 @@ endif()
 option(TESTS            "enable tests"              OFF)
 option(CODECOVERAGE     "enable code coverage"      OFF)
 option(HARDEN           "enable Hardening"          OFF)
+option(STATIC_LINK      "enable Static link c++"    ON)
 
 set(SANITIZER "" CACHE STRING "Enable sanitizers (address, undefined, etc.)")
 
@@ -52,6 +53,9 @@ if(CODECOVERAGE)
         link_libraries($<$<CXX_COMPILER_ID:GNU>:gcov>)
 endif()
 
+if(STATIC_LINK)
+    add_link_options(-static-libgcc -static-libstdc++)
+endif()
 ####################################################################################################
 # WIN32 defines 
 ####################################################################################################
@@ -242,7 +246,6 @@ target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
 add_compile_definitions(
     PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
     OPENGL_LIB="${CORE_OPENGL_LIB}"
-    $<$<BOOL:${HAS_STD_STACKTRACE}>:HAS_STD_STACKTRACE>
     $<$<CONFIG:Debug>:DEBUG>
     $<$<CONFIG:Release>:NDEBUG>
 )

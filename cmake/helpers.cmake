@@ -55,12 +55,13 @@ function(apply_compile_options)
             target_compile_options(${target} PRIVATE
                 -Wno-cast-function-type -Winit-self -Wcast-qual
                 -Wsuggest-final-types -Wsuggest-final-methods
-                -fdevirtualize -ftree-vectorize 
-               
+                -fdevirtualize -ftree-vectorize
             )
-            add_link_options(
-                -static-libasan -static-libtsan -static-liblsan -static-libubsan 
-            )
+            if(NOT "${SANITIZER}" STREQUAL "")
+                add_link_options(
+                    -static-libasan -static-libtsan -static-liblsan -static-libubsan 
+                )
+            endif()
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             target_compile_options(${target} PRIVATE -Wno-language-extension-token)
         endif()
@@ -82,18 +83,14 @@ function(apply_compile_options)
             "$<$<CONFIG:Release>:-g1>"
             "$<$<CONFIG:Release>:-march=native>"  #enable when dnt need to send the app
             "$<$<CONFIG:Release>:-funwind-tables>"
-            # "$<$<CONFIG:Release>:-fasynchronous-unwind-tables>" # seems to be causing issues
+            "$<$<CONFIG:Release>:-fasynchronous-unwind-tables>" # seems to be causing issues
             "$<$<CONFIG:Release>:-ffunction-sections>"
             "$<$<CONFIG:Release>:-fdata-sections>"
         )
         target_link_options(${target} PRIVATE
             "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
         )
-        add_link_options(
-            -static-libgcc -static-libstdc++
-            -Wl,--as-needed
-            -Wl,--no-undefined
-        )
+
         add_definitions(-include "${CMAKE_SOURCE_DIR}/include/core/Global_H.hpp")
         endif()
     endforeach()
