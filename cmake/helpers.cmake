@@ -90,7 +90,7 @@ function(apply_compile_options)
             "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
         )
         add_link_options(
-            -static-libgcc -static-libstdc++
+            -static-libgcc
             -Wl,--as-needed
             -Wl,--no-undefined
         )
