@@ -158,12 +158,20 @@ function(apply_harden_options)
             )
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE) 
+            if(UNIX)
+                target_compile_options(${target} PRIVATE
+                    "$<$<STREQUAL:$<TARGET_PROPERTY:${target},TYPE>,EXECUTABLE>:-fPIE>"
+                    "$<$<NOT:$<STREQUAL:$<TARGET_PROPERTY:${target},TYPE>,EXECUTABLE>>:-fPIC>"
+                )
+                target_link_options(${target} PRIVATE
+                    "$<$<STREQUAL:$<TARGET_PROPERTY:${target},TYPE>,EXECUTABLE>:-pie;-Wl,-pie>"
+                )
+            endif()
+            
             target_compile_options(${target} PRIVATE
                 -fvisibility=default
                 -ftrivial-auto-var-init=zero
                 -mretpoline
-                "$<$<STREQUAL:$<TARGET_PROPERTY:${target},TYPE>,EXECUTABLE>:-fPIE>"
-                "$<$<NOT:$<STREQUAL:$<TARGET_PROPERTY:${target},TYPE>,EXECUTABLE>>:-fPIC>"
 
                 -Wformat -Wformat-security -Werror=format-security -fno-strict-aliasing -fno-common
                 -fzero-call-used-regs=all -mharden-sls=all -ftrivial-auto-var-init=pattern 
@@ -172,7 +180,7 @@ function(apply_harden_options)
             )
             target_link_options(${target} PRIVATE
                 -Wl,-O1 -Wl,-flto -fstack-clash-protection
-                "$<$<STREQUAL:$<TARGET_PROPERTY:${target},TYPE>,EXECUTABLE>:-pie;-Wl,-pie>"
+
                 "$<$<STREQUAL:$<PLATFORM_ID>,Windows>:-Wl,--export-all-symbols;-Wl,--nxcompat;-Wl,--dynamicbase>"
                 "$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-Wl,--sort-common;-Wl,--as-needed>"
                 "$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-Wl,-z,relro;-Wl,-z,now;-Wl,-z,shstk;-Wl,-z,notext>"
