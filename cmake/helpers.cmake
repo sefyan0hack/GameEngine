@@ -170,6 +170,7 @@ function(apply_harden_options)
             )
             target_link_options(${target} PRIVATE
                 -fuse-ld=lld
+                -flto
             )
         endif()
 
