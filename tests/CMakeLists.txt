@@ -27,5 +27,9 @@ set_target_properties(tests PROPERTIES CXX_VISIBILITY_PRESET hidden)
 apply_compile_options(TARGETS tests)
 print_target_compile_options(tests)
 
+if(HARDEN)
+    apply_harden_options(TARGETS tests)
+endif()
+
 include(GoogleTest)
 gtest_discover_tests(tests)
