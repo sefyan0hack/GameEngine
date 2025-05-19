@@ -127,7 +127,7 @@ endfunction()
 
 
 function(apply_harden_options)
-    if(NOT CMAKE_BUILD_TYPE MATCHES "Release")
+    if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
     set(options)
     set(oneValueArgs)
     set(multiValueArgs TARGETS)
