@@ -265,7 +265,7 @@ add_compile_definitions(
 if(TESTS)
     message(STATUS "[Tests `ON`]")
     if(ONLINE)
-        CPMAddPackage("gh:google/googletest#1.16.0")
+        CPMAddPackage("gh:google/googletest@1.17.0")
     else()
         add_subdirectory(3party/googletest-1.16.0)
     endif()
