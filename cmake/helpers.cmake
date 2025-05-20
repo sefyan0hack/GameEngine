@@ -55,7 +55,6 @@ function(apply_compile_options)
             target_compile_options(${target} PRIVATE
                 -Wno-cast-function-type -Winit-self -Wcast-qual
                 -Wsuggest-final-types -Wsuggest-final-methods
-                -fdevirtualize -ftree-vectorize
             )
             if(NOT "${SANITIZER}" STREQUAL "")
                 add_link_options(
@@ -73,7 +72,7 @@ function(apply_compile_options)
             -Wuninitialized -Wpointer-arith -Wreturn-type -Wredundant-decls
             -fno-operator-names
             -frtti
-            -fvisibility=hidden
+
             # Debug flags
             "$<$<CONFIG:Debug>:-g>"
             "$<$<CONFIG:Debug>:-ggdb>"

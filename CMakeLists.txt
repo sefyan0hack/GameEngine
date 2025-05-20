@@ -8,7 +8,6 @@ project(Engine LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_SUPPRESS_REGENERATION true)
-set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
@@ -186,6 +185,10 @@ set(SOURCES
 
 # Find OpenGL package
 find_package(OpenGL REQUIRED)
+
+# Find Threads package
+find_package(Threads REQUIRED)
+
 # Find X11 package
 if(UNIX)
 find_package(X11 REQUIRED)
@@ -242,12 +245,13 @@ target_link_libraries(core
         glm::glm-header-only
         stb_image
         ${OPENGL_LIBRARIES}
+        Threads::Threads
         $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
         $<$<STREQUAL:$<PLATFORM_ID>,Linux>:dl;${X11_LIBRARIES}>
         $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
 )
-set_target_properties(core PROPERTIES CXX_VISIBILITY_PRESET hidden)
-set_target_properties(${PROJECT_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
+
+
 
 target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
 
