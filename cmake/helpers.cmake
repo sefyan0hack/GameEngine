@@ -156,18 +156,11 @@ function(apply_harden_options)
             
             target_compile_options(${target} PRIVATE
                 -fvisibility=default
-                -mretpoline
-
                 -Wformat -Wformat-security -Werror=format-security -fno-strict-aliasing -fno-common
-                -fcf-protection=full
-                -fstack-protector -fstack-protector-all -fsanitize=safe-stack -fstack-clash-protection
-                -fsanitize=integer -fsanitize-minimal-runtime -fno-sanitize-recover
+                -fstack-protector -fstack-protector-all  -fstack-clash-protection
             )
             target_link_options(${target} PRIVATE
-                -Wl,-O1 -Wl,-flto
-
                 "$<$<STREQUAL:$<PLATFORM_ID>,Windows>:-Wl,--export-all-symbols;-Wl,--nxcompat;-Wl,--dynamicbase>"
-                "$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-Wl,--sort-common;-Wl,--as-needed>"
                 "$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-Wl,-z,relro;-Wl,-z,now;-Wl,-z,shstk;-Wl,-z,notext>"
             )
         endif()
