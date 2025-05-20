@@ -368,7 +368,7 @@ private:
 #else
 #   define GLFUN(type, name)\
     inline type name = Function<type>::default_;\
-    Expect(name != nullptr && name == Function<type>::default_, #name" not valid `{}`", name);
+    Expect(name != nullptr && name == Function<type>::default_, "`{}` not valid ", name);
 #endif
 
 GLFUNCS(GLFUN)
