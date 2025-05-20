@@ -73,17 +73,13 @@ function(apply_compile_options)
             -Wuninitialized -Wpointer-arith -Wreturn-type -Wredundant-decls
             -fno-operator-names
             -frtti
-
+            -fvisibility=hidden
             # Debug flags
-            "$<$<CONFIG:Debug>:-ggdb>"
             "$<$<CONFIG:Debug>:-g>"
+            "$<$<CONFIG:Debug>:-ggdb>"
             "$<$<CONFIG:Debug>:-O0>"
             # Release flags
             "$<$<CONFIG:Release>:-O3>"
-            "$<$<CONFIG:Release>:-g1>"
-            "$<$<CONFIG:Release>:-funwind-tables>"
-            "$<$<CONFIG:Release>:-ffunction-sections>"
-            "$<$<CONFIG:Release>:-fdata-sections>"
         )
         target_link_options(${target} PRIVATE
             "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
