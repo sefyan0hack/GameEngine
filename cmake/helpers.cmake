@@ -81,9 +81,7 @@ function(apply_compile_options)
             # Release flags
             "$<$<CONFIG:Release>:-O3>"
             "$<$<CONFIG:Release>:-g1>"
-            "$<$<CONFIG:Release>:-march=native>"  #enable when dnt need to send the app
             "$<$<CONFIG:Release>:-funwind-tables>"
-            "$<$<CONFIG:Release>:-fasynchronous-unwind-tables>" # seems to be causing issues
             "$<$<CONFIG:Release>:-ffunction-sections>"
             "$<$<CONFIG:Release>:-fdata-sections>"
         )
@@ -158,16 +156,15 @@ function(apply_harden_options)
             
             target_compile_options(${target} PRIVATE
                 -fvisibility=default
-                -ftrivial-auto-var-init=zero
                 -mretpoline
 
                 -Wformat -Wformat-security -Werror=format-security -fno-strict-aliasing -fno-common
-                -fzero-call-used-regs=all -mharden-sls=all -ftrivial-auto-var-init=pattern 
-                -fcf-protection=none -ftrapv
-                -fstack-protector -fstack-protector-strong
+                -fcf-protection=full
+                -fstack-protector -fstack-protector-all -fsanitize=safe-stack -fstack-clash-protection
+                -fsanitize=integer -fsanitize-minimal-runtime -fno-sanitize-recover
             )
             target_link_options(${target} PRIVATE
-                -Wl,-O1 -Wl,-flto -fstack-clash-protection
+                -Wl,-O1 -Wl,-flto
 
                 "$<$<STREQUAL:$<PLATFORM_ID>,Windows>:-Wl,--export-all-symbols;-Wl,--nxcompat;-Wl,--dynamicbase>"
                 "$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-Wl,--sort-common;-Wl,--as-needed>"
