@@ -163,7 +163,7 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vect
     PrepareVertexdata();
     PrepareAttribs();
     Count++;
-    Info("{}", *this);
+    
 }
 
 

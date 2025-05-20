@@ -32,7 +32,7 @@ Shader::Shader(const char* name, GLenum type)
     LoadSource();
     Compile(m_Id);
     checkShaderCompileStatus(m_Id);
-    Info("{}", *this);
+    
 }
 
 Shader::Shader(const Shader& other)
@@ -43,7 +43,7 @@ Shader::Shader(const Shader& other)
     LoadSource();
     Compile(m_Id);
     checkShaderCompileStatus(m_Id);
-    Info("{}", *this);
+    
 
 }
 

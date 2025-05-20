@@ -16,13 +16,13 @@ Camera::Camera()
     , m_Yaw(-90), m_Pitch(0)
 {
 
-    Info("{}", *this);
+    
 }
 
 Camera::Camera(CWindow &window) : Camera()
 {
   m_Window = std::make_shared<CWindow>(window);
-  Info("{}", *this);
+  
 }
 
 Camera::~Camera() {

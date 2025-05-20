@@ -12,7 +12,7 @@ GameObject::GameObject(glm::vec3 position, Material& matt, Mesh& mesh, std::stri
     , m_Name(Name)
 {   
     UpMatrix();
-    Info("{}", *this);
+    
     Count++;
 }
 
@@ -23,7 +23,7 @@ GameObject::GameObject(Transform transform, Material &matt, Mesh &mesh, std::str
     , m_Name(Name)
 {
     UpMatrix();
-    Info("{}", *this);
+    
     Count++;
 }
 

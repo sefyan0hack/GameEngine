@@ -25,7 +25,7 @@ Material::Material(const Shader& vertex, const Shader& fragment)
     Info("Uniforms count is {}", UniformCount());
     DumpAttribs();
     DumpUniforms();
-    Info("{}", *this);
+    
 }
 Material::Material(std::initializer_list<Shader> shaders)
     : m_Id(glCreateProgram())
@@ -42,7 +42,7 @@ Material::Material(std::initializer_list<Shader> shaders)
     glUseProgram(m_Id);
     DumpAttribs();
     DumpUniforms();
-    Info("{}", *this);
+    
 }
 
 Material::Material(const Material& other)
@@ -60,7 +60,7 @@ Material::Material(const Material& other)
     glUseProgram(m_Id);
     DumpAttribs();
     DumpUniforms();
-    Info("{}", *this);
+    
 }
 Material::Material(Material&& other) noexcept
     : m_Id(std::exchange(other.m_Id, 0))
