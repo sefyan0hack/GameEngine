@@ -189,15 +189,24 @@ public:
     using FuncType = R(APIENTRY*)(Args...);
 
     Function()
-    : m_Func(noctx)
+    : m_Func(&default_)
     , m_Name("Function")
     , m_ReturnType(type_name<R>())
     , m_ArgsTypes{type_name<Args>()...}
     , m_ArgsValues{}
     , m_CallCount(0)
-    { m_Count++; }
+    { 
+        m_Count++;
 
-    static auto APIENTRY noctx([[maybe_unused]] Args... args) -> R
+        //add some checks
+        if(m_Func == nullptr || m_Func != &default_)
+        {
+            std::cout <<"m_Func == nullptr || m_Func != &default_" << std::endl;
+            std::exit(1);
+        }
+    }
+
+    static auto APIENTRY default_([[maybe_unused]] Args... args) -> R
     {
         if constexpr (!std::is_void_v<R>) {
             return R{};
@@ -357,7 +366,7 @@ private:
     inline Function<type> name;
 #else
 #   define GLFUN(type, name)\
-    inline type name = Function<type>::noctx;
+    inline type name = Function<type>::default_;
 #endif
 
 GLFUNCS(GLFUN)
