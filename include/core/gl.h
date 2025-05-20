@@ -367,7 +367,7 @@ private:
     inline Function<type> name;
 #else
 #   define GLFUN(type, name)\
-    inline type name = Function<type>::default_;\
+    inline type name = Function<type>::default_;
 #endif
 
 GLFUNCS(GLFUN)
