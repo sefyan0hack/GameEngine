@@ -215,6 +215,7 @@ public:
 
     auto operator()(Args... args, std::source_location loc = std::source_location::current()) -> R
     {
+        if(m_Func == nullptr) throw std::runtime_error(m_Name + " not loaded!");
         m_ArgsValues = std::make_tuple(args...);
         m_CallCount++;
 
@@ -366,7 +367,8 @@ private:
     inline Function<type> name;
 #else
 #   define GLFUN(type, name)\
-    inline type name = Function<type>::default_;
+    inline type name = Function<type>::default_;\
+    Expect(name != nullptr && name == Function<type>::default_, #name" not valid `{}`", name);
 #endif
 
 GLFUNCS(GLFUN)
