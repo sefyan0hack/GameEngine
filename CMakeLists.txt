@@ -19,7 +19,10 @@ endif()
 if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
     message(FATAL_ERROR "Create a build directory and run CMake from there.")
 endif()
-
+if(WIN32)
+    set(CMAKE_USE_WINHTTP_FOR_HTTP ON CACHE BOOL "" FORCE)
+    set(CMAKE_USE_CURL OFF CACHE BOOL "" FORCE)
+endif()
 ####################################################################################################
 # Options
 ####################################################################################################
