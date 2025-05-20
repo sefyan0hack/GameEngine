@@ -141,7 +141,7 @@ function(apply_harden_options)
         endif()
         
         if(MSVC)
-            if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "x64|x86|AMD64")
+            if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "x86_64|x64|x86|AMD64")
                 target_compile_options(${target} PRIVATE
                     /sdl /GS /SafeSEH /guard:cf /dynamicbase
                 )
