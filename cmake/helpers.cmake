@@ -157,7 +157,7 @@ function(apply_harden_options)
             target_compile_options(${target} PRIVATE
                 -fvisibility=default
                 -Wformat -Wformat-security -Werror=format-security -fno-strict-aliasing -fno-common
-                -fstack-protector -fstack-protector-all  -fstack-clash-protection
+                -fstack-protector -fstack-protector-all
             )
             target_link_options(${target} PRIVATE
                 "$<$<STREQUAL:$<PLATFORM_ID>,Windows>:-Wl,--export-all-symbols;-Wl,--nxcompat;-Wl,--dynamicbase>"
