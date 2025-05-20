@@ -40,7 +40,7 @@
 #endif
 
 #ifdef TESTING
-#define FOR_TEST(CLASSNAME) friend class CLASSNAME##_Test;
+#define FOR_TEST(CLASSNAME) friend struct CLASSNAME##_Test;
 #else
 #define FOR_TEST(CLASSNAME)
 #endif
