@@ -141,12 +141,14 @@ function(apply_harden_options)
         endif()
         
         if(MSVC)
-            target_compile_options(${target} PRIVATE
-                /sdl /GS /SafeSEH /guard:cf /dynamicbase
-            )
-            target_link_options(${target} PRIVATE
-                /guard:cf
-            )
+            if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "x64|x86|AMD64")
+                target_compile_options(${target} PRIVATE
+                    /sdl /GS /SafeSEH /guard:cf /dynamicbase
+                )
+                target_link_options(${target} PRIVATE
+                    /guard:cf
+                )
+            endif()
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
             target_compile_options(${target} PRIVATE
                 -fhardened -Wno-hardened
@@ -155,12 +157,10 @@ function(apply_harden_options)
             set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE) 
             
             target_compile_options(${target} PRIVATE
-                -fvisibility=default
                 -Wformat -Wformat-security -Werror=format-security -fno-strict-aliasing -fno-common
-                -fstack-protector -fstack-protector-all
+                -fstack-protector-all
             )
             target_link_options(${target} PRIVATE
-                "$<$<STREQUAL:$<PLATFORM_ID>,Windows>:-Wl,--export-all-symbols;-Wl,--nxcompat;-Wl,--dynamicbase>"
                 "$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-Wl,-z,relro;-Wl,-z,now;-Wl,-z,shstk;-Wl,-z,notext>"
             )
         endif()
