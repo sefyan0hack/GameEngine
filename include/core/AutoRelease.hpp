@@ -2,7 +2,6 @@
 
 template <typename T>
 class AutoRelease {
-    FOR_TEST(AutoRelease)
 
 private:
     T resource{};
@@ -60,4 +59,5 @@ public:
     size_t use_count() const noexcept {
         return ref_count ? ref_count->load(std::memory_order_relaxed) : 0;
     }
+    FOR_TEST
 };

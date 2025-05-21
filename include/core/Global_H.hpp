@@ -40,9 +40,9 @@
 #endif
 
 #ifdef TESTING
-#define FOR_TEST(CLASSNAME) friend struct CLASSNAME##_Test;
+#define FOR_TEST public: template<unsigned short n> struct Test;
 #else
-#define FOR_TEST(CLASSNAME)
+#define FOR_TEST
 #endif
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)

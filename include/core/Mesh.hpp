@@ -25,7 +25,6 @@ class Material;
 
 class Mesh
 {
-  FOR_TEST(Mesh)
 public:
   using VetexData = Vertex;
 
@@ -70,6 +69,8 @@ public:
     std::vector<AttributeInfo> attribs;
     GLuint VBO, EBO, VAO;
     inline static size_t Count = 1;
+
+    FOR_TEST
 };
 
 // custom Mesh Format

@@ -3,7 +3,6 @@
 class CWindow;
 class Mouse
 {
-	FOR_TEST(Mouse)
     friend class CWindow;
 private:
     struct RawDelta
@@ -71,4 +70,6 @@ private:
 	int wheelDeltaCarry = 0;
 	std::queue<Event> buffer;
 	std::queue<RawDelta> rawDeltaBuffer;
+
+	FOR_TEST
 };

@@ -11,7 +11,6 @@ enum class ResType{
 
 class ResourceManager
 {
-  FOR_TEST(resourceManager)
 public:
     ResourceManager(const ResourceManager&) = delete;
     ResourceManager& operator=(const ResourceManager&) = delete;
@@ -28,6 +27,8 @@ private:
 
     std::unordered_map<std::string, std::shared_ptr<Texture>> m_Textures;
     std::unordered_map<std::string, std::shared_ptr<Shader>> m_Shaders;
+
+    FOR_TEST
 };
 
 auto strig_to_vector(const std::string& path) -> std::vector<std::string>;

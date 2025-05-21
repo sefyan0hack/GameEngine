@@ -8,7 +8,6 @@ class Mesh;
 
 class Renderer
 {
-  FOR_TEST(Renderer)
     public:
         Renderer();
         ~Renderer();
@@ -16,5 +15,5 @@ class Renderer
         auto render(Scene &scene, Camera &camera) -> void;
     private:
         auto draw(const Mesh& mesh, GLsizei count = 1) -> void;
-        
+        FOR_TEST  
 };

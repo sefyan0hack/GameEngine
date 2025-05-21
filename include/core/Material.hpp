@@ -8,8 +8,6 @@
 
 class Material
 {
-  FOR_TEST(Material)
-
 public:
     friend struct std::formatter<Material>;
     Material(const Shader& vertex, const Shader& fragment);
@@ -72,6 +70,8 @@ private:
     std::map<std::string, GLuint> m_Uniforms;
     std::shared_ptr<Texture> m_Albedo;
     mutable GLuint m_Previd;
+
+    FOR_TEST
 };
 
 // custom Material Format

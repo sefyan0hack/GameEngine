@@ -6,7 +6,6 @@ constexpr const char* OPENGL_MODULE_NAME {OPENGL_LIB};
 
 class OpenGL
 {
-  FOR_TEST(OpenGL)
     public:
         explicit OpenGL(WindHandl window, HDC_D drawContext);
         OpenGL(const OpenGL& other);
@@ -92,4 +91,6 @@ class OpenGL
             GLX_DEPTH_SIZE		            = 12,
             #endif 
         };
+        
+        FOR_TEST
 };

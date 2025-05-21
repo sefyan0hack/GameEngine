@@ -13,7 +13,6 @@
 
 class CWindow
 {
-  FOR_TEST(CWindow)
     #if defined(WINDOWS_PLT)
     class WinClass
     {
@@ -78,4 +77,6 @@ class CWindow
         
     public:
         inline static unsigned short S_WindowsCount = 0;
+
+        FOR_TEST
 };

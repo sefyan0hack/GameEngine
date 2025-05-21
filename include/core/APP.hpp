@@ -4,7 +4,6 @@
 class APP
 {
 protected:
-    FOR_TEST(APP)
 
     APP();
     ~APP() = default;
@@ -16,4 +15,6 @@ public:
 protected:
     CWindow m_Window;
     int64_t start_count, end_count, counts, freq, fps;
+
+    FOR_TEST
 };

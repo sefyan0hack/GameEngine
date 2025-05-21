@@ -1,43 +1,50 @@
 #include <gtest/gtest.h>
 #include <core/Camera.hpp>
+#include <core/Window.hpp>
 
 using namespace std;
 using namespace glm;
 
-struct Camera_Test : public ::testing::Test {
-    Camera member;
+using Camera_Test_Ctor1 = Camera::Test<1>;
+using Camera_Test_Ctor2 = Camera::Test<2>;
 
-    MEMBER_VAR(m_Position);
-    MEMBER_VAR(m_FrontDir);
-    MEMBER_VAR(m_UpDir);
-    MEMBER_VAR(m_RightDir);
-    MEMBER_VAR(m_Window);
-    MEMBER_VAR(m_Sensitivity);
-    MEMBER_VAR(m_Yaw);
-    MEMBER_VAR(m_Pitch);
-
-    MEMBER_FUN(void, SetFrontVector, (vec3));
-    MEMBER_FUN(void, SetUpVector, (vec3));
-    MEMBER_FUN(void, SetRightVector, (vec3));
-    MEMBER_FUN(void, MoveFroward, (float));
-    MEMBER_FUN(void, MoveBackward, (float));
-    MEMBER_FUN(void, MoveUP, (float));
-    MEMBER_FUN(void, MoveDown, (float));
-    MEMBER_FUN(void, MoveRight, (float));
-    MEMBER_FUN(void, MoveLeft,  (float));
-    MEMBER_FUN(void, EnableMSAA, (void));
-    MEMBER_FUN(void, UpdateVectors, (void));
-    MEMBER_FUN(void, MoseMove, (bool));
-    MEMBER_FUN(mat4, View, (void) const);
-    MEMBER_FUN(mat4, Perspective, (void) const);
-    MEMBER_FUN(vec3, Position, (void) const);
-    MEMBER_FUN(vec3, FrontDir, (void) const);
-    MEMBER_FUN(vec3, UpDir, (void) const);
-    MEMBER_FUN(vec3, RightDir, (void) const);
+#define Camera_INTERFACE \
+    MEMBER_VAR(m_Position);\
+    MEMBER_VAR(m_FrontDir);\
+    MEMBER_VAR(m_UpDir);\
+    MEMBER_VAR(m_RightDir);\
+    MEMBER_VAR(m_Window);\
+    MEMBER_VAR(m_Sensitivity);\
+    MEMBER_VAR(m_Yaw);\
+    MEMBER_VAR(m_Pitch);\
+    \
+    MEMBER_FUN(void, SetFrontVector, (vec3));\
+    MEMBER_FUN(void, SetUpVector, (vec3));\
+    MEMBER_FUN(void, SetRightVector, (vec3));\
+    MEMBER_FUN(void, MoveFroward, (float));\
+    MEMBER_FUN(void, MoveBackward, (float));\
+    MEMBER_FUN(void, MoveUP, (float));\
+    MEMBER_FUN(void, MoveDown, (float));\
+    MEMBER_FUN(void, MoveRight, (float));\
+    MEMBER_FUN(void, MoveLeft,  (float));\
+    MEMBER_FUN(void, EnableMSAA, (void));\
+    MEMBER_FUN(void, UpdateVectors, (void));\
+    MEMBER_FUN(void, MoseMove, (bool));\
+    MEMBER_FUN(mat4, View, (void) const);\
+    MEMBER_FUN(mat4, Perspective, (void) const);\
+    MEMBER_FUN(vec3, Position, (void) const);\
+    MEMBER_FUN(vec3, FrontDir, (void) const);\
+    MEMBER_FUN(vec3, UpDir, (void) const);\
+    MEMBER_FUN(vec3, RightDir, (void) const);\
     MEMBER_FUN(float, Sensitivity, (void) const);
+
+template<>
+struct Camera::Test<1> : public ::testing::Test {
+    Camera member;
+    Camera_INTERFACE
 };
 
-TEST_F(Camera_Test, ctor) {
+TEST_F(Camera_Test_Ctor1, ctor) {
     EXPECT_EQ(m_Position, vec3(0, 2, 0));
     EXPECT_EQ(m_FrontDir, vec3(0, 0, -1));
     EXPECT_EQ(m_UpDir, vec3(0, 1, 0));
@@ -48,86 +55,103 @@ TEST_F(Camera_Test, ctor) {
     EXPECT_EQ(m_Pitch, 0);
 }
 
-TEST_F(Camera_Test, SetFrontVector) {
+TEST_F(Camera_Test_Ctor1, SetFrontVector) {
     auto value = vec3(0,0,1);
     SetFrontVector(value);
     EXPECT_EQ(m_FrontDir, value);
 }
 
-TEST_F(Camera_Test, SetUpVector) {
+TEST_F(Camera_Test_Ctor1, SetUpVector) {
     auto value = vec3(1,0,0);
     SetUpVector(value);
     EXPECT_EQ(m_UpDir, value);
 }
 
-TEST_F(Camera_Test, SetRightVector) {
+TEST_F(Camera_Test_Ctor1, SetRightVector) {
     auto value = vec3(1,0,0);
     SetRightVector(value);
     EXPECT_EQ(m_RightDir, value);
 }
 
-TEST_F(Camera_Test, MoveFroward) {
+TEST_F(Camera_Test_Ctor1, MoveFroward) {
     auto speed = 5.0f;
     auto e = m_Position - (-m_FrontDir * speed);
     MoveFroward(speed);
     EXPECT_EQ(m_Position, e);
 }
 
-TEST_F(Camera_Test, MoveBackward) {
+TEST_F(Camera_Test_Ctor1, MoveBackward) {
     auto speed = 5.0f;
     auto e = m_Position + (-m_FrontDir * speed);
     MoveBackward(speed);
     EXPECT_EQ(m_Position, e);
 }
 
-TEST_F(Camera_Test, MoveUP) {
+TEST_F(Camera_Test_Ctor1, MoveUP) {
     auto speed = 5.0f; 
     auto e = m_Position + (m_UpDir  * speed);
     MoveUP(speed);
     EXPECT_EQ(m_Position, e);
 }
 
-TEST_F(Camera_Test, MoveDown) {
+TEST_F(Camera_Test_Ctor1, MoveDown) {
     auto speed = 5.0f;
     auto e = m_Position - (m_UpDir  * speed);
     MoveDown(speed);
     EXPECT_EQ(m_Position, e);
 }
 
-TEST_F(Camera_Test, MoveRight) {
+TEST_F(Camera_Test_Ctor1, MoveRight) {
     auto speed = 5.0f;
     auto e = m_Position + (glm::cross(m_FrontDir, m_UpDir)  * speed);
     MoveRight(speed);
     EXPECT_EQ(m_Position, e);
 }
 
-TEST_F(Camera_Test, MoveLeft) {
+TEST_F(Camera_Test_Ctor1, MoveLeft) {
     auto speed = 5.0f;
     auto e = m_Position - (glm::cross(m_FrontDir, m_UpDir)  * speed);
     MoveLeft(speed);
     EXPECT_EQ(m_Position, e);
 }
 
-TEST_F(Camera_Test, View) {
+TEST_F(Camera_Test_Ctor1, View) {
     EXPECT_EQ(lookAt(m_Position, m_Position + m_FrontDir, m_UpDir), View());
 }
 
-TEST_F(Camera_Test, Position) {
+TEST_F(Camera_Test_Ctor1, Position) {
     EXPECT_EQ(m_Position, Position());
 }
 
-TEST_F(Camera_Test, FrontDir) {
+TEST_F(Camera_Test_Ctor1, FrontDir) {
     EXPECT_EQ(m_FrontDir, FrontDir());
 }
 
-TEST_F(Camera_Test, UpDir) {
+TEST_F(Camera_Test_Ctor1, UpDir) {
     EXPECT_EQ(m_UpDir, UpDir());
 }
 
-TEST_F(Camera_Test, RightDir) {
+TEST_F(Camera_Test_Ctor1, RightDir) {
     EXPECT_EQ(m_RightDir, RightDir());
 }
 
-TEST_F(Camera_Test, Sensitivity) {
+TEST_F(Camera_Test_Ctor1, Sensitivity) {
     EXPECT_EQ(m_Sensitivity, Sensitivity());
+}
+
+////////////////////////////////////
+
+template<>
+struct Camera::Test<2> : public ::testing::Test {
+    CWindow window;
+    Camera member;
+    Test() : window(800, 800, "Test"), member(window) {}
+
+    Camera_INTERFACE
+};
+
+TEST_F(Camera_Test_Ctor2, ctor) {
+    auto Owindow = *m_Window;
+    EXPECT_EQ(Owindow.Width(), window.Width());
+    EXPECT_EQ(Owindow.Height(), window.Height());
 }

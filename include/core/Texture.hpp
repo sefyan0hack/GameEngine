@@ -9,7 +9,6 @@ struct Image {
 
 class Texture
 {
-  FOR_TEST(Texture)
 public:
     friend struct std::formatter<Texture>;
     Texture(GLenum texType);
@@ -29,6 +28,7 @@ protected:
     GLsizei m_Width, m_Height;
     GLint m_TextureUnit;
     inline static GLint m_TextureUnitCount = 0;
+    FOR_TEST
 };
 
 class Texture2D final : public Texture

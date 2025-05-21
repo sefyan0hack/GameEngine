@@ -5,7 +5,6 @@
 
 class Scene
 {
-  FOR_TEST(Scene)
 public:
     friend struct std::formatter<Scene>;
     Scene() = default;
@@ -21,6 +20,8 @@ public:
 private:
     std::unique_ptr<SkyBox> m_SkyBox;
     std::vector<GameObject> m_Entities;
+
+    FOR_TEST
 };
 
 // custom Mesh Format

@@ -9,7 +9,6 @@ class Material;
 
 class Camera
 {
-  FOR_TEST(Camera)
 public:
     friend struct std::formatter<Camera>;
     
@@ -47,6 +46,8 @@ private:
     std::shared_ptr<CWindow> m_Window;
     float m_Sensitivity;
     float m_Yaw, m_Pitch;
+
+    FOR_TEST
 };
 
 // custom Camera Format

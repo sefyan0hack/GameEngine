@@ -9,7 +9,6 @@
 
 
 class GameObject {
-  FOR_TEST(GameObject)
 public:
     friend struct std::formatter<GameObject>;
     GameObject(glm::vec3 position, Material& matt, Mesh& mesh, std::string Name = std::format("Obj{}", Count));
@@ -38,6 +37,8 @@ private:
     std::vector<glm::vec3> m_InstancePos;
     std::string m_Name;
     inline static size_t Count = 1;
+
+    FOR_TEST
 };
 
 // custom GameObject Format

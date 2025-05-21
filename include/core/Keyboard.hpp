@@ -4,7 +4,6 @@ class CWindow;  // Forward declaration if necessary
 
 class Keyboard
 {
-	FOR_TEST(Keyboard)
 	friend class CWindow;
 private:
 	class Event
@@ -49,4 +48,6 @@ private:
 	std::bitset<nKeys> keystates;
 	std::queue<Event> keybuffer;
 	std::queue<char> charbuffer;
+
+	FOR_TEST
 };
