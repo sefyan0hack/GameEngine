@@ -118,7 +118,7 @@ auto OpenGL::init_opengl_win32() -> void
     PIXELFORMATDESCRIPTOR pfd {};
     pfd.nSize = sizeof(pfd);
     pfd.nVersion = 1;
-    pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+    pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER | PFD_SUPPORT_COMPOSITION;
     pfd.iPixelType = PFD_TYPE_RGBA;
     pfd.cColorBits = 32;
     pfd.cAlphaBits = 8;
@@ -145,8 +145,8 @@ auto OpenGL::init_opengl_win32() -> void
         Error("Failed to activate dummy OpenGL rendering context.");
     }
 
-    wglCreateContextAttribsARB  = (decltype(wglCreateContextAttribsARB))resolve_opengl_fn("wglCreateContextAttribsARB");
-    wglGetExtensionsStringARB   = (decltype(wglGetExtensionsStringARB))resolve_opengl_fn("wglGetExtensionsStringARB");
+    wglCreateContextAttribsARB  = (decltype(wglCreateContextAttribsARB))wglGetProcAddress("wglCreateContextAttribsARB");
+    wglGetExtensionsStringARB   = (decltype(wglGetExtensionsStringARB))wglGetProcAddress("wglGetExtensionsStringARB");
 
     if (!wglGetExtensionsStringARB || !wglCreateContextAttribsARB) {
         Error("Failed to load required WGL extensions.");
