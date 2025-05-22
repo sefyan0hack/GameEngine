@@ -229,6 +229,7 @@ target_include_directories(stb_image SYSTEM INTERFACE ${STB_IMG_HEADER})
 apply_compile_options(TARGETS core ${PROJECT_NAME})
 
 if(HARDEN)
+    message(STATUS "[Hardening `ON`]")
     apply_harden_options(TARGETS core ${PROJECT_NAME})
 endif()
 
