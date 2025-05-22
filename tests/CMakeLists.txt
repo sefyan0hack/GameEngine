@@ -8,6 +8,7 @@ target_link_libraries(tests PRIVATE core gtest gtest_main)
 
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+set(DISCOVERY_MODE  ON CACHE BOOL PRE_TEST FORCE)
 
 if(ONLINE)
         CPMAddPackage("gh:google/googletest@1.17.0")
@@ -23,3 +24,14 @@ gtest_discover_tests(tests
         EXTRA_ARGS --gtest_num_threads=1
         PROPERTIES RUN_SERIAL TRUE
 )
+
+if (WIN32)
+        # HACK: we can't use TARGET_RUNTIME_DLLS because simbody doesn't package libgfortran etc. correctly
+        file(GLOB_RECURSE dlls "${CMAKE_PREFIX_PATH}/*.dll")
+        add_custom_command(
+            TARGET core
+            POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${dlls} $<TARGET_FILE_DIR:core>
+            COMMAND_EXPAND_LISTS
+        )
+endif()
