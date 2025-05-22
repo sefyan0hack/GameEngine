@@ -6,6 +6,9 @@ add_executable(tests ${TEST_SOURCES})
 
 target_link_libraries(tests PRIVATE core gtest gtest_main)
 
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
 if(ONLINE)
         CPMAddPackage("gh:google/googletest@1.17.0")
 else()
