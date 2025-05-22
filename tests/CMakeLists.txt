@@ -27,11 +27,12 @@ gtest_discover_tests(tests
 
 if (WIN32)
         # HACK: we can't use TARGET_RUNTIME_DLLS because simbody doesn't package libgfortran etc. correctly
-        file(GLOB_RECURSE dlls "${CMAKE_PREFIX_PATH}/*.dll")
         add_custom_command(
-            TARGET core
-            POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${dlls} $<TARGET_FILE_DIR:core>
-            COMMAND_EXPAND_LISTS
+        TARGET tests POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                $<TARGET_RUNTIME_DLLS:tests>
+                $<TARGET_FILE_DIR:tests>
+        VERBATIM
+        COMMAND_EXPAND_LISTS
         )
 endif()
