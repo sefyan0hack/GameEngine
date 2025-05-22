@@ -309,9 +309,6 @@ if(TESTS)
                 find_program(LCOV_PATH lcov)
                 find_program(GCOVR_PATH gcovr)
 
-
-                if(GCOVR_PATH)
-
                 set(GCOVR_ADDITIONAL_ARGS 
                     "--calls"
                     "--branches"
@@ -330,67 +327,66 @@ if(TESTS)
                 endforeach()
 
                 if(LCOV_PATH)
-                add_custom_target(coverage
-                    COMMAND ${LCOV_PATH} --directory . --zerocounters
-                    COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${PROJECT_BINARY_DIR} --output-on-failure
-                    COMMAND ${LCOV_PATH} --directory . --capture --output-file coverage.include(CMakePrintSystemInformation)
-                    COMMAND ${LCOV_PATH} --remove coverage.info ${COVERAGE_EXCLUDES} --output-file coverage
+                    add_custom_target(coverage_xml
+                        COMMAND ${LCOV_PATH} --directory . --zerocounters
+                        COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${PROJECT_BINARY_DIR} --output-on-failure
+                        COMMAND ${LCOV_PATH} --directory . --capture --output-file coverage.include(CMakePrintSystemInformation)
+                        COMMAND ${LCOV_PATH} --remove coverage.info ${COVERAGE_EXCLUDES} --output-file coverage
 
-                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                    DEPENDS core tests
-                    COMMENT "Generating LCOV coverage report"
-                )
+                        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                        DEPENDS core tests
+                        COMMENT "Generating LCOV coverage report"
+                    )
 
                 elseif(GCOVR_PATH)
 
-                set(GCOVR_COMMON_ARGS
-                    --verbose
-                    --root=${CMAKE_SOURCE_DIR}
-                    --object-directory=${CMAKE_BINARY_DIR}
-                    ${GCOVR_EXCLUDE_ARGS}
-                    ${GCOVR_ADDITIONAL_ARGS}
-                )
-
-                if(UNIX)
-                    set(GCOV_BIN "gcov-14")
-                    set(GCOVR_ENV_VARS
-                        COMMAND ${CMAKE_COMMAND} -E env "GCOV=${GCOV_BIN} -o ${CMAKE_BINARY_DIR}"
+                    set(GCOVR_COMMON_ARGS
+                        --verbose
+                        --root=${CMAKE_SOURCE_DIR}
+                        --object-directory=${CMAKE_BINARY_DIR}
+                        ${GCOVR_EXCLUDE_ARGS}
+                        ${GCOVR_ADDITIONAL_ARGS}
                     )
-                    list(APPEND GCOVR_COMMON_ARGS --gcov-executable ${GCOV_BIN})
-                endif()
-                
-                # XML Target
-                add_custom_target(coverage_xml
-                    COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${PROJECT_BINARY_DIR} --output-on-failure
-                    COMMAND ${GCOVR_PATH}
-                    --xml
-                    --output=${PROJECT_BINARY_DIR}/coverage
-                    ${GCOVR_COMMON_ARGS}
 
-                    BYPRODUCTS coverage
-                    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-                    DEPENDS core tests
-                    COMMENT "Generating XML coverage report "
-
-                    VERBATIM
-                )
-                endif()
+                    if(UNIX)
+                        set(GCOV_BIN "gcov-14")
+                        set(GCOVR_ENV_VARS
+                            COMMAND ${CMAKE_COMMAND} -E env "GCOV=${GCOV_BIN} -o ${CMAKE_BINARY_DIR}"
+                        )
+                        list(APPEND GCOVR_COMMON_ARGS --gcov-executable ${GCOV_BIN})
+                    endif()
                 
-                # HTML Target
-                add_custom_target(coverage_html
-                    COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${PROJECT_BINARY_DIR} --output-on-failure
-                    COMMAND ${GCOVR_PATH}
-                        --html
-                        --html-details
-                        --output=${PROJECT_BINARY_DIR}/coverage.html
+                    # XML Target
+                    add_custom_target(coverage_xml
+                        COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${PROJECT_BINARY_DIR} --output-on-failure
+                        COMMAND ${GCOVR_PATH}
+                        --xml
+                        --output=${PROJECT_BINARY_DIR}/coverage
                         ${GCOVR_COMMON_ARGS}
-                    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-                    BYPRODUCTS coverage.html
-                    DEPENDS core tests
-                    COMMENT "Generating HTML coverage report "
-                    VERBATIM
-                )
-            endif()
+
+                        BYPRODUCTS coverage
+                        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+                        DEPENDS core tests
+                        COMMENT "Generating XML coverage report "
+
+                        VERBATIM
+                    )
+
+                    # HTML Target
+                    add_custom_target(coverage_html
+                        COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${PROJECT_BINARY_DIR} --output-on-failure
+                        COMMAND ${GCOVR_PATH}
+                            --html
+                            --html-details
+                            --output=${PROJECT_BINARY_DIR}/coverage.html
+                            ${GCOVR_COMMON_ARGS}
+                        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+                        BYPRODUCTS coverage.html
+                        DEPENDS core tests
+                        COMMENT "Generating HTML coverage report "
+                        VERBATIM
+                    )
+                endif()
         endif()
     endif()
 endif()
