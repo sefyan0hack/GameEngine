@@ -316,7 +316,6 @@ if(TESTS)
                     "--calls"
                     "--branches"
                     "--decisions"
-                    "--exclude-function-lines"
                     "--exclude-noncode-lines"
                     "--exclude-unreachable-branches"
                     "--exclude-throw-branches"
