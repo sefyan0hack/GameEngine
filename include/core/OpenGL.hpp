@@ -49,11 +49,11 @@ class OpenGL
         std::time_t m_CreationTime;
         bool m_Debug;
 
-        inline static std::string m_Vendor;
-        inline static std::string m_Renderer;
-        inline static std::vector<std::string> m_GlslVersions;
-        inline static std::vector<std::string> m_Extensions;
-        inline static GLint m_MaxTextureUnits;
+        inline static std::string m_Vendor{};
+        inline static std::string m_Renderer{};
+        inline static std::vector<std::string> m_GlslVersions{};
+        inline static std::vector<std::string> m_Extensions{};
+        inline static GLint m_MaxTextureUnits{};
 
         enum {
             CONTEXT_MAJOR_VERSION_ARB     = 0x2091,
