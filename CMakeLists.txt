@@ -308,7 +308,13 @@ if(TESTS)
             else()
                 find_program(LCOV_PATH lcov)
                 find_program(GCOVR_PATH gcovr)
-
+                if(UNIX)
+                    set(GCOV_BIN "gcov-14")
+                    set(GCOVR_ENV_VARS
+                        COMMAND ${CMAKE_COMMAND} -E env "GCOV=${GCOV_BIN} -o ${CMAKE_BINARY_DIR}"
+                    )
+                    list(APPEND GCOVR_COMMON_ARGS --gcov-executable ${GCOV_BIN})
+                endif()
                 set(GCOVR_ADDITIONAL_ARGS 
                     "--calls"
                     "--branches"
@@ -348,14 +354,6 @@ if(TESTS)
                         ${GCOVR_EXCLUDE_ARGS}
                         ${GCOVR_ADDITIONAL_ARGS}
                     )
-
-                    if(UNIX)
-                        set(GCOV_BIN "gcov-14")
-                        set(GCOVR_ENV_VARS
-                            COMMAND ${CMAKE_COMMAND} -E env "GCOV=${GCOV_BIN} -o ${CMAKE_BINARY_DIR}"
-                        )
-                        list(APPEND GCOVR_COMMON_ARGS --gcov-executable ${GCOV_BIN})
-                    endif()
                 
                     # XML Target
                     add_custom_target(coverage_xml
