@@ -118,31 +118,31 @@ auto OpenGL::init_opengl_win32() -> void
     PIXELFORMATDESCRIPTOR pfd {};
     pfd.nSize = sizeof(pfd);
     pfd.nVersion = 1;
-    pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER | PFD_SUPPORT_COMPOSITION;
+    pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
     pfd.iPixelType = PFD_TYPE_RGBA;
-    pfd.cColorBits = 32;
+    pfd.cColorBits = 24;
     pfd.cAlphaBits = 8;
-    pfd.cDepthBits = 32;
+    pfd.cDepthBits = 24;
     pfd.cStencilBits = 8;
     pfd.iLayerType = PFD_MAIN_PLANE;
 
     auto pixel_format = ChoosePixelFormat(m_DrawContext, &pfd);
     if (!pixel_format) {
-        Error("Failed to find a suitable pixel format.");
+        Error("Failed to find a suitable pixel format. : {}", GetLastError());
     }
     if (!SetPixelFormat(m_DrawContext, pixel_format, &pfd)) {
-        Error("Failed to set the pixel format.");
+        Error("Failed to set the pixel format. : {}", GetLastError());
     }
 
     GLCTX dummy_context = nullptr;
 
     dummy_context = wglCreateContext(m_DrawContext);
     if (!dummy_context) {
-        Error("Failed to create a dummy OpenGL rendering context.");
+        Error("Failed to create a dummy OpenGL rendering context. : {}", GetLastError());
     }
 
     if (!wglMakeCurrent(m_DrawContext, dummy_context)) {
-        Error("Failed to activate dummy OpenGL rendering context.");
+        Error("Failed to activate dummy OpenGL rendering context. : {}", GetLastError());
     }
 
     wglCreateContextAttribsARB  = (decltype(wglCreateContextAttribsARB))wglGetProcAddress("wglCreateContextAttribsARB");
