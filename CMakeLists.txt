@@ -28,7 +28,7 @@ endif()
 option(TESTS            "enable tests"              OFF)
 option(CODECOVERAGE     "enable code coverage"      OFF)
 option(HARDEN           "enable Hardening"          OFF)
-option(STATIC_LINK      "enable Static link c++"    OFF)
+option(STATIC_LINK      "enable Static link c++"    ON)
 
 set(SANITIZER "" CACHE STRING "Enable sanitizers (address, undefined, etc.)")
 
