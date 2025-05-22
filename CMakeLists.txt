@@ -337,7 +337,7 @@ if(TESTS)
                     add_custom_target(coverage_xml
                         COMMAND ${LCOV_PATH} --directory . --zerocounters
                         COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${PROJECT_BINARY_DIR} --output-on-failure
-                        COMMAND ${LCOV_PATH} --directory . --capture --output-file coverage.info
+                        COMMAND ${LCOV_PATH} --directory . --capture --output-file coverage.info --gcov-tool ${GCOV_BIN}
                         COMMAND ${LCOV_PATH} --remove coverage.info ${COVERAGE_EXCLUDES} --output-file coverage
 
                         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
