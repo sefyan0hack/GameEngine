@@ -25,6 +25,9 @@ class OpenGL
         auto isValid() const -> bool;
         auto CreationTime() const -> std::time_t;
         auto isDebugable() const -> bool;
+        auto ThreadId()    const -> std::thread::id;
+        
+        auto CheckThread() const -> void;
 
         static auto Vendor() -> std::string;
         static auto Renderer() -> std::string;
@@ -48,6 +51,8 @@ class OpenGL
         GLint m_Minor;
         std::time_t m_CreationTime;
         bool m_Debug;
+        std::thread::id m_ThreadId;
+
 
         inline static std::string m_Vendor{};
         inline static std::string m_Renderer{};

@@ -3,6 +3,9 @@
 #include <core/gl.h>
 #include <core/Utils.hpp>
 
+static std::mutex g_GetProcMutex;
+
+
 [[maybe_unused]] static void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, [[maybe_unused]] GLsizei length, const GLchar *message, [[maybe_unused]] const void *param)
 {
     const char *source_, *type_, *severity_;
@@ -43,6 +46,8 @@
 }
 
 auto __GetProcAddress(const char* module, const char* name) -> void* {
+    std::lock_guard<std::mutex> lock(g_GetProcMutex);
+
     #if defined(WINDOWS_PLT)
     auto lib = GetModuleHandleA(module);
 
@@ -82,6 +87,7 @@ auto __GetProcAddress(const char* module, const char* name) -> void* {
 }
 
 auto resolve_opengl_fn(const char* name) -> void* {
+
     #if defined(WINDOWS_PLT)
     void *address = (void *)wglGetProcAddress(name);
 
@@ -115,6 +121,8 @@ auto resolve_opengl_fn(const char* name) -> void* {
 
 auto OpenGL::init_opengl_win32() -> void
 {
+    CheckThread();
+
     PIXELFORMATDESCRIPTOR pfd {};
     pfd.nSize = sizeof(pfd);
     pfd.nVersion = 1;
@@ -185,6 +193,8 @@ auto OpenGL::init_opengl_win32() -> void
 
 auto OpenGL::init_opengl_linux() -> void
 {
+    CheckThread();
+
     static int visualAttribs[] = {
         GLX_X_RENDERABLE,  true,
         GLX_DOUBLEBUFFER,  true,
@@ -255,6 +265,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     , m_Minor(0)
     , m_CreationTime(std::time(nullptr))
     , m_Debug(false)
+    , m_ThreadId(std::this_thread::get_id())
 {
     #if defined(WINDOWS_PLT)
     init_opengl_win32();
@@ -340,6 +351,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     }
     #endif
 
+    Info("GL Thread id : {}", m_ThreadId);
     Info("GL Version : {}.{}", m_Major, m_Minor);
     Info("GLSL Version Supported : {}", to_string(m_GlslVersions));
     Info("GL Vendor : {}", m_Vendor);
@@ -423,11 +435,13 @@ auto OpenGL::operator != (const OpenGL& other) const ->bool
 
 OpenGL::operator bool() const
 {
+    CheckThread();
     return isValid();
 }
 
 OpenGL::~OpenGL()
 {
+    CheckThread();
     #if defined(WINDOWS_PLT)
     wglMakeCurrent(nullptr, nullptr);
     wglDeleteContext(m_Context);
@@ -439,35 +453,42 @@ OpenGL::~OpenGL()
 
 auto OpenGL::Context() const -> GLCTX
 {
+    CheckThread();
     return m_Context;
 }
 
 auto OpenGL::DrawContext() const -> HDC_D
 {
+    CheckThread();
     return m_DrawContext;
 }
 
 auto OpenGL::MajorV() const -> GLint
 {
+    CheckThread();
     return m_Major;
 }
 auto OpenGL::MinorV() const -> GLint
 {
+    CheckThread();
     return m_Minor;
 }
 
 auto OpenGL::isValid() const -> bool
 {
+    CheckThread();
     return m_Context != nullptr;
 }
 
 auto OpenGL::CreationTime() const -> std::time_t
 {
+    CheckThread();
     return m_CreationTime;
 }
 
 auto OpenGL::isDebugable() const -> bool
 {
+    CheckThread();
     return m_Debug;
 }
 
@@ -493,4 +514,18 @@ auto OpenGL::Extensions() -> std::vector<std::string>
 auto OpenGL::MaxTextureUnits() -> GLint
 {
     return m_MaxTextureUnits;
+}
+
+auto OpenGL::ThreadId() const -> std::thread::id
+{
+    CheckThread();
+    return m_ThreadId;
+}
+
+auto OpenGL::CheckThread() const -> void
+{
+    auto id = std::this_thread::get_id();
+    if ( std::this_thread::get_id() != m_ThreadId) {
+        Error("OpenGL context used in wrong thread! . Expected id: {} Vs Geted: {}", m_ThreadId, id);
+    }
 }
