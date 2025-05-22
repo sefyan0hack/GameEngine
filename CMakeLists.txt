@@ -315,10 +315,7 @@ if(TESTS)
                 set(GCOVR_ADDITIONAL_ARGS 
                     "--calls"
                     "--branches"
-                    "--decisions"
-                    "--exclude-noncode-lines"
                     "--exclude-unreachable-branches"
-                    "--exclude-throw-branches"
                     "--delete"
                 )
 
