@@ -46,12 +46,10 @@ endif()
 
 if(CODECOVERAGE)
         add_compile_options(
-            "$<$<CXX_COMPILER_ID:GNU,Clang>:--coverage>"
-            "$<$<CXX_COMPILER_ID:GNU,Clang>:-fcondition-coverage>"
+            "$<$<CXX_COMPILER_ID:GNU,Clang>:--coverage;-fprofile-arcs;-ftest-coverage;-fcondition-coverage>"
         )
         add_link_options(
-            "$<$<CXX_COMPILER_ID:GNU,Clang>:--coverage>"
-            "$<$<CXX_COMPILER_ID:GNU,Clang>:-fcondition-coverage>"
+            "$<$<CXX_COMPILER_ID:GNU,Clang>:--coverage;-fprofile-arcs>"
         )
         link_libraries($<$<CXX_COMPILER_ID:GNU>:gcov>)
 endif()
@@ -308,7 +306,9 @@ if(TESTS)
                 )
             endif()
             else()
+                find_program(LCOV_PATH lcov)
                 find_program(GCOVR_PATH gcovr)
+
 
                 if(GCOVR_PATH)
 
@@ -328,7 +328,21 @@ if(TESTS)
                 foreach(EXCLUDE ${COVERAGE_EXCLUDES})
                     list(APPEND GCOVR_EXCLUDE_ARGS "--exclude=${EXCLUDE}")
                 endforeach()
-                
+
+                if(LCOV_PATH)
+                add_custom_target(coverage
+                    COMMAND ${LCOV_PATH} --directory . --zerocounters
+                    COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${PROJECT_BINARY_DIR} --output-on-failure
+                    COMMAND ${LCOV_PATH} --directory . --capture --output-file coverage.include(CMakePrintSystemInformation)
+                    COMMAND ${LCOV_PATH} --remove coverage.info ${COVERAGE_EXCLUDES} --output-file coverage
+
+                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                    DEPENDS core tests
+                    COMMENT "Generating LCOV coverage report"
+                )
+
+                elseif(GCOVR_PATH)
+
                 set(GCOVR_COMMON_ARGS
                     --verbose
                     --root=${CMAKE_SOURCE_DIR}
@@ -350,16 +364,18 @@ if(TESTS)
                     COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${PROJECT_BINARY_DIR} --output-on-failure
                     COMMAND ${GCOVR_PATH}
                     --xml
-                    --output=${PROJECT_BINARY_DIR}/coverage.xml
+                    --output=${PROJECT_BINARY_DIR}/coverage
                     ${GCOVR_COMMON_ARGS}
 
-                    BYPRODUCTS coverage.xml
+                    BYPRODUCTS coverage
                     WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
                     DEPENDS core tests
                     COMMENT "Generating XML coverage report "
 
                     VERBATIM
                 )
+                endif()
+                
                 # HTML Target
                 add_custom_target(coverage_html
                     COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${PROJECT_BINARY_DIR} --output-on-failure

@@ -39,7 +39,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-dev  mesa-common-dev libxi-dev gcovr
+          sudo apt-get install -y libgl1-mesa-dev  mesa-common-dev libxi-dev gcovr lcov
 
       - name: Configure CMake
         shell: bash
@@ -70,4 +70,4 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: build/coverage.xml
+          files: build/coverage
