@@ -332,12 +332,30 @@ private:
         return name;
     #endif
     }
-
+    #ifndef NO_RTTI
     template <typename T>
     static auto type_name() -> std::string
     {
         return demangle(typeid(T).name());
     }
+    #else
+    template <typename T>
+    constexpr std::string_view type_name() {
+        constexpr auto loc = std::source_location::current();
+        #if defined(__clang__) || defined(__GNUC__)
+        constexpr auto prefix = "T = ";
+        constexpr auto suffix = "]";
+        #elif defined(_MSC_VER)
+        constexpr auto prefix = "type_name<";
+        constexpr auto suffix = ">(void)";
+        #endif
+
+        constexpr std::string_view func = loc.function_name();
+        constexpr auto start = func.find(prefix) + std::string_view(prefix).size();
+        constexpr auto end = func.find(suffix, start);
+        return func.substr(start, end - start);
+    }
+    #endif
 
     template<typename SubR, typename... SubArgs>
     static auto functionPtrSigature() -> std::string

@@ -58,3 +58,15 @@
 #ifndef MEMBER_FUN
 #   define MEMBER_FUN(R, Name, ARGS) R Name(auto&&... args) { return (member.*static_cast<R(decltype(member)::*)ARGS>(&decltype(member)::Name))(std::forward<decltype(args)>(args)...); }
 #endif
+
+#if defined(__GNUC__) || defined(__clang__)
+    #ifndef __GXX_RTTI
+    #   define NO_RTTI
+    #endif
+#elif defined(_MSC_VER)
+    #ifndef _CPPRTTI
+    #   define NO_RTTI
+    #endif
+#else
+    #error "Unsupported Compiler"
+#endif
