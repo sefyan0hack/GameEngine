@@ -305,7 +305,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     GLint nGlslv = 0;
     glGetIntegerv(GL_NUM_SHADING_LANGUAGE_VERSIONS, &nGlslv);
 
-    if(static_cast<site_t>(nGlslv) != m_GlslVersions.size()){
+    if(static_cast<size_t>(nGlslv) != m_GlslVersions.size()){
         for(GLint i = 0; i < nGlslv; i++){
             auto r = reinterpret_cast<const char*>(glGetStringi(GL_SHADING_LANGUAGE_VERSION, static_cast<GLuint>(i)));
             if(r) m_GlslVersions.push_back(r);
