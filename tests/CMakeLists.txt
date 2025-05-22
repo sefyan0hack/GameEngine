@@ -4,6 +4,8 @@ file(GLOB TEST_SOURCES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/" "*_test.cpp")
 
 add_executable(tests ${TEST_SOURCES})
 
+apply_compile_options(TARGETS tests )
+
 target_link_libraries(tests PRIVATE core gtest gtest_main)
 
 # For Windows: Prevent overriding the parent project's compiler/linker settings
