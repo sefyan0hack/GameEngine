@@ -149,7 +149,7 @@ auto OpenGL::init_opengl_win32() -> void
     wglGetExtensionsStringARB   = (decltype(wglGetExtensionsStringARB))wglGetProcAddress("wglGetExtensionsStringARB");
 
     if (!wglGetExtensionsStringARB || !wglCreateContextAttribsARB) {
-        Error("Failed to load required WGL extensions.");
+        Error("Failed to load required WGL extensions. : {}", GetLastError());
     }
 
     int gl_attribs[] = { 
