@@ -321,9 +321,8 @@ if(TESTS)
 
                 set(COVERAGE_EXCLUDES
                     "${CMAKE_SOURCE_DIR}/3party/.*"
-                    "${CMAKE_SOURCE_DIR}/tests/.*" 
-                    ".*/CMakeFiles/.*"             
-                    ".*cmake_pch.*"                
+                    "${CMAKE_SOURCE_DIR}/tests/.*"
+                    "${CMAKE_SOURCE_DIR}/src/main.cpp"
                 )
                 set(GCOVR_EXCLUDE_ARGS "")
                 foreach(EXCLUDE ${COVERAGE_EXCLUDES})
