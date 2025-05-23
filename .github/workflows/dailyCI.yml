@@ -45,7 +45,7 @@ jobs:
         shell: bash
         run: |
           rm -rf build
-          cmake -S . -B build -G  "Ninja" -DCMAKE_BUILD_TYPE=Debug -DTESTS=ON -DCODECOVERAGE=ON -DHARDEN=ON
+          cmake -S . -B build -G  "Ninja" -DCMAKE_BUILD_TYPE=Debug -DTESTS=ON -DENABLE_COVERAGE=ON
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
@@ -58,13 +58,13 @@ jobs:
 
       - name: Code Coverage
         shell: bash
-        run: GCOV=gcov-14 cmake --build build --target coverage_xml
+        run: cmake --build build --target all 
 
       - name: Upload to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: build/coverage
+          files: build/lcov/data/init/core.info
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
