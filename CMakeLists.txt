@@ -26,7 +26,6 @@ endif()
 # Options
 ####################################################################################################
 option(TESTS            "enable tests"              OFF)
-option(CODECOVERAGE     "enable code coverage"      OFF)
 option(HARDEN           "enable Hardening"          OFF)
 option(STATIC_LINK      "enable Static link c++"    ON)
 
@@ -47,16 +46,6 @@ endif()
 if(ENABLE_COVERAGE)
     add_compile_options(--coverage)
     add_link_options(--coverage)
-endif()
-
-if(CODECOVERAGE)
-        add_compile_options(
-            "$<$<CXX_COMPILER_ID:GNU,Clang>:--coverage;-fprofile-arcs;-ftest-coverage;-fcondition-coverage>"
-        )
-        add_link_options(
-            "$<$<CXX_COMPILER_ID:GNU,Clang>:--coverage;-fprofile-arcs>"
-        )
-        link_libraries($<$<CXX_COMPILER_ID:GNU>:gcov>)
 endif()
 
 if(STATIC_LINK)
@@ -278,6 +267,9 @@ if(TESTS)
     
     
     find_package(codecov)
+    list(APPEND LCOV_REMOVE_PATTERNS "'${PROJECT_SOURCE_DIR}/3party/*'")
+    list(APPEND LCOV_REMOVE_PATTERNS "'${PROJECT_SOURCE_DIR}/tests/*'")
+
     add_coverage(core)
     # if(CODECOVERAGE)
         
