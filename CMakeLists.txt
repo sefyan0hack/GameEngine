@@ -270,129 +270,133 @@ if(TESTS)
     add_definitions(-DTESTING)
     include(CTest)
     add_subdirectory(tests)
+    
+    
+    find_package(codecov)
+    add_coverage(core)
+    # if(CODECOVERAGE)
+        
+        # message(STATUS "[Code Coverage `ON`]")
 
-    if(CODECOVERAGE)
-        message(STATUS "[Code Coverage `ON`]")
-
-        if(WIN32 AND MSVC)
-            find_program(OPENCPPCOVERAGE_PATH OpenCppCoverage.exe)
-            if(OPENCPPCOVERAGE_PATH)
-                file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/src" NATIVE_SOURCE_DIR)
-                file(TO_NATIVE_PATH "${CMAKE_BINARY_DIR}/coverage_report" NATIVE_OUTPUT_DIR)
-                file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/3party" NATIVE_3PARTY_PATTERN)
-                file(TO_NATIVE_PATH "$<TARGET_FILE:tests>" NATIVE_TESTS)
+        # if(WIN32 AND MSVC)
+        #     find_program(OPENCPPCOVERAGE_PATH OpenCppCoverage.exe)
+        #     if(OPENCPPCOVERAGE_PATH)
+        #         file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/src" NATIVE_SOURCE_DIR)
+        #         file(TO_NATIVE_PATH "${CMAKE_BINARY_DIR}/coverage_report" NATIVE_OUTPUT_DIR)
+        #         file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/3party" NATIVE_3PARTY_PATTERN)
+        #         file(TO_NATIVE_PATH "$<TARGET_FILE:tests>" NATIVE_TESTS)
                     
-                set(EXCLUDED_SOURCES
-                    --excluded_sources "${NATIVE_3PARTY_PATTERN}\\*"
-                    --excluded_sources "*.h"
-                    --excluded_sources "*.hpp"
-                    --excluded_sources "*.inl"
-                    --excluded_sources ".*\\\\predefined C\\+\\+ types.*"
-                    --excluded_sources ".*\\\\Microsoft Visual Studio.*"
-                    --excluded_modules ".*msvcp.*.dll"
-                    --excluded_modules ".*vcruntime.*.dll"
-                )
-                add_custom_target(coverage
-                COMMAND ${CMAKE_COMMAND} -E make_directory "${NATIVE_OUTPUT_DIR}"
-                COMMAND ${OPENCPPCOVERAGE_PATH}
-                    --quiet
-                    --sources ${NATIVE_SOURCE_DIR}
-                    --export_type html:${NATIVE_OUTPUT_DIR}
-                    ${EXCLUDED_SOURCES}
-                    -- ${NATIVE_TESTS}
-                WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                COMMENT "Running OpenCppCoverage..."
-                DEPENDS core
-                )
-            endif()
-            else()
-                find_program(LCOV_PATH lcov)
-                find_program(GCOVR_PATH gcovr)
-                if(UNIX)
-                    set(GCOV_BIN "gcov-14")
-                    set(GCOVR_ENV_VARS
-                        COMMAND ${CMAKE_COMMAND} -E env "GCOV=${GCOV_BIN} -o ${CMAKE_BINARY_DIR}"
-                    )
-                    list(APPEND GCOVR_COMMON_ARGS --gcov-executable ${GCOV_BIN})
-                endif()
-                set(GCOVR_ADDITIONAL_ARGS 
-                    "--calls"
-                    "--branches"
-                    "--exclude-unreachable-branches"
-                    "--delete"
-                )
+        #         set(EXCLUDED_SOURCES
+        #             --excluded_sources "${NATIVE_3PARTY_PATTERN}\\*"
+        #             --excluded_sources "*.h"
+        #             --excluded_sources "*.hpp"
+        #             --excluded_sources "*.inl"
+        #             --excluded_sources ".*\\\\predefined C\\+\\+ types.*"
+        #             --excluded_sources ".*\\\\Microsoft Visual Studio.*"
+        #             --excluded_modules ".*msvcp.*.dll"
+        #             --excluded_modules ".*vcruntime.*.dll"
+        #         )
+        #         add_custom_target(coverage
+        #         COMMAND ${CMAKE_COMMAND} -E make_directory "${NATIVE_OUTPUT_DIR}"
+        #         COMMAND ${OPENCPPCOVERAGE_PATH}
+        #             --quiet
+        #             --sources ${NATIVE_SOURCE_DIR}
+        #             --export_type html:${NATIVE_OUTPUT_DIR}
+        #             ${EXCLUDED_SOURCES}
+        #             -- ${NATIVE_TESTS}
+        #         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        #         COMMENT "Running OpenCppCoverage..."
+        #         DEPENDS core
+        #         )
+        #     endif()
+        #     else()
+        #         find_program(LCOV_PATH lcov)
+        #         find_program(GCOVR_PATH gcovr)
+        #         if(UNIX)
+        #             set(GCOV_BIN "gcov-14")
+        #             set(GCOVR_ENV_VARS
+        #                 COMMAND ${CMAKE_COMMAND} -E env "GCOV=${GCOV_BIN} -o ${CMAKE_BINARY_DIR}"
+        #             )
+        #             list(APPEND GCOVR_COMMON_ARGS --gcov-executable ${GCOV_BIN})
+        #         endif()
+        #         set(GCOVR_ADDITIONAL_ARGS 
+        #             "--calls"
+        #             "--branches"
+        #             "--exclude-unreachable-branches"
+        #             "--delete"
+        #         )
 
-                set(COVERAGE_EXCLUDES
-                    "${CMAKE_SOURCE_DIR}/3party/.*"
-                    "${CMAKE_SOURCE_DIR}/tests/.*"
-                    "${CMAKE_SOURCE_DIR}/src/main.cpp"
-                )
-                set(LCOV_COVERAGE_EXCLUDES
-                    "*/3party/*"
-                    "*/tests/*"
-                    "*/src/main.cpp"
-                )
+        #         set(COVERAGE_EXCLUDES
+        #             "${CMAKE_SOURCE_DIR}/3party/.*"
+        #             "${CMAKE_SOURCE_DIR}/tests/.*"
+        #             "${CMAKE_SOURCE_DIR}/src/main.cpp"
+        #         )
+        #         set(LCOV_COVERAGE_EXCLUDES
+        #             "*/3party/*"
+        #             "*/tests/*"
+        #             "*/src/main.cpp"
+        #         )
 
-                set(GCOVR_EXCLUDE_ARGS "")
-                foreach(EXCLUDE ${COVERAGE_EXCLUDES})
-                    list(APPEND GCOVR_EXCLUDE_ARGS "--exclude=${EXCLUDE}")
-                endforeach()
+        #         set(GCOVR_EXCLUDE_ARGS "")
+        #         foreach(EXCLUDE ${COVERAGE_EXCLUDES})
+        #             list(APPEND GCOVR_EXCLUDE_ARGS "--exclude=${EXCLUDE}")
+        #         endforeach()
 
-                if(LCOV_PATH)
-                    add_custom_target(coverage_xml
-                        COMMAND ${LCOV_PATH} --directory . --zerocounters
-                        COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${PROJECT_BINARY_DIR} --output-on-failure
-                        COMMAND ${LCOV_PATH} --directory . --capture --output-file coverage.info --gcov-tool ${GCOV_BIN} --ignore-errors mismatch  --no-external
-                        COMMAND ${LCOV_PATH} --remove coverage.info ${LCOV_COVERAGE_EXCLUDES} --output-file coverage --ignore-errors unused
+        #         if(LCOV_PATH)
+        #             add_custom_target(coverage_xml
+        #                 COMMAND ${LCOV_PATH} --directory . --zerocounters
+        #                 COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${PROJECT_BINARY_DIR} --output-on-failure
+        #                 COMMAND ${LCOV_PATH} --directory . --capture --output-file coverage.info --gcov-tool ${GCOV_BIN} --ignore-errors mismatch  --no-external
+        #                 COMMAND ${LCOV_PATH} --remove coverage.info ${LCOV_COVERAGE_EXCLUDES} --output-file coverage --ignore-errors unused
 
-                        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                        DEPENDS core tests
-                        COMMENT "Generating LCOV coverage report"
-                    )
+        #                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        #                 DEPENDS core tests
+        #                 COMMENT "Generating LCOV coverage report"
+        #             )
 
-                elseif(GCOVR_PATH)
+        #         elseif(GCOVR_PATH)
 
-                    set(GCOVR_COMMON_ARGS
-                        --verbose
-                        --root=${CMAKE_SOURCE_DIR}
-                        --object-directory=${CMAKE_BINARY_DIR}
-                        ${GCOVR_EXCLUDE_ARGS}
-                        ${GCOVR_ADDITIONAL_ARGS}
-                    )
+        #             set(GCOVR_COMMON_ARGS
+        #                 --verbose
+        #                 --root=${CMAKE_SOURCE_DIR}
+        #                 --object-directory=${CMAKE_BINARY_DIR}
+        #                 ${GCOVR_EXCLUDE_ARGS}
+        #                 ${GCOVR_ADDITIONAL_ARGS}
+        #             )
                 
-                    # XML Target
-                    add_custom_target(coverage_xml
-                        COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${PROJECT_BINARY_DIR} --output-on-failure
-                        COMMAND ${GCOVR_PATH}
-                        --xml
-                        --output=${PROJECT_BINARY_DIR}/coverage
-                        ${GCOVR_COMMON_ARGS}
+        #             # XML Target
+        #             add_custom_target(coverage_xml
+        #                 COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${PROJECT_BINARY_DIR} --output-on-failure
+        #                 COMMAND ${GCOVR_PATH}
+        #                 --xml
+        #                 --output=${PROJECT_BINARY_DIR}/coverage
+        #                 ${GCOVR_COMMON_ARGS}
 
-                        BYPRODUCTS coverage
-                        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-                        DEPENDS core tests
-                        COMMENT "Generating XML coverage report "
+        #                 BYPRODUCTS coverage
+        #                 WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+        #                 DEPENDS core tests
+        #                 COMMENT "Generating XML coverage report "
 
-                        VERBATIM
-                    )
+        #                 VERBATIM
+        #             )
 
-                    # HTML Target
-                    add_custom_target(coverage_html
-                        COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${PROJECT_BINARY_DIR} --output-on-failure
-                        COMMAND ${GCOVR_PATH}
-                            --html
-                            --html-details
-                            --output=${PROJECT_BINARY_DIR}/coverage.html
-                            ${GCOVR_COMMON_ARGS}
-                        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-                        BYPRODUCTS coverage.html
-                        DEPENDS core tests
-                        COMMENT "Generating HTML coverage report "
-                        VERBATIM
-                    )
-                endif()
-        endif()
-    endif()
+        #             # HTML Target
+        #             add_custom_target(coverage_html
+        #                 COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${PROJECT_BINARY_DIR} --output-on-failure
+        #                 COMMAND ${GCOVR_PATH}
+        #                     --html
+        #                     --html-details
+        #                     --output=${PROJECT_BINARY_DIR}/coverage.html
+        #                     ${GCOVR_COMMON_ARGS}
+        #                 WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+        #                 BYPRODUCTS coverage.html
+        #                 DEPENDS core tests
+        #                 COMMENT "Generating HTML coverage report "
+        #                 VERBATIM
+        #             )
+        #         endif()
+        # endif()
+    # endif()
 endif()
 
 print_target_compile_options(core)
