@@ -10,6 +10,7 @@
 
 CWindow::CWindow(int m_Width, int m_Height, const char* Title) 
 	: m_Visible(false)
+	, m_refCount(1)
 	, m_Keyboard(std::make_shared<Keyboard>())
 	, m_Mouse(std::make_shared<Mouse>())
 {
@@ -33,9 +34,9 @@ CWindow::CWindow(const CWindow& other)
 	, m_Visible(other.m_Visible)
 	, m_RawBuffer(other.m_RawBuffer)
 	, m_OpenGl(other.m_OpenGl)
+	, m_refCount(other.m_refCount)
 	, m_Keyboard(other.m_Keyboard)
 	, m_Mouse(other.m_Mouse)
-	, m_refCount(other.m_refCount)
 {
 	m_refCount++;
 }
