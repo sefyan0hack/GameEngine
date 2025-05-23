@@ -18,25 +18,25 @@ using Camera_Test_Ctor2 = Camera::Test<2>;
     MEMBER_VAR(m_Yaw);\
     MEMBER_VAR(m_Pitch);\
     \
-    MEMBER_FUN(void, SetFrontVector, (vec3));\
-    MEMBER_FUN(void, SetUpVector, (vec3));\
-    MEMBER_FUN(void, SetRightVector, (vec3));\
-    MEMBER_FUN(void, MoveFroward, (float));\
-    MEMBER_FUN(void, MoveBackward, (float));\
-    MEMBER_FUN(void, MoveUP, (float));\
-    MEMBER_FUN(void, MoveDown, (float));\
-    MEMBER_FUN(void, MoveRight, (float));\
-    MEMBER_FUN(void, MoveLeft,  (float));\
-    MEMBER_FUN(void, EnableMSAA, (void));\
-    MEMBER_FUN(void, UpdateVectors, (void));\
-    MEMBER_FUN(void, MoseMove, (bool));\
-    MEMBER_FUN(mat4, View, (void) const);\
-    MEMBER_FUN(mat4, Perspective, (void) const);\
-    MEMBER_FUN(vec3, Position, (void) const);\
-    MEMBER_FUN(vec3, FrontDir, (void) const);\
-    MEMBER_FUN(vec3, UpDir, (void) const);\
-    MEMBER_FUN(vec3, RightDir, (void) const);\
-    MEMBER_FUN(float, Sensitivity, (void) const);
+    MEMBER_FUN(SetFrontVector);\
+    MEMBER_FUN(SetUpVector);\
+    MEMBER_FUN(SetRightVector);\
+    MEMBER_FUN(MoveFroward);\
+    MEMBER_FUN(MoveBackward);\
+    MEMBER_FUN(MoveUP);\
+    MEMBER_FUN(MoveDown);\
+    MEMBER_FUN(MoveRight);\
+    MEMBER_FUN(MoveLeft)\
+    MEMBER_FUN(EnableMSAA);\
+    MEMBER_FUN(UpdateVectors);\
+    MEMBER_FUN(MoseMove);\
+    MEMBER_FUN(View);\
+    MEMBER_FUN(Perspective);\
+    MEMBER_FUN(Position);\
+    MEMBER_FUN(FrontDir);\
+    MEMBER_FUN(UpDir);\
+    MEMBER_FUN(RightDir);\
+    MEMBER_FUN(Sensitivity);
 
 template<>
 struct Camera::Test<1> : public ::testing::Test {
