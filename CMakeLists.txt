@@ -327,6 +327,11 @@ if(TESTS)
                     "${CMAKE_SOURCE_DIR}/tests/.*"
                     "${CMAKE_SOURCE_DIR}/src/main.cpp"
                 )
+                set(LCOV_COVERAGE_EXCLUDES
+                    "*/3party/*"
+                    "*/tests/*"
+                    "*/src/main.cpp"
+                )
 
                 set(GCOVR_EXCLUDE_ARGS "")
                 foreach(EXCLUDE ${COVERAGE_EXCLUDES})
@@ -337,8 +342,8 @@ if(TESTS)
                     add_custom_target(coverage_xml
                         COMMAND ${LCOV_PATH} --directory . --zerocounters
                         COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${PROJECT_BINARY_DIR} --output-on-failure
-                        COMMAND ${LCOV_PATH} --directory . --capture --output-file coverage.info --gcov-tool ${GCOV_BIN} --ignore-errors mismatch --no-external
-                        COMMAND ${LCOV_PATH} --remove coverage.info ${COVERAGE_EXCLUDES} --output-file coverage
+                        COMMAND ${LCOV_PATH} --directory . --capture --output-file coverage.info --gcov-tool ${GCOV_BIN} --ignore-errors mismatch  --no-external
+                        COMMAND ${LCOV_PATH} --remove coverage.info ${LCOV_COVERAGE_EXCLUDES} --output-file coverage --ignore-errors unused
 
                         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                         DEPENDS core tests
