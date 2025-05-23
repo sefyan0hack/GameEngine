@@ -44,7 +44,9 @@ CWindow::~CWindow()
 	DestroyWindow(m_WindowHandle);
 	#elif defined(LINUX_PLT)
     XDestroyWindow(m_DrawContext, m_WindowHandle);
-    XCloseDisplay(m_DrawContext);
+	if (m_DrawContext) {
+		XCloseDisplay(m_DrawContext);
+	}
 	#endif
 }
 
