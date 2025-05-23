@@ -44,6 +44,10 @@ if(NOT "${SANITIZER}" STREQUAL "")
     endif()
 endif()
 
+if(ENABLE_COVERAGE)
+    add_compile_options(--coverage)
+endif()
+
 if(CODECOVERAGE)
         add_compile_options(
             "$<$<CXX_COMPILER_ID:GNU,Clang>:--coverage;-fprofile-arcs;-ftest-coverage;-fcondition-coverage>"
