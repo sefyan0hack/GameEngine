@@ -267,8 +267,8 @@ if(TESTS)
     
     
     find_package(codecov)
-    list(APPEND LCOV_REMOVE_PATTERNS "'${PROJECT_SOURCE_DIR}/3party/*'")
-    list(APPEND LCOV_REMOVE_PATTERNS "'${PROJECT_SOURCE_DIR}/tests/*'")
+    list(APPEND LCOV_REMOVE_PATTERNS "'*/3party/*'")
+    list(APPEND LCOV_REMOVE_PATTERNS "'*/tests/*'")
 
     add_coverage(core)
     # if(CODECOVERAGE)
