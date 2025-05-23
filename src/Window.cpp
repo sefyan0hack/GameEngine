@@ -35,19 +35,24 @@ CWindow::CWindow(const CWindow& other)
 	, m_OpenGl(other.m_OpenGl)
 	, m_Keyboard(other.m_Keyboard)
 	, m_Mouse(other.m_Mouse)
+	, m_refCount(other.m_refCount)
 {
+	m_refCount++;
 }
 
 CWindow::~CWindow()
 {
-	#if defined(WINDOWS_PLT)
-	DestroyWindow(m_WindowHandle);
-	#elif defined(LINUX_PLT)
-    XDestroyWindow(m_DrawContext, m_WindowHandle);
-	if (m_DrawContext) {
-		XCloseDisplay(m_DrawContext);
+	m_refCount--;
+	if (m_refCount == 0) {
+		#if defined(WINDOWS_PLT)
+		DestroyWindow(m_WindowHandle);
+		#elif defined(LINUX_PLT)
+		XDestroyWindow(m_DrawContext, m_WindowHandle);
+		if (m_DrawContext) {
+			XCloseDisplay(m_DrawContext);
+		}
+		#endif
 	}
-	#endif
 }
 
 #if defined(WINDOWS_PLT)

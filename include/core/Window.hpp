@@ -71,6 +71,7 @@ class CWindow
         bool m_Visible;
         std::vector<std::byte> m_RawBuffer;
         std::shared_ptr<OpenGL> m_OpenGl;
+        int m_refCount;
     public:
         std::shared_ptr<Keyboard> m_Keyboard;
         std::shared_ptr<Mouse> m_Mouse;
