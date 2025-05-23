@@ -56,12 +56,6 @@ jobs:
         shell: bash
         run: cmake --build build --config Debug --parallel
 
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
-        continue-on-error: true
-        with:
-          category: "/language:${{ matrix.language }}"
-
       - name: Code Coverage
         shell: bash
         run: GCOV=gcov-14 cmake --build build --target coverage_xml
@@ -71,3 +65,9 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: build/coverage
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        continue-on-error: true
+        with:
+          category: "/language:${{ matrix.language }}"
