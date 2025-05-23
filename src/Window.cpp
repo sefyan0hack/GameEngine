@@ -45,6 +45,7 @@ CWindow::~CWindow()
 {
 	m_refCount--;
 	if (m_refCount == 0) {
+		m_OpenGl.reset();
 		#if defined(WINDOWS_PLT)
 		DestroyWindow(m_WindowHandle);
 		#elif defined(LINUX_PLT)
