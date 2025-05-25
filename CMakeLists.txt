@@ -129,7 +129,7 @@ endif()
 # Compiler Check
 ####################################################################################################
 
-message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID} (${CMAKE_CXX_COMPILER_VERSION}) , Arch:(${CMAKE_HOST_SYSTEM_PROCESSOR})")
+message(STATUS "Platform: (${CMAKE_SYSTEM_NAME}), Compiler: ${CMAKE_CXX_COMPILER_ID} (${CMAKE_CXX_COMPILER_VERSION}) , Arch: (${CMAKE_HOST_SYSTEM_PROCESSOR})")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "13")
