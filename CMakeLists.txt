@@ -50,41 +50,20 @@ endif()
 
 if(TESTS AND ENABLE_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
-    add_compile_options( 
-        "$<$<CONFIG:Debug>:--coverage>"
-        "$<$<CONFIG:Debug>:-fprofile-arcs>"
-        "$<$<CONFIG:Debug>:-ftest-coverage>"
-        "$<$<CONFIG:Debug>:-fkeep-static-functions>"
-        "$<$<CONFIG:Debug>:-fno-inline>"
-        "$<$<CONFIG:Debug>:-fno-elide-constructors>"
-        "$<$<CONFIG:Debug>:-fno-inline-small-functions>"
-        "$<$<CONFIG:Debug>:-fno-default-inline>"
-        "$<$<CONFIG:Debug>:-fprofile-abs-path>"
-    )
-    add_link_options( 
-        "$<$<CONFIG:Debug>:--coverage>"
-        "$<$<CONFIG:Debug>:-fprofile-arcs>"
-        "$<$<CONFIG:Debug>:-ftest-coverage>"
-        "$<$<CONFIG:Debug>:-fkeep-static-functions>"
-        "$<$<CONFIG:Debug>:-fno-inline>"
-        "$<$<CONFIG:Debug>:-fno-elide-constructors>"
-        "$<$<CONFIG:Debug>:-fno-inline-small-functions>"
-        "$<$<CONFIG:Debug>:-fno-default-inline>"
-        "$<$<CONFIG:Debug>:-fprofile-abs-path>"
-    )
-    
+    add_compile_options( --coverage -fprofile-arcs -ftest-coverage -fno-inline -fprofile-abs-path)
+    add_link_options( --coverage -fprofile-arcs -ftest-coverage -fno-inline -fprofile-abs-path)
+
     find_program(GCOVR_PATH gcovr)
     find_program(GCOV_EXECUTABLE "gcov-${COMPILER_MAJOR_VERSION}")
 
     if(GCOVR_PATH)
         add_custom_target(coverage
-            COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${PROJECT_BINARY_DIR} --output-on-failure
+            COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
             COMMAND ${GCOVR_PATH}
                 --root ${CMAKE_SOURCE_DIR}
                 --exclude '${CMAKE_SOURCE_DIR}/tests/'
                 --exclude '${CMAKE_SOURCE_DIR}/3party/'
                 --gcov-executable ${GCOV_EXECUTABLE}
-                --object-directory ${CMAKE_BINARY_DIR}
                 --calls
                 --branches
                 --decisions
@@ -101,13 +80,12 @@ if(TESTS AND ENABLE_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         )
 
         add_custom_target(coverage_html
-            COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${PROJECT_BINARY_DIR} --output-on-failure
+            COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
             COMMAND ${GCOVR_PATH}
                 --root ${CMAKE_SOURCE_DIR}
                 --exclude '${CMAKE_SOURCE_DIR}/tests/'
                 --exclude '${CMAKE_SOURCE_DIR}/3party/'
                 --gcov-executable ${GCOV_EXECUTABLE}
-                --object-directory ${CMAKE_BINARY_DIR}
                 --calls
                 --branches
                 --decisions
