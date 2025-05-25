@@ -72,6 +72,7 @@ if(TESTS AND ENABLE_COVERAGE)
                     --exclude '/usr/'
                     --xml -o coverage
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                DEPENDS core tests
                 COMMENT "Generating GCC coverage report with gcovr..."
             )
         elseif(LCOV_PATH)
