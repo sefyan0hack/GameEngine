@@ -106,7 +106,7 @@ if(TESTS AND ENABLE_COVERAGE AND NOT MSVC)
         if(LLVM_PROFDATA AND LLVM_COV)
             add_custom_target(coverage
                 COMMAND ${CMAKE_COMMAND} -E env "LLVM_PROFILE_FILE=${CMAKE_BINARY_DIR}/default.profraw"
-                COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+                        ${CMAKE_CTEST_COMMAND} --output-on-failure
                 COMMAND ${LLVM_PROFDATA} merge -sparse ${CMAKE_BINARY_DIR}/default.profraw -o ${CMAKE_BINARY_DIR}/coverage
                 # Generate coverage report (HTML/text)
                 COMMAND ${LLVM_COV} show
