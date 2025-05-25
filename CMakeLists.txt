@@ -52,7 +52,7 @@ if(TESTS AND ENABLE_COVERAGE AND NOT MSVC)
 
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         add_compile_options( -fno-inline -g --coverage -fprofile-arcs -ftest-coverage)
-        add_link_options( -fno-inline -g --coverage)
+        add_link_options( -fno-inline -g --coverage -fprofile-arcs -ftest-coverage)
     elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         add_compile_options( -fno-inline -g -fprofile-instr-generate -fcoverage-mapping)
         add_link_options( -fno-inline -g -fprofile-instr-generate)
