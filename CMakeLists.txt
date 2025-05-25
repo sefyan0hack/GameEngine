@@ -79,7 +79,6 @@ if(TESTS AND ENABLE_COVERAGE)
                     --gcov-executable ${GCOV_EXECUTABLE}
                     --object-directory ${CMAKE_BINARY_DIR}
                     --gcov-ignore-errors=all
-                    --gcov-arg=-b
                     --verbose
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                 DEPENDS core tests
