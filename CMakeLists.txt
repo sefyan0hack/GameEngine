@@ -89,7 +89,7 @@ if(TESTS AND ENABLE_COVERAGE AND NOT MSVC)
                 --object-directory ${CMAKE_BINARY_DIR}
                 --gcov-ignore-errors=all
                 --exclude-unreachable-branches
-                --html details -o coverage.html
+                --html-details -o coverage.html
                 -s
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
             DEPENDS core tests
