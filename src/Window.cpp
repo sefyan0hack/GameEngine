@@ -327,7 +327,9 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 
 auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 {
-    
+    if (!m_DrawContext) {
+		Error("Failed to open X display connection.");
+	}
     int screen = DefaultScreen(m_DrawContext);
 
     /* Create a window */
