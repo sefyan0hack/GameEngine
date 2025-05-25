@@ -48,53 +48,51 @@ if(NOT "${SANITIZER}" STREQUAL "")
     endif()
 endif()
 
-if(TESTS AND ENABLE_COVERAGE AND NOT MSVC)
+if(TESTS AND ENABLE_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        add_compile_options( -fno-inline -g --coverage -fprofile-arcs -ftest-coverage)
-        add_link_options( -fno-inline -g --coverage -fprofile-arcs -ftest-coverage)
+    add_compile_options( -fno-inline -g --coverage -fprofile-arcs -ftest-coverage)
+    add_link_options( -fno-inline -g --coverage -fprofile-arcs -ftest-coverage)
 
-        find_program(GCOVR_PATH gcovr)
-        find_program(GCOV_EXECUTABLE "gcov-${COMPILER_MAJOR_VERSION}")
+    find_program(GCOVR_PATH gcovr)
+    find_program(GCOV_EXECUTABLE "gcov-${COMPILER_MAJOR_VERSION}")
 
-        if(GCOVR_PATH)
-            add_custom_target(coverage
-                COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
-                COMMAND ${GCOVR_PATH}
-                    --root ${CMAKE_SOURCE_DIR}
-                    --exclude '${CMAKE_SOURCE_DIR}/tests/'
-                    --exclude '${CMAKE_SOURCE_DIR}/3party/'
-                    --gcov-executable ${GCOV_EXECUTABLE}
-                    --object-directory ${CMAKE_BINARY_DIR}
-                    --gcov-ignore-errors=all
-                    --exclude-unreachable-branches
-                    --exclude-function-lines
-                    --exclude-noncode-lines
-                    --xml -o coverage
-                    -s
-                WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                DEPENDS core tests
-                COMMENT "Generating GCC coverage report with gcovr..."
-            )
+    if(GCOVR_PATH)
+        add_custom_target(coverage
+            COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+            COMMAND ${GCOVR_PATH}
+                --root ${CMAKE_SOURCE_DIR}
+                --exclude '${CMAKE_SOURCE_DIR}/tests/'
+                --exclude '${CMAKE_SOURCE_DIR}/3party/'
+                --gcov-executable ${GCOV_EXECUTABLE}
+                --object-directory ${CMAKE_BINARY_DIR}
+                --gcov-ignore-errors=all
+                --exclude-unreachable-branches
+                --exclude-function-lines
+                --exclude-noncode-lines
+                --xml -o coverage
+                -s
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+            DEPENDS core tests
+            COMMENT "Generating GCC coverage report with gcovr..."
+        )
 
-            add_custom_target(coverage_html
-                COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
-                COMMAND ${GCOVR_PATH}
-                    --root ${CMAKE_SOURCE_DIR}
-                    --exclude '${CMAKE_SOURCE_DIR}/tests/'
-                    --exclude '${CMAKE_SOURCE_DIR}/3party/'
-                    --gcov-executable ${GCOV_EXECUTABLE}
-                    --object-directory ${CMAKE_BINARY_DIR}
-                    --gcov-ignore-errors=all
-                    --exclude-function-lines
-                    --exclude-noncode-lines
-                    --html-details -o coverage.html
-                    -s
-                WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                DEPENDS core tests
-                COMMENT "Generating GCC coverage report with gcovr..."
-            )
-        endif()
+        add_custom_target(coverage_html
+            COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+            COMMAND ${GCOVR_PATH}
+                --root ${CMAKE_SOURCE_DIR}
+                --exclude '${CMAKE_SOURCE_DIR}/tests/'
+                --exclude '${CMAKE_SOURCE_DIR}/3party/'
+                --gcov-executable ${GCOV_EXECUTABLE}
+                --object-directory ${CMAKE_BINARY_DIR}
+                --gcov-ignore-errors=all
+                --exclude-function-lines
+                --exclude-noncode-lines
+                --html-details -o coverage.html
+                -s
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+            DEPENDS core tests
+            COMMENT "Generating GCC coverage report with gcovr..."
+        )
     endif()
 
 endif()
