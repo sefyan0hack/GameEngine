@@ -74,6 +74,7 @@ if(TESTS AND ENABLE_COVERAGE)
                     --xml -o coverage
                     --gcov-executable ${GCOV_EXECUTABLE}
                     --object-directory ${CMAKE_BINARY_DIR}
+                    --verbose
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                 DEPENDS core tests
                 COMMENT "Generating GCC coverage report with gcovr..."
