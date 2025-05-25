@@ -83,11 +83,9 @@ if(TESTS AND ENABLE_COVERAGE AND NOT MSVC)
             COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
             COMMAND ${GCOVR_PATH}
                 --root ${CMAKE_SOURCE_DIR}
-                --exclude '${CMAKE_SOURCE_DIR}/3party/'
                 --gcov-executable ${GCOV_EXECUTABLE}
                 --object-directory ${CMAKE_BINARY_DIR}
                 --gcov-ignore-errors=all
-                --exclude-unreachable-branches
                 --html-details -o coverage.html
                 -s
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
