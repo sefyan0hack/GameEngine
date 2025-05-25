@@ -62,10 +62,6 @@ jobs:
         shell: bash
         run: cmake --build build --config Debug --parallel
 
-      - name: Run Tests
-        shell: bash
-        run: gdb ./build/tests/tests -ex run -ex bt --batch -q
-
       - name: Code Coverage
         shell: bash
         run: cmake --build build --target coverage 
