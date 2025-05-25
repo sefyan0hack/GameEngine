@@ -31,5 +31,6 @@ endif()
 include(GoogleTest)
 
 gtest_discover_tests(tests
+        EXTRA_ARGS --gtest_num_threads=1
         PROPERTIES RUN_SERIAL TRUE
 )
