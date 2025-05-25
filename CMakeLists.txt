@@ -71,6 +71,7 @@ if(TESTS AND ENABLE_COVERAGE)
                     --exclude 'tests/'
                     --exclude '3party/'
                     --exclude '/usr/'
+                    --exclude '.*/cmake_pch.*'
                     --xml -o coverage
                     --gcov-executable ${GCOV_EXECUTABLE}
                     --object-directory ${CMAKE_BINARY_DIR}
