@@ -102,20 +102,24 @@ if(TESTS AND ENABLE_COVERAGE AND NOT MSVC)
 
         find_program(LLVM_PROFDATA NAMES llvm-profdata)
         find_program(LLVM_COV NAMES llvm-cov)
+        
+        set_target_properties(tests PROPERTIES
+            ENVIRONMENT "LLVM_PROFILE_FILE=${CMAKE_BINARY_DIR}/default.profraw"
+        )
 
         if(LLVM_PROFDATA AND LLVM_COV)
             add_custom_target(coverage
                 COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
-                COMMAND ${LLVM_PROFDATA} merge -sparse default.profraw -o coverage
+                COMMAND ${LLVM_PROFDATA} merge -sparse ${CMAKE_BINARY_DIR}/default.profraw -o ${CMAKE_BINARY_DIR}/coverage
                 # Generate coverage report (HTML/text)
                 COMMAND ${LLVM_COV} show
-                    --instr-profile=coverage
+                    --instr-profile=${CMAKE_BINARY_DIR}/coverage
                     --show-line-counts-or-regions
                     --show-branches=count
                     --format=html
                     --output-dir=${CMAKE_BINARY_DIR}
                     $<TARGET_FILE:tests>
-                COMMAND ${LLVM_COV} report --instr-profile=coverage $<TARGET_FILE:tests>
+                COMMAND ${LLVM_COV} report --instr-profile=${CMAKE_BINARY_DIR}/coverage $<TARGET_FILE:tests>
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                 DEPENDS core tests
                 COMMENT "Generating Clang coverage report with llvm-cov..."
