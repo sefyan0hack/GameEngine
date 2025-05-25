@@ -58,13 +58,13 @@ jobs:
 
       - name: Code Coverage
         shell: bash
-        run: cmake --build build --target all 
+        run: cmake --build build --target coverage 
 
       - name: Upload to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: build/lcov/data/init/core.info
+          files: build/coverage
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
