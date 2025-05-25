@@ -65,6 +65,10 @@ if(TESTS AND ENABLE_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
                 --exclude '${CMAKE_SOURCE_DIR}/3party/'
                 --gcov-executable ${GCOV_EXECUTABLE}
                 --object-directory ${CMAKE_BINARY_DIR}
+                --calls
+                --branches
+                --decisions
+                --delete
                 --gcov-ignore-errors=all
                 --exclude-unreachable-branches
                 --exclude-function-lines
@@ -84,6 +88,10 @@ if(TESTS AND ENABLE_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
                 --exclude '${CMAKE_SOURCE_DIR}/3party/'
                 --gcov-executable ${GCOV_EXECUTABLE}
                 --object-directory ${CMAKE_BINARY_DIR}
+                --calls
+                --branches
+                --decisions
+                --delete
                 --gcov-ignore-errors=all
                 --exclude-function-lines
                 --exclude-noncode-lines
