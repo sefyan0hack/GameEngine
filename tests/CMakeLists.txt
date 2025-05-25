@@ -20,6 +20,13 @@ endif()
 
 target_link_libraries(tests PRIVATE core gtest gtest_main)
 
+if(STATIC_LINK)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        add_link_options(-static-libgcc -static-libstdc++)
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+        set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    endif()
+endif()
 
 include(GoogleTest)
 
