@@ -50,9 +50,29 @@ endif()
 
 if(TESTS AND ENABLE_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
-    add_compile_options( -fno-inline -g --coverage -fprofile-arcs -ftest-coverage)
-    add_link_options( -fno-inline -g --coverage -fprofile-arcs -ftest-coverage)
-
+    add_compile_options( 
+        "$<$<CONFIG:Debug>:--coverage>"
+        "$<$<CONFIG:Debug>:-fprofile-arcs>"
+        "$<$<CONFIG:Debug>:-ftest-coverage>"
+        "$<$<CONFIG:Debug>:-fkeep-static-functions>"
+        "$<$<CONFIG:Debug>:-fno-inline>"
+        "$<$<CONFIG:Debug>:-fno-elide-constructors>"
+        "$<$<CONFIG:Debug>:-fno-inline-small-functions>"
+        "$<$<CONFIG:Debug>:-fno-default-inline>"
+        "$<$<CONFIG:Debug>:-fprofile-abs-path>"
+    )
+    add_link_options( 
+        "$<$<CONFIG:Debug>:--coverage>"
+        "$<$<CONFIG:Debug>:-fprofile-arcs>"
+        "$<$<CONFIG:Debug>:-ftest-coverage>"
+        "$<$<CONFIG:Debug>:-fkeep-static-functions>"
+        "$<$<CONFIG:Debug>:-fno-inline>"
+        "$<$<CONFIG:Debug>:-fno-elide-constructors>"
+        "$<$<CONFIG:Debug>:-fno-inline-small-functions>"
+        "$<$<CONFIG:Debug>:-fno-default-inline>"
+        "$<$<CONFIG:Debug>:-fprofile-abs-path>"
+    )
+    
     find_program(GCOVR_PATH gcovr)
     find_program(GCOV_EXECUTABLE "gcov-${COMPILER_MAJOR_VERSION}")
 
