@@ -71,7 +71,7 @@ if(TESTS AND ENABLE_COVERAGE)
                 COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
                 COMMAND ${GCOVR_PATH}
                     --root ${CMAKE_SOURCE_DIR}
-                    --exclude 'tests/'
+                    --exclude '${CMAKE_BINARY_DIR}/tests/.*'
                     --exclude '3party/'
                     --exclude '/usr/'
                     --exclude '.*/cmake_pch.*'
