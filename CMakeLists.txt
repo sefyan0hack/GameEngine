@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.28)
 
 project(Engine LANGUAGES C CXX)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+include(helpers)
+
 ####################################################################################################
 # Futures 
 ####################################################################################################
@@ -10,7 +14,6 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_SUPPRESS_REGENERATION true)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
@@ -33,6 +36,21 @@ option(TESTS            "enable tests"              OFF)
 option(ENABLE_COVERAGE  "enable code coverage"      OFF)
 option(HARDEN           "enable Hardening"          OFF)
 option(STATIC_LINK      "enable Static link c++"    ON)
+
+
+####################################################################################################
+# TEST
+####################################################################################################
+if(TESTS)
+    message(STATUS "[Tests `ON`]")
+    include(CTest)
+    add_definitions(-DTESTING)
+    add_subdirectory(tests)
+endif()
+
+####################################################################################################
+# Options Work
+####################################################################################################
 
 set(SANITIZER "" CACHE STRING "Enable sanitizers (address, undefined, etc.)")
 
@@ -147,7 +165,6 @@ else()
     set(ONLINE TRUE)
 endif()
 
-include(helpers)
 if(ONLINE)
 
 # Include get_cpm.cmake
@@ -305,16 +322,6 @@ add_compile_definitions(
     $<$<CONFIG:Release>:NDEBUG>
 )
 
-
-####################################################################################################
-# TEST
-####################################################################################################
-if(TESTS)
-    message(STATUS "[Tests `ON`]")
-    add_definitions(-DTESTING)
-    include(CTest)
-    add_subdirectory(tests)
-endif()
 
 print_target_compile_options(core)
 print_target_compile_options(${PROJECT_NAME})
