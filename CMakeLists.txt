@@ -48,7 +48,7 @@ if(NOT "${SANITIZER}" STREQUAL "")
     endif()
 endif()
 
-if(TESTS AND ENABLE_COVERAGE)
+if(TESTS AND ENABLE_COVERAGE AND NOT MSVC)
 
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         add_compile_options( -g --coverage -fprofile-arcs -ftest-coverage)
