@@ -72,6 +72,7 @@ if(TESTS AND ENABLE_COVERAGE)
                 --object-directory ${CMAKE_BINARY_DIR}
                 --gcov-ignore-errors=all
                 --xml -o coverage
+                -s
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
             DEPENDS core tests
             COMMENT "Generating GCC coverage report with gcovr..."
