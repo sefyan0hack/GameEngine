@@ -66,13 +66,12 @@ if(TESTS AND ENABLE_COVERAGE)
             COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
             COMMAND ${GCOVR_PATH}
                 --root ${CMAKE_SOURCE_DIR}
-                --exclude 'tests/'
-                --exclude '3party/'
-                --exclude '/usr/'
-                --xml -o coverage
+                --exclude '${CMAKE_SOURCE_DIR}/tests/'
+                --exclude '${CMAKE_SOURCE_DIR}/3party/'
                 --gcov-executable ${GCOV_EXECUTABLE}
                 --object-directory ${CMAKE_BINARY_DIR}
                 --gcov-ignore-errors=all
+                --xml -o coverage
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
             DEPENDS core tests
             COMMENT "Generating GCC coverage report with gcovr..."
