@@ -6,8 +6,6 @@ add_executable(tests ${TEST_SOURCES})
 
 apply_compile_options(TARGETS tests )
 
-target_link_libraries(tests PRIVATE core gtest gtest_main)
-
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
@@ -20,26 +18,10 @@ else()
         )
 endif()
 
+target_link_libraries(tests PRIVATE core gtest gtest_main)
+
+
 include(GoogleTest)
-
-add_custom_command(
-  TARGET tests POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E echo "Resolved DLLs: $<JOIN:$<TARGET_RUNTIME_DLLS:tests>, >"
-  VERBATIM
-)
-
-if (WIN32)
-        # HACK: we can't use TARGET_RUNTIME_DLLS because simbody doesn't package libgfortran etc. correctly
-        add_custom_command(
-        TARGET tests POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E env 
-                "DLL_PATHS=$<JOIN:$<TARGET_RUNTIME_DLLS:tests>,;>"
-                "DEST_DIR=$<TARGET_FILE_DIR:tests>"
-                ${CMAKE_COMMAND} -P "${CMAKE_SOURCE_DIR}/cmake/CopyDllsIfNeeded.cmake"
-        VERBATIM
-        COMMENT "Copying runtime DLLs if needed"
-        )
-endif()
 
 gtest_discover_tests(tests
         EXTRA_ARGS --gtest_num_threads=1
