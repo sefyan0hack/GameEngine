@@ -60,52 +60,25 @@ if(TESTS AND ENABLE_COVERAGE)
 
     find_program(GCOVR_PATH gcovr)
     find_program(GCOV_EXECUTABLE "gcov-${COMPILER_MAJOR_VERSION}")
-    find_program(LCOV_PATH lcov)
-    # find_program(GENHTML_PATH genhtml)
-    find_program(LLVM_PROFDATA_PATH llvm-profdata)
-    find_program(LLVM_COV_PATH llvm-cov)
 
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND GCOVR_PATH OR LCOV_PATH)
-        if(GCOVR_PATH)
-            add_custom_target(coverage
-                COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
-                COMMAND ${GCOVR_PATH}
-                    --root ${CMAKE_SOURCE_DIR}
-                    --exclude '${CMAKE_BINARY_DIR}/tests/.*'
-                    --exclude '3party/'
-                    --exclude '/usr/'
-                    --exclude '.*/cmake_pch.*'
-                    --exclude '.*googletest.*'
-                    --xml -o coverage
-                    --gcov-executable ${GCOV_EXECUTABLE}
-                    --object-directory ${CMAKE_BINARY_DIR}
-                    --gcov-ignore-errors=all
-                    --verbose
-                WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                DEPENDS core tests
-                COMMENT "Generating GCC coverage report with gcovr..."
-            )
-        elseif(LCOV_PATH)
-            add_custom_target(coverage
-                COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
-                COMMAND ${LCOV_PATH} --capture --directory . --output-file coverage.info
-                COMMAND ${LCOV_PATH} --remove coverage.info '*/tests/*' '/3party/*' '/usr/*' --output-file coverage
-                WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                DEPENDS core tests
-                COMMENT "Generating GCC coverage report..."
-            )
-        endif()
-    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND LLVM_PROFDATA_PATH AND LLVM_COV_PATH)
+    if(GCOVR_PATH)
         add_custom_target(coverage
             COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
-            COMMAND ${LLVM_PROFDATA_PATH} merge -sparse default.profraw -o coverage
-            COMMAND ${LLVM_COV_PATH} show $<TARGET_FILE:tests> -instr-profile=coverage -format=html -output-dir=coverage-report
+            COMMAND ${GCOVR_PATH}
+                --root ${CMAKE_SOURCE_DIR}
+                --exclude 'tests/'
+                --exclude '3party/'
+                --exclude '/usr/'
+                --xml -o coverage
+                --gcov-executable ${GCOV_EXECUTABLE}
+                --object-directory ${CMAKE_BINARY_DIR}
+                --gcov-ignore-errors=all
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
             DEPENDS core tests
-            COMMENT "Generating Clang coverage report..."
+            COMMENT "Generating GCC coverage report with gcovr..."
         )
     else()
-        message(WARNING "Code coverage tools not found. Install lcov/genhtml (GCC) or llvm (Clang).")
+        message(WARNING "Code coverage tools not found. Install gcovr")
     endif()
 endif()
 
