@@ -95,33 +95,6 @@ if(TESTS AND ENABLE_COVERAGE AND NOT MSVC)
                 COMMENT "Generating GCC coverage report with gcovr..."
             )
         endif()
-
-    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        add_compile_options( -fno-inline -g -fprofile-instr-generate -fcoverage-mapping)
-        add_link_options( -fno-inline -g -fprofile-instr-generate)
-
-        find_program(LLVM_PROFDATA NAMES llvm-profdata)
-        find_program(LLVM_COV NAMES llvm-cov)
-
-        if(LLVM_PROFDATA AND LLVM_COV)
-            add_custom_target(coverage
-                COMMAND ${CMAKE_COMMAND} -E env "LLVM_PROFILE_FILE=${CMAKE_BINARY_DIR}/default.profraw"
-                        ${CMAKE_CTEST_COMMAND} --output-on-failure
-                COMMAND ${LLVM_PROFDATA} merge -sparse ${CMAKE_BINARY_DIR}/default.profraw -o ${CMAKE_BINARY_DIR}/coverage
-                # Generate coverage report (HTML/text)
-                COMMAND ${LLVM_COV} show
-                    --instr-profile=${CMAKE_BINARY_DIR}/coverage
-                    --show-line-counts-or-regions
-                    --show-branches=count
-                    --format=html
-                    --output-dir=${CMAKE_BINARY_DIR}
-                    $<TARGET_FILE:tests>
-                COMMAND ${LLVM_COV} report --instr-profile=${CMAKE_BINARY_DIR}/coverage $<TARGET_FILE:tests>
-                WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                DEPENDS core tests
-                COMMENT "Generating Clang coverage report with llvm-cov..."
-            )
-        endif()
     endif()
 
 endif()
