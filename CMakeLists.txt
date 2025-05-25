@@ -115,7 +115,7 @@ if(TESTS AND ENABLE_COVERAGE AND NOT MSVC)
                     --format=html
                     --output-dir=${CMAKE_BINARY_DIR}
                     $<TARGET_FILE:tests>
-                COMMAND ${LLVM_COV} report --instr-profile=coverage.profdata $<TARGET_FILE:tests>
+                COMMAND ${LLVM_COV} report --instr-profile=coverage $<TARGET_FILE:tests>
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                 DEPENDS core tests
                 COMMENT "Generating Clang coverage report with llvm-cov..."
