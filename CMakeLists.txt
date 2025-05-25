@@ -61,7 +61,7 @@ if(TESTS AND ENABLE_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
     if(GCOVR_PATH)
         add_custom_target(coverage
-            COMMAND $<TARGET_FILE:tests>
+            COMMAND $<TARGET_FILE:tests> --gtest_death_test_style=threadsafe
             COMMAND ${GCOVR_PATH}
                 --root ${CMAKE_SOURCE_DIR}
                 --exclude '${CMAKE_SOURCE_DIR}/tests/'
@@ -75,7 +75,7 @@ if(TESTS AND ENABLE_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         )
 
         add_custom_target(coverage_html
-            COMMAND $<TARGET_FILE:tests>
+            COMMAND $<TARGET_FILE:tests> --gtest_death_test_style=threadsafe
             COMMAND ${GCOVR_PATH}
                 --root ${CMAKE_SOURCE_DIR}
                 --exclude '${CMAKE_SOURCE_DIR}/tests/'
