@@ -56,7 +56,7 @@
 #endif
 
 #ifndef MEMBER_FUN
-#   define MEMBER_FUN(Name) auto Name(auto&&... args) { return member.Name(std::forward<decltype(args)>(args)...); }
+#   define MEMBER_FUN(Name) auto Name(auto&&... args) { return static_cast<decltype(member)&>(member).Name(std::forward<decltype(args)>(args)...); }
 #endif
 
 #if defined(__GNUC__) || defined(__clang__)
