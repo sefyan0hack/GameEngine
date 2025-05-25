@@ -23,6 +23,9 @@ if(WIN32)
     set(CMAKE_USE_WINHTTP_FOR_HTTP ON CACHE BOOL "" FORCE)
     set(CMAKE_USE_CURL OFF CACHE BOOL "" FORCE)
 endif()
+
+string(REGEX MATCH "^[0-9]+" COMPILER_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSION}")
+
 ####################################################################################################
 # Options
 ####################################################################################################
@@ -56,7 +59,7 @@ if(TESTS AND ENABLE_COVERAGE)
     endif()
 
     find_program(GCOVR_PATH gcovr)
-    find_program(GCOV_EXECUTABLE gcov)
+    find_program(GCOV_EXECUTABLE "gcov-${COMPILER_MAJOR_VERSION}")
     find_program(LCOV_PATH lcov)
     # find_program(GENHTML_PATH genhtml)
     find_program(LLVM_PROFDATA_PATH llvm-profdata)
@@ -73,7 +76,7 @@ if(TESTS AND ENABLE_COVERAGE)
                     --exclude '/usr/'
                     --exclude '.*/cmake_pch.*'
                     --xml -o coverage
-                    --gcov-executable gcov-14
+                    --gcov-executable ${GCOV_EXECUTABLE}
                     --object-directory ${CMAKE_BINARY_DIR}
                     --gcov-ignore-errors=all
                     --gcov-arg=-b
