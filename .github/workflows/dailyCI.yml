@@ -45,7 +45,7 @@ jobs:
         shell: bash
         run: |
           rm -rf build
-          cmake -S . -B build -G  "Ninja" -DCMAKE_BUILD_TYPE=Debug -DTESTS=ON -DENABLE_COVERAGE=ON -DHARDEN=ON
+          cmake -S . -B build -G  "Ninja" -DCMAKE_BUILD_TYPE=Debug -DTESTS=ON -DENABLE_COVERAGE=ON
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
@@ -55,6 +55,10 @@ jobs:
       - name: Build
         shell: bash
         run: cmake --build build --config Debug --parallel
+
+      - name: Run Tests
+        shell: bash
+        run: ./build/tests/tests
 
       - name: Code Coverage
         shell: bash
