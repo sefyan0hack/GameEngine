@@ -56,6 +56,7 @@ if(TESTS AND ENABLE_COVERAGE)
     endif()
 
     find_program(GCOVR_PATH gcovr)
+    find_program(GCOV_EXECUTABLE gcov)
     find_program(LCOV_PATH lcov)
     # find_program(GENHTML_PATH genhtml)
     find_program(LLVM_PROFDATA_PATH llvm-profdata)
@@ -71,7 +72,7 @@ if(TESTS AND ENABLE_COVERAGE)
                     --exclude '3party/'
                     --exclude '/usr/'
                     --xml -o coverage
-                    --gcov-executable $(which gcov)
+                    --gcov-executable ${GCOV_EXECUTABLE}
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                 DEPENDS core tests
                 COMMENT "Generating GCC coverage report with gcovr..."
