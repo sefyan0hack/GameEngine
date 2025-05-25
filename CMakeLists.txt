@@ -71,6 +71,7 @@ if(TESTS AND ENABLE_COVERAGE)
                     --exclude '3party/'
                     --exclude '/usr/'
                     --xml -o coverage
+                    --gcov-executable $(which gcov)
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                 DEPENDS core tests
                 COMMENT "Generating GCC coverage report with gcovr..."
