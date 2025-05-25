@@ -53,8 +53,8 @@ endif()
 
 if(TESTS AND ENABLE_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
-    add_compile_options( --coverage -fprofile-arcs -ftest-coverage -fno-inline -fprofile-abs-path)
-    add_link_options( --coverage -fprofile-arcs -ftest-coverage -fno-inline -fprofile-abs-path)
+    add_compile_options( --coverage -fprofile-arcs -ftest-coverage -fno-inline -g)
+    add_link_options( --coverage )
 
     find_program(GCOVR_PATH gcovr)
     find_program(GCOV_EXECUTABLE "gcov-${COMPILER_MAJOR_VERSION}")
