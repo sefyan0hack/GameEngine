@@ -58,7 +58,7 @@ jobs:
 
       - name: Run Tests
         shell: bash
-        run: ./build/tests/tests
+        run: gdb ./build/tests/tests -ex run -ex bt --batch -q
 
       - name: Code Coverage
         shell: bash
