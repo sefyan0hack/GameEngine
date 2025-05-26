@@ -6,11 +6,8 @@ add_executable(tests ${TEST_SOURCES})
 
 apply_compile_options(TARGETS tests )
 
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-
 if(ONLINE)
-        CPMAddPackage("gh:google/googletest@1.17.0")
+        CPMAddPackage(URI "gh:google/googletest@1.17.0" OPTIONS "gtest_force_shared_crt ON" "INSTALL_GTEST OFF")
 else()
         add_subdirectory(
             ${CMAKE_SOURCE_DIR}/3party/googletest-1.16.0
