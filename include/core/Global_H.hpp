@@ -79,6 +79,7 @@
 #include <cxxabi.h>
 #include <cstdlib>
 #include <memory>
+#include <string>
 
 inline static auto demangle(const char* name) -> std::string
 {
@@ -92,18 +93,19 @@ inline static auto demangle(const char* name) -> std::string
 #endif
 
 #ifndef NO_RTTI
+#include <string>
 template <typename T>
 static auto type_name() -> std::string
 {
     return ::demangle(typeid(T).name());
 }
 #else
-
+#include <string>
 template <typename T>
 static auto  type_name() -> std::string
 {
     #if defined(__clang__) || defined(__GNUC__) || defined(__EDG__)
-        std::string_view name = __PRETTY_FUNCTION__;
+        std::string name = __PRETTY_FUNCTION__;
         auto start = name.find("T = ") + 4;
     #   if defined(__clang__) || defined(__EDG__)
         auto end = name.find(']', start);
@@ -112,7 +114,7 @@ static auto  type_name() -> std::string
     #   endif
         return std::string(name.substr(start, end - start));
     #elif defined(_MSC_VER)
-        std::string_view name = __FUNCSIG__;
+        std::string name = __FUNCSIG__;
         auto start = name.find("type_name<") + 10;
         auto end = name.find(">(void)");
         std::string result = std::string(name.substr(start, end - start));
