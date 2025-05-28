@@ -23,13 +23,42 @@ public:
             resource = other.resource;
             deleter = std::move(other.deleter);
             ref_count = std::move(other.ref_count);
-            other.resource = 0;
+            other.resource = T{};
         }
         return *this;
     }
 
-    AutoRelease(const AutoRelease&) = default;
-    AutoRelease& operator=(const AutoRelease&) = default;
+    AutoRelease(const AutoRelease& other)
+    : resource(other.resource), deleter(other.deleter), ref_count(other.ref_count) {
+        if (ref_count) {
+            ++(*ref_count);
+        }
+    }
+
+    AutoRelease& operator=(const AutoRelease& other) {
+        if (this != &other) {
+            T new_resource = other.resource;
+            std::function<void(T)> new_deleter = other.deleter;
+            auto new_ref_count = other.ref_count;
+
+            if (new_ref_count) {
+                ++(*new_ref_count);
+            }
+
+            std::swap(resource, new_resource);
+            std::swap(deleter, new_deleter);
+            std::swap(ref_count, new_ref_count);
+
+            if (new_ref_count) {
+                if (--(*new_ref_count) == 0) {
+                    if (new_resource != 0) {
+                        new_deleter(new_resource);
+                    }
+                }
+            }
+        }
+        return *this;
+    }
 
     bool operator==(const AutoRelease& other) const
     {
