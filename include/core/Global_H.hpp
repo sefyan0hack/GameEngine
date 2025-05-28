@@ -77,35 +77,33 @@
 
 
 
-#ifdef __GNUG__
+#if defined(__clang__) || defined(__GNUC__) || defined(__EDG__)
 #include <cxxabi.h>
 #include <cstdlib>
 #include <memory>
 #include <string>
+#endif
 
 inline static auto demangle(const char* name) -> std::string
 {
     int status = -1;
+    #if defined(__clang__) || defined(__GNUC__) || defined(__EDG__)
     std::unique_ptr<char, void(*)(void*)> res {
         abi::__cxa_demangle(name, nullptr, nullptr, &status),
         std::free
     };
+    #endif
     return (status == 0) ? res.get() : name;
 }
-#endif
 
 #ifndef NO_RTTI
 #include <string>
+
 template <typename T>
 inline static auto type_name() -> std::string
 {
     return ::demangle(typeid(T).name());
-}
 #else
-#include <string>
-template <typename T>
-inline static auto type_name() -> std::string
-{
     #if defined(__clang__) || defined(__GNUC__) || defined(__EDG__)
         std::string name = __PRETTY_FUNCTION__;
         auto start = name.find("T = ") + 4;
