@@ -22,11 +22,17 @@ using AutoRelease_Test_Ctor1 = AutoRelease<SubType>::Test<1>;
 template<> template<>
 struct AutoRelease<SubType>::Test<1> : public ::testing::Test {
     AutoRelease<SubType> member;
-    Test() : member(10, [](auto&& x){ cout << "delete  x : " << x; }) {}
+    Test() : member(10, [](auto&& x){ cout << "delete  x : " << x; x = 0; }) {}
     INTERFACE
 };
 
 TEST_F(AutoRelease_Test_Ctor1, ctor) {
     EXPECT_EQ(resource, 10);
     EXPECT_NE(deleter, nullptr);
+    EXPECT_NE(*ref_count, 0);
+}
+TEST_F(AutoRelease_Test_Ctor1, release) {
+    member.release();
+    EXPECT_EQ(resource, 0);
+    EXPECT_EQ(*ref_count, 0);
 }
