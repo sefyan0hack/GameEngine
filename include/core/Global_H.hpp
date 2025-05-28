@@ -75,6 +75,8 @@
     #error "Unsupported Compiler"
 #endif
 
+
+
 #ifdef __GNUG__
 #include <cxxabi.h>
 #include <cstdlib>
@@ -95,14 +97,14 @@ inline static auto demangle(const char* name) -> std::string
 #ifndef NO_RTTI
 #include <string>
 template <typename T>
-static auto type_name() -> std::string
+inline static auto type_name() -> std::string
 {
     return ::demangle(typeid(T).name());
 }
 #else
 #include <string>
 template <typename T>
-static auto  type_name() -> std::string
+inline static auto type_name() -> std::string
 {
     #if defined(__clang__) || defined(__GNUC__) || defined(__EDG__)
         std::string name = __PRETTY_FUNCTION__;
