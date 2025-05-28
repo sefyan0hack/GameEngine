@@ -59,6 +59,10 @@
 #   define MEMBER_FUN(Name) auto Name(auto&&... args) { return member.Name(std::forward<decltype(args)>(args)...); }
 #endif
 
+#ifndef MEMBER_OPCAST
+#   define MEMBER_OPCAST(Type) operator Type() const noexcept { return member.operator Type(); }
+#endif
+
 #if defined(__GNUC__) || defined(__clang__)
     #ifndef __GXX_RTTI
     #   define NO_RTTI
@@ -69,4 +73,58 @@
     #endif
 #else
     #error "Unsupported Compiler"
+#endif
+
+#ifdef __GNUG__
+#include <cxxabi.h>
+#include <cstdlib>
+#include <memory>
+
+inline static auto demangle(const char* name) -> std::string
+{
+    int status = -1;
+    std::unique_ptr<char, void(*)(void*)> res {
+        abi::__cxa_demangle(name, nullptr, nullptr, &status),
+        std::free
+    };
+    return (status == 0) ? res.get() : name;
+}
+#endif
+
+#ifndef NO_RTTI
+template <typename T>
+static auto type_name() -> std::string
+{
+    return ::demangle(typeid(T).name());
+}
+#else
+
+template <typename T>
+static auto  type_name() -> std::string
+{
+    #if defined(__clang__) || defined(__GNUC__) || defined(__EDG__)
+        std::string_view name = __PRETTY_FUNCTION__;
+        auto start = name.find("T = ") + 4;
+    #   if defined(__clang__) || defined(__EDG__)
+        auto end = name.find(']', start);
+    #   elif defined(__GNUC__)
+        auto end = name.find(';', start);
+    #   endif
+        return std::string(name.substr(start, end - start));
+    #elif defined(_MSC_VER)
+        std::string_view name = __FUNCSIG__;
+        auto start = name.find("type_name<") + 10;
+        auto end = name.find(">(void)");
+        std::string result = std::string(name.substr(start, end - start));
+
+        static const std::string prefixes[] = {"class ", "struct ", "union ", "enum "};
+        for (const auto& prefix : prefixes) {
+            if (result.rfind(prefix, 0) == 0) {
+                result.erase(0, prefix.length());
+                break;
+            }
+        }
+        return result;
+    #endif
+}
 #endif

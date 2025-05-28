@@ -2,7 +2,6 @@
 #include <core/Global_H.hpp>
 #include <glcorearb.h> // need repl  with glext.h
 
-
 #if defined(WINDOWS_PLT)
 #include <windows.h>
 using WindHandl = HWND;
@@ -46,22 +45,6 @@ extern "C" {
 }
 [[maybe_unused]] inline static auto glXCreateContextAttribsARB = (GLCTX(*)(HDC_D dpy, GLXFBConfig config, GLCTX share_context, Bool direct, const int *attrib_list))(nullptr);
 #endif 
-
-#ifdef __GNUG__
-#include <cxxabi.h>
-#include <cstdlib>
-#include <memory>
-
-inline static auto __demangle(const char* name) -> std::string
-{
-    int status = -1;
-    std::unique_ptr<char, void(*)(void*)> res {
-        abi::__cxa_demangle(name, nullptr, nullptr, &status),
-        std::free
-    };
-    return (status == 0) ? res.get() : name;
-}
-#endif
 
 inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
 {
@@ -327,36 +310,17 @@ private:
     static auto demangle(const char* name) -> std::string
     {
     #ifdef __GNUG__
-        return __demangle(name);
+        return ::demangle(name);
     #else
         return name;
     #endif
     }
-    #ifndef NO_RTTI
-    template <typename T>
-    static auto type_name() -> std::string
-    {
-        return demangle(typeid(T).name());
-    }
-    #else
+
     template <typename T>
     static auto  type_name() -> std::string
     {
-        constexpr auto loc = std::source_location::current();
-        #if defined(__clang__) || defined(__GNUC__)
-        constexpr auto prefix = "T = ";
-        constexpr auto suffix = "]";
-        #elif defined(_MSC_VER)
-        constexpr auto prefix = "type_name<";
-        constexpr auto suffix = ">(void)";
-        #endif
-
-        constexpr std::string_view func = loc.function_name();
-        constexpr auto start = func.find(prefix) + std::string_view(prefix).size();
-        constexpr auto end = func.find(suffix, start);
-        return std::string(func.substr(start, end - start));
+        return ::type_name<T>();
     }
-    #endif
 
     template<typename SubR, typename... SubArgs>
     static auto functionPtrSigature() -> std::string
