@@ -77,12 +77,13 @@
 
 
 
-#if defined(__clang__) || defined(__GNUC__) || defined(__EDG__)
+#if defined(__clang__) && !defined(WINDOWS_PLT) || defined(__GNUC__) || defined(__EDG__)
 #include <cxxabi.h>
+#endif
+
 #include <cstdlib>
 #include <memory>
 #include <string>
-#endif
 
 inline static auto demangle(const char* name) -> std::string
 {
@@ -96,12 +97,11 @@ inline static auto demangle(const char* name) -> std::string
     return (status == 0) ? res.get() : name;
 }
 
-#ifndef NO_RTTI
-#include <string>
 
 template <typename T>
 inline static auto type_name() -> std::string
 {
+#ifndef NO_RTTI
     return ::demangle(typeid(T).name());
 #else
     #if defined(__clang__) || defined(__GNUC__) || defined(__EDG__)
@@ -112,7 +112,9 @@ inline static auto type_name() -> std::string
     #   elif defined(__GNUC__)
         auto end = name.find(';', start);
     #   endif
+
         return std::string(name.substr(start, end - start));
+
     #elif defined(_MSC_VER)
         std::string name = __FUNCSIG__;
         auto start = name.find("type_name<") + 10;
@@ -128,5 +130,5 @@ inline static auto type_name() -> std::string
         }
         return result;
     #endif
-}
 #endif
+}
