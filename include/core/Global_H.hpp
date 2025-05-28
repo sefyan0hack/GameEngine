@@ -88,13 +88,15 @@
 inline static auto demangle(const char* name) -> std::string
 {
     int status = -1;
-    #if defined(__clang__) || defined(__GNUC__) || defined(__EDG__)
+    #if defined(__clang__) && !defined(WINDOWS_PLT) || defined(__GNUC__) || defined(__EDG__)
     std::unique_ptr<char, void(*)(void*)> res {
         abi::__cxa_demangle(name, nullptr, nullptr, &status),
         std::free
     };
-    #endif
     return (status == 0) ? res.get() : name;
+    #else
+    return name;
+    #endif
 }
 
 
