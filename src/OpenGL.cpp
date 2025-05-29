@@ -279,13 +279,11 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     }
     #endif //_WIN32
 
-
-    glGetError = reinterpret_cast<decltype(glGetError)>(resolve_opengl_fn("glGetError"));
-
     #ifdef DEBUG
     #   define RESOLVEGL(type, name)\
         name = Function<type>{};\
         name.m_Func = reinterpret_cast<type>(resolve_opengl_fn(#name));\
+        name.m_After = []([[maybe_unused]] std::string info) { GLenum err = glGetError(); if(err != GL_NO_ERROR) Info("{}", info); };\
         name.m_Name = #name;
     #else
     #   define RESOLVEGL(type, name)\

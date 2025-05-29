@@ -1,0 +1,184 @@
+#pragma once
+
+#ifndef APIENTRY
+#define APIENTRY
+#endif
+
+template <typename T>
+class Function;
+
+template <typename R, typename... Args>
+class Function<R(APIENTRY*)(Args...)> {
+public:
+    using FuncType = R(APIENTRY*)(Args...);
+    using BeforType = void(*)(void);
+    using AfterType = void(*)(std::string);
+
+    Function()
+    : m_Func(&default_)
+    , m_Befor(nullptr)
+    , m_After(nullptr)
+    , m_Name("Function")
+    , m_ReturnType(type_name<R>())
+    , m_ArgsTypes{type_name<Args>()...}
+    , m_ArgsValues{}
+    , m_CallCount(0)
+    { 
+        m_Count++;
+
+        //add some checks
+        if(m_Func == nullptr || m_Func != &default_)
+        {
+            std::cout <<"m_Func == nullptr || m_Func != &default_" << std::endl;
+            std::exit(1);
+        }
+    }
+
+    static auto APIENTRY default_([[maybe_unused]] Args... args) -> R
+    {
+        if constexpr (!std::is_void_v<R>) {
+            return R{};
+        }
+    }
+
+    auto operator()(Args... args, std::source_location loc = std::source_location::current()) -> R
+    {
+        if(m_Func == nullptr) throw std::runtime_error(m_Name + " not loaded!");
+        m_ArgsValues = std::make_tuple(args...);
+        m_CallCount++;
+
+        if(m_Befor) m_Befor();
+
+        if constexpr (std::is_void_v<R>) {
+            m_Func(args...);
+            if(m_After) m_After(function_info(loc));
+        } else {
+            R result = m_Func(args...);
+            if(m_After) m_After(function_info(loc));
+            return result;
+        }
+    }
+
+    auto ArgsValues() const -> std::array<std::string, sizeof...(Args)>
+    {
+        std::array<std::string, sizeof...(Args)> result;
+        int i = 0;
+        std::apply([&result, &i](auto&&... args) {
+            ((result[i++] = to_string(args)), ...);
+        }, m_ArgsValues);
+        return result;
+    }
+
+    auto ReturnType() const -> std::string
+    {
+        return m_ReturnType;
+    }
+
+    auto ArgsTypes() const -> std::array<std::string, sizeof...(Args)>
+    {
+        return m_ArgsTypes;
+    }
+
+    auto CallsCount() const -> size_t
+    {
+        return m_CallCount;
+    }
+
+    constexpr auto ArgsCount() const -> size_t
+    {
+        return sizeof...(Args);
+    }
+
+    static auto functionCount() -> size_t
+    {
+        return m_Count;
+    }
+    
+private:
+    auto formated_function_sig() const -> std::string {
+        std::string result = std::format("{} {}(", m_ReturnType, m_Name);
+        format_arguments(result);
+        return result + ")";
+    }
+
+    auto function_info(const std::source_location& loc) -> std::string
+    {
+        return std::format("call N: {} |> {} -> {}:{}\n", m_CallCount, formated_function_sig(), loc.file_name(), loc.line());
+    }
+
+    auto format_arguments(std::string& result) const -> void
+    {
+        int index = 1;
+        bool first = true;
+        for (const auto& [type, value] : std::views::zip(m_ArgsTypes, ArgsValues())) {
+            if (!first) result += ", ";
+            result += std::format("{} arg_{} = {}", type, index++, value);
+            first = false;
+        }
+    }
+
+
+    static auto to_string(const auto& value) -> std::string {
+        using T = std::decay_t<decltype(value)>;
+        if constexpr (std::is_pointer_v<T>) {
+            return format_pointer(value);
+        } else if constexpr (std::is_arithmetic_v<T>) {
+            return std::to_string(value);
+        } else {
+            return std::string(value);
+        }
+    }
+
+    static auto format_pointer(auto ptr) -> std::string {
+        if (!ptr) return "nullptr";
+        using Pointee = std::remove_cv_t<std::remove_pointer_t<decltype(ptr)>>;
+        if constexpr (std::is_function_v<Pointee>) {
+            return functionPtrSigature<Pointee>();
+        } else if constexpr (std::is_arithmetic_v<Pointee>) {
+            return std::to_string(*ptr);
+        } else if constexpr (std::is_same_v<Pointee, void>) {
+            return std::string("??");
+        } else {
+            return std::string(*ptr);
+        }
+    }
+    
+    static auto demangle(const char* name) -> std::string
+    {
+    #ifdef __GNUG__
+        return ::demangle(name);
+    #else
+        return name;
+    #endif
+    }
+
+    template <typename T>
+    static auto  type_name() -> std::string
+    {
+        return ::type_name<T>();
+    }
+
+    template<typename SubR, typename... SubArgs>
+    static auto functionPtrSigature() -> std::string
+    {
+        std::string signature = type_name<SubR>() + " (*)(";
+        
+        bool first = true;
+        ((signature += (first ? "" : ", ") + type_name<SubArgs>(), first = false), ...);
+        
+        signature += ")";
+        return signature;
+    }
+
+public:
+    FuncType m_Func;
+    BeforType m_Befor;
+    AfterType m_After;
+    std::string m_Name;
+private:
+    std::string m_ReturnType;
+    std::array<std::string, sizeof...(Args)> m_ArgsTypes;
+    std::tuple<Args...> m_ArgsValues;
+    size_t m_CallCount;
+    inline static size_t m_Count = 0;
+};
