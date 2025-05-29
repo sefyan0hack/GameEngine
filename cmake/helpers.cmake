@@ -73,6 +73,10 @@ function(apply_compile_options)
             -fno-operator-names
             -fno-rtti #disable rtti
 
+            # Coverage
+            "$<$<BOOL:${ENABLE_COVERAGE}>:--coverage;-fprofile-arcs;-fcondition-coverage;-fprofile-abs-path>"
+            "$<$<BOOL:${ENABLE_COVERAGE}>:-g;-fno-inline;-fno-inline-small-functions;-fno-default-inline>"
+            "$<$<BOOL:${ENABLE_COVERAGE}>:-pg>"
             # Debug flags
             "$<$<CONFIG:Debug>:-g>"
             "$<$<CONFIG:Debug>:-ggdb>"
@@ -82,6 +86,9 @@ function(apply_compile_options)
         )
         target_link_options(${target} PRIVATE
             "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
+            "$<$<BOOL:${ENABLE_COVERAGE}>:--coverage>"
+            "$<$<BOOL:${ENABLE_COVERAGE}>:-pg>"
+            "$<$<BOOL:${ENABLE_COVERAGE}>:-no-pie>"
         )
 
         add_definitions(-include "${CMAKE_SOURCE_DIR}/include/core/Global_H.hpp")
