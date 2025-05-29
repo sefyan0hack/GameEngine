@@ -87,9 +87,9 @@
 
 inline static auto demangle(const char* name) -> std::string
 {
-    int status = -1;
+    [[maybe_unused]] int status = -1;
     #if defined(__clang__) && !defined(WINDOWS_PLT) || defined(__GNUC__) || defined(__EDG__)
-    std::unique_ptr<char, void(*)(void*)> res {
+    [[maybe_unused]] std::unique_ptr<char, void(*)(void*)> res {
         abi::__cxa_demangle(name, nullptr, nullptr, &status),
         std::free
     };
