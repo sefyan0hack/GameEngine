@@ -25,13 +25,6 @@ public:
     , m_CallCount(0)
     { 
         m_Count++;
-
-        //add some checks
-        if(m_Func == nullptr || m_Func != &default_)
-        {
-            std::cout <<"m_Func == nullptr || m_Func != &default_" << std::endl;
-            std::exit(1);
-        }
     }
 
     static auto APIENTRY default_([[maybe_unused]] Args... args) -> R

@@ -8,7 +8,7 @@ using namespace glm;
 using Camera_Test_Ctor1 = Camera::Test<1>;
 using Camera_Test_Ctor2 = Camera::Test<2>;
 
-#define INTERFACE \
+#define TEST_INTERFACE \
     MEMBER_VAR(m_Position);\
     MEMBER_VAR(m_FrontDir);\
     MEMBER_VAR(m_UpDir);\
@@ -41,7 +41,7 @@ using Camera_Test_Ctor2 = Camera::Test<2>;
 template<>
 struct Camera::Test<1> : public ::testing::Test {
     Camera member;
-    INTERFACE
+    TEST_INTERFACE
 };
 
 TEST_F(Camera_Test_Ctor1, ctor) {
@@ -147,7 +147,7 @@ struct Camera::Test<2> : public ::testing::Test {
     Camera member;
     Test() : window(800, 800, "Test"), member(window) {}
 
-    INTERFACE
+    TEST_INTERFACE
 };
 
 TEST_F(Camera_Test_Ctor2, ctor) {

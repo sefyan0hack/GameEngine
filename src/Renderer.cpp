@@ -144,7 +144,7 @@ auto Renderer::render(Scene &scene, Camera &camera) -> void
 {
     scene.skyBox()->render(camera);
     //Drwaing        
-    for(auto &obj: scene.Entitys()){
+    for(auto &obj: scene.Entities()){
         auto material = obj.material();
         auto TextureUnit = material->texture()->TextureUnit();
         material->Use();

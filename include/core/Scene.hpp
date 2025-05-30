@@ -13,7 +13,7 @@ public:
     auto operator << (GameObject obj) -> void;
 
     auto add(GameObject gobj)   -> void;
-    auto Entitys()       -> std::vector<GameObject>&;
+    auto Entities()       -> std::vector<GameObject>&;
     auto setSkyBox(std::unique_ptr<SkyBox> skybox) -> void;
     auto skyBox() -> std::unique_ptr<SkyBox>&;
     auto to_json() const -> std::string;

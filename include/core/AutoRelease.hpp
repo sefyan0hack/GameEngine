@@ -30,9 +30,7 @@ public:
 
     AutoRelease(const AutoRelease& other)
     : resource(other.resource), deleter(other.deleter), ref_count(other.ref_count) {
-        if (ref_count) {
-            ++(*ref_count);
-        }
+        ++(*ref_count);
     }
 
     AutoRelease& operator=(const AutoRelease& other) {
@@ -41,9 +39,7 @@ public:
             std::function<void(T)> new_deleter = other.deleter;
             auto new_ref_count = other.ref_count;
 
-            if (new_ref_count) {
-                ++(*new_ref_count);
-            }
+            ++(*new_ref_count);
 
             std::swap(resource, new_resource);
             std::swap(deleter, new_deleter);
@@ -70,7 +66,7 @@ public:
     }
 
     void release() noexcept {
-        if (ref_count && --(*ref_count) == 0) {
+        if (--(*ref_count) == 0) {
             deleter(resource);
             resource = 0;
         }
@@ -85,7 +81,7 @@ public:
     }
 
     size_t use_count() const noexcept {
-        return ref_count ? ref_count->load(std::memory_order_relaxed) : 0;
+        return *ref_count;
     }
     FOR_TEST
 };

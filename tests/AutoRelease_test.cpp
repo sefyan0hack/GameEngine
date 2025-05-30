@@ -7,7 +7,7 @@ using SubType = int;
 
 using AutoRelease_Test_Ctor1 = AutoRelease<SubType>::Test<1>;
 
-#define INTERFACE \
+#define TEST_INTERFACE \
     MEMBER_VAR(resource);\
     MEMBER_VAR(deleter);\
     MEMBER_VAR(ref_count);\
@@ -24,7 +24,7 @@ template<> template<>
 struct AutoRelease<SubType>::Test<1> : public ::testing::Test {
     AutoRelease<SubType> member;
     Test() : member(10, [](auto&& x){ x = 0; }) {}
-    INTERFACE
+    TEST_INTERFACE
 };
 
 TEST_F(AutoRelease_Test_Ctor1, ctor) {

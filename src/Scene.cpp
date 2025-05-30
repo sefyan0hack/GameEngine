@@ -15,7 +15,7 @@ auto Scene::add(GameObject gobj) -> void
     m_Entities.emplace_back(std::move(gobj));
 }
 
-auto Scene::Entitys() -> std::vector<GameObject>&
+auto Scene::Entities() -> std::vector<GameObject>&
 {
     return m_Entities;
 }
