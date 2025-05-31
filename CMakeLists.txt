@@ -114,7 +114,7 @@ endif()
 # Compiler Check
 ####################################################################################################
 
-message(STATUS "Platform: (${CMAKE_SYSTEM_NAME}), Compiler: ${CMAKE_CXX_COMPILER_ID} (${CMAKE_CXX_COMPILER_VERSION}) , Arch: (${CMAKE_HOST_SYSTEM_PROCESSOR})")
+message(STATUS "Platform: ${CMAKE_SYSTEM_NAME} (${CMAKE_SYSTEM_VERSION}), Compiler: ${CMAKE_CXX_COMPILER_ID} (${CMAKE_CXX_COMPILER_VERSION}) , Arch: (${CMAKE_SYSTEM_PROCESSOR})")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "13")
@@ -291,6 +291,10 @@ target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
 add_compile_definitions(
     PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
     OPENGL_LIB="${CORE_OPENGL_LIB}"
+    PLATFORM_NAME="${CMAKE_SYSTEM_NAME}"
+    PLATFORM_VERSION="${CMAKE_SYSTEM_VERSION}"
+    PLATFORM_ARCH="${CMAKE_SYSTEM_PROCESSOR}"
+
     $<$<CONFIG:Debug>:DEBUG>
     $<$<CONFIG:Release>:NDEBUG>
 )
