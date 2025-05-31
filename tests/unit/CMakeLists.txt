@@ -4,7 +4,7 @@ file(GLOB TEST_SOURCES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/" "*_test.cpp")
 
 add_executable(unit_tests ${TEST_SOURCES})
 
-apply_compile_options(TARGETS unit_tests )
+apply_all_options(TARGETS unit_tests )
 
 if(ONLINE)
         CPMAddPackage(URI "gh:google/googletest@1.17.0" OPTIONS "gtest_force_shared_crt ON" "INSTALL_GTEST OFF")
