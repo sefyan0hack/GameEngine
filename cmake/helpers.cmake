@@ -57,9 +57,9 @@ function(apply_compile_options)
                 -Wsuggest-final-types -Wsuggest-final-methods
             )
             if(NOT "${SANITIZER}" STREQUAL "")
-                add_link_options(
-                    -static-libasan -static-libtsan -static-liblsan -static-libubsan 
-                )
+            target_link_options(${target} PRIVATE
+                -static-libasan -static-libtsan -static-liblsan -static-libubsan 
+            )
             endif()
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             target_compile_options(${target} PRIVATE -Wno-language-extension-token)
@@ -74,8 +74,8 @@ function(apply_compile_options)
             -fno-rtti #disable rtti
 
             # Coverage
-            "$<$<BOOL:${ENABLE_COVERAGE}>:--coverage;-fprofile-arcs;-fcondition-coverage;-fprofile-abs-path>"
-            "$<$<BOOL:${ENABLE_COVERAGE}>:-g;-fno-inline;-fno-inline-small-functions;-fno-default-inline>"
+            "$<$<BOOL:${ENABLE_COVERAGE}>:--coverage>"
+            "$<$<BOOL:${ENABLE_COVERAGE}>:-fno-inline>"
             "$<$<BOOL:${ENABLE_COVERAGE}>:-pg>"
             # Debug flags
             "$<$<CONFIG:Debug>:-g>"
