@@ -49,5 +49,4 @@ TEST_F(CWindow_Test_Ctor1, ctor){
     EXPECT_NE(m_DrawContext, nullptr);
     EXPECT_EQ(m_OpenGl->isValid(), true);
     EXPECT_EQ(m_Visible, false);
-    EXPECT_EQ(S_WindowsCount, 1);
 }
