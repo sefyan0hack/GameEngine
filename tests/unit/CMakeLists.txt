@@ -2,9 +2,9 @@ enable_testing()
 
 file(GLOB TEST_SOURCES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/" "*_test.cpp")
 
-add_executable(tests ${TEST_SOURCES})
+add_executable(unit_tests ${TEST_SOURCES})
 
-apply_compile_options(TARGETS tests )
+apply_compile_options(TARGETS unit_tests )
 
 if(ONLINE)
         CPMAddPackage(URI "gh:google/googletest@1.17.0" OPTIONS "gtest_force_shared_crt ON" "INSTALL_GTEST OFF")
@@ -15,11 +15,11 @@ else()
         )
 endif()
 
-target_link_libraries(tests PRIVATE core gtest gtest_main)
+target_link_libraries(unit_tests PRIVATE core gtest gtest_main)
 
 include(GoogleTest)
 
-gtest_discover_tests(tests
+gtest_discover_tests(unit_tests
         EXTRA_ARGS --gtest_num_threads=1
         PROPERTIES RUN_SERIAL TRUE
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
