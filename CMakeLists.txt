@@ -36,6 +36,8 @@ option(TESTS            "enable tests"              OFF)
 option(ENABLE_COVERAGE  "enable code coverage"      OFF)
 option(HARDEN           "enable Hardening"          OFF)
 option(STATIC_LINK      "enable Static link c++"    ON)
+option(NO_RTTI          "enable RunTime Type Info"  ON)
+
 
 set(SANITIZER "" CACHE STRING "Enable sanitizers (address, undefined, etc.)")
 
@@ -96,6 +98,9 @@ if(STATIC_LINK)
     endif()
 endif()
 
+if(NO_RTTI)
+    no_rtti()
+endif()
 ####################################################################################################
 # WIN32 defines 
 ####################################################################################################
@@ -278,8 +283,6 @@ target_include_directories(stb_image SYSTEM INTERFACE ${STB_IMG_HEADER})
 ####################################################################################################
 
 apply_all_options(TARGETS core ${PROJECT_NAME})
-no_rtti()
-
 
 ####################################################################################################
 # Link Libs 
