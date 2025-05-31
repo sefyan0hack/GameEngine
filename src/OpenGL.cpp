@@ -222,7 +222,8 @@ auto OpenGL::init_opengl_linux() -> void
         Info("Config {}: R={}, Depth={}", i, red, depth);
     }
 
-
+    XFree(allConfigs);
+    
     int fbcount;
     GLXFBConfig* fbc = glXChooseFBConfig(m_DrawContext, DefaultScreen(m_DrawContext), visualAttribs, &fbcount);
     if (!fbc || fbcount == 0) {
