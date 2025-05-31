@@ -293,8 +293,9 @@ target_link_libraries(core PRIVATE $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
 endif()
 
 target_link_libraries(core
+    PUBLIC
+        glm::glm
     PRIVATE
-        glm::glm-header-only
         stb_image
         ${OPENGL_LIBRARIES}
         Threads::Threads
