@@ -113,8 +113,27 @@ endif()
 ####################################################################################################
 # Compiler Check
 ####################################################################################################
-
+message(STATUS "=== Detailed Host Information ===")
 message(STATUS "Platform: ${CMAKE_SYSTEM_NAME} (${CMAKE_SYSTEM_VERSION}), Compiler: ${CMAKE_CXX_COMPILER_ID} (${CMAKE_CXX_COMPILER_VERSION}) , Arch: (${CMAKE_SYSTEM_PROCESSOR})")
+set(QUERIES
+    NUMBER_OF_LOGICAL_CORES
+    NUMBER_OF_PHYSICAL_CORES
+    TOTAL_VIRTUAL_MEMORY
+    AVAILABLE_VIRTUAL_MEMORY
+    TOTAL_PHYSICAL_MEMORY
+    AVAILABLE_PHYSICAL_MEMORY
+    HOSTNAME
+    FQDN
+    OS_NAME
+    OS_RELEASE
+    OS_VERSION
+    OS_PLATFORM
+)
+
+foreach(query IN LISTS QUERIES)
+    cmake_host_system_information(RESULT result QUERY ${query})
+    message(STATUS "${query}: ${result}")
+endforeach()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "13")
