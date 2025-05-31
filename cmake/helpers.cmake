@@ -255,7 +255,9 @@ endfunction()
 
 function(no_rtti)
     add_compile_options(
-        -fno-rtti #disable rtti
+        #disable rtti
+        "$<$<CXX_COMPILER_ID:MSVC>:/GR->"
+        "$<$<CXX_COMPILER_ID:Clang,GNU>:-fno-rtti>"
     )
 endfunction(no_rtti)
 
