@@ -15,7 +15,7 @@ else()
         )
 endif()
 
-target_link_libraries(unit_tests PRIVATE core gtest gtest_main)
+target_link_libraries(unit_tests PRIVATE core GTest::gtest GTest::gtest_main)
 
 include(GoogleTest)
 
