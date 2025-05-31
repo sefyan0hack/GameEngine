@@ -75,6 +75,7 @@ function(apply_compile_options)
 
             # Coverage
             "$<$<BOOL:${ENABLE_COVERAGE}>:--coverage>"
+            "$<$<BOOL:${ENABLE_COVERAGE}>:-fno-omit-frame-pointer>"
             "$<$<BOOL:${ENABLE_COVERAGE}>:-fno-inline>"
             "$<$<BOOL:${ENABLE_COVERAGE}>:-pg>"
             # Debug flags
