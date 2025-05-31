@@ -10,7 +10,7 @@ function(print_target_compile_options target)
     endforeach()
 endfunction()
 
-function(apply_compile_options)
+function(apply_main_options)
     set(options)
     set(oneValueArgs)
     set(multiValueArgs TARGETS)
@@ -26,8 +26,7 @@ function(apply_compile_options)
         
         if(MSVC)
             target_compile_options(${target} PRIVATE
-                /W4
-                /bigobj
+
                 # Debug flags
                 "$<$<CONFIG:Debug>:/Z7>"
                 "$<$<CONFIG:Debug>:/Od>"
@@ -40,7 +39,6 @@ function(apply_compile_options)
                 # Release flags
                 "$<$<CONFIG:Release>:/O2>"
                 "$<$<CONFIG:Release>:/Zi>"
-                "$<$<CONFIG:Release>:/Zo>"
                 "$<$<CONFIG:Release>:/Oy->"
             )
             target_link_options(${target} PRIVATE
@@ -51,33 +49,10 @@ function(apply_compile_options)
                 "$<$<CONFIG:Release>:/INCREMENTAL:NO>"          # Disable incremental linking
             )
             add_definitions(/FI"${CMAKE_SOURCE_DIR}/include/core/Global_H.hpp")
-        elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-            target_compile_options(${target} PRIVATE
-                -Wno-cast-function-type -Winit-self -Wcast-qual
-                -Wsuggest-final-types -Wsuggest-final-methods
-            )
-            if(NOT "${SANITIZER}" STREQUAL "")
-            target_link_options(${target} PRIVATE
-                -static-libasan -static-libtsan -static-liblsan -static-libubsan 
-            )
-            endif()
-        elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-            target_compile_options(${target} PRIVATE -Wno-language-extension-token)
         endif()
 
         if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         target_compile_options(${target} PRIVATE
-            -Wall -Wextra -Wpedantic -Wconversion -Wfloat-equal -Wwrite-strings -Wno-sign-conversion
-            -Wnull-dereference -Wswitch-enum
-            -Wuninitialized -Wpointer-arith -Wreturn-type -Wredundant-decls
-            -fno-operator-names
-            -fno-rtti #disable rtti
-
-            # Coverage
-            "$<$<BOOL:${ENABLE_COVERAGE}>:--coverage>"
-            "$<$<BOOL:${ENABLE_COVERAGE}>:-fno-omit-frame-pointer>"
-            "$<$<BOOL:${ENABLE_COVERAGE}>:-fno-inline>"
-            "$<$<BOOL:${ENABLE_COVERAGE}>:-pg>"
             # Debug flags
             "$<$<CONFIG:Debug>:-g>"
             "$<$<CONFIG:Debug>:-ggdb>"
@@ -87,15 +62,203 @@ function(apply_compile_options)
         )
         target_link_options(${target} PRIVATE
             "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
-            "$<$<BOOL:${ENABLE_COVERAGE}>:--coverage>"
-            "$<$<BOOL:${ENABLE_COVERAGE}>:-pg>"
-            "$<$<BOOL:${ENABLE_COVERAGE}>:-no-pie>"
         )
 
         add_definitions(-include "${CMAKE_SOURCE_DIR}/include/core/Global_H.hpp")
         endif()
     endforeach()
 endfunction()
+
+function(apply_warning_options)
+    set(options)
+    set(oneValueArgs)
+    set(multiValueArgs TARGETS)
+    cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    foreach(target IN LISTS ARG_TARGETS)
+        # check if the target is an ALIAS
+        get_target_property(original_target ${target} ALIASED_TARGET)
+            
+        if (original_target)
+            message(STATUS "Applying compile options to alias target '${target}' (original: '${original_target}')")
+            set(target ${original_target})
+        endif()
+
+        set(MSVC_WARNING_FLAGS /W4)
+
+        set(GNU_WARNING_FLAGS
+            -Wno-cast-function-type -Winit-self -Wcast-qual
+            -Wsuggest-final-types -Wsuggest-final-methods
+        )
+
+        set(CLANG_WARNING_FLAGS -Wno-language-extension-token)
+
+        set(CLANG_AND_GNU_WARNING_FLAGS
+            -Wall -Wextra -Wpedantic -Wconversion -Wfloat-equal -Wwrite-strings -Wno-sign-conversion
+            -Wnull-dereference -Wswitch-enum
+            -Wuninitialized -Wpointer-arith -Wreturn-type -Wredundant-decls
+            -fno-operator-names
+        )
+
+        target_compile_options(${target} PRIVATE 
+            "$<$<CXX_COMPILER_ID:MSVC>:${MSVC_WARNING_FLAGS}>"
+            "$<$<CXX_COMPILER_ID:GNU>:${GNU_WARNING_FLAGS}>"
+            "$<$<CXX_COMPILER_ID:Clang>:${CLANG_WARNING_FLAGS}>"
+            "$<$<CXX_COMPILER_ID:Clang,GNU>:${CLANG_AND_GNU_WARNING_FLAGS}>"
+        )    
+    endforeach()
+endfunction()
+
+function(apply_coverage_options)
+    set(options)
+    set(oneValueArgs)
+    set(multiValueArgs TARGETS)
+    cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    foreach(target IN LISTS ARG_TARGETS)
+        get_target_property(original_target ${target} ALIASED_TARGET)
+            
+        if (original_target)
+            message(STATUS "Applying compile options to alias target '${target}' (original: '${original_target}')")
+            set(target ${original_target})
+        endif()
+        
+        if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(${target} PRIVATE
+            "$<$<BOOL:${ENABLE_COVERAGE}>:--coverage>"
+            "$<$<BOOL:${ENABLE_COVERAGE}>:-fno-omit-frame-pointer>"
+            "$<$<BOOL:${ENABLE_COVERAGE}>:-fno-inline>"
+            "$<$<BOOL:${ENABLE_COVERAGE}>:-pg>"
+        )
+        target_link_options(${target} PRIVATE
+            "$<$<BOOL:${ENABLE_COVERAGE}>:--coverage>"
+            "$<$<BOOL:${ENABLE_COVERAGE}>:-pg>"
+            "$<$<BOOL:${ENABLE_COVERAGE}>:-no-pie>"
+        )
+        endif()
+    endforeach()
+endfunction()
+
+function(apply_sanitizer_options)
+    message(STATUS "[Sanitizing `ON`]")
+
+    set(options)
+    set(oneValueArgs)
+    set(multiValueArgs TARGETS)
+    cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    foreach(target IN LISTS ARG_TARGETS)
+        get_target_property(original_target ${target} ALIASED_TARGET)
+            
+        if (original_target)
+            message(STATUS "Applying compile options to alias target '${target}' (original: '${original_target}')")
+            set(target ${original_target})
+        endif()
+
+        if(NOT "${SANITIZER}" STREQUAL "")
+            if(MSVC)
+                if("${SANITIZER}" MATCHES ".*address.*")
+                    target_compile_options(${target} PRIVATE /fsanitize=address)
+                endif()
+            elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+                target_compile_options(${target} PRIVATE -fsanitize=${SANITIZER})
+            endif()
+
+            if(NOT "${SANITIZER}" STREQUAL "")
+            target_link_options(${target} PRIVATE
+                "$<$<CXX_COMPILER_ID:GNU>:-static-libasan -static-libtsan -static-liblsan -static-libubsan>"
+                "$<$<CXX_COMPILER_ID:Clang>:-static-libsan>"
+            )
+            endif()
+        endif()
+    endforeach()
+endfunction()
+
+function(apply_harden_options)
+    message(STATUS "[Hardening `ON`]")
+
+    set(options)
+    set(oneValueArgs)
+    set(multiValueArgs TARGETS)
+    cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    foreach(target IN LISTS ARG_TARGETS)
+        # check if the target is an ALIAS
+        get_target_property(original_target ${target} ALIASED_TARGET)
+        get_target_property(type ${target} TYPE)
+
+        if (original_target)
+            message(STATUS "Applying compile options to alias target '${target}' (original: '${original_target}')")
+            set(target ${original_target})
+        endif()
+        
+        if(MSVC)
+            if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|x64|x86|AMD64")
+                target_compile_options(${target} PRIVATE
+                    "$<$<BOOL:${HARDEN}>:/sdl>"
+                    "$<$<BOOL:${HARDEN}>:/GS>"
+                    "$<$<BOOL:${HARDEN}>:/SafeSEH>"
+                    "$<$<BOOL:${HARDEN}>:/guard:cf>"
+                    "$<$<BOOL:${HARDEN}>:/dynamicbase>"
+                )
+            endif()
+        elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            target_compile_options(${target} PRIVATE
+                "$<$<BOOL:${HARDEN}>:-fhardened>"
+                "$<$<BOOL:${HARDEN}>:-Wno-hardened>"
+            )
+        elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+            
+            target_compile_options(${target} PRIVATE
+                "$<$<BOOL:${HARDEN}>:-Wformat;-Wformat-security;-Werror=format-security;-fno-strict-aliasing;-fno-common;-fstack-protector-all>"
+            )
+
+            if(HARDEN)
+                target_link_options(${target} PRIVATE
+                    "$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-Wl,-z,relro;-Wl,-z,now;-Wl,-z,shstk;-Wl,-z,notext>"
+                )
+            endif()
+        endif()
+        
+        if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+            set_target_properties(${target}  PROPERTIES POSITION_INDEPENDENT_CODE ON)
+            set_target_properties(${target}  PROPERTIES CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE) 
+
+            target_compile_definitions(${target} PRIVATE
+                "$<$<BOOL:${HARDEN}>:-D_FORTIFY_SOURCE=2>"
+                "$<$<BOOL:${HARDEN}>:-D_GLIBCXX_ASSERTIONS>"
+            )
+        endif()
+
+    endforeach()
+endfunction()
+
+function(apply_all_options)
+    set(options)
+    set(oneValueArgs)
+    set(multiValueArgs TARGETS)
+    cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    foreach(target IN LISTS ARG_TARGETS)
+        # check if the target is an ALIAS
+        get_target_property(original_target ${target} ALIASED_TARGET)
+        get_target_property(type ${target} TYPE)
+
+        if (original_target)
+            message(STATUS "Applying compile options to alias target '${target}' (original: '${original_target}')")
+            set(target ${original_target})
+        endif()
+
+        apply_main_options(TARGETS ${target})
+        apply_warning_options(TARGETS ${target})
+        apply_sanitizer_options(TARGETS ${target})
+        apply_coverage_options(TARGETS ${target})
+        apply_harden_options(TARGETS ${target})
+    endforeach()
+endfunction()
+
+
+function(no_rtti TARGET)
+    target_compile_options(${TARGET} PRIVATE
+        -fno-rtti #disable rtti
+    )
+endfunction(no_rtti)
+
 
 function(delete_files_by_extension DIR EXTENSION)
     file(GLOB_RECURSE FILES_TO_DELETE 
@@ -124,56 +287,4 @@ function(delete_files_by_extension DIR EXTENSION)
             endif()
         endif()
     endforeach()
-endfunction()
-
-
-function(apply_harden_options)
-    if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
-    set(options)
-    set(oneValueArgs)
-    set(multiValueArgs TARGETS)
-    cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-    foreach(target IN LISTS ARG_TARGETS)
-        # check if the target is an ALIAS
-        get_target_property(original_target ${target} ALIASED_TARGET)
-        get_target_property(type ${target} TYPE)
-
-        if (original_target)
-            message(STATUS "Applying compile options to alias target '${target}' (original: '${original_target}')")
-            set(target ${original_target})
-        endif()
-        
-        if(MSVC)
-            if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "x86_64|x64|x86|AMD64")
-                target_compile_options(${target} PRIVATE
-                    /sdl /GS /SafeSEH /guard:cf /dynamicbase
-                )
-                target_link_options(${target} PRIVATE
-                    /guard:cf
-                )
-            endif()
-        elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-            target_compile_options(${target} PRIVATE
-                -fhardened -Wno-hardened
-            )
-        elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-            set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE) 
-            
-            target_compile_options(${target} PRIVATE
-                -Wformat -Wformat-security -Werror=format-security -fno-strict-aliasing -fno-common
-                -fstack-protector-all
-            )
-            target_link_options(${target} PRIVATE
-                "$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-Wl,-z,relro;-Wl,-z,now;-Wl,-z,shstk;-Wl,-z,notext>"
-            )
-        endif()
-        set_target_properties(${target}  PROPERTIES POSITION_INDEPENDENT_CODE ON)
-
-        if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-            add_definitions(-D_FORTIFY_SOURCE=2)
-            add_definitions(-D_GLIBCXX_ASSERTIONS)
-        endif()
-
-    endforeach()
-    endif()
 endfunction()

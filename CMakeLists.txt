@@ -277,12 +277,9 @@ target_include_directories(stb_image SYSTEM INTERFACE ${STB_IMG_HEADER})
 # Compile Flags 
 ####################################################################################################
 
-apply_compile_options(TARGETS core ${PROJECT_NAME})
+apply_all_options(TARGETS core ${PROJECT_NAME})
+no_rtti(core)
 
-if(HARDEN)
-    message(STATUS "[Hardening `ON`]")
-    apply_harden_options(TARGETS core ${PROJECT_NAME})
-endif()
 
 ####################################################################################################
 # Link Libs 
