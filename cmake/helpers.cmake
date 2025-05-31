@@ -253,8 +253,8 @@ function(apply_all_options)
 endfunction()
 
 
-function(no_rtti TARGET)
-    target_compile_options(${TARGET} PRIVATE
+function(no_rtti)
+    add_compile_options(
         -fno-rtti #disable rtti
     )
 endfunction(no_rtti)

@@ -278,7 +278,7 @@ target_include_directories(stb_image SYSTEM INTERFACE ${STB_IMG_HEADER})
 ####################################################################################################
 
 apply_all_options(TARGETS core ${PROJECT_NAME})
-no_rtti(core)
+no_rtti()
 
 
 ####################################################################################################
