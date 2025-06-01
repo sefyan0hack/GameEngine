@@ -98,9 +98,8 @@ function(apply_warning_options)
 
         target_compile_options(${target} PRIVATE 
             "$<$<CXX_COMPILER_ID:MSVC>:${MSVC_WARNING_FLAGS}>"
-            "$<$<CXX_COMPILER_ID:GNU>:${GNU_WARNING_FLAGS}>"
-            "$<$<CXX_COMPILER_ID:Clang>:${CLANG_WARNING_FLAGS}>"
-            "$<$<CXX_COMPILER_ID:Clang,GNU>:${CLANG_AND_GNU_WARNING_FLAGS}>"
+            "$<$<CXX_COMPILER_ID:GNU>:${GNU_WARNING_FLAGS} ${CLANG_AND_GNU_WARNING_FLAGS}>"
+            "$<$<CXX_COMPILER_ID:Clang>:${CLANG_WARNING_FLAGS} ${CLANG_AND_GNU_WARNING_FLAGS}>"
         )    
     endforeach()
 endfunction()
@@ -186,10 +185,12 @@ function(apply_harden_options)
                 target_compile_options(${target} PRIVATE
                     "$<$<BOOL:${HARDEN}>:/sdl>"
                     "$<$<BOOL:${HARDEN}>:/GS>"
-                    "$<$<BOOL:${HARDEN}>:/SafeSEH>"
                     "$<$<BOOL:${HARDEN}>:/guard:cf>"
                     "$<$<BOOL:${HARDEN}>:/dynamicbase>"
                 )
+            endif()
+            if(HARDEN AND CMAKE_SIZEOF_VOID_P EQUAL 4)  # 32-bit
+                    target_compile_options(${target} PRIVATE /SafeSEH)
             endif()
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
             target_compile_options(${target} PRIVATE
@@ -208,15 +209,17 @@ function(apply_harden_options)
                 )
             endif()
         endif()
-        
-        if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-            set_target_properties(${target}  PROPERTIES POSITION_INDEPENDENT_CODE ON)
-            set_target_properties(${target}  PROPERTIES CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE) 
+        if(HARDEN)
+            if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+                set_target_properties(${target} PROPERTIES
+                    POSITION_INDEPENDENT_CODE ON
+                    INTERPROCEDURAL_OPTIMIZATION $<IF:$<CONFIG:Release>,TRUE,FALSE>
+                )
 
-            target_compile_definitions(${target} PRIVATE
-                "$<$<BOOL:${HARDEN}>:-D_FORTIFY_SOURCE=2>"
-                "$<$<BOOL:${HARDEN}>:-D_GLIBCXX_ASSERTIONS>"
-            )
+                target_compile_definitions(${target} PRIVATE
+                    _FORTIFY_SOURCE=2
+                )
+            endif()
         endif()
 
     endforeach()
@@ -247,13 +250,21 @@ function(apply_all_options)
 endfunction()
 
 
-function(no_rtti)
+function(rtti V)
+    if(V)
+    add_compile_options(
+        #disable rtti
+        "$<$<CXX_COMPILER_ID:MSVC>:/GR>"
+        "$<$<CXX_COMPILER_ID:Clang,GNU>:-frtti>"
+    )
+    else()
     add_compile_options(
         #disable rtti
         "$<$<CXX_COMPILER_ID:MSVC>:/GR->"
         "$<$<CXX_COMPILER_ID:Clang,GNU>:-fno-rtti>"
     )
-endfunction(no_rtti)
+    endif()
+endfunction(rtti)
 
 function(pre_include_file file)
     if(MSVC)
