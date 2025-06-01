@@ -98,8 +98,8 @@ function(apply_warning_options)
 
         target_compile_options(${target} PRIVATE 
             "$<$<CXX_COMPILER_ID:MSVC>:${MSVC_WARNING_FLAGS}>"
-            "$<$<CXX_COMPILER_ID:GNU>:${GNU_WARNING_FLAGS} ${CLANG_AND_GNU_WARNING_FLAGS}>"
-            "$<$<CXX_COMPILER_ID:Clang>:${CLANG_WARNING_FLAGS} ${CLANG_AND_GNU_WARNING_FLAGS}>"
+            "$<$<CXX_COMPILER_ID:GNU>:${GNU_WARNING_FLAGS};${CLANG_AND_GNU_WARNING_FLAGS}>"
+            "$<$<CXX_COMPILER_ID:Clang>:${CLANG_WARNING_FLAGS};${CLANG_AND_GNU_WARNING_FLAGS}>"
         )    
     endforeach()
 endfunction()
