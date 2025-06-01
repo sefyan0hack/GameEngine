@@ -48,7 +48,6 @@ function(apply_main_options)
                 "$<$<CONFIG:Release>:/OPT:ICF>"                 # Identical COMDAT folding
                 "$<$<CONFIG:Release>:/INCREMENTAL:NO>"          # Disable incremental linking
             )
-            add_definitions(/FI"${CMAKE_SOURCE_DIR}/include/core/Global_H.hpp")
         endif()
 
         if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -63,8 +62,6 @@ function(apply_main_options)
         target_link_options(${target} PRIVATE
             "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
         )
-
-        add_definitions(-include "${CMAKE_SOURCE_DIR}/include/core/Global_H.hpp")
         endif()
     endforeach()
 endfunction()
@@ -246,6 +243,7 @@ function(apply_all_options)
         apply_coverage_options(TARGETS ${target})
         apply_harden_options(TARGETS ${target})
     endforeach()
+    pre_include_file("${CMAKE_SOURCE_DIR}/include/core/Global_H.hpp")
 endfunction()
 
 
@@ -256,6 +254,14 @@ function(no_rtti)
         "$<$<CXX_COMPILER_ID:Clang,GNU>:-fno-rtti>"
     )
 endfunction(no_rtti)
+
+function(pre_include_file file)
+    if(MSVC)
+        add_definitions(/FI"${file}")
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        add_definitions(-include "${file}")
+    endif()
+endfunction(pre_include_file)
 
 
 function(delete_files_by_extension DIR EXTENSION)
