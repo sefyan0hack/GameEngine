@@ -63,19 +63,6 @@
 #   define MEMBER_OPCAST(Type) operator Type() const noexcept { return member.operator Type(); }
 #endif
 
-#if defined(__GNUC__) || defined(__clang__)
-    #ifndef __GXX_RTTI
-    #   define NO_RTTI
-    #endif
-#elif defined(_MSC_VER)
-    #ifndef _CPPRTTI
-    #   define NO_RTTI
-    #endif
-#else
-    #error "Unsupported Compiler"
-#endif
-
-
 
 #if defined(__clang__) && !defined(WINDOWS_PLT) || defined(__GNUC__) || defined(__EDG__)
 #include <cxxabi.h>
