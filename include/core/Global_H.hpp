@@ -103,7 +103,7 @@ inline static auto demangle(const char* name) -> std::string
 template <typename T>
 inline static auto type_name() -> std::string
 {
-#ifndef NO_RTTI
+#ifdef __cpp_rtti
     return ::demangle(typeid(T).name());
 #else
     #if defined(__clang__) || defined(__GNUC__) || defined(__EDG__)
