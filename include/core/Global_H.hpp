@@ -57,7 +57,7 @@ concept is_static = std::is_object_v<std::remove_pointer_t<decltype(var)>> && !s
 
 #ifndef MEMBER_VAR
 #define MEMBER_VAR(Var) \
-    const auto& Var = [&]() -> const auto& { \
+    const std::remove_reference_t<decltype(member.Var)>& Var = [&]() -> const std::remove_reference_t<decltype(member.Var)>& { \
         using class_type = std::remove_cvref_t<decltype(member)>; \
         if constexpr (is_static<&class_type::Var>) { \
             static const auto& ref = member.Var; \
