@@ -253,13 +253,11 @@ endfunction()
 function(rtti V)
     if(V)
     add_compile_options(
-        #disable rtti
         "$<$<CXX_COMPILER_ID:MSVC>:/GR>"
         "$<$<CXX_COMPILER_ID:Clang,GNU>:-frtti>"
     )
     else()
     add_compile_options(
-        #disable rtti
         "$<$<CXX_COMPILER_ID:MSVC>:/GR->"
         "$<$<CXX_COMPILER_ID:Clang,GNU>:-fno-rtti>"
     )
