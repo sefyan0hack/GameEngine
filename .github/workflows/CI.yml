@@ -61,7 +61,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tests-${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
-          path: ${{ env.BUILD_DIR }}/tests/tests${{ env.APP_EXT }}
+          path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests${{ env.APP_EXT }}
           retention-days: 1
           overwrite: true
 
