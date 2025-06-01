@@ -84,6 +84,7 @@ if(TESTS AND ENABLE_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
                 --exclude '${CMAKE_SOURCE_DIR}/tests/'
                 --exclude '${CMAKE_SOURCE_DIR}/3party/'
                 --gcov-executable ${GCOV_EXECUTABLE}
+                --delete
                 --xml -o coverage
                 -s
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
@@ -98,6 +99,7 @@ if(TESTS AND ENABLE_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
                 --exclude '${CMAKE_SOURCE_DIR}/tests/'
                 --exclude '${CMAKE_SOURCE_DIR}/3party/'
                 --gcov-executable ${GCOV_EXECUTABLE}
+                --delete
                 --html-details -o coverage.html
                 -s
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
