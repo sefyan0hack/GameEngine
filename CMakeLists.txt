@@ -38,9 +38,27 @@ option(HARDEN           "enable Hardening"          OFF)
 option(STATIC_LINK      "enable Static link c++"    ON)
 option(NO_RTTI          "enable RunTime Type Info"  ON)
 
+if(TESTS)
+    message(STATUS "[Testing `ON`]")
+endif()
+if(ENABLE_COVERAGE)
+    message(STATUS "[Coverage `ON`]")
+endif()
+if(HARDEN)
+    message(STATUS "[Hardening `ON`]")
+endif()
+if(STATIC_LINK)
+    message(STATUS "[Static Link `ON`]")
+endif()
+if(NO_RTTI)
+    message(STATUS "[No Rtti `ON`]")
+endif()
 
 set(SANITIZER "" CACHE STRING "Enable sanitizers (address, undefined, etc.)")
 
+####################################################################################################
+# 
+####################################################################################################
 if(NOT "${SANITIZER}" STREQUAL "")
     message(STATUS "SANITIZER: ${SANITIZER}")
     if(MSVC)
@@ -101,6 +119,7 @@ endif()
 if(NO_RTTI)
     no_rtti()
 endif()
+
 ####################################################################################################
 # WIN32 defines 
 ####################################################################################################
@@ -325,6 +344,7 @@ add_compile_definitions(
 ####################################################################################################
 if(TESTS)
     message(STATUS "[Tests `ON`]")
+    enable_testing()
     add_definitions(-DTESTING)
     add_subdirectory(tests/unit)
 endif()

@@ -138,8 +138,6 @@ function(apply_coverage_options)
 endfunction()
 
 function(apply_sanitizer_options)
-    message(STATUS "[Sanitizing `ON`]")
-
     set(options)
     set(oneValueArgs)
     set(multiValueArgs TARGETS)
@@ -172,8 +170,6 @@ function(apply_sanitizer_options)
 endfunction()
 
 function(apply_harden_options)
-    message(STATUS "[Hardening `ON`]")
-
     set(options)
     set(oneValueArgs)
     set(multiValueArgs TARGETS)
