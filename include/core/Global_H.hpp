@@ -51,6 +51,9 @@
 #   define LINUX_PLT
 #endif
 
+template<auto var>
+concept is_static = std::is_object_v<std::remove_pointer_t<decltype(var)>> && !std::is_member_object_pointer_v<decltype(var)>;
+
 #ifndef MEMBER_VAR
 #   define MEMBER_VAR(Var) const decltype(member.Var)& Var = member.Var
 #endif
