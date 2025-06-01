@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, windows-11-arm, ubuntu-latest]
-        compiler: [llvm-17, llvm-18, llvm-19, llvm-20, msvc-19.34, gcc-13.2, gcc-14.2,]
+        compiler: [llvm, msvc, gcc]
         build_type: [Debug, Release]
         exclude:
           - os: ubuntu-latest
