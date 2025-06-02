@@ -81,14 +81,14 @@ if(TESTS AND ENABLE_COVERAGE)
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
         find_program(GCOVR_PATH gcovr REQUIRED)
-        find_program(GCOV_EXECUTABLE NAMES "gcov-${COMPILER_MAJOR_VERSION}" "gcov" REQUIRED)
+        find_program(GCOV_PATH NAMES "gcov-${COMPILER_MAJOR_VERSION}" "gcov" REQUIRED)
 
         if(GCOVR_PATH)
             set(COMMEN_GCOVR_FLAGS
                 --root ${CMAKE_SOURCE_DIR}
                 --exclude '${CMAKE_SOURCE_DIR}/tests/'
                 --exclude '${CMAKE_SOURCE_DIR}/3party/'
-                --gcov-executable ${GCOV_EXECUTABLE}
+                --gcov-executable ${GCOV_PATH}
                 --delete
                 --exclude-function-lines
                 --exclude-unreachable-branches
@@ -104,7 +104,7 @@ if(TESTS AND ENABLE_COVERAGE)
                 COMMAND $<TARGET_FILE:unit_tests>
                 COMMAND ${GCOVR_PATH} ${COMMEN_GCOVR_FLAGS} --xml -o coverage
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                DEPENDS core tests
+                DEPENDS core unit_tests
                 COMMENT "Generating GCC xml coverage report with gcovr..."
             )
 
@@ -112,14 +112,37 @@ if(TESTS AND ENABLE_COVERAGE)
                 COMMAND $<TARGET_FILE:unit_tests>
                 COMMAND ${GCOVR_PATH} ${COMMEN_GCOVR_FLAGS} --html-details -o coverage.html
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                DEPENDS core tests
+                DEPENDS core unit_tests
                 COMMENT "Generating GCC html coverage report with gcovr..."
             )
         endif()
     elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT WIN32)
 
-        find_program(GCOVR_PATH lcov REQUIRED)
-        find_program(GCOV_EXECUTABLE llvm-cov REQUIRED)
+        # find_program(LCOV_PATH lcov REQUIRED)
+        find_program(LLVM_PROTFDATA_PATH llvm-profdata REQUIRED)
+        find_program(LLVM_COV_PATH llvm-cov REQUIRED)
+
+        add_custom_target(coverage_html
+            COMMAND rm -f default.profraw
+            COMMAND $<TARGET_FILE:unit_tests>
+            COMMAND ${LLVM_PROFDATA_PATH} merge -sparse default.profraw -o default.profdata
+            COMMAND ${LLVM_COV_PATH} show $<TARGET_FILE:unit_tests>
+                -instr-profile=default.profdata
+                -format=lcov
+                -ignore-filename-regex='${CMAKE_SOURCE_DIR}/tests/.*'
+                -ignore-filename-regex='${CMAKE_SOURCE_DIR}/3party/.*' 
+                > lcov.info
+            # Generate HTML report
+            COMMAND ${LLVM_COV_PATH} show $<TARGET_FILE:unit_tests>
+                -instr-profile=default.profdata
+                -output-dir=${CMAKE_BINARY_DIR}
+                -format=html
+                -ignore-filename-regex='${CMAKE_SOURCE_DIR}/tests/.*'
+                -ignore-filename-regex='${CMAKE_SOURCE_DIR}/3party/.*'
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+            DEPENDS core unit_tests
+            COMMENT "Generating Clang html coverage reports..."
+        )
 
     endif()
 
