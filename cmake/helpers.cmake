@@ -120,10 +120,11 @@ function(apply_coverage_options)
         
         if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         target_compile_options(${target} PRIVATE
-            "$<$<BOOL:${ENABLE_COVERAGE}>:-fprofile-instr-generate -fcoverage-mapping>"
+            "$<$<BOOL:${ENABLE_COVERAGE}>:-fprofile-instr-generate>"
+            "$<$<BOOL:${ENABLE_COVERAGE}>:-fcoverage-mapping>"
         )
         endif()
-        
+
         if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         target_compile_options(${target} PRIVATE
             "$<$<BOOL:${ENABLE_COVERAGE}>:--coverage>"
