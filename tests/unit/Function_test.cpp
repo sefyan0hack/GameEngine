@@ -55,6 +55,7 @@ TEST_F(Function_Test_Ctor1, ctor) {
     EXPECT_EQ(m_After, nullptr);
     EXPECT_EQ(m_Name, "add");
     EXPECT_EQ(m_Func(1,2), 1+2);
+    EXPECT_EQ(member(1,2), 1+2);
     EXPECT_EQ(m_ReturnType, ::type_name<size_t>());
 
     auto expargstypes = std::array<std::string, 2>{::type_name<int>(), ::type_name<int>()};
