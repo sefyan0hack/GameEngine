@@ -119,7 +119,7 @@ if(TESTS AND ENABLE_COVERAGE)
     elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT WIN32)
 
         # find_program(LCOV_PATH lcov REQUIRED)
-        find_program(LLVM_PROTFDATA_PATH llvm-profdata REQUIRED)
+        find_program(LLVM_PROFDATA_PATH llvm-profdata REQUIRED)
         find_program(LLVM_COV_PATH llvm-cov REQUIRED)
 
         add_custom_target(coverage_html
