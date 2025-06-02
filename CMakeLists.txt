@@ -78,7 +78,7 @@ endif()
 if(TESTS AND ENABLE_COVERAGE)
     
     add_link_options(--coverage)
-    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
         find_program(GCOVR_PATH gcovr REQUIRED)
         find_program(GCOV_EXECUTABLE NAMES "gcov-${COMPILER_MAJOR_VERSION}" "gcov" REQUIRED)
@@ -116,10 +116,10 @@ if(TESTS AND ENABLE_COVERAGE)
                 COMMENT "Generating GCC html coverage report with gcovr..."
             )
         endif()
-    # elseif(AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT WIN32)
+    elseif(AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT WIN32)
 
-    #     find_program(GCOVR_PATH lcov REQUIRED)
-    #     find_program(GCOV_EXECUTABLE llvm-cov REQUIRED)
+        find_program(GCOVR_PATH lcov REQUIRED)
+        find_program(GCOV_EXECUTABLE llvm-cov REQUIRED)
 
     endif()
 
