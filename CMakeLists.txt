@@ -309,6 +309,9 @@ target_include_directories(stb_image SYSTEM INTERFACE ${STB_IMG_HEADER})
 ####################################################################################################
 
 apply_all_options(TARGETS core ${PROJECT_NAME})
+apply_coverage_options(TARGETS core)
+apply_harden_options(TARGETS core)
+apply_sanitizer_options(TARGETS core)
 
 ####################################################################################################
 # Link Libs 

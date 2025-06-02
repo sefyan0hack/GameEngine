@@ -123,12 +123,13 @@ function(apply_coverage_options)
             "$<$<BOOL:${ENABLE_COVERAGE}>:--coverage>"
             "$<$<BOOL:${ENABLE_COVERAGE}>:-fno-omit-frame-pointer>"
             "$<$<BOOL:${ENABLE_COVERAGE}>:-fno-inline>"
-            "$<$<BOOL:${ENABLE_COVERAGE}>:-pg>"
         )
         target_link_options(${target} PRIVATE
             "$<$<BOOL:${ENABLE_COVERAGE}>:--coverage>"
-            "$<$<BOOL:${ENABLE_COVERAGE}>:-pg>"
-            "$<$<BOOL:${ENABLE_COVERAGE}>:-no-pie>"
+        )
+        
+        target_link_libraries(${target} PRIVATE 
+            "$<$<BOOL:${ENABLE_COVERAGE}>:gcov>"
         )
         endif()
     endforeach()
@@ -243,9 +244,6 @@ function(apply_all_options)
 
         apply_main_options(TARGETS ${target})
         apply_warning_options(TARGETS ${target})
-        apply_sanitizer_options(TARGETS ${target})
-        apply_coverage_options(TARGETS ${target})
-        apply_harden_options(TARGETS ${target})
     endforeach()
     pre_include_file("${CMAKE_SOURCE_DIR}/include/core/Global_H.hpp")
 endfunction()
