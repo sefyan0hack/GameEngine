@@ -58,6 +58,7 @@ function(apply_main_options)
             "$<$<CONFIG:Debug>:-O0>"
             # Release flags
             "$<$<CONFIG:Release>:-O3>"
+            "$<$<CONFIG:Release>:-fomit-frame-pointer>"
         )
         target_link_options(${target} PRIVATE
             "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
