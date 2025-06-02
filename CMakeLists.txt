@@ -122,6 +122,8 @@ if(TESTS AND ENABLE_COVERAGE)
         find_program(LLVM_PROFDATA_PATH llvm-profdata REQUIRED)
         find_program(LLVM_COV_PATH llvm-cov REQUIRED)
 
+        set(ENV{LLVM_PROFILE_FILE} "default.profraw")
+
         add_custom_target(coverage_html
             COMMAND $<TARGET_FILE:unit_tests>
             COMMAND ${LLVM_PROFDATA_PATH} merge -sparse default.profraw -o coverage
