@@ -76,23 +76,33 @@ if(NOT "${SANITIZER}" STREQUAL "")
 endif()
 
 if(TESTS AND ENABLE_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-
+    
+    add_link_options(--coverage)
+    
     find_program(GCOVR_PATH gcovr REQUIRED)
     find_program(GCOV_EXECUTABLE NAMES "gcov-${COMPILER_MAJOR_VERSION}" "gcov" REQUIRED)
 
     if(GCOVR_PATH)
-        add_link_options(--coverage)
+    
+        set(COMMEN_GCOVR_FLAGS
+            --root ${CMAKE_SOURCE_DIR}
+            --exclude '${CMAKE_SOURCE_DIR}/tests/'
+            --exclude '${CMAKE_SOURCE_DIR}/3party/'
+            --gcov-executable ${GCOV_EXECUTABLE}
+            --delete
+            --exclude-function-lines
+            --exclude-unreachable-branches
+            --exclude-noncode-lines
+            --sort=uncovered-percent
+            --sort-reverse
+            --decisions
+            --calls
+            -s
+        )
         
         add_custom_target(coverage
             COMMAND $<TARGET_FILE:unit_tests>
-            COMMAND ${GCOVR_PATH}
-                --root ${CMAKE_SOURCE_DIR}
-                --exclude '${CMAKE_SOURCE_DIR}/tests/'
-                --exclude '${CMAKE_SOURCE_DIR}/3party/'
-                --gcov-executable ${GCOV_EXECUTABLE}
-                --delete
-                --xml -o coverage
-                -s
+            COMMAND ${GCOVR_PATH} ${COMMEN_GCOVR_FLAGS} --xml -o coverage
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
             DEPENDS core tests
             COMMENT "Generating GCC coverage report with gcovr..."
@@ -100,14 +110,7 @@ if(TESTS AND ENABLE_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
         add_custom_target(coverage_html
             COMMAND $<TARGET_FILE:unit_tests>
-            COMMAND ${GCOVR_PATH}
-                --root ${CMAKE_SOURCE_DIR}
-                --exclude '${CMAKE_SOURCE_DIR}/tests/'
-                --exclude '${CMAKE_SOURCE_DIR}/3party/'
-                --gcov-executable ${GCOV_EXECUTABLE}
-                --delete
-                --html-details -o coverage.html
-                -s
+            COMMAND ${GCOVR_PATH} ${COMMEN_GCOVR_FLAGS} --html-details -o coverage.html
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
             DEPENDS core tests
             COMMENT "Generating GCC coverage report with gcovr..."
