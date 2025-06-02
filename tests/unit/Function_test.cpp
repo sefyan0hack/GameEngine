@@ -91,3 +91,14 @@ TEST_F(Function_Test_Ctor1, ReturnType) {
     EXPECT_EQ(got, expct);
 }
 
+TEST_F(Function_Test_Ctor1, this_func_sig) {
+    auto got = this_func_sig();
+    auto expct = std::format(
+        "{} {}({} arg_1 = 0, {} arg_2 = 0)",
+        ::type_name<size_t>(),
+        m_Name,
+        ::type_name<int>(),
+        ::type_name<int>()
+    );
+    EXPECT_EQ(got, expct);
+}
