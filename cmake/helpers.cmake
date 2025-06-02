@@ -123,8 +123,11 @@ function(apply_coverage_options)
             "$<$<BOOL:${ENABLE_COVERAGE}>:-fprofile-instr-generate>"
             "$<$<BOOL:${ENABLE_COVERAGE}>:-fcoverage-mapping>"
         )
+        target_link_options(${target} PRIVATE
+            "$<$<BOOL:${ENABLE_COVERAGE}>:-fprofile-instr-generate>"
+        )
         endif()
-
+        
         if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         target_compile_options(${target} PRIVATE
             "$<$<BOOL:${ENABLE_COVERAGE}>:--coverage>"
