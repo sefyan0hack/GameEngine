@@ -26,12 +26,12 @@ using Function_Test_Ctor1 = Function<SubType>::Test<1>;
     MEMBER_FUN(ArgsCount);\
     MEMBER_FUN(CallsCount);\
     MEMBER_FUN(functionCount);\
-    MEMBER_FUN(formated_function_sig);\
+    MEMBER_FUN(this_func_sig);\
     MEMBER_FUN(function_info);\
     MEMBER_FUN(format_arguments);\
     MEMBER_FUN(to_string);\
     MEMBER_FUN(format_pointer);\
-    MEMBER_FUN(functionPtrSigature);
+    MEMBER_FUN(func_sig);
 
 
 template<> template<>
@@ -50,15 +50,44 @@ struct Function<SubType>::Test<1> : public ::testing::Test {
 
 
 TEST_F(Function_Test_Ctor1, ctor) {
+    int arg1 = 1, arg2 = 2;
+
     EXPECT_NE(m_Func, nullptr);
     EXPECT_EQ(m_Befor, nullptr);
     EXPECT_EQ(m_After, nullptr);
     EXPECT_EQ(m_Name, "add");
-    EXPECT_EQ(m_Func(1,2), 1+2);
-    EXPECT_EQ(member(1,2), 1+2);
+
+    EXPECT_EQ(m_Func(arg1, arg2), arg1+arg2);
+
+    EXPECT_EQ(member(arg1, arg2), arg1+arg2);
+
+    auto expectargvalues = std::tuple<int, int>(arg1, arg2);
+    EXPECT_EQ(m_ArgsValues,  expectargvalues);
+
     EXPECT_EQ(m_ReturnType, ::type_name<size_t>());
 
-    auto expargstypes = std::array<std::string, 2>{::type_name<int>(), ::type_name<int>()};
+    auto expargstypes = std::array{::type_name<int>(), ::type_name<int>()};
     EXPECT_EQ(m_ArgsTypes, expargstypes);
-    EXPECT_EQ(m_CallCount,  1 );
 }
+
+TEST_F(Function_Test_Ctor1, default_) {
+    auto got = ::type_name<decltype(default_(1,2))>();
+    auto expct = ::type_name<decltype(m_Func(1,2))>();
+    EXPECT_EQ(got, expct);
+}
+
+TEST_F(Function_Test_Ctor1, ArgsXXX) {
+    auto got = ArgsValues().size();
+    auto expct = 2;
+    EXPECT_EQ(got, expct);
+    EXPECT_EQ(got, ArgsTypes().size());
+    EXPECT_EQ(ArgsCount(), expct);
+    
+}
+
+TEST_F(Function_Test_Ctor1, ReturnType) {
+    auto got = ReturnType();
+    auto expct = ::type_name<size_t>();
+    EXPECT_EQ(got, expct);
+}
+

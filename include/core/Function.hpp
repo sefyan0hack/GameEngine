@@ -20,16 +20,16 @@ public:
 
     static auto APIENTRY default_([[maybe_unused]] Args... args) -> R;
     
-    auto ArgsValues() const -> std::array<std::string, sizeof...(Args)>;
     auto ReturnType() const -> std::string;
-    auto ArgsTypes() const -> std::array<std::string, sizeof...(Args)>;
+    auto ArgsValues() const -> std::array<std::string, sizeof...(Args)>;
+    auto ArgsTypes() const  -> std::array<std::string, sizeof...(Args)>;
     constexpr auto ArgsCount() const -> size_t;
     auto CallsCount() const -> size_t;
 
     static auto functionCount() -> size_t;
     
 private:
-    auto formated_function_sig() const -> std::string ;
+    auto this_func_sig() const -> std::string ;
 
     auto function_info(const std::source_location& loc) -> std::string;
     auto format_arguments(std::string& result) const -> void;
@@ -38,7 +38,7 @@ private:
     static auto format_pointer(auto ptr) -> std::string ;
 
     template<typename SubR, typename... SubArgs>
-    static auto functionPtrSigature() -> std::string;
+    static auto func_sig() -> std::string;
 
 public:
     FuncType m_Func;
@@ -141,7 +141,7 @@ auto Function<R(APIENTRY*)(Args...)>::functionCount() -> size_t
 }
 
 template <typename R, typename... Args>
-auto Function<R(APIENTRY*)(Args...)>::formated_function_sig() const -> std::string {
+auto Function<R(APIENTRY*)(Args...)>::this_func_sig() const -> std::string {
     std::string result = std::format("{} {}(", m_ReturnType, m_Name);
     format_arguments(result);
     return result + ")";
@@ -150,7 +150,13 @@ auto Function<R(APIENTRY*)(Args...)>::formated_function_sig() const -> std::stri
 template <typename R, typename... Args>
 auto Function<R(APIENTRY*)(Args...)>::function_info(const std::source_location& loc) -> std::string
 {
-    return std::format("call N: {} |> {} -> {}:{}\n", m_CallCount, formated_function_sig(), loc.file_name(), loc.line());
+    return std::format(
+        "call Number: {} ; instrments(Befor: {}, After: {}) |>=> {} -> {}:{}\n",
+        m_CallCount,
+        m_Befor ? "true" : "false", m_After ? "true" : "false",
+        this_func_sig(),
+        loc.file_name(), loc.line()
+    );
 }
 
 template <typename R, typename... Args>
@@ -182,7 +188,7 @@ auto Function<R(APIENTRY*)(Args...)>::format_pointer(auto ptr) -> std::string {
     if (!ptr) return "nullptr";
     using Pointee = std::remove_cv_t<std::remove_pointer_t<decltype(ptr)>>;
     if constexpr (std::is_function_v<Pointee>) {
-        return functionPtrSigature<Pointee>();
+        return func_sig<Pointee>();
     } else if constexpr (std::is_arithmetic_v<Pointee>) {
         return std::to_string(*ptr);
     } else if constexpr (std::is_same_v<Pointee, void>) {
@@ -194,7 +200,7 @@ auto Function<R(APIENTRY*)(Args...)>::format_pointer(auto ptr) -> std::string {
 
 template <typename R, typename... Args>
 template<typename SubR, typename... SubArgs>
-auto Function<R(APIENTRY*)(Args...)>::functionPtrSigature() -> std::string
+auto Function<R(APIENTRY*)(Args...)>::func_sig() -> std::string
 {
     std::string signature = ::type_name<SubR>() + " (*)(";
     
