@@ -123,7 +123,6 @@ if(TESTS AND ENABLE_COVERAGE)
         find_program(LLVM_COV_PATH llvm-cov REQUIRED)
 
         add_custom_target(coverage_html
-            COMMAND rm -f default.profraw
             COMMAND $<TARGET_FILE:unit_tests>
             COMMAND ${LLVM_PROFDATA_PATH} merge -sparse default.profraw -o coverage
             COMMAND ${LLVM_COV_PATH} show $<TARGET_FILE:unit_tests>
