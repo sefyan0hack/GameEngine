@@ -124,13 +124,6 @@ function(apply_coverage_options)
             "$<$<BOOL:${ENABLE_COVERAGE}>:-fno-omit-frame-pointer>"
             "$<$<BOOL:${ENABLE_COVERAGE}>:-fno-inline>"
         )
-        target_link_options(${target} PRIVATE
-            "$<$<BOOL:${ENABLE_COVERAGE}>:--coverage>"
-        )
-        
-        target_link_libraries(${target} PRIVATE 
-            "$<$<BOOL:${ENABLE_COVERAGE}>:gcov>"
-        )
         endif()
     endforeach()
 endfunction()
@@ -195,10 +188,12 @@ function(apply_harden_options)
                     target_compile_options(${target} PRIVATE /SafeSEH)
             endif()
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-            target_compile_options(${target} PRIVATE
-                "$<$<BOOL:${HARDEN}>:-fhardened>"
-                "$<$<BOOL:${HARDEN}>:-Wno-hardened>"
-            )
+            if(NOT WIN32)
+                target_compile_options(${target} PRIVATE
+                    "$<$<BOOL:${HARDEN}>:-fhardened>"
+                    "$<$<BOOL:${HARDEN}>:-Wno-hardened>"
+                )
+            endif()
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             
             target_compile_options(${target} PRIVATE
