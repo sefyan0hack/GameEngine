@@ -77,8 +77,8 @@ endif()
 
 if(TESTS AND ENABLE_COVERAGE)
     
-    add_link_options(--coverage)
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    add_link_options(--coverage)
 
         find_program(GCOVR_PATH gcovr REQUIRED)
         find_program(GCOV_PATH NAMES "gcov-${COMPILER_MAJOR_VERSION}" "gcov" REQUIRED)
@@ -117,7 +117,9 @@ if(TESTS AND ENABLE_COVERAGE)
             )
         endif()
     elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT WIN32)
-
+        
+        add_link_options(-fprofile-instr-generate)
+        
         # find_program(LCOV_PATH lcov REQUIRED)
         find_program(LLVM_PROFDATA_PATH llvm-profdata REQUIRED)
         find_program(LLVM_COV_PATH llvm-cov REQUIRED)
