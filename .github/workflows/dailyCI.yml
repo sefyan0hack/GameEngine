@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        compiler: [gcc-14]
+        compiler: [gcc-14, llvm]
         language: ['cpp']
 
     env:
@@ -67,6 +67,7 @@ jobs:
         run: cmake --build build --target coverage 
 
       - name: Upload to Codecov
+        if: ${{ matrix.compiler != 'llvm' }}
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
