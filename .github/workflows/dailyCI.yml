@@ -1,4 +1,4 @@
-name: Daily
+name: Daily Code Coverage
 on:  
   schedule:
     - cron: '0 0 * * *'
@@ -14,8 +14,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, windows-latest ]
-        compiler: [gcc-14, llvm]
+        os: [ubuntu-latest]
+        compiler: [gcc]
         language: ['cpp']
 
     env:
@@ -38,15 +38,12 @@ jobs:
       - name: Install Dependencies
         shell: bash
         run: |
-          if [[ "${{ matrix.os }}" == *ubuntu* ]]; then
-            sudo apt-get update
-            sudo apt-get install -y libgl1-mesa-dev  mesa-common-dev libxi-dev
-            sudo apt-get install -y xvfb libx11-dev xauth
-          fi
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev  mesa-common-dev libxi-dev
+          sudo apt-get install -y xvfb libx11-dev xauth
           pip install gcovr
 
       - name: Start Xvfb (virtual display)
-        if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
           Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
           echo "DISPLAY=:99" >> $GITHUB_ENV
@@ -55,7 +52,7 @@ jobs:
         shell: bash
         run: |
           rm -rf build
-          cmake -S . -B build -G  "Ninja" -DCMAKE_BUILD_TYPE=Debug -DTESTS=ON -DENABLE_COVERAGE=ON -DHARDEN=On
+          cmake -S . -B build -G  "Ninja" -DCMAKE_BUILD_TYPE=Debug -DTESTS=ON -DENABLE_COVERAGE=ON -DHARDEN=ON
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
@@ -71,7 +68,6 @@ jobs:
         run: cmake --build build --target coverage 
 
       - name: Upload to Codecov
-        if: ${{ matrix.compiler != 'llvm' }}
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
