@@ -36,6 +36,7 @@ jobs:
           choco: true
 
       - name: Install Dependencies
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         shell: bash
         run: |
           sudo apt-get update

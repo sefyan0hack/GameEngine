@@ -100,8 +100,9 @@ if(TESTS AND ENABLE_COVERAGE)
                 -s
             )
             add_custom_target(pre_coverage
+                COMMAND${GCOVR_PATH} --version
+                COMMAND${GCOV_PATH} --version
                 COMMAND $<TARGET_FILE:unit_tests>
-                ${CMAKE_COMMAND} -E echo "${GCOV_PATH}"
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                 DEPENDS core unit_tests
             )
@@ -130,6 +131,9 @@ if(TESTS AND ENABLE_COVERAGE)
         set(ENV{LLVM_PROFILE_FILE} "default.profraw")
 
         add_custom_target(pre_coverage
+            COMMAND ${LLVM_COV_PATH} --version
+            COMMAND ${CMAKE_COMMAND} -E remove "default.profraw"
+            COMMAND ${CMAKE_COMMAND} -E remove "coverage.profdata"
             COMMAND $<TARGET_FILE:unit_tests>
             COMMAND ${LLVM_PROFDATA_PATH} merge -sparse default.profraw -o coverage.profdata
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
