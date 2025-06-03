@@ -128,7 +128,7 @@ if(TESTS AND ENABLE_COVERAGE)
 
         add_custom_target(run_tests_gen_profdata
             COMMAND $<TARGET_FILE:unit_tests>
-            COMMAND ${LLVM_PROFDATA_PATH} merge -sparse default.profraw -o coverage
+            COMMAND ${LLVM_PROFDATA_PATH} merge -sparse default.profraw -o coverage.profdata
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
             DEPENDS core unit_tests
             COMMENT "Generating llvm profdata file"
@@ -136,7 +136,7 @@ if(TESTS AND ENABLE_COVERAGE)
 
         add_custom_target(coverage
             COMMAND ${LLVM_COV_PATH} export $<TARGET_FILE:unit_tests>
-                -instr-profile=coverage
+                -instr-profile=coverage.profdata
                 -format=lcov
                 -ignore-filename-regex='${CMAKE_SOURCE_DIR}/tests/.*'
                 -ignore-filename-regex='${CMAKE_SOURCE_DIR}/3party/.*'
@@ -148,7 +148,7 @@ if(TESTS AND ENABLE_COVERAGE)
 
         add_custom_target(coverage_html
             COMMAND ${LLVM_COV_PATH} show $<TARGET_FILE:unit_tests>
-                -instr-profile=coverage
+                -instr-profile=coverage.profdata
                 -output-dir=${CMAKE_BINARY_DIR}/coverage_html
                 -format=html
                 -ignore-filename-regex='${CMAKE_SOURCE_DIR}/tests/.*'
