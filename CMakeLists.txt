@@ -99,20 +99,23 @@ if(TESTS AND ENABLE_COVERAGE)
                 --calls
                 -s
             )
-            
-            add_custom_target(coverage
+            add_custom_target(pre_coverage
                 COMMAND $<TARGET_FILE:unit_tests>
-                COMMAND ${GCOVR_PATH} ${COMMEN_GCOVR_FLAGS} --xml -o coverage
+                ${CMAKE_COMMAND} -E echo "${GCOV_PATH}"
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                 DEPENDS core unit_tests
+            )
+            add_custom_target(coverage
+                COMMAND ${GCOVR_PATH} ${COMMEN_GCOVR_FLAGS} --xml -o coverage
+                WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                DEPENDS pre_coverage
                 COMMENT "Generating GCC xml coverage report with gcovr..."
             )
 
             add_custom_target(coverage_html
-                COMMAND $<TARGET_FILE:unit_tests>
                 COMMAND ${GCOVR_PATH} ${COMMEN_GCOVR_FLAGS} --html-details -o coverage.html
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                DEPENDS core unit_tests
+                DEPENDS pre_coverage
                 COMMENT "Generating GCC html coverage report with gcovr..."
             )
         endif()
@@ -126,12 +129,11 @@ if(TESTS AND ENABLE_COVERAGE)
 
         set(ENV{LLVM_PROFILE_FILE} "default.profraw")
 
-        add_custom_target(run_tests_gen_profdata
+        add_custom_target(pre_coverage
             COMMAND $<TARGET_FILE:unit_tests>
             COMMAND ${LLVM_PROFDATA_PATH} merge -sparse default.profraw -o coverage.profdata
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
             DEPENDS core unit_tests
-            COMMENT "Generating llvm profdata file"
         )
 
         add_custom_target(coverage
@@ -142,7 +144,7 @@ if(TESTS AND ENABLE_COVERAGE)
                 -ignore-filename-regex='${CMAKE_SOURCE_DIR}/3party/.*'
                 > ${CMAKE_BINARY_DIR}/coverage
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            DEPENDS run_tests_gen_profdata
+            DEPENDS pre_coverage
             COMMENT "Generating lcov coverage report for Codecov.io"
         )
 
@@ -157,7 +159,7 @@ if(TESTS AND ENABLE_COVERAGE)
                 --show-mcdc
                 -show-instantiation-summary
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            DEPENDS run_tests_gen_profdata
+            DEPENDS pre_coverage
             COMMENT "Generating Clang html coverage reports..."
         )
 
