@@ -116,7 +116,7 @@ if(TESTS AND ENABLE_COVERAGE)
                 COMMENT "Generating GCC html coverage report with gcovr..."
             )
         endif()
-    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT WIN32)
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         
         add_link_options(-fprofile-instr-generate)
         
@@ -126,10 +126,27 @@ if(TESTS AND ENABLE_COVERAGE)
 
         set(ENV{LLVM_PROFILE_FILE} "default.profraw")
 
-        add_custom_target(coverage_html
+        add_custom_target(run_tests_gen_profdata
             COMMAND $<TARGET_FILE:unit_tests>
             COMMAND ${LLVM_PROFDATA_PATH} merge -sparse default.profraw -o coverage
-            # Generate HTML report
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+            DEPENDS core unit_tests
+            COMMENT "Generating llvm profdata file"
+        )
+
+        add_custom_target(coverage
+            COMMAND ${LLVM_COV_PATH} export $<TARGET_FILE:unit_tests>
+                -instr-profile=coverage
+                -format=lcov
+                -ignore-filename-regex='${CMAKE_SOURCE_DIR}/tests/.*'
+                -ignore-filename-regex='${CMAKE_SOURCE_DIR}/3party/.*'
+                > ${CMAKE_BINARY_DIR}/coverage
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+            DEPENDS run_tests_gen_profdata
+            COMMENT "Generating lcov coverage report for Codecov.io"
+        )
+
+        add_custom_target(coverage_html
             COMMAND ${LLVM_COV_PATH} show $<TARGET_FILE:unit_tests>
                 -instr-profile=coverage
                 -output-dir=${CMAKE_BINARY_DIR}/coverage_html
@@ -140,7 +157,7 @@ if(TESTS AND ENABLE_COVERAGE)
                 --show-mcdc
                 -show-instantiation-summary
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            DEPENDS core unit_tests
+            DEPENDS run_tests_gen_profdata
             COMMENT "Generating Clang html coverage reports..."
         )
 
