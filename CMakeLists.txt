@@ -100,8 +100,8 @@ if(TESTS AND ENABLE_COVERAGE)
                 -s
             )
             add_custom_target(pre_coverage
-                COMMAND${GCOVR_PATH} --version
-                COMMAND${GCOV_PATH} --version
+                COMMAND ${GCOVR_PATH} --version
+                COMMAND ${GCOV_PATH} --version
                 COMMAND $<TARGET_FILE:unit_tests>
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                 DEPENDS core unit_tests
