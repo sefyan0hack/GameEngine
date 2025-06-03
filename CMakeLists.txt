@@ -94,7 +94,6 @@ if(TESTS AND ENABLE_COVERAGE)
                 --exclude-unreachable-branches
                 --exclude-noncode-lines
                 --sort uncovered-percent
-                --sort uncovered-number
                 --sort-reverse
                 --decisions
                 --calls
