@@ -122,6 +122,7 @@ function(apply_coverage_options)
         target_compile_options(${target} PRIVATE
             "$<$<BOOL:${ENABLE_COVERAGE}>:-fprofile-instr-generate>"
             "$<$<BOOL:${ENABLE_COVERAGE}>:-fcoverage-mapping>"
+            "$<$<BOOL:${ENABLE_COVERAGE}>:-fcoverage-mcdc>"
         )
         endif()
 

@@ -136,6 +136,9 @@ if(TESTS AND ENABLE_COVERAGE)
                 -format=html
                 -ignore-filename-regex='${CMAKE_SOURCE_DIR}/tests/.*'
                 -ignore-filename-regex='${CMAKE_SOURCE_DIR}/3party/.*'
+                --show-mcdc-summary
+                --show-mcdc
+                -show-instantiation-summary
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
             DEPENDS core unit_tests
             COMMENT "Generating Clang html coverage reports..."
