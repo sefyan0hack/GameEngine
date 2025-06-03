@@ -129,12 +129,6 @@ if(TESTS AND ENABLE_COVERAGE)
         add_custom_target(coverage_html
             COMMAND $<TARGET_FILE:unit_tests>
             COMMAND ${LLVM_PROFDATA_PATH} merge -sparse default.profraw -o coverage
-            COMMAND ${LLVM_COV_PATH} show $<TARGET_FILE:unit_tests>
-                -instr-profile=coverage
-                -format=lcov
-                -ignore-filename-regex='${CMAKE_SOURCE_DIR}/tests/.*'
-                -ignore-filename-regex='${CMAKE_SOURCE_DIR}/3party/.*' 
-                > lcov.info
             # Generate HTML report
             COMMAND ${LLVM_COV_PATH} show $<TARGET_FILE:unit_tests>
                 -instr-profile=coverage
