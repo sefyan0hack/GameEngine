@@ -2,22 +2,24 @@ name: Static Analyzer Cppcheck
 
 on: [push, pull_request, workflow_dispatch]
 
-job:
-  steps:
-    - uses: actions/checkout@v3
+jobs:
+  analyze:
+    name: Analyze
+    steps:
+      - uses: actions/checkout@v3
 
-    - name: Configure CMake
-      run: |
-        mkdir -pv build
-        cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DTESTS=ON -DHARDEN=ON
+      - name: Configure CMake
+        run: |
+          mkdir -pv build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DTESTS=ON -DHARDEN=ON
 
-    - uses: whisperity/codechecker-analysis-action@v1
-      id: codechecker
-      with:
-        logfile: ${{ github.workspace }}/build/compile_commands.json
+      - uses: whisperity/codechecker-analysis-action@v1
+        id: codechecker
+        with:
+          logfile: ${{ github.workspace }}/build/compile_commands.json
 
-    - uses: actions/upload-artifact@v4
-      with:
-        name: CodeChecker Bug Reports
-        path: ${{ steps.codechecker.outputs.result-html-dir }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CodeChecker Bug Reports
+          path: ${{ steps.codechecker.outputs.result-html-dir }}
