@@ -36,12 +36,14 @@ jobs:
           choco: true
 
       - name: Install Dependencies
-        if: ${{ matrix.os == 'ubuntu-latest' }}
         shell: bash
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-dev  mesa-common-dev libxi-dev gcovr
-          sudo apt-get install -y xvfb libx11-dev xauth
+          if [[ "${{ matrix.os }}" == *ubuntu* ]]; then
+            sudo apt-get update
+            sudo apt-get install -y libgl1-mesa-dev  mesa-common-dev libxi-dev
+            sudo apt-get install -y xvfb libx11-dev xauth
+          fi
+          pip install gcovr
 
       - name: Start Xvfb (virtual display)
         if: ${{ matrix.os == 'ubuntu-latest' }}
