@@ -94,6 +94,7 @@ if(TESTS AND ENABLE_COVERAGE)
                 --exclude-unreachable-branches
                 --exclude-noncode-lines
                 --sort uncovered-percent
+                --merge-mode-functions=merge-use-line-min
                 --sort-reverse
                 --decisions
                 --calls

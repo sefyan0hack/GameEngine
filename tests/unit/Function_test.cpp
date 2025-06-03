@@ -31,7 +31,6 @@ using Function_Test_Ctor1 = Function<SubType>::Test<1>;
     MEMBER_FUN(format_arguments);\
     MEMBER_FUN(to_string);\
     MEMBER_FUN(format_pointer);\
-    MEMBER_FUN(func_sig);
 
 
 template<> template<>

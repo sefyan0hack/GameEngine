@@ -47,5 +47,5 @@
 #include <cstring>
 #include <exception>
 #include <stdexcept>
-#define __GXX_TYPEINFO_EQUALITY_INLINE 0
 #include <typeinfo>
+#include <concepts>

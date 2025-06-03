@@ -5,6 +5,14 @@
 #endif
 
 template <typename T>
+concept Pointer = std::is_pointer_v<T>;
+
+template<typename T>
+concept FunctionPointer =
+    std::is_pointer_v<std::remove_cv_t<T>> &&
+    std::is_function_v<std::remove_pointer_t<std::remove_cv_t<T>>>;
+
+template <typename T>
 class Function;
 
 template <typename R, typename... Args>
@@ -35,10 +43,7 @@ private:
     auto format_arguments(std::string& result) const -> void;
 
     static auto to_string(const auto& value) -> std::string ;
-    static auto format_pointer(auto ptr) -> std::string ;
-
-    template<typename SubR, typename... SubArgs>
-    static auto func_sig() -> std::string;
+    static auto format_pointer(Pointer auto ptr) -> std::string ;
 
 public:
     FuncType m_Func;
@@ -172,7 +177,8 @@ auto Function<R(APIENTRY*)(Args...)>::format_arguments(std::string& result) cons
 }
 
 template <typename R, typename... Args>
-auto Function<R(APIENTRY*)(Args...)>::to_string(const auto& value) -> std::string {
+auto Function<R(APIENTRY*)(Args...)>::to_string(const auto& value) -> std::string
+{
     using T = std::decay_t<decltype(value)>;
     if constexpr (std::is_pointer_v<T>) {
         return format_pointer(value);
@@ -184,11 +190,14 @@ auto Function<R(APIENTRY*)(Args...)>::to_string(const auto& value) -> std::strin
 }
 
 template <typename R, typename... Args>
-auto Function<R(APIENTRY*)(Args...)>::format_pointer(auto ptr) -> std::string {
-    if (!ptr) return "nullptr";
+auto Function<R(APIENTRY*)(Args...)>::format_pointer(Pointer auto ptr) -> std::string
+{
     using Pointee = std::remove_cv_t<std::remove_pointer_t<decltype(ptr)>>;
+    
+    if (!ptr) return "nullptr";
+
     if constexpr (std::is_function_v<Pointee>) {
-        return func_sig<Pointee>();
+        return ::type_name<Pointee>();
     } else if constexpr (std::is_arithmetic_v<Pointee>) {
         return std::to_string(*ptr);
     } else if constexpr (std::is_same_v<Pointee, void>) {
@@ -196,17 +205,4 @@ auto Function<R(APIENTRY*)(Args...)>::format_pointer(auto ptr) -> std::string {
     } else {
         return std::string(*ptr);
     }
-}
-
-template <typename R, typename... Args>
-template<typename SubR, typename... SubArgs>
-auto Function<R(APIENTRY*)(Args...)>::func_sig() -> std::string
-{
-    std::string signature = ::type_name<SubR>() + " (*)(";
-    
-    bool first = true;
-    ((signature += (first ? "" : ", ") + ::type_name<SubArgs>(), first = false), ...);
-    
-    signature += ")";
-    return signature;
 }
