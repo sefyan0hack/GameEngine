@@ -132,7 +132,7 @@ if(TESTS AND ENABLE_COVERAGE)
             # Generate HTML report
             COMMAND ${LLVM_COV_PATH} show $<TARGET_FILE:unit_tests>
                 -instr-profile=coverage
-                -output-dir=${CMAKE_BINARY_DIR}
+                -output-dir=${CMAKE_BINARY_DIR}/coverage_html
                 -format=html
                 -ignore-filename-regex='${CMAKE_SOURCE_DIR}/tests/.*'
                 -ignore-filename-regex='${CMAKE_SOURCE_DIR}/3party/.*'
