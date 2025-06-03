@@ -38,7 +38,10 @@ function(apply_main_options)
 
                 # Release flags
                 "$<$<CONFIG:Release>:/O2>"
+                "$<$<CONFIG:Release>:/Ob2>"
+                "$<$<CONFIG:Release>:/Ot>"
                 "$<$<CONFIG:Release>:/Zi>"
+                "$<$<CONFIG:Release>:/fp:fast>"
                 "$<$<CONFIG:Release>:/Oy->"
             )
             target_link_options(${target} PRIVATE
