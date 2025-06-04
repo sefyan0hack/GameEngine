@@ -124,7 +124,6 @@ if(TESTS AND ENABLE_COVERAGE)
     elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         
         add_link_options(-fprofile-instr-generate)
-        add_compile_options(-Wno-unsupported-mcdc)
         
         # find_program(LCOV_PATH lcov REQUIRED)
         find_program(LLVM_PROFDATA_PATH llvm-profdata REQUIRED)
@@ -147,8 +146,7 @@ if(TESTS AND ENABLE_COVERAGE)
                 -format=lcov
                 -ignore-filename-regex='${CMAKE_SOURCE_DIR}/tests/.*'
                 -ignore-filename-regex='${CMAKE_SOURCE_DIR}/3party/.*'
-                -ignore-filename-regex='/usr/.*'
-                -ignore-filename-regex='/include/.*'
+                -ignore-filename-regex='.*/include/.*'
                 > ${CMAKE_BINARY_DIR}/coverage
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
             DEPENDS pre_coverage
@@ -162,8 +160,7 @@ if(TESTS AND ENABLE_COVERAGE)
                 -format=html
                 -ignore-filename-regex='${CMAKE_SOURCE_DIR}/tests/.*'
                 -ignore-filename-regex='${CMAKE_SOURCE_DIR}/3party/.*'
-                -ignore-filename-regex='/usr/.*'
-                -ignore-filename-regex='/include/.*'
+                -ignore-filename-regex='.*/include/.*'
                 --show-mcdc-summary
                 --show-mcdc
                 -show-instantiation-summary
