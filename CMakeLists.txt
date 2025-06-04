@@ -89,6 +89,10 @@ if(TESTS AND ENABLE_COVERAGE)
                 --exclude '${CMAKE_SOURCE_DIR}/tests/.*'
                 --exclude '${CMAKE_SOURCE_DIR}/3party/.*'
                 --exclude '${CMAKE_BINARY_DIR}/.*'
+                --exclude '/usr/.*'
+                --exclude '[A-Z]:/msys64/.*'
+                --exclude '[A-Z]:/mingw64/.*'
+                --exclude '.*/include/c++/.*'
                 --gcov-executable ${GCOV_PATH}
                 --delete
                 --exclude-function-lines
