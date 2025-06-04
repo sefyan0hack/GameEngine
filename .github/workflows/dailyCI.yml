@@ -70,8 +70,11 @@ jobs:
       - name: Upload to Codecov
         uses: codecov/codecov-action@v5
         with:
+          fail_ci_if_error: true 
           token: ${{ secrets.CODECOV_TOKEN }}
           files: build/coverage
+          flags: unit_tests
+          verbose: true
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
