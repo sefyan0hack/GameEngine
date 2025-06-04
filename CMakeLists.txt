@@ -124,18 +124,18 @@ if(TESTS AND ENABLE_COVERAGE)
     elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         
         add_link_options(-fprofile-instr-generate)
+        add_compile_options(-Wno-unsupported-mcdc)
         
         # find_program(LCOV_PATH lcov REQUIRED)
         find_program(LLVM_PROFDATA_PATH llvm-profdata REQUIRED)
         find_program(LLVM_COV_PATH llvm-cov REQUIRED)
 
-        set(ENV{LLVM_PROFILE_FILE} "default.profraw")
 
         add_custom_target(pre_coverage
             COMMAND ${LLVM_COV_PATH} --version
             COMMAND ${CMAKE_COMMAND} -E remove "default.profraw"
             COMMAND ${CMAKE_COMMAND} -E remove "coverage.profdata"
-            COMMAND $<TARGET_FILE:unit_tests>
+            COMMAND ${CMAKE_COMMAND} -E env "LLVM_PROFILE_FILE=default.profraw" $<TARGET_FILE:unit_tests>
             COMMAND ${LLVM_PROFDATA_PATH} merge -sparse default.profraw -o coverage.profdata
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
             DEPENDS core unit_tests
@@ -147,6 +147,8 @@ if(TESTS AND ENABLE_COVERAGE)
                 -format=lcov
                 -ignore-filename-regex='${CMAKE_SOURCE_DIR}/tests/.*'
                 -ignore-filename-regex='${CMAKE_SOURCE_DIR}/3party/.*'
+                -ignore-filename-regex='/usr/.*'
+                -ignore-filename-regex='/include/.*'
                 > ${CMAKE_BINARY_DIR}/coverage
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
             DEPENDS pre_coverage
@@ -160,6 +162,8 @@ if(TESTS AND ENABLE_COVERAGE)
                 -format=html
                 -ignore-filename-regex='${CMAKE_SOURCE_DIR}/tests/.*'
                 -ignore-filename-regex='${CMAKE_SOURCE_DIR}/3party/.*'
+                -ignore-filename-regex='/usr/.*'
+                -ignore-filename-regex='/include/.*'
                 --show-mcdc-summary
                 --show-mcdc
                 -show-instantiation-summary
