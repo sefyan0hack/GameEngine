@@ -108,7 +108,7 @@ if(TESTS AND ENABLE_COVERAGE)
             add_custom_target(pre_coverage
                 COMMAND ${GCOVR_PATH} --version
                 COMMAND ${GCOV_PATH} --version
-                COMMAND $<TARGET_FILE:unit_tests>
+                COMMAND ${CMAKE_COMMAND} -E env "TESTING_ENABLED=1"  $<TARGET_FILE:unit_tests>
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                 DEPENDS core unit_tests
             )
@@ -139,7 +139,7 @@ if(TESTS AND ENABLE_COVERAGE)
             COMMAND ${LLVM_COV_PATH} --version
             COMMAND ${CMAKE_COMMAND} -E remove "default.profraw"
             COMMAND ${CMAKE_COMMAND} -E remove "coverage.profdata"
-            COMMAND ${CMAKE_COMMAND} -E env "LLVM_PROFILE_FILE=default.profraw" $<TARGET_FILE:unit_tests>
+            COMMAND ${CMAKE_COMMAND} -E env "LLVM_PROFILE_FILE=default.profraw" "TESTING_ENABLED=1" $<TARGET_FILE:unit_tests>
             COMMAND ${LLVM_PROFDATA_PATH} merge -sparse default.profraw -o coverage.profdata
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
             DEPENDS core unit_tests
@@ -419,7 +419,6 @@ add_compile_definitions(
 if(TESTS)
     message(STATUS "[Tests `ON`]")
     enable_testing()
-    add_definitions(-DTESTING)
     add_subdirectory(tests/unit)
 endif()
 

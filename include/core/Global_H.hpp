@@ -39,11 +39,7 @@
     #error "no opengl lib path"
 #endif
 
-#ifdef TESTING
 #define FOR_TEST public: template<unsigned short n> struct Test;
-#else
-#define FOR_TEST
-#endif
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 #   define WINDOWS_PLT

@@ -115,22 +115,24 @@ auto Log_msg(
   
   return msg.str();
 }
+
 template <Log_LvL lvl, StreamOut Out, typename ...Ts>
 auto Log(
   [[maybe_unused]] const std::source_location loc,
   [[maybe_unused]] const std::format_string<Ts...>& fmt,
   [[maybe_unused]] Ts&& ... ts) -> void
 {
-  auto& out = Out::get_stream();
-  auto msg = Log_msg<lvl>(loc, fmt, std::forward<Ts>(ts)...);
+  auto Is_Testing_Enabled = std::getenv("TESTING_ENABLED");
+
+  [[maybe_unused]] auto& out = Out::get_stream();
+  [[maybe_unused]] auto msg = Log_msg<lvl>(loc, fmt, std::forward<Ts>(ts)...);
+  
+  if(Is_Testing_Enabled == nullptr){
+    out << msg;
+  }
   
   if constexpr (lvl == Log_LvL::ERR || lvl == Log_LvL::EXPT){
-    #ifndef DEBUG
-    out << msg;
-    #endif
     throw std::runtime_error(msg);
-  }else{
-    out << msg;
   }
 }
 
