@@ -86,8 +86,9 @@ if(TESTS AND ENABLE_COVERAGE)
         if(GCOVR_PATH)
             set(COMMEN_GCOVR_FLAGS
                 --root ${CMAKE_SOURCE_DIR}
-                --exclude '${CMAKE_SOURCE_DIR}/tests/'
-                --exclude '${CMAKE_SOURCE_DIR}/3party/'
+                --exclude '${CMAKE_SOURCE_DIR}/tests/.*'
+                --exclude '${CMAKE_SOURCE_DIR}/3party/.*'
+                --exclude '${CMAKE_BINARY_DIR}/.*'
                 --gcov-executable ${GCOV_PATH}
                 --delete
                 --exclude-function-lines

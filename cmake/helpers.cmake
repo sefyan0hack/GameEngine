@@ -121,20 +121,20 @@ function(apply_coverage_options)
             set(target ${original_target})
         endif()
         
-        if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-        target_compile_options(${target} PRIVATE
-            "$<$<BOOL:${ENABLE_COVERAGE}>:-fprofile-instr-generate>"
-            "$<$<BOOL:${ENABLE_COVERAGE}>:-fcoverage-mapping>"
-            "$<$<BOOL:${ENABLE_COVERAGE}>:-fcoverage-mcdc>"
-        )
-        endif()
-
-        if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-        target_compile_options(${target} PRIVATE
-            "$<$<BOOL:${ENABLE_COVERAGE}>:--coverage>"
-            "$<$<BOOL:${ENABLE_COVERAGE}>:-fno-omit-frame-pointer>"
-            "$<$<BOOL:${ENABLE_COVERAGE}>:-fno-inline>"
-        )
+        if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+            target_compile_options(${target} PRIVATE
+                "$<$<BOOL:${ENABLE_COVERAGE}>:-fprofile-instr-generate>"
+                "$<$<BOOL:${ENABLE_COVERAGE}>:-fcoverage-mapping>"
+                "$<$<BOOL:${ENABLE_COVERAGE}>:-fcoverage-mcdc>"
+            )
+        elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            target_compile_options(${target} PRIVATE
+                "$<$<BOOL:${ENABLE_COVERAGE}>:--coverage>"
+                "$<$<BOOL:${ENABLE_COVERAGE}>:-fprofile-arcs>"
+                "$<$<BOOL:${ENABLE_COVERAGE}>:-ftest-coverage>"
+                "$<$<BOOL:${ENABLE_COVERAGE}>:-fno-omit-frame-pointer>"
+                "$<$<BOOL:${ENABLE_COVERAGE}>:-fno-inline>"
+            )
         endif()
     endforeach()
 endfunction()
