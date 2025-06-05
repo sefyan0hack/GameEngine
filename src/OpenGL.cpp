@@ -286,7 +286,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
         OpenGL::name = Function<type>{};\
         OpenGL::name.m_Func = reinterpret_cast<type>(resolve_opengl_fn("gl"#name));\
         OpenGL::name.m_After = []([[maybe_unused]] std::string info) { GLenum err = glGetError(); if(err != GL_NO_ERROR) Info("{}", info); };\
-        OpenGL::name.m_Name = "gl"#name;
+        OpenGL::name.m_Name = "gl"#name
     #else
     #   define RESOLVEGL(type, name)\
         OpenGL::name = reinterpret_cast<type>(resolve_opengl_fn("gl"#name))

@@ -102,10 +102,10 @@ class OpenGL
         #undef GLFUN
         #ifdef DEBUG
         #   define GLFUN(type, name)\
-            inline static Function<type> name;
+            inline static Function<type> name
         #else
         #   define GLFUN(type, name)\
-            inline static type name = Function<type>::default_;
+            inline static type name = Function<type>::default_
         #endif
         GLFUNCS(GLFUN)
 
@@ -115,10 +115,10 @@ class OpenGL
 #undef GLFUN
 #ifdef DEBUG
 #   define GLFUN(type, name)\
-inline Function<type>& name = OpenGL::name;
+inline Function<type>& name = OpenGL::name
 #else
 #   define GLFUN(type, name)\
-inline type& name = OpenGL::name;
+inline type& name = OpenGL::name
 #endif
 
 GLFUNCS(GLFUN)
