@@ -267,7 +267,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     , m_Minor(0)
     , m_CreationTime(std::time(nullptr))
     , m_Debug(false)
-    , m_ThreadId(std::this_thread::get_id())
+    , m_ThreadId(std::hash<std::thread::id>{}(std::this_thread::get_id()))
 {
     #if defined(WINDOWS_PLT)
     init_opengl_win32();
@@ -516,7 +516,7 @@ auto OpenGL::MaxTextureUnits() -> GLint
     return m_MaxTextureUnits;
 }
 
-auto OpenGL::ThreadId() const -> std::thread::id
+auto OpenGL::ThreadId() const -> size_t
 {
     CheckThread();
     return m_ThreadId;
@@ -524,8 +524,8 @@ auto OpenGL::ThreadId() const -> std::thread::id
 
 auto OpenGL::CheckThread() const -> void
 {
-    auto id = std::this_thread::get_id();
-    if ( std::this_thread::get_id() != m_ThreadId) {
+    auto id = std::hash<std::thread::id>{}(std::this_thread::get_id());
+    if ( id != m_ThreadId) {
         Error("OpenGL context used in wrong thread! . Expected id: {} Vs Geted: {}", m_ThreadId, id);
     }
 }
