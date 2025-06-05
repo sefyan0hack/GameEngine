@@ -19,8 +19,8 @@ jobs:
         exclude:
           - os: ubuntu-latest
             compiler: msvc
-          - os: ubuntu-11-arm
-            compiler: [msvc, gcc]
+          - os: ubuntu-22.04-arm
+            compiler: msvc
           - os: windows-11-arm
             compiler: gcc
 
