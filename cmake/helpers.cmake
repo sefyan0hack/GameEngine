@@ -200,9 +200,15 @@ function(apply_harden_options)
             endif()
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
             if(NOT WIN32)
+                if(COMPILER_MAJOR_VERSION STREQUAL "14")
+                    target_compile_options(${target} PRIVATE
+                        "$<$<BOOL:${HARDEN}>:-fhardened>"
+                    )
+                endif()
                 target_compile_options(${target} PRIVATE
-                    "$<$<BOOL:${HARDEN}>:-fhardened>"
                     "$<$<BOOL:${HARDEN}>:-Wno-hardened>"
+                    "$<$<BOOL:${HARDEN}>:-fharden-compares>"
+                    "$<$<BOOL:${HARDEN}>:-fharden-conditional-branches>"
                 )
             endif()
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
