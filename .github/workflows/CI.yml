@@ -17,9 +17,11 @@ jobs:
         compiler: [llvm, msvc, gcc]
         build_type: [Debug, Release]
         exclude:
-          - os: [ubuntu-latest, ubuntu-22.04-arm]
+          - os: ubuntu-latest
             compiler: msvc
-          - os: [windows-11-arm, ubuntu-22.04-arm]
+          - os: ubuntu-11-arm
+            compiler: [msvc, gcc]
+          - os: windows-11-arm
             compiler: gcc
 
     env:
