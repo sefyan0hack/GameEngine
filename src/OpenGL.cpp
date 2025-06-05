@@ -289,7 +289,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
         OpenGL::name.m_Name = "gl"#name;
     #else
     #   define RESOLVEGL(type, name)\
-        OpenGL::name = reinterpret_cast<type>(resolve_opengl_fn(gl##name))
+        OpenGL::name = reinterpret_cast<type>(resolve_opengl_fn("gl"#name))
     #endif
 
 	GLFUNCS(RESOLVEGL)
