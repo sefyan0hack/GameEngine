@@ -158,24 +158,25 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
     gl::TexParameteri(m_Type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     gl::TexParameteri(m_Type, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-    for (auto [face, dataface, i] : std::views::zip(faces, m_Data, std::views::iota(0)))
-    {
+    for (size_t i = 0; i < faces.size(); ++i) {
+        const auto& face = faces[i];
 
-        if (auto result = load_img(face.c_str(), false); result)
-        {
+        if (auto result = load_img(face.c_str(), false); result) {
             auto [Width, Height, Channel, Data] = result.value();
+            
+            std::vector<GLubyte> DataFace = ubyte_to_vector(Data, Width * Height * Channel);
 
             m_Width = Width;
             m_Height = Height;
-            dataface = ubyte_to_vector(Data, Width * Height * Channel);
-
+            m_Data[i] = DataFace;
+    
             GLenum format = Channel == 1 ? GL_RED : Channel == 3 ? GL_RGB : GL_RGBA;
             
             GLint rowBytes = Width * Channel;
             GLint alignment = (rowBytes % 8 == 0)? 8 : (rowBytes % 4 == 0)? 4 : (rowBytes % 2 == 0)? 2 : 1;
             gl::PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
 
-            gl::TexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, static_cast<GLint>(format), m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, dataface.data());
+            gl::TexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, static_cast<GLint>(format), m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, DataFace.data());
 
             Info("Loding {} ", face);
         }else{
