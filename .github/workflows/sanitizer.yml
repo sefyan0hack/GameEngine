@@ -3,7 +3,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  linux_sanitizers:
+  sanitizers:
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
