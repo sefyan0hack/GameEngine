@@ -13,19 +13,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        os: [windows-latest, windows-11-arm, ubuntu-latest,  ubuntu-22.04-arm]
+        compiler: [llvm, msvc, gcc]
         build_type: [Debug, Release]
-        include:
-          - os: windows-latest
-            compiler: [llvm, msvc, gcc]
-
-          - os: windows-11-arm
-            compiler: [llvm, msvc]
-
+        exclude:
           - os: ubuntu-latest
-            compiler: [llvm, gcc]
-
+            compiler: msvc
           - os: ubuntu-22.04-arm
-            compiler: [llvm, gcc]
+            compiler: msvc
+          - os: windows-11-arm
+            compiler: gcc
 
     env:
       TEST_TIMEOUT: 60
