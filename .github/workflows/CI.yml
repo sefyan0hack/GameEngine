@@ -13,14 +13,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, windows-11-arm, ubuntu-latest]
-        compiler: [llvm, msvc, gcc]
+        os: [windows-latest, windows-11-arm, ubuntu-latest,  ubuntu-22.04-arm]
+        compiler: [llvm, msvc, gcc-14]
         build_type: [Debug, Release]
         exclude:
           - os: ubuntu-latest
             compiler: msvc
-          - os: windows-11-arm
-            compiler: gcc
+
     env:
       TEST_TIMEOUT: 60
       BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
