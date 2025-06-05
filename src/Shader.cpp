@@ -1,4 +1,4 @@
-#include <core/gl.h>
+#include <core/OpenGL.hpp>
 #include <core/Log.hpp>
 #include <core/OpenGL.hpp>
 #include <core/Shader.hpp>
@@ -27,7 +27,7 @@ Shader::Shader()
 }
 
 Shader::Shader(const char* name, GLenum type)
-: m_Id(glCreateShader(type)), m_Type(type), m_Content(LoadFile(name))
+: m_Id(gl::CreateShader(type)), m_Type(type), m_Content(LoadFile(name))
 {
     LoadSource();
     Compile(m_Id);
@@ -36,7 +36,7 @@ Shader::Shader(const char* name, GLenum type)
 }
 
 Shader::Shader(const Shader& other)
-    : m_Id(glCreateShader(other.m_Type))
+    : m_Id(gl::CreateShader(other.m_Type))
     , m_Type(other.m_Type)
     , m_Content(other.m_Content)
 {
@@ -57,7 +57,7 @@ Shader::Shader(Shader&& other) noexcept
 Shader &Shader::operator=(const Shader& other)
 {
     if(*this != other){
-        this->m_Id = glCreateShader(other.m_Type);
+        this->m_Id = gl::CreateShader(other.m_Type);
         this->m_Type = other.m_Type;
         this->m_Content = other.m_Content;
         
@@ -74,21 +74,21 @@ bool Shader::operator==(const Shader &other)
 }
 Shader::~Shader()
 {
-    // if(glIsShader(id) == GL_TRUE) glDeleteShader(id);
+    // if(gl::IsShader(id) == GL_TRUE) gl::DeleteShader(id);
 }
 
 auto Shader::LoadSource() -> void
 {
     const auto ShaderSource = this->m_Content.data();
     const auto size = static_cast<GLint>(this->m_Content.size());
-    glShaderSource(m_Id, 1, &ShaderSource, &size);
+    gl::ShaderSource(m_Id, 1, &ShaderSource, &size);
 }
 
 auto Shader::LoadSource(const std::vector<GLchar>& src, GLuint shader) -> void
 {
     const auto ShaderSource = src.data();
     const auto size = static_cast<GLint>(src.size());
-    glShaderSource(shader, 1, &ShaderSource, &size);
+    gl::ShaderSource(shader, 1, &ShaderSource, &size);
 }
 
 auto Shader::LoadFile(const char* filename) -> std::vector<GLchar>
@@ -116,18 +116,18 @@ auto Shader::LoadFile(const char* filename) -> std::vector<GLchar>
 
 auto Shader::Compile(GLuint shader) -> void
 {
-    glCompileShader(shader);
+    gl::CompileShader(shader);
 }
 
 auto Shader::checkShaderCompileStatus(const GLuint &shader) -> void
 {
     GLint success = 0;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    gl::GetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success) {
         GLchar infoLog[512];
         std::memset(infoLog, '\0', 512);
-        glGetShaderInfoLog(shader, 512, NULL, infoLog);
-        glDeleteShader(shader);
+        gl::GetShaderInfoLog(shader, 512, NULL, infoLog);
+        gl::DeleteShader(shader);
         Error("SHADER::COMPILATION_FAILED {}", infoLog);
     }
 }

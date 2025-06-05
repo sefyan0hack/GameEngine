@@ -2,6 +2,8 @@
 
 #include <core/gl.h>
 
+namespace gl {
+
 constexpr const char* OPENGL_MODULE_NAME {OPENGL_LIB};
 
 class OpenGL
@@ -96,6 +98,29 @@ class OpenGL
             GLX_DEPTH_SIZE		            = 12,
             #endif 
         };
-        
+    public:
+        #undef GLFUN
+        #ifdef DEBUG
+        #   define GLFUN(type, name)\
+            inline static Function<type> name;
+        #else
+        #   define GLFUN(type, name)\
+            inline static type name = Function<type>::default_;
+        #endif
+        GLFUNCS(GLFUN)
+
         FOR_TEST
 };
+
+#undef GLFUN
+#ifdef DEBUG
+#   define GLFUN(type, name)\
+inline Function<type>& name = OpenGL::name;
+#else
+#   define GLFUN(type, name)\
+inline type& name = OpenGL::name;
+#endif
+
+GLFUNCS(GLFUN)
+
+} //namespace gl

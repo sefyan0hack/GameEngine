@@ -54,7 +54,7 @@ Texture::Texture(GLenum texType)
     , m_Height(1)
     , m_TextureUnit(m_TextureUnitCount++)
 {
-    glGenTextures(1, &m_Id);
+    gl::GenTextures(1, &m_Id);
     Bind();
 }
 
@@ -65,13 +65,13 @@ auto Texture::id() const -> GLuint
 
 auto Texture::Bind() const -> void
 {
-    glActiveTexture(static_cast<GLenum>(GL_TEXTURE0 + m_TextureUnit));
-    glBindTexture(m_Type, m_Id);
+    gl::ActiveTexture(static_cast<GLenum>(GL_TEXTURE0 + m_TextureUnit));
+    gl::BindTexture(m_Type, m_Id);
 }
 
 auto Texture::UnBind() const -> void
 {
-    glBindTexture(m_Type, 0);
+    gl::BindTexture(m_Type, 0);
 }
 
 
@@ -103,10 +103,10 @@ Texture2D::Texture2D(const std::string &name)
     : Texture(GL_TEXTURE_2D), m_Mipmapped(true)
 {
 
-    glTexParameteri(m_Type, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(m_Type, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(m_Type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(m_Type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    gl::TexParameteri(m_Type, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    gl::TexParameteri(m_Type, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    gl::TexParameteri(m_Type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    gl::TexParameteri(m_Type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     
     if (auto result = load_img(name.c_str()); result)
@@ -117,9 +117,9 @@ Texture2D::Texture2D(const std::string &name)
         m_Data = ubyte_to_vector(Data, Width * Height * Channel);
         GLenum format = Channel == 1 ? GL_RED : Channel == 3 ? GL_RGB : GL_RGBA;
         if(is_odd(m_Width)){
-            glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+            gl::PixelStorei(GL_UNPACK_ALIGNMENT, 1);
         }
-        glTexImage2D(m_Type, 0, static_cast<GLint>(format), m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, m_Data.data());
+        gl::TexImage2D(m_Type, 0, static_cast<GLint>(format), m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, m_Data.data());
 
         if (m_Mipmapped) GenerateMipMap();
 
@@ -127,9 +127,9 @@ Texture2D::Texture2D(const std::string &name)
     }
     else
     {
-        glTexStorage2D(m_Type, 1, GL_RGB32F, m_Width, m_Height);
+        gl::TexStorage2D(m_Type, 1, GL_RGB32F, m_Width, m_Height);
         GLfloat clearColor[3] = { 1.0f, 0.0f, 1.0f};
-        glClearTexImage(m_Id, 0, GL_RGB, GL_FLOAT, clearColor); 
+        gl::ClearTexImage(m_Id, 0, GL_RGB, GL_FLOAT, clearColor); 
 
         Info("{}", std::format("failed to load {} : {}", name, stbi_failure_reason()));
     }
@@ -139,7 +139,7 @@ Texture2D::Texture2D(const std::string &name)
 
 auto Texture2D::GenerateMipMap() -> void
 {
-    glGenerateMipmap(m_Type);
+    gl::GenerateMipmap(m_Type);
 }
 
 auto Texture2D::isMipMapped() const -> GLboolean
@@ -152,11 +152,11 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
     : Texture(GL_TEXTURE_CUBE_MAP)
 {
 
-    glTexParameteri(m_Type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(m_Type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(m_Type, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(m_Type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(m_Type, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    gl::TexParameteri(m_Type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    gl::TexParameteri(m_Type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    gl::TexParameteri(m_Type, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    gl::TexParameteri(m_Type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    gl::TexParameteri(m_Type, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
     for (auto [face, dataface, i] : std::views::zip(faces, m_Data, std::views::iota(0)))
     {
@@ -173,15 +173,15 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
             
             GLint rowBytes = Width * Channel;
             GLint alignment = (rowBytes % 8 == 0)? 8 : (rowBytes % 4 == 0)? 4 : (rowBytes % 2 == 0)? 2 : 1;
-            glPixelStorei(GL_UNPACK_ALIGNMENT, alignment);
+            gl::PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
 
-            glTexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, static_cast<GLint>(format), m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, dataface.data());
+            gl::TexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, static_cast<GLint>(format), m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, dataface.data());
 
             Info("Loding {} ", face);
         }else{
             Error("{}", std::format("failed to load {} : {}", face, stbi_failure_reason()));
         }
     }
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+    gl::PixelStorei(GL_UNPACK_ALIGNMENT, 4);
     Info("{}", static_cast<const Texture&>(*this));
 }

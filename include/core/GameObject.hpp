@@ -6,6 +6,7 @@
 #include <core/fmts.hpp>
 #include <core/AutoRelease.hpp>
 #include <core/Camera.hpp>
+#include <core/OpenGL.hpp>
 
 
 class GameObject {
@@ -70,15 +71,15 @@ public:
     auto mesh = m_skybox.mesh();
     auto TextureUnit = mat->texture()->TextureUnit();
     
-    glDepthFunc(GL_LEQUAL);
+    gl::DepthFunc(GL_LEQUAL);
     mat->Use();
     mat->SetUniform("View", glm::mat4(glm::mat3(camera.View())));
     mat->SetUniform("Perspective", camera.Perspective());
     mat->SetUniform("albedo", TextureUnit);
     mesh->Bind();
-    glDrawArrays(GL_TRIANGLES, 0, mesh->VextexSize());
+    gl::DrawArrays(GL_TRIANGLES, 0, mesh->VextexSize());
     mesh->DisableAttribs();
-    glDepthFunc(GL_LESS);
+    gl::DepthFunc(GL_LESS);
   }
   auto gameObject() const -> const GameObject&
   {

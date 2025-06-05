@@ -1,6 +1,6 @@
 #include <core/Camera.hpp>
 #include <core/Log.hpp>
-#include <core/gl.h>
+#include <core/OpenGL.hpp>
 #include <core/Window.hpp>
 
 #define GLM_ENABLE_EXPERIMENTAL
@@ -15,8 +15,6 @@ Camera::Camera()
     , m_Sensitivity(0.11f)
     , m_Yaw(-90), m_Pitch(0)
 {
-
-    
 }
 
 Camera::Camera(CWindow &window) : Camera()
@@ -81,7 +79,7 @@ auto Camera::MoveLeft(float speed) -> void
 
 auto Camera::EnableMSAA() -> void
 {
-    glEnable(GL_MULTISAMPLE);
+    gl::Enable(GL_MULTISAMPLE);
 }
 
 auto Camera::UpdateVectors() -> void

@@ -155,9 +155,9 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vect
         if(vertices.size() != indices.size()){
             ERR("vert size != indces size");
         }
-        glGenBuffers(1, &EBO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
+        gl::GenBuffers(1, &EBO);
+        gl::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        gl::BufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
 #endif
 
     PrepareVertexdata();
@@ -170,9 +170,9 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vect
 Mesh::~Mesh()
 {
     Count--;
-    if(glIsBuffer(EBO) == GL_TRUE) glDeleteBuffers(1, &EBO);
-    if(glIsBuffer(VBO) == GL_TRUE) glDeleteBuffers(1, &VBO);
-    if(glIsVertexArray(VAO) == GL_TRUE) glDeleteVertexArrays(1, &VAO);
+    if(gl::IsBuffer(EBO) == GL_TRUE) gl::DeleteBuffers(1, &EBO);
+    if(gl::IsBuffer(VBO) == GL_TRUE) gl::DeleteBuffers(1, &VBO);
+    if(gl::IsVertexArray(VAO) == GL_TRUE) gl::DeleteVertexArrays(1, &VAO);
 }
 
 Mesh::Mesh(const Mesh& other)
@@ -235,41 +235,41 @@ auto Mesh::operator==(const Mesh &other) const -> bool
 // auto Mesh::CloneVAO(GLuint src) -> GLuint
 // {
 //     GLuint clone = 0;
-//     glGenVertexArrays(1, &clone);
+//     gl::GenVertexArrays(1, &clone);
 //     if(clone == 0) Error("clone is 0");
     
 //     GLint maxAttributes = 0;
-//     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxAttributes);
+//     gl::GetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxAttributes);
 
 //     if(attribs.size() >= maxAttributes) Error("attribs reched max `{}`", maxAttributes);
 
-//     // glBindVertexArray(src);
+//     // gl::BindVertexArray(src);
 
 //     // std::vector<AttributeInfo> attributes(attribs);
 //     // for (GLuint atrInd = 0; atrInd < attribs; ++atrInd)
 //     // {
-//     //     glGetVertexAttribiv(atrInd, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &attributes[atrInd].enabled);
+//     //     gl::GetVertexAttribiv(atrInd, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &attributes[atrInd].enabled);
 
 //     //     if(attributes[atrInd].enabled){
-//     //         glGetVertexAttribiv(atrInd, GL_VERTEX_ATTRIB_ARRAY_SIZE, &attributes[atrInd].size);
-//     //         glGetVertexAttribiv(atrInd, GL_VERTEX_ATTRIB_ARRAY_TYPE, (GLint*)&attributes[atrInd].type);
-//     //         glGetVertexAttribiv(atrInd, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, (GLint*)&attributes[atrInd].normalized);
-//     //         glGetVertexAttribiv(atrInd, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &attributes[atrInd].stride);
-//     //         glGetVertexAttribiv(atrInd, GL_VERTEX_ATTRIB_ARRAY_DIVISOR, &attributes[atrInd].divisor);
-//     //         glGetVertexAttribPointerv(atrInd, GL_VERTEX_ATTRIB_ARRAY_POINTER, &attributes[atrInd].offset);
+//     //         gl::GetVertexAttribiv(atrInd, GL_VERTEX_ATTRIB_ARRAY_SIZE, &attributes[atrInd].size);
+//     //         gl::GetVertexAttribiv(atrInd, GL_VERTEX_ATTRIB_ARRAY_TYPE, (GLint*)&attributes[atrInd].type);
+//     //         gl::GetVertexAttribiv(atrInd, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, (GLint*)&attributes[atrInd].normalized);
+//     //         gl::GetVertexAttribiv(atrInd, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &attributes[atrInd].stride);
+//     //         gl::GetVertexAttribiv(atrInd, GL_VERTEX_ATTRIB_ARRAY_DIVISOR, &attributes[atrInd].divisor);
+//     //         gl::GetVertexAttribPointerv(atrInd, GL_VERTEX_ATTRIB_ARRAY_POINTER, &attributes[atrInd].offset);
 //     //     }
 //     // }
 
-//     Expect(glIsBuffer(this->VBO) == GL_TRUE, "{} is not valid buffer", this->VBO);
+//     Expect(gl::IsBuffer(this->VBO) == GL_TRUE, "{} is not valid buffer", this->VBO);
 
-//     glBindVertexArray(clone);
-//     glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+//     gl::BindVertexArray(clone);
+//     gl::BindBuffer(GL_ARRAY_BUFFER, this->VBO);
 //     for (auto atrb : attribs)
 //     {
 //         setAttribute(atrb);
 //     }
-//     // glBindVertexArray(0);
-//     // glBindBuffer(GL_ARRAY_BUFFER, 0);
+//     // gl::BindVertexArray(0);
+//     // gl::BindBuffer(GL_ARRAY_BUFFER, 0);
 
 //     return clone;
 // }
@@ -281,15 +281,15 @@ auto Mesh::CloneBuffer(GLenum type, GLuint src) -> GLuint
     BindBuffer(type, src);
     
     GLint bufferSize = 0, usage = 0;
-    glGetBufferParameteriv(type, GL_BUFFER_SIZE, &bufferSize);
-    glGetBufferParameteriv(type, GL_BUFFER_USAGE, &usage);
+    gl::GetBufferParameteriv(type, GL_BUFFER_SIZE, &bufferSize);
+    gl::GetBufferParameteriv(type, GL_BUFFER_USAGE, &usage);
     
     if (bufferSize > 0) {
         BindBuffer(GL_COPY_WRITE_BUFFER, clone);
-        glBufferData(GL_COPY_WRITE_BUFFER, bufferSize, nullptr, static_cast<GLenum>(usage));
-        glCopyBufferSubData(type, GL_COPY_WRITE_BUFFER, 0, 0, bufferSize);
+        gl::BufferData(GL_COPY_WRITE_BUFFER, bufferSize, nullptr, static_cast<GLenum>(usage));
+        gl::CopyBufferSubData(type, GL_COPY_WRITE_BUFFER, 0, 0, bufferSize);
     } else {
-        glDeleteBuffers(1, &clone);
+        gl::DeleteBuffers(1, &clone);
         Error("VBO bufferSize is 0");
     }
 
@@ -323,7 +323,7 @@ auto Mesh::setAttribute(GLuint index, AttributeInfo att) -> void
         att.offset
     );
 
-    glVertexAttribPointer(
+    gl::VertexAttribPointer(
         index,
         att.size,
         att.type,
@@ -332,7 +332,7 @@ auto Mesh::setAttribute(GLuint index, AttributeInfo att) -> void
         reinterpret_cast<GLvoid*>(att.offset)
     );
 
-    glVertexAttribDivisor(index, static_cast<GLuint>(att.divisor));
+    gl::VertexAttribDivisor(index, static_cast<GLuint>(att.divisor));
 }
 
 auto Mesh::PrepareAttribs() ->void
@@ -357,14 +357,14 @@ auto Mesh::EnableAttribs() const -> void
 
     if(currentVAO == VAO){
         for(GLuint i = 0; i < attribs.size(); i++){
-            glEnableVertexAttribArray(i);
+            gl::EnableVertexAttribArray(i);
         }
     }else{   
         BindVertexArray(VAO);
         BindVertexBuffer(VBO);
         
         for(GLuint i = 0; i < attribs.size(); i++){
-            glEnableVertexAttribArray(i);
+            gl::EnableVertexAttribArray(i);
         }
         
         BindVertexBuffer(currentVBO);
@@ -380,7 +380,7 @@ auto Mesh::DisableAttribs() const -> void
     BindVertexArray(VAO);
     BindVertexBuffer(VBO);
     for(GLuint i = 0; i < attribs.size(); i++){
-        glDisableVertexAttribArray(i);
+        gl::DisableVertexAttribArray(i);
     }
     BindVertexBuffer(currentVBO);
     BindVertexArray(currentVAO);
@@ -389,14 +389,14 @@ auto Mesh::DisableAttribs() const -> void
 auto Mesh::CurrentVAO() -> GLuint
 {
     GLint currentVAO = 0;
-    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
+    gl::GetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
     return static_cast<GLuint>(currentVAO);
 }
 
 auto Mesh::CurrentVBO() -> GLuint
 {
     GLint currentVBO = 0;
-    glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &currentVBO);
+    gl::GetIntegerv(GL_ARRAY_BUFFER_BINDING, &currentVBO);
     return static_cast<GLuint>(currentVBO);
 }
 
@@ -404,14 +404,14 @@ auto Mesh::Updata(GLuint buffer, const std::vector<VetexData>& vrtx) -> void
 {
     auto currentVBO = CurrentVBO();
     BindVertexBuffer(buffer);
-    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(vrtx.size() * sizeof(Mesh::VetexData)), vrtx.data(), GL_STATIC_DRAW);
+    gl::BufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(vrtx.size() * sizeof(Mesh::VetexData)), vrtx.data(), GL_STATIC_DRAW);
     BindVertexBuffer(currentVBO);
 }
 
 auto Mesh::GenVertexArray() -> GLuint
 {
     GLuint result = 0;
-    glGenVertexArrays(1, &result);
+    gl::GenVertexArrays(1, &result);
     Info("GenVertexArray {}", result);
     return result;
 }
@@ -419,18 +419,18 @@ auto Mesh::GenVertexArray() -> GLuint
 auto Mesh::GenBuffer() -> GLuint
 {
     GLuint result = 0;
-    glGenBuffers(1, &result);
+    gl::GenBuffers(1, &result);
     Info("GenBuffer {}", result);
     return result;
 }
 auto Mesh::BindVertexArray(GLuint vao) -> void
 {
-    glBindVertexArray(vao);
+    gl::BindVertexArray(vao);
 }
 
 auto Mesh::BindBuffer(GLenum type, GLuint buffer) -> void
 {
-    glBindBuffer(type, buffer);
+    gl::BindBuffer(type, buffer);
 }
 
 auto Mesh::BindVertexBuffer(GLuint buffer) -> void

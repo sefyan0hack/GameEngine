@@ -1,7 +1,7 @@
 #pragma once
 
 #include <core/OpenGL.hpp>
-#include <core/gl.h>
+#include <core/OpenGL.hpp>
 #include <core/Keyboard.hpp>
 #include <core/Mouse.hpp>
 
@@ -49,7 +49,7 @@ class CWindow
         auto DrawContext() const         -> HDC_D ;
         auto Width() const       -> int ;
         auto Height() const      -> int ;
-        auto opengl() const          -> std::shared_ptr<OpenGL> ;
+        auto opengl() const          -> std::shared_ptr<gl::OpenGL> ;
         auto Visible() const        -> bool ;
         auto Show()                 -> void;
         auto Hide()                 -> void;
@@ -70,7 +70,7 @@ class CWindow
         int m_Height;
         bool m_Visible;
         std::vector<std::byte> m_RawBuffer;
-        std::shared_ptr<OpenGL> m_OpenGl;
+        std::shared_ptr<gl::OpenGL> m_OpenGl;
         int m_refCount;
     public:
         std::shared_ptr<Keyboard> m_Keyboard;

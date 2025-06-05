@@ -1,7 +1,8 @@
 #include <core/OpenGL.hpp>
 #include <core/Log.hpp>
-#include <core/gl.h>
 #include <core/Utils.hpp>
+
+namespace gl {
 
 static std::mutex g_GetProcMutex;
 
@@ -282,25 +283,25 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
 
     #ifdef DEBUG
     #   define RESOLVEGL(type, name)\
-        name = Function<type>{};\
-        name.m_Func = reinterpret_cast<type>(resolve_opengl_fn(#name));\
-        name.m_After = []([[maybe_unused]] std::string info) { GLenum err = glGetError(); if(err != GL_NO_ERROR) Info("{}", info); };\
-        name.m_Name = #name;
+        OpenGL::name = Function<type>{};\
+        OpenGL::name.m_Func = reinterpret_cast<type>(resolve_opengl_fn("gl"#name));\
+        OpenGL::name.m_After = []([[maybe_unused]] std::string info) { GLenum err = glGetError(); if(err != GL_NO_ERROR) Info("{}", info); };\
+        OpenGL::name.m_Name = "gl"#name;
     #else
     #   define RESOLVEGL(type, name)\
-        name = reinterpret_cast<type>(resolve_opengl_fn(#name))
+        OpenGL::name = reinterpret_cast<type>(resolve_opengl_fn(gl##name))
     #endif
 
 	GLFUNCS(RESOLVEGL)
 
-    glGetIntegerv(GL_MAJOR_VERSION, &m_Major);
-    glGetIntegerv(GL_MINOR_VERSION, &m_Minor);
+    gl::GetIntegerv(GL_MAJOR_VERSION, &m_Major);
+    gl::GetIntegerv(GL_MINOR_VERSION, &m_Minor);
     GLint flags = 0;
-    glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+    gl::GetIntegerv(GL_CONTEXT_FLAGS, &flags);
     m_Debug = !!(flags & GL_CONTEXT_FLAG_DEBUG_BIT);
     
-    auto vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
-    auto renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+    auto vendor = reinterpret_cast<const char*>(gl::GetString(GL_VENDOR));
+    auto renderer = reinterpret_cast<const char*>(gl::GetString(GL_RENDERER));
     m_Vendor = vendor ? vendor : "unknown";
     m_Renderer = renderer ? renderer : "unknown";
 
@@ -313,40 +314,40 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     m_Extensions = exts ? split(exts, " ") : decltype(m_Extensions){} ;
         
     GLint nGlslv = 0;
-    glGetIntegerv(GL_NUM_SHADING_LANGUAGE_VERSIONS, &nGlslv);
+    gl::GetIntegerv(GL_NUM_SHADING_LANGUAGE_VERSIONS, &nGlslv);
 
     if(static_cast<size_t>(nGlslv) != m_GlslVersions.size()){
         for(GLint i = 0; i < nGlslv; i++){
-            auto r = reinterpret_cast<const char*>(glGetStringi(GL_SHADING_LANGUAGE_VERSION, static_cast<GLuint>(i)));
+            auto r = reinterpret_cast<const char*>(gl::GetStringi(GL_SHADING_LANGUAGE_VERSION, static_cast<GLuint>(i)));
             if(r) m_GlslVersions.push_back(r);
         }
     }
 
-    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_MaxTextureUnits);
+    gl::GetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_MaxTextureUnits);
     
 
-    // glEnable(GL_CULL_FACE);
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
+    // gl::Enable(GL_CULL_FACE);
+    gl::Enable(GL_DEPTH_TEST);
+    gl::DepthFunc(GL_LESS);
 
-    glEnable(GL_LINE_SMOOTH);
+    gl::Enable(GL_LINE_SMOOTH);
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_MULTISAMPLE);
+    gl::Enable(GL_BLEND);
+    gl::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    gl::Enable(GL_MULTISAMPLE);
  
-    glDisable(GL_CULL_FACE);
-    glFrontFace(GL_CCW);
+    gl::Disable(GL_CULL_FACE);
+    gl::FrontFace(GL_CCW);
     
-    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+    gl::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 
     #ifdef DEBUG
     if( m_Major >= 4 && m_Minor >= 3 && m_Debug){
-        glEnable(GL_DEBUG_OUTPUT);
-        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-        glDebugMessageCallback(GLDebugMessageCallback, nullptr);
-        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+        gl::Enable(GL_DEBUG_OUTPUT);
+        gl::Enable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        gl::DebugMessageCallback(GLDebugMessageCallback, nullptr);
+        gl::DebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
     }
     #endif
 
@@ -528,3 +529,5 @@ auto OpenGL::CheckThread() const -> void
         Error("OpenGL context used in wrong thread! . Expected id: {} Vs Geted: {}", m_ThreadId, id);
     }
 }
+
+} //namespace gl

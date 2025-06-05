@@ -49,14 +49,14 @@ auto GameObject::SetUp(std::vector<glm::vec3> InsPos) -> void
     auto currentVAO = Mesh::CurrentVAO();
     if(size > 1){
         GLuint VBO; // posible leak vbo think about it `TODO`
-        glGenBuffers(1, &VBO);
+        gl::GenBuffers(1, &VBO);
         
         Expect(m_Mesh->VAO != 0, "VAO is 0");
         auto currentVBO = m_Mesh->CurrentVBO();
 
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(size * sizeof(glm::vec3)), m_InstancePos.data(), GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, currentVBO);
+        gl::BindBuffer(GL_ARRAY_BUFFER, VBO);
+        gl::BufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(size * sizeof(glm::vec3)), m_InstancePos.data(), GL_STATIC_DRAW);
+        gl::BindBuffer(GL_ARRAY_BUFFER, currentVBO);
 
         AttributeInfo positions{
             VetexData::length(),
@@ -68,7 +68,7 @@ auto GameObject::SetUp(std::vector<glm::vec3> InsPos) -> void
         };
     
         m_Mesh->setAttribute(3, positions); // dnt forget  3 is the index need better way
-        glBindVertexArray(currentVAO);
+        gl::BindVertexArray(currentVAO);
     }
 }
 
@@ -132,7 +132,7 @@ auto GameObject::material() const -> std::shared_ptr<Material>
 auto GameObject::Bind() const -> void
 {
     Expect(m_Mesh->VAO != 0, "VAO is 0");
-    glBindVertexArray(m_Mesh->VAO);
+    gl::BindVertexArray(m_Mesh->VAO);
 }
 
 auto GameObject::Name() const -> std::string

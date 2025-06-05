@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <core/gl.h>
+#include <core/OpenGL.hpp>
 #include <core/fmts.hpp>
 
 

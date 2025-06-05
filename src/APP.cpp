@@ -26,13 +26,13 @@ auto APP::Run() -> void
     #if defined(WINDOWS_PLT)
     QueryPerformanceCounter((LARGE_INTEGER *)&start_count);
     QueryPerformanceFrequency((LARGE_INTEGER *)&freq);
-    glClearColor(0.2f, 0.21f, 0.22f, 1.0f);
+    gl::ClearColor(0.2f, 0.21f, 0.22f, 1.0f);
     
     while (CWindow::WindowsCount() != 0) {
         CWindow::ProcessMessages();
         auto _hdc = m_Window.opengl()->DrawContext();
-        glViewport(0, 0, m_Window.Width(), m_Window.Height());
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        gl::Viewport(0, 0, m_Window.Width(), m_Window.Height());
+        gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         Update(1/static_cast<float>(fps));
 
@@ -52,7 +52,7 @@ auto APP::Run() -> void
     struct timespec start_time, end_time;
     clock_gettime(CLOCK_MONOTONIC, &start_time);
     
-    glClearColor(0.2f, 0.21f, 0.22f, 1.0f);
+    gl::ClearColor(0.2f, 0.21f, 0.22f, 1.0f);
     
     while (CWindow::WindowsCount() != 0) {
         while (XPending(display)) {
@@ -81,8 +81,8 @@ auto APP::Run() -> void
         }
 
         // Rendering
-        glViewport(0, 0, m_Window.Width(), m_Window.Height());
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        gl::Viewport(0, 0, m_Window.Width(), m_Window.Height());
+        gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         Update(1/static_cast<float>(fps));
 

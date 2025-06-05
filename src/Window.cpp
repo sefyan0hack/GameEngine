@@ -1,6 +1,6 @@
 #include <core/Window.hpp>
 #include <core/Log.hpp>
-#include <core/gl.h>
+#include <core/OpenGL.hpp>
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>
@@ -23,7 +23,7 @@ CWindow::CWindow(int m_Width, int m_Height, const char* Title)
 	#endif
 
     S_WindowsCount++;
-    m_OpenGl = std::make_shared<OpenGL>(m_WindowHandle, m_DrawContext);
+    m_OpenGl = std::make_shared<gl::OpenGL>(m_WindowHandle, m_DrawContext);
 }
 
 CWindow::CWindow(const CWindow& other)
@@ -367,7 +367,7 @@ auto CWindow::Height() const -> int
 {
     return m_Height;
 }
-auto CWindow::opengl() const -> std::shared_ptr<OpenGL>
+auto CWindow::opengl() const -> std::shared_ptr<gl::OpenGL>
 {
 	return m_OpenGl;
 }

@@ -184,10 +184,10 @@ public:
         //     static bool flip = false;
         //     if(flip == false){
         //         flip = !flip;
-        //         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        //         gl::PolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         //     }else{
         //         flip = !flip;
-        //         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        //         gl::PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         //     }
         // }
 

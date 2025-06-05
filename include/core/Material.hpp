@@ -1,5 +1,5 @@
 #pragma once
-#include <core/gl.h>
+#include <core/OpenGL.hpp>
 #include <core/fmts.hpp>
 #include <core/Shader.hpp>
 #include <core/Texture.hpp>

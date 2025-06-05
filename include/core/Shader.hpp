@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/gl.h>
+#include <core/OpenGL.hpp>
 #include <core/fmts.hpp>
 
 class Shader

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/gl.h>
+#include <core/OpenGL.hpp>
 
 struct Image {
   GLsizei width, height, Channels;

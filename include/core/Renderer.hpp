@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/gl.h>
+#include <core/OpenGL.hpp>
 
 class Scene;
 class Camera;
