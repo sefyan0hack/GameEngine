@@ -66,7 +66,7 @@ extern "C"{
     extern GLenum glGetError();
 }
 
-#define GLFUNCS(X);\
+#define GLFUNCS(X)\
 X(PFNGLCLEARCOLORPROC, ClearColor);\
 X(PFNGLVIEWPORTPROC, Viewport);\
 X(PFNGLGENVERTEXARRAYSPROC, GenVertexArrays);\
