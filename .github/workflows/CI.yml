@@ -52,9 +52,7 @@ jobs:
 
       - name: Configure CMake
         shell: bash
-        run: |
-          rm -rf "${{ env.BUILD_DIR }}"
-          cmake -S . -B "$BUILD_DIR" -G  "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DTESTS=ON -DHARDEN=ON
+        run: cmake -S . -B "$BUILD_DIR" -G  "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DTESTS=ON -DHARDEN=ON
 
       - name: Build
         shell: bash

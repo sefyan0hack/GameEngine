@@ -161,12 +161,10 @@ function(apply_sanitizer_options)
                 target_compile_options(${target} PRIVATE -fsanitize=${SANITIZER})
             endif()
 
-            if(NOT "${SANITIZER}" STREQUAL "")
             target_link_options(${target} PRIVATE
                 "$<$<CXX_COMPILER_ID:GNU>:-static-libasan;-static-libtsan;-static-liblsan;-static-libubsan>"
                 "$<$<CXX_COMPILER_ID:Clang>:-static-libsan>"
             )
-            endif()
         endif()
     endforeach()
 endfunction()

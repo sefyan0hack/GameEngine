@@ -3,24 +3,46 @@ on:
   workflow_dispatch:
 
 jobs:
-  sanitizers:
-    runs-on: ubuntu-latest
-
+  linux_sanitizers:
     strategy:
       fail-fast: false
       matrix:
-        sanitizers: ["address", "leak", "thread", "undefined", "integer", "implicit-conversion", "nullability", "safe-stack"]
-
+        os: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, windows-11-arm]
+        compiler: [gcc, llvm, msvc]
+        sanitizers: [address, undefined]
+        exclude:
+          - os: ubuntu-latest
+            compiler: msvc
+          - os: ubuntu-22.04-arm
+            compiler: msvc
+        include:
+          - os: windows-latest
+            sanitizers: [leak, thread, integer, implicit-conversion, nullability]
+          - os: windows-11-arm
+            sanitizers: [leak, thread, integer, implicit-conversion, nullability]
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install
-        run: |
-          sudo apt-get install -y ninja-build libgl1-mesa-dev  mesa-common-dev libxi-dev libc++-18-dev libc++abi-18-dev
+      - name: Setup Cpp
+        uses: aminya/setup-cpp@v1
+        with:
+          compiler: ${{ matrix.compiler }}
+          vcvarsall: ${{ contains(matrix.os, 'windows' )}}
+          cmake: true
+          ninja: true
+          vcpkg: false
+          cppcheck: false
 
-      - name: Generate
+      - name: Install
+        shell: bash
         run: |
-          cmake -B build -S . -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DTESTS=ON -DSANITIZER=${{ matrix.sanitizers }} -DHARDEN=ON
+          if [[ "${{ matrix.os }}" == *ubuntu* ]]; then
+            sudo apt-get update
+            sudo apt-get install -y libgl1-mesa-dev libxi-dev mesa-common-dev
+          fi
+
+      - name: Configure CMake
+        run: cmake -B build -S . -G Ninja -DTESTS=ON -DSANITIZER=${{ matrix.sanitizers }} -DHARDEN=ON
 
       - name: Build
         run: cmake --build build --config Debug
