@@ -348,7 +348,7 @@ list(GET OPENGL_LIBRARIES 0 CORE_OPENGL_LIB)
 ####################################################################################################
 add_library(core ${SOURCES})
 add_executable(${PROJECT_NAME} src/main.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE core)
+target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm core)
 ####################################################################################################
 # Include Dirs 
 ####################################################################################################
@@ -395,7 +395,6 @@ target_link_libraries(core
         $<$<STREQUAL:$<PLATFORM_ID>,Linux>:dl;${X11_LIBRARIES}>
         $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
 )
-
 
 
 target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
