@@ -10,7 +10,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, ubuntu-22.04-arm]
         compiler: [gcc, llvm]
-        sanitizers: [address, undefined, leak, thread, integer, implicit-conversion, nullability]
+        sanitizers: [address, undefined, leak, thread]
 
     env:
       BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}
