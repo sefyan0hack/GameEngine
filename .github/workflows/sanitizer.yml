@@ -12,7 +12,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, ubuntu-22.04-arm]
         compiler: [gcc, llvm]
-        sanitizers: [address, undefined, leak, thread]
+        sanitizers: [ASAN, USAN, LSAN, TSAN] # [address, undefined, leak, thread]
 
     env:
       BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}
@@ -39,7 +39,7 @@ jobs:
           fi
 
       - name: Configure CMake
-        run: cmake -B "${{ env.BUILD_DIR }}" -S . -G Ninja -DTESTS=ON -DSANITIZER=${{ matrix.sanitizers }} -DHARDEN=ON
+        run: cmake -B "${{ env.BUILD_DIR }}" -S . -G Ninja -DTESTS=ON -D${{ matrix.sanitizers }}=ON -DHARDEN=ON
 
       - name: Build
         run: cmake --build "${{ env.BUILD_DIR }}"

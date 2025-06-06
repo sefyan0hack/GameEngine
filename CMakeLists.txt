@@ -32,14 +32,19 @@ string(REGEX MATCH "^[0-9]+" COMPILER_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSIO
 ####################################################################################################
 # Options
 ####################################################################################################
-option(TESTS            "enable tests"              OFF)
-option(ENABLE_COVERAGE  "enable code coverage"      OFF)
-option(HARDEN           "enable Hardening"          OFF)
-option(STATIC_LINK      "enable Static link c++"    ON)
+option(TESTS            "enable tests"               OFF)
+option(ENABLE_COVERAGE  "enable code coverage"       OFF)
+option(HARDEN           "enable Hardening"           OFF)
+option(STATIC_LINK      "enable Static link c++"     ON)
+option(ASAN             "enable Address Sanitizer"   OFF)
+option(USAN             "enable Undefined Sanitizer" OFF)
+option(LSAN             "enable Leak Sanitizer"      OFF)
+option(TSAN             "enable Thread Sanitizer"    OFF)
+
 if(MINGW) #desable RTTI becaus of bug in mingw redifinition when static link libstdc++
-option(RTTI             "enable RunTime Type Info"  OFF)
+option(RTTI             "enable RunTime Type Info"   OFF)
 else()
-option(RTTI             "enable RunTime Type Info"  ON)
+option(RTTI             "enable RunTime Type Info"   ON)
 endif(MINGW)
 
 if(TESTS)
@@ -54,26 +59,25 @@ endif()
 if(STATIC_LINK)
     message(STATUS "[Static Link `ON`]")
 endif()
+if(ASAN)
+    message(STATUS "[Address Sanitizer `ON`]")
+endif()
+if(USAN)
+    message(STATUS "[Undefined Sanitizer `ON`]")
+endif()
+if(LSAN)
+    message(STATUS "[Leak Sanitizer `ON`]")
+endif()
+if(TSAN)
+    message(STATUS "[Thread Sanitizer `ON`]")
+endif()
 if(RTTI)
     message(STATUS "[Rtti `ON`]")
 endif()
 
-set(SANITIZER "" CACHE STRING "Enable sanitizers (address, undefined, etc.)")
-
 ####################################################################################################
 # 
 ####################################################################################################
-if(NOT "${SANITIZER}" STREQUAL "")
-    message(STATUS "SANITIZER: ${SANITIZER}")
-    if(MSVC)
-        if("${SANITIZER}" MATCHES ".*address.*")
-            add_compile_options(/fsanitize=address)
-        endif()
-    elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-        add_compile_options(-fsanitize=${SANITIZER})
-        add_link_options(-fsanitize=${SANITIZER})
-    endif()
-endif()
 
 if(TESTS AND ENABLE_COVERAGE)
     
