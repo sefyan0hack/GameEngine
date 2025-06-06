@@ -1,4 +1,4 @@
-name: Sanitizer
+name: Sanitizer (Linux)
 on:  
   workflow_dispatch:
 
@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, windows-11-arm]
+        os: [ubuntu-latest, ubuntu-22.04-arm]
         compiler: [gcc, llvm]
         sanitizers: [address, undefined, leak, thread, integer, implicit-conversion, nullability]
 
@@ -22,7 +22,7 @@ jobs:
         uses: aminya/setup-cpp@v1
         with:
           compiler: ${{ matrix.compiler }}
-          vcvarsall: ${{ contains(matrix.os, 'windows' )}}
+          vcvarsall: false
           cmake: true
           ninja: true
           vcpkg: false
