@@ -166,7 +166,7 @@ function(apply_sanitizer_options)
             endif()
             if(USAN)
                 target_compile_options(${target} PRIVATE -fsanitize=undefined)
-                target_link_options(${target} PUBLIC -fsanitize=undefined "$<$<CXX_COMPILER_ID:GNU>:-static-libusan>")
+                target_link_options(${target} PUBLIC -fsanitize=undefined "$<$<CXX_COMPILER_ID:GNU>:-static-libubsan>")
             endif()
             if(LSAN)
                 target_compile_options(${target} PRIVATE -fsanitize=leak)
@@ -215,10 +215,10 @@ function(apply_harden_options)
                 if(COMPILER_MAJOR_VERSION STREQUAL "14")
                     target_compile_options(${target} PRIVATE
                         "$<$<BOOL:${HARDEN}>:-fhardened>"
+                        "$<$<BOOL:${HARDEN}>:-Wno-hardened>"
                     )
                 endif()
                 target_compile_options(${target} PRIVATE
-                    "$<$<BOOL:${HARDEN}>:-Wno-hardened>"
                     "$<$<BOOL:${HARDEN}>:-fharden-compares>"
                     "$<$<BOOL:${HARDEN}>:-fharden-conditional-branches>"
                 )

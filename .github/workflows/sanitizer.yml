@@ -15,7 +15,7 @@ jobs:
         sanitizers: [ASAN, USAN, LSAN, TSAN] # [address, undefined, leak, thread]
 
     env:
-      BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}
+      BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.sanitizers}}
 
     steps:
       - uses: actions/checkout@v3
