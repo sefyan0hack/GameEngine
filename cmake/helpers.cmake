@@ -167,7 +167,12 @@ function(apply_sanitizer_options)
                 "$<$<BOOL:${USAN}>:-fsanitize=undefined>"
                 "$<$<BOOL:${LSAN}>:-fsanitize=leak>"
                 "$<$<BOOL:${TSAN}>:-fsanitize=thread>"
-                -fno-omit-frame-pointer
+            )
+            target_link_options(${target} PUBLIC
+                "$<$<BOOL:${ASAN}>:-fsanitize=address>"
+                "$<$<BOOL:${USAN}>:-fsanitize=undefined>"
+                "$<$<BOOL:${LSAN}>:-fsanitize=leak>"
+                "$<$<BOOL:${TSAN}>:-fsanitize=thread>"
             )
         endif()
 
