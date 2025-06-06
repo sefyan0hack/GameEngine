@@ -171,7 +171,7 @@ function(apply_sanitizer_options)
             )
         endif()
 
-        target_link_options(${target} PRIVATE 
+        target_link_options(${target} PUBLIC
             "$<$<CXX_COMPILER_ID:GNU>:-static-libasan>"
             "$<$<CXX_COMPILER_ID:GNU>:-static-libubsan>"
             "$<$<CXX_COMPILER_ID:GNU>:-static-liblsan>"
