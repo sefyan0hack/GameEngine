@@ -13,9 +13,9 @@ jobs:
         os: [ubuntu-latest, ubuntu-22.04-arm]
         compiler: [gcc, llvm]
         sanitizers: [ASAN, USAN, LSAN, TSAN] # [address, undefined, leak, thread]
-      exclude:
-        - os: ubuntu-latest
-          sanitizers: USAN
+      # exclude:
+      #   - os: ubuntu-latest
+      #     sanitizers: USAN
     env:
       BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.sanitizers}}
 
