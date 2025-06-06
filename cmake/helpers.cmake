@@ -153,33 +153,32 @@ function(apply_sanitizer_options)
         endif()
         if(MSVC)
             if(ASAN)
-                target_compile_options(${target} PUBLIC /fsanitize=address)
+                target_compile_options(${target} PRIVATE /fsanitize=address)
             endif()
 
             if(USAN OR LSAN OR TSAN)
                 message(STATUS "USAN OR LSAN OR TSAN NOT WORKING IN `MSVC` !!")
             endif()
-        elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-            if(ASAN)
-                target_compile_options(${target} PRIVATE -fsanitize=address)
-                target_link_options(${target} PRIVATE -fsanitize=address "$<$<CXX_COMPILER_ID:GNU>:-static-libasan>")
-            endif()
-            if(USAN)
-                target_compile_options(${target} PRIVATE -fsanitize=undefined)
-                target_link_options(${target} PRIVATE -fsanitize=undefined "$<$<CXX_COMPILER_ID:GNU>:-static-libubsan>")
-            endif()
-            if(LSAN)
-                target_compile_options(${target} PRIVATE -fsanitize=leak)
-                target_link_options(${target} PRIVATE -fsanitize=leak "$<$<CXX_COMPILER_ID:GNU>:-static-liblsan>")
-            endif()
-            if(TSAN)
-                target_compile_options(${target} PRIVATE -fsanitize=thread)
-                target_link_options(${target} PRIVATE -fsanitize=thread "$<$<CXX_COMPILER_ID:GNU>:-static-libtsan>")
-            endif()
-            target_link_options(${target} PRIVATE
-                "$<$<CXX_COMPILER_ID:Clang>:-static-libsan>"
+        endif()
+
+        if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+            target_compile_options(${target} PRIVATE
+                "$<$<BOOL:${ASAN}>:-fsanitize=address>"
+                "$<$<BOOL:${USAN}>:-fsanitize=undefined>"
+                "$<$<BOOL:${LSAN}>:-fsanitize=leak>"
+                "$<$<BOOL:${TSAN}>:-fsanitize=thread>"
+                -fno-omit-frame-pointer
             )
         endif()
+
+        target_link_options(${target} PRIVATE 
+            "$<$<CXX_COMPILER_ID:GNU>:-static-libasan>"
+            "$<$<CXX_COMPILER_ID:GNU>:-static-libubsan>"
+            "$<$<CXX_COMPILER_ID:GNU>:-static-liblsan>"
+            "$<$<CXX_COMPILER_ID:GNU>:-static-libtsan>"
+
+            "$<$<CXX_COMPILER_ID:Clang>:-static-libsan>"
+        )
     endforeach()
 endfunction()
 
