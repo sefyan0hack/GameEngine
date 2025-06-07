@@ -16,6 +16,7 @@ Welcome to the **GameEngine** repository! This engine is designed to provide a s
 
 - **platform compatibility** (Windows/Linux)
 - **Win32 API**
+- **X11**
 - **Modular architecture** for easy extension and customization
 - **Input handling** for keyboard, mouse
   
