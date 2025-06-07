@@ -73,29 +73,24 @@ template<typename Map>
 struct std::formatter<MapWrapper<Map>> : MapFormatter<MapWrapper<Map>> {};
 
 
-template <typename T>
+template <typename Vec>
 struct VecWrapper {
-    std::vector<T> vec;
+    std::vector<Vec> vec;
 };
 
-template <typename T>
-struct std::formatter<VecWrapper<T>, char> {
-    constexpr auto parse(std::format_parse_context& ctx) {
-        return ctx.begin();
-    }
-
-    template <typename FormatContext>
-    auto format(const VecWrapper<T>& w, FormatContext& ctx) const {
+template<typename Wrapper>
+struct VecFormatter : std::formatter<std::string> {
+    auto format(const Wrapper& wrapper, std::format_context& ctx) const {
       using namespace std::ranges;
-      auto joined = w.vec 
-          | views::transform([](const T& elem) { return std::format("{}", elem); })
-          | views::join_with(std::string_view{", "});
+      auto joined_range = wrapper.vec
+        | views::transform([](auto elem) { return std::format("{}, ", elem); })
+        | std::views::join
+        | to<std::string>();
       
-      *ctx.out()++ = '[';
-      for (char c : joined) *ctx.out()++ = c;
-      *ctx.out()++ = ']';
-
-      
-      return ctx.out();
+      if(!joined_range.empty()) joined_range.pop_back();
+      return std::formatter<std::string>::format(joined_range, ctx);
     }
 };
+
+template<typename Vec>
+struct std::formatter<VecWrapper<Vec>> : VecFormatter<VecWrapper<Vec>> {};
