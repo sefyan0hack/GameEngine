@@ -75,6 +75,8 @@ auto __GetProcAddress(const char* module, const char* name) -> void* {
 
     dlerror();
     void* address = (void *)dlsym(lib, name);
+    #elif defined(WEB_PLT)
+    void* address = (void*)emscripten_GetProcAddress(name);
     #endif
 
     if(address != nullptr)
@@ -112,6 +114,13 @@ auto resolve_opengl_fn(const char* name) -> void* {
         Error("Couldnt load opengl function `{}`", name);
     }else{
         Info("from LIB:`opengl32`: load function `{}` at : {}", name, address);
+    }
+    #elif defined(WEB_PLT)
+    void* address = (void*)emscripten_GetProcAddress(name);
+    if(address != nullptr) {
+        Info("from LIB:`WebGL`: load function `{}` at : {}", name, address);
+    } else {
+        Error("Couldnt load opengl function `{}` from WebGL", name);
     }
     #endif
 
