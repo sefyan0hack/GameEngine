@@ -130,3 +130,51 @@ inline static auto type_name() -> std::string
     #endif
 #endif
 }
+
+namespace sys {
+    enum class Target : uint8_t
+    {
+        Windows,
+        Linux,
+        Unknown
+    };
+
+    enum class Arch : uint8_t
+    {
+        x86_64,
+        Arm64,
+        x86,
+        Arm,
+        Unknown
+    };
+
+    #if defined(WINDOWS_PLT)
+    constexpr auto Target = sys::Target::Windows;
+    #elif defined(LINUX_PLT)
+    constexpr auto Target = sys::Target::Linux;
+    #else
+    constexpr auto Target = sys::Target::Unknown;
+    #endif
+    constexpr const char* TargetName =
+        Target == Target::Windows ? "Windows" :
+        Target == Target::Windows ? "Linux"   : "UNKNOWN";
+
+
+    #if defined(__x86_64__) || defined(_M_AMD64)
+        constexpr auto Arch = sys::Arch::x86_64;
+    #elif defined(__aarch64__) || defined(_M_ARM64)
+        constexpr auto Arch = sys::Arch::Arm64;
+    #elif defined(__i386__) || defined(_M_IX86)
+        constexpr auto Arch = sys::Arch::x86;
+    #elif defined(__arm__) || defined(_M_ARM)
+        constexpr auto Arch = sys::Arch::Arm;
+    #else
+        constexpr auto Arch = sys::Arch::Unknown;
+    #endif
+
+    constexpr const char* ArchName =
+        Arch == Arch::x86_64 ? "x86_64" :
+        Arch == Arch::Arm64  ? "Arm64"  :
+        Arch == Arch::x86    ? "x86"    :
+        Arch == Arch::Arm    ? "Arm"    : "UNKNOWN";
+} //namespace sys

@@ -351,6 +351,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     }
     #endif
 
+    Info("Platform : {}, Arch : {}", sys::TargetName, sys::ArchName);
     Info("GL Thread id : {}", m_ThreadId);
     Info("GL Version : {}.{}", m_Major, m_Minor);
     Info("GLSL Version Supported : {}", to_string(m_GlslVersions));
