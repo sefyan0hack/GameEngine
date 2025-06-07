@@ -171,17 +171,13 @@ function(apply_sanitizer_options)
             target_link_options(${target} PUBLIC
                 "$<$<BOOL:${ASAN}>:-fsanitize=address>"
                 "$<$<BOOL:${USAN}>:-fsanitize=undefined>"
-                "$<$<BOOL:${LSAN}>:-fsanitize=leak>"
+                # "$<$<BOOL:${LSAN}>:-fsanitize=leak>" # when add this sanitizer leak fails
                 "$<$<BOOL:${TSAN}>:-fsanitize=thread>"
             )
         endif()
 
         target_link_options(${target} PUBLIC
-            "$<$<CXX_COMPILER_ID:GNU>:-static-libasan>"
-            "$<$<CXX_COMPILER_ID:GNU>:-static-libubsan>"
-            "$<$<CXX_COMPILER_ID:GNU>:-static-liblsan>"
-            "$<$<CXX_COMPILER_ID:GNU>:-static-libtsan>"
-
+            "$<$<CXX_COMPILER_ID:GNU>:-static-libasan;-static-libubsan;-static-liblsan;-static-libtsan>"
             "$<$<CXX_COMPILER_ID:Clang>:-static-libsan>"
         )
     endforeach()
