@@ -163,6 +163,9 @@ if(TESTS AND ENABLE_COVERAGE)
                 -instr-profile=coverage.profdata
                 -output-dir=${CMAKE_BINARY_DIR}/coverage_html
                 -format=html
+                -Xdemangler=c++filt -Xdemangler=-n
+                -show-line-counts-or-regions
+                -show-instantiations
                 -ignore-filename-regex='${CMAKE_SOURCE_DIR}/tests/.*'
                 -ignore-filename-regex='${CMAKE_SOURCE_DIR}/3party/.*'
                 --show-mcdc-summary
