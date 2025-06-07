@@ -368,6 +368,7 @@ OpenGL::OpenGL(const OpenGL &other)
     , m_Minor(other.m_Minor)
     , m_CreationTime(std::time(nullptr))
     , m_Debug(other.m_Debug)
+    , m_ThreadId(other.m_ThreadId)
 {
     #if defined(WINDOWS_PLT)
     auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
@@ -406,6 +407,7 @@ OpenGL::OpenGL(OpenGL &&other) noexcept
     , m_Minor(std::exchange(other.m_Minor, 0))
     , m_CreationTime(std::exchange(other.m_CreationTime, 0))
     , m_Debug(std::exchange(other.m_Debug, false))
+    , m_ThreadId(std::exchange(other.m_ThreadId, 0))
 {
 }
 
