@@ -300,7 +300,7 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}                      # For KHR/khrplatform.h
 )
 else()
-add_subdirectory(3party/glm EXCLUDE_FROM_ALL)
+add_subdirectory(3party/glm)
 endif()
 
 ####################################################################################################
@@ -419,7 +419,7 @@ add_compile_definitions(
 if(TESTS)
     message(STATUS "[Tests `ON`]")
     enable_testing()
-    add_subdirectory(tests/unit EXCLUDE_FROM_ALL)
+    add_subdirectory(tests/unit)
 endif()
 
 print_target_compile_options(core)

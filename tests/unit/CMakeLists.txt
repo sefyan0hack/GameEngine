@@ -11,8 +11,6 @@ else()
         add_subdirectory(
             ${CMAKE_SOURCE_DIR}/3party/googletest-1.16.0
             ${CMAKE_CURRENT_BINARY_DIR}/googletest-1.16.0-build
-
-            EXCLUDE_FROM_ALL
         )
 endif()
 
