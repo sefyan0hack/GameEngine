@@ -101,6 +101,7 @@ if(TESTS AND ENABLE_COVERAGE)
                 --delete
                 --exclude-function-lines
                 --exclude-unreachable-branches
+                --exclude-throw-branches
                 --exclude-noncode-lines
                 --sort uncovered-percent
                 --merge-mode-functions=merge-use-line-min
@@ -302,7 +303,7 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}                      # For KHR/khrplatform.h
 )
 else()
-add_subdirectory(3party/glm)
+add_subdirectory(3party/glm EXCLUDE_FROM_ALL)
 endif()
 
 ####################################################################################################
@@ -421,7 +422,7 @@ add_compile_definitions(
 if(TESTS)
     message(STATUS "[Tests `ON`]")
     enable_testing()
-    add_subdirectory(tests/unit)
+    add_subdirectory(tests/unit EXCLUDE_FROM_ALL)
 endif()
 
 print_target_compile_options(core)
