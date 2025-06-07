@@ -135,10 +135,8 @@ function(apply_coverage_options)
                 "$<$<BOOL:${ENABLE_COVERAGE}>:--coverage>"
                 "$<$<BOOL:${ENABLE_COVERAGE}>:-fno-omit-frame-pointer>"
                 "$<$<BOOL:${ENABLE_COVERAGE}>:-fno-elide-constructors>" # Track copy/move constructors
-                "$<$<BOOL:${ENABLE_COVERAGE}>:-fkeep-inline-functions>"  # Track inline/template functions
                 "$<$<BOOL:${ENABLE_COVERAGE}>:-fprofile-abs-path>" # Absolute paths for gcovr
                 "$<$<BOOL:${ENABLE_COVERAGE}>:-fno-inline>"
-                "$<$<BOOL:${ENABLE_COVERAGE}>:-Wa,-mbig-obj>"  # Direct assembler support
             )
             target_link_options(${target} PRIVATE
                 "$<$<BOOL:${ENABLE_COVERAGE}>:-Wl,--bigobj>"  # Critical for large sections
