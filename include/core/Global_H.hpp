@@ -45,6 +45,8 @@
 #   define WINDOWS_PLT
 #elif defined(__linux__)
 #   define LINUX_PLT
+#elif defined(EMSCRIPTEN)
+#   define WEB_PLT
 #endif
 
 #include <type_traits>
@@ -136,6 +138,7 @@ namespace sys {
     {
         Windows,
         Linux,
+        Web,
         Unknown
     };
 
@@ -152,12 +155,15 @@ namespace sys {
     constexpr auto Target = sys::Target::Windows;
     #elif defined(LINUX_PLT)
     constexpr auto Target = sys::Target::Linux;
+    #elif defined(WEB_PLT)
+    constexpr auto Target = sys::Target::Web;
     #else
     constexpr auto Target = sys::Target::Unknown;
     #endif
     constexpr const char* TargetName =
         Target == Target::Windows ? "Windows" :
-        Target == Target::Windows ? "Linux"   : "UNKNOWN";
+        Target == Target::Windows ? "Linux"   :
+        Target == Target::Windows ? "Web"   : "UNKNOWN";
 
 
     #if defined(__x86_64__) || defined(_M_AMD64)

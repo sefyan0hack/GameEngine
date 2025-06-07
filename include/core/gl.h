@@ -44,7 +44,14 @@ extern "C" {
     extern GLXFBConfig * glXGetFBConfigs( HDC_D dpy, int screen, int * nelements);
 }
 [[maybe_unused]] inline static auto glXCreateContextAttribsARB = (GLCTX(*)(HDC_D dpy, GLXFBConfig config, GLCTX share_context, Bool direct, const int *attrib_list))(nullptr);
-#endif 
+
+#elif defined(WEB_PLT)
+#include <emscripten/html5.h>
+using WindHandl = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
+using HDC_D     = void*;  // Not used in Emscripten
+using GLCTX     = void*;  // Not used in Emscripten
+
+#endif
 
 inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
 {

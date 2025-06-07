@@ -1,5 +1,9 @@
 #pragma once
 
+#if defined(__clang__) && !defined(__APPLE__) && !defined(_MSC_VER)
+#   define _LIBCPP_ENABLE_EXPERIMENTAL
+#endif
+
 #include <version>
 #include <iostream>
 #include <sstream>
@@ -24,7 +28,7 @@
 #include <cstddef>
 #include <utility>
 #include <functional>
-#ifdef __cpp_lib_format
+#if defined(WEB_PLT) || defined(__cpp_lib_format)
 #   include <format>
 #else
 #error "This project uses <format>, and it need's modern compiler with -std=c++23"

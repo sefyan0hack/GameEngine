@@ -13,7 +13,11 @@ include(helpers)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_SUPPRESS_REGENERATION true)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    add_compile_options(-fexperimental-library)
+endif()
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
@@ -193,6 +197,20 @@ endif()
 
 rtti(${RTTI})
 
+# Emscripten-specific setup
+if(EMSCRIPTEN)
+    set(CMAKE_EXECUTABLE_SUFFIX ".html")
+    add_link_options(-s USE_WEBGL2=1)
+    add_compile_options(-std=c++23)
+    add_link_options(-s FULL_ES3=1)
+    add_link_options(-s WASM=1)
+    add_link_options(-s ALLOW_MEMORY_GROWTH=1)
+    add_link_options(-s NO_EXIT_RUNTIME=1)
+    add_link_options(-s EXPORTED_RUNTIME_METHODS=ccall,cwrap)
+    add_link_options(--preload-file ${CMAKE_SOURCE_DIR}/res)
+    add_compile_definitions(EMSCRIPTEN)
+endif()
+
 ####################################################################################################
 # WIN32 defines 
 ####################################################################################################
@@ -338,8 +356,8 @@ find_package(OpenGL REQUIRED)
 find_package(Threads REQUIRED)
 
 # Find X11 package
-if(UNIX)
-find_package(X11 REQUIRED)
+if(UNIX AND NOT EMSCRIPTEN)
+    find_package(X11 REQUIRED)
 endif()
 
 # Extract the core OpenGL library (first entry in the list)
@@ -357,7 +375,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm core)
 
 target_include_directories(core PUBLIC 
     "${CMAKE_SOURCE_DIR}/include"
-    $<$<STREQUAL:$<PLATFORM_ID>,Linux>:${X11_INCLUDE_DIR}>
+    $<$<AND:$<STREQUAL:$<PLATFORM_ID>,Linux>,$<BOOL:${X11_INCLUDE_DIR}>>:${X11_INCLUDE_DIR}>
 )
 
 if(ONLINE)
@@ -394,8 +412,9 @@ target_link_libraries(core
         ${OPENGL_LIBRARIES}
         Threads::Threads
         $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
-        $<$<STREQUAL:$<PLATFORM_ID>,Linux>:dl;${X11_LIBRARIES}>
         $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
+        $<$<AND:$<STREQUAL:$<PLATFORM_ID>,Linux>,$<NOT:$<BOOL:${EMSCRIPTEN}>>>:dl>
+        $<$<AND:$<STREQUAL:$<PLATFORM_ID>,Linux>,$<NOT:$<BOOL:${EMSCRIPTEN}>>,$<BOOL:${X11_X11_LIB}>>:${X11_LIBRARIES}>
 )
 
 
