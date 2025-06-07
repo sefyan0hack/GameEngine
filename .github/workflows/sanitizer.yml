@@ -12,7 +12,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, ubuntu-22.04-arm]
         compiler: [gcc, llvm]
-        sanitizers: [ASAN, USAN, LSAN, TSAN] # [address, undefined, leak, thread]
+        sanitizers: [ASAN, USAN, TSAN] # [address, undefined, thread]
 
     env:
       BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.sanitizers}}

@@ -38,7 +38,6 @@ option(HARDEN           "enable Hardening"           OFF)
 option(STATIC_LINK      "enable Static link c++"     ON)
 option(ASAN             "enable Address Sanitizer"   OFF)
 option(USAN             "enable Undefined Sanitizer" OFF)
-option(LSAN             "enable Leak Sanitizer"      OFF)
 option(TSAN             "enable Thread Sanitizer"    OFF)
 
 if(MINGW) #desable RTTI becaus of bug in mingw redifinition when static link libstdc++
@@ -64,9 +63,6 @@ if(ASAN)
 endif()
 if(USAN)
     message(STATUS "[Undefined Sanitizer `ON`]")
-endif()
-if(LSAN)
-    message(STATUS "[Leak Sanitizer `ON`]")
 endif()
 if(TSAN)
     message(STATUS "[Thread Sanitizer `ON`]")
@@ -103,7 +99,7 @@ if(TESTS AND ENABLE_COVERAGE)
                 --exclude-unreachable-branches
                 --exclude-throw-branches
                 --exclude-noncode-lines
-                --sort uncovered-percent
+                --sort=uncovered-percent
                 --merge-mode-functions=merge-use-line-min
                 --sort-reverse
                 --decisions

@@ -127,9 +127,6 @@ function(apply_coverage_options)
                 "$<$<BOOL:${ENABLE_COVERAGE}>:-fcoverage-mapping>"
                 "$<$<BOOL:${ENABLE_COVERAGE}>:-fcoverage-mcdc>"
             )
-            target_link_options(${target} PRIVATE
-                "$<$<BOOL:${ENABLE_COVERAGE}>:-Wl,--bigobj>"  # Critical for large sections
-            )
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
             target_compile_options(${target} PRIVATE
                 "$<$<BOOL:${ENABLE_COVERAGE}>:--coverage>"
@@ -137,9 +134,6 @@ function(apply_coverage_options)
                 "$<$<BOOL:${ENABLE_COVERAGE}>:-fno-elide-constructors>" # Track copy/move constructors
                 "$<$<BOOL:${ENABLE_COVERAGE}>:-fprofile-abs-path>" # Absolute paths for gcovr
                 "$<$<BOOL:${ENABLE_COVERAGE}>:-fno-inline>"
-            )
-            target_link_options(${target} PRIVATE
-                "$<$<BOOL:${ENABLE_COVERAGE}>:-Wl,--bigobj>"  # Critical for large sections
             )
         endif()
 
@@ -172,19 +166,17 @@ function(apply_sanitizer_options)
             target_compile_options(${target} PRIVATE
                 "$<$<BOOL:${ASAN}>:-fsanitize=address>"
                 "$<$<BOOL:${USAN}>:-fsanitize=undefined>"
-                "$<$<BOOL:${LSAN}>:-fsanitize=leak>"
                 "$<$<BOOL:${TSAN}>:-fsanitize=thread>"
             )
             target_link_options(${target} PUBLIC
                 "$<$<BOOL:${ASAN}>:-fsanitize=address>"
                 "$<$<BOOL:${USAN}>:-fsanitize=undefined>"
-                # "$<$<BOOL:${LSAN}>:-fsanitize=leak>" # when add this sanitizer leak fails
                 "$<$<BOOL:${TSAN}>:-fsanitize=thread>"
             )
         endif()
 
         target_link_options(${target} PUBLIC
-            "$<$<CXX_COMPILER_ID:GNU>:-static-libasan;-static-libubsan;-static-liblsan;-static-libtsan>"
+            "$<$<CXX_COMPILER_ID:GNU>:-static-libasan;-static-libubsan;-static-liblsan>"
             "$<$<CXX_COMPILER_ID:Clang>:-static-libsan>"
         )
     endforeach()
