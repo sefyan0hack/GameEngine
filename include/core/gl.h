@@ -46,6 +46,7 @@ extern "C" {
 [[maybe_unused]] inline static auto glXCreateContextAttribsARB = (GLCTX(*)(HDC_D dpy, GLXFBConfig config, GLCTX share_context, Bool direct, const int *attrib_list))(nullptr);
 
 #elif defined(WEB_PLT)
+#include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
 using WindHandl = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
 using HDC_D     = void*;  // Not used in Emscripten
