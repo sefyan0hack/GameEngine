@@ -55,17 +55,15 @@ struct MapWrapper {
 template<typename Wrapper>
 struct MapFormatter : std::formatter<std::string> {
     auto format(const Wrapper& wrapper, std::format_context& ctx) const {
-        std::string result = "{";
-        bool first = true;
-        for (const auto& [key, value] : wrapper.map) {
-            if (!first) {
-              result += ", ";
-            }
-            result += std::format(R"("{}": "{}")", key, value);
-            first = false;
-        }
-        result += "}";
-        return std::formatter<std::string>::format(result, ctx);
+      using namespace std::ranges;
+      auto joined_range = wrapper.map
+      | views::transform([](auto elem) { auto& [key, value] = elem; return std::format(R"("{}": "{}", )", key, value); })
+      | std::views::join
+      | std::ranges::to<std::string>();
+      if(!joined_range.empty()) {joined_range.pop_back(); joined_range.pop_back();}
+      
+      std::string final_str  = "{" + joined_range + "}";
+      return std::formatter<std::string>::format(final_str, ctx);
     }
 };
 
@@ -85,7 +83,7 @@ struct VecFormatter : std::formatter<std::string> {
       auto joined_range = wrapper.vec
         | views::transform([](auto elem) { return std::format("{}, ", elem); })
         | std::views::join
-        | to<std::string>();
+        | std::ranges::to<std::string>();
       
       if(!joined_range.empty()) {joined_range.pop_back(); joined_range.pop_back();}
       std::string final_str  = "[" + joined_range + "]";
