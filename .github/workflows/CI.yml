@@ -16,7 +16,7 @@ jobs:
         os: [windows-latest, windows-11-arm, ubuntu-latest,  ubuntu-22.04-arm]
         compiler: [llvm-18, llvm-19, llvm-20]
         build_type: [Debug, Release]
-        exclude:
+        # exclude:
           # - os: ubuntu-latest
           #   compiler: msvc
           # - os: ubuntu-22.04-arm
