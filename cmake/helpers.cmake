@@ -100,7 +100,7 @@ function(apply_warning_options)
             -fno-operator-names
         )
 
-        target_compile_options(${target} PRIVATE 
+        target_compile_options(${target} PRIVATE
             "$<$<CXX_COMPILER_ID:MSVC>:${MSVC_WARNING_FLAGS}>"
             "$<$<CXX_COMPILER_ID:GNU>:${GNU_WARNING_FLAGS};${CLANG_AND_GNU_WARNING_FLAGS}>"
             "$<$<CXX_COMPILER_ID:Clang>:${CLANG_WARNING_FLAGS};${CLANG_AND_GNU_WARNING_FLAGS}>"
@@ -157,8 +157,8 @@ function(apply_sanitizer_options)
                 target_compile_options(${target} PRIVATE /fsanitize=address)
             endif()
 
-            if(USAN OR LSAN OR TSAN)
-                message(STATUS "USAN OR LSAN OR TSAN NOT WORKING IN `MSVC` !!")
+            if(USAN OR TSAN)
+                message(STATUS "USAN OR TSAN NOT WORKING IN `MSVC` !!")
             endif()
         endif()
 
@@ -174,11 +174,12 @@ function(apply_sanitizer_options)
                 "$<$<BOOL:${TSAN}>:-fsanitize=thread>"
             )
         endif()
-
-        target_link_options(${target} PUBLIC
-            "$<$<CXX_COMPILER_ID:GNU>:-static-libasan;-static-libubsan;-static-liblsan>"
-            "$<$<CXX_COMPILER_ID:Clang>:-static-libsan>"
-        )
+        if(ASAN OR USAN OR TSAN)
+            target_link_options(${target} PUBLIC
+                "$<$<CXX_COMPILER_ID:GNU>:-static-libasan;-static-libubsan;-static-liblsan>"
+                "$<$<CXX_COMPILER_ID:Clang>:-static-libsan>"
+            )
+        endif()
     endforeach()
 endfunction()
 
