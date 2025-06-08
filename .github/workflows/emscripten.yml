@@ -5,23 +5,39 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      EMSDK_VERSION: 4.0.10
+      EMSDK_PATH: ${{ runner.os == 'Linux' && '~/emsdk' || '' }}
+
     steps:
       - uses: actions/checkout@v3
 
+      - name: Cache emsdk
+        uses: actions/cache@v3
+        id: cache-emsdk
+        with:
+          path: ${{ env.EMSDK_PATH }}
+          key: emsdk-${{ runner.os }}-${{ env.EMSDK_VERSION }}
+
       - uses: mymindstorm/setup-emsdk@v14
         with:
-          version: 4.0.10
-          actions-cache-folder: 'emsdk-cache'
+          version: ${{ env.EMSDK_VERSION }}
 
       - name: Verify
         run: emcc -v
 
+      - name: Cache apt packages
+        uses: actions/cache@v3
+        id: cache-apt
+        with:
+          path: /var/cache/apt
+          key: apt-${{ runner.os }}-${{ hashFiles('.github/workflows/**/*.yml') }}
+
       - name: Install Dependencies
         shell: bash
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-dev  mesa-common-dev libxi-dev
-          sudo apt-get install -y xvfb libx11-dev
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libgl1-mesa-dev  mesa-common-dev libxi-dev xvfb libx11-dev
 
       - name: Configure
         shell: bash
