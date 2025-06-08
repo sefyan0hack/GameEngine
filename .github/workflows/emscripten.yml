@@ -30,3 +30,10 @@ jobs:
       - name: Build
         shell: bash
         run:  cmake --build build
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          path: build
+          retention-days: 1
+          overwrite: true
