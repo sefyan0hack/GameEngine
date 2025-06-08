@@ -63,7 +63,9 @@ class CWindow
         auto CALLBACK WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)           -> LRESULT ;
         #endif
         #if defined(WEB_PLT)
-        static int WebHandleEvent(int eventType, const EmscriptenUiEvent* uiEvent, void* userData);
+        static int ResizeHandler(int eventType, const EmscriptenUiEvent* e, void* userData);
+        static int KeyHandler(int eventType, const EmscriptenKeyboardEvent* e, void* userData);
+        static int MouseHandler(int eventType, const EmscriptenMouseEvent* e, void* userData);
         #endif
         auto _init_helper(int Width, int Height, const char* Title)                         -> void ;
     private:

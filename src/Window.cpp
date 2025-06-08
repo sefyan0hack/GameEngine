@@ -30,9 +30,9 @@ CWindow::CWindow(int m_Width, int m_Height, const char* Title)
     m_OpenGl = std::make_shared<gl::OpenGL>(m_WindowHandle, m_DrawContext);
 
 	#if defined(WEB_PLT)
-    // emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, 1, WebHandleEvent);
-    // emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, 1, WebHandleEvent);
-    // emscripten_set_mousedown_callback("#canvas", this, 1, WebHandleEvent);
+    emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, 1, ResizeHandler);
+    emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, 1, KeyHandler);
+    emscripten_set_mousedown_callback("#canvas", this, 1, MouseHandler);
     #endif
 }
 
@@ -64,8 +64,8 @@ CWindow::~CWindow()
 			XCloseDisplay(m_DrawContext);
 		}
 		#elif defined(WEB_PLT)
-		if (m_OpenGl->m_Context) {
-			emscripten_webgl_destroy_context(m_OpenGl->m_Context);
+		if (m_OpenGl->Context()) {
+			emscripten_webgl_destroy_context(m_OpenGl->Context());
 		}
 		#endif
 	}
@@ -361,20 +361,22 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 }
 
 #elif defined(WEB_PLT)
-int CWindow::WebHandleEvent(int eventType, const EmscriptenUiEvent* uiEvent, void* userData) {
+iint CWindow::ResizeHandler(int eventType, const EmscriptenUiEvent* e, void* userData) {
     CWindow* window = static_cast<CWindow*>(userData);
-    
-    switch (eventType) {
-        case EMSCRIPTEN_EVENT_RESIZE:
-            window->m_Width  = uiEvent->windowInnerWidth;
-			window->m_Height = uiEvent->windowInnerHeight;
-            return 1;
-        case EMSCRIPTEN_EVENT_KEYDOWN:
-            return 1;
-        case EMSCRIPTEN_EVENT_MOUSEDOWN:
-            return 1;
-    }
-    return 0;
+    window->SetDims(e->windowInnerWidth, e->windowInnerHeight);
+    return 1;
+}
+
+int CWindow::KeyHandler(int eventType, const EmscriptenKeyboardEvent* e, void* userData) {
+    CWindow* window = static_cast<CWindow*>(userData);
+    // Handle key events (e.key, e.code, etc.)
+    return 1;
+}
+
+int CWindow::MouseHandler(int eventType, const EmscriptenMouseEvent* e, void* userData) {
+    CWindow* window = static_cast<CWindow*>(userData);
+    // Handle mouse events (e.clientX, e.clientY, e.button, etc.)
+    return 1;
 }
 #endif
 
