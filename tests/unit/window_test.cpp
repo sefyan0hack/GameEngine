@@ -40,7 +40,7 @@ TEST_F(CWindow_Test_Ctor1, ctor){
     #if defined(WINDOWS_PLT)
     EXPECT_NE(m_WindowHandle, nullptr);
     EXPECT_EQ(IsWindow(m_WindowHandle), true);
-    #else
+    #elif defined(LINUX_PLT)
     //check in X11 if m_WindowHandle is valid :)
     XWindowAttributes attr{};
     Status status = XGetWindowAttributes(m_DrawContext, m_WindowHandle, &attr);
