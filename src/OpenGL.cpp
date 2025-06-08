@@ -392,10 +392,11 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
 
 
     #if defined(WEB_PLT)
-    if (m_Major >= 2) {
+    if (m_Major >= 2)
     #else
-    if( m_Major >= 4 && m_Minor >= 3 && m_Debug){
+    if( m_Major >= 4 && m_Minor >= 3 && m_Debug)
     #endif
+    {
         #ifdef DEBUG
         gl::Enable(GL_DEBUG_OUTPUT);
         gl::Enable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -403,7 +404,6 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
         gl::DebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
         #endif
     }
-    #endif
 
     Info("Platform : {}, Arch : {}", sys::TargetName, sys::ArchName);
     Info("GL Thread id : {}", m_ThreadId);
