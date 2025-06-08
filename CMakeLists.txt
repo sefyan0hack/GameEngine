@@ -454,5 +454,8 @@ if(TESTS)
     add_subdirectory(tests/unit)
 endif()
 
+remove_global_flags(Engine)
+remove_global_flags(core)
+
 print_target_compile_options(core)
 print_target_compile_options(${PROJECT_NAME})

@@ -324,3 +324,13 @@ function(delete_files_by_extension DIR EXTENSION)
         endif()
     endforeach()
 endfunction()
+
+# Remove -nostdlib and -nostartfiles from compile options
+macro(remove_global_flags target)
+    get_target_property(TARGET_OPTS ${target} COMPILE_OPTIONS)
+    if(TARGET_OPTS)
+        list(FILTER TARGET_OPTS EXCLUDE REGEX "^-nostdlib$")
+        list(FILTER TARGET_OPTS EXCLUDE REGEX "^-nostartfiles$")
+        set_target_properties(${target} PROPERTIES COMPILE_OPTIONS "${TARGET_OPTS}")
+    endif()
+endmacro()
