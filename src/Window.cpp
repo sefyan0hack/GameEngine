@@ -6,6 +6,10 @@
 #include <windows.h>
 #elif defined(LINUX_PLT)
 #include <X11/Xlib.h>
+#elif defined(WEB_PLT)
+#include <emscripten/emscripten.h>
+#include <emscripten/html5.h>
+#include <emscripten/html5_webgl.h>
 #endif
 
 CWindow::CWindow(int m_Width, int m_Height, const char* Title) 
@@ -60,8 +64,8 @@ CWindow::~CWindow()
 			XCloseDisplay(m_DrawContext);
 		}
 		#elif defined(WEB_PLT)
-		if (m_GLContext) {
-			emscripten_webgl_destroy_context(m_GLContext);
+		if (m_OpenGL->m_Context) {
+			emscripten_webgl_destroy_context(m_Context);
 		}
 		#endif
 	}
@@ -362,7 +366,8 @@ int CWindow::WebHandleEvent(int eventType, const EmscriptenUiEvent* uiEvent, voi
     
     switch (eventType) {
         case EMSCRIPTEN_EVENT_RESIZE:
-            window->SetDims(uiEvent->windowInnerWidth, uiEvent->windowInnerHeight);
+            window->m_Width  = uiEvent->windowInnerWidth;
+			window->m_Height = uiEvent->windowInnerHeight;
             return 1;
         case EMSCRIPTEN_EVENT_KEYDOWN:
             return 1;
