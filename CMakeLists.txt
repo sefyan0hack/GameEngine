@@ -200,21 +200,21 @@ rtti(${RTTI})
 # Emscripten-specific setup
 if(EMSCRIPTEN)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
-    add_compile_options(-std=c++23)
-    add_compile_options(-Wno-character-conversion)
-
-    add_link_options(-s USE_WEBGL2=1)
-    add_link_options(-s MIN_WEBGL_VERSION=1)
-    add_link_options(-s MAX_WEBGL_VERSION=2)
-    add_link_options(-s WASM=1)
-    add_link_options(-s GL_DEBUG=1)
-    add_link_options(-s ASSERTIONS=1)
-    add_link_options(-s ALLOW_MEMORY_GROWTH=1)
-    add_link_options(-s NO_EXIT_RUNTIME=1)
-    add_link_options(-s EXPORTED_RUNTIME_METHODS=ccall,cwrap)
-    add_link_options(--preload-file ${CMAKE_SOURCE_DIR}/res)
+    add_compile_options(-std=c++23 -Wno-character-conversion)
     add_compile_definitions(EMSCRIPTEN)
 
+    add_link_options(
+        -sUSE_WEBGL2=1
+        -sMIN_WEBGL_VERSION=1
+        -sMAX_WEBGL_VERSION=2
+        -sWASM=1
+        -sGL_DEBUG=1
+        -sASSERTIONS=1
+        -sALLOW_MEMORY_GROWTH=1
+        -sNO_EXIT_RUNTIME=1
+        -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
+        --preload-file ${CMAKE_SOURCE_DIR}/res
+    )
 endif()
 
 ####################################################################################################
