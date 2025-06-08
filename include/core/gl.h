@@ -48,12 +48,11 @@ extern "C" {
 #elif defined(WEB_PLT)
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
-extern "C" {
-    extern void* emscripten_GetProcAddress(const char *name);
-}
+#include <emscripten/html5_webgl.h>
+
 using WindHandl = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
-using HDC_D     = void*;  // Not used in Emscripten
-using GLCTX     = void*;  // Not used in Emscripten
+using HDC_D     = void*;
+using GLCTX     = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
 
 #endif
 

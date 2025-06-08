@@ -44,7 +44,7 @@ class OpenGL
         auto init_opengl_win32()              -> void ;
         #elif defined(LINUX_PLT)
         auto init_opengl_linux()              -> void ;
-        #endif //_WIN32
+        #endif
 
     private:
         GLCTX m_Context;

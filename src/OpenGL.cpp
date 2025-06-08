@@ -76,7 +76,7 @@ auto __GetProcAddress(const char* module, const char* name) -> void* {
     dlerror();
     void* address = (void *)dlsym(lib, name);
     #elif defined(WEB_PLT)
-    void* address = (void*)emscripten_GetProcAddress(name);
+    void* address = (void*)emscripten_webgl_get_proc_address(name);
     #endif
 
     if(address != nullptr)
@@ -116,11 +116,11 @@ auto resolve_opengl_fn(const char* name) -> void* {
         Info("from LIB:`opengl32`: load function `{}` at : {}", name, address);
     }
     #elif defined(WEB_PLT)
-    void* address = (void*)emscripten_GetProcAddress(name);
-    if(address != nullptr) {
+    void* address = __GetProcAddress(OPENGL_MODULE_NAME, name);
+    if (address != nullptr) {
         Info("from LIB:`WebGL`: load function `{}` at : {}", name, address);
     } else {
-        Error("Couldnt load opengl function `{}` from WebGL", name);
+        Error("Couldn't load WebGL function `{}`", name);
     }
     #endif
 
@@ -267,10 +267,43 @@ auto OpenGL::init_opengl_linux() -> void
         Error("Failed to create GLX context.");
     }
 }
+#elif defined(WEB_PLT)
+auto OpenGL::init_opengl_web() -> void
+{
+    CheckThread();
+
+    EmscriptenWebGLContextAttributes attrs;
+    emscripten_webgl_init_context_attributes(&attrs);
+    
+    attrs.alpha = EM_TRUE;
+    attrs.depth = EM_TRUE;
+    attrs.stencil = EM_TRUE;
+    attrs.antialias = EM_TRUE;
+    attrs.premultipliedAlpha = EM_FALSE;
+    attrs.preserveDrawingBuffer = EM_FALSE;
+    attrs.powerPreference = EM_WEBGL_POWER_PREFERENCE_HIGH_PERFORMANCE;
+    attrs.failIfMajorPerformanceCaveat = EM_FALSE;
+    attrs.majorVersion = 2;
+    attrs.minorVersion = 0;
+    attrs.enableExtensionsByDefault = EM_TRUE;
+
+    m_Context = emscripten_webgl_create_context("#canvas", &attrs);
+    
+    if (m_Context <= 0) {
+        attrs.majorVersion = 1;
+        m_Context = emscripten_webgl_create_context("#canvas", &attrs);
+        
+        if (m_Context <= 0) {
+            Error("Failed to create WebGL context: error {}", static_cast<int>(m_Context));
+            return;
+        }
+    }
+}
+
 #endif
 
 OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
-    : m_Context(nullptr)
+    : m_Context(GLCTX{})
     , m_DrawContext(drawContext)
     , m_Major(0)
     , m_Minor(0)
@@ -288,7 +321,12 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     if (!glXMakeCurrent(m_DrawContext, window, m_Context)) {
         Error("Failed to make context current.");
     }
-    #endif //_WIN32
+    #elif defined(WEB_PLT)
+    init_opengl_web();
+    if (emscripten_webgl_make_context_current(m_Context) != EMSCRIPTEN_RESULT_SUCCESS) {
+        Error("Failed to make WebGL context current.");
+    }
+    #endif
 
     #ifdef DEBUG
     #   define RESOLVEGL(type, name)\
@@ -318,6 +356,8 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     auto exts = reinterpret_cast<const char*>(wglGetExtensionsStringARB(m_DrawContext));
     #elif defined(LINUX_PLT)
     auto exts = reinterpret_cast<const char*>(glXQueryExtensionsString(m_DrawContext, DefaultScreen(m_DrawContext)));
+    #elif defined(WEB_PLT)
+    auto exts = emscripten_webgl_get_supported_extensions();
     #endif
 
     m_Extensions = exts ? split(exts, " ") : decltype(m_Extensions){} ;
@@ -351,12 +391,17 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     gl::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 
-    #ifdef DEBUG
+    #if defined(WEB_PLT)
+    if (m_Major >= 2) {
+    #else
     if( m_Major >= 4 && m_Minor >= 3 && m_Debug){
+    #endif
+        #ifdef DEBUG
         gl::Enable(GL_DEBUG_OUTPUT);
         gl::Enable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
         gl::DebugMessageCallback(GLDebugMessageCallback, nullptr);
         gl::DebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+        #endif
     }
     #endif
 
@@ -460,6 +505,10 @@ OpenGL::~OpenGL()
     #elif defined(LINUX_PLT)
     glXMakeCurrent(m_DrawContext, Window{},  GLCTX{});
     glXDestroyContext(m_DrawContext, m_Context);
+    #elif defined(WEB_PLT)
+    if (m_Context > 0) {
+        emscripten_webgl_destroy_context(m_Context);
+    }
     #endif
 }
 
