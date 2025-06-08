@@ -367,14 +367,15 @@ find_package(OpenGL REQUIRED)
 # Find Threads package
 find_package(Threads REQUIRED)
 
-# Find X11 package
-if(UNIX AND NOT EMSCRIPTEN)
-    find_package(X11 REQUIRED)
+if(NOT EMSCRIPTEN)
+    # Find X11 package
+    if(UNIX)
+        find_package(X11 REQUIRED)
+    endif()
+
+    # Extract the core OpenGL library (first entry in the list)
+    list(GET OPENGL_LIBRARIES 0 CORE_OPENGL_LIB)
 endif()
-
-# Extract the core OpenGL library (first entry in the list)
-list(GET OPENGL_LIBRARIES 0 CORE_OPENGL_LIB)
-
 ####################################################################################################
 # Build Exe 
 ####################################################################################################
@@ -421,13 +422,19 @@ target_link_libraries(core
     PRIVATE
         glm::glm
         stb_image
-        ${OPENGL_LIBRARIES}
         Threads::Threads
         $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
-        $<$<AND:$<STREQUAL:$<CXX_COMPILER_ID>,GNU>,$<NOT:$<BOOL:${EMSCRIPTEN}>>>:stdc++exp>
-        $<$<AND:$<STREQUAL:$<PLATFORM_ID>,Linux>,$<NOT:$<BOOL:${EMSCRIPTEN}>>>:dl>
-        $<$<AND:$<STREQUAL:$<PLATFORM_ID>,Linux>,$<NOT:$<BOOL:${EMSCRIPTEN}>>,$<BOOL:${X11_X11_LIB}>>:${X11_LIBRARIES}>
 )
+
+if(NOT EMSCRIPTEN)
+    target_link_libraries(core
+        PRIVATE
+            ${OPENGL_LIBRARIES}
+            $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
+            $<$<PLATFORM_ID:Linux>:dl>
+            $<$<PLATFORM_ID:Linux>:${X11_LIBRARIES}>
+    )
+endif()
 
 
 target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
