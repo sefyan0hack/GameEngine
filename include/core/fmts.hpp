@@ -88,7 +88,8 @@ struct VecFormatter : std::formatter<std::string> {
         | to<std::string>();
       
       if(!joined_range.empty()) {joined_range.pop_back(); joined_range.pop_back();}
-      return std::formatter<std::string>::format(joined_range, ctx);
+      std::string final_str  = "[" + joined_range + "]";
+      return std::formatter<std::string>::format(final_str, ctx);
     }
 };
 
