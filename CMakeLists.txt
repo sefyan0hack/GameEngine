@@ -409,10 +409,6 @@ apply_sanitizer_options(TARGETS core)
 # Link Libs 
 ####################################################################################################
 
-if(NOT WIN32)
-target_link_libraries(core PRIVATE $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
-endif()
-
 target_link_libraries(core
     PRIVATE
         glm::glm
@@ -422,6 +418,10 @@ target_link_libraries(core
 )
 
 if(NOT EMSCRIPTEN)
+    if(NOT WIN32)
+    target_link_libraries(core PRIVATE $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
+    endif()
+
     target_link_libraries(core
         PRIVATE
             ${OPENGL_LIBRARIES}
