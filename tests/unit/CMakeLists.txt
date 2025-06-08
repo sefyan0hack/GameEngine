@@ -18,8 +18,10 @@ target_link_libraries(unit_tests PRIVATE GTest::gtest GTest::gtest_main glm::glm
 
 include(GoogleTest)
 
+if(NOT EMSCRIPTEN)
 gtest_discover_tests(unit_tests
         EXTRA_ARGS --gtest_num_threads=1
         PROPERTIES RUN_SERIAL TRUE
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
+endif()
