@@ -73,7 +73,7 @@ struct std::formatter<MapWrapper<Map>> : MapFormatter<MapWrapper<Map>> {};
 
 template <typename Vec>
 struct VecWrapper {
-    std::vector<Vec> vec;
+    const Vec& vec;
 };
 
 template<typename Wrapper>
