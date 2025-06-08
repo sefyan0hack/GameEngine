@@ -30,9 +30,9 @@ CWindow::CWindow(int m_Width, int m_Height, const char* Title)
     m_OpenGl = std::make_shared<gl::OpenGL>(m_WindowHandle, m_DrawContext);
 
 	#if defined(WEB_PLT)
-    emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, 1, WebHandleEvent);
-    emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, 1, WebHandleEvent);
-    emscripten_set_mousedown_callback("#canvas", this, 1, WebHandleEvent);
+    // emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, 1, WebHandleEvent);
+    // emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, 1, WebHandleEvent);
+    // emscripten_set_mousedown_callback("#canvas", this, 1, WebHandleEvent);
     #endif
 }
 
@@ -64,8 +64,8 @@ CWindow::~CWindow()
 			XCloseDisplay(m_DrawContext);
 		}
 		#elif defined(WEB_PLT)
-		if (m_OpenGL->m_Context) {
-			emscripten_webgl_destroy_context(m_Context);
+		if (m_OpenGl->m_Context) {
+			emscripten_webgl_destroy_context(m_OpenGl->m_Context);
 		}
 		#endif
 	}
