@@ -30,9 +30,9 @@ CWindow::CWindow(int m_Width, int m_Height, const char* Title)
     m_OpenGl = std::make_shared<gl::OpenGL>(m_WindowHandle, m_DrawContext);
 
 	#if defined(WEB_PLT)
-    emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, 1, ResizeHandler);
-    emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, 1, KeyHandler);
-    emscripten_set_mousedown_callback("#canvas", this, 1, MouseHandler);
+    // emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, 1, ResizeHandler);
+    // emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, 1, KeyHandler);
+    // emscripten_set_mousedown_callback("#canvas", this, 1, MouseHandler);
     #endif
 }
 
@@ -361,9 +361,10 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 }
 
 #elif defined(WEB_PLT)
-iint CWindow::ResizeHandler(int eventType, const EmscriptenUiEvent* e, void* userData) {
+int CWindow::ResizeHandler(int eventType, const EmscriptenUiEvent* e, void* userData) {
     CWindow* window = static_cast<CWindow*>(userData);
-    window->SetDims(e->windowInnerWidth, e->windowInnerHeight);
+    window->m_Width  = e->windowInnerWidth;
+    window->m_Height = e->windowInnerHeight;
     return 1;
 }
 
