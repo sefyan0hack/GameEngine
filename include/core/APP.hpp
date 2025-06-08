@@ -13,7 +13,7 @@ public:
     auto Run() -> void ;
     auto Render() -> void ;
     #if defined(WEB_PLT)
-    void WebLoop(void* userData);
+    static auto WebLoop(void* userData) -> void;
     #endif
 protected:
     CWindow m_Window;
