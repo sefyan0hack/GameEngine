@@ -45,51 +45,55 @@ struct std::formatter<glm::mat4> {
   }
 };
 
-// custom maps formater
 
 template<typename Map>
 struct MapWrapper {
     const Map& map;
 };
 
-template<typename Wrapper>
-struct MapFormatter : std::formatter<std::string> {
-    auto format(const Wrapper& wrapper, std::format_context& ctx) const {
-      using namespace std::ranges;
-      auto joined_range = wrapper.map
-      | views::transform([](auto elem) { auto& [key, value] = elem; return std::format(R"("{}": "{}", )", key, value); })
-      | std::views::join
-      | std::ranges::to<std::string>();
-      if(!joined_range.empty()) {joined_range.pop_back(); joined_range.pop_back();}
-      
-      std::string final_str  = "{" + joined_range + "}";
-      return std::formatter<std::string>::format(final_str, ctx);
-    }
-};
-
-template<typename Map>
-struct std::formatter<MapWrapper<Map>> : MapFormatter<MapWrapper<Map>> {};
-
-
 template <typename Vec>
 struct VecWrapper {
     const Vec& vec;
 };
 
-template<typename Wrapper>
-struct VecFormatter : std::formatter<std::string> {
-    auto format(const Wrapper& wrapper, std::format_context& ctx) const {
-      using namespace std::ranges;
-      auto joined_range = wrapper.vec
-        | views::transform([](auto elem) { return std::format("{}, ", elem); })
-        | std::views::join
-        | std::ranges::to<std::string>();
-      
-      if(!joined_range.empty()) {joined_range.pop_back(); joined_range.pop_back();}
-      std::string final_str  = "[" + joined_range + "]";
-      return std::formatter<std::string>::format(final_str, ctx);
+// Formatter for MapWrapper
+template<typename Map>
+struct std::formatter<MapWrapper<Map>> {
+    constexpr auto parse(std::format_parse_context& ctx) {
+        return ctx.begin();
+    }
+
+    auto format(const MapWrapper<Map>& wrapper, std::format_context& ctx) const {
+        auto out = ctx.out();
+        out = std::format_to(out, "{{");
+        bool first = true;
+        for (const auto& [key, value] : wrapper.map) {
+            if (first) first = false;
+            else out = std::format_to(out, ", ");
+            out = std::format_to(out, R"("{}": "{}")", key, value);
+        }
+        out = std::format_to(out, "}}");
+        return out;
     }
 };
 
+// Formatter for VecWrapper
 template<typename Vec>
-struct std::formatter<VecWrapper<Vec>> : VecFormatter<VecWrapper<Vec>> {};
+struct std::formatter<VecWrapper<Vec>> {
+    constexpr auto parse(std::format_parse_context& ctx) {
+        return ctx.begin();
+    }
+
+    auto format(const VecWrapper<Vec>& wrapper, std::format_context& ctx) const {
+        auto out = ctx.out();
+        out = std::format_to(out, "[");
+        bool first = true;
+        for (const auto& elem : wrapper.vec) {
+            if (first) first = false;
+            else out = std::format_to(out, ", ");
+            out = std::format_to(out, "{}", elem);
+        }
+        out = std::format_to(out, "]");
+        return out;
+    }
+};
