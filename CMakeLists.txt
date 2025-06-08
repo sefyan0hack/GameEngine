@@ -188,12 +188,11 @@ if(STATIC_LINK)
     if(MSVC)
         set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-        if(NOT WIN32)
+        if(NOT MINGW)
             add_link_options(-static-libgcc -static-libstdc++)
         endif()
     endif()
 endif()
-
 
 rtti(${RTTI})
 
