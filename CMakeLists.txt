@@ -281,7 +281,7 @@ endif()
 if(ONLINE)
 
 # Include get_cpm.cmake
-include(get_cpm)
+include(CPM)
 # deps :
 
     # add glm 1.0.1
