@@ -362,20 +362,20 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 
 #elif defined(WEB_PLT)
 int CWindow::ResizeHandler([[maybe_unused]] int eventType, [[maybe_unused]] const EmscriptenUiEvent* e, [[maybe_unused]] void* userData) {
-    CWindow* window = static_cast<CWindow*>(userData);
+    [[maybe_unused]] CWindow* window = static_cast<CWindow*>(userData);
     window->m_Width  = e->windowInnerWidth;
     window->m_Height = e->windowInnerHeight;
     return 1;
 }
 
 int CWindow::KeyHandler([[maybe_unused]] int eventType, [[maybe_unused]] const EmscriptenKeyboardEvent* e, [[maybe_unused]] void* userData) {
-    CWindow* window = static_cast<CWindow*>(userData);
+    [[maybe_unused]] CWindow* window = static_cast<CWindow*>(userData);
     // Handle key events (e.key, e.code, etc.)
     return 1;
 }
 
 int CWindow::MouseHandler([[maybe_unused]] int eventType, [[maybe_unused]] const EmscriptenMouseEvent* e, [[maybe_unused]] void* userData) {
-    CWindow* window = static_cast<CWindow*>(userData);
+    [[maybe_unused]] CWindow* window = static_cast<CWindow*>(userData);
     // Handle mouse events (e.clientX, e.clientY, e.button, etc.)
     return 1;
 }

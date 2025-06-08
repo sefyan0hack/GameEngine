@@ -60,11 +60,11 @@ auto APP::Render() -> void {
     #endif
     
     #if defined(WEB_PLT)
-    end_count = emscripten_get_now();
-    counts = end_count - start_count;
+    end_count = static_cast<int64_t>(emscripten_get_now());
+    counts = static_cast<int64_t>(end_count - start_count);
     start_count = end_count;
     if (counts > 0) {
-        fps = 1000.0 / counts;
+        fps = static_cast<int64_t>(1000.0 / counts);
     }
     #endif
 }

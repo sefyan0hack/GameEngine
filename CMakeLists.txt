@@ -215,6 +215,12 @@ if(EMSCRIPTEN)
         -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
         --preload-file ${CMAKE_SOURCE_DIR}/res
     )
+
+    add_link_options(-sUSE_FILESYSTEM=1)
+    
+    # Remove unsupported libraries from link command
+    set(CMAKE_CXX_STANDARD_LIBRARIES "" CACHE INTERNAL "" FORCE)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--strip-all" CACHE INTERNAL "" FORCE)
 endif()
 
 ####################################################################################################
