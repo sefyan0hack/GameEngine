@@ -417,7 +417,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
 }
 
 OpenGL::OpenGL(const OpenGL &other)
-    : m_Context(nullptr)
+    : m_Context(GLCTX{})
     , m_DrawContext(other.m_DrawContext)
     , m_Major(other.m_Major)
     , m_Minor(other.m_Minor)
@@ -437,7 +437,7 @@ OpenGL::OpenGL(const OpenGL &other)
 auto OpenGL::operator=(const OpenGL &other) -> OpenGL
 {
     if(*this != other){
-        this->m_Context = nullptr;
+        this->m_Context = GLCTX{};
         this->m_DrawContext = other.m_DrawContext;    
         this->m_Major = other.m_Major;
         this->m_Minor = other.m_Minor;
@@ -456,7 +456,7 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL
 }
 
 OpenGL::OpenGL(OpenGL &&other) noexcept
-    : m_Context(std::exchange(other.m_Context, nullptr))
+    : m_Context(std::exchange(other.m_Context, GLCTX{}))
     , m_DrawContext(std::exchange(other.m_DrawContext, nullptr))
     , m_Major(std::exchange(other.m_Major, 0))
     , m_Minor(std::exchange(other.m_Minor, 0))
@@ -469,7 +469,7 @@ OpenGL::OpenGL(OpenGL &&other) noexcept
 auto OpenGL::operator=(OpenGL &&other) noexcept -> OpenGL
 {
     if(*this != other){
-        this->m_Context = std::exchange(other.m_Context, nullptr);
+        this->m_Context = std::exchange(other.m_Context, GLCTX{});
         this->m_DrawContext = std::exchange(other.m_DrawContext, nullptr);
         this->m_Major = std::exchange(other.m_Major, 0);
         this->m_Minor = std::exchange(other.m_Minor, 0);
@@ -538,7 +538,7 @@ auto OpenGL::MinorV() const -> GLint
 auto OpenGL::isValid() const -> bool
 {
     CheckThread();
-    return m_Context != nullptr;
+    return m_Context != GLCTX{};
 }
 
 auto OpenGL::CreationTime() const -> std::time_t
