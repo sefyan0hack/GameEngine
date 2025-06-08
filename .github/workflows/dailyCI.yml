@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        compiler: [llvm]
+        compiler: [llvm-18]
         language: ['cpp']
 
     env:
