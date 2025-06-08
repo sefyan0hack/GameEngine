@@ -215,6 +215,7 @@ if(EMSCRIPTEN)
         -sFORCE_FILESYSTEM=1
         -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
         --preload-file ${CMAKE_SOURCE_DIR}/res
+
     )
     
     # Remove unsupported libraries from link command
