@@ -12,7 +12,7 @@
 #include <emscripten/html5_webgl.h>
 #endif
 
-CWindow::CWindow(int m_Width, int m_Height, const char* Title) 
+CWindow::CWindow([[maybe_unused]] int m_Width, [[maybe_unused]] int m_Height, [[maybe_unused]] const char* Title) 
 	: m_Visible(false)
 	, m_refCount(1)
 	, m_Keyboard(std::make_shared<Keyboard>())
@@ -361,20 +361,20 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 }
 
 #elif defined(WEB_PLT)
-int CWindow::ResizeHandler(int eventType, const EmscriptenUiEvent* e, void* userData) {
+int CWindow::ResizeHandler([[maybe_unused]] int eventType, [[maybe_unused]] const EmscriptenUiEvent* e, [[maybe_unused]] void* userData) {
     CWindow* window = static_cast<CWindow*>(userData);
     window->m_Width  = e->windowInnerWidth;
     window->m_Height = e->windowInnerHeight;
     return 1;
 }
 
-int CWindow::KeyHandler(int eventType, const EmscriptenKeyboardEvent* e, void* userData) {
+int CWindow::KeyHandler([[maybe_unused]] int eventType, [[maybe_unused]] const EmscriptenKeyboardEvent* e, [[maybe_unused]] void* userData) {
     CWindow* window = static_cast<CWindow*>(userData);
     // Handle key events (e.key, e.code, etc.)
     return 1;
 }
 
-int CWindow::MouseHandler(int eventType, const EmscriptenMouseEvent* e, void* userData) {
+int CWindow::MouseHandler([[maybe_unused]] int eventType, [[maybe_unused]] const EmscriptenMouseEvent* e, [[maybe_unused]] void* userData) {
     CWindow* window = static_cast<CWindow*>(userData);
     // Handle mouse events (e.clientX, e.clientY, e.button, etc.)
     return 1;

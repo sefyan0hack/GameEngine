@@ -33,7 +33,7 @@ void APP::WebLoop(void* userData) {
     // Get current time for delta calculation
     static double lastTime = emscripten_get_now();
     double currentTime = emscripten_get_now();
-    float delta = (currentTime - lastTime) / 1000.0f;  // Convert to seconds
+    float delta = static_cast<float>((currentTime - lastTime)) / 1000.0f;  // Convert to seconds
     lastTime = currentTime;
     
     app->Update(delta);
