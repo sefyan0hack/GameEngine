@@ -418,7 +418,7 @@ target_link_libraries(core
         ${OPENGL_LIBRARIES}
         Threads::Threads
         $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
-        $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
+        $<$<AND:$<STREQUAL:$<CXX_COMPILER_ID>,GNU>,$<NOT:$<BOOL:${EMSCRIPTEN}>>>:stdc++exp>
         $<$<AND:$<STREQUAL:$<PLATFORM_ID>,Linux>,$<NOT:$<BOOL:${EMSCRIPTEN}>>>:dl>
         $<$<AND:$<STREQUAL:$<PLATFORM_ID>,Linux>,$<NOT:$<BOOL:${EMSCRIPTEN}>>,$<BOOL:${X11_X11_LIB}>>:${X11_LIBRARIES}>
 )
