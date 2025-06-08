@@ -11,7 +11,10 @@ protected:
     virtual auto Update(float delta) -> void = 0 ;
 public:
     auto Run() -> void ;
-
+    auto Render() -> void ;
+    #if defined(WEB_PLT)
+    void WebLoop(void* userData);
+    #endif
 protected:
     CWindow m_Window;
     int64_t start_count, end_count, counts, freq, fps;

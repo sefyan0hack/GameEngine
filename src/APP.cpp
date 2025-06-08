@@ -7,6 +7,9 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <sys/time.h>
+#elif defined(WEB_PLT)
+#include <emscripten/emscripten.h>
+#include <emscripten/html5.h>
 #endif
 constexpr auto Wname = "Main";
 
@@ -21,12 +24,58 @@ APP::APP()
     m_Window.Show();
 }
 
+
+#if defined(WEB_PLT)
+// Web platform main loop handler
+void APP::WebLoop(void* userData) {
+    APP* app = static_cast<APP*>(userData);
+    
+    // Get current time for delta calculation
+    static double lastTime = emscripten_get_now();
+    double currentTime = emscripten_get_now();
+    float delta = (currentTime - lastTime) / 1000.0f;  // Convert to seconds
+    lastTime = currentTime;
+    
+    app->Update(delta);
+    app->Render();
+    
+    // Check if we should stop the loop
+    if (CWindow::WindowsCount() == 0) {
+        emscripten_cancel_main_loop();
+    }
+}
+#endif
+
+
+auto APP::Render() -> void {
+    gl::Viewport(0, 0, m_Window.Width(), m_Window.Height());
+    gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+    #if defined(WINDOWS_PLT)
+    SwapBuffers(m_Window.opengl()->DrawContext());
+    #elif defined(LINUX_PLT)
+    glXSwapBuffers(m_Window.DrawContext(), m_Window.WindowHandle());
+    #elif defined(WEB_PLT)
+    // No buffer swap needed - handled automatically by browser
+    #endif
+    
+    #if defined(WEB_PLT)
+    end_count = emscripten_get_now();
+    counts = end_count - start_count;
+    start_count = end_count;
+    if (counts > 0) {
+        fps = 1000.0 / counts;
+    }
+    #endif
+}
+
 auto APP::Run() -> void
 {
+    gl::ClearColor(0.2f, 0.21f, 0.22f, 1.0f);
+
     #if defined(WINDOWS_PLT)
     QueryPerformanceCounter((LARGE_INTEGER *)&start_count);
     QueryPerformanceFrequency((LARGE_INTEGER *)&freq);
-    gl::ClearColor(0.2f, 0.21f, 0.22f, 1.0f);
     
     while (CWindow::WindowsCount() != 0) {
         CWindow::ProcessMessages();
@@ -51,9 +100,7 @@ auto APP::Run() -> void
 
     struct timespec start_time, end_time;
     clock_gettime(CLOCK_MONOTONIC, &start_time);
-    
-    gl::ClearColor(0.2f, 0.21f, 0.22f, 1.0f);
-    
+        
     while (CWindow::WindowsCount() != 0) {
         while (XPending(display)) {
             XEvent event;
@@ -106,5 +153,8 @@ auto APP::Run() -> void
         
         clock_gettime(CLOCK_MONOTONIC, &start_time);
     }
+    #elif defined(WEB_PLT)
+    start_count = emscripten_get_now();
+    emscripten_set_main_loop_arg(WebLoop, this, 0, 1);
     #endif
 }

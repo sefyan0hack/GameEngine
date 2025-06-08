@@ -62,6 +62,9 @@ class CWindow
         static auto CALLBACK WinProcSetup2(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT ;
         auto CALLBACK WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)           -> LRESULT ;
         #endif
+        #if defined(WEB_PLT)
+        static int WebHandleEvent(int eventType, const EmscriptenUiEvent* uiEvent, void* userData);
+        #endif
         auto _init_helper(int Width, int Height, const char* Title)                         -> void ;
     private:
         WindHandl m_WindowHandle;
