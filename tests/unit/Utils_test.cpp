@@ -4,7 +4,7 @@
 
 using namespace std;
 
-
+#if !defined(WEB_PLT)
 TEST(load_file_async, exist) {
     auto filename = "Hello.txt";
     ofstream file { filename };
@@ -20,6 +20,7 @@ TEST(load_file_async, not_exist) {
     auto r = load_file_async("filenotexist.ext").get();
     EXPECT_EQ(r.has_value(), false);
 }
+#endif
 
 TEST(split, string) {
     auto r = split("hi my name sofyane", " ");
