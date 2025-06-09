@@ -584,7 +584,7 @@ auto OpenGL::ThreadId() const -> size_t
 auto OpenGL::CheckThread() const -> void
 {
     auto id = std::hash<std::thread::id>{}(std::this_thread::get_id());
-    if ( id != m_ThreadId) {
+    if ( id != m_ThreadId && sys::Target != sys::Target::Web) {
         Error("OpenGL context used in wrong thread! . Expected id: {} Vs Geted: {}", m_ThreadId, id);
     }
 }

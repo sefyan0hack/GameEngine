@@ -91,10 +91,13 @@ if(EMSCRIPTEN)
         -fPIC
         -fexceptions
     )
-    add_compile_definitions(EMSCRIPTEN)
 
     add_link_options(
         --bind
+        -sWASM_EXCEPTIONS
+        -sASYNCIFY
+        -sOFFSCREEN_FRAMEBUFFER=1
+        -sPROXY_TO_PTHREAD
         -sUSE_WEBGL2=1
         -sMIN_WEBGL_VERSION=1
         -sMAX_WEBGL_VERSION=2
@@ -454,6 +457,12 @@ add_compile_definitions(
     PLATFORM_NAME="${CMAKE_SYSTEM_NAME}"
     PLATFORM_VERSION="${CMAKE_SYSTEM_VERSION}"
     PLATFORM_ARCH="${CMAKE_SYSTEM_PROCESSOR}"
+
+    $<$<PLATFORM_ID:Emscripten>:OPENGL_LIB="WebGL">
+    
+    $<$<PLATFORM_ID:Windows>:WINDOWS_PLT>
+    $<$<PLATFORM_ID:Linux>:LINUX_PLT>
+    $<$<PLATFORM_ID:Emscripten>:WEB_PLT>
 
     $<$<CONFIG:Debug>:DEBUG>
     $<$<CONFIG:Release>:NDEBUG>

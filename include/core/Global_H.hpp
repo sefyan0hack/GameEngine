@@ -41,14 +41,6 @@
 
 #define FOR_TEST public: template<unsigned short n> struct Test;
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-#   define WINDOWS_PLT
-#elif defined(__linux__)
-#   define LINUX_PLT
-#elif defined(EMSCRIPTEN)
-#   define WEB_PLT
-#endif
-
 #include <type_traits>
 template<auto var>
 concept is_static = std::is_object_v<std::remove_pointer_t<decltype(var)>> && !std::is_member_object_pointer_v<decltype(var)>;
@@ -74,7 +66,6 @@ concept is_static = std::is_object_v<std::remove_pointer_t<decltype(var)>> && !s
 #   define MEMBER_OPCAST(Type) operator Type() const noexcept { return member.operator Type(); }
 #endif
 
-
 #if defined(__clang__) && !defined(WINDOWS_PLT) || defined(__GNUC__) || defined(__EDG__)
 #include <cxxabi.h>
 #endif
@@ -96,7 +87,6 @@ inline static auto demangle(const char* name) -> std::string
     return name;
     #endif
 }
-
 
 template <typename T>
 inline static auto type_name() -> std::string
@@ -160,11 +150,6 @@ namespace sys {
     #else
     constexpr auto Target = sys::Target::Unknown;
     #endif
-    constexpr const char* TargetName =
-        Target == Target::Windows ? "Windows" :
-        Target == Target::Windows ? "Linux"   :
-        Target == Target::Windows ? "Web"   : "UNKNOWN";
-
 
     #if defined(__x86_64__) || defined(_M_AMD64)
         constexpr auto Arch = sys::Arch::x86_64;
@@ -178,11 +163,8 @@ namespace sys {
         constexpr auto Arch = sys::Arch::Unknown;
     #endif
 
-    constexpr const char* ArchName =
-        Arch == Arch::x86_64 ? "x86_64" :
-        Arch == Arch::Arm64  ? "Arm64"  :
-        Arch == Arch::x86    ? "x86"    :
-        Arch == Arch::Arm    ? "Arm"    : "UNKNOWN";
-
+    constexpr const char* TargetName = CMAKE_SYSTEM_NAME;
+    constexpr const char* TargetVersion = CMAKE_SYSTEM_VERSION;
+    constexpr const char* ArchName = CMAKE_SYSTEM_PROCESSOR;
     constexpr const char* TimeStamp = __TIMESTAMP__;
 } //namespace sys
