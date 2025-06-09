@@ -39,7 +39,7 @@ jobs:
         with:
           compiler: ${{ matrix.compiler }}
           vcvarsall: ${{ contains(matrix.os, 'windows' )}}
-          cmake: true
+          cmake: 3.30
           ninja: true
           vcpkg: false
           cppcheck: false
