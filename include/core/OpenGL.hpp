@@ -4,7 +4,11 @@
 
 namespace gl {
 
+#if defined(WEB_PLT)
+constexpr const char* OPENGL_MODULE_NAME {"WebGL"};
+#else
 constexpr const char* OPENGL_MODULE_NAME {OPENGL_LIB};
+#endif
 
 class OpenGL
 {

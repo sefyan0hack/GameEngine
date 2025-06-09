@@ -66,6 +66,7 @@ concept is_static = std::is_object_v<std::remove_pointer_t<decltype(var)>> && !s
 #   define MEMBER_OPCAST(Type) operator Type() const noexcept { return member.operator Type(); }
 #endif
 
+
 #if defined(__clang__) && !defined(WINDOWS_PLT) || defined(__GNUC__) || defined(__EDG__)
 #include <cxxabi.h>
 #endif
@@ -87,6 +88,7 @@ inline static auto demangle(const char* name) -> std::string
     return name;
     #endif
 }
+
 
 template <typename T>
 inline static auto type_name() -> std::string
@@ -163,8 +165,16 @@ namespace sys {
         constexpr auto Arch = sys::Arch::Unknown;
     #endif
 
-    constexpr const char* TargetName = CMAKE_SYSTEM_NAME;
-    constexpr const char* TargetVersion = CMAKE_SYSTEM_VERSION;
-    constexpr const char* ArchName = CMAKE_SYSTEM_PROCESSOR;
+    constexpr const char* TargetName = 
+        Target == Target::Windows ? "Windows" :
+        Target == Target::Windows ? "Linux"   :
+        Target == Target::Windows ? "Web"     : "UNKNOWN";
+
+    constexpr const char* ArchName =
+        Arch == Arch::x86_64 ? "x86_64" :
+        Arch == Arch::Arm64  ? "Arm64"  :
+        Arch == Arch::x86    ? "x86"    :
+        Arch == Arch::Arm    ? "Arm"    : "UNKNOWN";
+
     constexpr const char* TimeStamp = __TIMESTAMP__;
 } //namespace sys
