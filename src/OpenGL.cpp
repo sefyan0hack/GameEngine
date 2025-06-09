@@ -120,7 +120,8 @@ auto resolve_opengl_fn(const char* name) -> void* {
     if (address != nullptr) {
         Info("from LIB:`WebGL`: load function `{}` at : {}", name, address);
     } else {
-        Error("Couldn't load WebGL function `{}`", name);
+        Info("Couldn't load WebGL function `{}`", name);
+        // Error("Couldn't load WebGL function `{}`", name);
     }
     #endif
 
@@ -391,19 +392,15 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     gl::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 
-    #if defined(WEB_PLT)
-    if (m_Major >= 2)
-    #else
+    #if defined(DEBUG) && !defined(WEB_PLT)
     if( m_Major >= 4 && m_Minor >= 3 && m_Debug)
-    #endif
     {
-        #ifdef DEBUG
         gl::Enable(GL_DEBUG_OUTPUT);
         gl::Enable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
         gl::DebugMessageCallback(GLDebugMessageCallback, nullptr);
         gl::DebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-        #endif
     }
+    #endif
 
     Info("Platform : {}, Arch : {}", sys::TargetName, sys::ArchName);
     Info("GL Thread id : {}", m_ThreadId);
