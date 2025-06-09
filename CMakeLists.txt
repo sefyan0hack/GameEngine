@@ -212,6 +212,7 @@ if(EMSCRIPTEN)
         -sALLOW_MEMORY_GROWTH=1
         -sNO_EXIT_RUNTIME=1
         -sFORCE_FILESYSTEM=1
+        -sDISABLE_EXCEPTION_CATCHING=0
         -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
         --preload-file ${CMAKE_SOURCE_DIR}/res
     )

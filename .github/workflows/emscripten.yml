@@ -52,6 +52,12 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          path: build
+          name: web-build
+          path: |
+            build/**/*.js
+            build/**/*.html
+            build/**/*.wasm
+            build/**/*.data
+            build/**/*.css
           retention-days: 1
           overwrite: true
