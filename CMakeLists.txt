@@ -215,6 +215,9 @@ if(EMSCRIPTEN)
         -sDISABLE_EXCEPTION_CATCHING=0
         -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
         --preload-file ${CMAKE_SOURCE_DIR}/res
+
+        -sUSE_PTHREADS=1
+        -sPTHREAD_POOL_SIZE=4
     )
 endif()
 
