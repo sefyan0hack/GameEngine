@@ -223,7 +223,7 @@ if(EMSCRIPTEN)
 
         -sCOOP=same-origin
         -sCOEP=require-corp
-        
+
         -sUSE_PTHREADS=1
         -sPTHREAD_POOL_SIZE=4
         -sPTHREAD_POOL_SIZE_STRICT=2
