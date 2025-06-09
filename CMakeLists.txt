@@ -88,7 +88,7 @@ if(EMSCRIPTEN)
         -std=c++23 -Wno-character-conversion 
         -pthread
         -msimd128
-        --no-entry
+        -fPIC
     )
     add_compile_definitions(EMSCRIPTEN)
 
@@ -108,7 +108,6 @@ if(EMSCRIPTEN)
         -sDISABLE_EXCEPTION_CATCHING=0
         -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
         --preload-file ${CMAKE_SOURCE_DIR}/res
-        -sSIDE_MODULE=1
     )
 endif()
 ####################################################################################################
