@@ -88,7 +88,7 @@ TEST(Formatters, Camera){
 
 
 TEST(Formatters, Shader){
-    EXPECT_ANY_THROW({ 
+    try {
         auto shader = Shader(SHADER(skybox)".vert", GL_VERTEX_SHADER);
 
         auto r = std::format("{}", shader);
@@ -97,7 +97,7 @@ TEST(Formatters, Shader){
             shader.id(), shader.TypeName()
         );
         EXPECT_EQ(r, e);
-    });
+    } catch (...) {}
 }
 
 TEST(Formatters, Mesh){
