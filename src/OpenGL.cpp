@@ -84,7 +84,8 @@ auto __GetProcAddress(const char* module, const char* name) -> void* {
         Info("from LIB:`{}`: load function `{}` at : {}", module, name, address);
         return address;
     }else{
-        Error("Couldnt load function `{}` from module : {}", name, module);
+        // Error("Couldnt load function `{}` from module : {}", name, module);
+        Info("Couldnt load function `{}` from module : {}", name, module);
         return nullptr;
     }
 }
