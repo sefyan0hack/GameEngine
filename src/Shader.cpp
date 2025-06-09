@@ -100,17 +100,25 @@ auto Shader::LoadFile(const char* filename) -> std::vector<GLchar>
     file.open(filename);
     if(file.is_open())
     {
+        if constexpr (sys::Target == sys::Target::Web){
+            buffer << "#define GL_ES 1\n";
+        }else {
+            buffer << "#define GL_ES 0\n";
+        }
+
         buffer << file.rdbuf();
         auto str = buffer.str();
         str += '\0';
         result.resize(str.size());
         memcpy(result.data(), str.data(), str.size());
+        
         Info("Loding {} ", filename);
     }else{
         Error("Couldnt open file {} : {}", filename, std::strerror(errno));
     }
 
     file.close();
+
     return result;
 }
 
