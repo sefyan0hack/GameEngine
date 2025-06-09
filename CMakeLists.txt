@@ -213,7 +213,11 @@ if(EMSCRIPTEN)
         -sWASM=1
         -sGL_DEBUG=1
         -sASSERTIONS=1
+        -sTOTAL_MEMORY=128MB
+        -sWASM_MEM_MAX=1GB
         -sALLOW_MEMORY_GROWTH=1
+        -sMODULARIZE=1
+        -sDEMANGLE_SUPPORT=1
         -sNO_EXIT_RUNTIME=1
         -sFORCE_FILESYSTEM=1
         -sDISABLE_EXCEPTION_CATCHING=0
