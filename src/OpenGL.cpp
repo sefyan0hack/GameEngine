@@ -119,9 +119,9 @@ auto resolve_opengl_fn(const char* name) -> void* {
     #elif defined(WEB_PLT)
     void* address = __GetProcAddress(OPENGL_MODULE_NAME, name);
     if (address != nullptr) {
-        Info("from LIB:`WebGL`: load function `{}` at : {}", name, address);
+        Info("from LIB:`{}`: load function `{}` at : {}", OPENGL_MODULE_NAME, name, address);
     } else {
-        Info("Couldn't load WebGL function `{}`", name);
+        Info("Couldn't load {} function `{}`", OPENGL_MODULE_NAME, name);
         // Error("Couldn't load WebGL function `{}`", name);
     }
     #endif
@@ -333,9 +333,9 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     #ifdef DEBUG
     #   define RESOLVEGL(type, name)\
         OpenGL::name = Function<type>{};\
-        OpenGL::name.m_Func = reinterpret_cast<type>(resolve_opengl_fn("gl"#name));\
+        OpenGL::name.m_Func  = reinterpret_cast<type>(resolve_opengl_fn("gl"#name));\
         OpenGL::name.m_After = []([[maybe_unused]] std::string info) { GLenum err = glGetError(); if(err != GL_NO_ERROR) Info("{}", info); };\
-        OpenGL::name.m_Name = "gl"#name
+        OpenGL::name.m_Name  = "gl"#name
     #else
     #   define RESOLVEGL(type, name)\
         OpenGL::name = reinterpret_cast<type>(resolve_opengl_fn("gl"#name))

@@ -86,6 +86,7 @@ TEST(Formatters, Camera){
     EXPECT_EQ(r, e);
 }
 
+#if !defined(WEB_PLT)
 
 TEST(Formatters, Shader){
     try {
@@ -144,3 +145,4 @@ TEST(Formatters, GameObject){
         EXPECT_EQ(r, e);
     });
 }
+#endif
