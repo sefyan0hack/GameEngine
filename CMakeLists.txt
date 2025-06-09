@@ -200,9 +200,11 @@ rtti(${RTTI})
 if(EMSCRIPTEN)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
     add_compile_options(
+        -Os
         -std=c++23 -Wno-character-conversion 
         -pthread
         -msimd128
+        --no-entry
     )
     add_compile_definitions(EMSCRIPTEN)
 
@@ -217,12 +219,13 @@ if(EMSCRIPTEN)
         -sWASM_MEM_MAX=1GB
         -sALLOW_MEMORY_GROWTH=1
         -sMODULARIZE=1
-        -sDEMANGLE_SUPPORT=1
         -sNO_EXIT_RUNTIME=1
         -sFORCE_FILESYSTEM=1
         -sDISABLE_EXCEPTION_CATCHING=0
         -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
         --preload-file ${CMAKE_SOURCE_DIR}/res
+        -sSIDE_MODULE=1
+        -sSTANDALONE_WASM
 
         -sUSE_PTHREADS=1
         -sPTHREAD_POOL_SIZE=4
