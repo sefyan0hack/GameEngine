@@ -16,19 +16,19 @@ set(CMAKE_SUPPRESS_REGENERATION true)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    add_compile_options(-fexperimental-library)
+add_compile_options(-fexperimental-library)
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
+set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
 endif()
 
 if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
-    message(FATAL_ERROR "Create a build directory and run CMake from there.")
+message(FATAL_ERROR "Create a build directory and run CMake from there.")
 endif()
 if(WIN32)
-    set(CMAKE_USE_WINHTTP_FOR_HTTP ON CACHE BOOL "" FORCE)
-    set(CMAKE_USE_CURL OFF CACHE BOOL "" FORCE)
+set(CMAKE_USE_WINHTTP_FOR_HTTP ON CACHE BOOL "" FORCE)
+set(CMAKE_USE_CURL OFF CACHE BOOL "" FORCE)
 endif()
 
 string(REGEX MATCH "^[0-9]+" COMPILER_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSION}")
@@ -75,6 +75,42 @@ if(RTTI)
     message(STATUS "[Rtti `ON`]")
 endif()
 
+####################################################################################################
+# Emscripten-specific setup 
+####################################################################################################
+
+if(EMSCRIPTEN)
+    set(CMAKE_EXECUTABLE_SUFFIX ".html")
+    set(STATIC_LINK OFF)
+    
+    add_compile_options(
+        -Os
+        -std=c++23 -Wno-character-conversion 
+        -pthread
+        -msimd128
+        --no-entry
+    )
+    add_compile_definitions(EMSCRIPTEN)
+
+    add_link_options(
+        -sUSE_WEBGL2=1
+        -sMIN_WEBGL_VERSION=1
+        -sMAX_WEBGL_VERSION=2
+        -sWASM=1
+        -sGL_DEBUG=1
+        -sASSERTIONS=1
+        -sTOTAL_MEMORY=128MB
+        -sWASM_MEM_MAX=1GB
+        -sALLOW_MEMORY_GROWTH=1
+        -sMODULARIZE=1
+        -sNO_EXIT_RUNTIME=1
+        -sFORCE_FILESYSTEM=1
+        -sDISABLE_EXCEPTION_CATCHING=0
+        -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
+        --preload-file ${CMAKE_SOURCE_DIR}/res
+        -sSIDE_MODULE=1
+    )
+endif()
 ####################################################################################################
 # 
 ####################################################################################################
@@ -195,38 +231,6 @@ if(STATIC_LINK)
 endif()
 
 rtti(${RTTI})
-
-# Emscripten-specific setup
-if(EMSCRIPTEN)
-    set(CMAKE_EXECUTABLE_SUFFIX ".html")
-    add_compile_options(
-        -Os
-        -std=c++23 -Wno-character-conversion 
-        -pthread
-        -msimd128
-        --no-entry
-    )
-    add_compile_definitions(EMSCRIPTEN)
-
-    add_link_options(
-        -sUSE_WEBGL2=1
-        -sMIN_WEBGL_VERSION=1
-        -sMAX_WEBGL_VERSION=2
-        -sWASM=1
-        -sGL_DEBUG=1
-        -sASSERTIONS=1
-        -sTOTAL_MEMORY=128MB
-        -sWASM_MEM_MAX=1GB
-        -sALLOW_MEMORY_GROWTH=1
-        -sMODULARIZE=1
-        -sNO_EXIT_RUNTIME=1
-        -sFORCE_FILESYSTEM=1
-        -sDISABLE_EXCEPTION_CATCHING=0
-        -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
-        --preload-file ${CMAKE_SOURCE_DIR}/res
-        -sSIDE_MODULE=1
-    )
-endif()
 
 ####################################################################################################
 # WIN32 defines 
