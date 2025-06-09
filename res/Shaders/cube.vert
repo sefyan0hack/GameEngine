@@ -1,4 +1,9 @@
-#version 440 core
+#ifdef GL_ES
+    #version 300 es
+    precision mediump float;
+#else
+    #version 440 core
+#endif
 
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
@@ -15,10 +20,12 @@ uniform mat4 View;
 
 void main() {
     vec4 worldPos = Modle * vec4(aPos + InstancePosition, 1.0);
-    Normal = mat3(transpose(inverse(Modle))) * aNormal;
+    
+    mat3 normalMatrix = mat3(transpose(inverse(Modle)));
+    Normal = normalMatrix * aNormal;
+    
     FragPos = worldPos.xyz;
     Uv = aUv;
     
     gl_Position = Perspective * View * worldPos;
-
 }

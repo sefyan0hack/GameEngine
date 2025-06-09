@@ -1,4 +1,9 @@
-#version 440 core
+#ifdef GL_ES
+    #version 300 es
+    precision mediump float;
+#else
+    #version 440 core
+#endif
 
 layout (location = 0) in vec3 aPos;
 
