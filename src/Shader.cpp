@@ -101,9 +101,10 @@ auto Shader::LoadFile(const char* filename) -> std::vector<GLchar>
     if(file.is_open())
     {
         if constexpr (sys::Target == sys::Target::Web){
-            buffer << "#define GL_ES 1\n";
+            buffer << "#version 300 es\n";
+            buffer << "precision mediump float;\n";
         }else {
-            buffer << "#define GL_ES 0\n";
+            buffer << "#version 440 core\n";
         }
 
         buffer << file.rdbuf();

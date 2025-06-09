@@ -1,9 +1,3 @@
-#ifdef GL_ES
-    #version 300 es
-    precision mediump float;
-#else
-    #version 440 core
-#endif
 in vec3 Normal;
 in vec3 FragPos;
 in vec2 Uv;
