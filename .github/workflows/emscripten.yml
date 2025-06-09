@@ -49,16 +49,28 @@ jobs:
       - name: Build
         run: cmake --build build
 
-      - name: Upload
+      - name: Upload Engine
         uses: actions/upload-artifact@v4
         with:
-          name: web-build
+          name: web-build-Engine
           path: |
             build/**/*.js
             build/**/*.html
             build/**/*.wasm
             build/**/*.data
-            build/**/*.css
+            !build/tests/**
             !build/_deps/**
+          retention-days: 1
+          overwrite: true
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build-tests
+          path: |
+            build/tests/*.js
+            build/tests/*.html
+            build/tests/*.wasm
+            build/tests/*.data
           retention-days: 1
           overwrite: true
