@@ -89,10 +89,12 @@ if(EMSCRIPTEN)
         -pthread
         -msimd128
         -fPIC
+        -fexceptions
     )
     add_compile_definitions(EMSCRIPTEN)
 
     add_link_options(
+        --bind
         -sUSE_WEBGL2=1
         -sMIN_WEBGL_VERSION=1
         -sMAX_WEBGL_VERSION=2
