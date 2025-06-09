@@ -199,7 +199,12 @@ rtti(${RTTI})
 # Emscripten-specific setup
 if(EMSCRIPTEN)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
-    add_compile_options(-std=c++23 -Wno-character-conversion)
+    add_compile_options(
+        -std=c++23 -Wno-character-conversion 
+        -pthread
+        -msimd128
+        -moutline-atomics
+    )
     add_compile_definitions(EMSCRIPTEN)
 
     add_link_options(
@@ -218,6 +223,9 @@ if(EMSCRIPTEN)
 
         -sUSE_PTHREADS=1
         -sPTHREAD_POOL_SIZE=4
+        -sPTHREAD_POOL_SIZE_STRICT=2
+        -sSHARED_MEMORY
+        -sPROXY_TO_PTHREAD
     )
 endif()
 
