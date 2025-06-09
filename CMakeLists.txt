@@ -203,7 +203,6 @@ if(EMSCRIPTEN)
         -std=c++23 -Wno-character-conversion 
         -pthread
         -msimd128
-        -moutline-atomics
     )
     add_compile_definitions(EMSCRIPTEN)
 
@@ -221,8 +220,8 @@ if(EMSCRIPTEN)
         -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
         --preload-file ${CMAKE_SOURCE_DIR}/res
 
-        -sCOOP=same-origin
-        -sCOEP=require-corp
+        -sCROSS_ORIGIN_OPENER_POLICY=same-origin
+        -sCROSS_ORIGIN_EMBEDDER_POLICY=require-corp
 
         -sUSE_PTHREADS=1
         -sPTHREAD_POOL_SIZE=4
