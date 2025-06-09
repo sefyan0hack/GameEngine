@@ -96,7 +96,6 @@ if(EMSCRIPTEN)
         --bind
         -sASYNCIFY
         -sOFFSCREEN_FRAMEBUFFER=1
-        -sPROXY_TO_PTHREAD
         -sUSE_WEBGL2=1
         -sMIN_WEBGL_VERSION=1
         -sMAX_WEBGL_VERSION=2
