@@ -183,4 +183,6 @@ namespace sys {
         Arch == Arch::Arm64  ? "Arm64"  :
         Arch == Arch::x86    ? "x86"    :
         Arch == Arch::Arm    ? "Arm"    : "UNKNOWN";
+
+    constexpr const char* TimeStamp = __TIMESTAMP__;
 } //namespace sys

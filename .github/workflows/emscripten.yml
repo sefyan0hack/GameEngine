@@ -68,9 +68,9 @@ jobs:
         with:
           name: web-build-tests
           path: |
-            build/tests/*.js
-            build/tests/*.html
-            build/tests/*.wasm
-            build/tests/*.data
+            build/tests/**/*.js
+            build/tests/**/*.html
+            build/tests/**/*.wasm
+            build/tests/**/*.data
           retention-days: 1
           overwrite: true
