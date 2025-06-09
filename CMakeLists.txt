@@ -225,13 +225,6 @@ if(EMSCRIPTEN)
         -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
         --preload-file ${CMAKE_SOURCE_DIR}/res
         -sSIDE_MODULE=1
-        -sSTANDALONE_WASM
-
-        -sUSE_PTHREADS=1
-        -sPTHREAD_POOL_SIZE=4
-        -sPTHREAD_POOL_SIZE_STRICT=2
-        -sSHARED_MEMORY
-        -sPROXY_TO_PTHREAD
     )
 endif()
 
