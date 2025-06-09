@@ -167,8 +167,8 @@ namespace sys {
 
     constexpr const char* TargetName = 
         Target == Target::Windows ? "Windows" :
-        Target == Target::Windows ? "Linux"   :
-        Target == Target::Windows ? "Web"     : "UNKNOWN";
+        Target == Target::Linux   ? "Linux"   :
+        Target == Target::Web     ? "Web"     : "UNKNOWN";
 
     constexpr const char* ArchName =
         Arch == Arch::x86_64 ? "x86_64" :
