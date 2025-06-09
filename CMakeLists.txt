@@ -94,7 +94,6 @@ if(EMSCRIPTEN)
 
     add_link_options(
         --bind
-        -sWASM_EXCEPTIONS
         -sASYNCIFY
         -sOFFSCREEN_FRAMEBUFFER=1
         -sPROXY_TO_PTHREAD
