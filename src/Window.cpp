@@ -40,6 +40,7 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
     // emscripten_set_mouseup_callback(EMSCRIPTEN_EVENT_TARGET_CANVAS  , this, EM_FALSE, &CWindow::MouseHandler);
     // emscripten_set_mousemove_callback(EMSCRIPTEN_EVENT_TARGET_CANVAS, this, EM_FALSE, &CWindow::MouseHandler);
 
+	emscripten_set_keypress_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, &CWindow::KeyHandler);
 	emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, &CWindow::KeyHandler);
 	emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, &CWindow::KeyHandler);
 
@@ -49,6 +50,47 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 	emscripten_set_mousemove_callback("#canvas" , this, EM_FALSE, &CWindow::MouseHandler);
 	emscripten_set_mouseenter_callback("#canvas", this, EM_FALSE, &CWindow::MouseHandler);
 	emscripten_set_mouseleave_callback("#canvas", this, EM_FALSE, &CWindow::MouseHandler);
+
+	emscripten_set_fullscreenchange_callback("#canvas", this, EM_FALSE, 
+		[](
+			[[maybe_unused]] int eventType, 
+			[[maybe_unused]] const EmscriptenFullscreenChangeEvent* e,
+			[[maybe_unused]] void* userData
+		) -> bool {
+			auto* window = static_cast<CWindow*>(userData);
+
+			// e->fullscreenEnabled  → browser supports fullscreen on this element
+			// e->isFullscreen       → whether we’re currently in fullscreen
+			// e->screenWidth/Height → size of the screen area in fullscreen
+			// e->elementWidth/Height→ size of the HTML element
+			
+			if (e->isFullscreen) Info("Enable FullScreen");
+
+			Info("-C++ {}, {}",e->elementWidth, e->elementHeight);
+
+			EM_ASM({
+				const canvas = document.getElementById('canvas');
+
+				if      (canvas.requestFullscreen)        canvas.requestFullscreen();
+				else if (canvas.webkitRequestFullscreen)  canvas.webkitRequestFullscreen();
+				else if (canvas.mozRequestFullScreen)     canvas.mozRequestFullScreen();
+				else if (canvas.msRequestFullscreen)      canvas.msRequestFullscreen();
+				else Info("Can't FullScreen");
+
+				canvas.width  = screen.width;
+				canvas.height = screen.height;
+				// 4) Write the values back into the HEAP32 slots pointed at by $0/$1
+				HEAP32[$0 >> 2] = screen.width;
+				HEAP32[$1 >> 2] = screen.height;
+
+				console.log("-EM_ASM");
+				console.log(canvas.width);
+				console.log(canvas.height);
+				console.log("EM_ASM-");
+			}, &m_Width, m_Height);
+
+			return true;
+	});
 	
     #endif
 }
