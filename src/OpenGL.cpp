@@ -84,14 +84,15 @@ auto __GetProcAddress(const char* module, const char* name) -> void* {
         if(sys::Target != sys::Target::Web){
             Error("Couldnt load function `{}` from module : {}", name, module);
         }else{
-            constexpr std::array<const char*, 6> ignorelist = {
+            constexpr std::array<const char*, 6> ignorelist {
                 "glDebugMessageCallback",
                 "glDebugMessageControl",
                 "glVertexAttribFormat",
                 "glVertexAttribBinding",
                 "glBindVertexBuffer",
                 "glClearTexImage",
-            }
+            };
+
             if(std::ranges::find(ignorelist, name) == ignorelist.end()){
                 Error("Couldnt load function `{}` from module : {}", name, module);
             }else{
