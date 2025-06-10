@@ -79,28 +79,7 @@ auto __GetProcAddress(const char* module, const char* name) -> void* {
     void* address = (void*)emscripten_webgl_get_proc_address(name);
     #endif
 
-    if(address == nullptr)
-    {
-        if(sys::Target != sys::Target::Web){
-            Error("Couldnt load function `{}` from module : {}", name, module);
-        }else{
-            constexpr std::array<const char*, 6> ignorelist {
-                "glDebugMessageCallback",
-                "glDebugMessageControl",
-                "glVertexAttribFormat",
-                "glVertexAttribBinding",
-                "glBindVertexBuffer",
-                "glClearTexImage",
-            };
-
-            if(std::ranges::find(ignorelist, name) == ignorelist.end()){
-                Error("Couldnt load function `{}` from module : {}", name, module);
-            }else{
-                Info("Couldnt load function `{}` from module : {}", name, module);
-            }
-        }
-        return nullptr;
-    }
+    return address;
 }
 
 auto resolve_opengl_fn(const char* name) -> void* {
