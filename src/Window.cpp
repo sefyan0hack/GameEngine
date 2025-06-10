@@ -67,8 +67,8 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 			if (e->isFullscreen) Info("Enable FullScreen");
 
 			Info("-C++ {}, {}",e->elementWidth, e->elementHeight);
-			m_Width = e->elementWidth;
-			m_Height = e->elementHeight;
+			window->m_Width = e->elementWidth;
+			window->m_Height = e->elementHeight;
 
 			EM_ASM({
 				const canvas = document.getElementById('canvas');
