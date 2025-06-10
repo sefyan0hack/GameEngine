@@ -44,11 +44,11 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 	emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, &CWindow::KeyHandler);
 
 	// Use null for default canvas instead of undefined constant
-	emscripten_set_mousedown_callback(nullptr , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseup_callback(nullptr   , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mousemove_callback(nullptr , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseenter_callback(nullptr, this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseleave_callback(nullptr, this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mousedown_callback("#canvas" , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseup_callback("#canvas"   , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mousemove_callback("#canvas" , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseenter_callback("#canvas", this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseleave_callback("#canvas", this, EM_FALSE, &CWindow::MouseHandler);
 	
     #endif
 }
