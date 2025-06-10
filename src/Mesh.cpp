@@ -170,9 +170,9 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vect
 Mesh::~Mesh()
 {
     Count--;
-    if(gl::IsBuffer(EBO) == GL_TRUE) gl::DeleteBuffers(1, &EBO);
-    if(gl::IsBuffer(VBO) == GL_TRUE) gl::DeleteBuffers(1, &VBO);
-    if(gl::IsVertexArray(VAO) == GL_TRUE) gl::DeleteVertexArrays(1, &VAO);
+    gl::DeleteBuffers(1, &EBO);
+    gl::DeleteBuffers(1, &VBO);
+    gl::DeleteVertexArrays(1, &VAO);
 }
 
 Mesh::Mesh(const Mesh& other)
@@ -259,8 +259,6 @@ auto Mesh::operator==(const Mesh &other) const -> bool
 //     //         gl::GetVertexAttribPointerv(atrInd, GL_VERTEX_ATTRIB_ARRAY_POINTER, &attributes[atrInd].offset);
 //     //     }
 //     // }
-
-//     Expect(gl::IsBuffer(this->VBO) == GL_TRUE, "{} is not valid buffer", this->VBO);
 
 //     gl::BindVertexArray(clone);
 //     gl::BindBuffer(GL_ARRAY_BUFFER, this->VBO);

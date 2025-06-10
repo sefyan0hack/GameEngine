@@ -74,7 +74,7 @@ bool Shader::operator==(const Shader &other)
 }
 Shader::~Shader()
 {
-    // if(gl::IsShader(id) == GL_TRUE) gl::DeleteShader(id);
+    gl::DeleteShader(m_Id);
 }
 
 auto Shader::LoadSource() -> void
