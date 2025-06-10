@@ -347,6 +347,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
             for(GLint i = 0; i < nGlslv; i++){
                 auto r = reinterpret_cast<const char*>(gl::GetStringi(GL_SHADING_LANGUAGE_VERSION, static_cast<GLuint>(i)));
                 if(r) m_GlslVersions.push_back(r);
+                
             }
         }
     }else{
