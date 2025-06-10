@@ -367,17 +367,24 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 #elif defined(WEB_PLT)
 auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 {
-	EM_ASM(document.title = Title);
-	EM_ASM(document.getElementById("canvas").width = Width);
-	EM_ASM(document.getElementById("canvas").height = Height);
+	EM_ASM({
+        document.title = UTF8ToString($0);
+        document.getElementById("canvas").width = $1;
+        document.getElementById("canvas").height = $2;
+    }, Title, Width, Height);
 }
 
 int CWindow::ResizeHandler([[maybe_unused]] int eventType, [[maybe_unused]] const EmscriptenUiEvent* e, [[maybe_unused]] void* userData) {
     [[maybe_unused]] CWindow* window = static_cast<CWindow*>(userData);
     window->m_Width  = e->windowInnerWidth;
     window->m_Height = e->windowInnerHeight;
-	EM_ASM(document.getElementById("canvas").width = window->m_Width);
-	EM_ASM(document.getElementById("canvas").Height = window->m_Height);
+
+	EM_ASM(
+	{
+		document.getElementById("canvas").Height = $0;
+		document.getElementById("canvas").width = $1;
+	}, window->m_Width, window->m_Height);
+
     return 1;
 }
 
