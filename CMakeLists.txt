@@ -84,7 +84,7 @@ if(EMSCRIPTEN)
     set(STATIC_LINK OFF)
     
     add_compile_options(
-        -Os
+        -Oz
         -std=c++23 -Wno-character-conversion 
         -pthread
         -msimd128
@@ -93,6 +93,7 @@ if(EMSCRIPTEN)
     )
 
     add_link_options(
+        -Oz
         --bind
         -sASYNCIFY
         -sOFFSCREEN_FRAMEBUFFER=1
@@ -109,9 +110,7 @@ if(EMSCRIPTEN)
         -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
         --use-preload-plugins
         --preload-file ${CMAKE_SOURCE_DIR}/res
-        -sMINIMAL_RUNTIME=2
         -sSTACK_SIZE=64KB
-        -lGL
     )
 endif()
 ####################################################################################################
