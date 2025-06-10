@@ -30,7 +30,7 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 	_init_helper(m_Width, m_Height, Title);
 	#endif
 
-    S_WindowsCount++;
+	S_WindowsCount++;
     m_OpenGl = std::make_shared<gl::OpenGL>(m_WindowHandle, m_DrawContext);
 
 	#if defined(WEB_PLT)
