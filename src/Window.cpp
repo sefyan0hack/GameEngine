@@ -28,15 +28,18 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 	_init_helper(m_Width, m_Height, Title);
 	#elif defined(WEB_PLT)
 	_init_helper(m_Width, m_Height, Title);
+	m_DrawContext = emscripten_webgl_get_current_context();
 	#endif
 
     S_WindowsCount++;
     m_OpenGl = std::make_shared<gl::OpenGL>(m_WindowHandle, m_DrawContext);
 
 	#if defined(WEB_PLT)
-    // emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, 1, ResizeHandler);
-    // emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, 1, KeyHandler);
-    // emscripten_set_mousedown_callback("#canvas", this, 1, MouseHandler);
+	emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, &CWindow::KeyHandler);
+    emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT  , this, EM_FALSE, &CWindow::KeyHandler);
+    emscripten_set_mousedown_callback(EMSCRIPTEN_EVENT_TARGET_CANVAS, this, EM_FALSE, &CWindow::MouseHandler);
+    emscripten_set_mouseup_callback(EMSCRIPTEN_EVENT_TARGET_CANVAS  , this, EM_FALSE, &CWindow::MouseHandler);
+    emscripten_set_mousemove_callback(EMSCRIPTEN_EVENT_TARGET_CANVAS, this, EM_FALSE, &CWindow::MouseHandler);
     #endif
 }
 
@@ -392,7 +395,68 @@ int CWindow::ResizeHandler([[maybe_unused]] int eventType, [[maybe_unused]] cons
 
 int CWindow::KeyHandler([[maybe_unused]] int eventType, [[maybe_unused]] const EmscriptenKeyboardEvent* e, [[maybe_unused]] void* userData) {
     [[maybe_unused]] CWindow* window = static_cast<CWindow*>(userData);
-    // Handle key events (e.key, e.code, etc.)
+    if (!window) return 1;
+
+	// Windows virtual key codes (subset)
+	constexpr unsigned char VK_BACK = 0x08;
+	constexpr unsigned char VK_TAB = 0x09;
+	constexpr unsigned char VK_RETURN = 0x0D;
+	constexpr unsigned char VK_SHIFT = 0x10;
+	constexpr unsigned char VK_CONTROL = 0x11;
+	constexpr unsigned char VK_MENU = 0x12;  // Alt
+	constexpr unsigned char VK_ESCAPE = 0x1B;
+	constexpr unsigned char VK_SPACE = 0x20;
+
+    auto MapToVirtualKey = [](const char* code) -> unsigned char {
+        // Alphanumeric keys
+        if (strlen(code) == 4 && code[0] == 'K' && code[1] == 'e' && code[2] == 'y') 
+            return code[3];  // 'A'-'Z'
+        if (strlen(code) == 6 && !strncmp(code, "Digit", 5)) 
+            return code[5];  // '0'-'9'
+
+        // Special keys
+        if (strcmp(code, "Backspace") == 0) return VK_BACK;
+        if (strcmp(code, "Tab") == 0) return VK_TAB;
+        if (strcmp(code, "Enter") == 0) return VK_RETURN;
+        if (strcmp(code, "ShiftLeft") == 0 || strcmp(code, "ShiftRight") == 0) return VK_SHIFT;
+        if (strcmp(code, "ControlLeft") == 0 || strcmp(code, "ControlRight") == 0) return VK_CONTROL;
+        if (strcmp(code, "AltLeft") == 0 || strcmp(code, "AltRight") == 0) return VK_MENU;
+        if (strcmp(code, "Escape") == 0) return VK_ESCAPE;
+        if (strcmp(code, "Space") == 0) return VK_SPACE;
+        
+        return 0;  // Unmapped key
+    };
+
+    auto MapToChar = [](const char* key) -> char {
+        if (strlen(key) == 1) return key[0];  // Printable characters
+        if (strcmp(key, "Enter") == 0) return '\r';
+        if (strcmp(key, "Tab") == 0) return '\t';
+        if (strcmp(key, "Backspace") == 0) return '\b';
+        if (strcmp(key, "Escape") == 0) return '\x1B';
+        return 0;  // Non-character key
+    };
+
+    switch (eventType) {
+        case EMSCRIPTEN_EVENT_KEYDOWN: {
+            unsigned char vk = MapToVirtualKey(e->code);
+            if (vk != 0) {
+                window->keyboard.OnKeyPressed(vk);
+            }
+
+            char ch = MapToChar(e->key);
+            if (ch != 0) {
+                window->keyboard.OnChar(ch);
+            }
+        } break;
+
+        case EMSCRIPTEN_EVENT_KEYUP: {
+            unsigned char vk = MapToVirtualKey(e->code);
+            if (vk != 0) {
+                window->keyboard.OnKeyReleased(vk);
+            }
+        } break;
+    }
+
     return 1;
 }
 
