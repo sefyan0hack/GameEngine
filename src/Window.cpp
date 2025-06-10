@@ -52,7 +52,7 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 	emscripten_set_mouseleave_callback("#canvas", this, EM_FALSE, &CWindow::MouseHandler);
 
 	emscripten_set_fullscreenchange_callback("#canvas", this, EM_FALSE, 
-		[&m_Width, &m_Height](
+		[](
 			[[maybe_unused]] int eventType, 
 			[[maybe_unused]] const EmscriptenFullscreenChangeEvent* e,
 			[[maybe_unused]] void* userData
@@ -67,6 +67,8 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 			if (e->isFullscreen) Info("Enable FullScreen");
 
 			Info("-C++ {}, {}",e->elementWidth, e->elementHeight);
+			m_Width = e->elementWidth;
+			m_Height = e->elementHeight;
 
 			EM_ASM({
 				const canvas = document.getElementById('canvas');
@@ -77,17 +79,14 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 				else if (canvas.msRequestFullscreen)      canvas.msRequestFullscreen();
 				else Info("Can't FullScreen");
 
-				canvas.width  = screen.width;
-				canvas.height = screen.height;
-
-				HEAP32[$0 >> 2] = screen.width;
-				HEAP32[$1 >> 2] = screen.height;
+				// canvas.width  = screen.width;
+				// canvas.height = screen.height;
 
 				console.log("-EM_ASM");
 				console.log(canvas.width);
 				console.log(canvas.height);
 				console.log("EM_ASM-");
-			}, &m_Width, &m_Height);
+			});
 
 			return true;
 	});
