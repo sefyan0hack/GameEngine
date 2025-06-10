@@ -101,7 +101,6 @@ if(EMSCRIPTEN)
         -sMAX_WEBGL_VERSION=2
         -sWASM=1
         -sINITIAL_MEMORY=16MB
-        -sTOTAL_MEMORY=16MB
         -sWASM_MEM_MAX=1GB
         -sALLOW_MEMORY_GROWTH=1
         -sNO_EXIT_RUNTIME=1
@@ -112,6 +111,7 @@ if(EMSCRIPTEN)
         --preload-file ${CMAKE_SOURCE_DIR}/res
         -sMINIMAL_RUNTIME=2
         -sSTACK_SIZE=64KB
+        -lGL
     )
 endif()
 ####################################################################################################
