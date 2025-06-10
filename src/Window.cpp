@@ -34,11 +34,22 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
     m_OpenGl = std::make_shared<gl::OpenGL>(m_WindowHandle, m_DrawContext);
 
 	#if defined(WEB_PLT)
+	// emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, &CWindow::KeyHandler);
+    // emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT  , this, EM_FALSE, &CWindow::KeyHandler);
+    // emscripten_set_mousedown_callback(EMSCRIPTEN_EVENT_TARGET_CANVAS, this, EM_FALSE, &CWindow::MouseHandler);
+    // emscripten_set_mouseup_callback(EMSCRIPTEN_EVENT_TARGET_CANVAS  , this, EM_FALSE, &CWindow::MouseHandler);
+    // emscripten_set_mousemove_callback(EMSCRIPTEN_EVENT_TARGET_CANVAS, this, EM_FALSE, &CWindow::MouseHandler);
+
 	emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, &CWindow::KeyHandler);
-    emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT  , this, EM_FALSE, &CWindow::KeyHandler);
-    emscripten_set_mousedown_callback(EMSCRIPTEN_EVENT_TARGET_CANVAS, this, EM_FALSE, &CWindow::MouseHandler);
-    emscripten_set_mouseup_callback(EMSCRIPTEN_EVENT_TARGET_CANVAS  , this, EM_FALSE, &CWindow::MouseHandler);
-    emscripten_set_mousemove_callback(EMSCRIPTEN_EVENT_TARGET_CANVAS, this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, &CWindow::KeyHandler);
+
+	// Use null for default canvas instead of undefined constant
+	emscripten_set_mousedown_callback(nullptr , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseup_callback(nullptr   , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mousemove_callback(nullptr , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseenter_callback(nullptr, this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseleave_callback(nullptr, this, EM_FALSE, &CWindow::MouseHandler);
+	
     #endif
 }
 
@@ -377,8 +388,10 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
     }, Title, Width, Height);
 }
 
-int CWindow::ResizeHandler([[maybe_unused]] int eventType, [[maybe_unused]] const EmscriptenUiEvent* e, [[maybe_unused]] void* userData) {
+bool CWindow::ResizeHandler([[maybe_unused]] int eventType, [[maybe_unused]] const EmscriptenUiEvent* e, [[maybe_unused]] void* userData) {
     [[maybe_unused]] CWindow* window = static_cast<CWindow*>(userData);
+    if (!window) return true;
+
     window->m_Width  = e->windowInnerWidth;
     window->m_Height = e->windowInnerHeight;
 
@@ -389,12 +402,12 @@ int CWindow::ResizeHandler([[maybe_unused]] int eventType, [[maybe_unused]] cons
 		canvas.width = $1;
 	}, window->m_Width, window->m_Height);
 
-    return 1;
+    return true;
 }
 
-int CWindow::KeyHandler([[maybe_unused]] int eventType, [[maybe_unused]] const EmscriptenKeyboardEvent* e, [[maybe_unused]] void* userData) {
+bool CWindow::KeyHandler([[maybe_unused]] int eventType, [[maybe_unused]] const EmscriptenKeyboardEvent* e, [[maybe_unused]] void* userData) {
     [[maybe_unused]] CWindow* window = static_cast<CWindow*>(userData);
-    if (!window) return 1;
+    if (!window) return true;
 
 	// Windows virtual key codes (subset)
 	constexpr unsigned char VK_BACK = 0x08;
@@ -439,64 +452,64 @@ int CWindow::KeyHandler([[maybe_unused]] int eventType, [[maybe_unused]] const E
         case EMSCRIPTEN_EVENT_KEYDOWN: {
             unsigned char vk = MapToVirtualKey(e->code);
             if (vk != 0) {
-                window->m_Keyboard.OnKeyPressed(vk);
+                window->m_Keyboard->OnKeyPressed(vk);
             }
 
             char ch = MapToChar(e->key);
             if (ch != 0) {
-                window->m_Keyboard.OnChar(ch);
+                window->m_Keyboard->OnChar(ch);
             }
         } break;
 
         case EMSCRIPTEN_EVENT_KEYUP: {
             unsigned char vk = MapToVirtualKey(e->code);
             if (vk != 0) {
-                window->m_Keyboard.OnKeyReleased(vk);
+                window->m_Keyboard->OnKeyReleased(vk);
             }
         } break;
     }
 
-    return 1;
+    return true;
 }
 
-int CWindow::MouseHandler([[maybe_unused]] int eventType, [[maybe_unused]] const EmscriptenMouseEvent* e, [[maybe_unused]] void* userData) {
+bool CWindow::MouseHandler([[maybe_unused]] int eventType, [[maybe_unused]] const EmscriptenMouseEvent* e, [[maybe_unused]] void* userData) {
     [[maybe_unused]] CWindow* window = static_cast<CWindow*>(userData);
-    if (!window) return 1;
+    if (!window) return true;
 
     switch (eventType) {
         case EMSCRIPTEN_EVENT_MOUSEDOWN:
             if (e->button == 0) {        // Left button
-                window->m_Mouse.OnLeftPressed();
+                window->m_Mouse->OnLeftPressed();
             } else if (e->button == 2) { // Right button
-                window->m_Mouse.OnRightPressed();
+                window->m_Mouse->OnRightPressed();
             }
             [[fallthrough]]; // Position update for click events
         
         case EMSCRIPTEN_EVENT_MOUSEUP:
             if (eventType == EMSCRIPTEN_EVENT_MOUSEUP) {
                 if (e->button == 0) {
-                    window->m_Mouse.OnLeftReleased();
+                    window->m_Mouse->OnLeftReleased();
                 } else if (e->button == 2) {
-                    window->m_Mouse.OnRightReleased();
+                    window->m_Mouse->OnRightReleased();
                 }
             }
             [[fallthrough]]; // Position update for release events
         
         case EMSCRIPTEN_EVENT_MOUSEMOVE:
-            window->m_Mouse.OnMouseMove(static_cast<int>(e->clientX), 
+            window->m_Mouse->OnMouseMove(static_cast<int>(e->clientX), 
                                       static_cast<int>(e->clientY));
             break;
         
         case EMSCRIPTEN_EVENT_MOUSEENTER:
-            window->m_Mouse.OnMouseEnter();
+            window->m_Mouse->OnMouseEnter();
             break;
         
         case EMSCRIPTEN_EVENT_MOUSELEAVE:
-            window->m_Mouse.OnMouseLeave();
+            window->m_Mouse->OnMouseLeave();
             break;
     }
 
-    return 1;
+    return true;
 }
 #endif
 
