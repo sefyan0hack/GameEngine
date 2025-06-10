@@ -45,7 +45,7 @@ struct Camera::Test<1> : public ::testing::Test {
 };
 
 TEST_F(Camera_Test_Ctor1, ctor) {
-    EXPECT_EQ(m_Position, vec3(0, 2, 0));
+    EXPECT_EQ(m_Position, vec3(0, 1, 4));
     EXPECT_EQ(m_FrontDir, vec3(0, 0, -1));
     EXPECT_EQ(m_UpDir, vec3(0, 1, 0));
     EXPECT_EQ(m_RightDir, vec3(1, 0, 0));

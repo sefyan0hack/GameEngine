@@ -7,7 +7,7 @@
 #include <glm/gtx/fast_trigonometry.hpp>
 
 Camera::Camera() 
-    : m_Position({0, 2, 0})
+    : m_Position({0, 1, 4})
     , m_FrontDir({0, 0, -1})
     , m_UpDir({ 0, 1, 0})
     , m_RightDir({1, 0, 0})
