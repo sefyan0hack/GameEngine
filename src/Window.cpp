@@ -28,7 +28,6 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 	_init_helper(m_Width, m_Height, Title);
 	#elif defined(WEB_PLT)
 	_init_helper(m_Width, m_Height, Title);
-	m_DrawContext = emscripten_webgl_get_current_context();
 	#endif
 
     S_WindowsCount++;
