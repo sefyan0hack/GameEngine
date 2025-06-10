@@ -100,16 +100,18 @@ if(EMSCRIPTEN)
         -sMIN_WEBGL_VERSION=1
         -sMAX_WEBGL_VERSION=2
         -sWASM=1
-        -sGL_DEBUG=1
-        -sASSERTIONS=1
-        -sTOTAL_MEMORY=128MB
+        -sINITIAL_MEMORY=16MB
+        -sTOTAL_MEMORY=16MB
         -sWASM_MEM_MAX=1GB
         -sALLOW_MEMORY_GROWTH=1
         -sNO_EXIT_RUNTIME=1
         -sFORCE_FILESYSTEM=1
         -sDISABLE_EXCEPTION_CATCHING=0
         -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
+        --use-preload-plugins
         --preload-file ${CMAKE_SOURCE_DIR}/res
+        -sMINIMAL_RUNTIME=2
+        -sSTACK_SIZE=64KB
     )
 endif()
 ####################################################################################################

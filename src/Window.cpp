@@ -368,9 +368,10 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 {
 	EM_ASM({
+		const canvas = document.getElementById("canvas");
         document.title = UTF8ToString($0);
-        document.getElementById("canvas").width = $1;
-        document.getElementById("canvas").height = $2;
+        canvas.width = $1;
+        canvas.height = $2;
     }, Title, Width, Height);
 }
 
@@ -381,8 +382,9 @@ int CWindow::ResizeHandler([[maybe_unused]] int eventType, [[maybe_unused]] cons
 
 	EM_ASM(
 	{
-		document.getElementById("canvas").Height = $0;
-		document.getElementById("canvas").width = $1;
+		const canvas = document.getElementById("canvas");
+		canvas.Height = $0;
+		canvas.width = $1;
 	}, window->m_Width, window->m_Height);
 
     return 1;
