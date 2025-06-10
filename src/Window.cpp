@@ -12,8 +12,10 @@
 #include <emscripten/html5_webgl.h>
 #endif
 
-CWindow::CWindow([[maybe_unused]] int m_Width, [[maybe_unused]] int m_Height, [[maybe_unused]] const char* Title) 
-	: m_Visible(false)
+CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[maybe_unused]] const char* Title) 
+	: m_Width(Width)
+	, m_Height(Height)
+	, m_Visible(false)
 	, m_refCount(1)
 	, m_Keyboard(std::make_shared<Keyboard>())
 	, m_Mouse(std::make_shared<Mouse>())
@@ -23,6 +25,8 @@ CWindow::CWindow([[maybe_unused]] int m_Width, [[maybe_unused]] int m_Height, [[
 	m_DrawContext = GetDC(m_WindowHandle);
 	#elif defined(LINUX_PLT)
 	m_DrawContext = XOpenDisplay(nullptr);
+	_init_helper(m_Width, m_Height, Title);
+	#elif defined(WEB_PLT)
 	_init_helper(m_Width, m_Height, Title);
 	#endif
 
@@ -361,10 +365,19 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 }
 
 #elif defined(WEB_PLT)
+auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
+{
+	EM_ASM(document.title = Title);
+	EM_ASM(document.getElementById("canvas").width = Width);
+	EM_ASM(document.getElementById("canvas").height = Height);
+}
+
 int CWindow::ResizeHandler([[maybe_unused]] int eventType, [[maybe_unused]] const EmscriptenUiEvent* e, [[maybe_unused]] void* userData) {
     [[maybe_unused]] CWindow* window = static_cast<CWindow*>(userData);
     window->m_Width  = e->windowInnerWidth;
     window->m_Height = e->windowInnerHeight;
+	EM_ASM(document.getElementById("canvas").width = window->m_Width);
+	EM_ASM(document.getElementById("canvas").Height = window->m_Height);
     return 1;
 }
 
