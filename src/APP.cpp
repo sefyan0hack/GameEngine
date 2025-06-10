@@ -44,7 +44,7 @@ void APP::WebLoop(void* userData) {
         app->fps = static_cast<int64_t>(1000.0 / app->counts);
     }
     
-    if (CWindow::WindowsCount() == 0) {
+    if (CWindow::WindowShouldClose()) {
         emscripten_cancel_main_loop();
     }
 }
@@ -59,7 +59,7 @@ auto APP::Run() -> void
     QueryPerformanceCounter((LARGE_INTEGER *)&start_count);
     QueryPerformanceFrequency((LARGE_INTEGER *)&freq);
     
-    while (CWindow::WindowsCount() != 0) {
+    while (!CWindow::WindowShouldClose()) {
         CWindow::ProcessMessages();
         auto _hdc = m_Window.opengl()->DrawContext();
 
@@ -82,7 +82,7 @@ auto APP::Run() -> void
     struct timespec start_time, end_time;
     clock_gettime(CLOCK_MONOTONIC, &start_time);
         
-    while (CWindow::WindowsCount() != 0) {
+    while (!CWindow::WindowShouldClose()) {
         while (XPending(display)) {
             XEvent event;
             XNextEvent(display, &event);

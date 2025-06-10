@@ -54,7 +54,9 @@ class CWindow
         auto Show()                 -> void;
         auto Hide()                 -> void;
         static auto WindowsCount()  -> unsigned short ;
-        static auto ProcessMessages() -> void ;
+        static auto ProcessMessages()   -> void ;
+        static auto WindowShouldClose() -> bool ;
+
 
     private:
         #if defined(WINDOWS_PLT)

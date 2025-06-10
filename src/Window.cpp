@@ -501,32 +501,32 @@ bool CWindow::MouseHandler([[maybe_unused]] int eventType, [[maybe_unused]] cons
     [[maybe_unused]] CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return true;
 
-    switch (eventType) {
+	double canvas_left, canvas_top;
+    emscripten_get_element_css_position("#canvas", &canvas_left, &canvas_top);
+
+	int canvas_x = static_cast<int>(e->clientX - canvas_left);
+    int canvas_y = static_cast<int>(e->clientY - canvas_top);
+
+	switch (eventType) {
         case EMSCRIPTEN_EVENT_MOUSEDOWN:
-            if (e->button == 0) {        // Left button
-                window->m_Mouse->OnLeftPressed();
-            } else if (e->button == 2) { // Right button
-                window->m_Mouse->OnRightPressed();
-            }
-            [[fallthrough]]; // Position update for click events
+            if (e->button == 0) window->m_Mouse->OnLeftPressed();
+            else if (e->button == 2) window->m_Mouse->OnRightPressed();
+            window->m_Mouse->OnMouseMove(canvas_x, canvas_y);
+            break;
         
         case EMSCRIPTEN_EVENT_MOUSEUP:
-            if (eventType == EMSCRIPTEN_EVENT_MOUSEUP) {
-                if (e->button == 0) {
-                    window->m_Mouse->OnLeftReleased();
-                } else if (e->button == 2) {
-                    window->m_Mouse->OnRightReleased();
-                }
-            }
-            [[fallthrough]]; // Position update for release events
+            if (e->button == 0) window->m_Mouse->OnLeftReleased();
+            else if (e->button == 2) window->m_Mouse->OnRightReleased();
+            window->m_Mouse->OnMouseMove(canvas_x, canvas_y);
+            break;
         
         case EMSCRIPTEN_EVENT_MOUSEMOVE:
-            window->m_Mouse->OnMouseMove(static_cast<int>(e->clientX), 
-                                      static_cast<int>(e->clientY));
+            window->m_Mouse->OnMouseMove(canvas_x, canvas_y);
             break;
         
         case EMSCRIPTEN_EVENT_MOUSEENTER:
             window->m_Mouse->OnMouseEnter();
+            window->m_Mouse->OnMouseMove(canvas_x, canvas_y);
             break;
         
         case EMSCRIPTEN_EVENT_MOUSELEAVE:
@@ -586,4 +586,14 @@ auto CWindow::Hide() -> void
 	XUnmapWindow(m_DrawContext, m_WindowHandle);
 	#endif
 	m_Visible = false;
+}
+
+auto CWindow::WindowShouldClose() -> bool
+{
+	#if !defined(WEB_PLT)
+	return S_WindowsCount == 0;
+	#else
+	emscripten_sleep(12);
+	return false;
+	#endif
 }
