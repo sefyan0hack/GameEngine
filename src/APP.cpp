@@ -34,7 +34,7 @@ void APP::WebLoop(void* userData) {
     float delta = static_cast<float>((currentTime - lastTime)) / 1000.0f;
     lastTime = currentTime;
 
-    gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    gl::Clear(GL_DEPTH_BUFFER_BIT);
     app->Update(delta);
 
     end_count = static_cast<int64_t>(emscripten_get_now());
@@ -54,7 +54,8 @@ auto APP::Run() -> void
 {
     gl::ClearColor(0.2f, 0.21f, 0.22f, 1.0f);
     gl::Viewport(0, 0, m_Window.Width(), m_Window.Height());
-
+    gl::Clear(GL_COLOR_BUFFER_BIT);
+    
     #if defined(WINDOWS_PLT)
     QueryPerformanceCounter((LARGE_INTEGER *)&start_count);
     QueryPerformanceFrequency((LARGE_INTEGER *)&freq);
@@ -62,8 +63,8 @@ auto APP::Run() -> void
     while (CWindow::WindowsCount() != 0) {
         CWindow::ProcessMessages();
         auto _hdc = m_Window.opengl()->DrawContext();
-        
-        gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        gl::Clear(GL_DEPTH_BUFFER_BIT);
         Update(1/static_cast<float>(fps));
 
         SwapBuffers(_hdc);
@@ -109,7 +110,7 @@ auto APP::Run() -> void
         }
 
         // Rendering
-        gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        gl::Clear(GL_DEPTH_BUFFER_BIT);
         Update(1/static_cast<float>(fps));
 
         // Swap buffers
