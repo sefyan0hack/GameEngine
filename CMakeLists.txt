@@ -108,8 +108,7 @@ if(EMSCRIPTEN)
         -sFORCE_FILESYSTEM=1
         -sDISABLE_EXCEPTION_CATCHING=0
         -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
-        --use-preload-plugins
-        --preload-file ${CMAKE_SOURCE_DIR}/res
+        --embed-file ${CMAKE_SOURCE_DIR}/res
         -sSTACK_SIZE=64KB
     )
 endif()
