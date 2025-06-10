@@ -37,11 +37,11 @@ void APP::WebLoop(void* userData) {
     gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     app->Update(delta);
 
-    end_count = static_cast<int64_t>(emscripten_get_now());
-    counts = static_cast<int64_t>(end_count - start_count);
-    start_count = end_count;
+    app->end_count = static_cast<int64_t>(emscripten_get_now());
+    app->counts = static_cast<int64_t>(app->end_count - app->start_count);
+    app->start_count = app->end_count;
     if (counts > 0) {
-        fps = static_cast<int64_t>(1000.0 / counts);
+        app->fps = static_cast<int64_t>(1000.0 / app->counts);
     }
     
     if (CWindow::WindowsCount() == 0) {
