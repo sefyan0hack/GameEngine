@@ -74,3 +74,30 @@ jobs:
             build/tests/**/*.data
           retention-days: 1
           overwrite: true
+  deploy:
+      needs: build
+      runs-on: ubuntu-latest
+      permissions:
+        pages: write
+        id-token: write
+      environment:
+        name: github-pages
+        url: ${{ steps.deployment.outputs.page_url }}
+      steps:
+        - name: Download Engine Artifact
+          uses: actions/download-artifact@v4
+          with:
+            name: web-build-Engine
+            path: dist
+
+        - name: Setup Pages
+          uses: actions/configure-pages@v5
+
+        - name: Upload to Pages
+          uses: actions/upload-pages-artifact@v3
+          with:
+            path: dist
+
+        - name: Deploy to GitHub Pages
+          id: deployment
+          uses: actions/deploy-pages@v4
