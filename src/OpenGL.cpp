@@ -347,7 +347,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
             for(GLint i = 0; i < nGlslv; i++){
                 auto r = reinterpret_cast<const char*>(gl::GetStringi(GL_SHADING_LANGUAGE_VERSION, static_cast<GLuint>(i)));
                 if(r) m_GlslVersions.push_back(r);
-                
+
             }
         }
     }else{
@@ -361,8 +361,8 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     gl::DepthFunc(GL_LESS);
 
 
-    gl::Enable(GL_BLEND);
-    gl::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    // gl::Enable(GL_BLEND);
+    // gl::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
     gl::Disable(GL_CULL_FACE);
     gl::FrontFace(GL_CCW);
