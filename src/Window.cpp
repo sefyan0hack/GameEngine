@@ -440,19 +440,19 @@ int CWindow::KeyHandler([[maybe_unused]] int eventType, [[maybe_unused]] const E
         case EMSCRIPTEN_EVENT_KEYDOWN: {
             unsigned char vk = MapToVirtualKey(e->code);
             if (vk != 0) {
-                window->keyboard.OnKeyPressed(vk);
+                window->m_Keyboard.OnKeyPressed(vk);
             }
 
             char ch = MapToChar(e->key);
             if (ch != 0) {
-                window->keyboard.OnChar(ch);
+                window->m_Keyboard.OnChar(ch);
             }
         } break;
 
         case EMSCRIPTEN_EVENT_KEYUP: {
             unsigned char vk = MapToVirtualKey(e->code);
             if (vk != 0) {
-                window->keyboard.OnKeyReleased(vk);
+                window->m_Keyboard.OnKeyReleased(vk);
             }
         } break;
     }
@@ -462,7 +462,41 @@ int CWindow::KeyHandler([[maybe_unused]] int eventType, [[maybe_unused]] const E
 
 int CWindow::MouseHandler([[maybe_unused]] int eventType, [[maybe_unused]] const EmscriptenMouseEvent* e, [[maybe_unused]] void* userData) {
     [[maybe_unused]] CWindow* window = static_cast<CWindow*>(userData);
-    // Handle mouse events (e.clientX, e.clientY, e.button, etc.)
+    if (!window) return 1;
+
+    switch (eventType) {
+        case EMSCRIPTEN_EVENT_MOUSEDOWN:
+            if (e->button == 0) {        // Left button
+                window->m_Mouse.OnLeftPressed();
+            } else if (e->button == 2) { // Right button
+                window->m_Mouse.OnRightPressed();
+            }
+            [[fallthrough]]; // Position update for click events
+        
+        case EMSCRIPTEN_EVENT_MOUSEUP:
+            if (eventType == EMSCRIPTEN_EVENT_MOUSEUP) {
+                if (e->button == 0) {
+                    window->m_Mouse.OnLeftReleased();
+                } else if (e->button == 2) {
+                    window->m_Mouse.OnRightReleased();
+                }
+            }
+            [[fallthrough]]; // Position update for release events
+        
+        case EMSCRIPTEN_EVENT_MOUSEMOVE:
+            window->m_Mouse.OnMouseMove(static_cast<int>(e->clientX), 
+                                      static_cast<int>(e->clientY));
+            break;
+        
+        case EMSCRIPTEN_EVENT_MOUSEENTER:
+            window->m_Mouse.OnMouseEnter();
+            break;
+        
+        case EMSCRIPTEN_EVENT_MOUSELEAVE:
+            window->m_Mouse.OnMouseLeave();
+            break;
+    }
+
     return 1;
 }
 #endif
