@@ -209,24 +209,6 @@ auto OpenGL::init_opengl_linux() -> void
         GLX_DEPTH_SIZE,     24,
         0
     };
-
-    int totalFbConfigs = 0;
-    GLXFBConfig* allConfigs = glXGetFBConfigs(m_DrawContext, DefaultScreen(m_DrawContext), &totalFbConfigs);
-
-    if (!allConfigs || totalFbConfigs == 0) {
-        Error("No FBConfigs available on this system.");
-        return;
-    }
-
-    // Log attributes of the first 5 configs
-    for (int i = 0; i < std::min(5, totalFbConfigs); i++) {
-        int red, depth;
-        glXGetFBConfigAttrib(m_DrawContext, allConfigs[i], GLX_RED_SIZE, &red);
-        glXGetFBConfigAttrib(m_DrawContext, allConfigs[i], GLX_DEPTH_SIZE, &depth);
-        Info("Config {}: R={}, Depth={}", i, red, depth);
-    }
-
-    XFree(allConfigs);
     
     int fbcount;
     GLXFBConfig* fbc = glXChooseFBConfig(m_DrawContext, DefaultScreen(m_DrawContext), visualAttribs, &fbcount);
@@ -367,6 +349,8 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
                 if(r) m_GlslVersions.push_back(r);
             }
         }
+    }else{
+        m_GlslVersions.push_back((const char*)emscripten_webgl_get_parameter(m_Context, EMSCRIPTEN_WEBGL_PARAM_SHADING_LANGUAGE_VERSION));    
     }
     gl::GetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_MaxTextureUnits);
     
