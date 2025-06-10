@@ -44,7 +44,7 @@ struct CerrPolicy {
 
 struct ClogPolicy {
   static std::ostream& get_stream() {
-    return std::clog;
+    return std::cout;
   }
 };
 
