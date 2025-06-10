@@ -38,10 +38,10 @@ void APP::WebLoop(void* userData) {
     app->Update(delta);
 
     app->end_count = static_cast<int64_t>(emscripten_get_now());
-    counts = static_cast<int64_t>(app->end_count - app->start_count);
+    app->counts = static_cast<int64_t>(app->end_count - app->start_count);
     app->start_count = app->end_count;
-    if (counts > 0) {
-        app->fps = static_cast<int64_t>(1000.0 / counts);
+    if (app->counts > 0) {
+        app->fps = static_cast<int64_t>(1000.0 / app->counts);
     }
     
     if (CWindow::WindowsCount() == 0) {
