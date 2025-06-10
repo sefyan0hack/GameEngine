@@ -373,17 +373,18 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     gl::Enable(GL_DEPTH_TEST);
     gl::DepthFunc(GL_LESS);
 
-    gl::Enable(GL_LINE_SMOOTH);
 
     gl::Enable(GL_BLEND);
     gl::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    gl::Enable(GL_MULTISAMPLE);
  
     gl::Disable(GL_CULL_FACE);
     gl::FrontFace(GL_CCW);
-    
-    gl::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
+    if(sys::Target != sys::Target::Web){
+        gl::Enable(GL_LINE_SMOOTH);
+        gl::Enable(GL_MULTISAMPLE);
+        gl::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+    }
 
     #if defined(DEBUG) && !defined(WEB_PLT)
     if( m_Major >= 4 && m_Minor >= 3 && m_Debug)
