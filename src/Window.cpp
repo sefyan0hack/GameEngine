@@ -71,7 +71,7 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 			window->m_Height = e->elementHeight;
 
 			EM_ASM({
-				const canvas = document.getElementById('canvas');
+				const canvas = Module.canvas;
 
 				if      (canvas.requestFullscreen)        canvas.requestFullscreen();
 				else if (canvas.webkitRequestFullscreen)  canvas.webkitRequestFullscreen();
@@ -422,7 +422,7 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 {
 	EM_ASM({
-		const canvas = document.getElementById("canvas");
+		const canvas = Module.canvas;
         document.title = UTF8ToString($0);
         canvas.width = $1;
         canvas.height = $2;
@@ -438,7 +438,7 @@ bool CWindow::ResizeHandler([[maybe_unused]] int eventType, [[maybe_unused]] con
 
 	EM_ASM(
 	{
-		const canvas = document.getElementById("canvas");
+		const canvas = Module.canvas;
 		canvas.Height = $0;
 		canvas.width = $1;
 	}, window->m_Width, window->m_Height);
