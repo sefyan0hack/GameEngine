@@ -350,7 +350,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
             }
         }
     }else{
-        m_GlslVersions.push_back((const char*)emscripten_webgl_get_parameter(m_Context, EMSCRIPTEN_WEBGL_PARAM_SHADING_LANGUAGE_VERSION));    
+        m_GlslVersions.push_back("300 es");
     }
     gl::GetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_MaxTextureUnits);
     

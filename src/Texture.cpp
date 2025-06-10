@@ -183,6 +183,8 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
             Error("{}", std::format("failed to load {} : {}", face, stbi_failure_reason()));
         }
     }
+    gl::GenerateMipmap(m_Type);
+    gl::TexParameteri(m_Type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     gl::PixelStorei(GL_UNPACK_ALIGNMENT, 4);
     Info("{}", static_cast<const Texture&>(*this));
 }
