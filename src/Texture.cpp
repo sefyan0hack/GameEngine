@@ -102,12 +102,14 @@ auto Texture::TextureUnit() const -> GLint
 Texture2D::Texture2D(const std::string &name)
     : Texture(GL_TEXTURE_2D), m_Mipmapped(true)
 {
-
-    gl::TexParameteri(m_Type, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    gl::TexParameteri(m_Type, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    gl::TexParameteri(m_Type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    gl::TexParameteri(m_Type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
+    static bool once = false;
+    if(!once){
+        gl::TexParameteri(m_Type, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        gl::TexParameteri(m_Type, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        gl::TexParameteri(m_Type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        gl::TexParameteri(m_Type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        once = true;
+    }
     
     if (auto result = load_img(name.c_str()); result)
     {
@@ -159,12 +161,16 @@ auto Texture2D::isMipMapped() const -> GLboolean
 TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
     : Texture(GL_TEXTURE_CUBE_MAP)
 {
-
-    gl::TexParameteri(m_Type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    gl::TexParameteri(m_Type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    gl::TexParameteri(m_Type, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    gl::TexParameteri(m_Type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    gl::TexParameteri(m_Type, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    static bool once = false;
+    if(!once){
+        gl::TexParameteri(m_Type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        gl::TexParameteri(m_Type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        gl::TexParameteri(m_Type, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        gl::TexParameteri(m_Type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        gl::TexParameteri(m_Type, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+        once = true;
+    }
+    
 
     for (size_t i = 0; i < faces.size(); ++i) {
         const auto& face = faces[i];
@@ -198,7 +204,6 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
         }
     }
     gl::GenerateMipmap(m_Type);
-    gl::TexParameteri(m_Type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     gl::PixelStorei(GL_UNPACK_ALIGNMENT, 4);
     Info("{}", static_cast<const Texture&>(*this));
 }
