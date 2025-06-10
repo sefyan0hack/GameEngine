@@ -11,7 +11,6 @@ protected:
     virtual auto Update(float delta) -> void = 0 ;
 public:
     auto Run() -> void ;
-    auto Render() -> void ;
     #if defined(WEB_PLT)
     static auto WebLoop(void* userData) -> void;
     #endif

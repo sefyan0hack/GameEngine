@@ -26,52 +26,34 @@ APP::APP()
 
 
 #if defined(WEB_PLT)
-// Web platform main loop handler
 void APP::WebLoop(void* userData) {
     APP* app = static_cast<APP*>(userData);
     
-    // Get current time for delta calculation
     static double lastTime = emscripten_get_now();
     double currentTime = emscripten_get_now();
-    float delta = static_cast<float>((currentTime - lastTime)) / 1000.0f;  // Convert to seconds
+    float delta = static_cast<float>((currentTime - lastTime)) / 1000.0f;
     lastTime = currentTime;
-    
-    app->Update(delta);
-    app->Render();
-    
-    // Check if we should stop the loop
-    if (CWindow::WindowsCount() == 0) {
-        emscripten_cancel_main_loop();
-    }
-}
-#endif
 
-
-auto APP::Render() -> void {
-    gl::Viewport(0, 0, m_Window.Width(), m_Window.Height());
     gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-    #if defined(WINDOWS_PLT)
-    SwapBuffers(m_Window.opengl()->DrawContext());
-    #elif defined(LINUX_PLT)
-    glXSwapBuffers(m_Window.DrawContext(), m_Window.WindowHandle());
-    #elif defined(WEB_PLT)
-    // No buffer swap needed - handled automatically by browser
-    #endif
-    
-    #if defined(WEB_PLT)
+    app->Update(delta);
+
     end_count = static_cast<int64_t>(emscripten_get_now());
     counts = static_cast<int64_t>(end_count - start_count);
     start_count = end_count;
     if (counts > 0) {
         fps = static_cast<int64_t>(1000.0 / counts);
     }
-    #endif
+    
+    if (CWindow::WindowsCount() == 0) {
+        emscripten_cancel_main_loop();
+    }
 }
+#endif
 
 auto APP::Run() -> void
 {
     gl::ClearColor(0.2f, 0.21f, 0.22f, 1.0f);
+    gl::Viewport(0, 0, m_Window.Width(), m_Window.Height());
 
     #if defined(WINDOWS_PLT)
     QueryPerformanceCounter((LARGE_INTEGER *)&start_count);
@@ -80,9 +62,8 @@ auto APP::Run() -> void
     while (CWindow::WindowsCount() != 0) {
         CWindow::ProcessMessages();
         auto _hdc = m_Window.opengl()->DrawContext();
-        gl::Viewport(0, 0, m_Window.Width(), m_Window.Height());
+        
         gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         Update(1/static_cast<float>(fps));
 
         SwapBuffers(_hdc);
@@ -128,9 +109,7 @@ auto APP::Run() -> void
         }
 
         // Rendering
-        gl::Viewport(0, 0, m_Window.Width(), m_Window.Height());
         gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         Update(1/static_cast<float>(fps));
 
         // Swap buffers

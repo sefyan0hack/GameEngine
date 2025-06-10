@@ -183,6 +183,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
         case WM_SIZE:{
             m_Width  = LOWORD(Lpr);
             m_Height = HIWORD(Lpr);
+			gl::Viewport(0, 0, m_Width, m_Height);
             return 0;
         }
         /*********** KEYBOARD MESSAGES ***********/
@@ -418,13 +419,14 @@ bool CWindow::ResizeHandler([[maybe_unused]] int eventType, [[maybe_unused]] con
     window->m_Width  = e->windowInnerWidth;
     window->m_Height = e->windowInnerHeight;
 
-	EM_ASM(
-	{
-		const canvas = Module.canvas;
-		canvas.Height = $0;
-		canvas.width = $1;
-	}, window->m_Width, window->m_Height);
+	// EM_ASM(
+	// {
+	// 	const canvas = Module.canvas;
+	// 	canvas.Height = $0;
+	// 	canvas.width = $1;
+	// }, window->m_Width, window->m_Height);
 
+	gl::Viewport(0, 0, window->m_Width, window->m_Height);
     return true;
 }
 

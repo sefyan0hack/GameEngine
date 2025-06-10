@@ -115,11 +115,19 @@ Texture2D::Texture2D(const std::string &name)
         m_Width = Width;
         m_Height = Height;
         m_Data = ubyte_to_vector(Data, Width * Height * Channel);
-        GLenum format = Channel == 1 ? GL_RED : Channel == 3 ? GL_RGB : GL_RGBA;
+
+        GLenum internalFormat  = 
+            Channel == 1 ? GL_RED :
+            Channel == 3 ? GL_RGB8 : GL_RGBA8;
+
+        GLenum format  = 
+            Channel == 1 ? GL_RED :
+            Channel == 3 ? GL_RGB : GL_RGBA;
+
         if(is_odd(m_Width)){
             gl::PixelStorei(GL_UNPACK_ALIGNMENT, 1);
         }
-        gl::TexImage2D(m_Type, 0, static_cast<GLint>(format), m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, m_Data.data());
+        gl::TexImage2D(m_Type, 0, static_cast<GLint>(internalFormat), m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, m_Data.data());
 
         if (m_Mipmapped) GenerateMipMap();
 
@@ -170,13 +178,19 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
             m_Height = Height;
             m_Data[i] = DataFace;
     
-            GLenum format = Channel == 1 ? GL_RED : Channel == 3 ? GL_RGB : GL_RGBA;
+            GLenum internalFormat  = 
+                    Channel == 1 ? GL_RED :
+                    Channel == 3 ? GL_RGB8 : GL_RGBA8;
+
+            GLenum format  = 
+                    Channel == 1 ? GL_RED :
+                    Channel == 3 ? GL_RGB : GL_RGBA;
             
             GLint rowBytes = Width * Channel;
             GLint alignment = (rowBytes % 8 == 0)? 8 : (rowBytes % 4 == 0)? 4 : (rowBytes % 2 == 0)? 2 : 1;
             gl::PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
 
-            gl::TexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, static_cast<GLint>(format), m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, DataFace.data());
+            gl::TexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, static_cast<GLint>(internalFormat), m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, DataFace.data());
 
             Info("Loding {} ", face);
         }else{
