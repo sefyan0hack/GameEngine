@@ -140,6 +140,7 @@ namespace sys {
         Arm64,
         x86,
         Arm,
+        Wasm,
         Unknown
     };
 
@@ -153,14 +154,16 @@ namespace sys {
     constexpr auto Target = sys::Target::Unknown;
     #endif
 
-    #if defined(__x86_64__) || defined(_M_AMD64)
+    #if   defined(__x86_64__)  || defined(_M_AMD64)
         constexpr auto Arch = sys::Arch::x86_64;
     #elif defined(__aarch64__) || defined(_M_ARM64)
         constexpr auto Arch = sys::Arch::Arm64;
-    #elif defined(__i386__) || defined(_M_IX86)
+    #elif defined(__i386__)    || defined(_M_IX86)
         constexpr auto Arch = sys::Arch::x86;
-    #elif defined(__arm__) || defined(_M_ARM)
+    #elif defined(__arm__)     || defined(_M_ARM)
         constexpr auto Arch = sys::Arch::Arm;
+    #elif defined(__wasm32__)  || defined(__wasm__)
+        constexpr auto Arch = sys::Arch::Wasm;
     #else
         constexpr auto Arch = sys::Arch::Unknown;
     #endif
@@ -174,7 +177,8 @@ namespace sys {
         Arch == Arch::x86_64 ? "x86_64" :
         Arch == Arch::Arm64  ? "Arm64"  :
         Arch == Arch::x86    ? "x86"    :
-        Arch == Arch::Arm    ? "Arm"    : "UNKNOWN";
+        Arch == Arch::Arm    ? "Arm"    :
+        Arch == Arch::Wasm   ? "Wasm"   : "UNKNOWN";
 
     constexpr const char* TimeStamp = __TIMESTAMP__;
 } //namespace sys
