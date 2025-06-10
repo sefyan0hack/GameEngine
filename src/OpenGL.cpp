@@ -354,19 +354,13 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
         m_GlslVersions.push_back("300 es");
     }
     gl::GetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_MaxTextureUnits);
-    
 
-    // gl::Enable(GL_CULL_FACE);
     gl::Enable(GL_DEPTH_TEST);
     gl::DepthFunc(GL_LESS);
-
 
     // gl::Enable(GL_BLEND);
     // gl::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
-    gl::Disable(GL_CULL_FACE);
-    gl::FrontFace(GL_CCW);
-
     if(sys::Target != sys::Target::Web){
         gl::Enable(GL_LINE_SMOOTH);
         gl::Enable(GL_MULTISAMPLE);

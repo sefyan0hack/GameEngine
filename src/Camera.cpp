@@ -84,11 +84,14 @@ auto Camera::EnableMSAA() -> void
 
 auto Camera::UpdateVectors() -> void
 {
-    auto cosyaw  = cos(glm::radians(this->m_Yaw));
-    auto sinyaw  = sin(glm::radians(this->m_Yaw));
+    auto yawrad   = glm::radians(this->m_Yaw);
+    auto pitchrad = glm::radians(this->m_Pitch);
 
-    auto cospich = cos(glm::radians(this->m_Pitch));
-    auto sinpich = sin(glm::radians(this->m_Pitch));
+    auto cosyaw  = cos(yawrad);
+    auto sinyaw  = sin(yawrad);
+
+    auto cospich = cos(pitchrad);
+    auto sinpich = sin(pitchrad);
     glm::vec3 front;
 
     front = {cosyaw * cospich, sinpich, sinyaw * cospich};
