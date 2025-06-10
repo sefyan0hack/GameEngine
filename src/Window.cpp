@@ -501,8 +501,15 @@ bool CWindow::MouseHandler([[maybe_unused]] int eventType, [[maybe_unused]] cons
     [[maybe_unused]] CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return true;
 
-	double canvas_left, canvas_top;
-    emscripten_get_element_css_position("#canvas", &canvas_left, &canvas_top);
+	double canvas_left = 0.0 , canvas_top = 0.0;
+    EM_ASM({
+        const canvas = document.getElementById('canvas');
+        if (canvas) {
+            const rect = canvas.getBoundingClientRect();
+            setValue($0, rect.left, 'double');
+            setValue($1, rect.top, 'double');
+        }
+    }, &canvas_left, &canvas_top);
 
 	int canvas_x = static_cast<int>(e->clientX - canvas_left);
     int canvas_y = static_cast<int>(e->clientY - canvas_top);
