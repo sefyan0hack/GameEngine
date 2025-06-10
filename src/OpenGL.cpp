@@ -337,9 +337,6 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
 
     gl::GetIntegerv(GL_MAJOR_VERSION, &m_Major);
     gl::GetIntegerv(GL_MINOR_VERSION, &m_Minor);
-    GLint flags = 0;
-    gl::GetIntegerv(GL_CONTEXT_FLAGS, &flags);
-    m_Debug = !!(flags & GL_CONTEXT_FLAG_DEBUG_BIT);
     
     auto vendor = reinterpret_cast<const char*>(gl::GetString(GL_VENDOR));
     auto renderer = reinterpret_cast<const char*>(gl::GetString(GL_RENDERER));
@@ -355,17 +352,22 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     #endif
 
     m_Extensions = exts ? split(exts, " ") : decltype(m_Extensions){} ;
-        
-    GLint nGlslv = 0;
-    gl::GetIntegerv(GL_NUM_SHADING_LANGUAGE_VERSIONS, &nGlslv);
+    
+    if(sys::Target != sys::Target::Web){
+        GLint flags = 0;
+        gl::GetIntegerv(GL_CONTEXT_FLAGS, &flags);
+        m_Debug = !!(flags & GL_CONTEXT_FLAG_DEBUG_BIT);
 
-    if(static_cast<size_t>(nGlslv) != m_GlslVersions.size()){
-        for(GLint i = 0; i < nGlslv; i++){
-            auto r = reinterpret_cast<const char*>(gl::GetStringi(GL_SHADING_LANGUAGE_VERSION, static_cast<GLuint>(i)));
-            if(r) m_GlslVersions.push_back(r);
+        GLint nGlslv = 0;
+        gl::GetIntegerv(GL_NUM_SHADING_LANGUAGE_VERSIONS, &nGlslv);
+
+        if(static_cast<size_t>(nGlslv) != m_GlslVersions.size()){
+            for(GLint i = 0; i < nGlslv; i++){
+                auto r = reinterpret_cast<const char*>(gl::GetStringi(GL_SHADING_LANGUAGE_VERSION, static_cast<GLuint>(i)));
+                if(r) m_GlslVersions.push_back(r);
+            }
         }
     }
-
     gl::GetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_MaxTextureUnits);
     
 
