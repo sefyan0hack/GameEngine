@@ -52,7 +52,7 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 	emscripten_set_mouseleave_callback("#canvas", this, EM_FALSE, &CWindow::MouseHandler);
 
 	emscripten_set_fullscreenchange_callback("#canvas", this, EM_FALSE, 
-		[](
+		[&m_Width, &m_Height](
 			[[maybe_unused]] int eventType, 
 			[[maybe_unused]] const EmscriptenFullscreenChangeEvent* e,
 			[[maybe_unused]] void* userData
@@ -79,7 +79,7 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 
 				canvas.width  = screen.width;
 				canvas.height = screen.height;
-				// 4) Write the values back into the HEAP32 slots pointed at by $0/$1
+
 				HEAP32[$0 >> 2] = screen.width;
 				HEAP32[$1 >> 2] = screen.height;
 
@@ -87,7 +87,7 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 				console.log(canvas.width);
 				console.log(canvas.height);
 				console.log("EM_ASM-");
-			}, &m_Width, m_Height);
+			}, &m_Width, &m_Height);
 
 			return true;
 	});
