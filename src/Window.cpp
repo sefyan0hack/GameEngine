@@ -72,16 +72,17 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 	emscripten_set_mousemove_callback(target  , this, EM_FALSE, &CWindow::MouseHandler);
 	emscripten_set_mouseenter_callback(target , this, EM_FALSE, &CWindow::MouseHandler);
 	emscripten_set_mouseleave_callback(target , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_contextmenu_callback(target, this, EM_TRUE, 
-		[](int, const EmscriptenMouseEvent*, void*) -> bool { 
-			return true; 
-		}
-	);
+
 	emscripten_set_focusout_callback(target, this, EM_FALSE,
-		[](int, const EmscriptenFocusEvent *, void*) -> bool {
+		[](int eventType, const EmscriptenFocusEvent *, void* userData) -> bool {
 			[[maybe_unused]] CWindow* window = static_cast<CWindow*>(userData);
     		if (!window) return true;
-			window->m_Keyboard->ClearState();
+			switch (eventType)
+			{
+				case EMSCRIPTEN_EVENT_FOCUSOUT:
+					window->m_Keyboard->ClearState();
+					break;
+			}
 			return true;
 		}
 	);
@@ -553,12 +554,12 @@ bool CWindow::MouseHandler([[maybe_unused]] int eventType, [[maybe_unused]] cons
         
         case EMSCRIPTEN_EVENT_MOUSEENTER:
             window->m_Mouse->OnMouseEnter();
-			window->m_Mouse->isEnterd = true;
+			window->m_Mouse->isEntered = true;
             break;
         
         case EMSCRIPTEN_EVENT_MOUSELEAVE:
             window->m_Mouse->OnMouseLeave();
-			window->m_Mouse->isEnterd = false;
+			window->m_Mouse->isEntered = false;
             break;
     }
 
