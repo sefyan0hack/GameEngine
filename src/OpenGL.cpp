@@ -335,7 +335,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
 
     m_Extensions = exts ? split(exts, " ") : decltype(m_Extensions){} ;
     
-    if(sys::Target != sys::Target::Web){
+    if constexpr (sys::Target != sys::Target::Web){
         GLint flags = 0;
         gl::GetIntegerv(GL_CONTEXT_FLAGS, &flags);
         m_Debug = !!(flags & GL_CONTEXT_FLAG_DEBUG_BIT);
@@ -361,7 +361,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     // gl::Enable(GL_BLEND);
     // gl::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
-    if(sys::Target != sys::Target::Web){
+    if constexpr (sys::Target != sys::Target::Web){
         gl::Enable(GL_LINE_SMOOTH);
         gl::Enable(GL_MULTISAMPLE);
         gl::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
@@ -557,9 +557,12 @@ auto OpenGL::ThreadId() const -> size_t
 
 auto OpenGL::CheckThread() const -> void
 {
-    auto id = std::hash<std::thread::id>{}(std::this_thread::get_id());
-    if ( id != m_ThreadId && sys::Target != sys::Target::Web) {
-        Error("OpenGL context used in wrong thread! . Expected id: {} Vs Geted: {}", m_ThreadId, id);
+    if constexpr (sys::Target != sys::Target::Web){
+        
+        auto id = std::hash<std::thread::id>{}(std::this_thread::get_id());
+        if ( id != m_ThreadId ) {
+            Error("OpenGL context used in wrong thread! . Expected id: {} Vs Geted: {}", m_ThreadId, id);
+        }
     }
 }
 

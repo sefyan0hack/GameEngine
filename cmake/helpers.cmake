@@ -28,7 +28,6 @@ function(apply_main_options)
             target_compile_options(${target} PRIVATE
 
                 # Debug flags
-                "$<$<CONFIG:Debug>:/Z7>"
                 "$<$<CONFIG:Debug>:/Od>"
                 "$<$<CONFIG:Debug>:/RTC1>"
                 "$<$<CONFIG:Debug>:/DYNAMICBASE>"
@@ -39,7 +38,6 @@ function(apply_main_options)
                 "$<$<CONFIG:Release>:/O2>"
                 "$<$<CONFIG:Release>:/Ob2>"
                 "$<$<CONFIG:Release>:/Ot>"
-                "$<$<CONFIG:Release>:/Zi>"
                 "$<$<CONFIG:Release>:/fp:fast>"
                 "$<$<CONFIG:Release>:/Oy->"
             )
