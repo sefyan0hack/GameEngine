@@ -28,7 +28,9 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 	_init_helper(m_Width, m_Height, Title);
 	#elif defined(WEB_PLT)
 	_init_helper(m_Width, m_Height, Title);
-	
+
+	const char* target = "#canvas";
+
 	//hide all element except canvas
 	EM_ASM({
 		// 1. Select the canvas (use your canvas ID or selector)
@@ -60,18 +62,23 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
     m_OpenGl = std::make_shared<gl::OpenGL>(m_WindowHandle, m_DrawContext);
 
 	#if defined(WEB_PLT)
-	emscripten_set_keypress_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, &CWindow::KeyHandler);
-	emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, &CWindow::KeyHandler);
-	emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, &CWindow::KeyHandler);
+	emscripten_set_keypress_callback(target, this, EM_FALSE, &CWindow::KeyHandler);
+	emscripten_set_keydown_callback(target, this, EM_FALSE, &CWindow::KeyHandler);
+	emscripten_set_keyup_callback(target, this, EM_FALSE, &CWindow::KeyHandler);
 
 	//
-	emscripten_set_mousedown_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseup_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT   , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mousemove_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseenter_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseleave_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mousedown_callback(target , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseup_callback(target   , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mousemove_callback(target , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseenter_callback(target, this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseleave_callback(target, this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_contextmenu_callback(target, this, EM_TRUE, 
+		[](int, const EmscriptenMouseEvent*, void*) -> int { 
+			return 1; 
+		}
+	);
 
-	emscripten_set_fullscreenchange_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, 
+	emscripten_set_fullscreenchange_callback(target, this, EM_FALSE, 
 		[](
 			[[maybe_unused]] int eventType, 
 			[[maybe_unused]] const EmscriptenFullscreenChangeEvent* e,
@@ -243,11 +250,11 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 			return 0;
 	    }
 		case WM_MOUSEHOVER :{
-			m_Mouse->isEnterd = true;
+			m_Mouse->isEntered = true;
 			return 0;
 		}
 		case WM_MOUSELEAVE :{
-			m_Mouse->isEnterd = false;
+			m_Mouse->isEntered = false;
 			return 0;
 		}
 	    case WM_LBUTTONDOWN:
@@ -533,15 +540,17 @@ bool CWindow::MouseHandler([[maybe_unused]] int eventType, [[maybe_unused]] cons
             break;
         
         case EMSCRIPTEN_EVENT_MOUSEMOVE:
-            window->m_Mouse->OnMouseMove(e->clientX, e->clientY);
+            window->m_Mouse->OnMouseMove(e->targetX, e->targetY);
             break;
         
         case EMSCRIPTEN_EVENT_MOUSEENTER:
             window->m_Mouse->OnMouseEnter();
+			window->m_Mouse->isEnterd = true;
             break;
         
         case EMSCRIPTEN_EVENT_MOUSELEAVE:
             window->m_Mouse->OnMouseLeave();
+			window->m_Mouse->isEnterd = false;
             break;
     }
 

@@ -36,7 +36,7 @@ auto Mouse::IsInWindow() const noexcept -> bool
 
 auto Mouse::IsEntered() const noexcept -> bool
 {
-    return isEnterd;
+    return isEntered;
 }
 
 auto Mouse::LeftIsPressed() const noexcept -> bool 
@@ -84,6 +84,7 @@ auto Mouse::OnMouseMove( int newx,int newy ) noexcept -> void
 auto Mouse::OnMouseLeave() noexcept -> void
 {
 	isInWindow = false;
+	isEntered = false;
 	buffer.push( Mouse::Event( Mouse::Event::Type::Leave,*this ) );
 	TrimBuffer();
 }
@@ -91,6 +92,7 @@ auto Mouse::OnMouseLeave() noexcept -> void
 auto Mouse::OnMouseEnter() noexcept -> void
 {
 	isInWindow = true;
+	isEntered = true;
 	buffer.push( Mouse::Event( Mouse::Event::Type::Enter,*this ) );
 	TrimBuffer();
 }
