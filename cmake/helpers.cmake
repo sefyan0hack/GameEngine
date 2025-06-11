@@ -30,8 +30,6 @@ function(apply_main_options)
                 # Debug flags
                 "$<$<CONFIG:Debug>:/Od>"
                 "$<$<CONFIG:Debug>:/RTC1>"
-                "$<$<CONFIG:Debug>:/analyze>"
-
                 # Release flags
                 "$<$<CONFIG:Release>:/O2>"
             )
