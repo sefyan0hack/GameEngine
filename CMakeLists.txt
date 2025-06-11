@@ -242,7 +242,7 @@ else()
     add_definitions(/D_HAS_EXCEPTIONS=0)
     endif()
     add_compile_options(
-        $<$<CXX_COMPILER_ID:MSVC>:/EHs-c->
+        $<$<CXX_COMPILER_ID:MSVC>:/EHs-c-;/wd4530>
         $<$<CXX_COMPILER_ID:Clang,GNU>:-fno-exceptions>
     )
 endif()
