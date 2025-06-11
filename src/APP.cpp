@@ -47,6 +47,7 @@ void APP::WebLoop(void* userData) {
     if (CWindow::WindowShouldClose()) {
         emscripten_cancel_main_loop();
     }
+    app->m_Window.m_Keyboard->UpdatePrevState();
 }
 #endif
 
@@ -72,6 +73,7 @@ auto APP::Run() -> void
         counts = end_count - start_count;
         start_count = end_count;
         fps = freq / counts;
+        m_Window.m_Keyboard->UpdatePrevState();
     }
     #elif defined(LINUX_PLT)
     Display* display = m_Window.DrawContext();
@@ -129,7 +131,9 @@ auto APP::Run() -> void
             };
             nanosleep(&sleep_time, nullptr);
         }
-        
+
+        m_Window.m_Keyboard->UpdatePrevState();
+
         clock_gettime(CLOCK_MONOTONIC, &start_time);
     }
     #elif defined(WEB_PLT)
