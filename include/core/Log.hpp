@@ -132,18 +132,18 @@ auto Log(
   }
   
   if constexpr (lvl == Log_LvL::ERR || lvl == Log_LvL::EXPT){
-    if(sys::Target != sys::Target::Web)
+    #if !defined(WEB_PLT)
       throw std::runtime_error(msg);
-    else{
+    #else
       std::cerr << msg;
       std::exit(1);
-    }
+    #endif
   }
 }
 
 }
 
-#ifdef DEBUG
+#if defined(DEBUG) || defined(WEB_PLT)
 #define LOGPolicy ClogPolicy
 #else
 #define LOGPolicy FilePolicy
