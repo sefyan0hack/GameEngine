@@ -89,7 +89,7 @@ TEST(Formatters, Camera){
 #if !defined(WEB_PLT)
 
 TEST(Formatters, Shader){
-    try {
+    IF_THROWS_IGNOR({
         auto shader = Shader(SHADER(skybox)".vert", GL_VERTEX_SHADER);
 
         auto r = std::format("{}", shader);
@@ -98,7 +98,7 @@ TEST(Formatters, Shader){
             shader.id(), shader.TypeName()
         );
         EXPECT_EQ(r, e);
-    } catch (...) {}
+    });
 }
 
 TEST(Formatters, Mesh){
@@ -113,7 +113,7 @@ TEST(Formatters, Mesh){
 }
 
 TEST(Formatters, Material){
-    EXPECT_ANY_THROW({
+    IF_THROWS_IGNOR({
         auto shader_vert = Shader(SHADER(skybox)".vert", GL_VERTEX_SHADER);
         auto shader_frag = Shader(SHADER(skybox)".frag", GL_FRAGMENT_SHADER);
 
@@ -129,7 +129,7 @@ TEST(Formatters, Material){
 }
 
 TEST(Formatters, GameObject){
-    EXPECT_ANY_THROW({
+    IF_THROWS_IGNOR({
         auto shader_vert = Shader(SHADER(skybox)".vert", GL_VERTEX_SHADER);
         auto shader_frag = Shader(SHADER(skybox)".frag", GL_FRAGMENT_SHADER);
         auto mesh = Mesh(std::vector<Vertex>());

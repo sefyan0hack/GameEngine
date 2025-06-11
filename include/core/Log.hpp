@@ -132,7 +132,7 @@ auto Log(
   }
   
   if constexpr (lvl == Log_LvL::ERR || lvl == Log_LvL::EXPT){
-    #if !defined(WEB_PLT)
+    #ifdef __cpp_exceptions
       throw std::runtime_error(msg);
     #else
       std::cerr << msg;

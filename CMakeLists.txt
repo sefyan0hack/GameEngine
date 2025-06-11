@@ -39,10 +39,11 @@ string(REGEX MATCH "^[0-9]+" COMPILER_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSIO
 option(TESTS            "enable tests"               OFF)
 option(ENABLE_COVERAGE  "enable code coverage"       OFF)
 option(HARDEN           "enable Hardening"           OFF)
-option(STATIC_LINK      "enable Static link c++"     ON)
+option(STATIC_LINK      "enable Static link C++"     ON)
 option(ASAN             "enable Address Sanitizer"   OFF)
 option(USAN             "enable Undefined Sanitizer" OFF)
 option(TSAN             "enable Thread Sanitizer"    OFF)
+option(EXCEPTIONS       "enable Exciptions"          OFF)
 
 if(MINGW) #desable RTTI becaus of bug in mingw redifinition when static link libstdc++
 option(RTTI             "enable RunTime Type Info"   OFF)
@@ -73,6 +74,9 @@ if(TSAN)
 endif()
 if(RTTI)
     message(STATUS "[Rtti `ON`]")
+endif()
+if(EXCEPTIONS)
+    message(STATUS "[Exceptions `ON`]")
 endif()
 
 ####################################################################################################
@@ -106,8 +110,6 @@ if(EMSCRIPTEN)
         -sNO_EXIT_RUNTIME=1
         --embed-file ${CMAKE_SOURCE_DIR}/res
     )
-        # -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
-        # -sFORCE_FILESYSTEM=1
 endif()
 ####################################################################################################
 # 
@@ -229,6 +231,18 @@ if(STATIC_LINK)
 endif()
 
 rtti(${RTTI})
+
+if(EXCEPTIONS)
+    add_compile_options( 
+        $<$<CXX_COMPILER_ID:MSVC>:/EHsc>
+        $<$<CXX_COMPILER_ID:Clang,GNU>:-fexceptions>
+    )
+else()
+    add_compile_options(
+        # $<$<CXX_COMPILER_ID:MSVC>:/EHs-;/EHc-;/D_HAS_EXCEPTIONS=0>
+        $<$<CXX_COMPILER_ID:Clang,GNU>:-fno-exceptions>
+    )
+endif()
 
 ####################################################################################################
 # WIN32 defines 

@@ -31,7 +31,6 @@ function(apply_main_options)
                 "$<$<CONFIG:Debug>:/Z7>"
                 "$<$<CONFIG:Debug>:/Od>"
                 "$<$<CONFIG:Debug>:/RTC1>"
-                "$<$<CONFIG:Debug>:/EHsc>"
                 "$<$<CONFIG:Debug>:/DYNAMICBASE>"
                 "$<$<CONFIG:Debug>:/analyze>"
                 "$<$<CONFIG:Debug>:/Oy->"

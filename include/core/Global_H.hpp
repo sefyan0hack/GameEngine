@@ -182,3 +182,9 @@ namespace sys {
 
     constexpr const char* TimeStamp = __TIMESTAMP__;
 } //namespace sys
+
+#ifdef __cpp_exceptions
+#define IF_THROWS_IGNOR(...) throw {__VA_ARGS__ } catch(...){}
+#else
+#define IF_THROWS_IGNOR(...) __VA_ARGS__
+#endif
