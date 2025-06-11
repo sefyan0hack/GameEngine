@@ -82,6 +82,7 @@ endif()
 if(EMSCRIPTEN)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
     set(STATIC_LINK OFF)
+    set(RTTI OFF)
     
     add_compile_options(
         -Oz
@@ -90,12 +91,11 @@ if(EMSCRIPTEN)
         -pthread
         -msimd128
         -fPIC
-        -fexceptions
+        -fno-exceptions -fno-rtti
     )
 
     add_link_options(
         -Oz
-        --bind
         -sASYNCIFY
         -sOFFSCREEN_FRAMEBUFFER=1
         -sUSE_WEBGL2=1
@@ -107,10 +107,8 @@ if(EMSCRIPTEN)
         -sALLOW_MEMORY_GROWTH=1
         -sNO_EXIT_RUNTIME=1
         -sFORCE_FILESYSTEM=1
-        -sDISABLE_EXCEPTION_CATCHING=0
         -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
         --embed-file ${CMAKE_SOURCE_DIR}/res
-        -sSTACK_SIZE=64KB
     )
 endif()
 ####################################################################################################

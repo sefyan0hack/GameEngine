@@ -132,7 +132,12 @@ auto Log(
   }
   
   if constexpr (lvl == Log_LvL::ERR || lvl == Log_LvL::EXPT){
-    throw std::runtime_error(msg);
+    if(sys::Target != sys::Target::Web)
+      throw std::runtime_error(msg);
+    else{
+      std::cerr << msg;
+      std::exit(1);
+    }
   }
 }
 

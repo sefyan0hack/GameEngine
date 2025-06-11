@@ -1,4 +1,5 @@
 #pragma once
+#include <core/Log.hpp>
 
 #ifndef APIENTRY
 #define APIENTRY
@@ -88,7 +89,7 @@ auto APIENTRY Function<R(APIENTRY*)(Args...)>::default_([[maybe_unused]] Args...
 template <typename R, typename... Args>
 auto Function<R(APIENTRY*)(Args...)>::operator()(Args... args, std::source_location loc) -> R
 {
-    if(m_Func == nullptr) throw std::runtime_error(m_Name + " not loaded!");
+    if(m_Func == nullptr) Error( "{} not loaded!", m_Name);
     m_ArgsValues = std::make_tuple(args...);
     m_CallCount++;
 
