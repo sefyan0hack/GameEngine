@@ -30,16 +30,10 @@ function(apply_main_options)
                 # Debug flags
                 "$<$<CONFIG:Debug>:/Od>"
                 "$<$<CONFIG:Debug>:/RTC1>"
-                "$<$<CONFIG:Debug>:/DYNAMICBASE>"
                 "$<$<CONFIG:Debug>:/analyze>"
-                "$<$<CONFIG:Debug>:/Oy->"
 
                 # Release flags
                 "$<$<CONFIG:Release>:/O2>"
-                "$<$<CONFIG:Release>:/Ob2>"
-                "$<$<CONFIG:Release>:/Ot>"
-                "$<$<CONFIG:Release>:/fp:fast>"
-                "$<$<CONFIG:Release>:/Oy->"
             )
             target_link_options(${target} PRIVATE
                 "$<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>"       # no terminale
