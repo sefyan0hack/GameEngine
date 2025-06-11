@@ -25,15 +25,20 @@ public:
 	auto operator=( const Keyboard& ) -> Keyboard& = delete;
 	auto ReadKey() noexcept 								 	-> std::optional<Event> ;
 	auto ReadChar() noexcept 								 	-> std::optional<char> ;
-	auto KeyIsPressed( unsigned char keycode ) const noexcept 	-> bool ;
-	auto KeyIsEmpty() const noexcept 						 	-> bool ;
+
+	auto IsKeyPressed( unsigned char keycode ) const noexcept 	-> bool ;
+	auto IsKeyReleased(unsigned char keycode) const noexcept    -> bool ;
+	auto IsKeyDown(unsigned char keycode) const noexcept 		-> bool ;
+	auto IsKeyUp(unsigned char keycode) const noexcept 			-> bool ;
+
 	auto FlushKey() noexcept 								 	-> void ;
-	auto CharIsEmpty() const noexcept 							-> bool ;
 	auto FlushChar() noexcept 									-> void ;
 	auto Flush() noexcept 										-> void ;
 	auto EnableAutorepeat() noexcept 							-> void ;
 	auto DisableAutorepeat() noexcept 							-> void ;
 	auto AutorepeatIsEnabled() const noexcept 					-> bool ;
+	auto UpdatePrevState() noexcept 							-> void;
+
 private:
 	auto OnKeyPressed( unsigned char keycode ) noexcept  		-> void ;
 	auto OnKeyReleased( unsigned char keycode ) noexcept 		-> void ;
@@ -41,11 +46,13 @@ private:
 	auto ClearState() noexcept 									-> void ;
 	template<typename T>
 	static auto TrimBuffer( std::queue<T>& buffer ) noexcept	-> void;
+
 private:
 	static constexpr unsigned int nKeys = 256u;
 	static constexpr unsigned int bufferSize = 16u;
 	bool autorepeatEnabled = true;
 	std::bitset<nKeys> keystates;
+	std::bitset<nKeys> prevKeyStates;
 	std::queue<Event> keybuffer;
 	std::queue<char> charbuffer;
 

@@ -20,15 +20,32 @@ auto Keyboard::Event::Code() const noexcept -> unsigned char
 /////////////////////////////////////////////////////////
 
 //KeyBoard//////////////////////////////////////////////
-Keyboard::Keyboard(){}
-auto Keyboard::KeyIsPressed( unsigned char keycode ) const noexcept -> bool
+Keyboard::Keyboard(){
+	keystates.reset();
+	prevKeyStates.reset();
+}
+auto Keyboard::IsKeyDown(unsigned char keycode) const noexcept -> bool
 {
-	return keystates[keycode];
+    return keystates[keycode];
+}
+auto Keyboard::IsKeyUp(unsigned char keycode) const noexcept -> bool
+{
+    return !keystates[keycode];
+}
+
+auto Keyboard::IsKeyPressed( unsigned char keycode ) const noexcept -> bool
+{
+	return keystates[keycode] && !prevKeyStates[keycode];
+}
+
+auto Keyboard::IsKeyReleased(unsigned char keycode) const noexcept -> bool
+{
+    return !keystates[keycode] && prevKeyStates[keycode];
 }
 
 auto Keyboard::ReadKey() noexcept -> std::optional<Keyboard::Event>
 {
-	if( keybuffer.size() > 0u )
+	if( !keybuffer.empty() )
 	{
 		Keyboard::Event e = keybuffer.front();
 		keybuffer.pop();
@@ -37,14 +54,10 @@ auto Keyboard::ReadKey() noexcept -> std::optional<Keyboard::Event>
 	return {};
 }
 
-auto Keyboard::KeyIsEmpty() const noexcept -> bool
-{
-	return keybuffer.empty();
-}
 
 auto Keyboard::ReadChar() noexcept -> std::optional<char>
 {
-	if( charbuffer.size() > 0u )
+	if( !charbuffer.empty())
 	{
 		auto charcode = charbuffer.front();
 		charbuffer.pop();
@@ -53,19 +66,14 @@ auto Keyboard::ReadChar() noexcept -> std::optional<char>
 	return {};
 }
 
-auto Keyboard::CharIsEmpty() const noexcept -> bool
-{
-	return charbuffer.empty();
-}
-
 auto Keyboard::FlushKey() noexcept -> void
 {
-	keybuffer = std::queue<Event>();
+	keybuffer = {};
 }
 
 auto Keyboard::FlushChar() noexcept -> void
 {
-	charbuffer = std::queue<char>();
+	charbuffer = {};
 }
 
 auto Keyboard::Flush() noexcept -> void
@@ -89,17 +97,22 @@ auto Keyboard::AutorepeatIsEnabled() const noexcept -> bool
 	return autorepeatEnabled;
 }
 
+auto Keyboard::UpdatePrevState() noexcept -> void
+{
+    prevKeyStates = keystates;
+}
+
 auto Keyboard::OnKeyPressed( unsigned char keycode ) noexcept -> void
 {
 	keystates[keycode] = true;
-	keybuffer.push( Keyboard::Event( Keyboard::Event::Type::Press,keycode ) );
+	keybuffer.emplace( Keyboard::Event::Type::Press, keycode );
 	TrimBuffer( keybuffer );
 }
 
 auto Keyboard::OnKeyReleased( unsigned char keycode ) noexcept -> void
 {
 	keystates[keycode] = false;
-	keybuffer.push( Keyboard::Event( Keyboard::Event::Type::Release,keycode ) );
+	keybuffer.emplace( Keyboard::Event::Type::Release, keycode );
 	TrimBuffer( keybuffer );
 }
 
