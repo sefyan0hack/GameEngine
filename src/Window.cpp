@@ -34,22 +34,22 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
     m_OpenGl = std::make_shared<gl::OpenGL>(m_WindowHandle, m_DrawContext);
 
 	#if defined(WEB_PLT)
-	// emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, &CWindow::KeyHandler);
-    // emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT  , this, EM_FALSE, &CWindow::KeyHandler);
-    // emscripten_set_mousedown_callback(EMSCRIPTEN_EVENT_TARGET_CANVAS, this, EM_FALSE, &CWindow::MouseHandler);
-    // emscripten_set_mouseup_callback(EMSCRIPTEN_EVENT_TARGET_CANVAS  , this, EM_FALSE, &CWindow::MouseHandler);
-    // emscripten_set_mousemove_callback(EMSCRIPTEN_EVENT_TARGET_CANVAS, this, EM_FALSE, &CWindow::MouseHandler);
-
 	emscripten_set_keypress_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, &CWindow::KeyHandler);
 	emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, &CWindow::KeyHandler);
 	emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, &CWindow::KeyHandler);
 
-	// Use null for default canvas instead of undefined constant
+	//
 	emscripten_set_mousedown_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT , this, EM_FALSE, &CWindow::MouseHandler);
 	emscripten_set_mouseup_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT   , this, EM_FALSE, &CWindow::MouseHandler);
 	emscripten_set_mousemove_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT , this, EM_FALSE, &CWindow::MouseHandler);
 	emscripten_set_mouseenter_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, &CWindow::MouseHandler);
 	emscripten_set_mouseleave_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, &CWindow::MouseHandler);
+	//
+	emscripten_set_mousedown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW   , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mousemove_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseenter_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseleave_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, EM_FALSE, &CWindow::MouseHandler);
 
 	emscripten_set_fullscreenchange_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, 
 		[](
@@ -501,39 +501,25 @@ bool CWindow::MouseHandler([[maybe_unused]] int eventType, [[maybe_unused]] cons
     [[maybe_unused]] CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return true;
 
-	double canvas_left = 0.0 , canvas_top = 0.0;
-    EM_ASM({
-        const canvas = document.getElementById('canvas');
-        if (canvas) {
-            const rect = canvas.getBoundingClientRect();
-            setValue($0, rect.left, 'double');
-            setValue($1, rect.top, 'double');
-        }
-    }, &canvas_left, &canvas_top);
-
-	int canvas_x = static_cast<int>(e->clientX - canvas_left);
-    int canvas_y = static_cast<int>(e->clientY - canvas_top);
-
 	switch (eventType) {
         case EMSCRIPTEN_EVENT_MOUSEDOWN:
             if (e->button == 0) window->m_Mouse->OnLeftPressed();
             else if (e->button == 2) window->m_Mouse->OnRightPressed();
-            window->m_Mouse->OnMouseMove(canvas_x, canvas_y);
             break;
         
         case EMSCRIPTEN_EVENT_MOUSEUP:
             if (e->button == 0) window->m_Mouse->OnLeftReleased();
             else if (e->button == 2) window->m_Mouse->OnRightReleased();
-            window->m_Mouse->OnMouseMove(canvas_x, canvas_y);
             break;
         
         case EMSCRIPTEN_EVENT_MOUSEMOVE:
+		int canvas_x = static_cast<int>(e->clientX);
+    	int canvas_y = static_cast<int>(e->clientY);
             window->m_Mouse->OnMouseMove(canvas_x, canvas_y);
             break;
         
         case EMSCRIPTEN_EVENT_MOUSEENTER:
             window->m_Mouse->OnMouseEnter();
-            window->m_Mouse->OnMouseMove(canvas_x, canvas_y);
             break;
         
         case EMSCRIPTEN_EVENT_MOUSELEAVE:
