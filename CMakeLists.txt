@@ -234,16 +234,16 @@ rtti(${RTTI})
 
 if(EXCEPTIONS)
     add_compile_options( 
-        $<$<CXX_COMPILER_ID:MSVC>:/EHsc>
-        $<$<CXX_COMPILER_ID:Clang,GNU>:-fexceptions>
+        "$<$<CXX_COMPILER_ID:MSVC>:/EHsc>"
+        "$<$<CXX_COMPILER_ID:Clang,GNU>:-fexceptions>"
     )
 else()
     if(MSVC)
     add_definitions(/D_HAS_EXCEPTIONS=0)
     endif()
     add_compile_options(
-        $<$<CXX_COMPILER_ID:MSVC>:/EHs-c-;/wd4530>
-        $<$<CXX_COMPILER_ID:Clang,GNU>:-fno-exceptions>
+        "$<$<CXX_COMPILER_ID:MSVC>:/EHs-c-;/wd4530>"
+        "$<$<CXX_COMPILER_ID:Clang,GNU>:-fno-exceptions>"
     )
 endif()
 
