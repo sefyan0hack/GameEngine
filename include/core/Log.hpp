@@ -136,7 +136,7 @@ auto Log(
       throw std::runtime_error(msg);
     #else
       std::cerr << msg;
-      std::exit(1);
+      std::abort();
     #endif
   }
 }

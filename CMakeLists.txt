@@ -238,8 +238,11 @@ if(EXCEPTIONS)
         $<$<CXX_COMPILER_ID:Clang,GNU>:-fexceptions>
     )
 else()
+    if(MSVC)
+    add_definitions(/D_HAS_EXCEPTIONS=0)
+    endif()
     add_compile_options(
-        # $<$<CXX_COMPILER_ID:MSVC>:/EHs-;/EHc-;/D_HAS_EXCEPTIONS=0>
+        $<$<CXX_COMPILER_ID:MSVC>:/EHs-c->
         $<$<CXX_COMPILER_ID:Clang,GNU>:-fno-exceptions>
     )
 endif()
