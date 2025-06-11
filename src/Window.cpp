@@ -29,7 +29,7 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 	#elif defined(WEB_PLT)
 	_init_helper(m_Width, m_Height, Title);
 
-	const char* target = "#canvas";
+	const char* target = EMSCRIPTEN_EVENT_TARGET_DOCUMENT;
 
 	//hide all element except canvas
 	EM_ASM({
