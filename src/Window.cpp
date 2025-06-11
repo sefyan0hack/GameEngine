@@ -454,16 +454,6 @@ bool CWindow::KeyHandler([[maybe_unused]] int eventType, [[maybe_unused]] const 
     [[maybe_unused]] CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return true;
 
-	// Windows virtual key codes (subset)
-	constexpr unsigned char VK_BACK = 0x08;
-	constexpr unsigned char VK_TAB = 0x09;
-	constexpr unsigned char VK_RETURN = 0x0D;
-	constexpr unsigned char VK_SHIFT = 0x10;
-	constexpr unsigned char VK_CONTROL = 0x11;
-	constexpr unsigned char VK_MENU = 0x12;  // Alt
-	constexpr unsigned char VK_ESCAPE = 0x1B;
-	constexpr unsigned char VK_SPACE = 0x20;
-
     auto MapToVirtualKey = [](const char* code) -> unsigned char {
         // Alphanumeric keys
         if (strlen(code) == 4 && code[0] == 'K' && code[1] == 'e' && code[2] == 'y') 
@@ -608,5 +598,80 @@ auto CWindow::WindowShouldClose() -> bool
 	#else
 	emscripten_sleep(12);
 	return false;
+	#endif
+}
+auto CWindow::ToggleFullScreen() -> void
+{
+	#if defined(WINDOWS_PLT)
+	struct FullscreenData {
+		RECT restoreRect;
+	    bool wasMaximized;
+		LONG_PTR style;
+		LONG_PTR exStyle;
+	};
+	const char* propName = "FullscreenData";
+    FullscreenData* data = static_cast<FullscreenData*>(GetProp(m_WindowHandle, propName));
+	SendMessage(m_WindowHandle, WM_SETREDRAW, FALSE, 0);
+
+    if (data) {
+        // RESTORE WINDOW
+        SetWindowLongPtr(m_WindowHandle, GWL_STYLE, data->style);
+        SetWindowLongPtr(m_WindowHandle, GWL_EXSTYLE, data->exStyle);
+		m_Width = data->restoreRect.right - data->restoreRect.left;
+		m_Height = data->restoreRect.bottom - data->restoreRect.top;
+
+        // Restore topmost state based on original extended style
+        SetWindowPos(m_WindowHandle, 
+            (data->exStyle & WS_EX_TOPMOST) ? HWND_TOPMOST : HWND_NOTOPMOST,
+            data->restoreRect.left,
+			data->restoreRect.top,
+			m_Width,
+			m_Height,
+			SWP_FRAMECHANGED | SWP_NOACTIVATE
+        );
+		if (data->wasMaximized) {
+			ShowWindow(m_WindowHandle, SW_MAXIMIZE);
+		}
+
+        RemoveProp(m_WindowHandle, propName);
+        delete data;
+    } else {
+        // ENTER FULLSCREEN
+        data = new FullscreenData();
+        data->style = GetWindowLongPtr(m_WindowHandle, GWL_STYLE);
+        data->exStyle = GetWindowLongPtr(m_WindowHandle, GWL_EXSTYLE);
+		data->wasMaximized = !!::IsZoomed(m_WindowHandle);
+    	GetWindowRect(m_WindowHandle, &data->restoreRect);
+
+        // Get monitor dimensions
+        HMONITOR hmon = MonitorFromWindow(m_WindowHandle, MONITOR_DEFAULTTONEAREST);
+        MONITORINFO mi = { sizeof(mi) };
+        GetMonitorInfo(hmon, &mi);
+
+		m_Width = mi.rcMonitor.right - mi.rcMonitor.left;
+		m_Height = mi.rcMonitor.bottom - mi.rcMonitor.top;
+
+        LONG_PTR newStyle = data->style & ~(WS_CAPTION | WS_THICKFRAME);
+        LONG_PTR newExStyle = data->exStyle & ~(WS_EX_DLGMODALFRAME | WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE);
+        
+        SetWindowLongPtr(m_WindowHandle, GWL_STYLE, newStyle);
+        SetWindowLongPtr(m_WindowHandle, GWL_EXSTYLE, newExStyle);
+        
+        SetWindowPos(m_WindowHandle, HWND_TOPMOST,
+            mi.rcMonitor.left,
+            mi.rcMonitor.top,
+            m_Width,
+            m_Height,
+            SWP_FRAMECHANGED | SWP_NOACTIVATE
+        );
+        SetProp(m_WindowHandle, propName, data);
+    }
+	SendMessage(m_WindowHandle, WM_SETREDRAW, TRUE, 0);
+	RedrawWindow(m_WindowHandle, NULL, NULL, RDW_ERASE | RDW_FRAME | RDW_INVALIDATE | RDW_ALLCHILDREN);
+	#elif defined(LINUX_PLT)
+	#elif defined(WEB_PLT)
+	EM_ASM({
+		Module.requestFullscreen();
+	});
 	#endif
 }

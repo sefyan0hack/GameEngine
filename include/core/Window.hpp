@@ -53,6 +53,7 @@ class CWindow
         auto Visible() const        -> bool ;
         auto Show()                 -> void;
         auto Hide()                 -> void;
+        auto ToggleFullScreen()     -> void;
         static auto WindowsCount()  -> unsigned short ;
         static auto ProcessMessages()   -> void ;
         static auto WindowShouldClose() -> bool ;
