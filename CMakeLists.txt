@@ -240,6 +240,7 @@ if(EXCEPTIONS)
 else()
     if(MSVC)
     add_definitions(/D_HAS_EXCEPTIONS=0)
+    string(REGEX REPLACE "/EH[a-z]+" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     endif()
     add_compile_options(
         "$<$<CXX_COMPILER_ID:MSVC>:/EHs-c-;/wd4530>"
