@@ -29,7 +29,6 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 	#elif defined(WEB_PLT)
 	_init_helper(m_Width, m_Height, Title);
 	
-	// document.getElementById("output").style.display = "none";
 	//hide all element except canvas
 	EM_ASM({
 		// 1. Select the canvas (use your canvas ID or selector)
