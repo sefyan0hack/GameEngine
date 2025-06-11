@@ -27,53 +27,26 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 	m_DrawContext = XOpenDisplay(nullptr);
 	_init_helper(m_Width, m_Height, Title);
 	#elif defined(WEB_PLT)
+	m_DrawContext = EMSCRIPTEN_EVENT_TARGET_DOCUMENT;
 	_init_helper(m_Width, m_Height, Title);
-
-	const char* target = EMSCRIPTEN_EVENT_TARGET_DOCUMENT;
-
-	//hide all element except canvas
-	EM_ASM({
-		// 1. Select the canvas (use your canvas ID or selector)
-		const canvas = Module.canvas;
-			
-		// 2. Remove ALL children from the <body>
-		document.body.innerHTML = '';
-			
-		// 3. Append only the canvas back into <body>
-		document.body.appendChild(canvas);
-			
-		// 4. Reset styles for full-screen canvas
-		document.documentElement.style.margin = '0';
-		document.documentElement.style.padding = '0';
-		document.body.style.margin = '0';
-		document.body.style.padding = '0';
-		document.body.style.width = '100vw';
-		document.body.style.height = '100vh';
-			
-		// Optional: Make canvas fill the body
-		// canvas.style.width = '100%';
-		// canvas.style.height = '100%';
-		// canvas.style.display = 'block';
-	});
-
 	#endif
 
 	S_WindowsCount++;
     m_OpenGl = std::make_shared<gl::OpenGL>(m_WindowHandle, m_DrawContext);
 
 	#if defined(WEB_PLT)
-	emscripten_set_keypress_callback(target, this, EM_FALSE, &CWindow::KeyHandler);
-	emscripten_set_keydown_callback(target, this, EM_FALSE, &CWindow::KeyHandler);
-	emscripten_set_keyup_callback(target, this, EM_FALSE, &CWindow::KeyHandler);
+	emscripten_set_keypress_callback(m_DrawContext, this, EM_FALSE, &CWindow::KeyHandler);
+	emscripten_set_keydown_callback(m_DrawContext, this, EM_FALSE, &CWindow::KeyHandler);
+	emscripten_set_keyup_callback(m_DrawContext, this, EM_FALSE, &CWindow::KeyHandler);
 
 	//
-	emscripten_set_mousedown_callback(target  , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseup_callback(target    , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mousemove_callback(target  , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseenter_callback(target , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseleave_callback(target , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mousedown_callback(m_DrawContext  , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseup_callback(m_DrawContext    , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mousemove_callback(m_DrawContext  , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseenter_callback(m_DrawContext , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseleave_callback(m_DrawContext , this, EM_FALSE, &CWindow::MouseHandler);
 
-	emscripten_set_focusout_callback(target, this, EM_FALSE,
+	emscripten_set_focusout_callback(m_DrawContext, this, EM_FALSE,
 		[](int eventType, const EmscriptenFocusEvent *, void* userData) -> bool {
 			[[maybe_unused]] CWindow* window = static_cast<CWindow*>(userData);
     		if (!window) return true;
@@ -87,7 +60,7 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 		}
 	);
 
-	emscripten_set_fullscreenchange_callback(target, this, EM_FALSE, 
+	emscripten_set_fullscreenchange_callback(m_DrawContext, this, EM_FALSE, 
 		[](
 			[[maybe_unused]] int eventType, 
 			[[maybe_unused]] const EmscriptenFullscreenChangeEvent* e,
@@ -442,10 +415,21 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 {
 	EM_ASM({
 		const canvas = Module.canvas;
-        document.title = UTF8ToString($0);
-        canvas.width = $1;
+
+		document.title = UTF8ToString($0);
+
+		document.body.innerHTML = '';
+
+		document.body.appendChild(canvas);
+
+		document.documentElement.style.margin = '0';
+		document.documentElement.style.padding = '0';
+		document.body.style.margin = '0';
+		document.body.style.padding = '0';
+		canvas.width = $1;
         canvas.height = $2;
-    }, Title, Width, Height);
+
+	}, Title, Width, Height);
 }
 
 bool CWindow::ResizeHandler([[maybe_unused]] int eventType, [[maybe_unused]] const EmscriptenUiEvent* e, [[maybe_unused]] void* userData) {

@@ -51,7 +51,7 @@ extern "C" {
 #include <emscripten/html5_webgl.h>
 
 using WindHandl = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
-using HDC_D     = void*;
+using HDC_D     = const char*;
 using GLCTX     = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
 
 #endif
