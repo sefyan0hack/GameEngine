@@ -67,14 +67,22 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 	emscripten_set_keyup_callback(target, this, EM_FALSE, &CWindow::KeyHandler);
 
 	//
-	emscripten_set_mousedown_callback(target , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseup_callback(target   , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mousemove_callback(target , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseenter_callback(target, this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseleave_callback(target, this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mousedown_callback(target  , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseup_callback(target    , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mousemove_callback(target  , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseenter_callback(target , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseleave_callback(target , this, EM_FALSE, &CWindow::MouseHandler);
 	emscripten_set_contextmenu_callback(target, this, EM_TRUE, 
-		[](int, const EmscriptenMouseEvent*, void*) -> int { 
-			return 1; 
+		[](int, const EmscriptenMouseEvent*, void*) -> bool { 
+			return true; 
+		}
+	);
+	emscripten_set_focusout_callback(target, this, EM_FALSE,
+		[](int, const EmscriptenFocusEvent *, void*) -> bool {
+			[[maybe_unused]] CWindow* window = static_cast<CWindow*>(userData);
+    		if (!window) return true;
+			window->m_Keyboard->ClearState();
+			return true;
 		}
 	);
 
