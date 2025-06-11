@@ -156,31 +156,37 @@ public:
     auto Update(float delta) -> void override {
 
         Cam.MoseMove();
-        if( m_Window.m_Keyboard->KeyIsPressed('W')){
+        if( m_Window.m_Keyboard->IsKeyDown('W')){
             float speed = 10.0f * delta;
             #if defined(WINDOWS_PLT)
-            if(m_Window.m_Keyboard->KeyIsPressed(VK_SHIFT))
+            if(m_Window.m_Keyboard->IsKeyDown(VK_SHIFT))
                 speed *= 10;
             #endif //_WIN32
             Cam.MoveFroward(speed);
         }
-        if( m_Window.m_Keyboard->KeyIsPressed('S')){
+        if( m_Window.m_Keyboard->IsKeyDown('S')){
             Cam.MoveBackward(10.0f * delta);
         }
-        if( m_Window.m_Keyboard->KeyIsPressed('A')){
+        if( m_Window.m_Keyboard->IsKeyDown('A')){
              Cam.MoveLeft(10.0f * delta);
         }
-        if( m_Window.m_Keyboard->KeyIsPressed('D')){
+        if( m_Window.m_Keyboard->IsKeyDown('D')){
              Cam.MoveRight(10.0f * delta);
         }
-        if( m_Window.m_Keyboard->KeyIsPressed('N') ){
+        if( m_Window.m_Keyboard->IsKeyDown('N') ){
              Cam.MoveUP(10.0f * delta);
         }
-        if( m_Window.m_Keyboard->KeyIsPressed('M') ){
+        if( m_Window.m_Keyboard->IsKeyDown('M') ){
              Cam.MoveDown(10.0f * delta);
         }
+
+        #if defined(WINDOWS_PLT)
+        if(m_Window.m_Keyboard->IsKeyPressed(VK_F11)){
+            m_Window.ToggleFullScreen();
+        }
+        #endif
         
-        // if (m_Window.m_Keyboard->KeyIsPressed('H')){
+        // if (m_Window.m_Keyboard->IsKeyPressed('H')){
         //     static bool flip = false;
         //     if(flip == false){
         //         flip = !flip;
