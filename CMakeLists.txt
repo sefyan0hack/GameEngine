@@ -86,6 +86,7 @@ if(EMSCRIPTEN)
     
     add_compile_options(
         -Oz
+        -g0
         -std=c++23
         -Wno-character-conversion -Wno-dollar-in-identifier-extension
         -pthread
@@ -96,6 +97,7 @@ if(EMSCRIPTEN)
 
     add_link_options(
         -Oz
+        -g0
         -sASYNCIFY
         -sOFFSCREEN_FRAMEBUFFER=1
         -sUSE_WEBGL2=1
