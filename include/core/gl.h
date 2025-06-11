@@ -49,6 +49,7 @@ extern "C" {
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
 #include <emscripten/html5_webgl.h>
+#include <emscripten/key_codes.h>
 
 using WindHandl = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
 using HDC_D     = const char*;
