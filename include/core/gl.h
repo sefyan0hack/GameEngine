@@ -72,9 +72,7 @@ inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
     }
 }
 
-extern "C"{
-    extern GLenum glGetError();
-}
+inline PFNGLGETERRORPROC glGetError = nullptr;
 
 #define GLFUNCS(X)\
 X(PFNGLCLEARCOLORPROC, ClearColor);\

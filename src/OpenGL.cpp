@@ -304,6 +304,8 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     }
     #endif
 
+    glGetError = reinterpret_cast<PFNGLGETERRORPROC>(resolve_opengl_fn("glGetError"));
+
     #ifdef DEBUG
     #   define RESOLVEGL(type, name)\
         OpenGL::name = Function<type>{};\
@@ -558,7 +560,7 @@ auto OpenGL::ThreadId() const -> size_t
 auto OpenGL::CheckThread() const -> void
 {
     if constexpr (sys::Target != sys::Target::Web){
-        
+
         auto id = std::hash<std::thread::id>{}(std::this_thread::get_id());
         if ( id != m_ThreadId ) {
             Error("OpenGL context used in wrong thread! . Expected id: {} Vs Geted: {}", m_ThreadId, id);
