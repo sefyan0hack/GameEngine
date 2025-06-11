@@ -85,7 +85,8 @@ if(EMSCRIPTEN)
     
     add_compile_options(
         -Oz
-        -std=c++23 -Wno-character-conversion 
+        -std=c++23
+        -Wno-character-conversion -Wno-dollar-in-identifier-extension
         -pthread
         -msimd128
         -fPIC
