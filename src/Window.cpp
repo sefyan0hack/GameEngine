@@ -32,29 +32,27 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 	// document.getElementById("output").style.display = "none";
 	//hide all element except canvas
 	EM_ASM({
-		document.addEventListener('DOMContentLoaded', () => {
-			// 1. Select the canvas (use your canvas ID or selector)
-			const canvas = Module.canvas;
+		// 1. Select the canvas (use your canvas ID or selector)
+		const canvas = Module.canvas;
 			
-			// 2. Remove ALL children from the <body>
-			document.body.innerHTML = '';
+		// 2. Remove ALL children from the <body>
+		document.body.innerHTML = '';
 			
-			// 3. Append only the canvas back into <body>
-			document.body.appendChild(canvas);
+		// 3. Append only the canvas back into <body>
+		document.body.appendChild(canvas);
 			
-			// 4. Reset styles for full-screen canvas
-			document.documentElement.style.margin = '0';
-			document.documentElement.style.padding = '0';
-			document.body.style.margin = '0';
-			document.body.style.padding = '0';
-			document.body.style.width = '100vw';
-			document.body.style.height = '100vh';
+		// 4. Reset styles for full-screen canvas
+		document.documentElement.style.margin = '0';
+		document.documentElement.style.padding = '0';
+		document.body.style.margin = '0';
+		document.body.style.padding = '0';
+		document.body.style.width = '100vw';
+		document.body.style.height = '100vh';
 			
-			// Optional: Make canvas fill the body
-			canvas.style.width = '100%';
-			canvas.style.height = '100%';
-			canvas.style.display = 'block';
-		  });
+		// Optional: Make canvas fill the body
+		// canvas.style.width = '100%';
+		// canvas.style.height = '100%';
+		// canvas.style.display = 'block';
 	});
 
 	#endif
@@ -73,12 +71,6 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 	emscripten_set_mousemove_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT , this, EM_FALSE, &CWindow::MouseHandler);
 	emscripten_set_mouseenter_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, &CWindow::MouseHandler);
 	emscripten_set_mouseleave_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, &CWindow::MouseHandler);
-	//
-	emscripten_set_mousedown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW   , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mousemove_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseenter_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseleave_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, EM_FALSE, &CWindow::MouseHandler);
 
 	emscripten_set_fullscreenchange_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, EM_FALSE, 
 		[](
