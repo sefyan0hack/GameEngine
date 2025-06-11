@@ -183,7 +183,7 @@ namespace sys {
     constexpr const char* TimeStamp = __TIMESTAMP__;
 } //namespace sys
 
-#if defined(__cpp_exceptions) || defined(_CPPUNWIND) || __has_feature(cxx_exceptions) || defined(__EXCEPTIONS)
+#if defined(__cpp_exceptions) || defined(_CPPUNWIND) || defined(__EXCEPTIONS)
 #define CXX_EXCEPTIONS
 #endif
 
