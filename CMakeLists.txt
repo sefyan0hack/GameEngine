@@ -99,19 +99,15 @@ if(EMSCRIPTEN)
         -Oz
         -g0
         -sASYNCIFY
-        -sOFFSCREEN_FRAMEBUFFER=1
         -sUSE_WEBGL2=1
         -sMIN_WEBGL_VERSION=1
         -sMAX_WEBGL_VERSION=2
-        -sWASM=1
-        -sINITIAL_MEMORY=16MB
-        -sWASM_MEM_MAX=1GB
         -sALLOW_MEMORY_GROWTH=1
         -sNO_EXIT_RUNTIME=1
-        -sFORCE_FILESYSTEM=1
-        -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
         --embed-file ${CMAKE_SOURCE_DIR}/res
     )
+        # -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
+        # -sFORCE_FILESYSTEM=1
 endif()
 ####################################################################################################
 # 
