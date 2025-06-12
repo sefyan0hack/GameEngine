@@ -102,6 +102,7 @@ if(EMSCRIPTEN)
     add_link_options(
         -Oz
         -g0
+        -sASYNCIFY
         -sUSE_WEBGL2=1
         -sMIN_WEBGL_VERSION=1
         -sMAX_WEBGL_VERSION=2
