@@ -417,6 +417,8 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 	EM_ASM({
 		const canvas = Module.canvas;
 
+		canvas.focus();
+
 		document.title = UTF8ToString($0);
 
 		document.body.innerHTML = '';
@@ -463,14 +465,14 @@ bool CWindow::KeyHandler([[maybe_unused]] int eventType, [[maybe_unused]] const 
             return code[5];  // '0'-'9'
 
         // Special keys
-        if (strcmp(code, "Backspace") == 0) return VK_BACK;
-        if (strcmp(code, "Tab") == 0) return VK_TAB;
-        if (strcmp(code, "Enter") == 0) return VK_RETURN;
-        if (strcmp(code, "ShiftLeft") == 0 || strcmp(code, "ShiftRight") == 0) return VK_SHIFT;
-        if (strcmp(code, "ControlLeft") == 0 || strcmp(code, "ControlRight") == 0) return VK_CONTROL;
-        if (strcmp(code, "AltLeft") == 0 || strcmp(code, "AltRight") == 0) return VK_MENU;
-        if (strcmp(code, "Escape") == 0) return VK_ESCAPE;
-        if (strcmp(code, "Space") == 0) return VK_SPACE;
+        if (strcmp(code, "Backspace") == 0) return DOM_VK_BACK;
+        if (strcmp(code, "Tab") == 0) return DOM_VK_TAB;
+        if (strcmp(code, "Enter") == 0) return DOM_VK_RETURN;
+        if (strcmp(code, "ShiftLeft") == 0 || strcmp(code, "ShiftRight") == 0) return DOM_VK_SHIFT;
+        if (strcmp(code, "ControlLeft") == 0 || strcmp(code, "ControlRight") == 0) return DOM_VK_CONTROL;
+        if (strcmp(code, "AltLeft") == 0 || strcmp(code, "AltRight") == 0) return DOM_VK_MENU;
+        if (strcmp(code, "Escape") == 0) return DOM_VK_ESCAPE;
+        if (strcmp(code, "Space") == 0) return DOM_VK_SPACE;
         
         return 0;  // Unmapped key
     };
