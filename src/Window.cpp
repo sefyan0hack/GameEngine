@@ -437,10 +437,11 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 		document.documentElement.style.padding = '0';
 		document.body.style.margin = '0';
 		document.body.style.padding = '0';
-		canvas.width = $1;
-        canvas.height = $2;
 
-	}, Title, Width, Height);
+	}, Title);
+
+	emscripten_set_canvas_element_size("#canvas", Height, height);
+	emscripten_set_canvas_css_size();
 }
 
 auto CWindow::ResizeHandler(int eventType, const EmscriptenUiEvent* e, void* userData) -> EM_BOOL
