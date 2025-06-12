@@ -417,7 +417,7 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 	EM_ASM({
 		const canvas = Module.canvas;
 
-		canvas.focus();
+		// canvas.focus();
 
 		document.title = UTF8ToString($0);
 
