@@ -78,6 +78,10 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 			auto* window = static_cast<CWindow*>(userData);
 
 			if (e->isFullscreen) Info("Enable FullScreen");
+
+			window->m_Width = e->elementWidth;
+			window->m_Height = e->elementHeight;
+			
 			return EM_TRUE;
 	});
 	
@@ -687,15 +691,9 @@ auto CWindow::ToggleFullScreen() -> void
 
 	if (!fullscrendata.isFullscreen) {
 		ret = emscripten_request_fullscreen("#canvas", 1);
-		ret = emscripten_get_fullscreen_status(&fullscrendata);
-		m_Width = fullscrendata->elementWidth;
-		m_Height = fullscrendata->elementHeight;
 	} else {
 		ret = emscripten_exit_fullscreen();
-		ret = emscripten_get_fullscreen_status(&fullscrendata);
-		m_Width = fullscrendata->elementWidth;
-		m_Height = fullscrendata->elementHeight;
 	}
-	
+
 	#endif
 }
