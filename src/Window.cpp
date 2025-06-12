@@ -540,13 +540,13 @@ auto CWindow::MouseHandler( int eventType, const EmscriptenMouseEvent* e, void* 
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_TRUE;
 
-	Info(
-		R"(screen({},{}), client({},{}), movement({},{}), target({},{}), canvas({},{}), button: {})",
-		e->screenX, e->screenY, e->clientX, e->clientY, e->movementX, e->movementY, e->targetX, e->targetY, e->canvasX, e->canvasY,
-		e->button == 0 ? "Left" :
-		e->button == 1 ? "Mid"  :
-		e->button == 2 ? "Right": "??"
-	);
+	// Info(
+	// 	R"(screen({},{}), client({},{}), movement({},{}), target({},{}), canvas({},{}), button: {})",
+	// 	e->screenX, e->screenY, e->clientX, e->clientY, e->movementX, e->movementY, e->targetX, e->targetY, e->canvasX, e->canvasY,
+	// 	e->button == 0 ? "Left" :
+	// 	e->button == 1 ? "Mid"  :
+	// 	e->button == 2 ? "Right": "??"
+	// );
 
 	switch (eventType) {
         case EMSCRIPTEN_EVENT_MOUSEDOWN:
