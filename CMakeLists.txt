@@ -84,6 +84,7 @@ endif()
 ####################################################################################################
 
 if(EMSCRIPTEN)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
     set(STATIC_LINK OFF)
     set(RTTI OFF)
