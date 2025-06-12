@@ -48,16 +48,24 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 	emscripten_set_mouseleave_callback(m_DrawContext , this, EM_FALSE, &CWindow::MouseHandler);
 
 	emscripten_set_focusout_callback(m_DrawContext, this, EM_FALSE,
-		[](int eventType, const EmscriptenFocusEvent *, void* userData) -> bool {
+		[](int eventType, const EmscriptenFocusEvent *, void* userData) -> EM_BOOL {
 			CWindow* window = static_cast<CWindow*>(userData);
-    		if (!window) return true;
+    		if (!window) return EM_TRUE;
 			switch (eventType)
 			{
-				case EMSCRIPTEN_EVENT_FOCUSOUT:
+				case EMSCRIPTEN_EVENT_BLUR:
 					window->m_Keyboard->ClearState();
 					break;
 			}
-			return true;
+			return EM_TRUE;
+		}
+	);
+
+	emscripten_set_wheel_callback(m_DrawContext, this, EM_FALSE,
+		[]([[maybe_unused]] int eventType, const EmscriptenWheelEvent* e, void* userData) -> EM_BOOL  {
+			CWindow* w = static_cast<CWindow*>(userData);
+			w->m_Mouse->OnWheelDelta(e->deltaY * -120); // Match Win32 scaling
+			return EM_TRUE;
 		}
 	);
 
@@ -66,7 +74,7 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 			int eventType, 
 			const EmscriptenFullscreenChangeEvent* e,
 			void* userData
-		) -> bool {
+		) -> EM_BOOL {
 			auto* window = static_cast<CWindow*>(userData);
 
 			if (e->isFullscreen) Info("Enable FullScreen");
@@ -80,7 +88,7 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 			Info("Now fullscreen: {}×{} (screen {}×{})",
 				 e->elementWidth, e->elementHeight,
 				 e->screenWidth, e->screenHeight);
-			return true;
+			return EM_TRUE;
 	});
 	
     #endif
@@ -541,6 +549,7 @@ auto CWindow::MouseHandler( int eventType, const EmscriptenMouseEvent* e, void* 
 
 	switch (eventType) {
         case EMSCRIPTEN_EVENT_MOUSEDOWN:
+			emscripten_set_element_capture(m_DrawContext);
             if (e->button == 0) window->m_Mouse->OnLeftPressed();
             else if (e->button == 2) window->m_Mouse->OnRightPressed();
             break;
@@ -548,10 +557,29 @@ auto CWindow::MouseHandler( int eventType, const EmscriptenMouseEvent* e, void* 
         case EMSCRIPTEN_EVENT_MOUSEUP:
             if (e->button == 0) window->m_Mouse->OnLeftReleased();
             else if (e->button == 2) window->m_Mouse->OnRightReleased();
+			emscripten_release_capture();
+            if (e->canvasX < 0 || e->canvasX >= window->m_Width || 
+                e->canvasY < 0 || e->canvasY >= window->m_Height) {
+                window->m_Mouse->OnMouseLeave();
+            }
             break;
         
         case EMSCRIPTEN_EVENT_MOUSEMOVE:
-            window->m_Mouse->OnMouseMove(e->targetX, e->targetY);
+			if (e->canvasX >= 0 && e->canvasX < window->m_Width &&
+				e->canvasY >= 0 && e->canvasY < window->m_Height) 
+			{
+				if (!window->m_Mouse->IsInWindow()) {
+					window->m_Mouse->OnMouseEnter();
+				}
+				window->m_Mouse->OnMouseMove(e->canvasX, e->canvasY);
+			}
+			else {
+				if (window->m_Mouse->IsInWindow()) {
+					window->m_Mouse->OnMouseLeave();
+				}
+				// Optional: Still report position if needed
+				// window->m_Mouse->OnMouseMove(e->canvasX, e->canvasY);
+			}
             break;
         
         case EMSCRIPTEN_EVENT_MOUSEENTER:
