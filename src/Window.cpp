@@ -549,7 +549,7 @@ auto CWindow::MouseHandler( int eventType, const EmscriptenMouseEvent* e, void* 
 
 	switch (eventType) {
         case EMSCRIPTEN_EVENT_MOUSEDOWN:
-			emscripten_request_pointerlock(window->m_DrawContext, EM_TRUE);
+			emscripten_request_pointerlock("#canvas", EM_TRUE);
             if (e->button == 0) window->m_Mouse->OnLeftPressed();
             else if (e->button == 2) window->m_Mouse->OnRightPressed();
             break;
