@@ -549,7 +549,7 @@ auto CWindow::MouseHandler( int eventType, const EmscriptenMouseEvent* e, void* 
 
 	switch (eventType) {
         case EMSCRIPTEN_EVENT_MOUSEDOWN:
-			emscripten_set_element_capture(m_DrawContext);
+			emscripten_set_element_capture(window->m_DrawContext);
             if (e->button == 0) window->m_Mouse->OnLeftPressed();
             else if (e->button == 2) window->m_Mouse->OnRightPressed();
             break;
@@ -557,8 +557,8 @@ auto CWindow::MouseHandler( int eventType, const EmscriptenMouseEvent* e, void* 
         case EMSCRIPTEN_EVENT_MOUSEUP:
             if (e->button == 0) window->m_Mouse->OnLeftReleased();
             else if (e->button == 2) window->m_Mouse->OnRightReleased();
-			emscripten_release_capture();
-            if (e->canvasX < 0 || e->canvasX >= window->m_Width || 
+
+			if (e->canvasX < 0 || e->canvasX >= window->m_Width || 
                 e->canvasY < 0 || e->canvasY >= window->m_Height) {
                 window->m_Mouse->OnMouseLeave();
             }
