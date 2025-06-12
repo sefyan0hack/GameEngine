@@ -49,7 +49,7 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 
 	emscripten_set_focusout_callback(m_DrawContext, this, EM_FALSE,
 		[](int eventType, const EmscriptenFocusEvent *, void* userData) -> bool {
-			[[maybe_unused]] CWindow* window = static_cast<CWindow*>(userData);
+			CWindow* window = static_cast<CWindow*>(userData);
     		if (!window) return true;
 			switch (eventType)
 			{
@@ -63,9 +63,9 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 
 	emscripten_set_fullscreenchange_callback(m_DrawContext, this, EM_FALSE, 
 		[](
-			[[maybe_unused]] int eventType, 
-			[[maybe_unused]] const EmscriptenFullscreenChangeEvent* e,
-			[[maybe_unused]] void* userData
+			int eventType, 
+			const EmscriptenFullscreenChangeEvent* e,
+			void* userData
 		) -> bool {
 			auto* window = static_cast<CWindow*>(userData);
 
@@ -435,9 +435,10 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 	}, Title, Width, Height);
 }
 
-bool CWindow::ResizeHandler([[maybe_unused]] int eventType, [[maybe_unused]] const EmscriptenUiEvent* e, [[maybe_unused]] void* userData) {
-    [[maybe_unused]] CWindow* window = static_cast<CWindow*>(userData);
-    if (!window) return true;
+auto CWindow::ResizeHandler(int eventType, const EmscriptenUiEvent* e, void* userData) -> EM_BOOL
+{
+    CWindow* window = static_cast<CWindow*>(userData);
+    if (!window) return EM_TRUE;
 
     window->m_Width  = e->windowInnerWidth;
     window->m_Height = e->windowInnerHeight;
@@ -450,12 +451,13 @@ bool CWindow::ResizeHandler([[maybe_unused]] int eventType, [[maybe_unused]] con
 	// }, window->m_Width, window->m_Height);
 
 	gl::Viewport(0, 0, window->m_Width, window->m_Height);
-    return true;
+    return EM_TRUE;
 }
 
-bool CWindow::KeyHandler([[maybe_unused]] int eventType, [[maybe_unused]] const EmscriptenKeyboardEvent* e, [[maybe_unused]] void* userData) {
-    [[maybe_unused]] CWindow* window = static_cast<CWindow*>(userData);
-    if (!window) return true;
+auto CWindow::KeyHandler(int eventType, const EmscriptenKeyboardEvent* e, void* userData) -> EM_BOOL
+{
+    CWindow* window = static_cast<CWindow*>(userData);
+    if (!window) return EM_TRUE;
 
 	// auto safeCopy = [](const char* src) -> std::string {
     //     return src ? std::string(src) : "";
@@ -521,12 +523,13 @@ bool CWindow::KeyHandler([[maybe_unused]] int eventType, [[maybe_unused]] const 
         } break;
     }
 
-    return true;
+    return EM_TRUE;
 }
 
-bool CWindow::MouseHandler([[maybe_unused]] int eventType, [[maybe_unused]] const EmscriptenMouseEvent* e, [[maybe_unused]] void* userData) {
-    [[maybe_unused]] CWindow* window = static_cast<CWindow*>(userData);
-    if (!window) return true;
+auto CWindow::MouseHandler( int eventType, const EmscriptenMouseEvent* e, void* userData) -> EM_BOOL
+{
+    CWindow* window = static_cast<CWindow*>(userData);
+    if (!window) return EM_TRUE;
 
 	switch (eventType) {
         case EMSCRIPTEN_EVENT_MOUSEDOWN:
@@ -554,7 +557,7 @@ bool CWindow::MouseHandler([[maybe_unused]] int eventType, [[maybe_unused]] cons
             break;
     }
 
-    return true;
+    return EM_TRUE;
 }
 #endif
 
