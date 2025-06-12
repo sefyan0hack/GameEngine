@@ -441,7 +441,6 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 	}, Title);
 
 	emscripten_set_canvas_element_size("#canvas", Width, Height);
-	emscripten_set_canvas_css_size();
 }
 
 auto CWindow::ResizeHandler(int eventType, const EmscriptenUiEvent* e, void* userData) -> EM_BOOL
