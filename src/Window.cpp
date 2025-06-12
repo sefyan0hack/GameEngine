@@ -456,6 +456,10 @@ bool CWindow::ResizeHandler([[maybe_unused]] int eventType, [[maybe_unused]] con
 bool CWindow::KeyHandler([[maybe_unused]] int eventType, [[maybe_unused]] const EmscriptenKeyboardEvent* e, [[maybe_unused]] void* userData) {
     [[maybe_unused]] CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return true;
+	Info(
+		"timestamp: {}, key: {}({}), code: {}, location: {}, Flags: [ctrlKey:{}, shiftKey:{}, altKey:{}, metaKey:{}, repeat:{}], locale: {}",
+		e->timestamp, e->key, sizeof(e->key), e->code, e->location, e->ctrlKey, e->shiftKey, e->altKey, e->metaKey, e->metaKey, e->repeat, e->locale
+	);
 
     auto MapToVirtualKey = [](const char* code) -> unsigned char {
         // Alphanumeric keys
