@@ -412,25 +412,19 @@ auto CWindow::_init_helper(int32_t Width, int32_t Height, const char* Title) -> 
 #elif defined(WEB_PLT)
 auto CWindow::_init_helper(int32_t Width, int32_t Height, const char* Title) -> void
 {
+	emscripten_set_window_title(Title);
+	emscripten_set_canvas_element_size("#canvas", Width, Height);
+
 	EM_ASM({
 		const canvas = Module.canvas;
-
-		canvas.focus();
-
-		document.title = UTF8ToString($0);
-
 		document.body.innerHTML = '';
-
 		document.body.appendChild(canvas);
-
 		document.documentElement.style.margin = '0';
 		document.documentElement.style.padding = '0';
 		document.body.style.margin = '0';
 		document.body.style.padding = '0';
 
-	}, Title);
-
-	emscripten_set_canvas_element_size("#canvas", Width, Height);
+	});
 }
 
 auto CWindow::ResizeHandler(int32_t eventType, const EmscriptenUiEvent* e, void* userData) -> EM_BOOL
@@ -532,7 +526,6 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
 
 	switch (eventType) {
         case EMSCRIPTEN_EVENT_MOUSEDOWN:
-			emscripten_request_pointerlock("#canvas", EM_TRUE);
             if (e->button == 0) window->m_Mouse->OnLeftPressed();
             else if (e->button == 2) window->m_Mouse->OnRightPressed();
             break;
@@ -688,54 +681,21 @@ auto CWindow::ToggleFullScreen() -> void
 	RedrawWindow(m_WindowHandle, NULL, NULL, RDW_ERASE | RDW_FRAME | RDW_INVALIDATE | RDW_ALLCHILDREN);
 	#elif defined(LINUX_PLT)
 	#elif defined(WEB_PLT)
-	static bool fullscreenenabled = (bool)EM_ASM_INT({
-		if((window.fullScreen) || (window.innerWidth == screen.width && window.innerHeight == screen.height)){
-			return 1;
-		}
-		else{
-			return 0;
-		}
-	});
-	if(!fullscreenenabled){
-		bool isfullenabled = (bool) EM_ASM_INT({
-			const canvas = document.getElementById("canvas");
-			if (canvas.requestFullscreen) {
-				canvas.requestFullscreen();
-				return 1;
-			}
-			else if (canvas.mozRequestFullScreen) {
-				canvas.mozRequestFullScreen();
-				return 1;
-			} else if (canvas.webkitRequestFullscreen) {
-				canvas.webkitRequestFullscreen();
-				return 1;
-			} else if (canvas.msRequestFullscreen) {
-				canvas.msRequestFullscreen();
-				return 1;
-			}else{
-				return 0;
-			}
-		});
-		if(isfullenabled) fullscreenenabled = true;
-	}else{
-		bool isfulldisabled = (bool)EM_ASM_INT({
-			if (document.exitFullscreen) {
-				document.exitFullscreen();
-				return 1;
-			} else if (document.mozCancelFullScreen) {
-				document.mozCancelFullScreen();
-				return 1;
-			} else if (document.webkitExitFullscreen) {
-				document.webkitExitFullscreen();
-				return 1;
-			} else if (document.msExitFullscreen) {
-				document.msExitFullscreen();
-				return 1;
-			}else{
-				return 0;
-			}
-		});
-		if(isfulldisabled) fullscreenenabled = false;
+
+	EmscriptenFullscreenChangeEvent fullscrendata;
+    EMSCRIPTEN_RESULT ret = emscripten_get_fullscreen_status(&fullscrendata);
+
+	if (!fullscrendata.isFullscreen) {
+		ret = emscripten_request_fullscreen("#canvas", 1);
+		ret = emscripten_get_fullscreen_status(&fullscrendata);
+		m_Width = fullscrendata->elementWidth;
+		m_Height = fullscrendata->elementHeight;
+	} else {
+		ret = emscripten_exit_fullscreen();
+		ret = emscripten_get_fullscreen_status(&fullscrendata);
+		m_Width = fullscrendata->elementWidth;
+		m_Height = fullscrendata->elementHeight;
 	}
+	
 	#endif
 }

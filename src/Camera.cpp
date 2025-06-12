@@ -125,14 +125,19 @@ auto Camera::MoseMove(bool islocked) -> void
         on = !on;
     }
     lastState = currentState;
-    #if defined(WINDOWS_PLT)
+    m_Window->m_Mouse->SetPos(m_Window->Width()/2, m_Window->Height()/2);
     if(on){
-        m_Window->m_Mouse->SetPos(m_Window->Width()/2, m_Window->Height()/2);
+        #if defined(WINDOWS_PLT)
         ShowCursor(false);
+        #elif defined(WEB_PLT)
+        emscripten_hide_mouse();
+        #endif
     }else{
+        #if defined(WINDOWS_PLT)
         ShowCursor(true);
+        #elif defined(WEB_PLT)
+        #endif
     }
-    #endif //_WIN32
     //fin
 
     UpdateVectors();
