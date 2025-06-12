@@ -39,13 +39,13 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 	emscripten_set_keypress_callback(m_DrawContext, this, EM_FALSE, &CWindow::KeyHandler);
 	emscripten_set_keydown_callback(m_DrawContext, this, EM_FALSE, &CWindow::KeyHandler);
 	emscripten_set_keyup_callback(m_DrawContext, this, EM_FALSE, &CWindow::KeyHandler);
-
+	
 	//
-	emscripten_set_mousedown_callback(m_DrawContext  , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseup_callback(m_DrawContext    , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mousemove_callback(m_DrawContext  , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseenter_callback(m_DrawContext , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseleave_callback(m_DrawContext , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mousedown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW  , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW    , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mousemove_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW  , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseenter_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseleave_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW , this, EM_FALSE, &CWindow::MouseHandler);
 
 	emscripten_set_focusout_callback(m_DrawContext, this, EM_FALSE,
 		[](int32_t eventType, const EmscriptenFocusEvent *, void* userData) -> EM_BOOL {
