@@ -549,7 +549,6 @@ auto CWindow::MouseHandler( int eventType, const EmscriptenMouseEvent* e, void* 
 
 	switch (eventType) {
         case EMSCRIPTEN_EVENT_MOUSEDOWN:
-			emscripten_set_element_capture(window->m_DrawContext);
             if (e->button == 0) window->m_Mouse->OnLeftPressed();
             else if (e->button == 2) window->m_Mouse->OnRightPressed();
             break;
