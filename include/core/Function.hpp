@@ -109,7 +109,7 @@ template <typename R, typename... Args>
 auto Function<R(APIENTRY*)(Args...)>::ArgsValues() const -> std::array<std::string, sizeof...(Args)>
 {
     std::array<std::string, sizeof...(Args)> result;
-    int i = 0;
+    size_t i = 0;
     std::apply([&result, &i](auto&&... args) {
         ((result[i++] = to_string(args)), ...);
     }, m_ArgsValues);
@@ -169,7 +169,7 @@ auto Function<R(APIENTRY*)(Args...)>::function_info(const std::source_location& 
 // template <typename R, typename... Args>
 // auto Function<R(APIENTRY*)(Args...)>::format_arguments(std::string& result) const -> void
 // {
-//     int index = 1;
+//     size_t index = 1;
 //     bool first = true;
 //     for (const auto& [type, value] : std::views::zip(m_ArgsTypes, ArgsValues())) {
 //         if (!first) result += ", ";
@@ -181,7 +181,7 @@ auto Function<R(APIENTRY*)(Args...)>::function_info(const std::source_location& 
 template <typename R, typename... Args>
 auto Function<R(APIENTRY*)(Args...)>::format_arguments(std::string& result) const -> void
 {
-    int index = 1;
+    size_t index = 1;
     bool first = true;
     auto argsValues = ArgsValues();
 

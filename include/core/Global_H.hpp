@@ -39,7 +39,7 @@
     #error "no opengl lib path"
 #endif
 
-#define FOR_TEST public: template<unsigned short n> struct Test;
+#define FOR_TEST public: template<uint16_t n> struct Test;
 
 #include <type_traits>
 template<auto var>
@@ -77,7 +77,7 @@ concept is_static = std::is_object_v<std::remove_pointer_t<decltype(var)>> && !s
 
 inline static auto demangle(const char* name) -> std::string
 {
-    [[maybe_unused]] int status = -1;
+    [[maybe_unused]] int32_t status = -1;
     #if defined(__clang__) && !defined(WINDOWS_PLT) || defined(__GNUC__) || defined(__EDG__)
     [[maybe_unused]] std::unique_ptr<char, void(*)(void*)> res {
         abi::__cxa_demangle(name, nullptr, nullptr, &status),

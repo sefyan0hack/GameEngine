@@ -55,7 +55,7 @@ auto Keyboard::ReadKey() noexcept -> std::optional<Keyboard::Event>
 }
 
 
-auto Keyboard::ReadChar() noexcept -> std::optional<char>
+auto Keyboard::ReadChar() noexcept -> std::optional<unsigned char>
 {
 	if( !charbuffer.empty())
 	{
@@ -116,7 +116,7 @@ auto Keyboard::OnKeyReleased( unsigned char keycode ) noexcept -> void
 	TrimBuffer( keybuffer );
 }
 
-auto Keyboard::OnChar( char character ) noexcept -> void
+auto Keyboard::OnChar( unsigned char character ) noexcept -> void
 {
 	charbuffer.push( character );
 	TrimBuffer( charbuffer );
@@ -127,8 +127,9 @@ auto Keyboard::ClearState() noexcept -> void
 	keystates.reset();
 }
 
-template<typename T>
-auto Keyboard::TrimBuffer( std::queue<T>& buffer ) noexcept -> void
+template<typename Container>
+requires requires(Container c){ c.size(); c.pop(); }
+auto Keyboard::TrimBuffer( Container& buffer ) noexcept -> void
 {
 	while( buffer.size() > bufferSize )
 	{

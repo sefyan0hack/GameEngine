@@ -3,7 +3,7 @@
 
 using namespace std;
 
-using SubType = int;
+using SubType = int32_t;
 
 using AutoRelease_Test_Ctor1 = AutoRelease<SubType>::Test<1>;
 

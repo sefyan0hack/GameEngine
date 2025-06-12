@@ -127,8 +127,8 @@ auto PrintStackTracectx(CONTEXT* context) -> void {
     #endif
 
     std::string msg;
-    const int maxFrames = 64;
-    for (int frameNum = 0; frameNum < maxFrames; ++frameNum) {
+    const int32_t maxFrames = 64;
+    for (int32_t frameNum = 0; frameNum < maxFrames; ++frameNum) {
         BOOL result = StackWalk64(
             machineType,
             process,

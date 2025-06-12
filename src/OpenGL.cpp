@@ -164,7 +164,7 @@ auto OpenGL::init_opengl_win32() -> void
         Error("Failed to load required WGL extensions. : {}", GetLastError());
     }
 
-    int gl_attribs[] = { 
+    int32_t gl_attribs[] = { 
         CONTEXT_MAJOR_VERSION_ARB, 4,
         CONTEXT_MINOR_VERSION_ARB, 4,
         CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB, 0x8252, // WGL_LOSE_CONTEXT_ON_RESET_ARB
@@ -199,7 +199,7 @@ auto OpenGL::init_opengl_linux() -> void
 {
     CheckThread();
 
-    static int visualAttribs[] = {
+    static int32_t visualAttribs[] = {
         GLX_X_RENDERABLE,  true,
         GLX_DOUBLEBUFFER,  true,
         GLX_RED_SIZE,       8,
@@ -210,7 +210,7 @@ auto OpenGL::init_opengl_linux() -> void
         0
     };
     
-    int fbcount;
+    int32_t fbcount;
     GLXFBConfig* fbc = glXChooseFBConfig(m_DrawContext, DefaultScreen(m_DrawContext), visualAttribs, &fbcount);
     if (!fbc || fbcount == 0) {
         Error("Failed to get framebuffer config.");
@@ -222,7 +222,7 @@ auto OpenGL::init_opengl_linux() -> void
         Error("Failed to get visual info.");
     }
 
-    int contextAttribs[] = {
+    int32_t contextAttribs[] = {
         CONTEXT_MAJOR_VERSION_ARB, 4,
         CONTEXT_MINOR_VERSION_ARB, 4,
         CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB, 0x8252, // GLX_LOSE_CONTEXT_ON_RESET_ARB
@@ -270,7 +270,7 @@ auto OpenGL::init_opengl_web() -> void
         m_Context = emscripten_webgl_create_context("#canvas", &attrs);
         
         if (m_Context <= 0) {
-            Error("Failed to create WebGL context: error {}", static_cast<int>(m_Context));
+            Error("Failed to create WebGL context: error {}", static_cast<int32_t>(m_Context));
             return;
         }
     }

@@ -34,33 +34,33 @@ TEST(Formatters, glm_mat4){
 }
 
 TEST(Formatters, MapWrapper){
-    auto m = map<int, string>{ {1, "one"}, {2, "two"}, {3, "three"} };
+    auto m = map<int32_t, string>{ {1, "one"}, {2, "two"}, {3, "three"} };
     auto r = std::format("{}", MapWrapper(m));
     auto e = string(R"({"1": "one", "2": "two", "3": "three"})");
     EXPECT_EQ(r, e);
 }
 TEST(Formatters, MapWrapper_empty){
-    auto r = std::format("{}", MapWrapper(map<int, string>()));
+    auto r = std::format("{}", MapWrapper(map<int32_t, string>()));
     auto e = string(R"({})");
     EXPECT_EQ(r, e);
 }
 
 TEST(Formatters, VecWrapper){
-    auto v = vector<int>{ 1, 2, 3 };
+    auto v = vector<int32_t>{ 1, 2, 3 };
     auto r = std::format("{}", VecWrapper(v));
     auto e = string(R"([1, 2, 3])");
     EXPECT_EQ(r, e);
 }
 
 TEST(Formatters, VecWrapper_single) {
-    auto v = vector<int>{42};
+    auto v = vector<int32_t>{42};
     auto r = std::format("{}", VecWrapper(v));
     auto e = string(R"([42])");
     EXPECT_EQ(r, e);
 }
 
 TEST(Formatters, VecWrapper_empty){
-    auto r = std::format("{}", VecWrapper(vector<int>()));
+    auto r = std::format("{}", VecWrapper(vector<int32_t>()));
     auto e = string(R"([])");
     EXPECT_EQ(r, e);
 }

@@ -35,7 +35,7 @@ class CWindow
     #endif
     
     public:
-        CWindow(int Width, int Height, const char* Title);
+        CWindow(int32_t Width, int32_t Height, const char* Title);
         CWindow(const CWindow& other);
         CWindow(CWindow&&) = delete;
     
@@ -47,8 +47,8 @@ class CWindow
     public:
         auto WindowHandle() const        -> WindHandl ;
         auto DrawContext() const         -> HDC_D ;
-        auto Width() const       -> int ;
-        auto Height() const      -> int ;
+        auto Width() const       -> int32_t ;
+        auto Height() const      -> int32_t ;
         auto opengl() const          -> std::shared_ptr<gl::OpenGL> ;
         auto Visible() const        -> bool ;
         auto Show()                 -> void;
@@ -66,20 +66,20 @@ class CWindow
         auto CALLBACK WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)           -> LRESULT ;
         #endif
         #if defined(WEB_PLT)
-        static auto ResizeHandler(int eventType, const EmscriptenUiEvent* e, void* userData)    -> EM_BOOL;
-        static auto KeyHandler(int eventType, const EmscriptenKeyboardEvent* e, void* userData) -> EM_BOOL;
-        static auto MouseHandler(int eventType, const EmscriptenMouseEvent* e, void* userData)  -> EM_BOOL;
+        static auto ResizeHandler(int32_t eventType, const EmscriptenUiEvent* e, void* userData)    -> EM_BOOL;
+        static auto KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, void* userData) -> EM_BOOL;
+        static auto MouseHandler(int32_t eventType, const EmscriptenMouseEvent* e, void* userData)  -> EM_BOOL;
         #endif
-        auto _init_helper(int Width, int Height, const char* Title)                         -> void ;
+        auto _init_helper(int32_t Width, int32_t Height, const char* Title)                         -> void ;
     private:
         WindHandl m_WindowHandle;
         HDC_D m_DrawContext;
-        int m_Width;
-        int m_Height;
+        int32_t m_Width;
+        int32_t m_Height;
         bool m_Visible;
         std::vector<std::byte> m_RawBuffer;
         std::shared_ptr<gl::OpenGL> m_OpenGl;
-        int m_refCount;
+        int32_t m_refCount;
     public:
         std::shared_ptr<Keyboard> m_Keyboard;
         std::shared_ptr<Mouse> m_Mouse;

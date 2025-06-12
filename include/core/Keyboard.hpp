@@ -24,7 +24,7 @@ public:
 	Keyboard( const Keyboard& ) = delete;
 	auto operator=( const Keyboard& ) -> Keyboard& = delete;
 	auto ReadKey() noexcept 								 	-> std::optional<Event> ;
-	auto ReadChar() noexcept 								 	-> std::optional<char> ;
+	auto ReadChar() noexcept 								 	-> std::optional<unsigned char> ;
 
 	auto IsKeyPressed( unsigned char keycode ) const noexcept 	-> bool ;
 	auto IsKeyReleased(unsigned char keycode) const noexcept    -> bool ;
@@ -42,19 +42,20 @@ public:
 private:
 	auto OnKeyPressed( unsigned char keycode ) noexcept  		-> void ;
 	auto OnKeyReleased( unsigned char keycode ) noexcept 		-> void ;
-	auto OnChar( char character ) noexcept 						-> void ;
+	auto OnChar( unsigned char character ) noexcept 			-> void ;
 	auto ClearState() noexcept 									-> void ;
-	template<typename T>
-	static auto TrimBuffer( std::queue<T>& buffer ) noexcept	-> void;
+	template<typename Container>
+	requires requires(Container c) { c.size(); c.pop(); }
+	static auto TrimBuffer( Container& buffer ) noexcept	-> void;
 
 private:
-	static constexpr unsigned int nKeys = 256u;
-	static constexpr unsigned int bufferSize = 16u;
+	static constexpr uint32_t nKeys = 256u;
+	static constexpr uint32_t bufferSize = 16u;
 	bool autorepeatEnabled = true;
 	std::bitset<nKeys> keystates;
 	std::bitset<nKeys> prevKeyStates;
 	std::queue<Event> keybuffer;
-	std::queue<char> charbuffer;
+	std::queue<unsigned char> charbuffer;
 
 	FOR_TEST
 };

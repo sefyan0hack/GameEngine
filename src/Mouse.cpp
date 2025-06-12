@@ -8,21 +8,21 @@ Mouse::Mouse() : x(0), y(0)
 {
 }
 
-auto Mouse::GetPos() const noexcept -> std::pair<int, int>
+auto Mouse::GetPos() const noexcept -> std::pair<int32_t, int32_t>
 {
 	return {x, y};
 }
 
-auto Mouse::GetPosX() const noexcept -> int
+auto Mouse::GetPosX() const noexcept -> int32_t
 {
 	return x;
 }
-auto Mouse::GetPosY() const noexcept -> int
+auto Mouse::GetPosY() const noexcept -> int32_t
 {
 	return y;
 }
 
-auto Mouse::SetPos([[maybe_unused]] int x_, [[maybe_unused]] int y_) -> void
+auto Mouse::SetPos([[maybe_unused]] int32_t x_, [[maybe_unused]] int32_t y_) -> void
 {
 	#if defined(WINDOWS_PLT)
 	SetCursorPos(x_, y_);
@@ -72,7 +72,7 @@ auto Mouse::Read() noexcept -> std::optional<Mouse::Event>
 	return {};
 }
 
-auto Mouse::OnMouseMove( int newx,int newy ) noexcept -> void
+auto Mouse::OnMouseMove( int32_t newx, int32_t newy ) noexcept -> void
 {
 	x = newx;
 	y = newy;
@@ -97,7 +97,7 @@ auto Mouse::OnMouseEnter() noexcept -> void
 	TrimBuffer();
 }
 
-auto Mouse::OnRawDelta( int dx,int dy ) noexcept -> void
+auto Mouse::OnRawDelta( int32_t dx, int32_t dy ) noexcept -> void
 {
 	rawDeltaBuffer.push( { dx,dy } );
 	TrimBuffer();
@@ -164,7 +164,7 @@ auto Mouse::TrimRawInputBuffer() noexcept -> void
 }
 
 
-auto Mouse::OnWheelDelta([[maybe_unused]] int delta ) noexcept -> void
+auto Mouse::OnWheelDelta([[maybe_unused]] int32_t delta ) noexcept -> void
 {
 	#if defined(WINDOWS_PLT)
 	wheelDeltaCarry += delta;
@@ -197,15 +197,15 @@ auto Mouse::Event::GetType() const noexcept -> Mouse::Event::Type
 {
 	return type;
 }
-auto Mouse::Event::GetPos() const noexcept -> std::pair<int, int> 
+auto Mouse::Event::GetPos() const noexcept -> std::pair<int32_t, int32_t> 
 {
 	return {x, y};
 }
-auto Mouse::Event::GetPosX() const noexcept -> int
+auto Mouse::Event::GetPosX() const noexcept -> int32_t
 {
 	return x;
 }
-auto Mouse::Event::GetPosY() const noexcept -> int
+auto Mouse::Event::GetPosY() const noexcept -> int32_t
 {
 	return y;
 }

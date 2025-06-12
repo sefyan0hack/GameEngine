@@ -13,7 +13,7 @@
 #include <emscripten/key_codes.h>
 #endif
 
-CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[maybe_unused]] const char* Title) 
+CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height, [[maybe_unused]] const char* Title) 
 	: m_Width(Width)
 	, m_Height(Height)
 	, m_Visible(false)
@@ -48,7 +48,7 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 	emscripten_set_mouseleave_callback(m_DrawContext , this, EM_FALSE, &CWindow::MouseHandler);
 
 	emscripten_set_focusout_callback(m_DrawContext, this, EM_FALSE,
-		[](int eventType, const EmscriptenFocusEvent *, void* userData) -> EM_BOOL {
+		[](int32_t eventType, const EmscriptenFocusEvent *, void* userData) -> EM_BOOL {
 			CWindow* window = static_cast<CWindow*>(userData);
     		if (!window) return EM_TRUE;
 			switch (eventType)
@@ -62,7 +62,7 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 	);
 
 	emscripten_set_wheel_callback(m_DrawContext, this, EM_FALSE,
-		[]([[maybe_unused]] int eventType, const EmscriptenWheelEvent* e, void* userData) -> EM_BOOL  {
+		[]([[maybe_unused]] int32_t eventType, const EmscriptenWheelEvent* e, void* userData) -> EM_BOOL  {
 			CWindow* w = static_cast<CWindow*>(userData);
 			w->m_Mouse->OnWheelDelta(e->deltaY * -120); // Match Win32 scaling
 			return EM_TRUE;
@@ -71,7 +71,7 @@ CWindow::CWindow([[maybe_unused]] int Width, [[maybe_unused]] int Height, [[mayb
 
 	emscripten_set_fullscreenchange_callback(m_DrawContext, this, EM_FALSE, 
 		[](
-			int eventType, 
+			int32_t eventType, 
 			const EmscriptenFullscreenChangeEvent* e,
 			void* userData
 		) -> EM_BOOL {
@@ -188,7 +188,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
             return 0;
         }
         case WM_CLOSE:{
-            int ret = MessageBoxA(m_WindowHandle, "Close.", "Exit", MB_YESNO | MB_ICONWARNING);
+            int32_t ret = MessageBoxA(m_WindowHandle, "Close.", "Exit", MB_YESNO | MB_ICONWARNING);
             if (ret == IDYES){
                 --S_WindowsCount;
                 m_Visible = false;
@@ -285,7 +285,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    }
 	    case WM_MOUSEWHEEL:
 	    {
-	    	const int delta = GET_WHEEL_DELTA_WPARAM( Wpr );
+	    	const int32_t delta = GET_WHEEL_DELTA_WPARAM( Wpr );
 	    	m_Mouse->OnWheelDelta(delta);
 	    	break;
 	    }
@@ -342,7 +342,7 @@ auto CWindow::ProcessMessages() -> void
         DispatchMessageA(&Msg);
     }
 	#elif defined(LINUX_PLT)
-	int screen = DefaultScreen(m_DrawContext);
+	int32_t screen = DefaultScreen(m_DrawContext);
 
     /* Event loop */
     // while (true) {
@@ -357,7 +357,7 @@ auto CWindow::ProcessMessages() -> void
     // }
 	#endif
 }
-auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
+auto CWindow::_init_helper(int32_t Width, int32_t Height, const char* Title) -> void
 {
     WinClass::Instance();
 
@@ -398,16 +398,16 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 
 #elif defined(LINUX_PLT)
 
-auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
+auto CWindow::_init_helper(int32_t Width, int32_t Height, const char* Title) -> void
 {
     if (!m_DrawContext) {
 		Error("Failed to open X display connection.");
 	}
-    int screen = DefaultScreen(m_DrawContext);
+    int32_t screen = DefaultScreen(m_DrawContext);
 
     /* Create a window */
     m_WindowHandle = XCreateSimpleWindow(m_DrawContext, RootWindow(m_DrawContext, screen), 
-                                 10, 10, static_cast<unsigned int>(Width), static_cast<unsigned int>(Height), 1, 
+                                 10, 10, static_cast<uint32_t>(Width), static_cast<uint32_t>(Height), 1, 
                                  BlackPixel(m_DrawContext, screen), WhitePixel(m_DrawContext, screen));
     Expect(m_WindowHandle != 0, "m_WindowHandle are null ???");
     XStoreName(m_DrawContext, m_WindowHandle, Title);
@@ -420,7 +420,7 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 }
 
 #elif defined(WEB_PLT)
-auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
+auto CWindow::_init_helper(int32_t Width, int32_t Height, const char* Title) -> void
 {
 	EM_ASM({
 		const canvas = Module.canvas;
@@ -443,7 +443,7 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 	emscripten_set_canvas_element_size("#canvas", Width, Height);
 }
 
-auto CWindow::ResizeHandler(int eventType, const EmscriptenUiEvent* e, void* userData) -> EM_BOOL
+auto CWindow::ResizeHandler(int32_t eventType, const EmscriptenUiEvent* e, void* userData) -> EM_BOOL
 {
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_TRUE;
@@ -462,7 +462,7 @@ auto CWindow::ResizeHandler(int eventType, const EmscriptenUiEvent* e, void* use
     return EM_TRUE;
 }
 
-auto CWindow::KeyHandler(int eventType, const EmscriptenKeyboardEvent* e, void* userData) -> EM_BOOL
+auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, void* userData) -> EM_BOOL
 {
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_TRUE;
@@ -534,7 +534,7 @@ auto CWindow::KeyHandler(int eventType, const EmscriptenKeyboardEvent* e, void* 
     return EM_TRUE;
 }
 
-auto CWindow::MouseHandler( int eventType, const EmscriptenMouseEvent* e, void* userData) -> EM_BOOL
+auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, void* userData) -> EM_BOOL
 {
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_TRUE;
@@ -586,12 +586,12 @@ auto CWindow::DrawContext() const -> HDC_D
     return m_DrawContext;
 }
 
-auto CWindow::Width() const -> int
+auto CWindow::Width() const -> int32_t
 {
     return m_Width;
 }
 
-auto CWindow::Height() const -> int
+auto CWindow::Height() const -> int32_t
 {
     return m_Height;
 }
