@@ -69,7 +69,7 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 		}
 	);
 
-	emscripten_set_fullscreenchange_callback(m_DrawContext, this, EM_FALSE, 
+	emscripten_set_fullscreenchange_callback("#canvas", this, EM_FALSE, 
 		[](
 			int32_t eventType, 
 			const EmscriptenFullscreenChangeEvent* e,
@@ -78,16 +78,6 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 			auto* window = static_cast<CWindow*>(userData);
 
 			if (e->isFullscreen) Info("Enable FullScreen");
-
-			Info("-C++ {}, {}",e->elementWidth, e->elementHeight);
-			window->m_Width = e->elementWidth;
-			window->m_Height = e->elementHeight;
-
-			window->m_Width  = e->elementWidth;   // width in px
-			window->m_Height = e->elementHeight;  // height in px
-			Info("Now fullscreen: {}×{} (screen {}×{})",
-				 e->elementWidth, e->elementHeight,
-				 e->screenWidth, e->screenHeight);
 			return EM_TRUE;
 	});
 	
@@ -425,7 +415,7 @@ auto CWindow::_init_helper(int32_t Width, int32_t Height, const char* Title) -> 
 	EM_ASM({
 		const canvas = Module.canvas;
 
-		// canvas.focus();
+		canvas.focus();
 
 		document.title = UTF8ToString($0);
 
@@ -450,13 +440,6 @@ auto CWindow::ResizeHandler(int32_t eventType, const EmscriptenUiEvent* e, void*
 
     window->m_Width  = e->windowInnerWidth;
     window->m_Height = e->windowInnerHeight;
-
-	// EM_ASM(
-	// {
-	// 	const canvas = Module.canvas;
-	// 	canvas.Height = $0;
-	// 	canvas.width = $1;
-	// }, window->m_Width, window->m_Height);
 
 	gl::Viewport(0, 0, window->m_Width, window->m_Height);
     return EM_TRUE;
@@ -705,8 +688,54 @@ auto CWindow::ToggleFullScreen() -> void
 	RedrawWindow(m_WindowHandle, NULL, NULL, RDW_ERASE | RDW_FRAME | RDW_INVALIDATE | RDW_ALLCHILDREN);
 	#elif defined(LINUX_PLT)
 	#elif defined(WEB_PLT)
-	EM_ASM({
-		Module.requestFullscreen();
+	static bool fullscreenenabled = (bool)EM_ASM_INT({
+		if((window.fullScreen) || (window.innerWidth == screen.width && window.innerHeight == screen.height)){
+			return 1;
+		}
+		else{
+			return 0;
+		}
 	});
+	if(!fullscreenenabled){
+		bool isfullenabled = (bool) EM_ASM_INT({
+			const canvas = document.getElementById("canvas");
+			if (canvas.requestFullscreen) {
+				canvas.requestFullscreen();
+				return 1;
+			}
+			else if (canvas.mozRequestFullScreen) {
+				canvas.mozRequestFullScreen();
+				return 1;
+			} else if (canvas.webkitRequestFullscreen) {
+				canvas.webkitRequestFullscreen();
+				return 1;
+			} else if (canvas.msRequestFullscreen) {
+				canvas.msRequestFullscreen();
+				return 1;
+			}else{
+				return 0;
+			}
+		});
+		if(isfullenabled) fullscreenenabled = true;
+	}else{
+		bool isfulldisabled = (bool)EM_ASM_INT({
+			if (document.exitFullscreen) {
+				document.exitFullscreen();
+				return 1;
+			} else if (document.mozCancelFullScreen) {
+				document.mozCancelFullScreen();
+				return 1;
+			} else if (document.webkitExitFullscreen) {
+				document.webkitExitFullscreen();
+				return 1;
+			} else if (document.msExitFullscreen) {
+				document.msExitFullscreen();
+				return 1;
+			}else{
+				return 0;
+			}
+		});
+		if(isfulldisabled) fullscreenenabled = false;
+	}
 	#endif
 }
