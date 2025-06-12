@@ -156,6 +156,8 @@ public:
     auto Update(float delta) -> void override {
 
         Cam.MoseMove();
+        Info("{}", *m_Window.m_Mouse);
+
         if( m_Window.m_Keyboard->IsKeyDown('W')){
             float speed = 10.0f * delta;
             #if defined(WINDOWS_PLT)

@@ -1,18 +1,24 @@
 #pragma once
+#include <core/fmts.hpp>
 
 class CWindow;
 class Mouse
 {
     friend class CWindow;
-private:
+	friend struct std::formatter<Mouse>;
+
+public:
     struct RawDelta
 	{
 		int x,y;
 	};
+
 	class Event
 	{
 	public:
-		enum class Type { LPress, LRelease, RPress, RRelease, WheelUp, WheelDown, Move, Enter, Leave, };
+		friend struct std::formatter<Event>;
+		enum class Type { LPress, LRelease, RPress, RRelease, WheelUp, WheelDown, Move, Enter, Leave };
+		static auto Type_to_string(Type t) -> const char*;
 	public:
 		Event( Type type,const Mouse& parent ) noexcept;
 		auto GetType() const noexcept 			-> Type ;
@@ -72,4 +78,47 @@ private:
 	std::queue<RawDelta> rawDeltaBuffer;
 
 	FOR_TEST
+};
+
+
+// custom Mouse::Event Format
+template<>
+struct std::formatter<Mouse::Event> {
+  constexpr auto parse(std::format_parse_context& context) {
+    return context.begin();
+  }
+  auto format(const Mouse::Event& obj, std::format_context& context) const {
+    return std::format_to(context.out(),
+		R"({{"Type": {}, "leftIsPressed": {}, "rightIsPressed":{}, "x": {}, "y": {}}})",
+		Mouse::Event::Type_to_string(obj.type), obj.leftIsPressed, obj.rightIsPressed, obj.x, obj.y
+  	);
+  }
+};
+
+// custom Mouse::RawDelta Format
+template<>
+struct std::formatter<Mouse::RawDelta > {
+  constexpr auto parse(std::format_parse_context& context) {
+    return context.begin();
+  }
+  auto format(const Mouse::RawDelta& obj, std::format_context& context) const {
+    return std::format_to(context.out(),
+		R"({{"x": {}, "y": {}}})",
+		obj.x, obj.y
+  	);
+  }
+};
+
+// custom Mouse Format
+template<>
+struct std::formatter<Mouse> {
+  constexpr auto parse(std::format_parse_context& context) {
+    return context.begin();
+  }
+  auto format(const Mouse& obj, std::format_context& context) const {
+    return std::format_to(context.out(),
+    R"({{ "x": {}, "y": {}, "leftIsPressed": {}, "rightIsPressed":{}, "isInWindow": {}, "isEntered": {}, "wheelDeltaCarry": {}, "buffer": {}, "rawDeltaBuffer": {} }})"
+    , obj.x, obj.y, obj.leftIsPressed, obj.rightIsPressed, obj.isInWindow, obj.isEntered, obj.wheelDeltaCarry, QueWrapper{obj.buffer}, QueWrapper{obj.rawDeltaBuffer}
+  	);
+  }
 };

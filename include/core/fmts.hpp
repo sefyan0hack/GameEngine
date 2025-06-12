@@ -56,6 +56,11 @@ struct VecWrapper {
     const Vec& vec;
 };
 
+template <typename Que>
+struct QueWrapper {
+    const Que& que;
+};
+
 // Formatter for MapWrapper
 template<typename Map>
 struct std::formatter<MapWrapper<Map>> {
@@ -92,6 +97,29 @@ struct std::formatter<VecWrapper<Vec>> {
             if (first) first = false;
             else out = std::format_to(out, ", ");
             out = std::format_to(out, "{}", elem);
+        }
+        out = std::format_to(out, "]");
+        return out;
+    }
+};
+
+// Formatter for QueWrapper
+template<typename Que>
+struct std::formatter<QueWrapper<Que>> {
+    constexpr auto parse(std::format_parse_context& ctx) {
+        return ctx.begin();
+    }
+
+    auto format(const QueWrapper<Que>& wrapper, std::format_context& ctx) const {
+        auto out = ctx.out();
+        out = std::format_to(out, "[");
+        Que q = wrapper.que;
+        bool first = true;
+        while (!q.empty()) {
+          if (first) first = false;
+          else out = std::format_to(out, ", ");
+          out = std::format_to(out, "{}", q.front());
+          q.pop();
         }
         out = std::format_to(out, "]");
         return out;

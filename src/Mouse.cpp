@@ -217,3 +217,31 @@ auto Mouse::Event::RightIsPressed() const noexcept -> bool
 {
 	return rightIsPressed;
 }
+
+auto Mouse::Event::Type_to_string(Type t) -> const char *
+{
+	using Type = Mouse::Event::Type;
+	switch (t)
+	{
+		case Type::LPress:
+			return "LPress";
+		case Type::LRelease:
+			return "LRelease";
+		case Type::RPress:
+			return "RPress";
+		case Type::RRelease:
+			return "RRelease";
+		case Type::WheelUp:
+			return "WheelUp";
+		case Type::WheelDown:
+			return "WheelDown";
+		case Type::Move:
+			return "Move";
+		case Type::Enter:
+			return "Enter";
+		case Type::Leave:
+			return "Leave";
+		default:
+			return "EventType??";
+	}
+}

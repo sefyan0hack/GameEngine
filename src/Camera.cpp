@@ -104,7 +104,7 @@ auto Camera::UpdateVectors() -> void
 auto Camera::MoseMove(bool islocked) -> void
 {
     constexpr float LIMIT_ANGLE = 45.0f;
-    Info("Mosemove");
+
     while (auto op = m_Window->m_Mouse->ReadRawDelta()) {
         float xoff = static_cast<float>(op->x)* m_Sensitivity;
         float yoff = static_cast<float>(-op->y) * m_Sensitivity;
