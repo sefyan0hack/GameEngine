@@ -549,6 +549,7 @@ auto CWindow::MouseHandler( int eventType, const EmscriptenMouseEvent* e, void* 
 
 	switch (eventType) {
         case EMSCRIPTEN_EVENT_MOUSEDOWN:
+			emscripten_request_pointerlock(window->m_DrawContext, EM_TRUE);
             if (e->button == 0) window->m_Mouse->OnLeftPressed();
             else if (e->button == 2) window->m_Mouse->OnRightPressed();
             break;
@@ -556,29 +557,10 @@ auto CWindow::MouseHandler( int eventType, const EmscriptenMouseEvent* e, void* 
         case EMSCRIPTEN_EVENT_MOUSEUP:
             if (e->button == 0) window->m_Mouse->OnLeftReleased();
             else if (e->button == 2) window->m_Mouse->OnRightReleased();
-
-			if (e->canvasX < 0 || e->canvasX >= window->m_Width || 
-                e->canvasY < 0 || e->canvasY >= window->m_Height) {
-                window->m_Mouse->OnMouseLeave();
-            }
             break;
         
         case EMSCRIPTEN_EVENT_MOUSEMOVE:
-			if (e->canvasX >= 0 && e->canvasX < window->m_Width &&
-				e->canvasY >= 0 && e->canvasY < window->m_Height) 
-			{
-				if (!window->m_Mouse->IsInWindow()) {
-					window->m_Mouse->OnMouseEnter();
-				}
-				window->m_Mouse->OnMouseMove(e->canvasX, e->canvasY);
-			}
-			else {
-				if (window->m_Mouse->IsInWindow()) {
-					window->m_Mouse->OnMouseLeave();
-				}
-				// Optional: Still report position if needed
-				// window->m_Mouse->OnMouseMove(e->canvasX, e->canvasY);
-			}
+			window->m_Mouse->OnMouseMove(e->canvasX, e->canvasY);
             break;
         
         case EMSCRIPTEN_EVENT_MOUSEENTER:
