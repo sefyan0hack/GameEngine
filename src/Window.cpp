@@ -440,7 +440,7 @@ auto CWindow::_init_helper(int Width, int Height, const char* Title) -> void
 
 	}, Title);
 
-	emscripten_set_canvas_element_size("#canvas", Height, height);
+	emscripten_set_canvas_element_size("#canvas", Width, Height);
 	emscripten_set_canvas_css_size();
 }
 
