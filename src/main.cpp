@@ -221,11 +221,6 @@ public: // distroy hire
 
 
 int main() {
-    #if defined(WINDOWS_PLT)
-    #   ifdef DEBUG
-        setup_crach_handler();
-    #   endif
-    #endif
     Game my_game ;
     my_game.Run();
     return 0;

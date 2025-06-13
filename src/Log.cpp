@@ -186,75 +186,8 @@ auto PrintStackTracectx(CONTEXT* context) -> void {
     MessageBox(GetForegroundWindow(), msg.c_str(), "Stack Trace", MB_OK | MB_ICONWARNING);
 }
 
-auto WINAPI ExceptionHandler([[maybe_unused]] PEXCEPTION_POINTERS ex) -> LONG
-{
-    constexpr DWORD MS_CPP_EXCEPTION = 0xE06D7363; // C++ exception code
-    const auto& exr = ex->ExceptionRecord;
-    const auto& excode = exr->ExceptionCode;
-    
-    // Always allow C++ exceptions to propagate
-    if (excode == MS_CPP_EXCEPTION) {
-        return EXCEPTION_CONTINUE_SEARCH;
-    }
-
-    static constexpr std::array critical_exceptions = {
-        EXCEPTION_ACCESS_VIOLATION,
-        EXCEPTION_ILLEGAL_INSTRUCTION,
-        EXCEPTION_STACK_OVERFLOW,
-        EXCEPTION_IN_PAGE_ERROR,
-        EXCEPTION_ARRAY_BOUNDS_EXCEEDED,
-        EXCEPTION_DATATYPE_MISALIGNMENT,
-        EXCEPTION_FLT_DENORMAL_OPERAND,
-        EXCEPTION_FLT_DIVIDE_BY_ZERO,
-        EXCEPTION_FLT_INEXACT_RESULT,
-        EXCEPTION_FLT_INVALID_OPERATION,
-        EXCEPTION_FLT_OVERFLOW,
-        EXCEPTION_FLT_STACK_CHECK,
-        EXCEPTION_FLT_UNDERFLOW,
-        EXCEPTION_INT_DIVIDE_BY_ZERO,
-        EXCEPTION_INT_OVERFLOW,
-        EXCEPTION_PRIV_INSTRUCTION
-    };
-
-    switch (excode) {
-        case 0x3FFA000A: // Custom RendeDoc code
-        case EXCEPTION_BREAKPOINT:
-        case EXCEPTION_SINGLE_STEP:
-            return EXCEPTION_CONTINUE_EXECUTION;
-    }
-
-    if (std::find(critical_exceptions.begin(), critical_exceptions.end(), excode) != critical_exceptions.end()) 
-    {
-        const auto& exaddr = exr->ExceptionAddress;
-        auto symName = resolveSymbol(exaddr);
-        
-        Info("--- Exception Caught ---");
-        Info("Exception {} (0x{:x})", EXCEPTION_RECORD_to_str(excode), excode);
-        Info("Exception  [{}] - {}", exaddr, symName);
-        Info("Exception Flags: {:#x}", exr->ExceptionFlags);
-        Info("Number of Parameters: {}", exr->NumberParameters);
-        
-        for (DWORD i = 0; i < exr->NumberParameters; i++) {
-            Info("Parameter[{}]: {:p}", i, (void*)exr->ExceptionInformation[i]);
-        }
-
-        if(ex->ContextRecord) {
-            PrintStackTracectx(ex->ContextRecord);
-        }
-
-        return EXCEPTION_EXECUTE_HANDLER;
-    }
-
-    return EXCEPTION_CONTINUE_SEARCH;
-}
-
 } // anonym space
 
-auto setup_crach_handler() -> void
-{
-    SymSetOptions(SYMOPT_UNDNAME | SYMOPT_DEFERRED_LOADS | SYMOPT_LOAD_LINES);
-    AddVectoredExceptionHandler(1, ExceptionHandler);
-}
 
 #endif //DEBUG
 #endif //_WIN32
