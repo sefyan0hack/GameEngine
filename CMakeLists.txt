@@ -2,9 +2,6 @@ cmake_minimum_required(VERSION 3.28)
 
 project(Engine LANGUAGES C CXX)
 
-####################################################################################################
-# Futures 
-####################################################################################################
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 include(CTest)
@@ -12,23 +9,11 @@ include(helpers)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_SUPPRESS_REGENERATION true)
 set(CMAKE_CXX_EXTENSIONS OFF)
-
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-add_compile_options(-fexperimental-library)
-endif()
+set(CMAKE_USE_RELATIVE_PATHS true)
 
 if(NOT CMAKE_BUILD_TYPE)
 set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
-endif()
-
-if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
-message(FATAL_ERROR "Create a build directory and run CMake from there.")
-endif()
-if(WIN32)
-set(CMAKE_USE_WINHTTP_FOR_HTTP ON CACHE BOOL "" FORCE)
-set(CMAKE_USE_CURL OFF CACHE BOOL "" FORCE)
 endif()
 
 string(REGEX MATCH "^[0-9]+" COMPILER_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSION}")
@@ -254,19 +239,6 @@ else()
     )
 endif()
 
-####################################################################################################
-# WIN32 defines 
-####################################################################################################
-
-if(WIN32)
-    add_definitions(-DNOMINMAX)
-    #shut up about unsafe stuff
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-    set(CMAKE_USE_RELATIVE_PATHS true)
-
-else()
-    # message(FATAL_ERROR "This project only support Windows. Sorry :)")
-endif()
 
 ####################################################################################################
 # Compiler Check
@@ -306,7 +278,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 endif()
 
 ####################################################################################################
-# Check if 3party exist to not fetch Debs
+# Check if We Want Fetch or include Deps
 ####################################################################################################
 
 if(EXISTS ${CMAKE_SOURCE_DIR}/3party)
@@ -316,53 +288,11 @@ else()
 endif()
 
 if(ONLINE)
-
-# Include get_cpm.cmake
-include(CPM)
-# deps :
-
-    # add glm 1.0.1
-CPMAddPackage("gh:g-truc/glm#1.0.1")
-
-    # stb_image v2.30
-CPMAddPackage(
-    NAME stb_image_header
-    URL https://raw.githubusercontent.com/nothings/stb/5c205738c191bcb0abc65c4febfa9bd25ff35234/stb_image.h
-    DOWNLOAD_ONLY YES
-    DOWNLOAD_NO_EXTRACT TRUE
-    DOWNLOAD_NAME stb_image.h
-)
-
-CPMAddPackage(
-    NAME glcorearb
-    URL https://registry.khronos.org/OpenGL/api/GL/glcorearb.h
-    DOWNLOAD_ONLY YES
-    DOWNLOAD_NO_EXTRACT TRUE
-    DOWNLOAD_NAME glcorearb.h
-)
-
-CPMAddPackage(
-    NAME khr
-    URL https://raw.githubusercontent.com/KhronosGroup/EGL-Registry/main/api/KHR/khrplatform.h
-    DOWNLOAD_ONLY YES
-    DOWNLOAD_NO_EXTRACT TRUE
-    DOWNLOAD_NAME khrplatform.h
-)
-if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/KHR/khrplatform.h)
-    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/KHR)
-
-    file(RENAME 
-        ${CMAKE_CURRENT_BINARY_DIR}/_deps/khr-src/khrplatform.h 
-        ${CMAKE_CURRENT_BINARY_DIR}/KHR/khrplatform.h
-    )
-endif()
-include_directories(
-    ${CMAKE_CURRENT_BINARY_DIR}/_deps/glcorearb-src  # For glcorearb.h
-    ${CMAKE_CURRENT_BINARY_DIR}                      # For KHR/khrplatform.h
-)
+    include(FetchDeps)
 else()
-add_subdirectory(3party/glm)
+    include(IncludeDeps)
 endif()
+
 
 ####################################################################################################
 # Source Files 
@@ -392,20 +322,21 @@ set(SOURCES
 # Find instaled packages 
 ####################################################################################################
 
+if(NOT EMSCRIPTEN)
+
 # Find OpenGL package
 find_package(OpenGL REQUIRED)
 
 # Find Threads package
 find_package(Threads REQUIRED)
 
-if(NOT EMSCRIPTEN)
-    # Find X11 package
-    if(UNIX)
-        find_package(X11 REQUIRED)
-    endif()
+# Find X11 package
+if(UNIX)
+    find_package(X11 REQUIRED)
+endif()
+# Extract the core OpenGL library (first entry in the list)
+list(GET OPENGL_LIBRARIES 0 CORE_OPENGL_LIB)
 
-    # Extract the core OpenGL library (first entry in the list)
-    list(GET OPENGL_LIBRARIES 0 CORE_OPENGL_LIB)
 endif()
 ####################################################################################################
 # Build Exe 
@@ -417,20 +348,10 @@ target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm core)
 # Include Dirs 
 ####################################################################################################
 
-target_include_directories(core PUBLIC 
+target_include_directories(core PUBLIC
     "${CMAKE_SOURCE_DIR}/include"
-    $<$<AND:$<STREQUAL:$<PLATFORM_ID>,Linux>,$<BOOL:${X11_INCLUDE_DIR}>>:${X11_INCLUDE_DIR}>
+    $<$<PLATFORM_ID:Linux>:${X11_INCLUDE_DIR}>
 )
-
-if(ONLINE)
-    set(STB_IMG_HEADER ${stb_image_header_SOURCE_DIR})
-else()
-    set(STB_IMG_HEADER ${CMAKE_SOURCE_DIR}/3party)
-    target_include_directories(core PUBLIC "${CMAKE_SOURCE_DIR}/3party")
-endif()
-
-add_library(stb_image INTERFACE)
-target_include_directories(stb_image SYSTEM INTERFACE ${STB_IMG_HEADER})
 
 ####################################################################################################
 # Compile Flags 
@@ -444,15 +365,13 @@ apply_sanitizer_options(TARGETS core)
 ####################################################################################################
 # Link Libs 
 ####################################################################################################
-
+# common Libs
 target_link_libraries(core
     PRIVATE
         glm::glm
-        stb_image
-        Threads::Threads
-        $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
 )
 
+# common (Not Web)
 if(NOT EMSCRIPTEN)
     if(NOT WIN32)
     target_link_libraries(core PRIVATE $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
@@ -460,7 +379,10 @@ if(NOT EMSCRIPTEN)
 
     target_link_libraries(core
         PRIVATE
+            Threads::Threads
             ${OPENGL_LIBRARIES}
+            stb_image
+            $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
             $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
             $<$<PLATFORM_ID:Linux>:dl>
             $<$<PLATFORM_ID:Linux>:${X11_LIBRARIES}>
@@ -484,7 +406,6 @@ add_compile_definitions(
     $<$<CONFIG:Debug>:DEBUG>
     $<$<CONFIG:Release>:NDEBUG>
 )
-
 
 ####################################################################################################
 # TEST
