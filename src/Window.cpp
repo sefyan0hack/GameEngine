@@ -36,16 +36,21 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
     m_OpenGl = std::make_shared<gl::OpenGL>(m_WindowHandle, m_DrawContext);
 
 	#if defined(WEB_PLT)
+	EM_ASM({
+		var canvasWrapper = document.getElementById(UTF8ToString($0)).parentElement;
+		canvasWrapper.style.setProperty("--device-pixel-ratio", window.devicePixelRatio);
+	}, "#canvas");
+
 	emscripten_set_keypress_callback(m_DrawContext, this, EM_FALSE, &CWindow::KeyHandler);
 	emscripten_set_keydown_callback(m_DrawContext, this, EM_FALSE, &CWindow::KeyHandler);
 	emscripten_set_keyup_callback(m_DrawContext, this, EM_FALSE, &CWindow::KeyHandler);
 	
 	//
-	emscripten_set_mousedown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW  , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mousedown_callback("#canvas"  , this, EM_FALSE, &CWindow::MouseHandler);
 	emscripten_set_mouseup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW    , this, EM_FALSE, &CWindow::MouseHandler);
 	emscripten_set_mousemove_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW  , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseenter_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseleave_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseenter_callback("#canvas" , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseleave_callback("#canvas" , this, EM_FALSE, &CWindow::MouseHandler);
 
 	emscripten_set_focusout_callback(m_DrawContext, this, EM_FALSE,
 		[](int32_t eventType, const EmscriptenFocusEvent *, void* userData) -> EM_BOOL {
@@ -81,7 +86,7 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 
 			window->m_Width = e->elementWidth;
 			window->m_Height = e->elementHeight;
-			
+
 			return EM_TRUE;
 	});
 	
