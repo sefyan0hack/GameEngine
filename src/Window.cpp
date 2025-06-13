@@ -554,7 +554,7 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
             break;
     }
 
-    return EM_TRUE;
+    return EM_FALSE;
 }
 #endif
 
