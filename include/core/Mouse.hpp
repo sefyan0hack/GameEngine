@@ -51,6 +51,8 @@ public:
 	auto RightIsPressed() const noexcept 	-> bool ;
 	auto IsEmpty() const noexcept 			-> bool ;
 	auto Flush() noexcept 					-> void ;
+	auto Lock() noexcept 					-> void ;
+	auto UnLock() noexcept 					-> void ;
 private:
 	auto OnMouseMove( int32_t x,int32_t y ) noexcept 	-> void ;
 	auto OnMouseLeave() noexcept 						-> void ;
@@ -73,6 +75,7 @@ private:
 	bool rightIsPressed = false;
 	bool isInWindow = false;
 	bool isEntered = false;
+	bool isLocked = false;
 	int32_t wheelDeltaCarry = 0;
 	std::queue<Event> buffer;
 	std::queue<RawDelta> rawDeltaBuffer;

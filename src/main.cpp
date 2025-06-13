@@ -170,16 +170,27 @@ public:
             Cam.MoveBackward(10.0f * delta);
         }
         if( m_Window.m_Keyboard->IsKeyDown('A')){
-             Cam.MoveLeft(10.0f * delta);
+            Cam.MoveLeft(10.0f * delta);
         }
         if( m_Window.m_Keyboard->IsKeyDown('D')){
-             Cam.MoveRight(10.0f * delta);
+            Cam.MoveRight(10.0f * delta);
         }
         if( m_Window.m_Keyboard->IsKeyDown('N') ){
-             Cam.MoveUP(10.0f * delta);
+            Cam.MoveUP(10.0f * delta);
         }
         if( m_Window.m_Keyboard->IsKeyDown('M') ){
-             Cam.MoveDown(10.0f * delta);
+            Cam.MoveDown(10.0f * delta);
+        }
+
+        if( m_Window.m_Keyboard->IsKeyDown('L') ){
+            static bool on = false;
+            if(!on){
+                m_Window.m_Mouse->Lock();
+                on = true;
+            }else{
+                m_Window.m_Mouse->UnLock();
+                on = false;
+            }
         }
 
         #if defined(WINDOWS_PLT)

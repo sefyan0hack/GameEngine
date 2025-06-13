@@ -218,6 +218,33 @@ auto Mouse::Event::RightIsPressed() const noexcept -> bool
 	return rightIsPressed;
 }
 
+
+auto Mouse::Lock() noexcept -> void
+{
+	if(!isLocked){
+        #if defined(WINDOWS_PLT)
+        m_Window->m_Mouse->SetPos(m_Window->Width()/2, m_Window->Height()/2);
+        ShowCursor(false);
+        #elif defined(WEB_PLT)
+        emscripten_request_pointerlock("#canvas", true);
+        #endif
+		isLocked = true;
+    }
+
+}
+
+auto Mouse::UnLock() noexcept -> void
+{
+	if(isLocked){
+        #if defined(WINDOWS_PLT)
+        ShowCursor(true);
+        #elif defined(WEB_PLT)
+        emscripten_exit_pointerlock();
+        #endif
+		isLocked = false;
+    }
+}
+
 auto Mouse::Event::Type_to_string(Type t) -> const char *
 {
 	using Type = Mouse::Event::Type;
