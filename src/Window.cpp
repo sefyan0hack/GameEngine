@@ -542,6 +542,7 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
             break;
         
         case EMSCRIPTEN_EVENT_MOUSEMOVE:
+			window->m_Mouse->OnRawDelta(e->movementX, e->movementY);
 			window->m_Mouse->OnMouseMove(e->canvasX, e->canvasY);
             break;
         
