@@ -36,19 +36,20 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
     m_OpenGl = std::make_shared<gl::OpenGL>(m_WindowHandle, m_DrawContext);
 
 	#if defined(WEB_PLT)
+	auto target = EMSCRIPTEN_EVENT_TARGET_WINDOW;
 
-	emscripten_set_keypress_callback(m_DrawContext, this, EM_FALSE, &CWindow::KeyHandler);
-	emscripten_set_keydown_callback(m_DrawContext, this, EM_FALSE, &CWindow::KeyHandler);
-	emscripten_set_keyup_callback(m_DrawContext, this, EM_FALSE, &CWindow::KeyHandler);
+	emscripten_set_keypress_callback(target, this, EM_FALSE, &CWindow::KeyHandler);
+	emscripten_set_keydown_callback(target, this, EM_FALSE, &CWindow::KeyHandler);
+	emscripten_set_keyup_callback(target, this, EM_FALSE, &CWindow::KeyHandler);
 	
 	//
-	emscripten_set_mousedown_callback("#canvas"  , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW    , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mousemove_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW  , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseenter_callback("#canvas" , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseleave_callback("#canvas" , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mousedown_callback(target , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseup_callback(target    , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mousemove_callback(target  , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseenter_callback(target , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseleave_callback(target , this, EM_FALSE, &CWindow::MouseHandler);
 
-	emscripten_set_focusout_callback(m_DrawContext, this, EM_FALSE,
+	emscripten_set_focusout_callback(target, this, EM_FALSE,
 		[](int32_t eventType, const EmscriptenFocusEvent *, void* userData) -> EM_BOOL {
 			CWindow* window = static_cast<CWindow*>(userData);
     		if (!window) return EM_TRUE;
@@ -62,7 +63,7 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 		}
 	);
 
-	emscripten_set_wheel_callback(m_DrawContext, this, EM_FALSE,
+	emscripten_set_wheel_callback(target, this, EM_FALSE,
 		[]([[maybe_unused]] int32_t eventType, const EmscriptenWheelEvent* e, void* userData) -> EM_BOOL  {
 			CWindow* w = static_cast<CWindow*>(userData);
 			w->m_Mouse->OnWheelDelta(e->deltaY * -120); // Match Win32 scaling
