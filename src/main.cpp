@@ -185,7 +185,7 @@ public:
         if( m_Window.m_Keyboard->IsKeyDown('L') ){
             static bool on = false;
             if(!on){
-                m_Window.m_Mouse->Lock();
+                m_Window.m_Mouse->Lock(m_Window);
                 on = true;
             }else{
                 m_Window.m_Mouse->UnLock();

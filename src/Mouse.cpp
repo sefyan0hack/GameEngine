@@ -1,4 +1,6 @@
 #include <core/Mouse.hpp>
+#include <core/Window.hpp>
+#include <core/Log.hpp>
 #if defined(WINDOWS_PLT)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -222,12 +224,29 @@ auto Mouse::Event::RightIsPressed() const noexcept -> bool
 }
 
 
-auto Mouse::Lock() noexcept -> void
+auto Mouse::Lock([[maybe_unused]] const CWindow& window) noexcept -> void
 {
 	if(!isLocked){
         #if defined(WINDOWS_PLT)
-        m_Window->m_Mouse->SetPos(m_Window->Width()/2, m_Window->Height()/2);
-        ShowCursor(false);
+		auto hndl = window.WindowHandle();
+
+        while(ShowCursor(false) >= 0);
+		RECT clientRect;
+        GetClientRect(hndl, &clientRect);
+        POINT topLeft = {0, 0};
+        ClientToScreen(hndl, &topLeft);
+
+		RECT clipRect = {
+            topLeft.x,
+            topLeft.y,
+            topLeft.x + clientRect.right,
+            topLeft.y + clientRect.bottom
+        };
+        ClipCursor(&clipRect);
+        auto centerX = topLeft.x + clientRect.right / 2;
+        auto centerY = topLeft.y + clientRect.bottom / 2;
+        SetCursorPos(centerX, centerY);
+
         #elif defined(WEB_PLT)
         emscripten_request_pointerlock("#canvas", EM_TRUE);
         #endif
@@ -240,7 +259,8 @@ auto Mouse::UnLock() noexcept -> void
 {
 	if(isLocked){
         #if defined(WINDOWS_PLT)
-        ShowCursor(true);
+        ClipCursor(nullptr);
+        while(ShowCursor(true) >= 0);
         #elif defined(WEB_PLT)
         emscripten_exit_pointerlock();
         #endif

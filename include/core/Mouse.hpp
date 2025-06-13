@@ -51,7 +51,7 @@ public:
 	auto RightIsPressed() const noexcept 	-> bool ;
 	auto IsEmpty() const noexcept 			-> bool ;
 	auto Flush() noexcept 					-> void ;
-	auto Lock() noexcept 					-> void ;
+	auto Lock([[maybe_unused]] const CWindow& window) noexcept -> void ;
 	auto UnLock() noexcept 					-> void ;
 private:
 	auto OnMouseMove( int32_t x,int32_t y ) noexcept 	-> void ;
