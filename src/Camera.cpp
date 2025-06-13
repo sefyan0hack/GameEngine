@@ -126,16 +126,17 @@ auto Camera::MoseMove(bool islocked) -> void
     }
     lastState = currentState;
     if(on){
-        m_Window->m_Mouse->SetPos(m_Window->Width()/2, m_Window->Height()/2);
         #if defined(WINDOWS_PLT)
+        m_Window->m_Mouse->SetPos(m_Window->Width()/2, m_Window->Height()/2);
         ShowCursor(false);
         #elif defined(WEB_PLT)
-        emscripten_hide_mouse();
+        emscripten_request_pointerlock("#canvas", true);
         #endif
     }else{
         #if defined(WINDOWS_PLT)
         ShowCursor(true);
         #elif defined(WEB_PLT)
+        emscripten_exit_pointerlock();
         #endif
     }
     //fin
