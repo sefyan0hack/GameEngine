@@ -622,34 +622,41 @@ auto CWindow::ToggleFullScreen() -> void
 {
 	#if defined(WINDOWS_PLT)
 	struct FullscreenData {
-		RECT restoreRect;
-	    bool wasMaximized;
-		LONG_PTR style;
-		LONG_PTR exStyle;
-	};
-	const char* propName = "FullscreenData";
+        RECT restoreRect;
+        bool wasMaximized;
+        LONG_PTR style;
+        LONG_PTR exStyle;
+    };
+    const char* propName = "FullscreenData";
     FullscreenData* data = static_cast<FullscreenData*>(GetProp(m_WindowHandle, propName));
-	SendMessage(m_WindowHandle, WM_SETREDRAW, FALSE, 0);
+
+    BOOL wasVisible = IsWindowVisible(m_WindowHandle);
+    
+    SendMessage(m_WindowHandle, WM_SETREDRAW, FALSE, 0);
+    if (wasVisible) {
+        ShowWindow(m_WindowHandle, SW_HIDE);
+    }
+
+    int32_t restoreShowCmd = SW_SHOW;
 
     if (data) {
+        bool wasMaximized = data->wasMaximized;
+        restoreShowCmd = wasMaximized ? SW_MAXIMIZE : SW_SHOW;
+
         // RESTORE WINDOW
         SetWindowLongPtr(m_WindowHandle, GWL_STYLE, data->style);
         SetWindowLongPtr(m_WindowHandle, GWL_EXSTYLE, data->exStyle);
-		m_Width = data->restoreRect.right - data->restoreRect.left;
-		m_Height = data->restoreRect.bottom - data->restoreRect.top;
+        m_Width = data->restoreRect.right - data->restoreRect.left;
+        m_Height = data->restoreRect.bottom - data->restoreRect.top;
 
-        // Restore topmost state based on original extended style
         SetWindowPos(m_WindowHandle, 
             (data->exStyle & WS_EX_TOPMOST) ? HWND_TOPMOST : HWND_NOTOPMOST,
             data->restoreRect.left,
-			data->restoreRect.top,
-			data->restoreRect.right - data->restoreRect.left,
-			data->restoreRect.bottom - data->restoreRect.top,
-			SWP_FRAMECHANGED | SWP_NOACTIVATE
+            data->restoreRect.top,
+            data->restoreRect.right - data->restoreRect.left,
+            data->restoreRect.bottom - data->restoreRect.top,
+            SWP_FRAMECHANGED | SWP_NOACTIVATE
         );
-		if (data->wasMaximized) {
-			ShowWindow(m_WindowHandle, SW_MAXIMIZE);
-		}
 
         RemoveProp(m_WindowHandle, propName);
         delete data;
@@ -658,19 +665,20 @@ auto CWindow::ToggleFullScreen() -> void
         data = new FullscreenData();
         data->style = GetWindowLongPtr(m_WindowHandle, GWL_STYLE);
         data->exStyle = GetWindowLongPtr(m_WindowHandle, GWL_EXSTYLE);
-		data->wasMaximized = !!::IsZoomed(m_WindowHandle);
-    	GetWindowRect(m_WindowHandle, &data->restoreRect);
+        data->wasMaximized = !!::IsZoomed(m_WindowHandle);
+        GetWindowRect(m_WindowHandle, &data->restoreRect);
 
-        // Get monitor dimensions
         HMONITOR hmon = MonitorFromWindow(m_WindowHandle, MONITOR_DEFAULTTONEAREST);
         MONITORINFO mi = { sizeof(mi) };
         GetMonitorInfo(hmon, &mi);
 
-		m_Width = mi.rcMonitor.right - mi.rcMonitor.left;
-		m_Height = mi.rcMonitor.bottom - mi.rcMonitor.top;
+        m_Width = mi.rcMonitor.right - mi.rcMonitor.left;
+        m_Height = mi.rcMonitor.bottom - mi.rcMonitor.top;
 
         LONG_PTR newStyle = data->style & ~(WS_CAPTION | WS_THICKFRAME);
-        LONG_PTR newExStyle = data->exStyle & ~(WS_EX_DLGMODALFRAME | WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE);
+        LONG_PTR newExStyle = data->exStyle & ~(WS_EX_DLGMODALFRAME | 
+                                               WS_EX_WINDOWEDGE | 
+                                               WS_EX_CLIENTEDGE);
         
         SetWindowLongPtr(m_WindowHandle, GWL_STYLE, newStyle);
         SetWindowLongPtr(m_WindowHandle, GWL_EXSTYLE, newExStyle);
@@ -678,14 +686,21 @@ auto CWindow::ToggleFullScreen() -> void
         SetWindowPos(m_WindowHandle, HWND_TOPMOST,
             mi.rcMonitor.left,
             mi.rcMonitor.top,
-			mi.rcMonitor.right - mi.rcMonitor.left,
-			mi.rcMonitor.bottom - mi.rcMonitor.top,
+            mi.rcMonitor.right - mi.rcMonitor.left,
+            mi.rcMonitor.bottom - mi.rcMonitor.top,
             SWP_FRAMECHANGED | SWP_NOACTIVATE
         );
         SetProp(m_WindowHandle, propName, data);
     }
-	SendMessage(m_WindowHandle, WM_SETREDRAW, TRUE, 0);
-	RedrawWindow(m_WindowHandle, NULL, NULL, RDW_ERASE | RDW_FRAME | RDW_INVALIDATE | RDW_ALLCHILDREN);
+
+    // Show window with appropriate state
+    if (wasVisible) {
+        ShowWindow(m_WindowHandle, data ? restoreShowCmd : SW_SHOW);
+    }
+
+    // Re-enable painting and refresh window
+    SendMessage(m_WindowHandle, WM_SETREDRAW, TRUE, 0);
+    RedrawWindow(m_WindowHandle, NULL, NULL, RDW_ERASE | RDW_FRAME | RDW_INVALIDATE | RDW_ALLCHILDREN);
 	#elif defined(LINUX_PLT)
 	#elif defined(WEB_PLT)
 

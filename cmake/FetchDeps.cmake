@@ -5,17 +5,16 @@ include(CPM)
     # add glm 1.0.1
 CPMAddPackage("gh:g-truc/glm#1.0.1")
 
-if(NOT EMSCRIPTEN)
-    # stb_image v2.30
-    CPMAddPackage(
-        NAME stb_image_header
-        URL https://raw.githubusercontent.com/nothings/stb/5c205738c191bcb0abc65c4febfa9bd25ff35234/stb_image.h
-        DOWNLOAD_ONLY YES
-        DOWNLOAD_NO_EXTRACT TRUE
-        DOWNLOAD_NAME stb_image.h
-    )
-    set(STB_IMG_HEADER ${stb_image_header_SOURCE_DIR})
-endif(EMSCRIPTEN)
+# stb_image v2.30
+CPMAddPackage(
+    NAME stb_image_header
+    URL https://raw.githubusercontent.com/nothings/stb/5c205738c191bcb0abc65c4febfa9bd25ff35234/stb_image.h
+    DOWNLOAD_ONLY YES
+    DOWNLOAD_NO_EXTRACT TRUE
+    DOWNLOAD_NAME stb_image.h
+)
+
+set(STB_IMG_HEADER ${stb_image_header_SOURCE_DIR})
 
 CPMAddPackage(
     NAME glcorearb
@@ -32,6 +31,7 @@ CPMAddPackage(
     DOWNLOAD_NO_EXTRACT TRUE
     DOWNLOAD_NAME khrplatform.h
 )
+
 if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/KHR/khrplatform.h)
     file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/KHR)
 

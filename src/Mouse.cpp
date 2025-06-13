@@ -2,7 +2,6 @@
 #include <core/Window.hpp>
 #include <core/Log.hpp>
 #if defined(WINDOWS_PLT)
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #elif defined(WEB_PLT)
 #include <emscripten/emscripten.h>
