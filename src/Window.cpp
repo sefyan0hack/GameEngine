@@ -643,8 +643,8 @@ auto CWindow::ToggleFullScreen() -> void
             (data->exStyle & WS_EX_TOPMOST) ? HWND_TOPMOST : HWND_NOTOPMOST,
             data->restoreRect.left,
 			data->restoreRect.top,
-			m_Width,
-			m_Height,
+			data->restoreRect.right - data->restoreRect.left,
+			data->restoreRect.bottom - data->restoreRect.top,
 			SWP_FRAMECHANGED | SWP_NOACTIVATE
         );
 		if (data->wasMaximized) {
@@ -678,8 +678,8 @@ auto CWindow::ToggleFullScreen() -> void
         SetWindowPos(m_WindowHandle, HWND_TOPMOST,
             mi.rcMonitor.left,
             mi.rcMonitor.top,
-            m_Width,
-            m_Height,
+			mi.rcMonitor.right - mi.rcMonitor.left,
+			mi.rcMonitor.bottom - mi.rcMonitor.top,
             SWP_FRAMECHANGED | SWP_NOACTIVATE
         );
         SetProp(m_WindowHandle, propName, data);

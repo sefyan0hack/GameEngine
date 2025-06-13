@@ -1,7 +1,7 @@
 #include <core/Texture.hpp>
 #include <core/Log.hpp>
 #include <core/Utils.hpp>
-#if !define(WEB_PLT)
+#if !defined(WEB_PLT)
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #endif
