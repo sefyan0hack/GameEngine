@@ -2,6 +2,9 @@
 #if defined(WINDOWS_PLT)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#elif defined(WEB_PLT)
+#include <emscripten/emscripten.h>
+#include <emscripten/html5.h>
 #endif
 
 Mouse::Mouse() : x(0), y(0)
@@ -226,7 +229,7 @@ auto Mouse::Lock() noexcept -> void
         m_Window->m_Mouse->SetPos(m_Window->Width()/2, m_Window->Height()/2);
         ShowCursor(false);
         #elif defined(WEB_PLT)
-        emscripten_request_pointerlock("#canvas", true);
+        emscripten_request_pointerlock("#canvas", EM_TRUE);
         #endif
 		isLocked = true;
     }
