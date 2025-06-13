@@ -36,10 +36,6 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
     m_OpenGl = std::make_shared<gl::OpenGL>(m_WindowHandle, m_DrawContext);
 
 	#if defined(WEB_PLT)
-	EM_ASM({
-		var canvasWrapper = document.getElementById(UTF8ToString($0)).parentElement;
-		canvasWrapper.style.setProperty("--device-pixel-ratio", window.devicePixelRatio);
-	}, "#canvas");
 
 	emscripten_set_keypress_callback(m_DrawContext, this, EM_FALSE, &CWindow::KeyHandler);
 	emscripten_set_keydown_callback(m_DrawContext, this, EM_FALSE, &CWindow::KeyHandler);
