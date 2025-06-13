@@ -125,8 +125,8 @@ auto Camera::MoseMove(bool islocked) -> void
         on = !on;
     }
     lastState = currentState;
-    m_Window->m_Mouse->SetPos(m_Window->Width()/2, m_Window->Height()/2);
     if(on){
+        m_Window->m_Mouse->SetPos(m_Window->Width()/2, m_Window->Height()/2);
         #if defined(WINDOWS_PLT)
         ShowCursor(false);
         #elif defined(WEB_PLT)

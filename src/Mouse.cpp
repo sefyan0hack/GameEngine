@@ -26,7 +26,7 @@ auto Mouse::SetPos([[maybe_unused]] int32_t x_, [[maybe_unused]] int32_t y_) -> 
 {
 	#if defined(WINDOWS_PLT)
 	SetCursorPos(x_, y_);
-	#endif //_WIN32
+	#endif
 }
 
 auto Mouse::IsInWindow() const noexcept -> bool
