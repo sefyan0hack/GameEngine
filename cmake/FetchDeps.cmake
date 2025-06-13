@@ -15,6 +15,7 @@ CPMAddPackage(
 )
 
 set(STB_IMG_HEADER ${stb_image_header_SOURCE_DIR})
+target_include_directories(stb_image SYSTEM INTERFACE ${STB_IMG_HEADER})
 
 CPMAddPackage(
     NAME glcorearb
