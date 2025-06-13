@@ -132,3 +132,13 @@ std::string to_string(const std::vector<T>& vec) {
     result += " ]";
     return result;
 }
+
+inline auto getenv_(const char* name) -> std::string
+{
+    #ifndef _CRT_SECURE_NO_WARNINGS
+    #define _CRT_SECURE_NO_WARNINGS
+    #endif
+    auto env = std::getenv(name);
+    return env ? std::string(env) : "";
+    #undef _CRT_SECURE_NO_WARNINGS
+}

@@ -1,5 +1,5 @@
 #pragma once
-
+#include <core/Utils.hpp>
 #if defined(WINDOWS_PLT)
 #include <windows.h>
 #ifdef DEBUG
@@ -122,12 +122,12 @@ auto Log(
   [[maybe_unused]] const std::format_string<Ts...>& fmt,
   [[maybe_unused]] Ts&& ... ts) -> void
 {
-  auto Is_Testing_Enabled = std::getenv("TESTING_ENABLED");
+  auto Is_Testing_Enabled = getenv_("TESTING_ENABLED");
 
   [[maybe_unused]] auto& out = Out::get_stream();
   [[maybe_unused]] auto msg = Log_msg<lvl>(loc, fmt, std::forward<Ts>(ts)...);
   
-  if(Is_Testing_Enabled == nullptr){
+  if(Is_Testing_Enabled.empty()){
     out << msg;
   }
   

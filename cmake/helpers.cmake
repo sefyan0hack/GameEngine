@@ -193,7 +193,6 @@ function(apply_harden_options)
                     "$<$<BOOL:${HARDEN}>:/sdl>"
                     "$<$<BOOL:${HARDEN}>:/GS>"
                     "$<$<BOOL:${HARDEN}>:/guard:cf>"
-                    "$<$<BOOL:${HARDEN}>:/dynamicbase>"
                 )
             endif()
             if(HARDEN AND CMAKE_SIZEOF_VOID_P EQUAL 4)  # 32-bit

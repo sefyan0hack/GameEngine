@@ -229,7 +229,7 @@ auto Mouse::Lock([[maybe_unused]] const CWindow& window) noexcept -> void
         #if defined(WINDOWS_PLT)
 		auto hndl = window.WindowHandle();
 
-        while(ShowCursor(false) >= 0);
+        while(ShowCursor(false) >= 0){};
 		RECT clientRect;
         GetClientRect(hndl, &clientRect);
         POINT topLeft = {0, 0};
@@ -259,7 +259,7 @@ auto Mouse::UnLock() noexcept -> void
 	if(isLocked){
         #if defined(WINDOWS_PLT)
         ClipCursor(nullptr);
-        while(ShowCursor(true) >= 0);
+        while(ShowCursor(true) >= 0){};
         #elif defined(WEB_PLT)
         emscripten_exit_pointerlock();
         #endif
