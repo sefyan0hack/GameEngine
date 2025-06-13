@@ -369,6 +369,7 @@ apply_sanitizer_options(TARGETS core)
 target_link_libraries(core
     PRIVATE
         glm::glm
+        stb_image
 )
 
 # common (Not Web)
@@ -381,7 +382,6 @@ if(NOT EMSCRIPTEN)
         PRIVATE
             Threads::Threads
             ${OPENGL_LIBRARIES}
-            stb_image
             $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
             $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
             $<$<PLATFORM_ID:Linux>:dl>
