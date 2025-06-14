@@ -18,7 +18,7 @@ using CWindow_Test_Ctor1 = CWindow::Test<1>;
     MEMBER_VAR(m_Mouse);\
     MEMBER_VAR(S_WindowsCount);\
     \
-    MEMBER_FUN(WindowHandle);\
+    MEMBER_FUN(Handle);\
     MEMBER_FUN(DrawContext);\
     MEMBER_FUN(Width);\
     MEMBER_FUN(Height);\

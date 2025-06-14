@@ -321,6 +321,14 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    ///////////////// END RAW MOUSE MESSAGES /////////////////
         case WM_KILLFOCUS:
 		m_Keyboard->ClearState();
+		ClipCursor(nullptr); //release cursor confinement
+		break;
+
+		case WM_SETCURSOR:
+		if (m_Mouse->isLocked && LOWORD(Lpr) == HTCLIENT) {
+			SetCursor(nullptr);
+			return true;
+		}
 		break;
 		
 
@@ -559,7 +567,7 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
 }
 #endif
 
-auto CWindow::WindowHandle() const -> WindHandl
+auto CWindow::Handle() const -> WindHandl
 {
     return m_WindowHandle;
 }

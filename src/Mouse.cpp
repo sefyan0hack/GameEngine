@@ -227,24 +227,21 @@ auto Mouse::Lock([[maybe_unused]] const CWindow& window) noexcept -> void
 {
 	if(!isLocked){
         #if defined(WINDOWS_PLT)
-		auto hndl = window.WindowHandle();
+		auto window_handle =  window.Handle();
+		auto centerX = window.Width() / 2;
+        auto centerY = window.Height() / 2;
 
-        while(ShowCursor(false) >= 0){};
-		RECT clientRect;
-        GetClientRect(hndl, &clientRect);
-        POINT topLeft = {0, 0};
-        ClientToScreen(hndl, &topLeft);
-
-		RECT clipRect = {
-            topLeft.x,
-            topLeft.y,
-            topLeft.x + clientRect.right,
-            topLeft.y + clientRect.bottom
-        };
+        // Confine cursor to window
+        RECT clipRect;
+        GetClientRect(window_handle, &clipRect);
+        MapWindowPoints(window_handle, nullptr, reinterpret_cast<POINT*>(&clipRect), 2);
         ClipCursor(&clipRect);
-        auto centerX = topLeft.x + clientRect.right / 2;
-        auto centerY = topLeft.y + clientRect.bottom / 2;
-        SetCursorPos(centerX, centerY);
+
+        // Set cursor to center
+        SetCursorPos(centerX + clipRect.left, centerY + clipRect.top);
+        
+        // Immediately hide cursor
+        SetCursor(nullptr);
 
         #elif defined(WEB_PLT)
         emscripten_request_pointerlock("#canvas", EM_TRUE);
@@ -258,8 +255,8 @@ auto Mouse::UnLock() noexcept -> void
 {
 	if(isLocked){
         #if defined(WINDOWS_PLT)
-        ClipCursor(nullptr);
-        while(ShowCursor(true) >= 0){};
+		ClipCursor(nullptr);
+        SetCursor(LoadCursor(nullptr, IDC_ARROW));
         #elif defined(WEB_PLT)
         emscripten_exit_pointerlock();
         #endif
@@ -291,6 +288,6 @@ auto Mouse::Event::Type_to_string(Type t) -> const char *
 		case Type::Leave:
 			return "Leave";
 		default:
-			return "EventType??";
+			std::unreachable();
 	}
 }

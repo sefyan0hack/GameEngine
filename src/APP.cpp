@@ -77,7 +77,7 @@ auto APP::Run() -> void
     }
     #elif defined(LINUX_PLT)
     Display* display = m_Window.DrawContext();
-    Window xid = m_Window.WindowHandle();
+    Window xid = m_Window.Handle();
     Atom wmDeleteMessage = XInternAtom(display, "WM_DELETE_WINDOW", false);
     XSetWMProtocols(display, xid, &wmDeleteMessage, 1);
 

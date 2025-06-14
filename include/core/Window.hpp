@@ -45,7 +45,7 @@ class CWindow
         ~CWindow();
     
     public:
-        auto WindowHandle() const        -> WindHandl ;
+        auto Handle() const              -> WindHandl ;
         auto DrawContext() const         -> HDC_D ;
         auto Width() const       -> int32_t ;
         auto Height() const      -> int32_t ;

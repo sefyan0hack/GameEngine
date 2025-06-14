@@ -28,7 +28,7 @@
 #include <cstddef>
 #include <utility>
 #include <functional>
-#if defined(WEB_PLT) || defined(__cpp_lib_format)
+#if defined(__cpp_lib_format)
 #   include <format>
 #else
 #error "This project uses <format>, and it need's modern compiler with -std=c++23"
