@@ -135,10 +135,21 @@ std::string to_string(const std::vector<T>& vec) {
 
 inline auto getenv_(const char* name) -> std::string
 {
-    #ifndef _CRT_SECURE_NO_WARNINGS
-    #define _CRT_SECURE_NO_WARNINGS
-    #endif
+    #if defined(WINDOWS_PLT)
+    char* buffer = nullptr;
+    size_t len = 0;
+    if (_dupenv_s(&buffer, &len, name) != 0 || buffer == nullptr) {
+        if (buffer) free(buffer);
+        return {};
+    }
+    std::string value(buffer, len);
+    free(buffer);
+    return value;
+
+    #else
+
     auto env = std::getenv(name);
     return env ? std::string(env) : "";
-    #undef _CRT_SECURE_NO_WARNINGS
+
+    #endif
 }

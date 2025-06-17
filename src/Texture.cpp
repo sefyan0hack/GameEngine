@@ -201,7 +201,7 @@ auto Texture::ToGPUImg2D(auto *data, GLsizei width, GLsizei height, GLint intfor
         Error("`{}` not allowd only primitives Types", ::type_name<DataType>());
     }
 
-    auto gl_type = [] -> GLenum {
+    auto gl_type = []() -> GLenum {
         if constexpr(std::is_same_v<DataType, GLubyte>)  return GL_UNSIGNED_BYTE;
         if constexpr(std::is_same_v<DataType, GLbyte>)   return GL_BYTE;
         if constexpr(std::is_same_v<DataType, GLushort>) return GL_UNSIGNED_SHORT;
