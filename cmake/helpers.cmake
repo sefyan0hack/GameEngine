@@ -73,7 +73,7 @@ function(apply_warning_options)
             set(target ${original_target})
         endif()
 
-        set(MSVC_WARNING_FLAGS /W4)
+        set(MSVC_WARNING_FLAGS /W4 /wd4996) # C4996 -> 'getenv': This function or variable may be unsafe
 
         set(GNU_WARNING_FLAGS
             -Wno-cast-function-type -Winit-self -Wcast-qual
