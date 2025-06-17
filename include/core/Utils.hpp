@@ -158,7 +158,7 @@ inline std::string strerror_()
 {
     char buf[256] = {0};
     #if defined(LINUX_PLT)
-    strerror_r(errno, sizeof(buf), buf);
+    strerror_r(errno, buf, sizeof(buf));
     #else
     strerror_s(buf, sizeof(buf), errno);
     #endif
