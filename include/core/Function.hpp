@@ -24,6 +24,10 @@ public:
     using AfterType = void(*)(std::string);
 
     Function();
+    auto operator= (Function&& other) -> Function&;
+    auto operator= (const Function& other) -> Function& = delete;
+    Function(Function&& other) = delete;
+    Function(const Function& other) = delete;
 
     auto operator()(Args... args, std::source_location loc = std::source_location::current()) -> R;
 
@@ -77,6 +81,20 @@ Function<R(APIENTRY*)(Args...)>::Function()
         m_Count++;
     }
 
+template <typename R, typename... Args>
+auto Function<R(APIENTRY *)(Args...)>::operator=(Function &&other) -> Function &
+{
+    this->m_Func = std::exchange(other.m_Func, nullptr);
+    this->m_Befor = std::exchange(other.m_Befor, nullptr);
+    this->m_After = std::exchange(other.m_After, nullptr);
+    this->m_Name = std::exchange(other.m_Name, std::string());
+    this->m_ReturnType = std::exchange(other.m_ReturnType, std::string());
+    this->m_ArgsTypes = std::exchange(other.m_ArgsTypes, {});
+    this->m_ArgsValues = std::exchange(other.m_ArgsValues, {});
+    this->m_CallCount = std::exchange(other.m_CallCount, 0);
+    
+    return *this;
+}
 
 template <typename R, typename... Args>
 auto APIENTRY Function<R(APIENTRY*)(Args...)>::default_([[maybe_unused]] Args... args) -> R
