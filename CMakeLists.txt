@@ -258,11 +258,6 @@ else()
     )
 endif()
 
-
-# Visibility hidden
-set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
-
 # Check whether the compiler supports an interprocedural optimization (IPO/LTO)
 include(CheckIPOSupported)
 check_ipo_supported(RESULT LTO_SUPPORTED)
