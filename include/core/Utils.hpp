@@ -135,7 +135,7 @@ std::string to_string(const std::vector<T>& vec) {
 
 inline auto getenv_(const char* name) -> std::string
 {
-    #if defined(WINDOWS_PLT)
+    #if defined(MSVC_CPL)
     char* buffer = nullptr;
     size_t len = 0;
     if (_dupenv_s(&buffer, &len, name) != 0 || buffer == nullptr) {
@@ -152,4 +152,11 @@ inline auto getenv_(const char* name) -> std::string
     return env ? std::string(env) : "";
 
     #endif
+}
+
+inline std::string strerror_()
+{
+    char buf[256] = {0};
+    strerror_s(buf, sizeof(buf), errno);
+    return buf;
 }
