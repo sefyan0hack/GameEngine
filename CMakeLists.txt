@@ -98,8 +98,10 @@ if(EMSCRIPTEN)
         -sSTB_IMAGE=1
         -sDISABLE_EXCEPTION_THROWING=1
         -sWASM_LEGACY_EXCEPTIONS=0
-        -fno-exceptions
+        -sELIMINATE_DUPLICATE_FUNCTIONS=1
+        -fno-exceptions -fno-rtti
         --embed-file ${CMAKE_SOURCE_DIR}/res
+        --llvm-lto 1
     )
 
     configure_file(
@@ -256,6 +258,16 @@ else()
     )
 endif()
 
+
+# Check whether the compiler supports an interprocedural optimization (IPO/LTO)
+include(CheckIPOSupported)
+check_ipo_supported(RESULT LTO_SUPPORTED)
+
+if(LTO_SUPPORTED)
+  set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)  # Enable LTO globally
+else()
+  message(WARNING "LTO not supported by cross-compiler!")
+endif()
 
 ####################################################################################################
 # Compiler Check
