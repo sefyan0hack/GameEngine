@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang=EN-us>
+   <head>
+      <meta charset=utf-8>
+      <meta content="text/html; charset=utf-8" http-equiv=Content-Type>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <script>
+        var Module = {
+            canvas: (function() {
+                const canvas = document.getElementById('canvas');
+                canvas.width = canvas.clientWidth * window.devicePixelRatio;
+                canvas.height = canvas.clientHeight * window.devicePixelRatio;
+                return canvas;
+            })()
+        };
+    </script>
+   </head>
+   <body>
+      <canvas class=emscripten id=canvas oncontextmenu=event.preventDefault() tabindex=-1></canvas>
+      <script src=@PROJECT_NAME@.js async></script>
+   </body>
+</html>

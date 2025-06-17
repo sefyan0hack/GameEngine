@@ -101,6 +101,23 @@ if(EMSCRIPTEN)
         -fno-exceptions
         --embed-file ${CMAKE_SOURCE_DIR}/res
     )
+
+    configure_file(
+        ${CMAKE_SOURCE_DIR}/cmake/index_template.cmake.in
+        ${CMAKE_BINARY_DIR}/index_html.cmake
+        @ONLY
+    )
+
+    add_custom_command(
+        OUTPUT ${CMAKE_BINARY_DIR}/index.html
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/index_html.cmake ${CMAKE_BINARY_DIR}/index.html
+        DEPENDS ${CMAKE_BINARY_DIR}/index_html.cmake ${PROJECT_NAME}
+        COMMENT "Generating index.html"
+    )
+    
+    add_custom_target(generate_index_html ALL
+        DEPENDS ${CMAKE_BINARY_DIR}/index.html
+    )
 endif()
 ####################################################################################################
 # 
