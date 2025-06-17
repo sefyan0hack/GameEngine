@@ -428,17 +428,6 @@ auto CWindow::_init_helper(int32_t Width, int32_t Height, const char* Title) -> 
 {
 	emscripten_set_window_title(Title);
 	emscripten_set_canvas_element_size("#canvas", Width, Height);
-
-	EM_ASM({
-		const canvas = Module.canvas;
-		document.body.innerHTML = '';
-		document.body.appendChild(canvas);
-		document.documentElement.style.margin = '0';
-		document.documentElement.style.padding = '0';
-		document.body.style.margin = '0';
-		document.body.style.padding = '0';
-
-	});
 }
 
 auto CWindow::ResizeHandler(int32_t eventType, const EmscriptenUiEvent* e, void* userData) -> EM_BOOL
