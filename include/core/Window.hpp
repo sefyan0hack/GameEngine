@@ -21,8 +21,8 @@ class CWindow
             WinClass(const WinClass&) = delete;
             WinClass(WinClass&&) = delete;
 
-            auto operator = (const WinClass&) -> WinClass = delete ;
-            auto operator = (WinClass&&)      -> WinClass = delete ;
+            auto operator = (const WinClass&) -> WinClass& = delete ;
+            auto operator = (WinClass&&)      -> WinClass& = delete ;
         public:
             ~WinClass() = default;
             static auto Instance()  -> WinClass& ;
@@ -39,8 +39,8 @@ class CWindow
         CWindow(const CWindow& other);
         CWindow(CWindow&&) = delete;
     
-        auto operator = (const CWindow &) -> CWindow = delete ;
-        auto operator = (CWindow &&)      -> CWindow = delete ;
+        auto operator = (const CWindow &) -> CWindow& = delete ;
+        auto operator = (CWindow &&)      -> CWindow& = delete ;
     
         ~CWindow();
     

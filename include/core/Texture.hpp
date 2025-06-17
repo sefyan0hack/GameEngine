@@ -22,6 +22,8 @@ public:
     virtual auto Type() const -> GLenum final;
     virtual auto TypeName() const -> std::string final;
     virtual auto TextureUnit() const -> GLint final;
+
+    auto ToGPUImg2D(auto* data, GLsizei width, GLsizei height, GLint intformat = GL_RGBA8, GLenum format = GL_RGBA) const -> void;
 protected:
     GLuint m_Id;
     GLenum m_Type;
@@ -35,7 +37,11 @@ class Texture2D final : public Texture
 {
   public:
     Texture2D(const std::string &name);
+    Texture2D(auto* data, GLint width, GLint height, GLenum intformat = GL_RGBA8, GLenum format = GL_RGBA);
     auto isMipMapped() const -> GLboolean;
+
+    static Texture2D Default;
+
   private:
     auto GenerateMipMap() -> void ;
   

@@ -11,7 +11,7 @@ class Shader
       Shader(const char* name, GLenum type);
       Shader(const Shader& other);
       Shader(Shader&& other) noexcept;
-      Shader& operator=(const Shader& other);
+      auto operator=(const Shader& other) -> Shader&;
 
       bool operator==(const Shader& other);
       ~Shader();

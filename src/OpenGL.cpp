@@ -310,7 +310,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     #   define RESOLVEGL(type, name)\
         OpenGL::name = Function<type>{};\
         OpenGL::name.m_Func  = reinterpret_cast<type>(resolve_opengl_fn("gl"#name));\
-        OpenGL::name.m_After = []([[maybe_unused]] std::string info) { GLenum err = glGetError(); if(err != GL_NO_ERROR) Info("{}", info); };\
+        OpenGL::name.m_After = []([[maybe_unused]] std::string info) { GLenum err = glGetError(); if(err != GL_NO_ERROR) Info("[{}] {}", GL_ERR_to_string(err), info); };\
         OpenGL::name.m_Name  = "gl"#name
     #else
     #   define RESOLVEGL(type, name)\
@@ -408,7 +408,7 @@ OpenGL::OpenGL(const OpenGL &other)
     #endif
 }
 
-auto OpenGL::operator=(const OpenGL &other) -> OpenGL
+auto OpenGL::operator=(const OpenGL &other) -> OpenGL&
 {
     if(*this != other){
         this->m_Context = GLCTX{};
@@ -440,7 +440,7 @@ OpenGL::OpenGL(OpenGL &&other) noexcept
 {
 }
 
-auto OpenGL::operator=(OpenGL &&other) noexcept -> OpenGL
+auto OpenGL::operator=(OpenGL &&other) noexcept -> OpenGL&
 {
     if(*this != other){
         this->m_Context = std::exchange(other.m_Context, GLCTX{});
