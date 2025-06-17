@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(__clang__) && !defined(__APPLE__) && !defined(_MSC_VER)
+#if defined(CLANG_CPL) && !defined(MSVC_CPL)
 #   define _LIBCPP_ENABLE_EXPERIMENTAL
 #endif
 

@@ -1,15 +1,15 @@
 #pragma once
-#if !defined _MSC_VER
+#if !defined(MSVC_CPL)
 #pragma GCC system_header
 #endif
 
 // disable warning
-#ifdef _MSC_VER
+#if defined(MSVC_CPL)
     #define NO_WARNING_BEGIN \
         __pragma(warning(push, 0))
     #define NO_WARNING_END \
         __pragma(warning(pop))
-#elif defined(__GNUC__)
+#elif defined(GNU_CPL)
     #define NO_WARNING_BEGIN \
         _Pragma("GCC diagnostic push") \
         _Pragma("GCC diagnostic ignored \"-Wall\"") \
@@ -67,7 +67,7 @@ concept is_static = std::is_object_v<std::remove_pointer_t<decltype(var)>> && !s
 #endif
 
 
-#if defined(__clang__) && !defined(WINDOWS_PLT) || defined(__GNUC__) || defined(__EDG__)
+#if defined(CLANG_CPL) && !defined(WINDOWS_PLT) || defined(GNU_CPL)
 #include <cxxabi.h>
 #endif
 
@@ -78,7 +78,7 @@ concept is_static = std::is_object_v<std::remove_pointer_t<decltype(var)>> && !s
 inline static auto demangle(const char* name) -> std::string
 {
     [[maybe_unused]] int32_t status = -1;
-    #if defined(__clang__) && !defined(WINDOWS_PLT) || defined(__GNUC__) || defined(__EDG__)
+    #if defined(CLANG_CPL) && !defined(WINDOWS_PLT) || defined(GNU_CPL)
     [[maybe_unused]] std::unique_ptr<char, void(*)(void*)> res {
         abi::__cxa_demangle(name, nullptr, nullptr, &status),
         std::free
@@ -96,18 +96,18 @@ inline static auto type_name() -> std::string
 #ifdef __cpp_rtti
     return ::demangle(typeid(T).name());
 #else
-    #if defined(__clang__) || defined(__GNUC__) || defined(__EDG__)
+    #if defined(CLANG_CPL) || defined(GNU_CPL)
         std::string name = __PRETTY_FUNCTION__;
         auto start = name.find("T = ") + 4;
-    #   if defined(__clang__) || defined(__EDG__)
+    #   if defined(CLANG_CPL)
         auto end = name.find(']', start);
-    #   elif defined(__GNUC__)
+    #   elif defined(GNU_CPL)
         auto end = name.find(';', start);
     #   endif
 
         return std::string(name.substr(start, end - start));
 
-    #elif defined(_MSC_VER)
+    #elif defined(MSVC_CPL)
         std::string name = __FUNCSIG__;
         auto start = name.find("type_name<") + 10;
         auto end = name.find(">(void)");

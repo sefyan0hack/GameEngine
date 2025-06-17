@@ -402,6 +402,10 @@ add_compile_definitions(
     $<$<PLATFORM_ID:Linux>:LINUX_PLT>
     $<$<PLATFORM_ID:Emscripten>:WEB_PLT>
 
+    $<$<CXX_COMPILER_ID:GNU>:GNU_CPL>
+    $<$<CXX_COMPILER_ID:Clang>:CLANG_CPL>
+    $<$<CXX_COMPILER_ID:MSVC>:MSVC_CPL>
+
     $<$<CONFIG:Debug>:DEBUG>
     $<$<CONFIG:Release>:NDEBUG>
 )
