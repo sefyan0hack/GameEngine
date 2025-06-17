@@ -16,8 +16,8 @@
         }
         #canvas {
             display: block;
-            width: 90vmin;
-            height: 90vmin;
+            width: 90vw;
+            height: 90vh;
             border: 2px solid #333;
         }
     </style>
