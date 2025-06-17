@@ -6,7 +6,10 @@ add_executable(unit_tests ${TEST_SOURCES})
 apply_all_options(TARGETS unit_tests )
 apply_harden_options(TARGETS unit_tests)
 if(ONLINE)
-        CPMAddPackage(URI "gh:google/googletest@1.17.0" OPTIONS "gtest_force_shared_crt ON" "INSTALL_GTEST OFF")
+        CPMAddPackage(
+            URI "gh:google/googletest@1.17.0" 
+            OPTIONS "gtest_force_shared_crt OFF" "INSTALL_GTEST OFF" "gtest_hide_internal_symbols OFF"
+        )
 else()
         add_subdirectory(
             ${CMAKE_SOURCE_DIR}/3party/googletest-1.16.0
