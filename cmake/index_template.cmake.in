@@ -5,22 +5,35 @@
       <meta content="text/html; charset=utf-8" http-equiv=Content-Type>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <style>
-        body { margin: 0; overflow: hidden; }
-        #canvas { display: block; width: 90%; height: 90%; }
-      </style>
-      <script>
-        var Module = {
-            canvas: (function() {
-                const canvas = document.getElementById('canvas');
-                canvas.width = canvas.clientWidth * window.devicePixelRatio;
-                canvas.height = canvas.clientHeight * window.devicePixelRatio;
-                return canvas;
-            })()
-        };
-    </script>
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #1a1a1a;
+        }
+        #canvas {
+            display: block;
+            width: 90vmin;
+            height: 90vmin;
+            border: 2px solid #333;
+        }
+    </style>
    </head>
    <body>
       <canvas class=emscripten id=canvas oncontextmenu=event.preventDefault() tabindex=-1></canvas>
+      <script>
+              window.addEventListener('load', () => {
+                  const canvas = document.getElementById('canvas');
+                  
+                  canvas.width = canvas.clientWidth * window.devicePixelRatio;
+                  canvas.height = canvas.clientHeight * window.devicePixelRatio;
+                  
+                  window.Module = {canvas: canvas};
+              });
+      </script>
       <script src=@PROJECT_NAME@.js async></script>
    </body>
 </html>
