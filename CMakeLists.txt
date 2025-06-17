@@ -16,6 +16,10 @@ if(NOT CMAKE_BUILD_TYPE)
 set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
 endif()
 
+# Check whether the compiler supports an interprocedural optimization (IPO/LTO)
+include(CheckIPOSupported)
+check_ipo_supported(RESULT LTO_SUPPORTED)
+
 string(REGEX MATCH "^[0-9]+" COMPILER_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSION}")
 
 ####################################################################################################
@@ -258,15 +262,6 @@ else()
     )
 endif()
 
-# Check whether the compiler supports an interprocedural optimization (IPO/LTO)
-include(CheckIPOSupported)
-check_ipo_supported(RESULT LTO_SUPPORTED)
-
-if(LTO_SUPPORTED)
-  set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)  # Enable LTO globally
-else()
-  message(WARNING "LTO not supported by cross-compiler!")
-endif()
 
 ####################################################################################################
 # Compiler Check
@@ -445,10 +440,19 @@ if(TESTS)
     message(STATUS "[Tests `ON`]")
     enable_testing()
     add_subdirectory(tests/unit)
-    
+
     set_target_properties(unit_tests PROPERTIES
         INTERPROCEDURAL_OPTIMIZATION FALSE
     )
+endif()
+
+# LTO for core
+if(LTO_SUPPORTED)
+    set_target_properties(core PROPERTIES
+        INTERPROCEDURAL_OPTIMIZATION TRUE
+    )
+else()
+  message(WARNING "LTO not supported by cross-compiler!")
 endif()
 
 remove_global_flags(Engine)
