@@ -157,7 +157,7 @@ inline auto getenv_(const char* name) -> std::string
 inline std::string strerror_()
 {
     char buf[256] = {0};
-    #if defined(LINUX_PLT)
+    #if defined(LINUX_PLT) || defined(WEB_PLT)
     strerror_r(errno, buf, sizeof(buf));
     #else
     strerror_s(buf, sizeof(buf), errno);
