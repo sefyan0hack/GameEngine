@@ -445,6 +445,10 @@ if(TESTS)
     message(STATUS "[Tests `ON`]")
     enable_testing()
     add_subdirectory(tests/unit)
+    
+    set_target_properties(unit_tests PROPERTIES
+        INTERPROCEDURAL_OPTIMIZATION FALSE
+    )
 endif()
 
 remove_global_flags(Engine)
