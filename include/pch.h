@@ -47,7 +47,6 @@
 #warning "there is no <stacktrace>"
 #endif
 
-#endif
 #if defined(__cpp_lib_format)
 #   include <format>
 #else
