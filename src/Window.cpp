@@ -639,7 +639,8 @@ auto CWindow::ToggleFullScreen() -> void
         
         // Get monitor info
         HMONITOR hmon = MonitorFromWindow(m_WindowHandle, MONITOR_DEFAULTTONEAREST);
-        MONITORINFO mi = { sizeof(mi) };
+        MONITORINFO mi{};
+		mi.cbSize = sizeof(mi);
         GetMonitorInfo(hmon, &mi);
         
         // Set window to cover entire monitor WITHOUT changing style

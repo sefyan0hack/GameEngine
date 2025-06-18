@@ -6,7 +6,7 @@ namespace gl {
 
 static std::mutex g_GetProcMutex;
 
-
+/* dead code 
 [[maybe_unused]] static void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, [[maybe_unused]] GLsizei length, const GLchar *message, [[maybe_unused]] const void *param)
 {
     const char *source_, *type_, *severity_;
@@ -45,6 +45,7 @@ static std::mutex g_GetProcMutex;
 
     Info("[{} {}({})] From {} : \n\t- {}", severity_, type_, id, source_, message);
 }
+*/
 
 auto __GetProcAddress(const char* module, const char* name) -> void* {
     std::lock_guard<std::mutex> lock(g_GetProcMutex);
@@ -369,6 +370,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
         gl::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     }
 
+    /* dead code 
     #if defined(DEBUG) && !defined(WEB_PLT)
     if( m_Major >= 4 && m_Minor >= 3 && m_Debug)
     {
@@ -378,6 +380,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
         gl::DebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
     }
     #endif
+    */
 
     Info("Platform : {}, Arch : {}", sys::TargetName, sys::ArchName);
     Info("GL Thread id : {}", m_ThreadId);
