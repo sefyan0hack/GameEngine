@@ -1,9 +1,4 @@
 #pragma once
-
-#if defined(CLANG_CPL) && !defined(MSVC_CPL)
-#   define _LIBCPP_ENABLE_EXPERIMENTAL
-#endif
-
 #include <version>
 #include <iostream>
 #include <sstream>
@@ -12,9 +7,6 @@
 #include <string>
 #include <memory>
 #include <algorithm>
-#ifdef __cpp_lib_stacktrace
-#   include <stacktrace>
-#endif
 #include <type_traits>
 #include <csignal>
 #include <cstdint>
@@ -28,11 +20,6 @@
 #include <cstddef>
 #include <utility>
 #include <functional>
-#if defined(__cpp_lib_format)
-#   include <format>
-#else
-#error "This project uses <format>, and it need's modern compiler with -std=c++23"
-#endif
 #include <array>
 #include <source_location>
 #include <tuple>
@@ -53,3 +40,16 @@
 #include <stdexcept>
 #include <typeinfo>
 #include <concepts>
+
+#ifdef __cpp_lib_stacktrace
+#   include <stacktrace>
+#else
+#warning "there is no <stacktrace>"
+#endif
+
+#endif
+#if defined(__cpp_lib_format)
+#   include <format>
+#else
+#error "This project uses <format>, and it need's modern compiler with -std=c++23"
+#endif
