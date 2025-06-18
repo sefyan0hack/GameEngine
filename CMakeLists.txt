@@ -257,6 +257,8 @@ else()
         "$<$<CXX_COMPILER_ID:MSVC>:/EHs-c-;/wd4530>"
         "$<$<CXX_COMPILER_ID:Clang,GNU>:-fno-exceptions>"
     )
+    # disable rtti when exception off
+    rtti(OFF)
 endif()
 
 
