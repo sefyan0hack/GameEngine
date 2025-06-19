@@ -103,7 +103,7 @@ auto Shader::LoadFile(const char* filename) -> std::vector<GLchar>
     auto glsl_verion = std::format("{}{}0", m_Major, m_Minor);
 
     buffer << std::format("#version {} {}\n", glsl_verion, sys::Target == sys::Target::Web ? "es" : "core");
-    buffer << std::format("precision {} float\n", sys::Target == sys::Target::Web ? "mediump" : "highp");
+    buffer << std::format("precision {} float;\n", sys::Target == sys::Target::Web ? "mediump" : "highp");
 
     //todo : size increment insted of  buff.str()
     auto op = file_to_str(filename);
