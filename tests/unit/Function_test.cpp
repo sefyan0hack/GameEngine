@@ -29,9 +29,7 @@ using Function_Test_Ctor1 = Function<SubType>::Test<1>;
     MEMBER_FUN(this_func_sig);\
     MEMBER_FUN(function_info);\
     MEMBER_FUN(format_arguments);\
-    MEMBER_FUN(to_string);\
-    MEMBER_FUN(format_pointer);\
-
+    MEMBER_FUN(to_string);
 
 template<> template<>
 struct Function<SubType>::Test<1> : public ::testing::Test {
