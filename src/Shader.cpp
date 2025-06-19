@@ -93,32 +93,31 @@ auto Shader::LoadSource(const std::vector<GLchar>& src, GLuint shader) -> void
 
 auto Shader::LoadFile(const char* filename) -> std::vector<GLchar>
 {
-    auto file = std::ifstream{};
     auto buffer = std::stringstream{};
     auto result = std::vector<GLchar>{};
+    GLint m_Major{}, m_Minor{};
 
-    file.open(filename);
-    if(file.is_open())
+    gl::GetIntegerv(GL_MAJOR_VERSION, &m_Major);
+    gl::GetIntegerv(GL_MINOR_VERSION, &m_Minor);
+
+    auto glsl_verion = std::format("{}{}0", m_Major, m_Minor);
+
+    buffer << std::format("#version {} {}\n", glsl_verion, sys::Target == sys::Target::Web ? "es" : "core");
+
+    //todo : size increment insted of  buff.str()
+    auto op = file_to_str(filename);
+    if(op)
     {
-        if constexpr (sys::Target == sys::Target::Web){
-            buffer << "#version 300 es\n";
-            buffer << "precision mediump float;\n";
-        }else {
-            buffer << "#version 440 core\n";
-        }
+        buffer << op.value();
 
-        buffer << file.rdbuf();
         auto str = buffer.str();
-        str += '\0';
         result.resize(str.size());
         memcpy(result.data(), str.data(), str.size());
-        
-        Info("Loding {} ", filename);
+
+        Info("Loding {} : {} bytes ", filename, str.size());
     }else{
         Error("Couldnt open file {} : {}", filename, strerror_());
     }
-
-    file.close();
 
     return result;
 }
