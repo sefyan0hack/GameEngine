@@ -1,9 +1,13 @@
 #pragma once
 
 template <typename T>
-concept Formatable = requires(T t) {
-    std::format("{}", t);
-};
+concept Pointer = std::is_pointer_v<T>;
+
+template<typename T>
+concept FunctionPointer =
+    std::is_pointer_v<std::remove_cv_t<T>> &&
+    std::is_function_v<std::remove_pointer_t<std::remove_cv_t<T>>>;
+
 
 template<typename Function, typename... Args>
 auto setTimeOut( unsigned long delay, Function&& func, Args&&... args) -> void
@@ -120,7 +124,7 @@ inline std::string replace(std::string s, char c, char with)
 }
 
 template<class T>
-requires std::convertible_to<T, std::string> || Formatable<T>
+requires std::convertible_to<T, std::string> || std::formattable<T, char>
 std::string to_string(const std::vector<T>& vec) {
     std::string result = "[ ";
     for (size_t i = 0; i < vec.size(); ++i) {
@@ -163,4 +167,80 @@ inline std::string strerror_()
     strerror_s(buf, sizeof(buf), errno);
     #endif
     return buf;
+}
+
+inline auto file_to_str(std::ifstream& file) -> std::optional<std::string>
+{
+    if (!file){ 
+        return std::nullopt;
+    }else{
+        return std::string(std::istreambuf_iterator<char>(file), {});
+    }
+}
+
+inline auto file_to_str(const char* path) -> std::optional<std::string>
+{
+    std::ifstream file(path, std::ios::binary);
+
+    if (!file){ 
+        return std::nullopt;
+    }else{
+        return std::string(std::istreambuf_iterator<char>(file), {});
+    }
+}
+
+
+template <class T>
+inline auto to_hex(const T& data) -> std::string
+{
+    return to_hex(data, 1);
+}
+
+template <class T>
+inline auto to_hex(T* data) -> std::string
+{
+    return to_hex(data, 1);
+}
+
+template <class T, size_t N>
+inline auto to_hex(const T (&data)[N]) -> std::string
+{
+    return to_hex(data, N);
+}
+
+template <class T>
+inline auto to_hex(const T* data, size_t n) -> std::string
+{
+    auto result = std::stringstream{};
+    auto data_as_byte = reinterpret_cast<const unsigned char*>(data);
+    size_t total_bytes = n * sizeof(T);
+
+    for (size_t i = 0; i < total_bytes; ++i) {
+        unsigned char byte = data_as_byte[i];
+        result << std::hex << std::setw(2) << std::setfill('0')
+               << static_cast<int>(byte) << ' ';
+       if ((i + 1) % 8 == 0) result << "  ";
+    }
+    return result.str();
+}
+
+auto pointer_to_string(Pointer auto ptr) -> std::string
+{
+    using Pointee = std::remove_cv_t<std::remove_pointer_t<decltype(ptr)>>;
+
+    if (ptr == nullptr) return "null";
+    if constexpr (std::is_constructible_v<std::string, decltype(ptr)>) return std::string(ptr);
+
+    if constexpr (std::is_function_v<Pointee>) {
+        return ::type_name<Pointee>();
+    } else if constexpr (std::is_arithmetic_v<Pointee>) {
+        return std::to_string(*ptr);
+    } else if constexpr (std::formattable<Pointee, char>) {
+        return std::format("{}", *ptr);
+    } else if constexpr (std::is_same_v<Pointee, void>) {
+        return std::format("<{:p}> : void*", static_cast<const void*>(ptr));
+    } else {
+        if constexpr (std::is_pointer_v<Pointee>) return pointer_to_string(*ptr);
+        return std::format("<{:p}> ({}) : [ {} ]", static_cast<const void*>(ptr), sizeof(Pointee), to_hex(ptr));
+    }
 }

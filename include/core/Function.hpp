@@ -6,14 +6,6 @@
 #endif
 
 template <typename T>
-concept Pointer = std::is_pointer_v<T>;
-
-template<typename T>
-concept FunctionPointer =
-    std::is_pointer_v<std::remove_cv_t<T>> &&
-    std::is_function_v<std::remove_pointer_t<std::remove_cv_t<T>>>;
-
-template <typename T>
 class Function;
 
 template <typename R, typename... Args>
@@ -48,7 +40,6 @@ private:
     auto format_arguments(std::string& result) const -> void;
 
     static auto to_string(const auto& value) -> std::string ;
-    static auto format_pointer(Pointer auto ptr) -> std::string ;
 
 public:
     FuncType m_Func;
@@ -215,28 +206,10 @@ auto Function<R(APIENTRY*)(Args...)>::to_string(const auto& value) -> std::strin
 {
     using T = std::decay_t<decltype(value)>;
     if constexpr (std::is_pointer_v<T>) {
-        return format_pointer(value);
+        return pointer_to_string(value);
     } else if constexpr (std::is_arithmetic_v<T>) {
         return std::to_string(value);
     } else {
         return std::string(value);
-    }
-}
-
-template <typename R, typename... Args>
-auto Function<R(APIENTRY*)(Args...)>::format_pointer(Pointer auto ptr) -> std::string
-{
-    using Pointee = std::remove_cv_t<std::remove_pointer_t<decltype(ptr)>>;
-    
-    if (!ptr) return "nullptr";
-
-    if constexpr (std::is_function_v<Pointee>) {
-        return ::type_name<Pointee>();
-    } else if constexpr (std::is_arithmetic_v<Pointee>) {
-        return std::to_string(*ptr);
-    } else if constexpr (std::is_same_v<Pointee, void>) {
-        return std::string("??");
-    } else {
-        return std::string(*ptr);
     }
 }
