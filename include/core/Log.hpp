@@ -1,13 +1,4 @@
 #pragma once
-#include <core/Utils.hpp>
-#if defined(WINDOWS_PLT)
-#include <windows.h>
-#ifdef DEBUG
-auto setup_crach_handler() -> void;
-auto resolveSymbol(void* addr, HANDLE proc = GetCurrentProcess()) -> std::string;
-auto PrintStackTrace(unsigned short skip = 0) -> void;
-#endif //DEBUG
-#endif
 
 namespace config {
     constexpr auto LogFileName = "Engine.log";
@@ -94,7 +85,7 @@ auto Log_msg(
   
   if constexpr (lvl == Log_LvL::ERR || lvl == Log_LvL::EXPT){
     msg << std::format(
-      "{} : [{}] ``{}``\n"
+      "{} : [{}] {}\n"
       "\t-> `{}` [{}:{}]\n"
       "{}\n",
       formatedTime(), lvl_str, formatted_msg,
@@ -107,7 +98,7 @@ auto Log_msg(
     );
   }
   else if constexpr (lvl == Log_LvL::INFO){
-    msg << std::format("{} : [{}] ``{}``\n", formatedTime(), lvl_str, formatted_msg);
+    msg << std::format("{} : [{}] {}\n", formatedTime(), lvl_str, formatted_msg);
   }
   else if constexpr (lvl == Log_LvL::PRT){
     msg << std::format("{} : {}\n", formatedTime(), formatted_msg);
@@ -122,12 +113,12 @@ auto Log(
   [[maybe_unused]] const std::format_string<Ts...>& fmt,
   [[maybe_unused]] Ts&& ... ts) -> void
 {
-  auto Is_Testing_Enabled = getenv_("TESTING_ENABLED");
+  auto Is_Testing_Enabled = std::getenv("TESTING_ENABLED");
 
   [[maybe_unused]] auto& out = Out::get_stream();
   [[maybe_unused]] auto msg = Log_msg<lvl>(loc, fmt, std::forward<Ts>(ts)...);
   
-  if(Is_Testing_Enabled.empty()){
+  if(Is_Testing_Enabled == nullptr){
     out << msg;
   }
   
@@ -149,8 +140,18 @@ auto Log(
 #define LOGPolicy FilePolicy
 #endif
 
-
+#ifndef Error
 #define Error(...) Log<Log_LvL::ERR, LOGPolicy>(std::source_location::current(), __VA_ARGS__)
+#endif
+
+#ifndef Info
 #define Info(...)  Log<Log_LvL::INFO, LOGPolicy>(std::source_location::current(), __VA_ARGS__)
+#endif
+
+#ifndef print
 #define print(...) Log<Log_LvL::PRT, LOGPolicy>(std::source_location::current(), __VA_ARGS__)
+#endif
+
+#ifndef Expect
 #define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); Log<Log_LvL::EXPT, LOGPolicy>(std::source_location::current(), __VA_ARGS__); } } while (0)
+#endif
