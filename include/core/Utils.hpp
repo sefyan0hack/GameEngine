@@ -5,7 +5,7 @@
 #if defined(WINDOWS_PLT)
 #include <windows.h>
 #elif defined(LINUX_PLT)
-#include <X11/Xlib.h>
+#include <dlfcn.h>
 #elif defined(WEB_PLT)
 #include <emscripten/emscripten.h>
 #endif
