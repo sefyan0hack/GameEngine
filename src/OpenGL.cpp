@@ -4,78 +4,10 @@
 
 namespace gl {
 
-static std::mutex g_GetProcMutex;
-
-auto __GetProcAddress(const char* module, const char* name) -> void* {
-    std::lock_guard<std::mutex> lock(g_GetProcMutex);
-
-    #if defined(WINDOWS_PLT)
-    auto lib = GetModuleHandleA(module);
-
-    if(lib == nullptr){
-        lib = LoadLibraryA(module);
-        
-        if(lib == nullptr){
-            Error("Couldnt load lib {} reason: {}", module, GetLastError());
-            return nullptr;
-        }
-    }
-
-    void *address = (void *)GetProcAddress(lib, name);
-    #elif defined(LINUX_PLT)
-    void* lib = dlopen(module, RTLD_LAZY | RTLD_NOLOAD);
-    
-    if(lib == nullptr) {
-        lib = dlopen(module, RTLD_LAZY);
-        if(lib == nullptr) {
-            Error("Couldn't load lib {} reason: {}", module, dlerror());
-            return nullptr;
-        }
-    }
-
-    dlerror();
-    void* address = (void *)dlsym(lib, name);
-    #elif defined(WEB_PLT)
-    void* address = reinterpret_cast<void*>(emscripten_webgl_get_proc_address(name));
-    #endif
-
-    return address;
-}
-
-auto resolve_opengl_fn(const char* name) -> void* {
-    void *address = nullptr;
-
-    #if defined(WINDOWS_PLT)
-    address = reinterpret_cast<void*>(wglGetProcAddress(name));
-
-    if(address == nullptr
-    || address == reinterpret_cast<void*>(0x1)
-    || address == reinterpret_cast<void*>(0x2)
-    || address == reinterpret_cast<void*>(0x3)
-    || address == reinterpret_cast<void*>(-1))
-    {
-        address = __GetProcAddress(OPENGL_MODULE_NAME, name);
-    }
-
-    #elif defined(LINUX_PLT) || defined(WEB_PLT)
-    address = __GetProcAddress(OPENGL_MODULE_NAME, name);
-    #endif
-
-    if (address != nullptr) {
-        Info("from LIB:`{}`: load function `{}` at : {}", OPENGL_MODULE_NAME, name, address);
-    } else {
-        Error("Couldn't load {} function `{}`", OPENGL_MODULE_NAME, name);
-    }
-
-    return address;
-}
-
 #if defined(WINDOWS_PLT)
 
 auto OpenGL::init_opengl_win32() -> void
 {
-    CheckThread();
-
     PIXELFORMATDESCRIPTOR pfd {};
     pfd.nSize = sizeof(pfd);
     pfd.nVersion = 1;
@@ -114,8 +46,8 @@ auto OpenGL::init_opengl_win32() -> void
     }
 
     int32_t gl_attribs[] = { 
-        CONTEXT_MAJOR_VERSION_ARB, 3,
-        CONTEXT_MINOR_VERSION_ARB, 3,
+        CONTEXT_MAJOR_VERSION_ARB, GLMajorVersion,
+        CONTEXT_MINOR_VERSION_ARB, GLMinorVersion,
     #ifdef DEBUG
         CONTEXT_FLAGS_ARB, 0x0001 | 0x0002,  // CONTEXT_DEBUG_BIT_ARB | CONTEXT_FORWARD_COMPATIBLE_BIT_ARB
     #endif
@@ -129,7 +61,7 @@ auto OpenGL::init_opengl_win32() -> void
         m_Context = nullptr;
 
         if (GetLastError() == ERROR_INVALID_VERSION_ARB){ // ?
-            Error("Unsupported GL Version {}.{}", gl_attribs[1], gl_attribs[3]);
+            Error("Unsupported GL Version {}.{}", GLMajorVersion, GLMinorVersion);
         }
         Error("Failed to create the final rendering context!");
     }
@@ -170,8 +102,8 @@ auto OpenGL::init_opengl_linux() -> void
     }
 
     int32_t contextAttribs[] = {
-        CONTEXT_MAJOR_VERSION_ARB, 3,
-        CONTEXT_MINOR_VERSION_ARB, 3,
+        CONTEXT_MAJOR_VERSION_ARB, GLMajorVersion,
+        CONTEXT_MINOR_VERSION_ARB, GLMinorVersion,
         #ifdef DEBUG
         CONTEXT_FLAGS_ARB, 0x0001 | 0x0002,  // CONTEXT_DEBUG_BIT_ARB | CONTEXT_FORWARD_COMPATIBLE_BIT_ARB
         #endif
@@ -229,7 +161,6 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     , m_Major(0)
     , m_Minor(0)
     , m_CreationTime(std::time(nullptr))
-    , m_ThreadId(std::hash<std::thread::id>{}(std::this_thread::get_id()))
 {
     #if defined(WINDOWS_PLT)
     init_opengl_win32();
@@ -248,17 +179,17 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     }
     #endif
 
-    glGetError = reinterpret_cast<PFNGLGETERRORPROC>(resolve_opengl_fn("glGetError"));
+    glGetError = reinterpret_cast<PFNGLGETERRORPROC>(gl::GetProcAddress("glGetError"));
 
     #ifdef DEBUG
     #   define RESOLVEGL(type, name)\
         OpenGL::name = Function<type>{};\
-        OpenGL::name.m_Func  = reinterpret_cast<type>(resolve_opengl_fn("gl"#name));\
+        OpenGL::name.m_Func  = reinterpret_cast<type>(gl::GetProcAddress("gl"#name));\
         OpenGL::name.m_After = []([[maybe_unused]] std::string info) { GLenum err = glGetError(); if(err != GL_NO_ERROR) Info("[{}] {}", GL_ERR_to_string(err), info); };\
         OpenGL::name.m_Name  = "gl"#name
     #else
     #   define RESOLVEGL(type, name)\
-        OpenGL::name = reinterpret_cast<type>(resolve_opengl_fn("gl"#name))
+        OpenGL::name = reinterpret_cast<type>(gl::GetProcAddress("gl"#name))
     #endif
 
 	GLFUNCS(RESOLVEGL)
@@ -294,8 +225,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     }
 
     Info("Platform : {}, Arch : {}", sys::TargetName, sys::ArchName);
-    Info("GL Thread id : {}", m_ThreadId);
-    Info("GL Version : {}.{}", m_Major, m_Minor);
+    Info("GL Version : Wanted:({}.{}) -> Got:({}.{})", GLMajorVersion, GLMinorVersion, m_Major, m_Minor);
     Info("GL Vendor : {}", m_Vendor);
     Info("GL Renderer : {}", m_Renderer);
     Info("GL Exts : {}", to_string(m_Extensions));
@@ -308,7 +238,6 @@ OpenGL::OpenGL(const OpenGL &other)
     , m_Major(other.m_Major)
     , m_Minor(other.m_Minor)
     , m_CreationTime(std::time(nullptr))
-    , m_ThreadId(other.m_ThreadId)
 {
     #if defined(WINDOWS_PLT)
     auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
@@ -345,7 +274,6 @@ OpenGL::OpenGL(OpenGL &&other) noexcept
     , m_Major(std::exchange(other.m_Major, 0))
     , m_Minor(std::exchange(other.m_Minor, 0))
     , m_CreationTime(std::exchange(other.m_CreationTime, 0))
-    , m_ThreadId(std::exchange(other.m_ThreadId, 0))
 {
 }
 
@@ -374,13 +302,11 @@ auto OpenGL::operator != (const OpenGL& other) const ->bool
 
 OpenGL::operator bool() const
 {
-    CheckThread();
     return isValid();
 }
 
 OpenGL::~OpenGL()
 {
-    CheckThread();
     #if defined(WINDOWS_PLT)
     wglMakeCurrent(nullptr, nullptr);
     wglDeleteContext(m_Context);
@@ -396,36 +322,30 @@ OpenGL::~OpenGL()
 
 auto OpenGL::Context() const -> GLCTX
 {
-    CheckThread();
     return m_Context;
 }
 
 auto OpenGL::DrawContext() const -> HDC_D
 {
-    CheckThread();
     return m_DrawContext;
 }
 
 auto OpenGL::MajorV() const -> GLint
 {
-    CheckThread();
     return m_Major;
 }
 auto OpenGL::MinorV() const -> GLint
 {
-    CheckThread();
     return m_Minor;
 }
 
 auto OpenGL::isValid() const -> bool
 {
-    CheckThread();
     return m_Context != GLCTX{};
 }
 
 auto OpenGL::CreationTime() const -> std::time_t
 {
-    CheckThread();
     return m_CreationTime;
 }
 
@@ -450,21 +370,34 @@ auto OpenGL::MaxTextureUnits() -> GLint
     return m_MaxTextureUnits;
 }
 
-auto OpenGL::ThreadId() const -> size_t
-{
-    CheckThread();
-    return m_ThreadId;
-}
 
-auto OpenGL::CheckThread() const -> void
-{
-    if constexpr (sys::Target != sys::Target::Web){
 
-        auto id = std::hash<std::thread::id>{}(std::this_thread::get_id());
-        if ( id != m_ThreadId ) {
-            Error("OpenGL context used in wrong thread! . Expected id: {} Vs Geted: {}", m_ThreadId, id);
-        }
+auto GetProcAddress(const char* name) -> void* {
+    void *address = nullptr;
+
+    #if defined(WINDOWS_PLT)
+    address = reinterpret_cast<void*>(wglGetProcAddress(name));
+
+    if(address == nullptr
+    || address == reinterpret_cast<void*>(0x1)
+    || address == reinterpret_cast<void*>(0x2)
+    || address == reinterpret_cast<void*>(0x3)
+    || address == reinterpret_cast<void*>(-1))
+    {
+        address = ::GetProcAddress(OPENGL_MODULE_NAME, name);
     }
+
+    #elif defined(LINUX_PLT) || defined(WEB_PLT)
+    address = ::GetProcAddress(OPENGL_MODULE_NAME, name);
+    #endif
+
+    if (address != nullptr) {
+        Info("from LIB:`{}`: load function `{}` at : {}", OPENGL_MODULE_NAME, name, address);
+    } else {
+        Error("Couldn't load {} function `{}`", OPENGL_MODULE_NAME, name);
+    }
+
+    return address;
 }
 
 } //namespace gl
