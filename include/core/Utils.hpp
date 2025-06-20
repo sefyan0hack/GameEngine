@@ -182,13 +182,28 @@ inline auto file_to_str(const char* path) -> std::optional<std::string>
 {
     std::ifstream file(path, std::ios::binary);
 
-    if (!file){ 
-        return std::nullopt;
+    return file_to_str(file);
+}
+
+
+inline auto file_to_vec(std::ifstream& file) -> std::optional<std::vector<std::byte>>
+{
+    auto op = file_to_str(file);
+
+    if(op){
+        auto r = op.value();
+        const auto* data_start = reinterpret_cast<const std::byte*>(r.data());
+        return std::vector<std::byte>(data_start, data_start + r.size());
     }else{
-        return std::string(std::istreambuf_iterator<char>(file), {});
+        return std::nullopt;
     }
 }
 
+inline auto file_to_vec(const char* path) -> std::optional<std::vector<std::byte>>
+{
+    std::ifstream file(path, std::ios::binary);
+    return file_to_vec(file);
+}
 
 template <class T>
 inline auto to_hex(const T& data) -> std::string
