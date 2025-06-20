@@ -2,16 +2,6 @@
 #include <core/Log.hpp>
 #include <core/OpenGL.hpp>
 
-#if defined(WINDOWS_PLT)
-#include <windows.h>
-#elif defined(LINUX_PLT)
-#include <X11/Xlib.h>
-#elif defined(WEB_PLT)
-#include <emscripten/emscripten.h>
-#include <emscripten/html5.h>
-#include <emscripten/html5_webgl.h>
-#include <emscripten/key_codes.h>
-#endif
 
 CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height, [[maybe_unused]] const char* Title) 
 	: m_Width(Width)
