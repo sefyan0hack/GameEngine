@@ -1,5 +1,6 @@
 #pragma once
 #include <core/Log.hpp>
+#include <core/Utils.hpp>
 
 #ifndef APIENTRY
 #define APIENTRY
