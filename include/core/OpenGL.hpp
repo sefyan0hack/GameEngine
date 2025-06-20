@@ -3,17 +3,21 @@
 #include <core/gl.h>
 
 namespace gl {
+    #if defined(WEB_PLT)
+    constexpr const char* OPENGL_MODULE_NAME {"WebGL"};
+    #else
+    constexpr const char* OPENGL_MODULE_NAME {OPENGL_LIB};
+    #endif
 
-#if defined(WEB_PLT)
-constexpr const char* OPENGL_MODULE_NAME {"WebGL"};
-#else
-constexpr const char* OPENGL_MODULE_NAME {OPENGL_LIB};
-#endif
+    auto GetProcAddress(const char* name) -> void*;
 
-constexpr int32_t DepthBufferBits   = 24;
-constexpr int32_t StencilBufferBits = 8;
-constexpr int32_t ChannelBits       = 8;
-constexpr int32_t AlphaBits         = 8;
+    constexpr int32_t DepthBufferBits   = 24;
+    constexpr int32_t StencilBufferBits = 8;
+    constexpr int32_t ChannelBits       = 8;
+    constexpr int32_t AlphaBits         = 8;
+
+    constexpr int32_t  GLMajorVersion   = 3;
+    constexpr int32_t  GLMinorVersion   = 3;
 
 class OpenGL
 {
@@ -35,9 +39,6 @@ class OpenGL
         auto MinorV() const -> GLint;
         auto isValid() const -> bool;
         auto CreationTime() const -> std::time_t;
-        auto ThreadId()    const -> size_t;
-        
-        auto CheckThread() const -> void;
 
         static auto Vendor() -> std::string;
         static auto Renderer() -> std::string;
@@ -45,8 +46,6 @@ class OpenGL
         static auto MaxTextureUnits() -> GLint;
 
     private:
-        friend auto resolve_opengl_fn(const char* name) -> void*;
-        friend auto __GetProcAddress(const char* module, const char* name) -> void*;
         #if defined(WINDOWS_PLT)
         auto init_opengl_win32()  -> void ;
         #elif defined(LINUX_PLT)
@@ -61,8 +60,6 @@ class OpenGL
         GLint m_Major;
         GLint m_Minor;
         std::time_t m_CreationTime;
-        size_t m_ThreadId;
-
 
         inline static std::string m_Vendor{};
         inline static std::string m_Renderer{};
