@@ -10,6 +10,11 @@ constexpr const char* OPENGL_MODULE_NAME {"WebGL"};
 constexpr const char* OPENGL_MODULE_NAME {OPENGL_LIB};
 #endif
 
+constexpr int32_t DepthBufferBits   = 24;
+constexpr int32_t StencilBufferBits = 8;
+constexpr int32_t ChannelBits       = 8;
+constexpr int32_t AlphaBits         = 8;
+
 class OpenGL
 {
     public:
@@ -30,14 +35,12 @@ class OpenGL
         auto MinorV() const -> GLint;
         auto isValid() const -> bool;
         auto CreationTime() const -> std::time_t;
-        auto isDebugable() const -> bool;
         auto ThreadId()    const -> size_t;
         
         auto CheckThread() const -> void;
 
         static auto Vendor() -> std::string;
         static auto Renderer() -> std::string;
-        static auto GlslVersions() -> std::vector<std::string>;
         static auto Extensions() -> std::vector<std::string>;
         static auto MaxTextureUnits() -> GLint;
 
@@ -58,13 +61,11 @@ class OpenGL
         GLint m_Major;
         GLint m_Minor;
         std::time_t m_CreationTime;
-        bool m_Debug;
         size_t m_ThreadId;
 
 
         inline static std::string m_Vendor{};
         inline static std::string m_Renderer{};
-        inline static std::vector<std::string> m_GlslVersions{};
         inline static std::vector<std::string> m_Extensions{};
         inline static GLint m_MaxTextureUnits{};
 
