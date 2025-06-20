@@ -1,5 +1,16 @@
 #pragma once
 
+#include <core/Log.hpp>
+
+#if defined(WINDOWS_PLT)
+#include <windows.h>
+#elif defined(LINUX_PLT)
+#include <X11/Xlib.h>
+#elif defined(WEB_PLT)
+#include <emscripten/emscripten.h>
+#endif
+
+
 template <typename T>
 concept Pointer = std::is_pointer_v<T>;
 
@@ -137,38 +148,6 @@ std::string to_string(const std::vector<T>& vec) {
     return result;
 }
 
-inline auto getenv_(const char* name) -> std::string
-{
-    #if defined(MSVC_CPL)
-    char* buffer = nullptr;
-    size_t len = 0;
-    if (_dupenv_s(&buffer, &len, name) != 0 || buffer == nullptr) {
-        if (buffer) free(buffer);
-        return {};
-    }
-    std::string value(buffer, len);
-    free(buffer);
-    return value;
-
-    #else
-
-    auto env = std::getenv(name);
-    return env ? std::string(env) : "";
-
-    #endif
-}
-
-inline std::string strerror_()
-{
-    char buf[256] = {0};
-    #if defined(LINUX_PLT) || defined(WEB_PLT)
-    strerror_r(errno, buf, sizeof(buf));
-    #else
-    strerror_s(buf, sizeof(buf), errno);
-    #endif
-    return buf;
-}
-
 inline auto file_to_str(std::ifstream& file) -> std::optional<std::string>
 {
     if (!file){ 
@@ -258,4 +237,39 @@ auto pointer_to_string(Pointer auto ptr) -> std::string
         if constexpr (std::is_pointer_v<Pointee>) return pointer_to_string(*ptr);
         return std::format("<{:p}> ({}) : [ {} ]", static_cast<const void*>(ptr), sizeof(Pointee), to_hex(ptr));
     }
+}
+
+inline auto GetProcAddress(const char* module, const char* name) -> void* {
+
+    #if defined(WINDOWS_PLT)
+    auto lib = GetModuleHandleA(module);
+
+    if(lib == nullptr){
+        lib = LoadLibraryA(module);
+        
+        if(lib == nullptr){
+            Error("Couldnt load lib {} reason: {}", module, GetLastError());
+            return nullptr;
+        }
+    }
+
+    void *address = (void *)GetProcAddress(lib, name);
+    #elif defined(LINUX_PLT)
+    void* lib = dlopen(module, RTLD_LAZY | RTLD_NOLOAD);
+    
+    if(lib == nullptr) {
+        lib = dlopen(module, RTLD_LAZY);
+        if(lib == nullptr) {
+            Error("Couldn't load lib {} reason: {}", module, dlerror());
+            return nullptr;
+        }
+    }
+
+    dlerror();
+    void* address = (void *)dlsym(lib, name);
+    #elif defined(WEB_PLT)
+    void* address = reinterpret_cast<void*>(emscripten_webgl_get_proc_address(name));
+    #endif
+
+    return address;
 }
