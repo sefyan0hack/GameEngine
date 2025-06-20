@@ -9,6 +9,11 @@
 #include <windows.h>
 #elif defined(LINUX_PLT)
 #include <X11/Xlib.h>
+#elif defined(WEB_PLT)
+#include <emscripten/emscripten.h>
+#include <emscripten/html5.h>
+#include <emscripten/html5_webgl.h>
+#include <emscripten/key_codes.h>
 #endif
 
 class CWindow
