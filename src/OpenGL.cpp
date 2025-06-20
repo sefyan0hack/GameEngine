@@ -6,47 +6,6 @@ namespace gl {
 
 static std::mutex g_GetProcMutex;
 
-/* dead code 
-[[maybe_unused]] static void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, [[maybe_unused]] GLsizei length, const GLchar *message, [[maybe_unused]] const void *param)
-{
-    const char *source_, *type_, *severity_;
-
-    switch (source)
-    {
-    case GL_DEBUG_SOURCE_API:             source_ = "API";             break;
-    case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   source_ = "WINDOW_SYSTEM";   break;
-    case GL_DEBUG_SOURCE_SHADER_COMPILER: source_ = "SHADER_COMPILER"; break;
-    case GL_DEBUG_SOURCE_THIRD_PARTY:     source_ = "THIRD_PARTY";     break;
-    case GL_DEBUG_SOURCE_APPLICATION:     source_ = "APPLICATION";     break;
-    case GL_DEBUG_SOURCE_OTHER:           source_ = "OTHER";           break;
-    default:                              source_ = "<SOURCE>";        break;
-    }
-
-    switch (type)
-    {
-    case GL_DEBUG_TYPE_ERROR:               type_ = "ERROR";               break;
-    case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: type_ = "DEPRECATED_BEHAVIOR"; break;
-    case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  type_ = "UDEFINED_BEHAVIOR";   break;
-    case GL_DEBUG_TYPE_PORTABILITY:         type_ = "PORTABILITY";         break;
-    case GL_DEBUG_TYPE_PERFORMANCE:         type_ = "PERFORMANCE";         break;
-    case GL_DEBUG_TYPE_OTHER:               type_ = "OTHER";               break;
-    case GL_DEBUG_TYPE_MARKER:              type_ = "MARKER";              break;
-    default:                                type_ = "<TYPE>";              break;
-    }
-
-    switch (severity)
-    {
-    case GL_DEBUG_SEVERITY_HIGH:         severity_ = "HIGH";         break;
-    case GL_DEBUG_SEVERITY_MEDIUM:       severity_ = "MEDIUM";       break;
-    case GL_DEBUG_SEVERITY_LOW:          severity_ = "LOW";          break;
-    case GL_DEBUG_SEVERITY_NOTIFICATION: severity_ = "NOTIFICATION"; break;
-    default:                             severity_ = "<SEVERITY>";   break;
-    }
-
-    Info("[{} {}({})] From {} : \n\t- {}", severity_, type_, id, source_, message);
-}
-*/
-
 auto __GetProcAddress(const char* module, const char* name) -> void* {
     std::lock_guard<std::mutex> lock(g_GetProcMutex);
 
@@ -77,16 +36,17 @@ auto __GetProcAddress(const char* module, const char* name) -> void* {
     dlerror();
     void* address = (void *)dlsym(lib, name);
     #elif defined(WEB_PLT)
-    void* address = (void*)emscripten_webgl_get_proc_address(name);
+    void* address = reinterpret_cast<void*>(emscripten_webgl_get_proc_address(name));
     #endif
 
     return address;
 }
 
 auto resolve_opengl_fn(const char* name) -> void* {
+    void *address = nullptr;
 
     #if defined(WINDOWS_PLT)
-    void *address = (void *)wglGetProcAddress(name);
+    address = reinterpret_cast<void*>(wglGetProcAddress(name));
 
     if(address == nullptr
     || address == reinterpret_cast<void*>(0x1)
@@ -95,29 +55,17 @@ auto resolve_opengl_fn(const char* name) -> void* {
     || address == reinterpret_cast<void*>(-1))
     {
         address = __GetProcAddress(OPENGL_MODULE_NAME, name);
-        if(address == nullptr){
-            Error("Couldnt load opengl function `{}` reason: {}", name, GetLastError());
-        }
-    }else{
-        Info("from LIB:`{}`: load function `{}` at : {}", OPENGL_MODULE_NAME, name, address);
     }
 
-    #elif defined(LINUX_PLT)
-    void *address = (void *)__GetProcAddress(OPENGL_MODULE_NAME, name);
-    if(address == nullptr){
-        Error("Couldnt load opengl function `{}`", name);
-    }else{
-        Info("from LIB:`opengl32`: load function `{}` at : {}", name, address);
-    }
-    #elif defined(WEB_PLT)
-    void* address = __GetProcAddress(OPENGL_MODULE_NAME, name);
+    #elif defined(LINUX_PLT) || defined(WEB_PLT)
+    address = __GetProcAddress(OPENGL_MODULE_NAME, name);
+    #endif
+
     if (address != nullptr) {
         Info("from LIB:`{}`: load function `{}` at : {}", OPENGL_MODULE_NAME, name, address);
     } else {
-        Info("Couldn't load {} function `{}`", OPENGL_MODULE_NAME, name);
-        // Error("Couldn't load WebGL function `{}`", name);
+        Error("Couldn't load {} function `{}`", OPENGL_MODULE_NAME, name);
     }
-    #endif
 
     return address;
 }
@@ -133,10 +81,10 @@ auto OpenGL::init_opengl_win32() -> void
     pfd.nVersion = 1;
     pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
     pfd.iPixelType = PFD_TYPE_RGBA;
-    pfd.cColorBits = 24;
-    pfd.cAlphaBits = 8;
-    pfd.cDepthBits = 24;
-    pfd.cStencilBits = 8;
+    pfd.cColorBits = ChannelBits + ChannelBits + ChannelBits;//rgb
+    pfd.cAlphaBits = AlphaBits; //a
+    pfd.cDepthBits = DepthBufferBits;
+    pfd.cStencilBits = StencilBufferBits;
     pfd.iLayerType = PFD_MAIN_PLANE;
 
     auto pixel_format = ChoosePixelFormat(m_DrawContext, &pfd);
@@ -166,13 +114,11 @@ auto OpenGL::init_opengl_win32() -> void
     }
 
     int32_t gl_attribs[] = { 
-        CONTEXT_MAJOR_VERSION_ARB, 4,
-        CONTEXT_MINOR_VERSION_ARB, 4,
-        CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB, 0x8252, // WGL_LOSE_CONTEXT_ON_RESET_ARB
+        CONTEXT_MAJOR_VERSION_ARB, 3,
+        CONTEXT_MINOR_VERSION_ARB, 3,
     #ifdef DEBUG
         CONTEXT_FLAGS_ARB, 0x0001 | 0x0002,  // CONTEXT_DEBUG_BIT_ARB | CONTEXT_FORWARD_COMPATIBLE_BIT_ARB
     #endif
-        CONTEXT_PROFILE_MASK_ARB, 0x00000001, // CONTEXT_CORE_PROFILE_BIT_ARB
         0,
     };
 
@@ -203,11 +149,11 @@ auto OpenGL::init_opengl_linux() -> void
     static int32_t visualAttribs[] = {
         GLX_X_RENDERABLE,  true,
         GLX_DOUBLEBUFFER,  true,
-        GLX_RED_SIZE,       8,
-        GLX_GREEN_SIZE,     8,
-        GLX_BLUE_SIZE,      8,
-        GLX_ALPHA_SIZE,     8,
-        GLX_DEPTH_SIZE,     24,
+        GLX_RED_SIZE,       ChannelBits,
+        GLX_GREEN_SIZE,     ChannelBits,
+        GLX_BLUE_SIZE,      ChannelBits,
+        GLX_ALPHA_SIZE,     AlphaBits,
+        GLX_DEPTH_SIZE,     DepthBufferBits,
         0
     };
     
@@ -224,13 +170,11 @@ auto OpenGL::init_opengl_linux() -> void
     }
 
     int32_t contextAttribs[] = {
-        CONTEXT_MAJOR_VERSION_ARB, 4,
-        CONTEXT_MINOR_VERSION_ARB, 4,
-        CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB, 0x8252, // GLX_LOSE_CONTEXT_ON_RESET_ARB
+        CONTEXT_MAJOR_VERSION_ARB, 3,
+        CONTEXT_MINOR_VERSION_ARB, 3,
         #ifdef DEBUG
         CONTEXT_FLAGS_ARB, 0x0001 | 0x0002,  // CONTEXT_DEBUG_BIT_ARB | CONTEXT_FORWARD_COMPATIBLE_BIT_ARB
         #endif
-        CONTEXT_PROFILE_MASK_ARB,  0x00000001,
         0
     };
 
@@ -285,7 +229,6 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     , m_Major(0)
     , m_Minor(0)
     , m_CreationTime(std::time(nullptr))
-    , m_Debug(false)
     , m_ThreadId(std::hash<std::thread::id>{}(std::this_thread::get_id()))
 {
     #if defined(WINDOWS_PLT)
@@ -338,59 +281,25 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
 
     m_Extensions = exts ? split(exts, " ") : decltype(m_Extensions){} ;
     
-    if constexpr (sys::Target != sys::Target::Web){
-        GLint flags = 0;
-        gl::GetIntegerv(GL_CONTEXT_FLAGS, &flags);
-        m_Debug = !!(flags & GL_CONTEXT_FLAG_DEBUG_BIT);
-
-        GLint nGlslv = 0;
-        gl::GetIntegerv(GL_NUM_SHADING_LANGUAGE_VERSIONS, &nGlslv);
-
-        if(static_cast<size_t>(nGlslv) != m_GlslVersions.size()){
-            for(GLint i = 0; i < nGlslv; i++){
-                auto r = reinterpret_cast<const char*>(gl::GetStringi(GL_SHADING_LANGUAGE_VERSION, static_cast<GLuint>(i)));
-                if(r) m_GlslVersions.push_back(r);
-
-            }
-        }
-    }else{
-        m_GlslVersions.push_back("300 es");
-    }
     gl::GetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_MaxTextureUnits);
 
     gl::Enable(GL_DEPTH_TEST);
     gl::DepthFunc(GL_LESS);
 
-    // gl::Enable(GL_BLEND);
-    // gl::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
- 
+
     if constexpr (sys::Target != sys::Target::Web){
         gl::Enable(GL_LINE_SMOOTH);
         gl::Enable(GL_MULTISAMPLE);
         gl::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     }
 
-    /* dead code 
-    #if defined(DEBUG) && !defined(WEB_PLT)
-    if( m_Major >= 4 && m_Minor >= 3 && m_Debug)
-    {
-        gl::Enable(GL_DEBUG_OUTPUT);
-        gl::Enable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-        gl::DebugMessageCallback(GLDebugMessageCallback, nullptr);
-        gl::DebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-    }
-    #endif
-    */
-
     Info("Platform : {}, Arch : {}", sys::TargetName, sys::ArchName);
     Info("GL Thread id : {}", m_ThreadId);
     Info("GL Version : {}.{}", m_Major, m_Minor);
-    Info("GLSL Version Supported : {}", to_string(m_GlslVersions));
     Info("GL Vendor : {}", m_Vendor);
     Info("GL Renderer : {}", m_Renderer);
     Info("GL Exts : {}", to_string(m_Extensions));
     Info("Max Texture Units : {}", m_MaxTextureUnits);
-    Info("Debug : {}", m_Debug ? "On" : "Off");
 }
 
 OpenGL::OpenGL(const OpenGL &other)
@@ -399,7 +308,6 @@ OpenGL::OpenGL(const OpenGL &other)
     , m_Major(other.m_Major)
     , m_Minor(other.m_Minor)
     , m_CreationTime(std::time(nullptr))
-    , m_Debug(other.m_Debug)
     , m_ThreadId(other.m_ThreadId)
 {
     #if defined(WINDOWS_PLT)
@@ -419,7 +327,6 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL&
         this->m_Major = other.m_Major;
         this->m_Minor = other.m_Minor;
         this->m_CreationTime = std::time(nullptr);
-        this->m_Debug = other.m_Debug;
 
         #if defined(WINDOWS_PLT)
         auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
@@ -438,7 +345,6 @@ OpenGL::OpenGL(OpenGL &&other) noexcept
     , m_Major(std::exchange(other.m_Major, 0))
     , m_Minor(std::exchange(other.m_Minor, 0))
     , m_CreationTime(std::exchange(other.m_CreationTime, 0))
-    , m_Debug(std::exchange(other.m_Debug, false))
     , m_ThreadId(std::exchange(other.m_ThreadId, 0))
 {
 }
@@ -451,7 +357,6 @@ auto OpenGL::operator=(OpenGL &&other) noexcept -> OpenGL&
         this->m_Major = std::exchange(other.m_Major, 0);
         this->m_Minor = std::exchange(other.m_Minor, 0);
         this->m_CreationTime = std::exchange(other.m_CreationTime, 0);
-        this->m_Debug = std::exchange(other.m_Debug, false);
     }
 
     return *this;
@@ -524,11 +429,6 @@ auto OpenGL::CreationTime() const -> std::time_t
     return m_CreationTime;
 }
 
-auto OpenGL::isDebugable() const -> bool
-{
-    CheckThread();
-    return m_Debug;
-}
 
 auto OpenGL::Vendor() -> std::string
 {
@@ -539,10 +439,6 @@ auto OpenGL::Renderer() -> std::string
     return m_Renderer;
 }
 
-auto OpenGL::GlslVersions() -> std::vector<std::string>
-{
-    return m_GlslVersions;
-}
 
 auto OpenGL::Extensions() -> std::vector<std::string>
 {

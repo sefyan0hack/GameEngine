@@ -146,10 +146,7 @@ private:
         Scn << GameObject({0,0,1}, Matt, cubeMesh);
         Scn << GameObject({1,1,0}, Matt, cubeMesh);
         Scn << GameObject({1,1,1}, Matt, cubeMesh);
-        
-        // #define PrintGLfunc(type, name) print("{} {}", (void*)name, #name)
-        
-        // GLFUNCS(PrintGLfunc)
+                
     }
 public:
 
