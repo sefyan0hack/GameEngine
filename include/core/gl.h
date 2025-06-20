@@ -1,4 +1,11 @@
 #pragma once
+#define GL_VERSION_4_0 0
+#define GL_VERSION_4_1 0
+#define GL_VERSION_4_2 0
+#define GL_VERSION_4_3 0
+#define GL_VERSION_4_4 0
+#define GL_VERSION_4_5 0
+#define GL_VERSION_4_6 0
 #include <glcorearb.h> // need repl  with glext.h
 #include <core/Function.hpp>
 
@@ -68,7 +75,6 @@ inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
         case GL_STACK_UNDERFLOW: return "GL_STACK_UNDERFLOW";
         case GL_OUT_OF_MEMORY: return "GL_OUT_OF_MEMORY";
         case GL_INVALID_FRAMEBUFFER_OPERATION: return "GL_INVALID_FRAMEBUFFER_OPERATION";
-        case GL_CONTEXT_LOST: return "GL_CONTEXT_LOST";
         default: return "GL_UNKNOWN";
     }
 }
@@ -161,14 +167,9 @@ X(PFNGLFRONTFACEPROC, FrontFace);\
 X(PFNGLDISABLEPROC, Disable);\
 X(PFNGLVALIDATEPROGRAMPROC, ValidateProgram);\
 X(PFNGLDETACHSHADERPROC, DetachShader);\
-X(PFNGLVERTEXATTRIBFORMATPROC, VertexAttribFormat);\
-X(PFNGLVERTEXATTRIBBINDINGPROC, VertexAttribBinding);\
-X(PFNGLBINDVERTEXBUFFERPROC, BindVertexBuffer);\
 X(PFNGLISENABLEDPROC, IsEnabled);\
 X(PFNGLGETFLOATVPROC, GetFloatv);\
-X(PFNGLCLEARTEXIMAGEPROC, ClearTexImage);\
 X(PFNGLTEXSUBIMAGE2DPROC, TexSubImage2D);\
-X(PFNGLTEXSTORAGE2DPROC, TexStorage2D);\
 X(PFNGLUNIFORM2FVPROC, Uniform2fv);
 
 // X(PFNGLDEBUGMESSAGECALLBACKPROC, DebugMessageCallback);
