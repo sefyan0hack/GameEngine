@@ -76,7 +76,6 @@ auto OpenGL::init_opengl_win32() -> void
 
 auto OpenGL::init_opengl_linux() -> void
 {
-    CheckThread();
 
     static int32_t visualAttribs[] = {
         GLX_X_RENDERABLE,  true,
@@ -123,7 +122,6 @@ auto OpenGL::init_opengl_linux() -> void
 #elif defined(WEB_PLT)
 auto OpenGL::init_opengl_web() -> void
 {
-    CheckThread();
 
     EmscriptenWebGLContextAttributes attrs;
     emscripten_webgl_init_context_attributes(&attrs);
