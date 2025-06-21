@@ -257,7 +257,7 @@ function(apply_all_options)
         apply_main_options(TARGETS ${target})
         apply_warning_options(TARGETS ${target})
     endforeach()
-    pre_include_file("${CMAKE_SOURCE_DIR}/include/core/Global_H.hpp")
+    pre_include_file("${CMAKE_SOURCE_DIR}/include/core/Platform.hpp")
 endfunction()
 
 
