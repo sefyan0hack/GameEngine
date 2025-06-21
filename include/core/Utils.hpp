@@ -8,6 +8,7 @@
 #include <dlfcn.h>
 #elif defined(WEB_PLT)
 #include <emscripten/emscripten.h>
+#include <emscripten/html5.h>
 #endif
 
 
