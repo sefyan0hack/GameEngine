@@ -38,11 +38,15 @@ auto OpenGL::init_opengl_win32() -> void
         Error("Failed to activate dummy OpenGL rendering context. : {}", GetLastError());
     }
 
-    wglCreateContextAttribsARB  = (decltype(wglCreateContextAttribsARB))wglGetProcAddress("wglCreateContextAttribsARB");
     wglGetExtensionsStringARB   = (decltype(wglGetExtensionsStringARB))wglGetProcAddress("wglGetExtensionsStringARB");
+    wglCreateContextAttribsARB  = (decltype(wglCreateContextAttribsARB))wglGetProcAddress("wglCreateContextAttribsARB");
 
-    if (!wglGetExtensionsStringARB || !wglCreateContextAttribsARB) {
-        Error("Failed to load required WGL extensions. : {}", GetLastError());
+    if (!wglGetExtensionsStringARB){
+        Error("Failed to load wglGetExtensionsStringARB. : {}", GetLastError());
+    }
+
+    if(!wglCreateContextAttribsARB) {
+        Error("Failed to load wglCreateContextAttribsARB. : {}", GetLastError());
     }
 
     int32_t gl_attribs[] = { 
@@ -57,7 +61,6 @@ auto OpenGL::init_opengl_win32() -> void
 
     GLCTX opengl_context = nullptr;
     if (nullptr == (opengl_context = wglCreateContextAttribsARB(m_DrawContext, nullptr, gl_attribs))) {
-        wglDeleteContext(dummy_context);
         m_Context = nullptr;
 
         if (GetLastError() == ERROR_INVALID_VERSION_ARB){ // ?
