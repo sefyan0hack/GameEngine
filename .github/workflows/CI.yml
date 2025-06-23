@@ -71,4 +71,4 @@ jobs:
 
       - name: Test
         shell: bash
-        run: ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
+        run: ctest -j 1 --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
