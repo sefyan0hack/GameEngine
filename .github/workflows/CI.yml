@@ -55,7 +55,7 @@ jobs:
 
       - name: Configure CMake
         shell: bash
-        run: cmake -S . -B "$BUILD_DIR" -G  "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DTESTS=ON -DHARDEN=ON
+        run: cmake -S . -B "$BUILD_DIR" -G  "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DTESTS=ON -DEXCEPTIONS=ON -DHARDEN=ON
 
       - name: Build
         shell: bash
@@ -71,4 +71,4 @@ jobs:
 
       - name: Test
         shell: bash
-        run: ctest -j 1 --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
+        run: ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
