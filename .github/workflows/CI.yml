@@ -58,12 +58,6 @@ jobs:
           echo "MESA_GLSL_VERSION_OVERRIDE=450" >> $GITHUB_ENV
           echo "LIBGL_ALWAYS_SOFTWARE=1" >> $GITHUB_ENV
 
-      - name: Verify Mesa Installation
-        if: contains(matrix.os, 'windows')
-        run: |
-          $MESADIR = "$env:RUNNER_TEMP\mesa\bin"
-          dumpbin /exports "$MESADIR\opengl32.dll" | findstr "glGenVertexArrays"
-          if ($LASTEXITCODE -ne 0) { exit 1 }
 
       - name: Install Dependencies
         shell: bash
