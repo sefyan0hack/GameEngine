@@ -26,6 +26,7 @@ class Shader
       static auto LoadFile(const char* filename) -> std::vector<GLchar>;
       static auto Compile(GLuint shader)             -> void;
       static auto LoadSource(const std::vector<GLchar>& src, GLuint shader) -> void;
+      static auto PreProcess() -> std::string;
       static auto checkShaderCompileStatus(const Shader &shader) -> void;
       static auto GetShaderInfo(GLuint id, GLenum what) -> std::optional<GLint>; //what : GL_SHADER_TYPE, GL_DELETE_STATUS, GL_COMPILE_STATUS, GL_INFO_LOG_LENGTH, GL_SHADER_SOURCE_LENGTH.
 
@@ -48,7 +49,7 @@ struct std::formatter<Shader> {
   }
   auto format(const Shader& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    R"({{ "id": {}, "type": "{}" }})"
-    , obj.m_Id, obj.TypeName());
+    R"({{ "id": {}, "type": "{}", "file": "{}" }})"
+    , obj.m_Id, obj.TypeName(), obj.m_File);
   }
 };

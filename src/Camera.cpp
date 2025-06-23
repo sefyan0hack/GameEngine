@@ -77,11 +77,6 @@ auto Camera::MoveLeft(float speed) -> void
     m_Position -= (c  * speed);
 }
 
-auto Camera::EnableMSAA() -> void
-{
-    gl::Enable(GL_MULTISAMPLE);
-}
-
 auto Camera::UpdateVectors() -> void
 {
     auto yawrad   = glm::radians(this->m_Yaw);

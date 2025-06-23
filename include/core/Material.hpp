@@ -56,7 +56,8 @@ public:
     auto SetUniform(const std::string &name, const GLint& value1, const GLint& value2, const GLint& value3, const GLint& value4) const -> void;
 
 private:
-    auto checkProgramLinkStatus() const        -> void;
+    static auto GetProgramInfo(GLint id, GLenum what)           -> std::optional<GLint>;
+    static auto checkProgramLinkStatus(const Material& aterial) -> void;
     auto Link() const -> void;
     auto UniformLocation_Prv(const char* name) const -> GLuint;
     auto AttribLocation_Prv(const char* name) const -> GLuint;

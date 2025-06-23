@@ -29,10 +29,10 @@ public:
     auto ReturnType() const -> std::string;
     auto ArgsValues() const -> std::array<std::string, sizeof...(Args)>;
     auto ArgsTypes() const  -> std::array<std::string, sizeof...(Args)>;
-    constexpr auto ArgsCount() const -> size_t;
-    auto CallsCount() const -> size_t;
+    constexpr auto ArgsCount() const -> std::size_t;
+    auto CallsCount() const -> std::size_t;
 
-    static auto functionCount() -> size_t;
+    static auto functionCount() -> std::size_t;
     
 private:
     auto this_func_sig() const -> std::string ;
@@ -51,8 +51,8 @@ private:
     std::string m_ReturnType;
     std::array<std::string, sizeof...(Args)> m_ArgsTypes;
     std::tuple<Args...> m_ArgsValues;
-    size_t m_CallCount;
-    inline static size_t m_Count = 0;
+    std::size_t m_CallCount;
+    inline static std::size_t m_Count = 0;
 
     FOR_TEST
 };
@@ -119,7 +119,7 @@ template <typename R, typename... Args>
 auto Function<R(APIENTRY*)(Args...)>::ArgsValues() const -> std::array<std::string, sizeof...(Args)>
 {
     std::array<std::string, sizeof...(Args)> result;
-    size_t i = 0;
+    std::size_t i = 0;
     std::apply([&result, &i](auto&&... args) {
         ((result[i++] = to_string(args)), ...);
     }, m_ArgsValues);
@@ -139,19 +139,19 @@ auto Function<R(APIENTRY*)(Args...)>::ArgsTypes() const -> std::array<std::strin
 }
 
 template <typename R, typename... Args>
-auto Function<R(APIENTRY*)(Args...)>::CallsCount() const -> size_t
+auto Function<R(APIENTRY*)(Args...)>::CallsCount() const -> std::size_t
 {
     return m_CallCount;
 }
 
 template <typename R, typename... Args>
-constexpr auto Function<R(APIENTRY*)(Args...)>::ArgsCount() const -> size_t
+constexpr auto Function<R(APIENTRY*)(Args...)>::ArgsCount() const -> std::size_t
 {
     return sizeof...(Args);
 }
 
 template <typename R, typename... Args>
-auto Function<R(APIENTRY*)(Args...)>::functionCount() -> size_t
+auto Function<R(APIENTRY*)(Args...)>::functionCount() -> std::size_t
 {
     return m_Count;
 }
@@ -179,7 +179,7 @@ auto Function<R(APIENTRY*)(Args...)>::function_info(const std::source_location& 
 // template <typename R, typename... Args>
 // auto Function<R(APIENTRY*)(Args...)>::format_arguments(std::string& result) const -> void
 // {
-//     size_t index = 1;
+//     std::size_t index = 1;
 //     bool first = true;
 //     for (const auto& [type, value] : std::views::zip(m_ArgsTypes, ArgsValues())) {
 //         if (!first) result += ", ";
@@ -191,11 +191,11 @@ auto Function<R(APIENTRY*)(Args...)>::function_info(const std::source_location& 
 template <typename R, typename... Args>
 auto Function<R(APIENTRY*)(Args...)>::format_arguments(std::string& result) const -> void
 {
-    size_t index = 1;
+    std::size_t index = 1;
     bool first = true;
     auto argsValues = ArgsValues();
 
-    for (size_t i = 0; i < m_ArgsTypes.size(); ++i) {
+    for (std::size_t i = 0; i < m_ArgsTypes.size(); ++i) {
         if (!first) result += ", ";
         result += std::format("{} arg_{} = {}", m_ArgsTypes[i], index++, argsValues[i]);
         first = false;

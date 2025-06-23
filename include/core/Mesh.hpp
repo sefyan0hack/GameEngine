@@ -68,7 +68,7 @@ public:
     std::vector<VetexData> vertices;
     std::vector<AttributeInfo> attribs;
     GLuint VBO, EBO, VAO;
-    inline static size_t Count = 1;
+    inline static std::size_t Count = 1;
 
     FOR_TEST
 };

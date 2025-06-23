@@ -368,8 +368,6 @@ auto OpenGL::MaxTextureUnits() -> GLint
     return m_MaxTextureUnits;
 }
 
-
-
 auto GetProcAddress(const char* name) -> void* {
     void *address = nullptr;
 
@@ -396,6 +394,164 @@ auto GetProcAddress(const char* name) -> void* {
     }
 
     return address;
+}
+
+
+auto gl::OpenGL::DummyCtx() -> GLCTX
+{
+    GLCTX dummy_context{};
+
+    #if defined(WINDOWS_PLT)
+    HINSTANCE hInstance = GetModuleHandle(nullptr);
+    const char* className = "DummyGLWindow";
+
+    WNDCLASS existingClass;
+    if (!GetClassInfo(hInstance, className, &existingClass)) {
+        WNDCLASS wc = {};
+        wc.lpfnWndProc = DefWindowProc;
+        wc.hInstance = hInstance;
+        wc.lpszClassName = className;
+
+        if (!RegisterClass(&wc)) {
+            DWORD error = GetLastError();
+            if (error != ERROR_CLASS_ALREADY_EXISTS) {
+                Error("Can't register Window class: {}", error);
+            }
+        }
+    }
+
+    HWND hwnd = CreateWindow(
+        className, "Dummy OpenGL",
+        WS_OVERLAPPEDWINDOW,
+        CW_USEDEFAULT, CW_USEDEFAULT, 800, 600,
+        nullptr, nullptr, hInstance, nullptr
+    );
+    if (!hwnd){
+        Error("Can't Create Window : {}", GetLastError());
+    }
+
+    HDC hdc = GetDC(hwnd);
+
+    PIXELFORMATDESCRIPTOR pfd {};
+    pfd.nSize = sizeof(pfd);
+    pfd.nVersion = 1;
+    pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+    pfd.iPixelType = PFD_TYPE_RGBA;
+    pfd.cColorBits = ChannelBits + ChannelBits + ChannelBits;//rgb
+    pfd.cAlphaBits = AlphaBits; //a
+    pfd.cDepthBits = DepthBufferBits;
+    pfd.cStencilBits = StencilBufferBits;
+    pfd.iLayerType = PFD_MAIN_PLANE;
+
+    auto pixel_format = ChoosePixelFormat(hdc, &pfd);
+    if (!pixel_format) {
+        Error("Failed to find a suitable pixel format. : {}", GetLastError());
+    }
+    if (!SetPixelFormat(hdc, pixel_format, &pfd)) {
+        Error("Failed to set the pixel format. : {}", GetLastError());
+    }
+
+    dummy_context = wglCreateContext(hdc);
+    if (!dummy_context) {
+        Error("Failed to create a dummy OpenGL rendering context. : {}", GetLastError());
+    }
+
+    if (!wglMakeCurrent(hdc, dummy_context)) {
+        Error("Failed to activate dummy OpenGL rendering context. : {}", GetLastError());
+    }
+
+    #elif defined(LINUX_PLT)
+
+    Display* display = XOpenDisplay(nullptr);
+    if (!display) return dummy_context;
+    int screen = DefaultScreen(display);
+    Window root = RootWindow(display, screen);
+
+    static int32_t visualAttribs[] = {
+        GLX_X_RENDERABLE,  true,
+        GLX_DOUBLEBUFFER,  true,
+        GLX_RED_SIZE,       ChannelBits,
+        GLX_GREEN_SIZE,     ChannelBits,
+        GLX_BLUE_SIZE,      ChannelBits,
+        GLX_ALPHA_SIZE,     AlphaBits,
+        GLX_DEPTH_SIZE,     DepthBufferBits,
+        0
+    };
+
+    int32_t fbcount;
+    GLXFBConfig* fbc = glXChooseFBConfig(display, screen, visualAttribs, &fbcount);
+    if (!fbc || fbcount == 0) {
+        Error("Failed to get framebuffer config.");
+    }
+
+    XVisualInfo* vis = glXGetVisualFromFBConfig(display, fbc[0]);
+    if (!vis) {
+        XFree(fbc);
+        Error("Failed to get visual info.");
+    }
+
+    Colormap cmap = XCreateColormap(display, root, vis->visual, AllocNone);
+    XSetWindowAttributes swa;
+    swa.colormap = cmap;
+    swa.background_pixmap = None;
+    swa.border_pixel = 0;
+    swa.event_mask = 0;
+    
+    Window win = XCreateWindow(display, root, 
+        0, 0, 1, 1,
+        0,
+        vis->depth,
+        InputOutput,
+        vis->visual,
+        CWColormap | CWBackPixmap | CWBorderPixel | CWEventMask,
+        &swa
+    );
+
+    dummy_context = glXCreateContext(display, vis, NULL, True);
+
+    XFree(fbc);
+    XFree(vis);
+
+    if (!dummy_context) {
+        Error("Failed to create GLX context.");
+    }
+
+    if (!glXMakeCurrent(display, win, dummy_context)) {
+        glXDestroyContext(display, dummy_context);
+        XDestroyWindow(display, win);
+        XCloseDisplay(display);
+        Error("Can't glXMakeCurrent ctx");
+    }
+
+    #elif defined(WEB_PLT)
+    EmscriptenWebGLContextAttributes attrs;
+    emscripten_webgl_init_context_attributes(&attrs);
+    attrs.majorVersion = 2;
+
+    dummy_context = emscripten_webgl_create_context("#canvas", &attrs);
+    
+    if (dummy_context < 0 || 
+        emscripten_webgl_make_context_current(dummy_context) != EMSCRIPTEN_RESULT_SUCCESS) {
+            Error("Can't Make Opengl Ctx Current. ");
+    }
+    #endif
+
+    glGetError = reinterpret_cast<PFNGLGETERRORPROC>(gl::GetProcAddress("glGetError"));
+
+    #ifdef DEBUG
+    #   define RESOLVEGL(type, name)\
+        OpenGL::name = Function<type>{};\
+        OpenGL::name.m_Func  = reinterpret_cast<type>(gl::GetProcAddress("gl"#name));\
+        OpenGL::name.m_After = []([[maybe_unused]] std::string info) { GLenum err = glGetError(); if(err != GL_NO_ERROR) Info("[{}] {}", GL_ERR_to_string(err), info); };\
+        OpenGL::name.m_Name  = "gl"#name
+    #else
+    #   define RESOLVEGL(type, name)\
+        OpenGL::name = reinterpret_cast<type>(gl::GetProcAddress("gl"#name))
+    #endif
+
+	GLFUNCS(RESOLVEGL)
+
+    return dummy_context;
 }
 
 } //namespace gl

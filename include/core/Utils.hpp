@@ -44,7 +44,7 @@ auto Repeat( unsigned long interval, Function&& func, Args&&... args) -> void
 // compile time
 consteval auto get_file_directory(const std::string_view file_path = __FILE__) -> std::string_view
 {
-    const size_t last_slash = file_path.find_last_of("/\\");
+    const std::size_t last_slash = file_path.find_last_of("/\\");
     return (last_slash == std::string_view::npos) ? "" : file_path.substr(0, last_slash);
 }
 
@@ -95,11 +95,11 @@ inline std::future<std::optional<std::vector<char>>> load_file_async(const std::
         streamsize size = static_cast<std::streamsize>(file.tellg());
         file.seekg(0, ios::beg);
         
-        if (static_cast<size_t>(size) > vector<char>().max_size()){
+        if (static_cast<std::size_t>(size) > vector<char>().max_size()){
             return nullopt;
         }
 
-        vector<char> buffer(static_cast<size_t>(size));
+        vector<char> buffer(static_cast<std::size_t>(size));
         file.read(buffer.data(), size);
         return buffer;
     });
@@ -113,7 +113,7 @@ inline std::vector<std::string> split(const char* cstr, const std::string& delim
     if(s.empty()) return {};
     
     vector<string> tokens;
-    size_t pos = 0;
+    std::size_t pos = 0;
     string token;
     while ((pos = s.find(delimiter)) != string::npos) {
         token = s.substr(0, pos);
@@ -139,7 +139,7 @@ template<class T>
 requires std::convertible_to<T, std::string> || std::formattable<T, char>
 std::string to_string(const std::vector<T>& vec) {
     std::string result = "[ ";
-    for (size_t i = 0; i < vec.size(); ++i) {
+    for (std::size_t i = 0; i < vec.size(); ++i) {
         result += vec[i];
         if (i != vec.size() - 1) {
             result += ", ";
@@ -197,20 +197,20 @@ inline auto to_hex(T* data) -> std::string
     return to_hex(data, 1);
 }
 
-template <class T, size_t N>
+template <class T, std::size_t N>
 inline auto to_hex(const T (&data)[N]) -> std::string
 {
     return to_hex(data, N);
 }
 
 template <class T>
-inline auto to_hex(const T* data, size_t n) -> std::string
+inline auto to_hex(const T* data, std::size_t n) -> std::string
 {
     auto result = std::stringstream{};
     auto data_as_byte = reinterpret_cast<const unsigned char*>(data);
-    size_t total_bytes = n * sizeof(T);
+    std::size_t total_bytes = n * sizeof(T);
 
-    for (size_t i = 0; i < total_bytes; ++i) {
+    for (std::size_t i = 0; i < total_bytes; ++i) {
         unsigned char byte = data_as_byte[i];
         result << std::hex << std::setw(2) << std::setfill('0')
                << static_cast<int>(byte) << ' ';

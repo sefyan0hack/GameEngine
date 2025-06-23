@@ -126,7 +126,7 @@ private:
 
         constexpr int32_t Grids = 200;
         [[maybe_unused]] std::vector<glm::vec3> positions(Grids * Grids * 4);
-        size_t index = 0;
+        std::size_t index = 0;
         for(int32_t i = -Grids; i < Grids; i ++){
             for(int32_t j = -Grids; j < Grids; j ++)
                 positions[index++] = {i, 0, j};

@@ -37,7 +37,7 @@ private:
     std::shared_ptr<Mesh> m_Mesh;
     std::vector<glm::vec3> m_InstancePos;
     std::string m_Name;
-    inline static size_t Count = 1;
+    inline static std::size_t Count = 1;
 
     FOR_TEST
 };

@@ -1,6 +1,7 @@
 #include <core/OpenGL.hpp>
 #include <core/Log.hpp>
 #include <core/OpenGL.hpp>
+#include <core/Buffer.hpp>
 #include <core/Shader.hpp>
 
 
@@ -95,10 +96,9 @@ auto Shader::LoadSource(const std::vector<GLchar>& src, GLuint shader) -> void
     gl::ShaderSource(shader, 1, &ShaderSource, &size);
 }
 
-auto Shader::LoadFile(const char* filename) -> std::vector<GLchar>
+auto Shader::PreProcess() -> std::string
 {
-    auto buffer = std::stringstream{};
-    auto result = std::vector<GLchar>{};
+    auto result = std::string();
     GLint m_Major{}, m_Minor{};
 
     gl::GetIntegerv(GL_MAJOR_VERSION, &m_Major);
@@ -106,24 +106,31 @@ auto Shader::LoadFile(const char* filename) -> std::vector<GLchar>
 
     auto glsl_verion = std::format("{}{}0", m_Major, m_Minor);
 
-    buffer << std::format("#version {} {}\n", glsl_verion, sys::Target == sys::Target::Web ? "es" : "core");
-    buffer << std::format("precision {} float;\n", sys::Target == sys::Target::Web ? "mediump" : "highp");
+    result += std::format("#version {} {}\n", glsl_verion, sys::Target == sys::Target::Web ? "es" : "core");
+    result += std::format("precision {} float;\n", sys::Target == sys::Target::Web ? "mediump" : "highp");
+    return result;
+}
 
-    //todo : size increment insted of buff.str()
-    auto op = file_to_str(filename);
-    if(op)
-    {
-        buffer << op.value();
-
-        auto str = buffer.str();
-        result.resize(str.size());
-        memcpy(result.data(), str.data(), str.size());
-
-        Info("Loding {} : {} bytes ", filename, str.size());
-    }else{
-        Error("Couldnt open file {} : {}", filename, std::strerror(errno));
+auto Shader::LoadFile(const char* filename) -> std::vector<GLchar>
+{
+    auto fileContent = file_to_str(filename);
+    if (!fileContent) {
+        Error("Couldn't open file {}: {}", filename, std::strerror(errno));
     }
 
+    std::string preprocessed = PreProcess();
+    
+    size_t totalSize = preprocessed.size() + fileContent->size();
+    
+    std::vector<GLchar> result;
+    result.reserve(totalSize + 1);
+
+    result.insert(result.end(), preprocessed.begin(), preprocessed.end());
+    result.insert(result.end(), fileContent->begin(), fileContent->end());
+    
+    result.push_back('\0');
+
+    Info("Loaded {}: ({} bytes)", filename, totalSize);
     return result;
 }
 
@@ -143,7 +150,7 @@ auto Shader::checkShaderCompileStatus(const Shader &shader) -> void
         if(infologlength > 0){
             std::string infoLog(infologlength, '\0');
 
-            gl::GetShaderInfoLog(id, infologlength, NULL, infoLog.data());
+            gl::GetShaderInfoLog(id, infologlength, nullptr, infoLog.data());
             gl::DeleteShader(id);
             Error("[{}] {} \n", shader.File(), infoLog);
         }

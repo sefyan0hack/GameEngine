@@ -23,8 +23,8 @@ public:
 
     auto Load(const char* path) -> bool;
     auto ReLoad(const char* path) -> bool;
-    auto Load(IMGType type, size_t Width, size_t Height, size_t Channels, std::byte* data) -> bool;
-    auto ReLoad(IMGType type, size_t Width, size_t Height, size_t Channels, std::byte* data) -> bool;
+    auto Load(IMGType type, std::size_t Width, std::size_t Height, std::size_t Channels, std::byte* data) -> bool;
+    auto ReLoad(IMGType type, std::size_t Width, std::size_t Height, std::size_t Channels, std::byte* data) -> bool;
 
     auto format() const -> GLenum;
     auto internalformat() const -> GLint;
@@ -32,13 +32,13 @@ public:
     auto Path() const -> std::string;
     auto Type() const -> IMGType;
     auto Data() const -> const std::byte&;
-    auto Width() const -> size_t;
-    auto Height() const -> size_t;
-    auto Channels() const -> size_t;
+    auto Width() const -> std::size_t;
+    auto Height() const -> std::size_t;
+    auto Channels() const -> std::size_t;
 
 private:
     std::string m_Path;
     IMGType m_Type;
     std::byte* m_Data;
-    size_t m_Width, m_Height, m_Channels;
+    std::size_t m_Width, m_Height, m_Channels;
 };

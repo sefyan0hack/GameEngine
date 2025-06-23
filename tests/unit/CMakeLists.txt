@@ -22,5 +22,5 @@ target_link_libraries(unit_tests PRIVATE GTest::gtest GTest::gtest_main glm::glm
 include(GoogleTest)
 
 if(NOT EMSCRIPTEN)
-gtest_discover_tests(unit_tests)
+gtest_discover_tests(unit_tests PROPERTIES RUN_SERIAL TRUE)
 endif()

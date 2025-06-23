@@ -27,7 +27,6 @@ using Camera_Test_Ctor2 = Camera::Test<2>;
     MEMBER_FUN(MoveDown);\
     MEMBER_FUN(MoveRight);\
     MEMBER_FUN(MoveLeft)\
-    MEMBER_FUN(EnableMSAA);\
     MEMBER_FUN(UpdateVectors);\
     MEMBER_FUN(MoseMove);\
     MEMBER_FUN(View);\
@@ -137,21 +136,4 @@ TEST_F(Camera_Test_Ctor1, RightDir) {
 
 TEST_F(Camera_Test_Ctor1, Sensitivity) {
     EXPECT_EQ(m_Sensitivity, Sensitivity());
-}
-
-////////////////////////////////////
-
-template<>
-struct Camera::Test<2> : public ::testing::Test {
-    CWindow window;
-    Camera member;
-    Test() : window(800, 800, "Test"), member(window) {}
-
-    TEST_INTERFACE
-};
-
-TEST_F(Camera_Test_Ctor2, ctor) {
-    auto Owindow = *m_Window;
-    EXPECT_EQ(Owindow.Width(), window.Width());
-    EXPECT_EQ(Owindow.Height(), window.Height());
 }

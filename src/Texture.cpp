@@ -6,20 +6,20 @@
 #include <stb_image.h>
 
 namespace {
-    template <typename T, size_t Width, size_t Height>
+    template <typename T, std::size_t Width, std::size_t Height>
     constexpr auto generate_checkerboard(const uint32_t color1, const uint32_t color2) {
-        constexpr size_t color_width = sizeof(color1);
+        constexpr std::size_t color_width = sizeof(color1);
 
         std::array<T, Width * Height * color_width> data{};
         
-        for (size_t y = 0; y < Height; ++y) {
-            for (size_t x = 0; x < Width; ++x) {
+        for (std::size_t y = 0; y < Height; ++y) {
+            for (std::size_t x = 0; x < Width; ++x) {
                 const bool is_color1 = ( (x/5 + y/5) % 2) == 0;
                 const uint32_t color = is_color1 ? color1 : color2;
                 
-                const size_t base_index = (y * Width + x) * color_width;
+                const std::size_t base_index = (y * Width + x) * color_width;
                 
-                for(size_t i = 0; i < color_width; i++){
+                for(std::size_t i = 0; i < color_width; i++){
                     data[base_index + i] = static_cast<T>((color >> (8 * i)));
                 }
             }
@@ -253,7 +253,7 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
     // }
     
 
-    for (size_t i = 0; i < faces.size(); ++i) {
+    for (std::size_t i = 0; i < faces.size(); ++i) {
         const auto& face = faces[i];
 
         if (auto result = load_img(face.c_str(), false); result) {

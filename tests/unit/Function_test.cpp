@@ -3,7 +3,7 @@
 
 using namespace std;
 
-using SubType = size_t (APIENTRY * )(int32_t, int32_t);
+using SubType = std::size_t (APIENTRY * )(int32_t, int32_t);
 
 using Function_Test_Ctor1 = Function<SubType>::Test<1>;
 
@@ -36,7 +36,7 @@ struct Function<SubType>::Test<1> : public ::testing::Test {
     Function<SubType> member;
 
     Test(){
-        member.m_Func = []( int32_t a, int32_t b ) -> size_t { return a+b; };
+        member.m_Func = []( int32_t a, int32_t b ) -> std::size_t { return a+b; };
         member.m_Befor = nullptr;
         member.m_After = nullptr;
         member.m_Name = "add";
@@ -61,7 +61,7 @@ TEST_F(Function_Test_Ctor1, ctor) {
     auto expectargvalues = std::tuple<int32_t, int32_t>(arg1, arg2);
     EXPECT_EQ(m_ArgsValues,  expectargvalues);
 
-    EXPECT_EQ(m_ReturnType, ::type_name<size_t>());
+    EXPECT_EQ(m_ReturnType, ::type_name<std::size_t>());
 
     auto expargstypes = std::array{::type_name<int32_t>(), ::type_name<int32_t>()};
     EXPECT_EQ(m_ArgsTypes, expargstypes);
@@ -84,7 +84,7 @@ TEST_F(Function_Test_Ctor1, ArgsXXX) {
 
 TEST_F(Function_Test_Ctor1, ReturnType) {
     auto got = ReturnType();
-    auto expct = ::type_name<size_t>();
+    auto expct = ::type_name<std::size_t>();
     EXPECT_EQ(got, expct);
 }
 
@@ -92,7 +92,7 @@ TEST_F(Function_Test_Ctor1, this_func_sig) {
     auto got = this_func_sig();
     auto expct = std::format(
         "{} {}({} arg_1 = 0, {} arg_2 = 0)",
-        ::type_name<size_t>(),
+        ::type_name<std::size_t>(),
         m_Name,
         ::type_name<int32_t>(),
         ::type_name<int32_t>()

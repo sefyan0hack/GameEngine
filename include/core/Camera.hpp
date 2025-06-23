@@ -25,7 +25,6 @@ public:
     auto MoveDown(float speed)            -> void ;
     auto MoveRight(float speed)           -> void ;
     auto MoveLeft(float speed)            -> void ;
-    auto EnableMSAA()                     -> void ;
     auto UpdateVectors()                  -> void ;
     auto MoseMove(bool islocked = true)   -> void ;
     auto View() const                       -> glm::mat4 ;

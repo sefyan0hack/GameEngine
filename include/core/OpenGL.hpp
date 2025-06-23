@@ -44,7 +44,8 @@ class OpenGL
         static auto Renderer() -> std::string;
         static auto Extensions() -> std::vector<std::string>;
         static auto MaxTextureUnits() -> GLint;
-
+        
+        static auto DummyCtx() -> GLCTX;
     private:
         #if defined(WINDOWS_PLT)
         auto init_opengl_win32()  -> void ;

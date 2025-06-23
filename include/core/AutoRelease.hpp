@@ -6,11 +6,11 @@ class AutoRelease {
 private:
     T resource{};
     std::function<void(T)> deleter;
-    std::shared_ptr<std::atomic<size_t>> ref_count;
+    std::shared_ptr<std::atomic<std::size_t>> ref_count;
 
 public:
     AutoRelease(T res, std::function<void(T)> del) noexcept
-        : resource(res), deleter(std::move(del)), ref_count(std::make_shared<std::atomic<size_t>>(1)) {}
+        : resource(res), deleter(std::move(del)), ref_count(std::make_shared<std::atomic<std::size_t>>(1)) {}
 
     AutoRelease(AutoRelease&& other) noexcept
         : resource(other.resource), deleter(std::move(other.deleter)), ref_count(std::move(other.ref_count)) {
@@ -80,7 +80,7 @@ public:
         return resource;
     }
 
-    size_t use_count() const noexcept {
+    std::size_t use_count() const noexcept {
         return *ref_count;
     }
     FOR_TEST

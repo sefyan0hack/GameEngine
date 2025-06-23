@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <core/fmts.hpp>
 #include <core/Transform.hpp>
+#include <core/OpenGL.hpp>
 #include <core/Camera.hpp>
 #include <core/Mesh.hpp>
 #include <core/Shader.hpp>
@@ -89,19 +90,24 @@ TEST(Formatters, Camera){
 #if !defined(WEB_PLT)
 
 TEST(Formatters, Shader){
+    [[maybe_unused]] auto ctx = gl::OpenGL::DummyCtx();
+
     IF_THROWS_IGNOR({
         auto shader = Shader(SHADER(skybox)".vert", GL_VERTEX_SHADER);
 
         auto r = std::format("{}", shader);
         auto e = format(
-            R"({{ "id": {}, "type": "{}" }})",
-            shader.id(), shader.TypeName()
+            R"({{ "id": {}, "type": "{}", "file": "{}" }})",
+            shader.id(), shader.TypeName(), shader.File()
         );
         EXPECT_EQ(r, e);
     });
 }
 
 TEST(Formatters, Mesh){
+    // [[maybe_unused]] auto ctx = gl::OpenGL::DummyCtx();
+    // EXPECT_NE(ctx, decltype(ctx){});
+
     auto mesh = Mesh(std::vector<Vertex>());
         
     auto r = std::format("{}", mesh);
@@ -113,6 +119,9 @@ TEST(Formatters, Mesh){
 }
 
 TEST(Formatters, Material){
+    // [[maybe_unused]] auto ctx = gl::OpenGL::DummyCtx();
+    // EXPECT_NE(ctx, decltype(ctx){});
+
     IF_THROWS_IGNOR({
         auto shader_vert = Shader(SHADER(skybox)".vert", GL_VERTEX_SHADER);
         auto shader_frag = Shader(SHADER(skybox)".frag", GL_FRAGMENT_SHADER);
@@ -129,6 +138,9 @@ TEST(Formatters, Material){
 }
 
 TEST(Formatters, GameObject){
+    // [[maybe_unused]] auto ctx = gl::OpenGL::DummyCtx();
+    // EXPECT_NE(ctx, decltype(ctx){});
+
     IF_THROWS_IGNOR({
         auto shader_vert = Shader(SHADER(skybox)".vert", GL_VERTEX_SHADER);
         auto shader_frag = Shader(SHADER(skybox)".frag", GL_FRAGMENT_SHADER);
