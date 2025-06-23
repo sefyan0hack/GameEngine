@@ -105,8 +105,8 @@ TEST(Formatters, Shader){
 }
 
 TEST(Formatters, Mesh){
-    // [[maybe_unused]] auto ctx = gl::OpenGL::DummyCtx();
-    // EXPECT_NE(ctx, decltype(ctx){});
+    [[maybe_unused]] auto ctx = gl::OpenGL::DummyCtx();
+    EXPECT_NE(ctx, decltype(ctx){});
 
     auto mesh = Mesh(std::vector<Vertex>());
         
@@ -119,8 +119,8 @@ TEST(Formatters, Mesh){
 }
 
 TEST(Formatters, Material){
-    // [[maybe_unused]] auto ctx = gl::OpenGL::DummyCtx();
-    // EXPECT_NE(ctx, decltype(ctx){});
+    [[maybe_unused]] auto ctx = gl::OpenGL::DummyCtx();
+    EXPECT_NE(ctx, decltype(ctx){});
 
     IF_THROWS_IGNOR({
         auto shader_vert = Shader(SHADER(skybox)".vert", GL_VERTEX_SHADER);
@@ -138,8 +138,8 @@ TEST(Formatters, Material){
 }
 
 TEST(Formatters, GameObject){
-    // [[maybe_unused]] auto ctx = gl::OpenGL::DummyCtx();
-    // EXPECT_NE(ctx, decltype(ctx){});
+    [[maybe_unused]] auto ctx = gl::OpenGL::DummyCtx();
+    EXPECT_NE(ctx, decltype(ctx){});
 
     IF_THROWS_IGNOR({
         auto shader_vert = Shader(SHADER(skybox)".vert", GL_VERTEX_SHADER);
