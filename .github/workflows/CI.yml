@@ -45,26 +45,12 @@ jobs:
           vcpkg: false
           cppcheck: false
 
-      # Install Mesa3D for Windows environments
-      - name: Install Mesa3D (Windows)
-        if: contains(matrix.os, 'windows')
-        run: |
-          curl -L -o mesa.zip https://github.com/pal1000/mesa-dist-win/releases/download/25.1.3/mesa3d-25.1.3-release-msvc.7z
-          7z x mesa.zip -o$RUNNER_TEMP/mesa
-          echo "$RUNNER_TEMP/mesa/bin" >> $GITHUB_PATH
-          echo "OPENGL_DRIVER_PATH=$RUNNER_TEMP/mesa" >> $GITHUB_ENV
-          echo "GALLIUM_DRIVER=llvmpipe" >> $GITHUB_ENV
-          echo "MESA_GL_VERSION_OVERRIDE=4.5" >> $GITHUB_ENV
-          echo "MESA_GLSL_VERSION_OVERRIDE=450" >> $GITHUB_ENV
-          echo "LIBGL_ALWAYS_SOFTWARE=1" >> $GITHUB_ENV
-
-
       - name: Install Dependencies
         shell: bash
         run: |
           if [[ "${{ matrix.os }}" == *ubuntu* ]]; then
             sudo apt-get update
-            sudo apt-get install -y libosmesa6-dev libgl1-mesa-dev libxi-dev mesa-common-dev xvfb
+            sudo apt-get install -y libgl1-mesa-dev libxi-dev mesa-common-dev
           fi
 
       - name: Configure CMake
@@ -82,12 +68,6 @@ jobs:
           path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests${{ env.APP_EXT }}
           retention-days: 1
           overwrite: true
-
-      - name: Start Xvfb (virtual display)
-        if: contains(matrix.os, 'ubuntu')
-        run: |
-          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-          echo "DISPLAY=:99" >> $GITHUB_ENV
 
       - name: Test
         shell: bash
