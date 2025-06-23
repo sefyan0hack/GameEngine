@@ -91,16 +91,16 @@ class OpenGL
             ERROR_INVALID_VERSION_ARB        = 0x2095,
             ERROR_INVALID_PROFILE_ARB        = 0x2096,
             #elif defined(LINUX_PLT)
-            GLX_NONE        			    = 0x8000,
-            GLX_DRAWABLE_TYPE               = 0x8010,
-            GLX_RENDER_TYPE                 = 0x8011,
-            GLX_X_RENDERABLE                = 0x8012,
-            GLX_DOUBLEBUFFER                = 5,
-            GLX_RED_SIZE		            = 8,
-            GLX_GREEN_SIZE		            = 9,
-            GLX_BLUE_SIZE		            = 10,
-            GLX_ALPHA_SIZE		            = 11,
-            GLX_DEPTH_SIZE		            = 12,
+            // GLX_NONE        			    = 0x8000,
+            // GLX_DRAWABLE_TYPE               = 0x8010,
+            // GLX_RENDER_TYPE                 = 0x8011,
+            // GLX_X_RENDERABLE                = 0x8012,
+            // GLX_DOUBLEBUFFER                = 5,
+            // GLX_RED_SIZE		            = 8,
+            // GLX_GREEN_SIZE		            = 9,
+            // GLX_BLUE_SIZE		            = 10,
+            // GLX_ALPHA_SIZE		            = 11,
+            // GLX_DEPTH_SIZE		            = 12,
             #endif 
         };
     public:
