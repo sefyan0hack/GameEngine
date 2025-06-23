@@ -8,17 +8,20 @@ namespace gl {
 
 auto OpenGL::init_opengl_win32() -> void
 {
-    PIXELFORMATDESCRIPTOR pfd {};
-    pfd.nSize = sizeof(pfd);
-    pfd.nVersion = 1;
-    pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-    pfd.iPixelType = PFD_TYPE_RGBA;
-    pfd.cColorBits = ChannelBits + ChannelBits + ChannelBits;//rgb
-    pfd.cAlphaBits = AlphaBits; //a
-    pfd.cDepthBits = DepthBufferBits;
-    pfd.cStencilBits = StencilBufferBits;
-    pfd.iLayerType = PFD_MAIN_PLANE;
-
+    PIXELFORMATDESCRIPTOR pfd = {
+        sizeof(PIXELFORMATDESCRIPTOR),
+        1,
+        PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
+        PFD_TYPE_RGBA,
+        static_cast<BYTE>(ChannelBits * 3),  // RGB bits
+        static_cast<BYTE>(AlphaBits),         // Alpha bits
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        static_cast<BYTE>(DepthBufferBits),   // Depth buffer
+        static_cast<BYTE>(StencilBufferBits), // Stencil buffer
+        0,
+        PFD_MAIN_PLANE,
+        0, 0, 0
+    };
     auto pixel_format = ChoosePixelFormat(m_DrawContext, &pfd);
     if (!pixel_format) {
         Error("Failed to find a suitable pixel format. : {}", GetLastError());
@@ -180,7 +183,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     }
     #endif
 
-    glGetError = reinterpret_cast<PFNGLGETERRORPROC>(gl::GetProcAddress("glGetError"));
+    // glGetError = reinterpret_cast<PFNGLGETERRORPROC>(gl::GetProcAddress("glGetError"));
 
     #ifdef DEBUG
     #   define RESOLVEGL(type, name)\
@@ -539,7 +542,7 @@ auto gl::OpenGL::DummyCtx() -> GLCTX
     }
     #endif
 
-    glGetError = reinterpret_cast<PFNGLGETERRORPROC>(gl::GetProcAddress("glGetError"));
+    // glGetError = reinterpret_cast<PFNGLGETERRORPROC>(gl::GetProcAddress("glGetError"));
 
     #ifdef DEBUG
     #   define RESOLVEGL(type, name)\

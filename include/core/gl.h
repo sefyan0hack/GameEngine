@@ -11,6 +11,8 @@
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>
+#include <GL/gl.h>
+
 using WindHandl = HWND;
 using HDC_D     = HDC;
 using GLCTX     = HGLRC;
@@ -22,33 +24,35 @@ using GLCTX     = HGLRC;
 #elif defined(LINUX_PLT)
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <GL/gl.h>
+#include <GL/glx.h>
 
 struct __GLXcontextRec;
 using WindHandl = Window;
 using HDC_D     = Display*;
 using GLCTX     = __GLXcontextRec*;
 
-typedef XID GLXPixmap;
-typedef XID GLXDrawable;
-/* GLX 1.3 and later */
-typedef struct __GLXFBConfigRec *GLXFBConfig;
-typedef XID GLXFBConfigID;
-typedef XID GLXContextID;
-typedef XID GLXWindow;
-typedef XID GLXPbuffer;
-extern "C" {
-    extern GLCTX glXCreateContext( HDC_D dpy, XVisualInfo *vis, GLCTX shareList, Bool direct );
-    extern Bool  glXMakeCurrent( HDC_D dpy, GLXDrawable drawable, GLCTX ctx);
-    extern void  glXDestroyContext( HDC_D dpy, GLCTX ctx );
-    extern void* glXGetProcAddress(const GLubyte * procName);
-    extern GLXFBConfig *glXChooseFBConfig( HDC_D dpy, int screen, const int *attribList, int *nitems );
-    extern XVisualInfo *glXGetVisualFromFBConfig( HDC_D dpy, GLXFBConfig config );
-    extern void glXSwapBuffers(	HDC_D dpy, GLXDrawable drawable);
-    extern const char * glXQueryExtensionsString(HDC_D dpy, int screen);
-    extern void glXCopyContext( HDC_D dpy, GLCTX src, GLCTX dst, unsigned long mask);
-    extern int glXGetFBConfigAttrib( HDC_D dpy, GLXFBConfig config, int attribute, int * value);
-    extern GLXFBConfig * glXGetFBConfigs( HDC_D dpy, int screen, int * nelements);
-}
+// typedef XID GLXPixmap;
+// typedef XID GLXDrawable;
+// /* GLX 1.3 and later */
+// typedef struct __GLXFBConfigRec *GLXFBConfig;
+// typedef XID GLXFBConfigID;
+// typedef XID GLXContextID;
+// typedef XID GLXWindow;
+// typedef XID GLXPbuffer;
+// extern "C" {
+//     extern GLCTX glXCreateContext( HDC_D dpy, XVisualInfo *vis, GLCTX shareList, Bool direct );
+//     extern Bool  glXMakeCurrent( HDC_D dpy, GLXDrawable drawable, GLCTX ctx);
+//     extern void  glXDestroyContext( HDC_D dpy, GLCTX ctx );
+//     extern void* glXGetProcAddress(const GLubyte * procName);
+//     extern GLXFBConfig *glXChooseFBConfig( HDC_D dpy, int screen, const int *attribList, int *nitems );
+//     extern XVisualInfo *glXGetVisualFromFBConfig( HDC_D dpy, GLXFBConfig config );
+//     extern void glXSwapBuffers(	HDC_D dpy, GLXDrawable drawable);
+//     extern const char * glXQueryExtensionsString(HDC_D dpy, int screen);
+//     extern void glXCopyContext( HDC_D dpy, GLCTX src, GLCTX dst, unsigned long mask);
+//     extern int glXGetFBConfigAttrib( HDC_D dpy, GLXFBConfig config, int attribute, int * value);
+//     extern GLXFBConfig * glXGetFBConfigs( HDC_D dpy, int screen, int * nelements);
+// }
 [[maybe_unused]] inline static auto glXCreateContextAttribsARB = (GLCTX(*)(HDC_D dpy, GLXFBConfig config, GLCTX share_context, Bool direct, const int *attrib_list))(nullptr);
 
 #elif defined(WEB_PLT)
@@ -56,6 +60,7 @@ extern "C" {
 #include <emscripten/html5.h>
 #include <emscripten/html5_webgl.h>
 #include <emscripten/key_codes.h>
+#include <GL/gl.h>
 
 using WindHandl = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
 using HDC_D     = const char*;
@@ -78,7 +83,7 @@ inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
     }
 }
 
-inline PFNGLGETERRORPROC glGetError = nullptr;
+// inline PFNGLGETERRORPROC glGetError = nullptr;
 
 #define GLFUNCS(X)\
 X(PFNGLCLEARCOLORPROC, ClearColor);\
