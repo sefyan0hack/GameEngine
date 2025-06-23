@@ -32,27 +32,6 @@ using WindHandl = Window;
 using HDC_D     = Display*;
 using GLCTX     = __GLXcontextRec*;
 
-// typedef XID GLXPixmap;
-// typedef XID GLXDrawable;
-// /* GLX 1.3 and later */
-// typedef struct __GLXFBConfigRec *GLXFBConfig;
-// typedef XID GLXFBConfigID;
-// typedef XID GLXContextID;
-// typedef XID GLXWindow;
-// typedef XID GLXPbuffer;
-// extern "C" {
-//     extern GLCTX glXCreateContext( HDC_D dpy, XVisualInfo *vis, GLCTX shareList, Bool direct );
-//     extern Bool  glXMakeCurrent( HDC_D dpy, GLXDrawable drawable, GLCTX ctx);
-//     extern void  glXDestroyContext( HDC_D dpy, GLCTX ctx );
-//     extern void* glXGetProcAddress(const GLubyte * procName);
-//     extern GLXFBConfig *glXChooseFBConfig( HDC_D dpy, int screen, const int *attribList, int *nitems );
-//     extern XVisualInfo *glXGetVisualFromFBConfig( HDC_D dpy, GLXFBConfig config );
-//     extern void glXSwapBuffers(	HDC_D dpy, GLXDrawable drawable);
-//     extern const char * glXQueryExtensionsString(HDC_D dpy, int screen);
-//     extern void glXCopyContext( HDC_D dpy, GLCTX src, GLCTX dst, unsigned long mask);
-//     extern int glXGetFBConfigAttrib( HDC_D dpy, GLXFBConfig config, int attribute, int * value);
-//     extern GLXFBConfig * glXGetFBConfigs( HDC_D dpy, int screen, int * nelements);
-// }
 [[maybe_unused]] inline static auto glXCreateContextAttribsARB = (GLCTX(*)(HDC_D dpy, GLXFBConfig config, GLCTX share_context, Bool direct, const int *attrib_list))(nullptr);
 
 #elif defined(WEB_PLT)
