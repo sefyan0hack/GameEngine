@@ -148,3 +148,4 @@ inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
     X(GetFloatv);\
     X(TexSubImage2D);\
     X(Uniform2fv);
+
