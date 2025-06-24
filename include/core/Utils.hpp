@@ -228,8 +228,6 @@ auto pointer_to_string(Pointer auto ptr) -> std::string
 
     if constexpr (std::is_function_v<Pointee>) {
         return ::type_name<Pointee>();
-    } else if constexpr (std::is_arithmetic_v<Pointee>) {
-        return std::to_string(*ptr);
     } else if constexpr (std::formattable<Pointee, char>) {
         return std::format("{}", *ptr);
     } else if constexpr (std::is_same_v<Pointee, void>) {

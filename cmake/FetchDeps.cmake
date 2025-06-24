@@ -19,11 +19,11 @@ add_library(stb_image INTERFACE)
 target_include_directories(stb_image SYSTEM INTERFACE ${STB_IMG_HEADER})
 
 CPMAddPackage(
-    NAME glcorearb
-    URL https://registry.khronos.org/OpenGL/api/GL/glcorearb.h
+    NAME glext
+    URL https://registry.khronos.org/OpenGL/api/GL/glext.h
     DOWNLOAD_ONLY YES
     DOWNLOAD_NO_EXTRACT TRUE
-    DOWNLOAD_NAME glcorearb.h
+    DOWNLOAD_NAME glext.h
 )
 
 CPMAddPackage(

@@ -1,17 +1,11 @@
 #pragma once
-#define GL_VERSION_4_0 0
-#define GL_VERSION_4_1 0
-#define GL_VERSION_4_2 0
-#define GL_VERSION_4_3 0
-#define GL_VERSION_4_4 0
-#define GL_VERSION_4_5 0
-#define GL_VERSION_4_6 0
-#include <glcorearb.h> // need repl  with glext.h
 #include <core/Function.hpp>
 
+#define GL_GLEXT_PROTOTYPES
 #if defined(WINDOWS_PLT)
 #include <windows.h>
 #include <GL/gl.h>
+#include <glext.h>
 
 using WindHandl = HWND;
 using HDC_D     = HDC;
@@ -26,6 +20,7 @@ using GLCTX     = HGLRC;
 #include <X11/Xutil.h>
 #include <GL/gl.h>
 #include <GL/glx.h>
+#include <glext.h>
 
 struct __GLXcontextRec;
 using WindHandl = Window;
@@ -40,6 +35,7 @@ using GLCTX     = __GLXcontextRec*;
 #include <emscripten/html5_webgl.h>
 #include <emscripten/key_codes.h>
 #include <GL/gl.h>
+#include "glext.h"
 
 using WindHandl = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
 using HDC_D     = const char*;
@@ -62,98 +58,93 @@ inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
     }
 }
 
-// inline PFNGLGETERRORPROC glGetError = nullptr;
-
 #define GLFUNCS(X)\
-X(PFNGLCLEARCOLORPROC, ClearColor);\
-X(PFNGLVIEWPORTPROC, Viewport);\
-X(PFNGLGENVERTEXARRAYSPROC, GenVertexArrays);\
-X(PFNGLGENBUFFERSPROC, GenBuffers);\
-X(PFNGLBINDVERTEXARRAYPROC, BindVertexArray);\
-X(PFNGLBINDBUFFERPROC, BindBuffer);\
-X(PFNGLBUFFERDATAPROC, BufferData);\
-X(PFNGLENABLEVERTEXATTRIBARRAYPROC, EnableVertexAttribArray);\
-X(PFNGLVERTEXATTRIBPOINTERPROC, VertexAttribPointer);\
-X(PFNGLCREATESHADERPROC, CreateShader);\
-X(PFNGLDELETESHADERPROC, DeleteShader);\
-X(PFNGLSHADERSOURCEPROC, ShaderSource);\
-X(PFNGLCOMPILESHADERPROC, CompileShader);\
-X(PFNGLGETSHADERIVPROC, GetShaderiv);\
-X(PFNGLGETSHADERINFOLOGPROC, GetShaderInfoLog);\
-X(PFNGLDRAWARRAYSINSTANCEDPROC, DrawArraysInstanced);\
-X(PFNGLDRAWARRAYSPROC, DrawArrays);\
-X(PFNGLENABLEPROC, Enable);\
-X(PFNGLGETINTEGERVPROC, GetIntegerv);\
-X(PFNGLGETSTRINGPROC, GetString);\
-X(PFNGLCLEARPROC, Clear);\
-X(PFNGLVERTEXATTRIBDIVISORPROC, VertexAttribDivisor);\
-X(PFNGLGENTEXTURESPROC, GenTextures);\
-X(PFNGLTEXPARAMETERIPROC, TexParameteri);\
-X(PFNGLPIXELSTOREIPROC, PixelStorei);\
-X(PFNGLTEXIMAGE2DPROC, TexImage2D);\
-X(PFNGLACTIVETEXTUREPROC, ActiveTexture);\
-X(PFNGLBINDTEXTUREPROC, BindTexture);\
-X(PFNGLGENERATEMIPMAPPROC, GenerateMipmap);\
-X(PFNGLCREATEPROGRAMPROC, CreateProgram);\
-X(PFNGLATTACHSHADERPROC, AttachShader);\
-X(PFNGLUSEPROGRAMPROC, UseProgram);\
-X(PFNGLDELETEPROGRAMPROC, DeleteProgram);\
-X(PFNGLLINKPROGRAMPROC, LinkProgram);\
-X(PFNGLGETUNIFORMLOCATIONPROC, GetUniformLocation);\
-X(PFNGLGETPROGRAMIVPROC, GetProgramiv);\
-X(PFNGLGETPROGRAMINFOLOGPROC, GetProgramInfoLog);\
-X(PFNGLGETACTIVEUNIFORMPROC, GetActiveUniform);\
-X(PFNGLUNIFORM1IPROC, Uniform1i);\
-X(PFNGLUNIFORM2IPROC, Uniform2i);\
-X(PFNGLUNIFORM3IPROC, Uniform3i);\
-X(PFNGLUNIFORM4IPROC, Uniform4i);\
-X(PFNGLUNIFORM1UIPROC, Uniform1ui);\
-X(PFNGLUNIFORM2UIPROC, Uniform2ui);\
-X(PFNGLUNIFORM3UIPROC, Uniform3ui);\
-X(PFNGLUNIFORM4UIPROC, Uniform4ui);\
-X(PFNGLUNIFORM1FPROC, Uniform1f);\
-X(PFNGLUNIFORM2FPROC, Uniform2f);\
-X(PFNGLUNIFORM3FPROC, Uniform3f);\
-X(PFNGLUNIFORM4FPROC, Uniform4f);\
-X(PFNGLUNIFORMMATRIX2FVPROC, UniformMatrix2fv);\
-X(PFNGLUNIFORMMATRIX3FVPROC, UniformMatrix3fv);\
-X(PFNGLUNIFORMMATRIX4FVPROC, UniformMatrix4fv);\
-X(PFNGLGETSTRINGIPROC, GetStringi);\
-X(PFNGLDRAWELEMENTSINSTANCEDPROC, DrawElementsInstanced);\
-X(PFNGLDRAWELEMENTSPROC, DrawElements);\
-X(PFNGLSTENCILFUNCPROC, StencilFunc);\
-X(PFNGLSTENCILOPPROC, StencilOp);\
-X(PFNGLSTENCILMASKPROC, StencilMask);\
-X(PFNGLDEPTHMASKPROC, DepthMask);\
-X(PFNGLDEPTHFUNCPROC, DepthFunc);\
-X(PFNGLDISABLEVERTEXATTRIBARRAYPROC, DisableVertexAttribArray);\
-X(PFNGLGETATTRIBLOCATIONPROC, GetAttribLocation);\
-X(PFNGLGETACTIVEATTRIBPROC, GetActiveAttrib);\
-X(PFNGLGETATTACHEDSHADERSPROC, GetAttachedShaders);\
-X(PFNGLBLENDEQUATIONPROC, BlendEquation);\
-X(PFNGLBLENDFUNCPROC, BlendFunc);\
-X(PFNGLCULLFACEPROC, CullFace);\
-X(PFNGLUNIFORM3FVPROC, Uniform3fv);\
-X(PFNGLDELETETEXTURESPROC, DeleteTextures);\
-X(PFNGLDELETEVERTEXARRAYSPROC, DeleteVertexArrays);\
-X(PFNGLDELETEBUFFERSPROC, DeleteBuffers);\
-X(PFNGLGETVERTEXATTRIBIVPROC, GetVertexAttribiv);\
-X(PFNGLGETVERTEXATTRIBPOINTERVPROC, GetVertexAttribPointerv);\
-X(PFNGLGETBUFFERPARAMETERIVPROC, GetBufferParameteriv);\
-X(PFNGLCOPYBUFFERSUBDATAPROC, CopyBufferSubData);\
-X(PFNGLISPROGRAMPROC, IsProgram);\
-X(PFNGLISBUFFERPROC, IsBuffer);\
-X(PFNGLISVERTEXARRAYPROC, IsVertexArray);\
-X(PFNGLISTEXTUREPROC, IsTexture);\
-X(PFNGLISSHADERPROC, IsShader);\
-X(PFNGLFRONTFACEPROC, FrontFace);\
-X(PFNGLDISABLEPROC, Disable);\
-X(PFNGLVALIDATEPROGRAMPROC, ValidateProgram);\
-X(PFNGLDETACHSHADERPROC, DetachShader);\
-X(PFNGLISENABLEDPROC, IsEnabled);\
-X(PFNGLGETFLOATVPROC, GetFloatv);\
-X(PFNGLTEXSUBIMAGE2DPROC, TexSubImage2D);\
-X(PFNGLUNIFORM2FVPROC, Uniform2fv);
-
-// X(PFNGLDEBUGMESSAGECALLBACKPROC, DebugMessageCallback);
-// X(PFNGLDEBUGMESSAGECONTROLPROC, DebugMessageControl);
+    X(ClearColor);\
+    X(Viewport);\
+    X(GenVertexArrays);\
+    X(GenBuffers);\
+    X(BindVertexArray);\
+    X(BindBuffer);\
+    X(BufferData);\
+    X(EnableVertexAttribArray);\
+    X(VertexAttribPointer);\
+    X(CreateShader);\
+    X(DeleteShader);\
+    X(ShaderSource);\
+    X(CompileShader);\
+    X(GetShaderiv);\
+    X(GetShaderInfoLog);\
+    X(DrawArraysInstanced);\
+    X(DrawArrays);\
+    X(Enable);\
+    X(GetIntegerv);\
+    X(GetString);\
+    X(Clear);\
+    X(VertexAttribDivisor);\
+    X(GenTextures);\
+    X(TexParameteri);\
+    X(PixelStorei);\
+    X(TexImage2D);\
+    X(ActiveTexture);\
+    X(BindTexture);\
+    X(GenerateMipmap);\
+    X(CreateProgram);\
+    X(AttachShader);\
+    X(UseProgram);\
+    X(DeleteProgram);\
+    X(LinkProgram);\
+    X(GetUniformLocation);\
+    X(GetProgramiv);\
+    X(GetProgramInfoLog);\
+    X(GetActiveUniform);\
+    X(Uniform1i);\
+    X(Uniform2i);\
+    X(Uniform3i);\
+    X(Uniform4i);\
+    X(Uniform1ui);\
+    X(Uniform2ui);\
+    X(Uniform3ui);\
+    X(Uniform4ui);\
+    X(Uniform1f);\
+    X(Uniform2f);\
+    X(Uniform3f);\
+    X(Uniform4f);\
+    X(UniformMatrix2fv);\
+    X(UniformMatrix3fv);\
+    X(UniformMatrix4fv);\
+    X(GetStringi);\
+    X(DrawElementsInstanced);\
+    X(DrawElements);\
+    X(StencilFunc);\
+    X(StencilOp);\
+    X(StencilMask);\
+    X(DepthMask);\
+    X(DepthFunc);\
+    X(DisableVertexAttribArray);\
+    X(GetAttribLocation);\
+    X(GetActiveAttrib);\
+    X(GetAttachedShaders);\
+    X(BlendEquation);\
+    X(BlendFunc);\
+    X(CullFace);\
+    X(Uniform3fv);\
+    X(DeleteTextures);\
+    X(DeleteVertexArrays);\
+    X(DeleteBuffers);\
+    X(GetVertexAttribiv);\
+    X(GetVertexAttribPointerv);\
+    X(GetBufferParameteriv);\
+    X(CopyBufferSubData);\
+    X(IsProgram);\
+    X(IsBuffer);\
+    X(IsVertexArray);\
+    X(IsTexture);\
+    X(IsShader);\
+    X(FrontFace);\
+    X(Disable);\
+    X(ValidateProgram);\
+    X(DetachShader);\
+    X(IsEnabled);\
+    X(GetFloatv);\
+    X(TexSubImage2D);\
+    X(Uniform2fv);

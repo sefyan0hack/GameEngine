@@ -183,17 +183,15 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     }
     #endif
 
-    // glGetError = reinterpret_cast<PFNGLGETERRORPROC>(gl::GetProcAddress("glGetError"));
-
     #ifdef DEBUG
-    #   define RESOLVEGL(type, name)\
-        OpenGL::name = Function<type>{};\
-        OpenGL::name.m_Func  = reinterpret_cast<type>(gl::GetProcAddress("gl"#name));\
+    #   define RESOLVEGL(name)\
+        OpenGL::name = Function<decltype(&gl##name)>{};\
+        OpenGL::name.m_Func  = reinterpret_cast<decltype(&gl##name)>(gl::GetProcAddress("gl"#name));\
         OpenGL::name.m_After = []([[maybe_unused]] std::string info) { GLenum err = glGetError(); if(err != GL_NO_ERROR) Info("[{}] {}", GL_ERR_to_string(err), info); };\
         OpenGL::name.m_Name  = "gl"#name
     #else
-    #   define RESOLVEGL(type, name)\
-        OpenGL::name = reinterpret_cast<type>(gl::GetProcAddress("gl"#name))
+    #   define RESOLVEGL(name)\
+        OpenGL::name = reinterpret_cast<decltype(&gl##name)>(gl::GetProcAddress("gl"#name))
     #endif
 
 	GLFUNCS(RESOLVEGL)
@@ -542,17 +540,15 @@ auto gl::OpenGL::DummyCtx() -> GLCTX
     }
     #endif
 
-    // glGetError = reinterpret_cast<PFNGLGETERRORPROC>(gl::GetProcAddress("glGetError"));
-
     #ifdef DEBUG
-    #   define RESOLVEGL(type, name)\
-        OpenGL::name = Function<type>{};\
-        OpenGL::name.m_Func  = reinterpret_cast<type>(gl::GetProcAddress("gl"#name));\
+    #   define RESOLVEGL(name)\
+        OpenGL::name = Function<decltype(&gl##name)>{};\
+        OpenGL::name.m_Func  = reinterpret_cast<decltype(&gl##name)>(gl::GetProcAddress("gl"#name));\
         OpenGL::name.m_After = []([[maybe_unused]] std::string info) { GLenum err = glGetError(); if(err != GL_NO_ERROR) Info("[{}] {}", GL_ERR_to_string(err), info); };\
         OpenGL::name.m_Name  = "gl"#name
     #else
-    #   define RESOLVEGL(type, name)\
-        OpenGL::name = reinterpret_cast<type>(gl::GetProcAddress("gl"#name))
+    #   define RESOLVEGL(name)\
+        OpenGL::name = reinterpret_cast<decltype(&gl##name)>(gl::GetProcAddress("gl"#name))
     #endif
 
 	GLFUNCS(RESOLVEGL)

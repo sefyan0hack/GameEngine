@@ -75,8 +75,6 @@ class OpenGL
             CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB = 0x00000002,
             CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB  = 0x8256,
             CONTEXT_PROFILE_MASK_ARB      = 0x9126,
-            // GL_ALL_ATTRIB_BITS               = 0x000fffff,
-
             #if defined(WINDOWS_PLT)
             WGL_DRAW_TO_WINDOW_ARB           = 0x2001,
             WGL_ACCELERATION_ARB             = 0x2003,
@@ -91,26 +89,16 @@ class OpenGL
             ERROR_INVALID_VERSION_ARB        = 0x2095,
             ERROR_INVALID_PROFILE_ARB        = 0x2096,
             #elif defined(LINUX_PLT)
-            // GLX_NONE        			    = 0x8000,
-            // GLX_DRAWABLE_TYPE               = 0x8010,
-            // GLX_RENDER_TYPE                 = 0x8011,
-            // GLX_X_RENDERABLE                = 0x8012,
-            // GLX_DOUBLEBUFFER                = 5,
-            // GLX_RED_SIZE		            = 8,
-            // GLX_GREEN_SIZE		            = 9,
-            // GLX_BLUE_SIZE		            = 10,
-            // GLX_ALPHA_SIZE		            = 11,
-            // GLX_DEPTH_SIZE		            = 12,
             #endif 
         };
     public:
         #undef GLFUN
         #ifdef DEBUG
-        #   define GLFUN(type, name)\
-            inline static Function<type> name
+        #   define GLFUN(name)\
+            inline static Function<decltype(&gl##name)> name
         #else
-        #   define GLFUN(type, name)\
-            inline static type name = Function<type>::default_
+        #   define GLFUN(name)\
+            inline static decltype(&gl##name) name = Function<decltype(&gl##name) >::default_
         #endif
         GLFUNCS(GLFUN)
 
@@ -119,11 +107,11 @@ class OpenGL
 
 #undef GLFUN
 #ifdef DEBUG
-#   define GLFUN(type, name)\
-inline Function<type>& name = OpenGL::name
+#   define GLFUN(name)\
+inline Function<decltype(&gl##name)>& name = OpenGL::name
 #else
-#   define GLFUN(type, name)\
-inline type& name = OpenGL::name
+#   define GLFUN(name)\
+inline decltype(&gl##name)& name = OpenGL::name
 #endif
 
 GLFUNCS(GLFUN)
