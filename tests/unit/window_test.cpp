@@ -32,7 +32,7 @@ using CWindow_Test_Ctor1 = CWindow::Test<1>;
 template<>
 struct CWindow::Test<1> : public ::testing::Test {
     CWindow member;
-    Test() : member(CWindow(100, 100, "Window")){}
+    Test() : member(CWindow(100, 100, "Window", false)){}
     TEST_INTERFACE
 };
 
@@ -47,6 +47,6 @@ TEST_F(CWindow_Test_Ctor1, ctor){
     EXPECT_NE(status, 0);
     #endif
     EXPECT_NE(m_DrawContext, nullptr);
-    EXPECT_EQ(m_OpenGl->isValid(), true);
+    EXPECT_EQ(m_OpenGl->isValid(), false);
     EXPECT_EQ(m_Visible, false);
 }
