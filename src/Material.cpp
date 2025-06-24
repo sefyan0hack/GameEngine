@@ -282,7 +282,7 @@ auto Material::GetProgramInfo(GLint id, GLenum what) -> std::optional<GLint>
     if(result != maxGLint){
         return result;
     }else{
-        Info("{}", glGetError());
+        Error("{}", glGetError());
         return std::nullopt;
     }
 }
