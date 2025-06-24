@@ -31,7 +31,7 @@ option(USAN             "enable Undefined Sanitizer" OFF)
 option(TSAN             "enable Thread Sanitizer"    OFF)
 option(EXCEPTIONS       "enable Exciptions"          OFF)
 
-if(MINGW) #desable RTTI becaus of bug in mingw redifinition when static link libstdc++
+if(MINGW) #disable RTTI becaus of bug in mingw redifinition when static link libstdc++
 option(RTTI             "enable RunTime Type Info"   OFF)
 else()
 option(RTTI             "enable RunTime Type Info"   ON)
@@ -234,10 +234,10 @@ endif()
 if(STATIC_LINK)
     if(MSVC)
         set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-    elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-        if(NOT WIN32)
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
             add_link_options(-static-libgcc -static-libstdc++)
-        endif()
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT WIN32)
+            add_link_options(-static-libgcc -static-libstdc++)
     endif()
 endif()
 
