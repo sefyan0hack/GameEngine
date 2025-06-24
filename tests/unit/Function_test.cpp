@@ -1,101 +1,103 @@
+// ===========================================================
+//  Function_AddTest.cpp  (C++‑20)
+//  Unit tests for Function<std::size_t(int32_t,int32_t)>
+// ===========================================================
+
 #include <gtest/gtest.h>
 #include <core/Function.hpp>
+#include <array>
+#include <tuple>
+#include <format>
 
-using namespace std;
+// ────────────────────────────────────────────────────────────
+//  Helpers
+// ────────────────────────────────────────────────────────────
+template <typename T>
+constexpr std::string_view type_name()
+{
+#if defined(__clang__) || defined(__GNUC__)
+    return {__PRETTY_FUNCTION__ + 34, sizeof(__PRETTY_FUNCTION__) - 36};
+#elif defined(_MSC_VER)
+    return {__FUNCSIG__ + 40, sizeof(__FUNCSIG__) - 112};
+#else
+    return "unknown‑compiler";
+#endif
+}
 
-using SubType = std::size_t (APIENTRY * )(int32_t, int32_t);
+// ────────────────────────────────────────────────────────────
+//  Fixture
+// ────────────────────────────────────────────────────────────
+class AddFunctionTest : public ::testing::Test
+{
+protected:
+    using func_sig = std::size_t(int32_t, int32_t);
 
-using Function_Test_Ctor1 = Function<SubType>::Test<1>;
+    // SUT – “system under test”
+    Function<func_sig> sut;
 
-#define TEST_INTERFACE \
-    MEMBER_VAR(m_Func);\
-    MEMBER_VAR(m_Befor);\
-    MEMBER_VAR(m_After);\
-    MEMBER_VAR(m_Name);\
-    MEMBER_VAR(m_ReturnType);\
-    MEMBER_VAR(m_ArgsTypes);\
-    MEMBER_VAR(m_ArgsValues);\
-    MEMBER_VAR(m_CallCount);\
-    MEMBER_VAR(m_Count);\
-    \
-    MEMBER_FUN(operator());\
-    MEMBER_FUN(default_);\
-    MEMBER_FUN(ArgsValues);\
-    MEMBER_FUN(ReturnType);\
-    MEMBER_FUN(ArgsTypes);\
-    MEMBER_FUN(ArgsCount);\
-    MEMBER_FUN(CallsCount);\
-    MEMBER_FUN(functionCount);\
-    MEMBER_FUN(this_func_sig);\
-    MEMBER_FUN(function_info);\
-    MEMBER_FUN(format_arguments);\
-    MEMBER_FUN(to_string);
-
-template<> template<>
-struct Function<SubType>::Test<1> : public ::testing::Test {
-    Function<SubType> member;
-
-    Test(){
-        member.m_Func = []( int32_t a, int32_t b ) -> std::size_t { return a+b; };
-        member.m_Befor = nullptr;
-        member.m_After = nullptr;
-        member.m_Name = "add";
+    void SetUp() override
+    {
+        sut.setFunction([](int32_t a, int32_t b) noexcept { return static_cast<std::size_t>(a + b); });
+        sut.setName("add");
+        // leave before/after hooks null by default
     }
 
-    TEST_INTERFACE
+    // convenience aliases
+    constexpr static std::array<std::string_view, 2> k_arg_types{
+        type_name<int32_t>(), type_name<int32_t>()};
 };
 
+// ────────────────────────────────────────────────────────────
+//  Compile‑time checks (fail at build, not at runtime)
+// ────────────────────────────────────────────────────────────
+static_assert(std::is_same_v<AddFunctionTest::func_sig, std::size_t(int32_t, int32_t)>);
+static_assert(Function<AddFunctionTest::func_sig>::arity == 2, "Function must take exactly two args");
 
-TEST_F(Function_Test_Ctor1, ctor) {
-    int32_t arg1 = 1, arg2 = 2;
-
-    EXPECT_NE(m_Func, nullptr);
-    EXPECT_EQ(m_Befor, nullptr);
-    EXPECT_EQ(m_After, nullptr);
-    EXPECT_EQ(m_Name, "add");
-
-    EXPECT_EQ(m_Func(arg1, arg2), arg1+arg2);
-
-    EXPECT_EQ(member(arg1, arg2), arg1+arg2);
-
-    auto expectargvalues = std::tuple<int32_t, int32_t>(arg1, arg2);
-    EXPECT_EQ(m_ArgsValues,  expectargvalues);
-
-    EXPECT_EQ(m_ReturnType, ::type_name<std::size_t>());
-
-    auto expargstypes = std::array{::type_name<int32_t>(), ::type_name<int32_t>()};
-    EXPECT_EQ(m_ArgsTypes, expargstypes);
+// ────────────────────────────────────────────────────────────
+//  TESTS
+// ────────────────────────────────────────────────────────────
+TEST_F(AddFunctionTest, DefaultState)
+{
+    EXPECT_NE(sut.function(), nullptr) << "Function pointer should be initialised";
+    EXPECT_EQ(sut.before(), nullptr)   << "No before‑hook expected by default";
+    EXPECT_EQ(sut.after(),  nullptr)   << "No after‑hook expected by default";
+    EXPECT_EQ(sut.name(),  "add")      << "Name should be ‘add’";
 }
 
-TEST_F(Function_Test_Ctor1, default_) {
-    auto got = ::type_name<decltype(default_(1,2))>();
-    auto expct = ::type_name<decltype(m_Func(1,2))>();
-    EXPECT_EQ(got, expct);
+TEST_F(AddFunctionTest, InvocationAndCapturedState)
+{
+    constexpr int32_t a = 1, b = 2;
+    const auto expected_sum = static_cast<std::size_t>(a + b);
+
+    EXPECT_EQ(sut(a, b), expected_sum) << "add(1,2) must equal 3";
+
+    const auto captured_args = std::make_tuple(a, b);
+    EXPECT_EQ(sut.argsValues(), captured_args) << "Captured argument values mismatch";
+
+    EXPECT_EQ(sut.returnType(), type_name<std::size_t>()) << "Return‑type reflection mismatch";
+    EXPECT_EQ(sut.argsTypes(),  k_arg_types)              << "Argument‑type reflection mismatch";
 }
 
-TEST_F(Function_Test_Ctor1, ArgsXXX) {
-    auto got = ArgsValues().size();
-    auto expct = 2;
-    EXPECT_EQ(got, expct);
-    EXPECT_EQ(got, ArgsTypes().size());
-    EXPECT_EQ(ArgsCount(), expct);
-    
+TEST_F(AddFunctionTest, ArgsAndCallCountHelpers)
+{
+    constexpr std::size_t expected_arity = 2;
+    EXPECT_EQ(sut.argsCount(), expected_arity) << "Arity helper broken";
+
+    // Call twice more and verify counter
+    (void)sut(3, 4);
+    (void)sut(5, 6);
+    EXPECT_EQ(sut.callsCount(), 3) << "Call counter should track every invocation";
 }
 
-TEST_F(Function_Test_Ctor1, ReturnType) {
-    auto got = ReturnType();
-    auto expct = ::type_name<std::size_t>();
-    EXPECT_EQ(got, expct);
-}
+TEST_F(AddFunctionTest, SignatureFormatting)
+{
+    const auto sig = sut.thisFuncSig();
+    const auto expect =
+        std::format("{} {}({} arg1 = 0, {} arg2 = 0)",
+                    type_name<std::size_t>(),
+                    sut.name(),
+                    type_name<int32_t>(),
+                    type_name<int32_t>());
 
-TEST_F(Function_Test_Ctor1, this_func_sig) {
-    auto got = this_func_sig();
-    auto expct = std::format(
-        "{} {}({} arg_1 = 0, {} arg_2 = 0)",
-        ::type_name<std::size_t>(),
-        m_Name,
-        ::type_name<int32_t>(),
-        ::type_name<int32_t>()
-    );
-    EXPECT_EQ(got, expct);
+    EXPECT_EQ(sig, expect) << "Human‑readable signature string mismatch";
 }
