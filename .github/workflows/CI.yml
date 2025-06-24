@@ -41,7 +41,6 @@ jobs:
           vcvarsall: ${{ contains(matrix.os, 'windows' )}}
           cmake: true
           ninja: true
-          ccache: true
           vcpkg: false
 
       - name: Install Dependencies
