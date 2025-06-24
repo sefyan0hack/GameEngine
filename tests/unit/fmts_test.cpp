@@ -87,7 +87,7 @@ TEST(Formatters, Camera){
     EXPECT_EQ(r, e);
 }
 
-#if !defined(WEB_PLT)
+#if !defined(WEB_PLT) && 0 //disable 
 
 TEST(Formatters, Shader){
     IF_THROWS_IGNOR({

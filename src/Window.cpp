@@ -3,7 +3,7 @@
 #include <core/OpenGL.hpp>
 
 
-CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height, [[maybe_unused]] const char* Title) 
+CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height, [[maybe_unused]] const char* Title, [[maybe_unused]] bool withopengl) 
 	: m_Width(Width)
 	, m_Height(Height)
 	, m_Visible(false)
@@ -21,9 +21,10 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 	m_DrawContext = EMSCRIPTEN_EVENT_TARGET_DOCUMENT;
 	_init_helper(m_Width, m_Height, Title);
 	#endif
-
+	
 	S_WindowsCount++;
-    m_OpenGl = std::make_shared<gl::OpenGL>(m_WindowHandle, m_DrawContext);
+
+	if(withopengl) m_OpenGl = std::make_shared<gl::OpenGL>(m_WindowHandle, m_DrawContext);
 
 	#if defined(WEB_PLT)
 	auto target = EMSCRIPTEN_EVENT_TARGET_WINDOW;

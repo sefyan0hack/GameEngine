@@ -40,7 +40,7 @@ class CWindow
     #endif
     
     public:
-        CWindow(int32_t Width, int32_t Height, const char* Title);
+        CWindow(int32_t Width, int32_t Height, const char* Title, bool withopengl = true);
         CWindow(const CWindow& other);
         CWindow(CWindow&&) = delete;
     
