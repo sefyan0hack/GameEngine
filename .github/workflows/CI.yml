@@ -60,16 +60,6 @@ jobs:
         shell: bash
         run: cmake --build "${{ env.BUILD_DIR }}" --config ${{ matrix.build_type }} --parallel
 
-      - name: Install Mesa
-        if: contains(matrix.os, 'windows')
-        shell: cmd
-        run: |
-          curl.exe -L --output mesa.7z --url https://github.com/pal1000/mesa-dist-win/releases/download/20.3.2/mesa3d-20.3.2-release-msvc.7z
-          "C:\Program Files\7-Zip\7z.exe" x mesa.7z
-          mklink opengl32.dll "x64\opengl32.dll"
-          mklink libglapi.dll "x64\libglapi.dll"
-        working-directory: ${{ env.BUILD_DIR }}
-
       - name: Upload Test Executable
         uses: actions/upload-artifact@v4
         with:
@@ -77,6 +67,12 @@ jobs:
           path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests${{ env.APP_EXT }}
           retention-days: 1
           overwrite: true
+
+      - name: Start Xvfb (virtual display)
+        if: contains(matrix.os, 'ubuntu')
+        run: |
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          echo "DISPLAY=:99" >> $GITHUB_ENV
 
       - name: Test
         shell: bash
