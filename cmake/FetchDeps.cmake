@@ -44,6 +44,6 @@ if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/KHR/khrplatform.h)
 endif()
 
 include_directories(
-    ${CMAKE_CURRENT_BINARY_DIR}/_deps/glcorearb-src  # For glcorearb.h
-    ${CMAKE_CURRENT_BINARY_DIR}                      # For KHR/khrplatform.h
+    ${CMAKE_CURRENT_BINARY_DIR}/_deps/glext-src  # For glext.h
+    ${CMAKE_CURRENT_BINARY_DIR}                  # For KHR/khrplatform.h
 )
