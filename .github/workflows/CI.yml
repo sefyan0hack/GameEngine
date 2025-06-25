@@ -59,6 +59,8 @@ jobs:
           MESA_FILENAME="mesa3d-$MESA_VERSION-release-msvc.7z"
           curl -L -o mesa.7z "https://github.com/pal1000/mesa-dist-win/releases/download/$MESA_VERSION/$MESA_FILENAME"
           7z x mesa.7z -omesa
+
+          echo "MESA_ROOT=$(pwd)/mesa" >> $GITHUB_ENV
           echo "$(pwd)/mesa/bin" >> $GITHUB_PATH
 
       - name: Configure CMake
