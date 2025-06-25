@@ -3,11 +3,7 @@
 #include <core/gl.h>
 
 namespace gl {
-    #if defined(WEB_PLT)
-    constexpr const char* OPENGL_MODULE_NAME {"WebGL"};
-    #else
-    constexpr const char* OPENGL_MODULE_NAME {OPENGL_LIB};
-    #endif
+    constexpr auto OPENGL_MODULE_NAME = OPENGL_LIB;
 
     auto GetProcAddress(const char* name) -> void*;
 

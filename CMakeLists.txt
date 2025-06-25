@@ -30,6 +30,7 @@ option(ASAN             "enable Address Sanitizer"   OFF)
 option(USAN             "enable Undefined Sanitizer" OFF)
 option(TSAN             "enable Thread Sanitizer"    OFF)
 option(EXCEPTIONS       "enable Exciptions"          OFF)
+# option(OPENGL_LIB_NAME  "OpenGl Lib"                 "")
 
 if(MINGW) #disable RTTI becaus of bug in mingw redifinition when static link libstdc++
 option(RTTI             "enable RunTime Type Info"   OFF)
@@ -345,21 +346,28 @@ set(SOURCES
 ####################################################################################################
 
 if(NOT EMSCRIPTEN)
+    # Find OpenGL package
+    find_package(OpenGL REQUIRED)
 
-# Find OpenGL package
-find_package(OpenGL REQUIRED)
+    # Find Threads package
+    find_package(Threads REQUIRED)
 
-# Find Threads package
-find_package(Threads REQUIRED)
-
-# Find X11 package
-if(UNIX)
-    find_package(X11 REQUIRED)
+    # Find X11 package
+    if(UNIX)
+        find_package(X11 REQUIRED)
+    endif()
+    # Extract the core OpenGL library (first entry in the list)
+    list(GET OPENGL_LIBRARIES 0 CORE_OPENGL_LIB)
 endif()
-# Extract the core OpenGL library (first entry in the list)
-list(GET OPENGL_LIBRARIES 0 CORE_OPENGL_LIB)
 
+if(NOT DEFINED OPENGL_LIB_NAME)
+  if(EMSCRIPTEN)
+    set(OPENGL_LIB_NAME "WebGL")
+  else()
+    set(OPENGL_LIB_NAME ${CORE_OPENGL_LIB})
+  endif()
 endif()
+
 ####################################################################################################
 # Build Exe 
 ####################################################################################################
@@ -415,11 +423,13 @@ target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
 
 add_compile_definitions(
     PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
-    OPENGL_LIB="${CORE_OPENGL_LIB}"
+
     PLATFORM_NAME="${CMAKE_SYSTEM_NAME}"
     PLATFORM_VERSION="${CMAKE_SYSTEM_VERSION}"
     PLATFORM_ARCH="${CMAKE_SYSTEM_PROCESSOR}"
-    
+
+    OPENGL_LIB="${OPENGL_LIB_NAME}"
+
     $<$<PLATFORM_ID:Windows>:WINDOWS_PLT>
     $<$<PLATFORM_ID:Linux>:LINUX_PLT>
     $<$<PLATFORM_ID:Emscripten>:WEB_PLT>
