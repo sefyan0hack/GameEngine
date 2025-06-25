@@ -28,7 +28,6 @@ jobs:
       TEST_TIMEOUT: 60
       BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
       APP_EXT: ${{ contains(matrix.os, 'windows' ) && '.exe' || '' }}
-      LIBGL_ALWAYS_SOFTWARE: ${{ contains(matrix.os, 'windows') && '1' }}
 
     steps:
       - uses: actions/checkout@v3
@@ -49,19 +48,6 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y libgl1-mesa-dev libxi-dev mesa-common-dev xvfb
           fi
-
-        # Install Mesa3D for Windows (software OpenGL)
-      - name: Setup Mesa for Windows
-        if: contains(matrix.os, 'windows')
-        shell: bash
-        run: |
-          MESA_VERSION="25.1.3"
-          MESA_FILENAME="mesa3d-$MESA_VERSION-release-msvc.7z"
-          curl -L -o mesa.7z "https://github.com/pal1000/mesa-dist-win/releases/download/$MESA_VERSION/$MESA_FILENAME"
-          7z x mesa.7z -omesa
-
-          echo "MESA_ROOT=$(pwd)/mesa" >> $GITHUB_ENV
-          echo "$(pwd)/mesa/bin" >> $GITHUB_PATH
 
       - name: Configure CMake
         shell: bash

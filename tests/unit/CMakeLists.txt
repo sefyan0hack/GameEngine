@@ -19,11 +19,6 @@ endif()
 
 target_link_libraries(unit_tests PRIVATE GTest::gtest GTest::gtest_main glm::glm core)
 
-if(WIN32 AND DEFINED ENV{CI})
-    find_library(OSMESA_LIBRARY NAMES osmesa PATHS ENV{MESA_ROOT}/x64/osmesa-gallium REQUIRED)
-    target_link_libraries(unit_tests PRIVATE ${OSMESA_LIBRARY})
-endif()
-
 include(GoogleTest)
 
 if(NOT EMSCRIPTEN)
