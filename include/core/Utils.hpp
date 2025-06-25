@@ -253,7 +253,7 @@ inline auto GetProcAddress(const char* module, const char* name) -> void* {
     failreson = lib ? "" : std::string((const char*)GetLastError());
     address = (void *)GetProcAddress(reinterpret_cast<HMODULE>(lib), name);
     #elif defined(LINUX_PLT)
-    void* lib = dlopen(module, RTLD_LAZY | RTLD_NOLOAD);
+    lib = dlopen(module, RTLD_LAZY | RTLD_NOLOAD);
     failreson = lib ? "" : std::string(dlerror());
     address = (void *)dlsym(lib, name);
     #elif defined(WEB_PLT)
