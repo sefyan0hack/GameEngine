@@ -3,6 +3,7 @@
 #include <fstream>
 
 using namespace std;
+using namespace utils;
 
 #if !defined(WEB_PLT)
 TEST(load_file_async, exist) {

@@ -12,6 +12,7 @@
 #endif
 
 
+
 template <typename T>
 concept Pointer = std::is_pointer_v<T>;
 
@@ -20,6 +21,7 @@ concept FunctionPointer =
     std::is_pointer_v<std::remove_cv_t<T>> &&
     std::is_function_v<std::remove_pointer_t<std::remove_cv_t<T>>>;
 
+namespace utils {
 
 template<typename Function, typename... Args>
 auto setTimeOut( unsigned long delay, Function&& func, Args&&... args) -> void
@@ -251,7 +253,7 @@ inline auto GetProcAddress(const char* module, const char* name) -> void* {
     }();
     
     failreson = lib ? "" : std::string((const char*)GetLastError());
-    address = (void *)GetProcAddress(reinterpret_cast<HMODULE>(lib), name);
+    address = (void *) ::GetProcAddress(reinterpret_cast<HMODULE>(lib), name);
     #elif defined(LINUX_PLT)
     lib = dlopen(module, RTLD_LAZY | RTLD_NOLOAD);
     failreson = lib ? "" : std::string(dlerror());
@@ -267,3 +269,5 @@ inline auto GetProcAddress(const char* module, const char* name) -> void* {
 
     return address;
 }
+
+}// namespaceutils

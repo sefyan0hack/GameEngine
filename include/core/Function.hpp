@@ -209,7 +209,7 @@ auto Function<R(PLT_CALL*)(Args...)>::to_string(const auto& value) -> std::strin
 {
     using T = std::decay_t<decltype(value)>;
     if constexpr (std::is_pointer_v<T>) {
-        return pointer_to_string(value);
+        return utils::pointer_to_string(value);
     } else if constexpr (std::is_arithmetic_v<T>) {
         return std::to_string(value);
     } else {

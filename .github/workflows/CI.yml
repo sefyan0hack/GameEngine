@@ -23,8 +23,6 @@ jobs:
             compiler: msvc
           - os: windows-11-arm
             compiler: gcc
-          # - os: windows-11-arm
-          #   compiler: llvm
 
     env:
       TEST_TIMEOUT: 60

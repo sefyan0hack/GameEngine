@@ -212,7 +212,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     auto exts = emscripten_webgl_get_supported_extensions();
     #endif
 
-    m_Extensions = exts ? split(exts, " ") : decltype(m_Extensions){} ;
+    m_Extensions = exts ? utils::split(exts, " ") : decltype(m_Extensions){} ;
     
     gl::GetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_MaxTextureUnits);
 
@@ -230,7 +230,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     Info("GL Version : Wanted:({}.{}) -> Got:({}.{})", GLMajorVersion, GLMinorVersion, m_Major, m_Minor);
     Info("GL Vendor : {}", m_Vendor);
     Info("GL Renderer : {}", m_Renderer);
-    Info("GL Exts : {}", to_string(m_Extensions));
+    Info("GL Exts : {}", utils::to_string(m_Extensions));
     Info("Max Texture Units : {}", m_MaxTextureUnits);
 }
 
@@ -384,11 +384,11 @@ auto GetProcAddress(const char* name) -> void* {
     || address == reinterpret_cast<void*>(0x3)
     || address == reinterpret_cast<void*>(-1))
     {
-        address = ::GetProcAddress(OPENGL_MODULE_NAME, name);
+        address = utils::GetProcAddress(OPENGL_MODULE_NAME, name);
     }
 
     #elif defined(LINUX_PLT) || defined(WEB_PLT)
-    address = ::GetProcAddress(OPENGL_MODULE_NAME, name);
+    address = utils::GetProcAddress(OPENGL_MODULE_NAME, name);
     #endif
 
     if (address != nullptr) {

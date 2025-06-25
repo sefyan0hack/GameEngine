@@ -30,7 +30,6 @@ option(ASAN             "enable Address Sanitizer"   OFF)
 option(USAN             "enable Undefined Sanitizer" OFF)
 option(TSAN             "enable Thread Sanitizer"    OFF)
 option(EXCEPTIONS       "enable Exciptions"          OFF)
-# option(OPENGL_LIB_NAME  "OpenGl Lib"                 "")
 
 if(MINGW) #disable RTTI becaus of bug in mingw redifinition when static link libstdc++
 option(RTTI             "enable RunTime Type Info"   OFF)
@@ -71,6 +70,7 @@ endif()
 ####################################################################################################
 
 if(EMSCRIPTEN)
+    set(OPENGL_LIB_NAME "WebGL")
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
     set(STATIC_LINK OFF)
@@ -358,14 +358,7 @@ if(NOT EMSCRIPTEN)
     endif()
     # Extract the core OpenGL library (first entry in the list)
     list(GET OPENGL_LIBRARIES 0 CORE_OPENGL_LIB)
-endif()
-
-if(NOT DEFINED OPENGL_LIB_NAME)
-  if(EMSCRIPTEN)
-    set(OPENGL_LIB_NAME "WebGL")
-  else()
     set(OPENGL_LIB_NAME ${CORE_OPENGL_LIB})
-  endif()
 endif()
 
 ####################################################################################################

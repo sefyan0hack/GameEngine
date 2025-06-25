@@ -113,7 +113,7 @@ auto Shader::PreProcess() -> std::string
 
 auto Shader::LoadFile(const char* filename) -> std::vector<GLchar>
 {
-    auto fileContent = file_to_str(filename);
+    auto fileContent = utils::file_to_str(filename);
     if (!fileContent) {
         Error("Couldn't open file {}: {}", filename, std::strerror(errno));
     }
