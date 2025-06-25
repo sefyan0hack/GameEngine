@@ -373,10 +373,10 @@ auto OpenGL::MaxTextureUnits() -> GLint
 }
 
 auto GetProcAddress(const char* name) -> void* {
-    void *address = utils::GetProcAddress(OPENGL_MODULE_NAME, name);
+    void *address = reinterpret_cast<void*>(XXXGetProcAddress(name));
 
     if(address == nullptr){
-        address = reinterpret_cast<void*>(XXXGetProcAddress(name));
+        address = utils::GetProcAddress(OPENGL_MODULE_NAME, name);
     }
 
     if (address != nullptr) {
