@@ -240,7 +240,7 @@ auto pointer_to_string(Pointer auto ptr) -> std::string
     }
 }
 
-inline auto GetProcAddress(const char* module, const char* name) -> void* {
+inline auto GetProcAddress([[maybe_unused]] const char* module, const char* name) -> void* {
 
     void* lib = nullptr;
     void* address = nullptr;
@@ -252,7 +252,7 @@ inline auto GetProcAddress(const char* module, const char* name) -> void* {
         return handle ? handle : LoadLibraryA(module);
     }();
     
-    failreson = lib ? "" : std::string((const char*)GetLastError());
+    failreson = lib ? "" : std::to_string(GetLastError());
     address = (void *) ::GetProcAddress(reinterpret_cast<HMODULE>(lib), name);
     #elif defined(LINUX_PLT)
     lib = dlopen(module, RTLD_LAZY | RTLD_NOLOAD);
