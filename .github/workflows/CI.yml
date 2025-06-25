@@ -75,6 +75,7 @@ jobs:
           fi
 
   Build-Web:
+    runs-on: ubuntu-latest
     steps:
     - name: Build
       uses: ./.github/workflows/emscripten-build.yml
