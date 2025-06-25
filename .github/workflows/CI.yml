@@ -28,6 +28,7 @@ jobs:
       TEST_TIMEOUT: 60
       BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
       APP_EXT: ${{ contains(matrix.os, 'windows' ) && '.exe' || '' }}
+      LIBGL_ALWAYS_SOFTWARE: ${{ contains(matrix.os, 'windows') && '1' }}
 
     steps:
       - uses: actions/checkout@v3
@@ -49,6 +50,17 @@ jobs:
             sudo apt-get install -y libgl1-mesa-dev libxi-dev mesa-common-dev xvfb
           fi
 
+        # Install Mesa3D for Windows (software OpenGL)
+      - name: Setup Mesa for Windows
+        if: contains(matrix.os, 'windows')
+        shell: bash
+        run: |
+          MESA_VERSION="25.1.3"
+          MESA_FILENAME="mesa3d-$MESA_VERSION-release-msvc.7z"
+          curl -L -o mesa.7z "https://github.com/pal1000/mesa-dist-win/releases/download/$MESA_VERSION/$MESA_FILENAME"
+          7z x mesa.7z -omesa
+          echo "$(pwd)/mesa/bin" >> $GITHUB_PATH
+
       - name: Configure CMake
         shell: bash
         run: cmake -S . -B "$BUILD_DIR" -G  "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DTESTS=ON -DHARDEN=ON
@@ -64,16 +76,6 @@ jobs:
           path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests${{ env.APP_EXT }}
           retention-days: 1
           overwrite: true
-        
-      - name: Install Mesa Windows
-        if: contains(matrix.os, 'windows')
-        run: |
-          curl.exe -L --output mesa.7z --url https://github.com/pal1000/mesa-dist-win/releases/download/20.3.2/mesa3d-20.3.2-release-msvc.7z
-          "C:\Program Files\7-Zip\7z.exe" x mesa.7z
-          copy /Y "x64\opengl32.dll" "${{ env.BUILD_DIR }}\tests\unit\"
-          mklink opengl32.dll "x64\opengl32.dll"
-          mklink libglapi.dll "x64\libglapi.dll"
-        working-directory: ${{ env.BUILD_DIR }}
 
       - name: Test
         shell: bash
