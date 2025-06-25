@@ -22,19 +22,23 @@ jobs:
             cmake_configure_flags: "-DTESTS=ON"
             system_dependencies: "libgl1-mesa-dev mesa-common-dev libxi-dev xvfb libx11-dev"
 
+        - name: Prepare Deployment Artifacts
+          run: |
+            mkdir -p dist
+            shopt -s globstar
+            # Copy only specified file types while excluding forbidden directories
+            cp -r --parents build-web/**/*.{js,html,wasm,data} dist/ || true
+            # Remove excluded directories
+            rm -rf dist/build-web/tests
+            rm -rf dist/build-web/_deps
+
         - name: Setup Pages
           uses: actions/configure-pages@v5
 
         - name: Upload to Pages
           uses: actions/upload-pages-artifact@v3
           with:
-            path: |
-              build-web/**/*.js
-              build-web/**/*.html
-              build-web/**/*.wasm
-              build-web/**/*.data
-              !build-web/tests/**
-              !build-web/_deps/**
+            path: dist
 
         - name: Deploy to GitHub Pages
           id: deployment
