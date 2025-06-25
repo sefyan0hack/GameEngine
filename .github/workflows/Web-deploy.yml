@@ -3,39 +3,24 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    steps:
-    - uses: ./.github/workflows/emscripten-build.yml
-
-    - name: Upload Engine
-      uses: actions/upload-artifact@v4
-      with:
-        name: web-build-Engine
-        path: |
-          build-web/**/*.js
-          build-web/**/*.html
-          build-web/**/*.wasm
-          build-web/**/*.data
-          !build-web/tests/**
-          !build-web/_deps/**
-        retention-days: 1
-        overwrite: true
-
   deploy:
-      needs: build
       runs-on: ubuntu-latest
       permissions:
         pages: write
         id-token: write
+
       environment:
         name: github-pages
         url: ${{ steps.deployment.outputs.page_url }}
+
       steps:
-        - name: Download Engine Artifact
-          uses: actions/download-artifact@v4
+        - uses: actions/checkout@v3
+
+        - name: Build
+          uses: ./.github/actions/emscripten-build
           with:
-            name: web-build-Engine
-            path: dist
+            cmake_configure_flags: "-DTESTS=ON"
+            system_dependencies: "libgl1-mesa-dev mesa-common-dev libxi-dev xvfb libx11-dev"
 
         - name: Setup Pages
           uses: actions/configure-pages@v5
@@ -43,7 +28,13 @@ jobs:
         - name: Upload to Pages
           uses: actions/upload-pages-artifact@v3
           with:
-            path: dist
+            path: |
+              build-web/**/*.js
+              build-web/**/*.html
+              build-web/**/*.wasm
+              build-web/**/*.data
+              !build-web/tests/**
+              !build-web/_deps/**
 
         - name: Deploy to GitHub Pages
           id: deployment
