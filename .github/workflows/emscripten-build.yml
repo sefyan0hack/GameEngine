@@ -10,11 +10,11 @@ on:
       system_dependencies:
         required: false
         type: string
-        default: "libgl1-mesa-dev mesa-common-dev libxi-dev xvfb libx11-dev"
+        default: ""
       cmake_configure_flags:
         required: false
         type: string
-        default: "-DTESTS=ON"
+        default: ""
       build_dir:
         required: false
         type: string

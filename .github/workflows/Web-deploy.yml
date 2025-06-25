@@ -4,6 +4,7 @@ on:
 
 jobs:
   build:
+    steps:
     - uses: ./.github/workflows/emscripten-build.yml
 
     - name: Upload Engine
@@ -20,17 +21,6 @@ jobs:
         retention-days: 1
         overwrite: true
 
-    - name: Upload
-      uses: actions/upload-artifact@v4
-      with:
-        name: web-build-tests
-        path: |
-          build-web/tests/**/*.js
-          build-web/tests/**/*.html
-          build-web/tests/**/*.wasm
-          build-web/tests/**/*.data
-        retention-days: 1
-        overwrite: true
   deploy:
       needs: build
       runs-on: ubuntu-latest
