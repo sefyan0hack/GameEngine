@@ -78,8 +78,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+
     - name: Build
-      uses: ./.github/workflows/emscripten-build.yml
+      uses: ./.github/actions/emscripten-build
       with:
         cmake_configure_flags: "-DTESTS=ON"
         system_dependencies: "libgl1-mesa-dev mesa-common-dev libxi-dev xvfb libx11-dev"
