@@ -24,7 +24,7 @@ using GLCTX     = HGLRC;
 #include <GL/glx.h>
 #include <glext.h>
 
-#define XXXGetProcAddress(name) glXGetProcAddress(name)
+#define XXXGetProcAddress(name) glXGetProcAddress((const GLubyte*)name)
 
 struct __GLXcontextRec;
 using WindHandl = Window;
