@@ -73,3 +73,5 @@ jobs:
           else
             ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
           fi
+  Build-Web:
+    uses: ./.github/workflows/emscripten-build.yml
