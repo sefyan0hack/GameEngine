@@ -373,23 +373,11 @@ auto OpenGL::MaxTextureUnits() -> GLint
 }
 
 auto GetProcAddress(const char* name) -> void* {
-    void *address = nullptr;
+    void *address = utils::GetProcAddress(OPENGL_MODULE_NAME, name);
 
-    #if defined(WINDOWS_PLT)
-    address = reinterpret_cast<void*>(wglGetProcAddress(name));
-
-    if(address == nullptr
-    || address == reinterpret_cast<void*>(0x1)
-    || address == reinterpret_cast<void*>(0x2)
-    || address == reinterpret_cast<void*>(0x3)
-    || address == reinterpret_cast<void*>(-1))
-    {
-        address = utils::GetProcAddress(OPENGL_MODULE_NAME, name);
+    if(address == nullptr){
+        address = reinterpret_cast<void*>(XXXGetProcAddress(name));
     }
-
-    #elif defined(LINUX_PLT) || defined(WEB_PLT)
-    address = utils::GetProcAddress(OPENGL_MODULE_NAME, name);
-    #endif
 
     if (address != nullptr) {
         Info("from LIB:`{}`: load function `{}` at : {}", OPENGL_MODULE_NAME, name, address);

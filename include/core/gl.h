@@ -11,6 +11,8 @@ using WindHandl = HWND;
 using HDC_D     = HDC;
 using GLCTX     = HGLRC;
 
+#define XXXGetProcAddress(name) wglGetProcAddress(name)
+
 [[maybe_unused]] inline static auto wglCreateContextAttribsARB = (GLCTX(WINAPI*)(HDC_D, GLCTX, const int*))(nullptr);
 [[maybe_unused]] inline static auto wglGetExtensionsStringARB = (const char *(WINAPI*)(HDC_D))(nullptr);
 [[maybe_unused]] inline static auto wglSwapIntervalEXT = (BOOL(APIENTRY*)(int))(nullptr);
@@ -21,6 +23,8 @@ using GLCTX     = HGLRC;
 #include <GL/gl.h>
 #include <GL/glx.h>
 #include <glext.h>
+
+#define XXXGetProcAddress(name) glXGetProcAddress(name)
 
 struct __GLXcontextRec;
 using WindHandl = Window;
@@ -36,6 +40,8 @@ using GLCTX     = __GLXcontextRec*;
 #include <emscripten/key_codes.h>
 #include <GL/gl.h>
 #include "glext.h"
+
+#define XXXGetProcAddress(name) emscripten_webgl_get_proc_address(name)
 
 using WindHandl = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
 using HDC_D     = const char*;
