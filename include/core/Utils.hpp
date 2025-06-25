@@ -240,35 +240,30 @@ auto pointer_to_string(Pointer auto ptr) -> std::string
 
 inline auto GetProcAddress(const char* module, const char* name) -> void* {
 
+    void* lib = nullptr;
+    void* address = nullptr;
+    std::string failreson;
+
     #if defined(WINDOWS_PLT)
-    auto lib = GetModuleHandleA(module);
-
-    if(lib == nullptr){
-        lib = LoadLibraryA(module);
-        
-        if(lib == nullptr){
-            Error("Couldnt load lib {} reason: {}", module, GetLastError());
-            return nullptr;
-        }
-    }
-
-    void *address = (void *)GetProcAddress(lib, name);
+    lib = [&module](){
+        void* handle = GetModuleHandleA(module);
+        return handle ? handle : LoadLibraryA(module);
+    }();
+    
+    failreson = lib ? "" : std::string((const char*)GetLastError());
+    address = (void *)GetProcAddress(reinterpret_cast<HMODULE>(lib), name);
     #elif defined(LINUX_PLT)
     void* lib = dlopen(module, RTLD_LAZY | RTLD_NOLOAD);
-    
-    if(lib == nullptr) {
-        lib = dlopen(module, RTLD_LAZY);
-        if(lib == nullptr) {
-            Error("Couldn't load lib {} reason: {}", module, dlerror());
-            return nullptr;
-        }
-    }
-
-    dlerror();
-    void* address = (void *)dlsym(lib, name);
+    failreson = lib ? "" : std::string(dlerror());
+    address = (void *)dlsym(lib, name);
     #elif defined(WEB_PLT)
-    void* address = reinterpret_cast<void*>(emscripten_webgl_get_proc_address(name));
+    address = reinterpret_cast<void*>(emscripten_webgl_get_proc_address(name));
+    failreson = lib ? "" : "emscripten_webgl_get_proc_address faild";
     #endif
+
+    if(lib == nullptr){
+        Error("Couldn't load lib {} reason: {}", module, failreson);
+    }
 
     return address;
 }
