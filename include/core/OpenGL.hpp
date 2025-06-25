@@ -95,10 +95,10 @@ class OpenGL
         #undef GLFUN
         #ifdef DEBUG
         #   define GLFUN(name)\
-            inline static thread_local Function<decltype(&gl##name)> name
+            inline static Function<decltype(&gl##name)> name
         #else
         #   define GLFUN(name)\
-            inline static thread_local decltype(&gl##name) name = Function<decltype(&gl##name)>::default_
+            inline static decltype(&gl##name) name = Function<decltype(&gl##name)>::default_
         #endif
         GLFUNCS(GLFUN)
 
@@ -108,10 +108,10 @@ class OpenGL
 #undef GLFUN
 #ifdef DEBUG
 #   define GLFUN(name)\
-inline thread_local Function<decltype(&gl##name)>& name = OpenGL::name
+inline Function<decltype(&gl##name)>& name = OpenGL::name
 #else
 #   define GLFUN(name)\
-inline thread_local decltype(&gl##name)& name = OpenGL::name
+inline decltype(&gl##name)& name = OpenGL::name
 #endif
 
 GLFUNCS(GLFUN)

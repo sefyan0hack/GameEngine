@@ -87,7 +87,9 @@ TEST(Formatters, Camera){
     EXPECT_EQ(r, e);
 }
 
-#if !defined(WEB_PLT) && 0
+inline static auto cTx = gl::OpenGL::DummyCtx();
+
+#if !defined(WEB_PLT)
 
 TEST(Formatters, Shader){
     IF_THROWS_IGNOR({
