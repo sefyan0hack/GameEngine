@@ -1,0 +1,64 @@
+name: 'Emscripten Build'
+
+description: 'Build a project using Emscripten'
+
+inputs:
+  emsdk_version:
+    description: 'Version of emsdk'
+    required: false
+    default: '4.0.10'
+  system_dependencies:
+    description: 'Space-separated list of system dependencies'
+    required: false
+    default: ''
+  cmake_configure_flags:
+    description: 'Flags for CMake configuration'
+    required: false
+    default: ''
+  build_dir:
+    description: 'Build directory name'
+    required: false
+    default: 'build-web'
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set environment variables
+      shell: bash
+      run: |
+        echo "BUILD_DIR=${{ inputs.build_dir }}" >> $GITHUB_ENV
+        echo "EMSDK_PATH=$HOME/emsdk" >> $GITHUB_ENV
+
+    - name: Cache emsdk
+      uses: actions/cache@v3
+      with:
+        path: ~/emsdk
+        key: emsdk-${{ runner.os }}-${{ inputs.emsdk_version }}
+
+    - name: Setup Emscripten
+      uses: mymindstorm/setup-emsdk@v14
+      with:
+        version: ${{ inputs.emsdk_version }}
+
+    - name: Verify Emscripten
+      shell: bash
+      run: emcc -v
+
+    - name: Install system dependencies
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.system_dependencies }}" ]; then
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ${{ inputs.system_dependencies }}
+        fi
+
+    - name: Configure with CMake
+      shell: bash
+      run: emcmake cmake -S . -B "$BUILD_DIR" -G Ninja ${{ inputs.cmake_configure_flags }}
+
+    - name: Build project
+      shell: bash
+      run: cmake --build "$BUILD_DIR"
