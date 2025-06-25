@@ -13,14 +13,9 @@
 **A high-performance C++ game engine**  
 Welcome to the **GameEngine** repository! This engine is designed to provide a solid foundation for building games and interactive applications. It leverages modern C++ standards, powerful libraries, and intuitive tools to help you create amazing experiences.
 
-## Features
 
-- **platform compatibility** (Windows/Linux)
-- **Win32 API**
-- **X11**
-- **Modular architecture** for easy extension and customization
-- **Input handling** for keyboard, mouse
-  
+- **platform compatibility** (Windows/Linux/Web)
+
 ## Getting Started
 
 ```bash
