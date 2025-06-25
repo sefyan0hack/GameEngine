@@ -78,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Build
-      uses: ./.github/workflows/emscripten-build.yml
+      uses: sefyan0hack/GameEngine/.github/workflows/emscripten-build.yml@main
       with:
         cmake_configure_flags: "-DTESTS=ON"
         system_dependencies: "libgl1-mesa-dev mesa-common-dev libxi-dev xvfb libx11-dev"
