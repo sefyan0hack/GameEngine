@@ -66,6 +66,15 @@ jobs:
           path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests${{ env.APP_EXT }}
           retention-days: 1
           overwrite: true
+        
+      - name: Install Mesa Windows
+        if: contains(matrix.os, 'windows')
+        run: |
+          curl.exe -L --output mesa.7z --url https://github.com/pal1000/mesa-dist-win/releases/download/20.3.2/mesa3d-20.3.2-release-msvc.7z
+          "C:\Program Files\7-Zip\7z.exe" x mesa.7z
+          mklink opengl32.dll "x64\opengl32.dll"
+          mklink libglapi.dll "x64\libglapi.dll"
+        working-directory: ${{ env.BUILD_DIR }}
 
       - name: Test
         shell: bash
