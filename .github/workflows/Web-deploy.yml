@@ -24,18 +24,12 @@ jobs:
 
         - name: Prepare Deployment Artifacts
           run: |
-            mkdir -p dist
-            # Enable extended glob patterns and nullglob
-            shopt -s globstar nullglob
-            # Copy files while preserving directory structure
-            for file in build-web/**/*.{js,html,wasm,data}; do
-                [ -e "$file" ] || continue  # Skip if file doesn't exist
-                mkdir -p "dist/$(dirname "$file")"
-                cp "$file" "dist/$file"
-            done
-            # Remove excluded directories if they exist
-            [ -d "dist/build-web/tests" ] && rm -rf dist/build-web/tests
-            [ -d "dist/build-web/_deps" ] && rm -rf dist/build-web/_deps
+              mkdir -p dist
+              # Find and copy .js, .html, .wasm, and .data files
+              find build-web -type f \( -name "*.js" -o -name "*.html" -o -name "*.wasm" -o -name "*.data" \) \
+                  -not -path "build-web/tests/*" \
+                  -not -path "build-web/_deps/*" \
+                  -exec sh -c 'mkdir -p "dist/$(dirname {})" && cp {} "dist/{}"' \;
 
         - name: Setup Pages
           uses: actions/configure-pages@v5
