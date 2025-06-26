@@ -91,9 +91,9 @@ jobs:
       with:
         name: unit_tests-web
         path: |
-          build-web/tests/*.js
-          build-web/tests/*.html
-          build-web/tests/*.wasm
-          build-web/tests/*.data
+          build-web/tests/**/*.js
+          build-web/tests/**/*.html
+          build-web/tests/**/*.wasm
+          build-web/tests/**/*.data
         retention-days: 1
         overwrite: true
