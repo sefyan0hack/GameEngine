@@ -24,6 +24,7 @@ jobs:
 
         - name: Prepare Deployment Artifacts
           run: |
+              tree build-web
               mkdir -p dist
               # Find and copy .js, .html, .wasm, and .data files
               find build-web -type f \( -name "*.js" -o -name "*.html" -o -name "*.wasm" -o -name "*.data" \) \
