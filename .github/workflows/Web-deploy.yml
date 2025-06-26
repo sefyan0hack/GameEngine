@@ -25,12 +25,17 @@ jobs:
         - name: Prepare Deployment Artifacts
           run: |
             mkdir -p dist
-            shopt -s globstar
-            # Copy only specified file types while excluding forbidden directories
-            cp -r --parents build-web/**/*.{js,html,wasm,data} dist/ || true
-            # Remove excluded directories
-            rm -rf dist/build-web/tests
-            rm -rf dist/build-web/_deps
+            # Enable extended glob patterns and nullglob
+            shopt -s globstar nullglob
+            # Copy files while preserving directory structure
+            for file in build-web/**/*.{js,html,wasm,data}; do
+                [ -e "$file" ] || continue  # Skip if file doesn't exist
+                mkdir -p "dist/$(dirname "$file")"
+                cp "$file" "dist/$file"
+            done
+            # Remove excluded directories if they exist
+            [ -d "dist/build-web/tests" ] && rm -rf dist/build-web/tests
+            [ -d "dist/build-web/_deps" ] && rm -rf dist/build-web/_deps
 
         - name: Setup Pages
           uses: actions/configure-pages@v5
