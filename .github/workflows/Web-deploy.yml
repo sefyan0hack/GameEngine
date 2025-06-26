@@ -22,15 +22,17 @@ jobs:
             cmake_configure_flags: "-DTESTS=ON"
             system_dependencies: "libgl1-mesa-dev mesa-common-dev libxi-dev xvfb libx11-dev"
 
-        - name: Prepare Deployment Artifacts
+        - name: Prepare Artifact
           run: |
-              tree build-web
-              mkdir -p dist
-              # Find and copy .js, .html, .wasm, and .data files
-              find build-web -type f \( -name "*.js" -o -name "*.html" -o -name "*.wasm" -o -name "*.data" \) \
-                  -not -path "build-web/tests/*" \
-                  -not -path "build-web/_deps/*" \
-                  -exec sh -c 'mkdir -p "dist/$(dirname {})" && cp {} "dist/{}"' \;
+            mkdir -p dist
+            
+            # Copy only essential files (js, html, wasm, data)
+            find build-web/ -maxdepth 1 -type f \( \
+              -name "*.js" \
+              -o -name "*.html" \
+              -o -name "*.wasm" \
+              -o -name "*.data" \
+            \) -exec cp {} dist/ \;
 
         - name: Setup Pages
           uses: actions/configure-pages@v5
