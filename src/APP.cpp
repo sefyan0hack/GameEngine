@@ -81,7 +81,8 @@ auto APP::Run() -> void
     #elif defined(LINUX_PLT)
     struct timespec start_time, end_time;
     clock_gettime(CLOCK_MONOTONIC, &start_time);
-        
+    constexpr uint64_t NS_PER_SEC = 1000000000ULL;    // Nanoseconds per second
+
     while (!CWindow::WindowShouldClose()) {
         CWindow::ProcessMessages(windowHandle, DrawCtx);
         // Rendering
@@ -91,24 +92,19 @@ auto APP::Run() -> void
         // Swap buffers
         glXSwapBuffers(DrawCtx, windowHandle);
 
-        // Frame timing
+        struct timespec sleep_time = {0, 1000000}; // 1ms in ns
+        nanosleep(&sleep_time, NULL);
+
         clock_gettime(CLOCK_MONOTONIC, &end_time);
-        long ns_diff = (end_time.tv_sec - start_time.tv_sec) * 1000000000L 
-                     + (end_time.tv_nsec - start_time.tv_nsec);
-        float delta = ns_diff / 1000000000.0f;
-        
-        // Maintain 60 FPS
-        if (delta < 1.0f/fps) {
-            timespec sleep_time{
-                0,
-                static_cast<long>((1.0f/fps - delta) * 1000000000L)
-            };
-            nanosleep(&sleep_time, nullptr);
-        }
+
+        start_ns = start_time.tv_sec * NS_PER_SEC + start_time.tv_nsec;
+        end_ns = end_time.tv_sec * NS_PER_SEC + end_time.tv_nsec;
+        counts = end_ns - start_ns;
+        start_time = end_time;
+
+        fps = (counts > 0) ? (NS_PER_SEC / counts) : 0;
 
         m_Window.m_Keyboard->UpdatePrevState();
-
-        clock_gettime(CLOCK_MONOTONIC, &start_time);
     }
     #elif defined(WEB_PLT)
     start_count = emscripten_get_now();

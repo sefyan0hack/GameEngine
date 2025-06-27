@@ -16,7 +16,7 @@ public:
     #endif
 protected:
     CWindow m_Window;
-    int64_t start_count, end_count, counts, freq, fps;
+    int64_t start_count = 0, end_count = 0, counts = 0, freq = 0, fps = 60;
 
     FOR_TEST
 };
