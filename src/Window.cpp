@@ -540,7 +540,7 @@ auto CWindow::ProcessMessages(WindHandl wnhd, HDC_D dctx) -> void
     while (true) {
         XNextEvent(dctx, &event);
         if (event.type == KeyPress) {
-			Info("Close Windows {:p}", static_cast<const void*>(wnhd));
+			Info("Close Window");
             S_WindowsCount--;
             break; //press Exit on key 
         }
