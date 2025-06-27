@@ -64,7 +64,7 @@ auto APP::Run() -> void
     QueryPerformanceFrequency((LARGE_INTEGER *)&freq);
     
     while (!CWindow::WindowShouldClose()) {
-        CWindow::ProcessMessages();
+        CWindow::ProcessMessages(&m_Window);
         auto _hdc = m_Window.opengl()->DrawContext();
 
         gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -84,7 +84,7 @@ auto APP::Run() -> void
     constexpr uint64_t NS_PER_SEC = 1000000000ULL;    // Nanoseconds per second
 
     while (!CWindow::WindowShouldClose()) {
-        CWindow::ProcessMessages(windowHandle, DrawCtx);
+        CWindow::ProcessMessages(&m_Window);
         // Rendering
         gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         Update(1/static_cast<float>(fps));

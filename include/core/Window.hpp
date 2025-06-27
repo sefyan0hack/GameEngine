@@ -60,7 +60,7 @@ class CWindow
         auto Hide()                 -> void;
         auto ToggleFullScreen()     -> void;
         static auto WindowsCount()  -> unsigned short ;
-        static auto ProcessMessages([[maybe_unused]] Cwindow* self)   -> void ;
+        static auto ProcessMessages([[maybe_unused]] CWindow* self)   -> void ;
         static auto WindowShouldClose() -> bool ;
 
 
