@@ -539,10 +539,10 @@ auto CWindow::ProcessMessages(WindHandl wnhd, HDC_D dctx) -> void
 	XEvent event {};
     while (true) {
         XNextEvent(dctx, &event);
-        if (m_Event.type == Expose) {
+        if (event.type == Expose) {
             XFillRectangle(dctx, wnhd, DefaultGC(dctx, screen), 20, 20, 200, 150);
         }
-        if (m_Event.type == KeyPress) {
+        if (event.type == KeyPress) {
             S_WindowsCount--;
             break; //press Exit on key 
         }
