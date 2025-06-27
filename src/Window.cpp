@@ -384,7 +384,7 @@ auto CWindow::_init_helper(int32_t Width, int32_t Height, const char* Title) -> 
 
 	XkbSetDetectableAutoRepeat(m_DrawContext, true, NULL);
     /* Select input events */
-    XSelectInput(m_DrawContext, m_WindowHandle, KeyPressMask | KeyReleaseMask | ExposureMask | ResizeRedirectMask);
+    XSelectInput(m_DrawContext, m_WindowHandle, KeyPressMask | KeyReleaseMask | ExposureMask | ResizeRedirectMask | FocusChangeMask);
 
     /* Show the window */
     // XMapWindow(m_DrawContext, m_WindowHandle);
@@ -553,31 +553,10 @@ auto CWindow::ProcessMessages([[maybe_unused]] WindHandl wnhd, [[maybe_unused]] 
 
 			case KeyPress: {
                 XKeyEvent& keyEvent = event.xkey;
-                bool isRepeat = false;
-                // Check for autorepeat
-                if (m_keyState.find(keyEvent.keycode) != m_keyState.end()) {
-                    if (m_keyState[keyEvent.keycode]) {
-                        isRepeat = true;
-                    }
-                }
-                // Handle key press (filter autorepeats if needed)
-                if (!isRepeat || m_keyboard->AutorepeatIsEnabled()) {
-                    // Get physical key code (scancode-like)
-                    unsigned char keycode = keyEvent.keycode & 0xFF;
-                    m_keyboard->OnKeyPressed(keycode);
-                }
+                unsigned char keycode = keyEvent.keycode & 0xFF;
                 
-                // Update key state
-                m_keyState[keyEvent.keycode] = true;
-                // Handle character input
-                char buffer[32];
-                KeySym keysym;
-                int count = XLookupString(&keyEvent, buffer, sizeof(buffer), &keysym, NULL);
-                if (count > 0) {
-                    for (int i = 0; i < count; i++) {
-                        m_keyboard->OnChar(buffer[i]);
-                    }
-                }
+                // Handle key Pressed
+                m_keyboard->OnKeyPressed(keycode);
                 break;
             }
             case KeyRelease: {
@@ -586,9 +565,6 @@ auto CWindow::ProcessMessages([[maybe_unused]] WindHandl wnhd, [[maybe_unused]] 
                 
                 // Handle key release
                 m_keyboard->OnKeyReleased(keycode);
-                
-                // Update key state
-                m_keyState[keyEvent.keycode] = false;
                 break;
             }
 
