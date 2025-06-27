@@ -535,16 +535,32 @@ auto CWindow::ProcessMessages(WindHandl wnhd, HDC_D dctx) -> void
 	#elif defined(LINUX_PLT)
 	int32_t screen = DefaultScreen(dctx);
 
-    /* Event loop */
-	XEvent event {};
-    while (true) {
-        XNextEvent(dctx, &event);
-        if (event.type == KeyPress) {
-			Info("Close Window");
-            S_WindowsCount--;
-            break; //press Exit on key 
-        }
-    }
+	while (XPending(dctx)) {
+		XEvent event;
+		XNextEvent(dctx, &event);
+		
+		switch (event.type) {
+			case Expose:
+				// Handle window expose event
+				break;
+
+			case ConfigureNotify:
+				// Handle window resize
+				// m_Window.SetDims(event.xconfigure.width, event.xconfigure.height);
+				break;
+
+			case KeyPress:
+				// Handle keyboard input
+				Info("Close Window");
+            	S_WindowsCount--;
+				break;
+
+			case ClientMessage:
+				if (event.xclient.data.l[0] == wmDeleteMessage)
+					// m_Window.Destroy();
+				break;
+		}
+	}
 	#elif defined(WEB_PLT)
 	#endif
 }
