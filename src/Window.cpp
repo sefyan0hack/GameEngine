@@ -523,7 +523,7 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
 }
 #endif
 
-auto CWindow::ProcessMessages() -> void
+auto CWindow::ProcessMessages(WindHandl wnhd, HDC dctx) -> void
 {
 	#if defined(WINDOWS_PLT)
     MSG Msg = {};
@@ -533,14 +533,14 @@ auto CWindow::ProcessMessages() -> void
         DispatchMessageA(&Msg);
     }
 	#elif defined(LINUX_PLT)
-	int32_t screen = DefaultScreen(m_DrawContext);
+	int32_t screen = DefaultScreen(dctx);
 
     /* Event loop */
 	XEvent event {};
     while (true) {
-        XNextEvent(m_DrawContext, &event);
+        XNextEvent(dctx, &event);
         if (m_Event.type == Expose) {
-            XFillRectangle(m_DrawContext, m_WindowHandle, DefaultGC(m_DrawContext, screen), 20, 20, 200, 150);
+            XFillRectangle(dctx, wnhd, DefaultGC(dctx, screen), 20, 20, 200, 150);
         }
         if (m_Event.type == KeyPress) {
             S_WindowsCount--;

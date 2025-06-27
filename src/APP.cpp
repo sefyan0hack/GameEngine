@@ -109,7 +109,7 @@ auto APP::Run() -> void
         //             break;
         //     }
         // }
-        CWindow::ProcessMessages();
+        CWindow::ProcessMessages(xid, display);
         // Rendering
         gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         Update(1/static_cast<float>(fps));
