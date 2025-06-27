@@ -556,7 +556,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] WindHandl wnhd, [[maybe_unused]] 
 				break;
 
 			case ClientMessage:
-				if (event.xclient.data.l[0] == "WM_DELETE_WINDOW")
+				if (event.xclient.data.l[0] == wmDeleteMessage)
 					// m_Window.Destroy();
 				break;
 		}
