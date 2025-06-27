@@ -53,6 +53,9 @@ void APP::WebLoop(void* userData) {
 
 auto APP::Run() -> void
 {
+    [[maybe_unused]] auto windowHandle = m_Window.Handle();
+    [[maybe_unused]] auto DrawCtx = m_Window.DrawContext();
+
     gl::ClearColor(0.2f, 0.21f, 0.22f, 1.0f);
     gl::Viewport(0, 0, m_Window.Width(), m_Window.Height());
 
@@ -76,22 +79,17 @@ auto APP::Run() -> void
         m_Window.m_Keyboard->UpdatePrevState();
     }
     #elif defined(LINUX_PLT)
-    Display* display = m_Window.DrawContext();
-    Window xid = m_Window.Handle();
-    // Atom wmDeleteMessage = XInternAtom(display, "WM_DELETE_WINDOW", false);
-    XSetWMProtocols(display, xid, &wmDeleteMessage, 1);
-
     struct timespec start_time, end_time;
     clock_gettime(CLOCK_MONOTONIC, &start_time);
         
     while (!CWindow::WindowShouldClose()) {
-        CWindow::ProcessMessages(xid, display);
+        CWindow::ProcessMessages(windowHandle, DrawCtx);
         // Rendering
         gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         Update(1/static_cast<float>(fps));
 
         // Swap buffers
-        glXSwapBuffers(display, xid);
+        glXSwapBuffers(DrawCtx, windowHandle);
 
         // Frame timing
         clock_gettime(CLOCK_MONOTONIC, &end_time);
