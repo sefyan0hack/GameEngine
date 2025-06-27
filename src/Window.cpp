@@ -523,7 +523,7 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
 }
 #endif
 
-auto CWindow::ProcessMessages(WindHandl wnhd, HDC_D dctx) -> void
+auto CWindow::ProcessMessages([[maybe_unused]] WindHandl wnhd, [[maybe_unused]] HDC_D dctx) -> void
 {
 	#if defined(WINDOWS_PLT)
     MSG Msg = {};

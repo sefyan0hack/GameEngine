@@ -60,7 +60,7 @@ class CWindow
         auto Hide()                 -> void;
         auto ToggleFullScreen()     -> void;
         static auto WindowsCount()  -> unsigned short ;
-        static auto ProcessMessages(WindHandl wnhd = WindHandl{}, HDC_D dctx = HDC_D{})   -> void ;
+        static auto ProcessMessages([[maybe_unused]] WindHandl wnhd = WindHandl{}, [[maybe_unused]] HDC_D dctx = HDC_D{})   -> void ;
         static auto WindowShouldClose() -> bool ;
 
 
