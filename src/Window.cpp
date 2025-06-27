@@ -384,7 +384,7 @@ auto CWindow::_init_helper(int32_t Width, int32_t Height, const char* Title) -> 
 
     /* Select input events */
 
-    XSelectInput(m_DrawContext, m_WindowHandle, ~((long)0));//KeyPressMask | KeyReleaseMask | ExposureMask);
+    XSelectInput(m_DrawContext, m_WindowHandle, KeyPressMask | KeyReleaseMask | ExposureMask | ResizeRedirectMask);
 
     /* Show the window */
     // XMapWindow(m_DrawContext, m_WindowHandle);
