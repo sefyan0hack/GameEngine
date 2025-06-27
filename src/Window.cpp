@@ -408,9 +408,9 @@ auto CWindow::_init_helper(int32_t Width, int32_t Height, const char* Title) -> 
     XStoreName(m_DrawContext, m_WindowHandle, Title);
 
     /* Select input events */
-	
+
     XSelectInput(m_DrawContext, m_WindowHandle, ExposureMask | KeyPressMask);
-	Info("XDisplayString({}) = {}", m_DrawContext, XDisplayString(m_DrawContext));
+	Info("XDisplayString = {}", XDisplayString(m_DrawContext));
 
     /* Show the window */
     // XMapWindow(m_DrawContext, m_WindowHandle);
