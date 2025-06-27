@@ -384,7 +384,10 @@ auto CWindow::_init_helper(int32_t Width, int32_t Height, const char* Title) -> 
 
 	XkbSetDetectableAutoRepeat(m_DrawContext, true, NULL);
     /* Select input events */
-    XSelectInput(m_DrawContext, m_WindowHandle, KeyPressMask | KeyReleaseMask | ExposureMask | ResizeRedirectMask | FocusChangeMask);
+    XSelectInput(m_DrawContext, m_WindowHandle,
+		 KeyPressMask | KeyReleaseMask | ExposureMask |
+		 ResizeRedirectMask | FocusChangeMask | StructureNotifyMask
+		);
 
     /* Show the window */
     // XMapWindow(m_DrawContext, m_WindowHandle);
@@ -555,17 +558,30 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 
 			case ConfigureNotify:
 				// Handle window resize
-				Info("new Dims ({}x{})", event.xconfigure.width, event.xconfigure.height);
+				self->m_Width = event.xconfigure.width;
+				self->m_Height = event.xconfigure.height;
 				break;
 
 			case KeyPress: {
-                XKeyEvent& keyEvent = event.xkey;
-                unsigned char keycode = keyEvent.keycode & 0xFF;
-                
-                // Handle key Pressed
-                self->m_Keyboard->OnKeyPressed(keycode);
-                break;
-            }
+				XKeyEvent& keyEvent = event.xkey;
+				unsigned char keycode = keyEvent.keycode & 0xFF;
+				
+				// Check for autorepeat
+				bool isRepeat = self->m_Keyboard->IsKeyDown(keycode);
+				
+				if (!isRepeat || self->m_Keyboard->AutorepeatIsEnabled()) {
+					self->m_Keyboard->OnKeyPressed(keycode);
+					
+					// Process character input
+					char buffer[32];
+					int charCount = XLookupString(&keyEvent, buffer, sizeof(buffer), nullptr, nullptr);
+					for (int i = 0; i < charCount; i++) {
+						self->m_Keyboard->OnChar(static_cast<unsigned char>(buffer[i]));
+					}
+				}
+				break;
+			}
+	
             case KeyRelease: {
                 XKeyEvent& keyEvent = event.xkey;
                 unsigned char keycode = keyEvent.keycode & 0xFF;
@@ -574,6 +590,10 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
                 self->m_Keyboard->OnKeyReleased(keycode);
                 break;
             }
+			case FocusOut:
+				// Clear keyboard state when window loses focus
+				self->m_Keyboard->ClearState();
+				break;
 
 			case ClientMessage:
 				if (event.xclient.data.l[0] == wmDeleteMessage){
