@@ -534,7 +534,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] WindHandl wnhd, [[maybe_unused]] 
     }
 	#elif defined(LINUX_PLT)
 	int32_t screen = DefaultScreen(dctx);
-
+	Atom wmDeleteMessage = XInternAtom(dctx, "WM_DELETE_WINDOW", false);
 	while (XPending(dctx)) {
 		XEvent event;
 		XNextEvent(dctx, &event);
@@ -556,7 +556,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] WindHandl wnhd, [[maybe_unused]] 
 				break;
 
 			case ClientMessage:
-				if (event.xclient.data.l[0] == wmDeleteMessage)
+				if (event.xclient.data.l[0] == "WM_DELETE_WINDOW")
 					// m_Window.Destroy();
 				break;
 		}
