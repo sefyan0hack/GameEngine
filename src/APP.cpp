@@ -97,8 +97,8 @@ auto APP::Run() -> void
 
         clock_gettime(CLOCK_MONOTONIC, &end_time);
 
-        start_ns = start_time.tv_sec * NS_PER_SEC + start_time.tv_nsec;
-        end_ns = end_time.tv_sec * NS_PER_SEC + end_time.tv_nsec;
+        auto start_ns = start_time.tv_sec * NS_PER_SEC + start_time.tv_nsec;
+        auto end_ns = end_time.tv_sec * NS_PER_SEC + end_time.tv_nsec;
         counts = end_ns - start_ns;
         start_time = end_time;
 
