@@ -563,7 +563,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
                 unsigned char keycode = keyEvent.keycode & 0xFF;
                 
                 // Handle key Pressed
-                self->m_keyboard->OnKeyPressed(keycode);
+                self->m_Keyboard->OnKeyPressed(keycode);
                 break;
             }
             case KeyRelease: {
@@ -571,7 +571,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
                 unsigned char keycode = keyEvent.keycode & 0xFF;
                 
                 // Handle key release
-                self->m_keyboard->OnKeyReleased(keycode);
+                self->m_Keyboard->OnKeyReleased(keycode);
                 break;
             }
 
