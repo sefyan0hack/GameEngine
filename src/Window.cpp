@@ -523,10 +523,12 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
 }
 #endif
 
-auto CWindow::ProcessMessages([[maybe_unused]] Cwindow* self) -> void
+auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 {
 	Expect(self != nullptr, "Cwindow* self Can't be null");
 
+	// auto This = reinterpret_cast<CWindow*>(self);
+	
 	[[maybe_unused]] auto winHandle = self->m_WindowHandle;
 	[[maybe_unused]] auto DrawCtx = self->m_DrawContext;
 
