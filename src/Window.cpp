@@ -535,6 +535,8 @@ auto CWindow::ProcessMessages([[maybe_unused]] WindHandl wnhd, [[maybe_unused]] 
 	#elif defined(LINUX_PLT)
 	int32_t screen = DefaultScreen(dctx);
 	Atom wmDeleteMessage = XInternAtom(dctx, "WM_DELETE_WINDOW", false);
+	XSetWMProtocols(dctx, wnhd, &wmDeleteMessage, 1);
+
 	while (XPending(dctx)) {
 		XEvent event;
 		XNextEvent(dctx, &event);
@@ -546,18 +548,18 @@ auto CWindow::ProcessMessages([[maybe_unused]] WindHandl wnhd, [[maybe_unused]] 
 
 			case ConfigureNotify:
 				// Handle window resize
-				// m_Window.SetDims(event.xconfigure.width, event.xconfigure.height);
+				Info("new Dims ({}x{})", event.xconfigure.width, event.xconfigure.height);
 				break;
 
 			case KeyPress:
-				// Handle keyboard input
-				Info("Close Window");
-            	S_WindowsCount--;
+				Info("{}", event.xkey);
 				break;
 
 			case ClientMessage:
-				if (event.xclient.data.l[0] == wmDeleteMessage)
-					// m_Window.Destroy();
+				if (event.xclient.data.l[0] == wmDeleteMessage){
+					Info("Close Window");
+					S_WindowsCount--;
+				}
 				break;
 		}
 	}
