@@ -327,32 +327,6 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
     return DefWindowProcA(Winhandle, msg, Wpr, Lpr);
 }
 
-auto CWindow::ProcessMessages() -> void
-{
-	#if defined(WINDOWS_PLT)
-    MSG Msg = {};
-    while (PeekMessageA(&Msg, nullptr, 0u, 0u, PM_REMOVE))
-    {
-        TranslateMessage(&Msg);
-        DispatchMessageA(&Msg);
-    }
-	#elif defined(LINUX_PLT)
-	int32_t screen = DefaultScreen(m_DrawContext);
-
-    /* Event loop */
-	XEvent event {};
-    while (true) {
-        XNextEvent(m_DrawContext, &event);
-        if (m_Event.type == Expose) {
-            XFillRectangle(m_DrawContext, m_WindowHandle, DefaultGC(m_DrawContext, screen), 20, 20, 200, 150);
-        }
-        if (m_Event.type == KeyPress) {
-            S_WindowsCount--;
-            break; //press Exit on key 
-        }
-    }
-	#endif
-}
 auto CWindow::_init_helper(int32_t Width, int32_t Height, const char* Title) -> void
 {
     WinClass::Instance();
@@ -548,6 +522,34 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
     return EM_FALSE;
 }
 #endif
+
+auto CWindow::ProcessMessages() -> void
+{
+	#if defined(WINDOWS_PLT)
+    MSG Msg = {};
+    while (PeekMessageA(&Msg, nullptr, 0u, 0u, PM_REMOVE))
+    {
+        TranslateMessage(&Msg);
+        DispatchMessageA(&Msg);
+    }
+	#elif defined(LINUX_PLT)
+	int32_t screen = DefaultScreen(m_DrawContext);
+
+    /* Event loop */
+	XEvent event {};
+    while (true) {
+        XNextEvent(m_DrawContext, &event);
+        if (m_Event.type == Expose) {
+            XFillRectangle(m_DrawContext, m_WindowHandle, DefaultGC(m_DrawContext, screen), 20, 20, 200, 150);
+        }
+        if (m_Event.type == KeyPress) {
+            S_WindowsCount--;
+            break; //press Exit on key 
+        }
+    }
+	#elif defined(WEB_PLT)
+	#endif
+}
 
 auto CWindow::Handle() const -> WindHandl
 {
