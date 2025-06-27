@@ -20,6 +20,7 @@ using GLCTX     = HGLRC;
 #elif defined(LINUX_PLT)
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <X11/XKBlib.h>
 #include <GL/gl.h>
 #include <GL/glx.h>
 #include <glext.h>

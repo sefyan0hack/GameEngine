@@ -523,8 +523,13 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
 }
 #endif
 
-auto CWindow::ProcessMessages([[maybe_unused]] WindHandl wnhd, [[maybe_unused]] HDC_D dctx) -> void
+auto CWindow::ProcessMessages([[maybe_unused]] Cwindow* self) -> void
 {
+	Expect(self != nullptr, "Cwindow* self Can't be null");
+
+	[[maybe_unused]] auto winHandle = self->m_WindowHandle;
+	[[maybe_unused]] auto DrawCtx = self->m_DrawContext;
+
 	#if defined(WINDOWS_PLT)
     MSG Msg = {};
     while (PeekMessageA(&Msg, nullptr, 0u, 0u, PM_REMOVE))
@@ -533,13 +538,13 @@ auto CWindow::ProcessMessages([[maybe_unused]] WindHandl wnhd, [[maybe_unused]] 
         DispatchMessageA(&Msg);
     }
 	#elif defined(LINUX_PLT)
-	int32_t screen = DefaultScreen(dctx);
-	Atom wmDeleteMessage = XInternAtom(dctx, "WM_DELETE_WINDOW", false);
-	XSetWMProtocols(dctx, wnhd, &wmDeleteMessage, 1);
+	int32_t screen = DefaultScreen(DrawCtx);
+	Atom wmDeleteMessage = XInternAtom(DrawCtx, "WM_DELETE_WINDOW", false);
+	XSetWMProtocols(DrawCtx, winHandle, &wmDeleteMessage, 1);
 
-	while (XPending(dctx)) {
+	while (XPending(DrawCtx)) {
 		XEvent event;
-		XNextEvent(dctx, &event);
+		XNextEvent(DrawCtx, &event);
 		
 		switch (event.type) {
 			case Expose:
@@ -556,7 +561,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] WindHandl wnhd, [[maybe_unused]] 
                 unsigned char keycode = keyEvent.keycode & 0xFF;
                 
                 // Handle key Pressed
-                m_keyboard->OnKeyPressed(keycode);
+                self->m_keyboard->OnKeyPressed(keycode);
                 break;
             }
             case KeyRelease: {
@@ -564,7 +569,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] WindHandl wnhd, [[maybe_unused]] 
                 unsigned char keycode = keyEvent.keycode & 0xFF;
                 
                 // Handle key release
-                m_keyboard->OnKeyReleased(keycode);
+                self->m_keyboard->OnKeyReleased(keycode);
                 break;
             }
 
