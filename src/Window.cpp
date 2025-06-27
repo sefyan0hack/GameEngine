@@ -340,16 +340,17 @@ auto CWindow::ProcessMessages() -> void
 	int32_t screen = DefaultScreen(m_DrawContext);
 
     /* Event loop */
-    // while (true) {
-    //     XNextEvent(m_DrawContext, &m_Event);
-    //     if (m_Event.type == Expose) {
-    //         XFillRectangle(m_DrawContext, m_WindowHandle, DefaultGC(m_DrawContext, screen), 20, 20, 200, 150);
-    //     }
-    //     if (m_Event.type == KeyPress) {
-    //         S_WindowsCount--;
-    //         break; //press Exit on key 
-    //     }
-    // }
+	XEvent event {};
+    while (true) {
+        XNextEvent(m_DrawContext, &event);
+        if (m_Event.type == Expose) {
+            XFillRectangle(m_DrawContext, m_WindowHandle, DefaultGC(m_DrawContext, screen), 20, 20, 200, 150);
+        }
+        if (m_Event.type == KeyPress) {
+            S_WindowsCount--;
+            break; //press Exit on key 
+        }
+    }
 	#endif
 }
 auto CWindow::_init_helper(int32_t Width, int32_t Height, const char* Title) -> void
@@ -409,8 +410,7 @@ auto CWindow::_init_helper(int32_t Width, int32_t Height, const char* Title) -> 
 
     /* Select input events */
 
-    XSelectInput(m_DrawContext, m_WindowHandle, ExposureMask | KeyPressMask);
-	Info("XDisplayString = {}", XDisplayString(m_DrawContext));
+    XSelectInput(m_DrawContext, m_WindowHandle, KeyPressMask | KeyReleaseMask | ExposureMask);
 
     /* Show the window */
     // XMapWindow(m_DrawContext, m_WindowHandle);

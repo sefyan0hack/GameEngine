@@ -85,31 +85,31 @@ auto APP::Run() -> void
     clock_gettime(CLOCK_MONOTONIC, &start_time);
         
     while (!CWindow::WindowShouldClose()) {
-        while (XPending(display)) {
-            XEvent event;
-            XNextEvent(display, &event);
+        // while (XPending(display)) {
+        //     XEvent event;
+        //     XNextEvent(display, &event);
             
-            switch (event.type) {
-                case Expose:
-                    // Handle window expose event
-                    break;
+        //     switch (event.type) {
+        //         case Expose:
+        //             // Handle window expose event
+        //             break;
                     
-                case ConfigureNotify:
-                    // Handle window resize
-                    // m_Window.SetDims(event.xconfigure.width, event.xconfigure.height);
-                    break;
+        //         case ConfigureNotify:
+        //             // Handle window resize
+        //             // m_Window.SetDims(event.xconfigure.width, event.xconfigure.height);
+        //             break;
                     
-                case KeyPress:
-                    // Handle keyboard input
-                    break;
+        //         case KeyPress:
+        //             // Handle keyboard input
+        //             break;
                     
-                case ClientMessage:
-                    if (event.xclient.data.l[0] == wmDeleteMessage)
-                        // m_Window.Destroy();
-                    break;
-            }
-        }
-
+        //         case ClientMessage:
+        //             if (event.xclient.data.l[0] == wmDeleteMessage)
+        //                 // m_Window.Destroy();
+        //             break;
+        //     }
+        // }
+        CWindow::ProcessMessages();
         // Rendering
         gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         Update(1/static_cast<float>(fps));
