@@ -552,7 +552,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] WindHandl wnhd, [[maybe_unused]] 
 				break;
 
 			case KeyPress:
-				Info("{}", event.xkey.keycode);
+				Info("KeyCode : {}, XK_space", event.xkey.keycode, XK_space);
 				break;
 
 			case ClientMessage:

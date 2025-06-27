@@ -78,37 +78,13 @@ auto APP::Run() -> void
     #elif defined(LINUX_PLT)
     Display* display = m_Window.DrawContext();
     Window xid = m_Window.Handle();
-    Atom wmDeleteMessage = XInternAtom(display, "WM_DELETE_WINDOW", false);
+    // Atom wmDeleteMessage = XInternAtom(display, "WM_DELETE_WINDOW", false);
     XSetWMProtocols(display, xid, &wmDeleteMessage, 1);
 
     struct timespec start_time, end_time;
     clock_gettime(CLOCK_MONOTONIC, &start_time);
         
     while (!CWindow::WindowShouldClose()) {
-        // while (XPending(display)) {
-        //     XEvent event;
-        //     XNextEvent(display, &event);
-            
-        //     switch (event.type) {
-        //         case Expose:
-        //             // Handle window expose event
-        //             break;
-                    
-        //         case ConfigureNotify:
-        //             // Handle window resize
-        //             // m_Window.SetDims(event.xconfigure.width, event.xconfigure.height);
-        //             break;
-                    
-        //         case KeyPress:
-        //             // Handle keyboard input
-        //             break;
-                    
-        //         case ClientMessage:
-        //             if (event.xclient.data.l[0] == wmDeleteMessage)
-        //                 // m_Window.Destroy();
-        //             break;
-        //     }
-        // }
         CWindow::ProcessMessages(xid, display);
         // Rendering
         gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
