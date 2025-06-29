@@ -566,7 +566,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 			case KeyRelease: {
 				const KeyCode keycode = event.xkey.keycode;
 				if (event.type == KeyPress) {
-					keyboard.OnKeyPressed(keycode);
+					self->m_keyboard.OnKeyPressed(keycode);
 
 					char buffer[32];
 					KeySym keysym;
@@ -574,11 +574,11 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 					int char_count = XLookupString(&event.xkey, buffer, sizeof(buffer), &keysym, &compose);
 
 					for (int i = 0; i < char_count; ++i) {
-						keyboard.OnChar(static_cast<unsigned char>(buffer[i]));
+						self->m_keyboard.OnChar(static_cast<unsigned char>(buffer[i]));
 					}
 
 				} else {
-					keyboard.OnKeyReleased(keycode);
+					self->m_keyboard.OnKeyReleased(keycode);
 				}
 				break;
 			}
