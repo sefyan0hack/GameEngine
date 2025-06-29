@@ -565,7 +565,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 			case KeyPress:
 			case KeyRelease: {
 				const KeyCode keycode = event.xkey.keycode;
-				KeySym keysym = XkbKeycodeToKeysym(m_DrawContext, keycode, 0, 0); // US layout
+				KeySym keysym = XkbKeycodeToKeysym(DrawCtx, keycode, 0, 0); // US layout
 				
 				// Map keysym to consistent virtual key codes
 				auto MapKeysymToVK = [](KeySym keysym) -> unsigned char {
@@ -610,7 +610,6 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 					self->m_Keyboard->OnKeyReleased(vk);
 				}
 				break;
-			}
 			}
 
 			case FocusOut:
