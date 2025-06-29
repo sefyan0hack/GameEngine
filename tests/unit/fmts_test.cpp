@@ -87,9 +87,9 @@ TEST(Formatters, Camera){
     EXPECT_EQ(r, e);
 }
 
-#if !defined(WEB_PLT) && 0 // disable opengl tests `Github Runner are headless`
+// disable opengl tests `Github Runner are headless`
 
-TEST(Formatters, Shader){
+TEST(Formatters, DISABLED_Shader){
     IF_THROWS_IGNOR({
         auto shader = Shader();
 
@@ -102,7 +102,7 @@ TEST(Formatters, Shader){
     });
 }
 
-TEST(Formatters, Mesh){
+TEST(Formatters, DISABLED_Mesh){
     auto mesh = Mesh(std::vector<Vertex>());
         
     auto r = std::format("{}", mesh);
@@ -113,7 +113,7 @@ TEST(Formatters, Mesh){
     EXPECT_EQ(r, e);
 }
 
-TEST(Formatters, Material){
+TEST(Formatters, DISABLED_Material){
     IF_THROWS_IGNOR({
         auto shader_vert = Shader(SHADER(skybox)".vert", GL_VERTEX_SHADER);
         auto shader_frag = Shader(SHADER(skybox)".frag", GL_FRAGMENT_SHADER);
@@ -129,7 +129,7 @@ TEST(Formatters, Material){
     });
 }
 
-TEST(Formatters, GameObject){
+TEST(Formatters, DISABLED_GameObject){
     IF_THROWS_IGNOR({
         auto shader_vert = Shader(SHADER(skybox)".vert", GL_VERTEX_SHADER);
         auto shader_frag = Shader(SHADER(skybox)".frag", GL_FRAGMENT_SHADER);
@@ -146,4 +146,3 @@ TEST(Formatters, GameObject){
         EXPECT_EQ(r, e);
     });
 }
-#endif
