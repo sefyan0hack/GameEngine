@@ -547,8 +547,8 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 	Atom wmDeleteMessage = XInternAtom(DrawCtx, "WM_DELETE_WINDOW", false);
 	XSetWMProtocols(DrawCtx, winHandle, &wmDeleteMessage, 1);
 
+	XEvent event{};
 	while (XPending(DrawCtx)) {
-		XEvent event;
 		XNextEvent(DrawCtx, &event);
 		
 		switch (event.type) {
@@ -562,34 +562,27 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 				self->m_Height = event.xconfigure.height;
 				break;
 
-			case KeyPress: {
-				XKeyEvent& keyEvent = event.xkey;
-				unsigned char keycode = keyEvent.keycode & 0xFF;
-				
-				// Check for autorepeat
-				bool isRepeat = self->m_Keyboard->IsKeyDown(keycode);
-				
-				if (!isRepeat || self->m_Keyboard->AutorepeatIsEnabled()) {
-					self->m_Keyboard->OnKeyPressed(keycode);
-					
-					// Process character input
+			case KeyPress:
+			case KeyRelease: {
+				const KeyCode keycode = event.xkey.keycode;
+				if (event.type == KeyPress) {
+					keyboard.OnKeyPressed(keycode);
+
 					char buffer[32];
-					int charCount = XLookupString(&keyEvent, buffer, sizeof(buffer), nullptr, nullptr);
-					for (int i = 0; i < charCount; i++) {
-						self->m_Keyboard->OnChar(static_cast<unsigned char>(buffer[i]));
+					KeySym keysym;
+					XComposeStatus compose;
+					int char_count = XLookupString(&event.xkey, buffer, sizeof(buffer), &keysym, &compose);
+
+					for (int i = 0; i < char_count; ++i) {
+						keyboard.OnChar(static_cast<unsigned char>(buffer[i]));
 					}
+
+				} else {
+					keyboard.OnKeyReleased(keycode);
 				}
 				break;
 			}
-	
-            case KeyRelease: {
-                XKeyEvent& keyEvent = event.xkey;
-                unsigned char keycode = keyEvent.keycode & 0xFF;
-                
-                // Handle key release
-                self->m_Keyboard->OnKeyReleased(keycode);
-                break;
-            }
+
 			case FocusOut:
 				// Clear keyboard state when window loses focus
 				self->m_Keyboard->ClearState();
