@@ -576,9 +576,10 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 					for (int i = 0; i < char_count; ++i) {
 						self->m_Keyboard->OnChar(static_cast<unsigned char>(buffer[i]));
 					}
-
+					Info("KeyPress: KeyCode: {}, Char: {}", keycode, buffer);
 				} else {
 					self->m_Keyboard->OnKeyReleased(keycode);
+					Info("KeyRelease: KeyCode: {}", keycode);
 				}
 				break;
 			}
