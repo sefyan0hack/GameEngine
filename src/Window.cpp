@@ -565,23 +565,52 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 			case KeyPress:
 			case KeyRelease: {
 				const KeyCode keycode = event.xkey.keycode;
+				KeySym keysym = XkbKeycodeToKeysym(m_DrawContext, keycode, 0, 0); // US layout
+				
+				// Map keysym to consistent virtual key codes
+				auto MapKeysymToVK = [](KeySym keysym) -> unsigned char {
+					// Letters (A-Z)
+					if (keysym >= XK_A && keysym <= XK_Z) return 'A' + (keysym - XK_A);
+					if (keysym >= XK_a && keysym <= XK_z) return 'A' + (keysym - XK_a);
+					
+					// Numbers (0-9)
+					if (keysym >= XK_0 && keysym <= XK_9) return '0' + (keysym - XK_0);
+					
+					// Special keys
+					switch (keysym) {
+						case XK_Shift_L: case XK_Shift_R: return 0x10;  // VK_SHIFT
+						case XK_Control_L: case XK_Control_R: return 0x11;  // VK_CONTROL
+						case XK_Alt_L: return 0x12;  // VK_MENU
+						case XK_space: return ' ';
+						case XK_Up: return 0x26;    // VK_UP
+						case XK_Down: return 0x28;  // VK_DOWN
+						case XK_Left: return 0x25;  // VK_LEFT
+						case XK_Right: return 0x27; // VK_RIGHT
+						case XK_Escape: return 0x1B; // VK_ESCAPE
+						case XK_Return: return 0x0D; // VK_RETURN
+
+						default: return static_cast<unsigned char>(keysym);
+					}
+				};
+			
+				unsigned char vk = MapKeysymToVK(keysym);
+			
 				if (event.type == KeyPress) {
-					self->m_Keyboard->OnKeyPressed(keycode);
-
+					self->m_Keyboard->OnKeyPressed(vk);
+			
 					char buffer[32];
-					KeySym keysym;
+					KeySym keysym_char;
 					XComposeStatus compose;
-					int char_count = XLookupString(&event.xkey, buffer, sizeof(buffer), &keysym, &compose);
-
+					int char_count = XLookupString(&event.xkey, buffer, sizeof(buffer), &keysym_char, &compose);
+			
 					for (int i = 0; i < char_count; ++i) {
 						self->m_Keyboard->OnChar(static_cast<unsigned char>(buffer[i]));
 					}
-					Info("KeyPress: KeyCode: {}, Char: {}", keycode, buffer);
 				} else {
-					self->m_Keyboard->OnKeyReleased(keycode);
-					Info("KeyRelease: KeyCode: {}", keycode);
+					self->m_Keyboard->OnKeyReleased(vk);
 				}
 				break;
+			}
 			}
 
 			case FocusOut:
