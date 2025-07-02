@@ -103,14 +103,14 @@ if(EMSCRIPTEN)
         -sWASM_LEGACY_EXCEPTIONS=0
         -fno-exceptions -fno-rtti
         --embed-file ${CMAKE_SOURCE_DIR}/res
-        --llvm-lto 1
-        -sINVOKE_RUN=0 
-        -sSTRICT=1 
-        -sMALLOC=emmalloc 
-        -sENVIRONMENT=web 
-        -sDYNAMIC_EXECUTION=0 
-        -sMODULARIZE=1 
-        -sWASM=1 
+        -sINVOKE_RUN=0
+        -sSTRICT=1
+        -sMALLOC=emmalloc
+        -sENVIRONMENT=web
+        -sDYNAMIC_EXECUTION=0
+        -sMODULARIZE=1
+        -sEXPORT_NAME="createMyModule"
+        -sWASM=1
         -llzma
     )
 
