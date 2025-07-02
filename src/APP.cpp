@@ -15,26 +15,11 @@ constexpr auto Wname = "Main";
 
 APP::APP()
     : m_Window(1180, 640, Wname)
-    , fps(60.0) 
+    , fps(60.0f) 
 { 
     m_Window.Show();
 }
 
-
-#if defined(WEB_PLT)
-void APP::WebLoop(void* userData) {
-    APP* app = static_cast<APP*>(userData);
-
-    gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    app->Update(1.0/fps);
-    
-    if (CWindow::WindowShouldClose()) {
-        emscripten_cancel_main_loop();
-    }
-    app->m_Window.m_Keyboard->UpdatePrevState();
-
-}
-#endif
 
 auto APP::Run() -> void
 {
@@ -47,12 +32,18 @@ auto APP::Run() -> void
         CWindow::ProcessMessages(&m_Window);
 
         gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        Update(1.0/fps);
+        Update(1.0f/fps);
         m_Window.SwapBuffers();
 
         m_Window.m_Keyboard->UpdatePrevState();
     }
     #elif defined(WEB_PLT)
-    emscripten_set_main_loop_arg(WebLoop, this, fps, 1);
+    emscripten_set_main_loop_arg([&this](void*){
+
+        gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        Update(1.0f/fps);
+        
+        m_Window.m_Keyboard->UpdatePrevState();
+    }, nullptr, fps, 1);
     #endif
 }
