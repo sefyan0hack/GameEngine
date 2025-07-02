@@ -108,8 +108,6 @@ if(EMSCRIPTEN)
         -sMALLOC=emmalloc
         -sENVIRONMENT=web
         -sDYNAMIC_EXECUTION=0
-        -sMODULARIZE=1
-        -sEXPORT_NAME="createMyModule"
         -sWASM=1
         -lGL
         # -sLEGACY_GL_EMULATION=1
