@@ -99,11 +99,20 @@ if(EMSCRIPTEN)
         -sFULL_ES3=1
         -sSTB_IMAGE=1
         -sDISABLE_EXCEPTION_THROWING=1
+        -sDISABLE_EXCEPTION_CATCHING=1 
         -sWASM_LEGACY_EXCEPTIONS=0
         -sELIMINATE_DUPLICATE_FUNCTIONS=1
         -fno-exceptions -fno-rtti
         --embed-file ${CMAKE_SOURCE_DIR}/res
         --llvm-lto 1
+        -sINVOKE_RUN=0 
+        -sSTRICT=1 
+        -sMALLOC=emmalloc 
+        -sENVIRONMENT=web 
+        -sDYNAMIC_EXECUTION=0 
+        -sMODULARIZE=1 
+        -sWASM=1 
+        -llzma
     )
 
     configure_file(
