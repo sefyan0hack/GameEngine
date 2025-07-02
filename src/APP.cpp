@@ -40,8 +40,8 @@ auto APP::Run() -> void
         Frame();
     }
     #elif defined(WEB_PLT)
-    emscripten_set_main_loop_arg([this](void*){
-        Frame();
+    emscripten_set_main_loop_arg([](void* userData){
+        static_cast<APP*>(userData)->Frame();
     }, nullptr, 0, 1);
     #endif
 }
