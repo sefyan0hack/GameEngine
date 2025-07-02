@@ -208,6 +208,7 @@ public:
         // }
 
         rndr.render(Scn, Cam);
+        Info("FPS: {}", fps);
     }
 
 public: // distroy hire

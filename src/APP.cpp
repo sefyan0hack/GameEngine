@@ -37,11 +37,20 @@ auto APP::Run() -> void
 
     #if defined(WINDOWS_PLT) || defined(LINUX_PLT)
     while (!CWindow::WindowShouldClose()) {
+        auto start = std::chrono::steady_clock::now();
         Frame();
+        auto end   = std::chrono::steady_clock::now();
+        fps = 1.0f/std::chrono::duration<float>(end - start).count();
     }
     #elif defined(WEB_PLT)
     emscripten_set_main_loop_arg([](void* userData){
-        static_cast<APP*>(userData)->Frame();
+        auto app = static_cast<APP*>(userData);
+
+        auto start = std::chrono::steady_clock::now();
+        app->Frame();
+        auto end   = std::chrono::steady_clock::now();
+        app->fps = 1.0f/std::chrono::duration<float>(end - start).count();
+
     }, nullptr, 0, 1);
     #endif
 }
