@@ -110,7 +110,7 @@ if(EMSCRIPTEN)
         -sDYNAMIC_EXECUTION=0
         -sWASM=1
         -lGL
-        # -sLEGACY_GL_EMULATION=1
+        -sASSERTIONS=0
     )
 
     configure_file(
