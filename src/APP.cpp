@@ -21,29 +21,27 @@ APP::APP()
 }
 
 
+auto APP::Frame() -> void
+{
+    CWindow::ProcessMessages(&m_Window);
+    gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    Update(1.0f/fps);
+    m_Window.SwapBuffers();
+    m_Window.m_Keyboard->UpdatePrevState();
+}
+
 auto APP::Run() -> void
 {
     gl::ClearColor(0.2f, 0.21f, 0.22f, 1.0f);
     gl::Viewport(0, 0, m_Window.Width(), m_Window.Height());
 
     #if defined(WINDOWS_PLT) || defined(LINUX_PLT)
-
     while (!CWindow::WindowShouldClose()) {
-        CWindow::ProcessMessages(&m_Window);
-
-        gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        Update(1.0f/fps);
-        m_Window.SwapBuffers();
-
-        m_Window.m_Keyboard->UpdatePrevState();
+        Frame();
     }
     #elif defined(WEB_PLT)
-    emscripten_set_main_loop_arg([&this](void*){
-
-        gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        Update(1.0f/fps);
-        
-        m_Window.m_Keyboard->UpdatePrevState();
-    }, nullptr, fps, 1);
+    emscripten_set_main_loop_arg([this](void*){
+        Frame();
+    }, nullptr, 0, 1);
     #endif
 }

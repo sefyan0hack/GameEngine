@@ -11,6 +11,8 @@ protected:
     virtual auto Update(float delta) -> void = 0 ;
 public:
     auto Run() -> void ;
+private:
+    auto Frame() -> void;
 protected:
     CWindow m_Window;
     float fps;
