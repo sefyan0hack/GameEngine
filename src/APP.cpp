@@ -38,10 +38,6 @@ void APP::WebLoop(void* userData) {
 
 auto APP::Run() -> void
 {
-    [[maybe_unused]] auto windowHandle = m_Window.Handle();
-    [[maybe_unused]] auto DrawCtx = m_Window.DrawContext();
-    [[maybe_unused]] auto OpenglCtx = m_Window.opengl()->DrawContext();
-
     gl::ClearColor(0.2f, 0.21f, 0.22f, 1.0f);
     gl::Viewport(0, 0, m_Window.Width(), m_Window.Height());
 
@@ -49,16 +45,10 @@ auto APP::Run() -> void
 
     while (!CWindow::WindowShouldClose()) {
         CWindow::ProcessMessages(&m_Window);
-        // Rendering
+
         gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         Update(1.0/fps);
-
-        // Swap buffers
-        #if defined(WINDOWS_PLT)
-        SwapBuffers(OpenglCtx);
-        #elif defined(LINUX_PLT)
-        glXSwapBuffers(DrawCtx, windowHandle);
-        #endif
+        m_Window.SwapBuffers();
 
         m_Window.m_Keyboard->UpdatePrevState();
     }

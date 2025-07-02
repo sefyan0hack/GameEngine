@@ -769,3 +769,12 @@ auto CWindow::ToggleFullScreen() -> void
 
 	#endif
 }
+
+auto CWindow::SwapBuffers() const -> void
+{
+	#if defined(WINDOWS_PLT)
+    ::SwapBuffers(m_DrawContext);
+    #elif defined(LINUX_PLT)
+    ::glXSwapBuffers(m_DrawContext, m_WindowHandle);
+    #endif
+}

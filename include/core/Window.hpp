@@ -59,10 +59,10 @@ class CWindow
         auto Show()                 -> void;
         auto Hide()                 -> void;
         auto ToggleFullScreen()     -> void;
+        auto SwapBuffers() const    -> void;
         static auto WindowsCount()  -> unsigned short ;
         static auto ProcessMessages([[maybe_unused]] CWindow* self)   -> void ;
         static auto WindowShouldClose() -> bool ;
-
 
     private:
         #if defined(WINDOWS_PLT)
