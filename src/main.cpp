@@ -137,7 +137,7 @@ private:
 
         Matt.SetTexture(TEXTURE(brik.png));
         Scn << GameObject({0,0,0}, Matt, cubeMesh) ;
-        
+
         Matt.SetTexture(TEXTURE(annie_spratt.jpg));
         Scn << GameObject({0,1,0}, Matt, cubeMesh);
 
@@ -146,21 +146,20 @@ private:
         Scn << GameObject({0,0,1}, Matt, cubeMesh);
         Scn << GameObject({1,1,0}, Matt, cubeMesh);
         Scn << GameObject({1,1,1}, Matt, cubeMesh);
-                
+
     }
 public:
 
     auto Update(float delta) -> void override {
 
         Cam.MoseMove();
-        // Info("{}", *m_Window.m_Mouse);
 
         if( m_Window.m_Keyboard->IsKeyDown('W')){
             float speed = 10.0f * delta;
             #if defined(WINDOWS_PLT)
             if(m_Window.m_Keyboard->IsKeyDown(VK_SHIFT))
                 speed *= 10;
-            #endif //_WIN32
+            #endif
             Cam.MoveFroward(speed);
         }
         if( m_Window.m_Keyboard->IsKeyDown('S')){
@@ -208,7 +207,6 @@ public:
         // }
 
         rndr.render(Scn, Cam);
-        Info("FPS: {}", fps);
     }
 
 public: // distroy hire

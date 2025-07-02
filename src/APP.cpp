@@ -30,6 +30,16 @@ auto APP::Frame() -> void
     m_Window.m_Keyboard->UpdatePrevState();
 }
 
+auto APP::LoopBody(void* ctx) -> void
+{
+    auto app = static_cast<APP*>(ctx);
+
+    auto start = std::chrono::steady_clock::now();
+    app->Frame();
+    auto end   = std::chrono::steady_clock::now();
+    app->fps = 1.0f/std::chrono::duration<float>(end - start).count();
+}
+
 auto APP::Run() -> void
 {
     gl::ClearColor(0.2f, 0.21f, 0.22f, 1.0f);
@@ -37,20 +47,9 @@ auto APP::Run() -> void
 
     #if defined(WINDOWS_PLT) || defined(LINUX_PLT)
     while (!CWindow::WindowShouldClose()) {
-        auto start = std::chrono::steady_clock::now();
-        Frame();
-        auto end   = std::chrono::steady_clock::now();
-        fps = 1.0f/std::chrono::duration<float>(end - start).count();
+        LoopBody(this);
     }
     #elif defined(WEB_PLT)
-    emscripten_set_main_loop_arg([](void* userData){
-        auto app = static_cast<APP*>(userData);
-
-        auto start = std::chrono::steady_clock::now();
-        app->Frame();
-        auto end   = std::chrono::steady_clock::now();
-        app->fps = 1.0f/std::chrono::duration<float>(end - start).count();
-
-    }, nullptr, 0, 1);
+    emscripten_set_main_loop_arg(LoopBody, this, 0, 1);
     #endif
 }
