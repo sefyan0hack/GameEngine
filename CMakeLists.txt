@@ -111,7 +111,6 @@ if(EMSCRIPTEN)
         -sMODULARIZE=1
         -sEXPORT_NAME="createMyModule"
         -sWASM=1
-        -llzma
     )
 
     configure_file(
