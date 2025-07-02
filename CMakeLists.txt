@@ -98,6 +98,7 @@ if(EMSCRIPTEN)
         -sNO_EXIT_RUNTIME=1
         -sFULL_ES3=1
         -sSTB_IMAGE=1
+        -sFILESYSTEM=0
         -sDISABLE_EXCEPTION_THROWING=1
         -sDISABLE_EXCEPTION_CATCHING=1 
         -sWASM_LEGACY_EXCEPTIONS=0
@@ -111,6 +112,7 @@ if(EMSCRIPTEN)
         -sMODULARIZE=1
         -sEXPORT_NAME="createMyModule"
         -sWASM=1
+        -lGL
     )
 
     configure_file(
