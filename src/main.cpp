@@ -156,10 +156,8 @@ public:
 
         if( m_Window.m_Keyboard->IsKeyDown(Key::W)){
             float speed = 10.0f * delta;
-            #if defined(WINDOWS_PLT)
-            if(m_Window.m_Keyboard->IsKeyDown(Key::LeftShift))
+            if(m_Window.m_Keyboard->IsKeyDown(Key::LeftShift) || m_Window.m_Keyboard->IsKeyDown(Key::RightShift))
                 speed *= 10;
-            #endif
             Cam.MoveFroward(speed);
         }
         if( m_Window.m_Keyboard->IsKeyDown(Key::S)){
@@ -189,11 +187,9 @@ public:
             }
         }
 
-        #if defined(WINDOWS_PLT)
         if(m_Window.m_Keyboard->IsKeyPressed(Key::F11)){
             m_Window.ToggleFullScreen();
         }
-        #endif
         
         // if (m_Window.m_Keyboard->IsKeyPressed(Key::H)){
         //     static bool flip = false;
