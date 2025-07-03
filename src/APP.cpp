@@ -15,17 +15,18 @@ constexpr auto Wname = "Main";
 
 APP::APP()
     : m_Window(1180, 640, Wname)
-    , fps(60.0f) 
+    , m_LastFrameTime(std::chrono::steady_clock::now())
+    , m_SmoothedFPS(60.0f)
 { 
     m_Window.Show();
 }
 
 
-auto APP::Frame() -> void
+auto APP::Frame(float deltaTime) -> void
 {
     CWindow::ProcessMessages(&m_Window);
     gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    Update(1.0f/fps);
+    Update(deltaTime);
     m_Window.SwapBuffers();
     m_Window.m_Keyboard->UpdatePrevState();
 }
@@ -34,10 +35,15 @@ auto APP::LoopBody(void* ctx) -> void
 {
     auto app = static_cast<APP*>(ctx);
 
-    auto start = std::chrono::steady_clock::now();
-    app->Frame();
-    auto end   = std::chrono::steady_clock::now();
-    app->fps = 1.0f/std::chrono::duration<float>(end - start).count();
+    auto now = std::chrono::steady_clock::now();
+    float deltaTime = std::chrono::duration<float>(now - app->m_LastFrameTime).count();
+    app->m_LastFrameTime = now;
+
+    app->m_Fps = 1.0f / deltaTime;
+    app->m_SmoothedFPS = 0.9f * app->m_SmoothedFPS + 0.1f * app->m_Fps;
+
+    app->Frame(deltaTime);
+    //todo: Frame Pacing
 }
 
 auto APP::Run() -> void
@@ -52,4 +58,18 @@ auto APP::Run() -> void
     #elif defined(WEB_PLT)
     emscripten_set_main_loop_arg(LoopBody, this, 0, 1);
     #endif
+}
+
+auto APP::Fps() const -> float
+{
+    return m_Fps;
+}
+auto APP::SmoothedFPS() const -> float
+{
+    return m_SmoothedFPS;
+}
+
+auto APP::DeltaTime() const -> float
+{
+    return 1.0f/m_Fps;
 }
