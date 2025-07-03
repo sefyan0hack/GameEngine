@@ -568,7 +568,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 				KeySym keysym = XkbKeycodeToKeysym(DrawCtx, keycode, 0, 0); // US layout
 				
 				// Map keysym to consistent virtual key codes
-				auto MapKeysymToVK = [](KeySym keysym) -> uint32_t {
+				auto MapKeysymToVK = [](KeySym keysym) {
 					// Letters (A-Z)
 					if (keysym >= XK_A && keysym <= XK_Z) return 'A' + (keysym - XK_A);
 					if (keysym >= XK_a && keysym <= XK_z) return 'A' + (keysym - XK_a);
@@ -593,7 +593,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 					}
 				};
 			
-				unsigned char vk = MapKeysymToVK(keysym);
+				auto vk = MapKeysymToVK(keysym);
 			
 				if (event.type == KeyPress) {
 					self->m_Keyboard->OnKeyPressed(static_cast<Key>(vk));
@@ -607,7 +607,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 						self->m_Keyboard->OnChar(static_cast<unsigned char>(buffer[i]));
 					}
 				} else {
-					self->m_Keyboard->OnKeyReleased(vk);
+					self->m_Keyboard->OnKeyReleased(static_cast<Key>(vk));
 				}
 				break;
 			}
