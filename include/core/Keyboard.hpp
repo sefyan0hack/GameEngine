@@ -103,6 +103,7 @@ namespace KeyMapper {
         uint32_t ToNative(Key key);
     #elif defined(LINUX_PLT)
         #include <X11/X.h>
+        #include <X11/keysym.h>
         KeySym ToNative(Key key);
     #elif defined(WEB_PLT)
         #include <emscripten/html5.h>
