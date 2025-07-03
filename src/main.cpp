@@ -154,31 +154,31 @@ public:
 
         Cam.MoseMove();
 
-        if( m_Window.m_Keyboard->IsKeyDown('W')){
+        if( m_Window.m_Keyboard->IsKeyDown(Key::W)){
             float speed = 10.0f * delta;
             #if defined(WINDOWS_PLT)
-            if(m_Window.m_Keyboard->IsKeyDown(VK_SHIFT))
+            if(m_Window.m_Keyboard->IsKeyDown(Key::LeftShift))
                 speed *= 10;
             #endif
             Cam.MoveFroward(speed);
         }
-        if( m_Window.m_Keyboard->IsKeyDown('S')){
+        if( m_Window.m_Keyboard->IsKeyDown(Key::S)){
             Cam.MoveBackward(10.0f * delta);
         }
-        if( m_Window.m_Keyboard->IsKeyDown('A')){
+        if( m_Window.m_Keyboard->IsKeyDown(Key::A)){
             Cam.MoveLeft(10.0f * delta);
         }
-        if( m_Window.m_Keyboard->IsKeyDown('D')){
+        if( m_Window.m_Keyboard->IsKeyDown(Key::D)){
             Cam.MoveRight(10.0f * delta);
         }
-        if( m_Window.m_Keyboard->IsKeyDown('N') ){
+        if( m_Window.m_Keyboard->IsKeyDown(Key::N) ){
             Cam.MoveUP(10.0f * delta);
         }
-        if( m_Window.m_Keyboard->IsKeyDown('M') ){
+        if( m_Window.m_Keyboard->IsKeyDown(Key::M) ){
             Cam.MoveDown(10.0f * delta);
         }
 
-        if( m_Window.m_Keyboard->IsKeyDown('L') ){
+        if( m_Window.m_Keyboard->IsKeyDown(Key::L) ){
             static bool on = false;
             if(!on){
                 m_Window.m_Mouse->Lock(m_Window);
@@ -190,12 +190,12 @@ public:
         }
 
         #if defined(WINDOWS_PLT)
-        if(m_Window.m_Keyboard->IsKeyPressed(VK_F11)){
+        if(m_Window.m_Keyboard->IsKeyPressed(Key::F11)){
             m_Window.ToggleFullScreen();
         }
         #endif
         
-        // if (m_Window.m_Keyboard->IsKeyPressed('H')){
+        // if (m_Window.m_Keyboard->IsKeyPressed(Key::H)){
         //     static bool flip = false;
         //     if(flip == false){
         //         flip = !flip;

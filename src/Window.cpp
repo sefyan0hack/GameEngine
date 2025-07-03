@@ -197,12 +197,12 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    case WM_SYSKEYDOWN:
 		if( !(Lpr & 0x40000000) || m_Keyboard->AutorepeatIsEnabled() ) // filter autorepeat
 	    	{
-	    		m_Keyboard->OnKeyPressed( static_cast<unsigned char>(Wpr) );
+	    		m_Keyboard->OnKeyPressed( static_cast<Key>(Wpr) );
 	    	}
 	    	break;
 	    case WM_KEYUP:
 	    case WM_SYSKEYUP:
-		m_Keyboard->OnKeyReleased( static_cast<unsigned char>(Wpr) );
+		m_Keyboard->OnKeyReleased( static_cast<Key>(Wpr) );
 	    	break;
 	    case WM_CHAR:
 	    	m_Keyboard->OnChar( static_cast<char>(Wpr) );
@@ -430,7 +430,7 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
 	// 	e->timestamp, key, code, e->location, e->ctrlKey, e->shiftKey, e->altKey, e->metaKey, e->repeat, locale
 	// );
 
-    auto MapToVirtualKey = [](const char* code) -> unsigned char {
+    auto MapToVirtualKey = [](const char* code) {
         // Alphanumeric keys
         if (strlen(code) == 4 && code[0] == 'K' && code[1] == 'e' && code[2] == 'y') 
             return code[3];  // 'A'-'Z'
@@ -451,7 +451,7 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
         return 0;  // Unmapped key
     };
 
-    auto MapToChar = [](const char* key) -> char {
+    auto MapToChar = [](const char* key) {
         if (strlen(key) == 1) return key[0];  // Printable characters
         if (strcmp(key, "Enter") == 0) return '\r';
         if (strcmp(key, "Tab") == 0) return '\t';
@@ -464,7 +464,7 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
         case EMSCRIPTEN_EVENT_KEYDOWN: {
             unsigned char vk = MapToVirtualKey(e->code);
             if (vk != 0) {
-                window->m_Keyboard->OnKeyPressed(vk);
+                window->m_Keyboard->OnKeyPressed(static_cast<Key>(vk));
             }
 
             char ch = MapToChar(e->key);
@@ -476,7 +476,7 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
         case EMSCRIPTEN_EVENT_KEYUP: {
             unsigned char vk = MapToVirtualKey(e->code);
             if (vk != 0) {
-                window->m_Keyboard->OnKeyReleased(vk);
+                window->m_Keyboard->OnKeyReleased(static_cast<Key>(vk));
             }
         } break;
     }
@@ -568,7 +568,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 				KeySym keysym = XkbKeycodeToKeysym(DrawCtx, keycode, 0, 0); // US layout
 				
 				// Map keysym to consistent virtual key codes
-				auto MapKeysymToVK = [](KeySym keysym) -> unsigned char {
+				auto MapKeysymToVK = [](KeySym keysym) -> uint32_t {
 					// Letters (A-Z)
 					if (keysym >= XK_A && keysym <= XK_Z) return 'A' + (keysym - XK_A);
 					if (keysym >= XK_a && keysym <= XK_z) return 'A' + (keysym - XK_a);
@@ -589,14 +589,14 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 						case XK_Escape: return 0x1B; // VK_ESCAPE
 						case XK_Return: return 0x0D; // VK_RETURN
 
-						default: return static_cast<unsigned char>(keysym);
+						default: return static_cast<uint32_t>(keysym);
 					}
 				};
 			
 				unsigned char vk = MapKeysymToVK(keysym);
 			
 				if (event.type == KeyPress) {
-					self->m_Keyboard->OnKeyPressed(vk);
+					self->m_Keyboard->OnKeyPressed(static_cast<Key>(vk));
 			
 					char buffer[32];
 					KeySym keysym_char;
