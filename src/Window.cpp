@@ -568,7 +568,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 				KeySym keysym = XkbKeycodeToKeysym(DrawCtx, keycode, 0, 0); // US layout
 				
 				// Map keysym to consistent virtual key codes
-				auto MapKeysymToVK = [](KeySym keysym) {
+				auto MapKeysymToVK = [](KeySym keysym) -> uint32_t {
 					// Letters (A-Z)
 					if (keysym >= XK_A && keysym <= XK_Z) return 'A' + (keysym - XK_A);
 					if (keysym >= XK_a && keysym <= XK_z) return 'A' + (keysym - XK_a);

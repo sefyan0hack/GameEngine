@@ -107,17 +107,17 @@ auto Keyboard::UpdatePrevState() noexcept -> void
 auto Keyboard::OnKeyPressed( Key key ) noexcept -> void
 {
 	const auto idx = static_cast<uint16_t>(key);
-    keystates[idx] = true;
-    keybuffer.emplace(Keyboard::Event::Type::Press, key);
-    TrimBuffer(keybuffer);
+	keystates[idx] = true;
+	keybuffer.emplace(Keyboard::Event::Type::Press, key);
+	TrimBuffer(keybuffer);
 }
 
 auto Keyboard::OnKeyReleased( Key key ) noexcept -> void
 {
 	const auto idx = static_cast<uint16_t>(key);
-    keystates[idx] = false;
-    keybuffer.emplace(Keyboard::Event::Type::Release, key);
-    TrimBuffer(keybuffer);
+	keystates[idx] = false;
+	keybuffer.emplace(Keyboard::Event::Type::Release, key);
+	TrimBuffer(keybuffer);
 }
 
 auto Keyboard::OnChar( unsigned char character ) noexcept -> void
