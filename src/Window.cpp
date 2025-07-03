@@ -197,12 +197,12 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    case WM_SYSKEYDOWN:
 		if( !(Lpr & 0x40000000) || m_Keyboard->AutorepeatIsEnabled() ) // filter autorepeat
 	    	{
-	    		m_Keyboard->OnKeyPressed( static_cast<Key>(Wpr) );
+	    		m_Keyboard->OnKeyPressed( static_cast<uint32_t>(Wpr) );
 	    	}
 	    	break;
 	    case WM_KEYUP:
 	    case WM_SYSKEYUP:
-		m_Keyboard->OnKeyReleased( static_cast<Key>(Wpr) );
+		m_Keyboard->OnKeyReleased( static_cast<uint32_t>(Wpr) );
 	    	break;
 	    case WM_CHAR:
 	    	m_Keyboard->OnChar( static_cast<char>(Wpr) );
@@ -448,7 +448,7 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
         if (strcmp(code, "Escape") == 0) return DOM_VK_ESCAPE;
         if (strcmp(code, "Space") == 0) return DOM_VK_SPACE;
         
-        return 0;  // Unmapped key
+        return '0';  // Unmapped key
     };
 
     auto MapToChar = [](const char* key) {
@@ -457,14 +457,14 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
         if (strcmp(key, "Tab") == 0) return '\t';
         if (strcmp(key, "Backspace") == 0) return '\b';
         if (strcmp(key, "Escape") == 0) return '\x1B';
-        return 0;  // Non-character key
+        return '0';  // Non-character key
     };
 
     switch (eventType) {
         case EMSCRIPTEN_EVENT_KEYDOWN: {
             unsigned char vk = MapToVirtualKey(e->code);
             if (vk != 0) {
-                window->m_Keyboard->OnKeyPressed(static_cast<Key>(vk));
+                window->m_Keyboard->OnKeyPressed(static_cast<uint32_t>(vk));
             }
 
             char ch = MapToChar(e->key);
@@ -476,7 +476,7 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
         case EMSCRIPTEN_EVENT_KEYUP: {
             unsigned char vk = MapToVirtualKey(e->code);
             if (vk != 0) {
-                window->m_Keyboard->OnKeyReleased(static_cast<Key>(vk));
+                window->m_Keyboard->OnKeyReleased(static_cast<uint32_t>(vk));
             }
         } break;
     }
@@ -596,7 +596,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 				auto vk = MapKeysymToVK(keysym);
 			
 				if (event.type == KeyPress) {
-					self->m_Keyboard->OnKeyPressed(static_cast<Key>(vk));
+					self->m_Keyboard->OnKeyPressed(static_cast<uint32_t>(vk));
 			
 					char buffer[32];
 					KeySym keysym_char;
@@ -607,7 +607,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 						self->m_Keyboard->OnChar(static_cast<unsigned char>(buffer[i]));
 					}
 				} else {
-					self->m_Keyboard->OnKeyReleased(static_cast<Key>(vk));
+					self->m_Keyboard->OnKeyReleased(static_cast<uint32_t>(vk));
 				}
 				break;
 			}
