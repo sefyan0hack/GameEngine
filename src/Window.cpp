@@ -417,25 +417,19 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_TRUE;
 
-	// auto safeCopy = [](const char* src) -> std::string {
-    //     return src ? std::string(src) : "";
-    // };
-	
-	// std::string key = safeCopy(e->key);
-    // std::string code = safeCopy(e->code);
-    // std::string locale = safeCopy(e->locale);
-
-	// Info(
-	// 	R"(timestamp: {}, key: "{}", code: {}, location: {}, Flags: [ctrlKey:{}, shiftKey:{}, altKey:{}, metaKey:{}, repeat:{}], locale: "{}")",
-	// 	e->timestamp, key, code, e->location, e->ctrlKey, e->shiftKey, e->altKey, e->metaKey, e->repeat, locale
-	// );
-
     auto MapToVirtualKey = [](const char* code) {
         // Alphanumeric keys
         if (strlen(code) == 4 && code[0] == 'K' && code[1] == 'e' && code[2] == 'y') 
-            return code[3];  // 'A'-'Z'
+            return DOM_VK_A + (code[3] - 'A'); // 'A'-'Z'
         if (strlen(code) == 6 && !strncmp(code, "Digit", 5)) 
-            return code[5];  // '0'-'9'
+            return DOM_VK_0 + (code[5] - '0');  // '0'-'9'
+
+		// Function keys (F1-F24)
+        if (strlen(code) > 1 && code[0] == 'F') {
+            int fnum = atoi(code + 1);
+            if (fnum >= 1 && fnum <= 24)
+                return DOM_VK_F1 + (fnum - 1);
+        }
 
         // Special keys
         if (strcmp(code, "Backspace") == 0) return DOM_VK_BACK_SPACE;
@@ -447,8 +441,62 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
 		if (strcmp(code, "AltRight") == 0) return DOM_VK_ALTGR;
         if (strcmp(code, "Escape") == 0) return DOM_VK_ESCAPE;
         if (strcmp(code, "Space") == 0) return DOM_VK_SPACE;
-        
-        return '0';  // Unmapped key
+
+		// Navigation keys
+		if (strcmp(code, "Insert") == 0) return DOM_VK_INSERT;
+		if (strcmp(code, "Delete") == 0) return DOM_VK_DELETE;
+		if (strcmp(code, "Home") == 0) return DOM_VK_HOME;
+		if (strcmp(code, "End") == 0) return DOM_VK_END;
+		if (strcmp(code, "PageUp") == 0) return DOM_VK_PAGE_UP;
+		if (strcmp(code, "PageDown") == 0) return DOM_VK_PAGE_DOWN;
+		
+		// Arrow keys
+		if (strcmp(code, "ArrowLeft") == 0) return DOM_VK_LEFT;
+		if (strcmp(code, "ArrowRight") == 0) return DOM_VK_RIGHT;
+		if (strcmp(code, "ArrowUp") == 0) return DOM_VK_UP;
+		if (strcmp(code, "ArrowDown") == 0) return DOM_VK_DOWN;
+		
+		// Numpad keys
+		if (strcmp(code, "Numpad0") == 0) return DOM_VK_NUMPAD0;
+		if (strcmp(code, "Numpad1") == 0) return DOM_VK_NUMPAD1;
+		if (strcmp(code, "Numpad2") == 0) return DOM_VK_NUMPAD2;
+		if (strcmp(code, "Numpad3") == 0) return DOM_VK_NUMPAD3;
+		if (strcmp(code, "Numpad4") == 0) return DOM_VK_NUMPAD4;
+		if (strcmp(code, "Numpad5") == 0) return DOM_VK_NUMPAD5;
+		if (strcmp(code, "Numpad6") == 0) return DOM_VK_NUMPAD6;
+		if (strcmp(code, "Numpad7") == 0) return DOM_VK_NUMPAD7;
+		if (strcmp(code, "Numpad8") == 0) return DOM_VK_NUMPAD8;
+		if (strcmp(code, "Numpad9") == 0) return DOM_VK_NUMPAD9;
+		if (strcmp(code, "NumpadDecimal") == 0) return DOM_VK_DECIMAL;
+		if (strcmp(code, "NumpadDivide") == 0) return DOM_VK_DIVIDE;
+		if (strcmp(code, "NumpadMultiply") == 0) return DOM_VK_MULTIPLY;
+		if (strcmp(code, "NumpadSubtract") == 0) return DOM_VK_SUBTRACT;
+		if (strcmp(code, "NumpadAdd") == 0) return DOM_VK_ADD;
+		if (strcmp(code, "NumpadEnter") == 0) return DOM_VK_ENTER;
+		if (strcmp(code, "NumpadEqual") == 0) return DOM_VK_EQUALS;
+		
+		// Punctuation keys
+		if (strcmp(code, "Comma") == 0) return DOM_VK_COMMA;
+		if (strcmp(code, "Period") == 0) return DOM_VK_PERIOD;
+		if (strcmp(code, "Semicolon") == 0) return DOM_VK_SEMICOLON;
+		if (strcmp(code, "Quote") == 0) return DOM_VK_QUOTE;
+		if (strcmp(code, "BracketLeft") == 0) return DOM_VK_OPEN_BRACKET;
+		if (strcmp(code, "BracketRight") == 0) return DOM_VK_CLOSE_BRACKET;
+		if (strcmp(code, "Backslash") == 0) return DOM_VK_BACK_SLASH;
+		if (strcmp(code, "Slash") == 0) return DOM_VK_SLASH;
+		if (strcmp(code, "Backquote") == 0) return DOM_VK_BACK_QUOTE;
+		if (strcmp(code, "Minus") == 0) return DOM_VK_HYPHEN_MINUS;
+		if (strcmp(code, "Equal") == 0) return DOM_VK_EQUALS;
+		
+		// Modifier keys
+		if (strcmp(code, "MetaLeft") == 0 || strcmp(code, "MetaRight") == 0) 
+			return DOM_VK_META;
+		
+		// Media keys (optional)
+		if (strcmp(code, "VolumeMute") == 0) return 0xAD;  // VK_VOLUME_MUTE
+		if (strcmp(code, "VolumeDown") == 0) return 0xAE;  // VK_VOLUME_DOWN
+		if (strcmp(code, "VolumeUp") == 0) return 0xAF;   // VK_VOLUME_UP
+        return {};
     };
 
     auto MapToChar = [](const char* key) {
@@ -457,31 +505,35 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
         if (strcmp(key, "Tab") == 0) return '\t';
         if (strcmp(key, "Backspace") == 0) return '\b';
         if (strcmp(key, "Escape") == 0) return '\x1B';
-        return '0';  // Non-character key
+        return {};
     };
 
     switch (eventType) {
         case EMSCRIPTEN_EVENT_KEYDOWN: {
-            unsigned char vk = MapToVirtualKey(e->code);
-            if (vk != 0) {
-                window->m_Keyboard->OnKeyPressed(static_cast<uint32_t>(vk));
+            if (e->repeat && !window->m_Keyboard->AutorepeatIsEnabled()) {
+                return EM_TRUE;
+            }
+
+            uint32_t vk = MapToVirtualKey(e->code);
+            if (vk) {
+                window->m_Keyboard->OnKeyPressed(vk);
             }
 
             char ch = MapToChar(e->key);
             if (ch != 0) {
-                window->m_Keyboard->OnChar(ch);
+                window->m_Keyboard->OnChar(static_cast<unsigned char>(ch));
             }
         } break;
 
         case EMSCRIPTEN_EVENT_KEYUP: {
-            unsigned char vk = MapToVirtualKey(e->code);
+            uint32_t vk = MapToVirtualKey(e->code);
             if (vk != 0) {
-                window->m_Keyboard->OnKeyReleased(static_cast<uint32_t>(vk));
+                window->m_Keyboard->OnKeyReleased(vk);
             }
         } break;
     }
 
-    return EM_TRUE;
+    return MapToVirtualKey(e->code) ? EM_TRUE : EM_FALSE;
 }
 
 auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, void* userData) -> EM_BOOL
