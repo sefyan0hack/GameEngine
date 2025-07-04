@@ -417,7 +417,7 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_TRUE;
 
-    auto MapToVirtualKey = [](const char* code) {
+    auto MapToVirtualKey = [](const char* code) -> uint32_t {
         // Alphanumeric keys
         if (strlen(code) == 4 && code[0] == 'K' && code[1] == 'e' && code[2] == 'y') 
             return DOM_VK_A + (code[3] - 'A'); // 'A'-'Z'
@@ -442,6 +442,11 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
         if (strcmp(code, "Escape") == 0) return DOM_VK_ESCAPE;
         if (strcmp(code, "Space") == 0) return DOM_VK_SPACE;
 
+		if (strcmp(code, "CapsLock") == 0) return DOM_VK_CAPS_LOCK;
+		if (strcmp(code, "PrintScreen") == 0) return DOM_VK_PRINTSCREEN;
+		if (strcmp(code, "ScrollLock") == 0) return DOM_VK_SCROLL_LOCK;
+		if (strcmp(code, "Pause") == 0) return DOM_VK_PAUSE;
+		
 		// Navigation keys
 		if (strcmp(code, "Insert") == 0) return DOM_VK_INSERT;
 		if (strcmp(code, "Delete") == 0) return DOM_VK_DELETE;
@@ -496,16 +501,16 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
 		if (strcmp(code, "VolumeMute") == 0) return 0xAD;  // VK_VOLUME_MUTE
 		if (strcmp(code, "VolumeDown") == 0) return 0xAE;  // VK_VOLUME_DOWN
 		if (strcmp(code, "VolumeUp") == 0) return 0xAF;   // VK_VOLUME_UP
-        return {};
+        return 0;
     };
 
-    auto MapToChar = [](const char* key) {
+    auto MapToChar = [](const char* key) -> char {
         if (strlen(key) == 1) return key[0];  // Printable characters
         if (strcmp(key, "Enter") == 0) return '\r';
         if (strcmp(key, "Tab") == 0) return '\t';
         if (strcmp(key, "Backspace") == 0) return '\b';
         if (strcmp(key, "Escape") == 0) return '\x1B';
-        return {};
+        return char{};
     };
 
     switch (eventType) {
