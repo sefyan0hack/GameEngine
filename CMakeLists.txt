@@ -108,6 +108,7 @@ if(EMSCRIPTEN)
         -sENVIRONMENT=web
         -sDYNAMIC_EXECUTION=0
         -sWASM=1
+        -lGL
         -sASSERTIONS=0
     )
 
