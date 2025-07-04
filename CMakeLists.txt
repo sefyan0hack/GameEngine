@@ -103,13 +103,11 @@ if(EMSCRIPTEN)
         -sWASM_LEGACY_EXCEPTIONS=0
         -fno-exceptions -fno-rtti
         --embed-file ${CMAKE_SOURCE_DIR}/res
-        -sINVOKE_RUN=0
         -sSTRICT=1
         -sMALLOC=emmalloc
         -sENVIRONMENT=web
         -sDYNAMIC_EXECUTION=0
         -sWASM=1
-        -lGL
         -sASSERTIONS=0
     )
 
