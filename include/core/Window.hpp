@@ -54,7 +54,7 @@ class CWindow
         auto DrawContext() const         -> HDC_D ;
         auto Width() const       -> int32_t ;
         auto Height() const      -> int32_t ;
-        auto opengl() const          -> std::shared_ptr<gl::OpenGL> ;
+        auto opengl() const         -> std::shared_ptr<gl::OpenGL> ;
         auto Visible() const        -> bool ;
         auto Show()                 -> void;
         auto Hide()                 -> void;
@@ -66,8 +66,7 @@ class CWindow
 
     private:
         #if defined(WINDOWS_PLT)
-        static auto CALLBACK WinProcSetup(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)  -> LRESULT ;
-        static auto CALLBACK WinProcSetup2(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT ;
+        static auto CALLBACK WinProcThunk(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)  -> LRESULT ;
         auto CALLBACK WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)           -> LRESULT ;
         #endif
         #if defined(WEB_PLT)
@@ -75,7 +74,7 @@ class CWindow
         static auto KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, void* userData) -> EM_BOOL;
         static auto MouseHandler(int32_t eventType, const EmscriptenMouseEvent* e, void* userData)  -> EM_BOOL;
         #endif
-        // auto _init_helper(int32_t Width, int32_t Height, const char* Title)                         -> void ;
+
         auto new_window(int32_t Width, int32_t Height, const char* Title)       -> std::pair<WindHandl, HDC_D> ;
 
     private:
@@ -87,12 +86,12 @@ class CWindow
         std::vector<std::byte> m_RawBuffer;
         std::shared_ptr<gl::OpenGL> m_OpenGl;
         int32_t m_refCount;
+
+        inline static unsigned short S_WindowsCount = 0;
     public:
         std::shared_ptr<Keyboard> m_Keyboard;
         std::shared_ptr<Mouse> m_Mouse;
         
-    public:
-        inline static unsigned short S_WindowsCount = 0;
 
         FOR_TEST
 };

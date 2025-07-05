@@ -123,7 +123,7 @@ CWindow::WinClass::WinClass(){
 	
 	m_WinclassEx.cbSize = sizeof(WNDCLASSEX);
     m_WinclassEx.style =  CS_HREDRAW | CS_VREDRAW;
-    m_WinclassEx.lpfnWndProc = CWindow::WinProcSetup;
+    m_WinclassEx.lpfnWndProc = CWindow::WinProcThunk;
     m_WinclassEx.hInstance =  GetModuleHandle(nullptr);
     m_WinclassEx.hCursor = LoadCursor(nullptr, IDC_ARROW);
     m_WinclassEx.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
@@ -138,25 +138,24 @@ CWindow::WinClass::WinClass(){
 
 ///////////////////////////////////////////////////////////////////
 
-auto CWindow::WinProcSetup(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT
+auto CWindow::WinProcThunk(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT
 {
     if (msg == WM_NCCREATE){
-        const CREATESTRUCTW* WinptrStruct = reinterpret_cast<CREATESTRUCTW*>(Lpr);
-        CWindow* const pWin  = reinterpret_cast<CWindow*>(WinptrStruct->lpCreateParams);
-        SetWindowLongPtrA( Winhandle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWin) );
-		SetWindowLongPtrA( Winhandle, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&CWindow::WinProcSetup2) );
+        const auto WinptrStruct = reinterpret_cast<CREATESTRUCTW*>(Lpr);
+        auto const pWindow  = reinterpret_cast<CWindow*>(WinptrStruct->lpCreateParams);
+        SetWindowLongPtrA(Winhandle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWindow));
 
 		return DefWindowProcA(Winhandle, msg, Wpr, Lpr);
     }
+
+	// Route messages to instance handler
+    if (auto pWindow = reinterpret_cast<CWindow*>(GetWindowLongPtrA(Winhandle, GWLP_USERDATA))) {
+        return pWindow->WinProcFun(Winhandle, msg, Wpr, Lpr);
+    }
+
     return DefWindowProcA(Winhandle, msg, Wpr, Lpr);
 }
 
-auto CWindow::WinProcSetup2(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT
-{
-	CWindow* const pWnd = reinterpret_cast<CWindow*>(GetWindowLongPtrA( Winhandle, GWLP_USERDATA ));
-
-	return pWnd->WinProcFun( Winhandle, msg, Wpr, Lpr );
-}
 auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT
 {
     switch (msg)
