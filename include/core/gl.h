@@ -44,8 +44,8 @@ using GLCTX     = __GLXcontextRec*;
 
 #define XXXGetProcAddress(name) emscripten_webgl_get_proc_address(name)
 
-using WindHandl = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
-using HDC_D     = const char*;
+using WindHandl = const char*;
+using HDC_D     = void*;
 using GLCTX     = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
 
 #endif

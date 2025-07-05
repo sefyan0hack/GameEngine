@@ -11,36 +11,27 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 	, m_Keyboard(std::make_shared<Keyboard>())
 	, m_Mouse(std::make_shared<Mouse>())
 {
-	#if defined(WINDOWS_PLT)
-	_init_helper(m_Width, m_Height, Title);
-	m_DrawContext = GetDC(m_WindowHandle);
-	#elif defined(LINUX_PLT)
-	m_DrawContext = XOpenDisplay(nullptr);
-	_init_helper(m_Width, m_Height, Title);
-	#elif defined(WEB_PLT)
-	m_DrawContext = EMSCRIPTEN_EVENT_TARGET_DOCUMENT;
-	_init_helper(m_Width, m_Height, Title);
-	#endif
+	auto [wHandle, dCtx] = new_window(m_Width, m_Height, Title);
+	m_WindowHandle = wHandle;
+	m_DrawContext = dCtx;
 	
 	S_WindowsCount++;
 
 	if(withopengl) m_OpenGl = std::make_shared<gl::OpenGL>(m_WindowHandle, m_DrawContext);
 
 	#if defined(WEB_PLT)
-	auto target = EMSCRIPTEN_EVENT_TARGET_WINDOW;
 
-	emscripten_set_keypress_callback(target, this, EM_FALSE, &CWindow::KeyHandler);
-	emscripten_set_keydown_callback(target, this, EM_FALSE, &CWindow::KeyHandler);
-	emscripten_set_keyup_callback(target, this, EM_FALSE, &CWindow::KeyHandler);
+	emscripten_set_keypress_callback(m_WindowHandle, this, EM_FALSE, &CWindow::KeyHandler);
+	emscripten_set_keydown_callback(m_WindowHandle, this, EM_FALSE, &CWindow::KeyHandler);
+	emscripten_set_keyup_callback(m_WindowHandle, this, EM_FALSE, &CWindow::KeyHandler);
 	
-	//
-	emscripten_set_mousedown_callback(target , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseup_callback(target    , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mousemove_callback(target  , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseenter_callback(target , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseleave_callback(target , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mousedown_callback(m_WindowHandle , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseup_callback(m_WindowHandle    , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mousemove_callback(m_WindowHandle  , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseenter_callback(m_WindowHandle , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseleave_callback(m_WindowHandle , this, EM_FALSE, &CWindow::MouseHandler);
 
-	emscripten_set_focusout_callback(target, this, EM_FALSE,
+	emscripten_set_focusout_callback(m_WindowHandle, this, EM_FALSE,
 		[](int32_t eventType, const EmscriptenFocusEvent *, void* userData) -> EM_BOOL {
 			CWindow* window = static_cast<CWindow*>(userData);
     		if (!window) return EM_TRUE;
@@ -54,7 +45,7 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 		}
 	);
 
-	emscripten_set_wheel_callback(target, this, EM_FALSE,
+	emscripten_set_wheel_callback(m_WindowHandle, this, EM_FALSE,
 		[]([[maybe_unused]] int32_t eventType, const EmscriptenWheelEvent* e, void* userData) -> EM_BOOL  {
 			CWindow* w = static_cast<CWindow*>(userData);
 			w->m_Mouse->OnWheelDelta(e->deltaY * -120); // Match Win32 scaling
@@ -62,7 +53,7 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 		}
 	);
 
-	emscripten_set_fullscreenchange_callback("#canvas", this, EM_FALSE, 
+	emscripten_set_fullscreenchange_callback(m_WindowHandle, this, EM_FALSE, 
 		[](
 			int32_t eventType, 
 			const EmscriptenFullscreenChangeEvent* e,
@@ -327,77 +318,66 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
     return DefWindowProcA(Winhandle, msg, Wpr, Lpr);
 }
 
-auto CWindow::_init_helper(int32_t Width, int32_t Height, const char* Title) -> void
+auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::pair<WindHandl, HDC_D>
 {
     WinClass::Instance();
 
-    RECT WinRect = { 0, 0, Width, Height };
-
-	if( AdjustWindowRect( &WinRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE ) == 0 )
-	{
-		Error("Addjusting Win");
-	}
-    m_Width = WinRect.right - WinRect.left;
-    m_Height = WinRect.bottom - WinRect.top;
-
-    m_WindowHandle = CreateWindow(
+    auto window_handle = CreateWindow(
         MAKEINTATOM(WinClass::m_Windclass),
         Title,
         WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, CW_USEDEFAULT, m_Width, m_Height,
+        CW_USEDEFAULT, CW_USEDEFAULT, Width, Height,
         nullptr, nullptr,
         GetModuleHandleA( nullptr ),
         this
     );
 
-    if(m_WindowHandle == nullptr){
+    if(window_handle == nullptr){
         Error("faild to creat CWindow code : {}", GetLastError());
-        return;
     }
-	// regester mouse raw data
-	RAWINPUTDEVICE _rid;
-	_rid.dwFlags = 0;
-	_rid.usUsagePage  = 0x01;
-	_rid.usUsage  = 0x02;
-	_rid.hwndTarget = nullptr;
-	if(RegisterRawInputDevices(&_rid, 1, sizeof(_rid)) == false){
-		Error("Mouse row data not regesterd");
-	}
 
+	return {window_handle, GetDC(window_handle)};
 }
 
 #elif defined(LINUX_PLT)
 
-auto CWindow::_init_helper(int32_t Width, int32_t Height, const char* Title) -> void
+auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::pair<WindHandl, HDC_D>
 {
-    if (!m_DrawContext) {
+	auto DrawContext = XOpenDisplay(nullptr);
+
+    if (!DrawContext) {
 		Error("Failed to open X display connection.");
 	}
-    int32_t screen = DefaultScreen(m_DrawContext);
+    int32_t screen = DefaultScreen(DrawContext);
 
     /* Create a window */
-    m_WindowHandle = XCreateSimpleWindow(m_DrawContext, RootWindow(m_DrawContext, screen), 
+    auto window_handle = XCreateSimpleWindow(DrawContext, RootWindow(DrawContext, screen), 
                                  10, 10, static_cast<uint32_t>(Width), static_cast<uint32_t>(Height), 1, 
-                                 BlackPixel(m_DrawContext, screen), WhitePixel(m_DrawContext, screen));
-    Expect(m_WindowHandle != 0, "m_WindowHandle are null ???");
-    XStoreName(m_DrawContext, m_WindowHandle, Title);
+                                 BlackPixel(DrawContext, screen), WhitePixel(DrawContext, screen));
+    Expect(window_handle != 0, "window_handle are null ???");
+    XStoreName(DrawContext, window_handle, Title);
 
-	XkbSetDetectableAutoRepeat(m_DrawContext, true, NULL);
+	XkbSetDetectableAutoRepeat(DrawContext, true, NULL);
+
     /* Select input events */
-    XSelectInput(m_DrawContext, m_WindowHandle,
+    XSelectInput(DrawContext, window_handle,
 		 KeyPressMask | KeyReleaseMask | ExposureMask |
 		 ResizeRedirectMask | FocusChangeMask | StructureNotifyMask
 		);
 
-    /* Show the window */
-    // XMapWindow(m_DrawContext, m_WindowHandle);
+	return {window_handle, DrawContext};
 }
 
 #elif defined(WEB_PLT)
-auto CWindow::_init_helper(int32_t Width, int32_t Height, const char* Title) -> void
+auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::pair<WindHandl, HDC_D>
 {
+	auto window_handle = "#canvas";
+	void* DrawContext = nullptr;
+
 	emscripten_set_window_title(Title);
-	emscripten_set_canvas_element_size("#canvas", Width, Height);
+	emscripten_set_canvas_element_size(window_handle, Width, Height);
+
+	return {window_handle, DrawContext};
 }
 
 auto CWindow::ResizeHandler(int32_t eventType, const EmscriptenUiEvent* e, void* userData) -> EM_BOOL

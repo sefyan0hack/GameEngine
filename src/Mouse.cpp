@@ -10,6 +10,19 @@
 
 Mouse::Mouse() : x(0), y(0)
 {
+	#if defined(WINDOWS_PLT)
+	// regester mouse raw data
+	RAWINPUTDEVICE _rid {
+		.usUsagePage = 0x01,
+		.usUsage = 0x02,
+		.dwFlags = 0,
+		.hwndTarget = nullptr,
+	};
+
+	if(RegisterRawInputDevices(&_rid, 1, sizeof(_rid)) == false){
+		Error("Mouse row data not regesterd");
+	}
+	#endif
 }
 
 auto Mouse::GetPos() const noexcept -> std::pair<int32_t, int32_t>
