@@ -11,10 +11,8 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 	, m_Keyboard(std::make_shared<Keyboard>())
 	, m_Mouse(std::make_shared<Mouse>())
 {
-	auto [wHandle, dCtx] = new_window(m_Width, m_Height, Title);
-	m_WindowHandle = wHandle;
-	m_DrawContext = dCtx;
-	
+	std::tie(m_WindowHandle, m_DrawContext) = new_window(m_Width, m_Height, Title);
+
 	S_WindowsCount++;
 
 	if(withopengl) m_OpenGl = std::make_shared<gl::OpenGL>(m_WindowHandle, m_DrawContext);
