@@ -181,17 +181,65 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
         }
         /*********** KEYBOARD MESSAGES ***********/
 	    case WM_KEYDOWN:
-	    // syskey commands need to be handled to track ALT key (VK_MENU) and F10
-	    case WM_SYSKEYDOWN:
-		if( !(Lpr & 0x40000000) || m_Keyboard->AutorepeatIsEnabled() ) // filter autorepeat
-	    	{
-	    		m_Keyboard->OnKeyPressed( static_cast<uint32_t>(Wpr) );
-	    	}
-	    	break;
-	    case WM_KEYUP:
-	    case WM_SYSKEYUP:
-		m_Keyboard->OnKeyReleased( static_cast<uint32_t>(Wpr) );
-	    	break;
+	    case WM_SYSKEYDOWN: {
+			const bool isExtended = (Lpr & (1 << 24)) != 0;
+			if (!(Lpr & 0x40000000) || m_Keyboard->AutorepeatIsEnabled()) {
+				Key key = Key::Unknown;
+				
+				switch (Wpr) {
+					case VK_SHIFT: {
+						const UINT scancode = (Lpr & 0x00FF0000) >> 16;
+						key = (MapVirtualKeyA(scancode, MAPVK_VSC_TO_VK_EX) == VK_RSHIFT) 
+							   ? Key::RightShift : Key::LeftShift;
+						break;
+					}
+					case VK_CONTROL:
+						key = isExtended ? Key::RightControl : Key::LeftControl;
+						break;
+					case VK_MENU:
+						key = isExtended ? Key::RightAlt : Key::LeftAlt;
+						break;
+					default:
+						key = Keyboard::FromNative(Wpr);
+						break;
+				}
+				
+				if (key != Key::Unknown) {
+					m_Keyboard->OnKeyPressed(key);
+				}
+			}
+			break;
+		}
+		
+		case WM_KEYUP:
+		case WM_SYSKEYUP: {
+			const bool isExtended = (Lpr & (1 << 24)) != 0;
+			Key key = Key::Unknown;
+			
+			switch (Wpr) {
+				case VK_SHIFT: {
+					const UINT scancode = (Lpr & 0x00FF0000) >> 16;
+					key = (MapVirtualKeyA(scancode, MAPVK_VSC_TO_VK_EX) == VK_RSHIFT) 
+						   ? Key::RightShift : Key::LeftShift;
+					break;
+				}
+				case VK_CONTROL:
+					key = isExtended ? Key::RightControl : Key::LeftControl;
+					break;
+				case VK_MENU:
+					key = isExtended ? Key::RightAlt : Key::LeftAlt;
+					break;
+				default:
+					key = Keyboard::FromNative(Wpr);
+					break;
+			}
+			
+			if (key != Key::Unknown) {
+				m_Keyboard->OnKeyReleased(key);
+			}
+			break;
+		}
+		
 	    case WM_CHAR:
 	    	m_Keyboard->OnChar( static_cast<char>(Wpr) );
 	    	break;
@@ -498,7 +546,7 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
 
             uint32_t vk = MapToVirtualKey(e->code);
             if (vk) {
-                window->m_Keyboard->OnKeyPressed(vk);
+                window->m_Keyboard->OnKeyPressed(Keyboard::FromNative(vk));
             }
 
             char ch = MapToChar(e->key);
@@ -510,7 +558,7 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
         case EMSCRIPTEN_EVENT_KEYUP: {
             uint32_t vk = MapToVirtualKey(e->code);
             if (vk != 0) {
-                window->m_Keyboard->OnKeyReleased(vk);
+                window->m_Keyboard->OnKeyReleased(Keyboard::FromNative(vk));
             }
         } break;
     }
@@ -630,7 +678,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 				auto vk = MapKeysymToVK(keysym);
 			
 				if (event.type == KeyPress) {
-					self->m_Keyboard->OnKeyPressed(static_cast<uint32_t>(vk));
+					self->m_Keyboard->OnKeyPressed(Keyboard::FromNative(vk));
 			
 					char buffer[32];
 					KeySym keysym_char;
@@ -641,7 +689,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 						self->m_Keyboard->OnChar(static_cast<unsigned char>(buffer[i]));
 					}
 				} else {
-					self->m_Keyboard->OnKeyReleased(static_cast<uint32_t>(vk));
+					self->m_Keyboard->OnKeyReleased(Keyboard::FromNative(vk));
 				}
 				break;
 			}

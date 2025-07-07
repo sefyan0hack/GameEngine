@@ -1,6 +1,6 @@
 #pragma once
 
-enum class Key : uint16_t {
+enum class Key : uint8_t {
 
     // Alphanumeric keys (A-Z, 0-9)
     A, B, C, D, E, F, G, H, I, J, K, L, M,
@@ -41,6 +41,8 @@ enum class Key : uint16_t {
     BrowserSearch, BrowserFavorites, BrowserHome, VolumeMute, VolumeDown,
     VolumeUp, MediaNext, MediaPrevious, MediaStop, MediaPlayPause,
     #endif
+
+    Unknown
 };
 
 class CWindow;  // Forward declaration if necessary
@@ -54,13 +56,13 @@ private:
 	public:
 		enum class Type { Press, Release };
 	public:
-		Event( Type type, uint32_t code ) noexcept;
+		Event( Type type, Key code ) noexcept;
 		auto IsPress() const noexcept 	-> bool ;
 		auto IsRelease() const noexcept -> bool ;
-		auto Code() const noexcept 	-> uint32_t;
+		auto Code() const noexcept 	-> Key;
     private:
 		Type type;
-		uint32_t code;
+		Key code;
 	};
 public:
 
@@ -70,9 +72,9 @@ public:
 	auto ReadKey() noexcept 								 	-> std::optional<Event> ;
 	auto ReadChar() noexcept 								 	-> std::optional<unsigned char> ;
 
-	auto IsKeyPressed(Key key ) const noexcept 	-> bool ;
-	auto IsKeyReleased(Key key) const noexcept    -> bool ;
-	auto IsKeyDown(Key key) const noexcept 		-> bool ;
+	auto IsKeyPressed(Key key ) const noexcept 	    -> bool ;
+	auto IsKeyReleased(Key key) const noexcept      -> bool ;
+	auto IsKeyDown(Key key) const noexcept 		    -> bool ;
 	auto IsKeyUp(Key key) const noexcept 			-> bool ;
 
 	auto FlushKey() noexcept 								 	-> void ;
@@ -81,14 +83,14 @@ public:
 	auto EnableAutorepeat() noexcept 							-> void ;
 	auto DisableAutorepeat() noexcept 							-> void ;
 	auto AutorepeatIsEnabled() const noexcept 					-> bool ;
-	auto UpdatePrevState() noexcept 							-> void;
+	auto UpdatePrevState() noexcept 							-> void ;
 
     static auto ToNative(Key key) -> uint32_t;
     static auto FromNative(uint32_t key) -> Key;
 
 private:
-	auto OnKeyPressed( uint32_t key ) noexcept  		-> void ;
-	auto OnKeyReleased( uint32_t key ) noexcept 		-> void ;
+	auto OnKeyPressed( Key key ) noexcept  		-> void ;
+	auto OnKeyReleased( Key key ) noexcept 		-> void ;
 	auto OnChar( unsigned char character ) noexcept 			-> void ;
 	auto ClearState() noexcept 									-> void ;
 	template<typename Container>
@@ -100,12 +102,11 @@ private:
     }
 
 private:
-	static constexpr uint32_t nKeys = 0x0700; // Covers up to 0x06FF web keys
 	static constexpr uint32_t bufferSize = 16u;
 	bool autorepeatEnabled = true;
 
-	std::bitset<nKeys> keystates;
-	std::bitset<nKeys> prevKeyStates;
+	std::bitset<std::to_underlying(Key::Unknown)> keystates;
+	std::bitset<std::to_underlying(Key::Unknown)> prevKeyStates;
 	std::queue<Event> keybuffer;
 	std::queue<unsigned char> charbuffer;
     inline static std::map<uint32_t, Key> KeyMaps {
@@ -240,7 +241,7 @@ private:
         key_to_pair(Key::GraveAccent),
         key_to_pair(Key::Minus),
         key_to_pair(Key::Equal),
-
+        
         // Web-specific
         #if defined(WEB_PLT)
         // key_to_pair(Key::BrowserBack),

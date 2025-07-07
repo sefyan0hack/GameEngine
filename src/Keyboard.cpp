@@ -1,4 +1,5 @@
 #include <core/Keyboard.hpp>
+#include <core/Log.hpp>
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>
@@ -9,7 +10,7 @@
 #endif
 
 // Event/////////////////////////////////////////////////
-Keyboard::Event::Event( Type type, uint32_t code ) noexcept
+Keyboard::Event::Event( Type type, Key code ) noexcept
     			: type( type )
     			, code( code )
     		{}
@@ -22,7 +23,7 @@ auto Keyboard::Event::IsRelease() const noexcept -> bool
 {
 	return type == Type::Release;
 }
-auto Keyboard::Event::Code() const noexcept -> uint32_t
+auto Keyboard::Event::Code() const noexcept -> Key
 {
 	return code;
 }
@@ -35,21 +36,21 @@ Keyboard::Keyboard(){
 }
 auto Keyboard::IsKeyDown(Key key) const noexcept -> bool
 {
-    return keystates[ToNative(key)];
+    return keystates[std::to_underlying(key)];
 }
 auto Keyboard::IsKeyUp(Key key) const noexcept -> bool
 {
-    return !keystates[ToNative(key)];
+    return !keystates[std::to_underlying(key)];
 }
 
 auto Keyboard::IsKeyPressed(Key key) const noexcept -> bool
 {
-    return keystates[ToNative(key)] && !prevKeyStates[ToNative(key)];
+    return keystates[std::to_underlying(key)] && !prevKeyStates[std::to_underlying(key)];
 }
 
 auto Keyboard::IsKeyReleased(Key key) const noexcept -> bool
 {
-    return !keystates[ToNative(key)] && prevKeyStates[ToNative(key)];
+    return !keystates[std::to_underlying(key)] && prevKeyStates[std::to_underlying(key)];
 }
 
 auto Keyboard::ReadKey() noexcept -> std::optional<Keyboard::Event>
@@ -111,16 +112,18 @@ auto Keyboard::UpdatePrevState() noexcept -> void
     prevKeyStates = keystates;
 }
 
-auto Keyboard::OnKeyPressed( uint32_t key ) noexcept -> void
+auto Keyboard::OnKeyPressed( Key key ) noexcept -> void
 {
-    keystates[key] = true;
+    const auto index = std::to_underlying(key);
+    keystates[index] = true;
 	keybuffer.emplace( Keyboard::Event::Type::Press, key );
 	TrimBuffer( keybuffer );
 }
 
-auto Keyboard::OnKeyReleased( uint32_t key ) noexcept -> void
+auto Keyboard::OnKeyReleased( Key key ) noexcept -> void
 {
-    keystates[key] = false;
+    const auto index = std::to_underlying(key);
+    keystates[index] = false;
 	keybuffer.emplace( Keyboard::Event::Type::Release, key );
 	TrimBuffer( keybuffer );
 }
@@ -550,9 +553,11 @@ auto Keyboard::ToNative(Key key) -> uint32_t
         // case Key::MediaStop: 		return "MediaStop";
         // case Key::MediaPlayPause: 	return "MediaPlayPause";
 #endif
-         default: std::unreachable(); 
+        case Key::Unknown:  Error("Unknown key not accepted"); break;
+        default: std::unreachable();
     }
-    return uint32_t{};
+
+    return static_cast<uint32_t>(-1);
 }
 
 auto Keyboard::FromNative(uint32_t key) -> Key
