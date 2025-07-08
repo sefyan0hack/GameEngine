@@ -85,8 +85,8 @@ public:
 	auto AutorepeatIsEnabled() const noexcept 					-> bool ;
 	auto UpdatePrevState() noexcept 							-> void ;
 
-    static auto ToNative(Key key) -> uint32_t;
-    static auto FromNative(uint32_t key) -> Key;
+    static auto ToNative(Key key) -> uint64_t;
+    static auto FromNative(uint64_t key) -> Key;
 
 private:
 	auto OnKeyPressed( Key key ) noexcept  		-> void ;
@@ -97,8 +97,8 @@ private:
 	requires requires(Container c) { c.size(); c.pop(); }
 	static auto TrimBuffer( Container& buffer ) noexcept	-> void;
 
-    constexpr static std::pair<uint32_t, Key> key_to_pair( Key key ){
-        return std::pair<uint32_t, Key>(ToNative(key), key);
+    constexpr static std::pair<uint64_t, Key> key_to_pair( Key key ){
+        return std::pair<uint64_t, Key>(ToNative(key), key);
     }
 
 private:
@@ -109,7 +109,7 @@ private:
 	std::bitset<std::to_underlying(Key::Unknown)> prevKeyStates;
 	std::queue<Event> keybuffer;
 	std::queue<unsigned char> charbuffer;
-    inline static std::map<uint32_t, Key> KeyMaps {
+    inline static std::map<uint64_t, Key> KeyMaps {
         // Alphabet
         key_to_pair(Key::A),
         key_to_pair(Key::B),
