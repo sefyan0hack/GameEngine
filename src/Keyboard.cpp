@@ -150,7 +150,7 @@ auto Keyboard::TrimBuffer( Container& buffer ) noexcept -> void
 }
 /////////////////////////////////////////////////////////
 
-auto Keyboard::ToNative(Key key) -> uint32_t
+auto Keyboard::ToNative(Key key) -> uint64_t
 {
     switch (key) {
 
@@ -557,10 +557,10 @@ auto Keyboard::ToNative(Key key) -> uint32_t
         default: std::unreachable();
     }
 
-    return static_cast<uint32_t>(-1);
+    return static_cast<uint64_t>(-1);
 }
 
-auto Keyboard::FromNative(uint32_t key) -> Key
+auto Keyboard::FromNative(uint64_t key) -> Key
 {
     return KeyMaps[key];
 }
