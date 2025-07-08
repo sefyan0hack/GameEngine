@@ -654,19 +654,19 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 				
 				// Letters (A-Z) - normalize to uppercase
 				if (keysym >= XK_A && keysym <= XK_Z) {
-					nativeKey = 'A' + (keysym - XK_A);
+					vk = 'A' + (keysym - XK_A);
 				}
 				// Letters (a-z) - normalize to uppercase
 				else if (keysym >= XK_a && keysym <= XK_z) {
-					nativeKey = 'A' + (keysym - XK_a);
+					vk = 'A' + (keysym - XK_a);
 				}
 				// Numbers (0-9)
 				else if (keysym >= XK_0 && keysym <= XK_9) {
-					nativeKey = '0' + (keysym - XK_0);
+					vk = '0' + (keysym - XK_0);
 				}
 				// Other keys - use keysym directly
 				else {
-					nativeKey = static_cast<uint32_t>(keysym);
+					vk = static_cast<uint32_t>(keysym);
 				}
 
 
