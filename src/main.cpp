@@ -151,29 +151,29 @@ private:
 public:
 
     auto Update(float delta) -> void override {
-
+        float speed = 10.0f;
         Cam.MoseMove();
 
+        if(m_Window.m_Keyboard->IsKeyDown(Key::LeftShift))
+                speed *= 2;
+                
         if( m_Window.m_Keyboard->IsKeyDown(Key::W)){
-            float speed = 10.0f * delta;
-            if(m_Window.m_Keyboard->IsKeyDown(Key::LeftShift) || m_Window.m_Keyboard->IsKeyDown(Key::RightShift))
-                speed *= 10;
-            Cam.MoveFroward(speed);
+            Cam.MoveFroward(speed * delta);
         }
         if( m_Window.m_Keyboard->IsKeyDown(Key::S)){
-            Cam.MoveBackward(10.0f * delta);
+            Cam.MoveBackward(speed * delta);
         }
         if( m_Window.m_Keyboard->IsKeyDown(Key::A)){
-            Cam.MoveLeft(10.0f * delta);
+            Cam.MoveLeft(speed * delta);
         }
         if( m_Window.m_Keyboard->IsKeyDown(Key::D)){
-            Cam.MoveRight(10.0f * delta);
+            Cam.MoveRight(speed * delta);
         }
         if( m_Window.m_Keyboard->IsKeyDown(Key::N) ){
-            Cam.MoveUP(10.0f * delta);
+            Cam.MoveUP(speed * delta);
         }
         if( m_Window.m_Keyboard->IsKeyDown(Key::M) ){
-            Cam.MoveDown(10.0f * delta);
+            Cam.MoveDown(speed * delta);
         }
 
         if( m_Window.m_Keyboard->IsKeyDown(Key::L) ){
