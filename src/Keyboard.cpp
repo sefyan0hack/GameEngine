@@ -220,27 +220,27 @@ auto Keyboard::ToNative(Key key) -> uint32_t
         case Key::F23:	return VK_F23;
         case Key::F24:	return VK_F24;
         // Specials
-        case Key::Escape:	return VK_ESCAPE;
-        case Key::Enter:	return VK_RETURN;
-        case Key::Tab:	return VK_TAB;
+        case Key::Escape:	    return VK_ESCAPE;
+        case Key::Enter:	    return VK_RETURN;
+        case Key::Tab:	        return VK_TAB;
         case Key::Backspace:	return VK_BACK;
-        case Key::Space:	return VK_SPACE;
-        case Key::CapsLock:	return VK_CAPITAL;
+        case Key::Space:	    return VK_SPACE;
+        case Key::CapsLock:	    return VK_CAPITAL;
         case Key::PrintScreen:	return VK_SNAPSHOT;
         case Key::ScrollLock:	return VK_SCROLL;
-        case Key::Pause:	return VK_PAUSE;
+        case Key::Pause:	    return VK_PAUSE;
         // Navigations
         case Key::Insert:	return VK_INSERT;
-        case Key::Home:	return VK_HOME;
+        case Key::Home:	    return VK_HOME;
         case Key::PageUp:	return VK_PRIOR;
         case Key::Delete:	return VK_DELETE;
-        case Key::End:	return VK_END;
+        case Key::End:	    return VK_END;
         case Key::PageDown:	return VK_NEXT;
         // Arrow
-        case Key::Left:	return VK_LEFT;
+        case Key::Left:	    return VK_LEFT;
         case Key::Right:	return VK_RIGHT;
-        case Key::Up:	return VK_UP;
-        case Key::Down:	return VK_DOWN;
+        case Key::Up:	    return VK_UP;
+        case Key::Down:	    return VK_DOWN;
         // Modifiers
         case Key::LeftShift:	return VK_LSHIFT;
         case Key::LeftControl:	return VK_LCONTROL;
@@ -262,24 +262,24 @@ auto Keyboard::ToNative(Key key) -> uint32_t
         case Key::NumPad8:	return VK_NUMPAD8;
         case Key::NumPad9:	return VK_NUMPAD9;
         case Key::NumPadDecimal:	return VK_DECIMAL;
-        case Key::NumPadDivide:	return VK_DIVIDE;
+        case Key::NumPadDivide:	    return VK_DIVIDE;
         case Key::NumPadMultiply:	return VK_MULTIPLY;
         case Key::NumPadSubtract:	return VK_SUBTRACT;
-        case Key::NumPadAdd:	return VK_ADD;
-        case Key::NumPadEnter:	return VK_RETURN;
-        case Key::NumPadEqual:	return VK_SEPARATOR;
+        case Key::NumPadAdd:	    return VK_ADD;
+        case Key::NumPadEnter:	    return VK_RETURN;
+        case Key::NumPadEqual:	    return VK_SEPARATOR;
         // Punctuation
-        case Key::Comma:	return VK_OEM_COMMA;
-        case Key::Period:	return VK_OEM_PERIOD;
+        case Key::Comma:	    return VK_OEM_COMMA;
+        case Key::Period:	    return VK_OEM_PERIOD;
         case Key::Semicolon:	return VK_OEM_1;
         case Key::Apostrophe:	return VK_OEM_7;
         case Key::BracketLeft:	return VK_OEM_4;
         case Key::BracketRight:	return VK_OEM_6;
         case Key::Backslash:	return VK_OEM_5;
-        case Key::Slash:	return VK_OEM_2;
+        case Key::Slash:	    return VK_OEM_2;
         case Key::GraveAccent:	return VK_OEM_3;
-        case Key::Minus:	return VK_OEM_MINUS;
-        case Key::Equal:	return VK_OEM_PLUS;
+        case Key::Minus:	    return VK_OEM_MINUS;
+        case Key::Equal:	    return VK_OEM_PLUS;
 
 #elif defined(LINUX_PLT)
 
@@ -348,14 +348,14 @@ auto Keyboard::ToNative(Key key) -> uint32_t
         case Key::F24:	return XK_F24;
         //  Specials
         case Key::Escape:		return XK_Escape;
-        case Key::Enter:			return XK_Return;
+        case Key::Enter:		return XK_Return;
         case Key::Tab:			return XK_Tab;
-        case Key::Backspace:		return XK_BackSpace;
-        case Key::Space:			return XK_space;
+        case Key::Backspace:	return XK_BackSpace;
+        case Key::Space:		return XK_space;
         case Key::CapsLock:		return XK_Caps_Lock;
         case Key::PrintScreen:	return XK_Print;
         case Key::ScrollLock:	return XK_Scroll_Lock;
-        case Key::Pause:			return XK_Pause;
+        case Key::Pause:		return XK_Pause;
         // Navigations
         case Key::Insert:	return XK_Insert;
         case Key::Home:		return XK_Home;
@@ -365,14 +365,14 @@ auto Keyboard::ToNative(Key key) -> uint32_t
         case Key::PageDown:	return XK_Next;
         // Arrows
         case Key::Left:		return XK_Left;
-        case Key::Right:		return XK_Right;
+        case Key::Right:	return XK_Right;
         case Key::Up:		return XK_Up;
         case Key::Down:		return XK_Down;
         // Modifiers
-        case Key::LeftShift:		return XK_Shift_L;
+        case Key::LeftShift:	return XK_Shift_L;
         case Key::LeftControl:	return XK_Control_L;
         case Key::LeftAlt:		return XK_Alt_L;
-        case Key::LeftSuper:		return XK_Super_L;
+        case Key::LeftSuper:	return XK_Super_L;
         case Key::RightShift:	return XK_Shift_R;
         case Key::RightControl:	return XK_Control_R;
         case Key::RightAlt:		return XK_Alt_R;
@@ -389,24 +389,24 @@ auto Keyboard::ToNative(Key key) -> uint32_t
         case Key::NumPad8:		return XK_KP_8;
         case Key::NumPad9:		return XK_KP_9;
         case Key::NumPadDecimal:	return XK_KP_Decimal;
-        case Key::NumPadDivide:	return XK_KP_Divide;
-        case Key::NumPadMultiply:return XK_KP_Multiply;
-        case Key::NumPadSubtract:return XK_KP_Subtract;
+        case Key::NumPadDivide:	    return XK_KP_Divide;
+        case Key::NumPadMultiply:   return XK_KP_Multiply;
+        case Key::NumPadSubtract:   return XK_KP_Subtract;
         case Key::NumPadAdd:		return XK_KP_Add;
-        case Key::NumPadEnter:	return XK_KP_Enter;
-        case Key::NumPadEqual:	return XK_KP_Equal;
+        case Key::NumPadEnter:	    return XK_KP_Enter;
+        case Key::NumPadEqual:	    return XK_KP_Equal;
         // Punctuation
-        case Key::Comma:			return XK_comma;
+        case Key::Comma:		return XK_comma;
         case Key::Period:		return XK_period;
-        case Key::Semicolon:		return XK_semicolon;
+        case Key::Semicolon:	return XK_semicolon;
         case Key::Apostrophe:	return XK_apostrophe;
         case Key::BracketLeft:	return XK_bracketleft;
         case Key::BracketRight:	return XK_bracketright;
-        case Key::Backslash:		return XK_backslash;
-        case Key::Slash:			return XK_slash;
+        case Key::Backslash:	return XK_backslash;
+        case Key::Slash:		return XK_slash;
         case Key::GraveAccent:	return XK_grave;
-        case Key::Minus:			return XK_minus;
-        case Key::Equal:			return XK_equal;
+        case Key::Minus:		return XK_minus;
+        case Key::Equal:		return XK_equal;
 
 #elif defined(WEB_PLT)
         // Alphanumeric keys
@@ -473,22 +473,22 @@ auto Keyboard::ToNative(Key key) -> uint32_t
         case Key::F23:	return DOM_VK_F23;
         case Key::F24:	return DOM_VK_F24;
         // Special keys
-        case Key::Escape: 	return DOM_VK_ESCAPE;
-        case Key::Enter: 	return DOM_VK_RETURN;
-        case Key::Tab: 		return DOM_VK_TAB;
+        case Key::Escape: 	    return DOM_VK_ESCAPE;
+        case Key::Enter: 	    return DOM_VK_RETURN;
+        case Key::Tab: 		    return DOM_VK_TAB;
         case Key::Backspace:	return DOM_VK_BACK_SPACE;
-        case Key::Space: 	return DOM_VK_SPACE;
+        case Key::Space: 	    return DOM_VK_SPACE;
         case Key::CapsLock: 	return DOM_VK_CAPS_LOCK;
         case Key::PrintScreen:	return DOM_VK_PRINTSCREEN;
         case Key::ScrollLock: 	return DOM_VK_SCROLL_LOCK;
-        case Key::Pause: 	return DOM_VK_PAUSE;
+        case Key::Pause: 	    return DOM_VK_PAUSE;
         // Navigation keys
         case Key::Insert: 	return DOM_VK_INSERT;
         case Key::Home: 	return DOM_VK_HOME;
         case Key::PageUp: 	return DOM_VK_PAGE_UP;
         case Key::Delete: 	return DOM_VK_DELETE;
         case Key::End: 		return DOM_VK_END;
-        case Key::PageDown: 	return DOM_VK_PAGE_DOWN;
+        case Key::PageDown: return DOM_VK_PAGE_DOWN;
         // Arrow keys
         case Key::Left: 	return DOM_VK_LEFT;
         case Key::Right: 	return DOM_VK_RIGHT;
@@ -543,11 +543,11 @@ auto Keyboard::ToNative(Key key) -> uint32_t
         // case Key::BrowserRefresh: 	return "BrowserRefresh";
         // case Key::BrowserStop: 		return "BrowserStop";
         // case Key::BrowserSearch: 	return "BrowserSearch";
-        // case Key::BrowserFavorites: return "BrowserFavorites";
+        // case Key::BrowserFavorites:  return "BrowserFavorites";
         // case Key::BrowserHome: 		return "BrowserHome";
         // case Key::VolumeMute: 		return "VolumeMute";
         // case Key::VolumeDown: 		return "VolumeDown";
-        // case Key::VolumeUp: 		return "VolumeUp";
+        // case Key::VolumeUp: 		    return "VolumeUp";
         // case Key::MediaNext: 		return "MediaTrackNext";
         // case Key::MediaPrevious: 	return "MediaTrackPrevious";
         // case Key::MediaStop: 		return "MediaStop";
