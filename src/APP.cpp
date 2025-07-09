@@ -48,7 +48,7 @@ auto APP::LoopBody(void* ctx) -> void
                 #if defined(WINDOWS_PLT)
                 int32_t ret = MessageBoxA(window.Handle(), "Close.", "Exit", MB_YESNO | MB_ICONWARNING);
                 if (ret == IDYES)
-                #if defined(LINUX_PLT)
+                #elif defined(LINUX_PLT)
                 #endif
                 {
                     window.Close();
