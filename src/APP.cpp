@@ -45,8 +45,14 @@ auto APP::LoopBody(void* ctx) -> void
     while (window.PollEvent(event)) {
         std::visit(overloaded {
             [&window](const QuitEvent&) {
+                #if defined(WINDOWS_PLT)
                 int32_t ret = MessageBoxA(window.Handle(), "Close.", "Exit", MB_YESNO | MB_ICONWARNING);
-                if (ret == IDYES){ window.Close(); }
+                if (ret == IDYES)
+                #if defined(LINUX_PLT)
+                #endif
+                {
+                    window.Close();
+                }
             },
             [&window](const WindowResizeEvent& e) {
                 window.m_Width  = e.width;
