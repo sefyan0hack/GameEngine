@@ -500,11 +500,13 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
 
     switch (eventType) {
         case EMSCRIPTEN_EVENT_KEYDOWN: {
-            // if (e->repeat) {
-            //     return EM_TRUE;
-            // }
             uint32_t vk = MapToVirtualKey(e->code);
-			window->m_Events.push(Keyboard::Event{Keyboard::FromNative(vk), Keyboard::Event::Type::Press});
+
+            auto keyAction = e->repeat 
+                ? Keyboard::Event::Type::Repeat 
+                : Keyboard::Event::Type::Press;
+
+				window->m_Events.push(Keyboard::Event{Keyboard::FromNative(vk), keyAction});
         } break;
 
         case EMSCRIPTEN_EVENT_KEYUP: {
@@ -564,8 +566,6 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
 auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 {
 	Expect(self != nullptr, "Cwindow* self Can't be null");
-
-	// auto This = reinterpret_cast<CWindow*>(self);
 	
 	[[maybe_unused]] auto winHandle = self->m_WindowHandle;
 	[[maybe_unused]] auto DrawCtx = self->m_DrawContext;
@@ -798,17 +798,7 @@ auto CWindow::SwapBuffers() const -> void
 
 auto CWindow::Close() -> void
 {
-	--S_WindowsCount;
-    m_Visible = false;
-
     Hide();
-	// #if defined(WINDOWS_PLT)
-    // PostQuitMessage(0); //hmmmm
-	// #elif defined(LINUX_PLT)
-	// //linux
-	// #elif defined(WEB_PLT)
-	// //web
-	// #endif
-
+	--S_WindowsCount;
     Info("Exit. ");
 }
