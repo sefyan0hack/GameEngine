@@ -84,12 +84,6 @@ auto APP::LoopBody(void* ctx) -> void
                     case Mouse::Event::Type::RRelease:
                         app->m_Mouse.OnRightReleased();
                         break;
-                    case Mouse::Event::Type::WheelUp:
-                        app->m_Mouse.OnWheelDelta(e.x);
-                        break;
-                    case Mouse::Event::Type::WheelDown:
-                        app->m_Mouse.OnWheelDelta(e.x); //delta is x or y
-                        break;
                     case Mouse::Event::Type::Move:
                         app->m_Mouse.OnMouseMove( e.x, e.y );
                         break;
@@ -102,6 +96,9 @@ auto APP::LoopBody(void* ctx) -> void
                     default:
                     std::unreachable();
                 }
+            },
+            [&app](const MouseWheelEvent& e) {
+                app->m_Mouse.OnWheelDelta(e.delta);
             },
             [&app](const MouseRawEvent& e) {
 	    		app->m_Mouse.OnRawDelta( e.dx, e.dy );

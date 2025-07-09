@@ -10,35 +10,35 @@ class Mouse
 public:
     struct RawDelta
 	{
-		int32_t x, y;
+		int16_t x, y;
 	};
 
 	class Event
 	{
 	public:
 		friend struct std::formatter<Event>;
-		enum class Type { LPress, LRelease, RPress, RRelease, WheelUp, WheelDown, Move, Enter, Leave };
+		enum class Type { LPress, LRelease, RPress, RRelease, Move, Enter, Leave };
 		static auto Type_to_string(Type t) -> const char*;
 
-		Event( Type type, uint32_t x, uint32_t y ) noexcept;
+		Event( Type type, uint16_t x, uint16_t y ) noexcept;
 		auto GetType() const noexcept 			-> Type ;
-		auto GetPos() const noexcept 			-> std::pair<uint32_t, uint32_t> ;
+		auto GetPos() const noexcept 			-> std::pair<uint16_t, uint16_t> ;
 
 		Type type;
-		uint32_t x;
-		uint32_t y;
+		uint16_t x;
+		uint16_t y;
 	};
 public:
     Mouse();
 	Mouse( const Mouse& ) = delete;
 public:
 	auto operator=( const Mouse& ) 			-> Mouse& = delete ;
-	auto GetPos() const noexcept 			-> std::pair<int32_t, int32_t> ;
+	auto GetPos() const noexcept 			-> std::pair<uint16_t, uint16_t> ;
 	auto ReadRawDelta() noexcept 			-> std::optional<RawDelta> ;
 	auto Read() noexcept 					-> std::optional<Mouse::Event> ;
-	auto GetPosX() const noexcept 			-> int32_t ;
-	auto GetPosY() const noexcept 			-> int32_t ;
-	auto SetPos(int32_t x_, int32_t y_)		-> void ;
+	auto GetPosX() const noexcept 			-> uint16_t ;
+	auto GetPosY() const noexcept 			-> uint16_t ;
+	auto SetPos(uint16_t x_, uint16_t y_)		-> void ;
 	auto IsInWindow() const noexcept 		-> bool ;
 	auto IsEntered() const noexcept 		-> bool ;
 	auto IsEmpty() const noexcept 			-> bool ;
@@ -47,27 +47,25 @@ public:
 	auto Lock([[maybe_unused]] const CWindow& window) noexcept -> void ;
 	auto UnLock() noexcept 					-> void ;
 private:
-	auto OnMouseMove( int32_t x,int32_t y ) noexcept 	-> void ;
+	auto OnMouseMove( uint16_t x, uint16_t y ) noexcept 	-> void ;
 	auto OnMouseLeave() noexcept 						-> void ;
 	auto OnMouseEnter() noexcept 						-> void ;
-	auto OnRawDelta( int32_t dx,int32_t dy ) noexcept 	-> void ;
+	auto OnRawDelta( int16_t dx, int16_t dy ) noexcept 	-> void ;
 	auto OnLeftPressed() noexcept 						-> void ;
 	auto OnLeftReleased() noexcept 						-> void ;
 	auto OnRightPressed() noexcept 						-> void ;
 	auto OnRightReleased() noexcept 					-> void ;
-	auto OnWheelUp() noexcept 							-> void ;
-	auto OnWheelDown() noexcept 						-> void ;
 	auto TrimBuffer() noexcept 							-> void ;
 	auto TrimRawInputBuffer() noexcept 					-> void ;
-	auto OnWheelDelta(int32_t delta ) noexcept 			-> void ;
+	auto OnWheelDelta(int16_t delta ) noexcept 			-> void ;
 private:
-	static constexpr uint32_t bufferSize = 16u;
-	int32_t x;
-	int32_t y;
+	static constexpr uint16_t bufferSize = 16u;
+	uint16_t x;
+	uint16_t y;
 	bool isInWindow = false;
 	bool isEntered = false;
 	bool isLocked = false;
-	int32_t wheelDeltaCarry = 0;
+	int16_t wheelDeltaCarry = 0;
 	std::queue<Event> buffer;
 	std::queue<RawDelta> rawDeltaBuffer;
 

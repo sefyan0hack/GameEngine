@@ -238,19 +238,19 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    case WM_MOUSEMOVE:
 	    {
 	    	const POINTS pt = MAKEPOINTS( Lpr );
-			m_Events.push(Mouse::Event{Mouse::Event::Type::Move, pt.x, pt.y});
+			m_Events.push(Mouse::Event{Mouse::Event::Type::Move, static_cast<uint16_t>(pt.x), static_cast<uint16_t>(pt.y)});
 			return 0;
 	    }
 		case WM_MOUSEHOVER :{
 			const POINTS pt = MAKEPOINTS( Lpr );
 
-			m_Events.push(Mouse::Event{Mouse::Event::Type::Enter, pt.x, pt.y});
+			m_Events.push(Mouse::Event{Mouse::Event::Type::Enter, static_cast<uint16_t>(pt.x), static_cast<uint16_t>(pt.y)});
 			return 0;
 		}
 		case WM_MOUSELEAVE :{
 			const POINTS pt = MAKEPOINTS( Lpr );
 
-			m_Events.push(Mouse::Event{Mouse::Event::Type::Leave, pt.x, pt.y});
+			m_Events.push(Mouse::Event{Mouse::Event::Type::Leave, static_cast<uint16_t>(pt.x), static_cast<uint16_t>(pt.y)});
 			return 0;
 		}
 	    case WM_LBUTTONDOWN:
@@ -258,40 +258,35 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 			const POINTS pt = MAKEPOINTS( Lpr );
 
 	    	SetForegroundWindow( Winhandle );
-			m_Events.push(Mouse::Event{Mouse::Event::Type::LPress, pt.x, pt.y});
+			m_Events.push(Mouse::Event{Mouse::Event::Type::LPress, static_cast<uint16_t>(pt.x), static_cast<uint16_t>(pt.y)});
 	    	break;
 	    }
 	    case WM_RBUTTONDOWN:
 	    {
 			const POINTS pt = MAKEPOINTS( Lpr );
 
-	    	m_Events.push(Mouse::Event{Mouse::Event::Type::RPress, pt.x, pt.y});
+	    	m_Events.push(Mouse::Event{Mouse::Event::Type::RPress, static_cast<uint16_t>(pt.x), static_cast<uint16_t>(pt.y)});
 	    	break;
 	    }
 	    case WM_LBUTTONUP:
 	    {
 			const POINTS pt = MAKEPOINTS( Lpr );
-			m_Events.push(Mouse::Event{Mouse::Event::Type::LRelease, pt.x, pt.y});
+			m_Events.push(Mouse::Event{Mouse::Event::Type::LRelease, static_cast<uint16_t>(pt.x), static_cast<uint16_t>(pt.y)});
 	    	break;
 	    }
 	    case WM_RBUTTONUP:
 	    {
 	    	const POINTS pt = MAKEPOINTS( Lpr );
 
-			m_Events.push(Mouse::Event{Mouse::Event::Type::RRelease, pt.x, pt.y});
+			m_Events.push(Mouse::Event{Mouse::Event::Type::RRelease, static_cast<uint16_t>(pt.x), static_cast<uint16_t>(pt.y)});
 	    	break;
 			
 	    }
 	    case WM_MOUSEWHEEL:
 	    {
-	    	const int32_t delta = GET_WHEEL_DELTA_WPARAM( Wpr );
-
-			if (delta > 0) {
-				m_Events.push(Mouse::Event{Mouse::Event::Type::WheelUp, delta, delta});
-			} else if (delta < 0) {
-				m_Events.push(Mouse::Event{Mouse::Event::Type::WheelDown, delta, delta});
-			}
-
+	    	const auto delta = GET_WHEEL_DELTA_WPARAM( Wpr );
+			
+			m_Events.push(MouseWheelEvent{delta});
 	    	break;
 	    }
 	    ///////////////// END MOUSE MESSAGES /////////////////
@@ -323,7 +318,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    	if( ri.header.dwType == RIM_TYPEMOUSE &&
 	    		(ri.data.mouse.lLastX != 0 || ri.data.mouse.lLastY != 0) )
 				{
-				m_Events.push(MouseRawEvent{ri.data.mouse.lLastX, ri.data.mouse.lLastY});
+				m_Events.push(MouseRawEvent{static_cast<int16_t>(ri.data.mouse.lLastX), static_cast<int16_t>(ri.data.mouse.lLastY)});
 	    	}
 	    	break;
 	    }
