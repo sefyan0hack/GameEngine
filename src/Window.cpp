@@ -544,7 +544,7 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
             break;
 
         case EMSCRIPTEN_EVENT_MOUSEMOVE:
-			window->m_Events.push(MouseRawEvent{e->movementX, e->movementY});
+			window->m_Events.push(MouseRawEvent{static_cast<int16_t>(e->movementX), static_cast<int16_t>(e->movementY)});
             window->m_Events.push(Mouse::Event{Mouse::Event::Type::Move, x, y});
             break;
 
