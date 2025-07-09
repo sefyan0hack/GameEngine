@@ -45,9 +45,9 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 
 	emscripten_set_wheel_callback(m_WindowHandle, this, EM_FALSE,
 		[]([[maybe_unused]] int32_t eventType, const EmscriptenWheelEvent* e, void* userData) -> EM_BOOL  {
-			CWindow* w = static_cast<CWindow*>(userData);
+			CWindow* window = static_cast<CWindow*>(userData);
 			
-			window->m_Events.push(MouseWheelEvent{e->deltaY * -120});
+			window->m_Events.push(MouseWheelEvent{static_cast<int16_t>(e->deltaY * -120)});
 			return EM_TRUE;
 		}
 	);
@@ -525,32 +525,35 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
 	if (e->button == 0) action = Mouse::Event::Type::LPress;
 	else if (e->button == 2) action = Mouse::Event::Type::RPress;
 
+	auto x = static_cast<uint16_t>(e->canvasX); 
+	auto y = static_cast<uint16_t>(e->canvasY);
+
 	switch (eventType) {
         case EMSCRIPTEN_EVENT_MOUSEDOWN:
 			if (e->button == 0) action = Mouse::Event::Type::LPress;
 			else if (e->button == 2) action = Mouse::Event::Type::RPress;
 
-			window->m_Events.push(Mouse::Event{action, e->canvasX, e->canvasY});
+			window->m_Events.push(Mouse::Event{action, x, y});
             break;
 
         case EMSCRIPTEN_EVENT_MOUSEUP:
 			if (e->button == 0) action = Mouse::Event::Type::LRelease;
 			else if (e->button == 2) action = Mouse::Event::Type::RRelease;
 
-            window->m_Events.push(Mouse::Event{action, e->canvasX, e->canvasY});
+            window->m_Events.push(Mouse::Event{action, x, y});
             break;
 
         case EMSCRIPTEN_EVENT_MOUSEMOVE:
 			window->m_Events.push(MouseRawEvent{e->movementX, e->movementY});
-            window->m_Events.push(Mouse::Event{Mouse::Event::Type::Move, e->canvasX, e->canvasY});
+            window->m_Events.push(Mouse::Event{Mouse::Event::Type::Move, x, y});
             break;
 
         case EMSCRIPTEN_EVENT_MOUSEENTER:
-            window->m_Events.push(Mouse::Event{Mouse::Event::Type::Enter, e->canvasX, e->canvasY});
+            window->m_Events.push(Mouse::Event{Mouse::Event::Type::Enter, x, y});
             break;
 
         case EMSCRIPTEN_EVENT_MOUSELEAVE:
-			window->m_Events.push(Mouse::Event{Mouse::Event::Type::Leave, e->canvasX, e->canvasY});
+			window->m_Events.push(Mouse::Event{Mouse::Event::Type::Leave, x, y});
             break;
     }
 
