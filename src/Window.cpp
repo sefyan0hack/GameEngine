@@ -611,7 +611,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 
 			case ConfigureNotify:
 				// Handle window resize
-				m_Events.push(WindowResizeEvent{event.xconfigure.width, event.xconfigure.height});
+				self->m_Events.push(WindowResizeEvent{event.xconfigure.width, event.xconfigure.height});
 				break;
 
 			case KeyPress:
@@ -640,9 +640,9 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 				}
 
 				if (event.type == KeyPress) {
-					m_Events.push(Keyboard::Event{Keyboard::FromNative(vk), Keyboard::Event::Type::Press});
+					self->m_Events.push(Keyboard::Event{Keyboard::FromNative(vk), Keyboard::Event::Type::Press});
 				} else {
-					m_Events.push(Keyboard::Event{Keyboard::FromNative(vk), Keyboard::Event::Type::Release});
+					self->m_Events.push(Keyboard::Event{Keyboard::FromNative(vk), Keyboard::Event::Type::Release});
 				}
 				break;
 				break;
@@ -650,12 +650,12 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 
 			case FocusOut:
 				// Clear keyboard state when window loses focus
-				m_Events.push(LoseFocusEvent{});
+				self->m_Events.push(LoseFocusEvent{});
 				break;
 
 			case ClientMessage:
 				if (event.xclient.data.l[0] == wmDeleteMessage){
-					m_Events.push(QuitEvent{});
+					self->m_Events.push(QuitEvent{});
 				}
 				break;
 		}
