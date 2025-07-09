@@ -593,7 +593,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 
 			case ConfigureNotify:
 				// Handle window resize
-				self->m_Events.push(WindowResizeEvent{event.xconfigure.width, event.xconfigure.height});
+				self->m_Events.push(WindowResizeEvent{static_cast<uint16_t>(event.xconfigure.width), static_cast<uint16_t>(event.xconfigure.height)});
 				break;
 
 			case KeyPress:
