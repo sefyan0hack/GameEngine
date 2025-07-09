@@ -36,7 +36,7 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 			switch (eventType)
 			{
 				case EMSCRIPTEN_EVENT_BLUR:
-					window->m_Keyboard->ClearState();
+					window->m_Events.push(LoseFocusEvent{});
 					break;
 			}
 			return EM_TRUE;
@@ -46,7 +46,8 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 	emscripten_set_wheel_callback(m_WindowHandle, this, EM_FALSE,
 		[]([[maybe_unused]] int32_t eventType, const EmscriptenWheelEvent* e, void* userData) -> EM_BOOL  {
 			CWindow* w = static_cast<CWindow*>(userData);
-			w->m_Mouse->OnWheelDelta(e->deltaY * -120); // Match Win32 scaling
+			
+			window->m_Events.push(MouseWheelEvent{e->deltaY * -120});
 			return EM_TRUE;
 		}
 	);
@@ -60,10 +61,7 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 			auto* window = static_cast<CWindow*>(userData);
 
 			if (e->isFullscreen) Info("Enable FullScreen");
-
-			window->m_Width = e->elementWidth;
-			window->m_Height = e->elementHeight;
-
+			window->m_Events.push(WindowResizeEvent{ e->elementWidth,  e->elementHeight});
 			return EM_TRUE;
 	});
 	
@@ -324,7 +322,6 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    }
 	    ///////////////// END RAW MOUSE MESSAGES /////////////////
         case WM_KILLFOCUS:
-		// m_Keyboard->ClearState();
 		m_Events.clear();
 		m_Events.push(LoseFocusEvent{});
 		ClipCursor(nullptr); //release cursor confinement
@@ -500,37 +497,19 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
         return 0;
     };
 
-    auto MapToChar = [](const char* key) -> char {
-        if (strlen(key) == 1) return key[0];  // Printable characters
-        if (strcmp(key, "Enter") == 0) return '\r';
-        if (strcmp(key, "Tab") == 0) return '\t';
-        if (strcmp(key, "Backspace") == 0) return '\b';
-        if (strcmp(key, "Escape") == 0) return '\x1B';
-        return char{};
-    };
 
     switch (eventType) {
         case EMSCRIPTEN_EVENT_KEYDOWN: {
-            if (e->repeat && !window->m_Keyboard->AutorepeatIsEnabled()) {
-                return EM_TRUE;
-            }
-
+            // if (e->repeat) {
+            //     return EM_TRUE;
+            // }
             uint32_t vk = MapToVirtualKey(e->code);
-            if (vk) {
-                window->m_Keyboard->OnKeyPressed(Keyboard::FromNative(vk));
-            }
-
-            char ch = MapToChar(e->key);
-            if (ch != 0) {
-                window->m_Keyboard->OnChar(static_cast<unsigned char>(ch));
-            }
+			window->m_Events.push(Keyboard::Event{Keyboard::FromNative(vk), Keyboard::Event::Type::Press});
         } break;
 
         case EMSCRIPTEN_EVENT_KEYUP: {
             uint32_t vk = MapToVirtualKey(e->code);
-            if (vk != 0) {
-                window->m_Keyboard->OnKeyReleased(Keyboard::FromNative(vk));
-            }
+			window->m_Events.push(Keyboard::Event{Keyboard::FromNative(vk), Keyboard::Event::Type::Release});
         } break;
     }
 
@@ -542,36 +521,36 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_TRUE;
 
-	// Info(
-	// 	R"(screen({},{}), client({},{}), movement({},{}), target({},{}), canvas({},{}), button: {})",
-	// 	e->screenX, e->screenY, e->clientX, e->clientY, e->movementX, e->movementY, e->targetX, e->targetY, e->canvasX, e->canvasY,
-	// 	e->button == 0 ? "Left" :
-	// 	e->button == 1 ? "Mid"  :
-	// 	e->button == 2 ? "Right": "??"
-	// );
+	Mouse::Event::Type action;
+	if (e->button == 0) action = Mouse::Event::Type::LPress;
+	else if (e->button == 2) action = Mouse::Event::Type::RPress;
 
 	switch (eventType) {
         case EMSCRIPTEN_EVENT_MOUSEDOWN:
-            if (e->button == 0) window->m_Mouse->OnLeftPressed();
-            else if (e->button == 2) window->m_Mouse->OnRightPressed();
+			if (e->button == 0) action = Mouse::Event::Type::LPress;
+			else if (e->button == 2) action = Mouse::Event::Type::RPress;
+
+			window->m_Events.push(Mouse::Event{action, e->canvasX, e->canvasY});
             break;
-        
+
         case EMSCRIPTEN_EVENT_MOUSEUP:
-            if (e->button == 0) window->m_Mouse->OnLeftReleased();
-            else if (e->button == 2) window->m_Mouse->OnRightReleased();
+			if (e->button == 0) action = Mouse::Event::Type::LRelease;
+			else if (e->button == 2) action = Mouse::Event::Type::RRelease;
+
+            window->m_Events.push(Mouse::Event{action, e->canvasX, e->canvasY});
             break;
-        
+
         case EMSCRIPTEN_EVENT_MOUSEMOVE:
-			window->m_Mouse->OnRawDelta(e->movementX, e->movementY);
-			window->m_Mouse->OnMouseMove(e->canvasX, e->canvasY);
+			window->m_Events.push(MouseRawEvent{e->movementX, e->movementY});
+            window->m_Events.push(Mouse::Event{Mouse::Event::Type::Move, e->canvasX, e->canvasY});
             break;
-        
+
         case EMSCRIPTEN_EVENT_MOUSEENTER:
-            window->m_Mouse->OnMouseEnter();
+            window->m_Events.push(Mouse::Event{Mouse::Event::Type::Enter, e->canvasX, e->canvasY});
             break;
-        
+
         case EMSCRIPTEN_EVENT_MOUSELEAVE:
-            window->m_Mouse->OnMouseLeave();
+			window->m_Events.push(Mouse::Event{Mouse::Event::Type::Leave, e->canvasX, e->canvasY});
             break;
     }
 

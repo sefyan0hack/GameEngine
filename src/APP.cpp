@@ -91,13 +91,13 @@ auto APP::LoopBody(void* ctx) -> void
                         app->m_Mouse.OnRightReleased();
                         break;
                     case Mouse::Event::Type::Move:
-                        app->m_Mouse.OnMouseMove( e.x, e.y );
+                        app->m_Mouse.OnMouseMove(e.x, e.y);
                         break;
                     case Mouse::Event::Type::Enter:
-                        app->m_Mouse.isEntered = true;
+                        app->m_Mouse.OnMouseEnter();
                         break;
                     case Mouse::Event::Type::Leave:
-                        app->m_Mouse.isEntered = false;
+                        app->m_Mouse.OnMouseLeave();
                         break;
                     default:
                     std::unreachable();
