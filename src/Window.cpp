@@ -61,7 +61,7 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 			auto* window = static_cast<CWindow*>(userData);
 
 			if (e->isFullscreen) Info("Enable FullScreen");
-			window->m_Events.push(WindowResizeEvent{ e->elementWidth,  e->elementHeight});
+			window->m_Events.push(WindowResizeEvent{ static_cast<int16_t>(e->elementWidth), static_cast<int16_t>(e->elementHeight)});
 			return EM_TRUE;
 	});
 	
