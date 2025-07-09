@@ -1,6 +1,7 @@
 #include <core/Window.hpp>
 #include <core/Log.hpp>
 #include <core/OpenGL.hpp>
+#include <core/Event.hpp>
 
 
 CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height, [[maybe_unused]] const char* Title, [[maybe_unused]] bool withopengl) 
@@ -8,8 +9,7 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 	, m_Height(Height)
 	, m_Visible(false)
 	, m_refCount(1)
-	, m_Keyboard(std::make_shared<Keyboard>())
-	, m_Mouse(std::make_shared<Mouse>())
+	, m_Events()
 {
 	std::tie(m_WindowHandle, m_DrawContext) = new_window(m_Width, m_Height, Title);
 
@@ -79,8 +79,7 @@ CWindow::CWindow(const CWindow& other)
 	, m_RawBuffer(other.m_RawBuffer)
 	, m_OpenGl(other.m_OpenGl)
 	, m_refCount(other.m_refCount)
-	, m_Keyboard(other.m_Keyboard)
-	, m_Mouse(other.m_Mouse)
+	, m_Events(other.m_Events)
 {
 	m_refCount++;
 }
@@ -163,59 +162,51 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
             return 0;
         }
         case WM_CLOSE:{
-            int32_t ret = MessageBoxA(m_WindowHandle, "Close.", "Exit", MB_YESNO | MB_ICONWARNING);
-            if (ret == IDYES){
-                --S_WindowsCount;
-                m_Visible = false;
-                ShowWindow(Winhandle, HIDE_WINDOW);
-                PostQuitMessage(0); //hmmmm
-                Info("Exit. ");
-            }
-            return 0;
+			m_Events.push(QuitEvent{});
+			return 0;
         }
         case WM_SIZE:{
-            m_Width  = LOWORD(Lpr);
-            m_Height = HIWORD(Lpr);
-			gl::Viewport(0, 0, m_Width, m_Height);
+			m_Events.push(WindowResizeEvent{LOWORD(Lpr), HIWORD(Lpr)});
             return 0;
         }
         /*********** KEYBOARD MESSAGES ***********/
 	    case WM_KEYDOWN:
 	    case WM_SYSKEYDOWN: {
-			const bool isExtended = (Lpr & (1 << 24)) != 0;
-			if (!(Lpr & 0x40000000) || m_Keyboard->AutorepeatIsEnabled()) {
-				Key key = Key::Unknown;
+
+			const bool isExtended   = (Lpr & (1 << 24)) != 0;
+        	const bool isAutoRepeat = (Lpr & (1 << 30)) != 0;  
+
+			Key key = Key::Unknown;
 				
-				switch (Wpr) {
-					case VK_SHIFT: {
-						const UINT scancode = (Lpr & 0x00FF0000) >> 16;
-						key = (MapVirtualKeyA(scancode, MAPVK_VSC_TO_VK_EX) == VK_RSHIFT) 
-							   ? Key::RightShift : Key::LeftShift;
-						break;
-					}
-					case VK_CONTROL:
-						key = isExtended ? Key::RightControl : Key::LeftControl;
-						break;
-					case VK_MENU:
-						key = isExtended ? Key::RightAlt : Key::LeftAlt;
-						break;
-					default:
-						key = Keyboard::FromNative(Wpr);
-						break;
+			switch (Wpr) {
+				case VK_SHIFT: {
+					const UINT scancode = (Lpr & 0x00FF0000) >> 16;
+					key = (MapVirtualKeyA(scancode, MAPVK_VSC_TO_VK_EX) == VK_RSHIFT) 
+						   ? Key::RightShift : Key::LeftShift;
+					break;
 				}
-				
-				if (key != Key::Unknown) {
-					m_Keyboard->OnKeyPressed(key);
-				}
+				case VK_CONTROL:
+					key = isExtended ? Key::RightControl : Key::LeftControl;
+					break;
+				case VK_MENU:
+					key = isExtended ? Key::RightAlt : Key::LeftAlt;
+					break;
+				default:
+					key = Keyboard::FromNative(Wpr);
 			}
-			break;
+				
+			if (key != Key::Unknown) {
+				auto keyAction = isAutoRepeat ? Keyboard::Event::Type::Repeat : Keyboard::Event::Type::Press;
+				m_Events.push(Keyboard::Event{key, keyAction});
+			}
 		}
+		break;
 		
 		case WM_KEYUP:
 		case WM_SYSKEYUP: {
 			const bool isExtended = (Lpr & (1 << 24)) != 0;
 			Key key = Key::Unknown;
-			
+
 			switch (Wpr) {
 				case VK_SHIFT: {
 					const UINT scancode = (Lpr & 0x00FF0000) >> 16;
@@ -235,81 +226,72 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 			}
 			
 			if (key != Key::Unknown) {
-				m_Keyboard->OnKeyReleased(key);
+				m_Events.push(Keyboard::Event{key, Keyboard::Event::Type::Release});
+            	break;
 			}
 			break;
 		}
-		
-	    case WM_CHAR:
-	    	m_Keyboard->OnChar( static_cast<char>(Wpr) );
-	    	break;
+
 	    ///////////// END KEYBOARD MESSAGES /////////////
 
         ///////////// MOUSE MESSAGES /////////////////
 	    case WM_MOUSEMOVE:
 	    {
 	    	const POINTS pt = MAKEPOINTS( Lpr );
-			if( !m_Mouse->IsInWindow() )
-			{
-				m_Mouse->OnMouseEnter();
-			}
-			if( pt.x >= 0 &&  pt.x < m_Width && pt.y >= 0 && pt.y < m_Height )
-			{
-				m_Mouse->OnMouseMove( pt.x, pt.y );
-				m_Mouse->OnMouseEnter();
-			}
-			else{
-				m_Mouse->OnMouseLeave();
-			}
+			m_Events.push(Mouse::Event{Mouse::Event::Type::Move, pt.x, pt.y});
 			return 0;
 	    }
 		case WM_MOUSEHOVER :{
-			m_Mouse->isEntered = true;
+			const POINTS pt = MAKEPOINTS( Lpr );
+
+			m_Events.push(Mouse::Event{Mouse::Event::Type::Enter, pt.x, pt.y});
 			return 0;
 		}
 		case WM_MOUSELEAVE :{
-			m_Mouse->isEntered = false;
+			const POINTS pt = MAKEPOINTS( Lpr );
+
+			m_Events.push(Mouse::Event{Mouse::Event::Type::Leave, pt.x, pt.y});
 			return 0;
 		}
 	    case WM_LBUTTONDOWN:
 	    {
+			const POINTS pt = MAKEPOINTS( Lpr );
+
 	    	SetForegroundWindow( Winhandle );
-	    	m_Mouse->OnLeftPressed();
+			m_Events.push(Mouse::Event{Mouse::Event::Type::LPress, pt.x, pt.y});
 	    	break;
 	    }
 	    case WM_RBUTTONDOWN:
 	    {
-	    	m_Mouse->OnRightPressed();
+			const POINTS pt = MAKEPOINTS( Lpr );
+
+	    	m_Events.push(Mouse::Event{Mouse::Event::Type::RPress, pt.x, pt.y});
 	    	break;
 	    }
 	    case WM_LBUTTONUP:
 	    {
-	    	const POINTS pt = MAKEPOINTS( Lpr );
-	    	m_Mouse->OnLeftReleased();
-	    	// release mouse if outside of window
-	    	if( pt.x < 0 || pt.x >= m_Width || pt.y < 0 || pt.y >= m_Height )
-	    	{
-	    		ReleaseCapture();
-	    		m_Mouse->OnMouseLeave();
-	    	}
+			const POINTS pt = MAKEPOINTS( Lpr );
+			m_Events.push(Mouse::Event{Mouse::Event::Type::LRelease, pt.x, pt.y});
 	    	break;
 	    }
 	    case WM_RBUTTONUP:
 	    {
 	    	const POINTS pt = MAKEPOINTS( Lpr );
-	    	m_Mouse->OnRightReleased();
-	    	// release mouse if outside of window
-	    	if( pt.x < 0 || pt.x >= m_Width || pt.y < 0 || pt.y >= m_Height )
-	    	{
-	    		ReleaseCapture();
-	    		m_Mouse->OnMouseLeave();
-	    	}
+
+			m_Events.push(Mouse::Event{Mouse::Event::Type::RRelease, pt.x, pt.y});
 	    	break;
+			
 	    }
 	    case WM_MOUSEWHEEL:
 	    {
 	    	const int32_t delta = GET_WHEEL_DELTA_WPARAM( Wpr );
-	    	m_Mouse->OnWheelDelta(delta);
+
+			if (delta > 0) {
+				m_Events.push(Mouse::Event{Mouse::Event::Type::WheelUp, delta, delta});
+			} else if (delta < 0) {
+				m_Events.push(Mouse::Event{Mouse::Event::Type::WheelDown, delta, delta});
+			}
+
 	    	break;
 	    }
 	    ///////////////// END MOUSE MESSAGES /////////////////
@@ -341,23 +323,17 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    	if( ri.header.dwType == RIM_TYPEMOUSE &&
 	    		(ri.data.mouse.lLastX != 0 || ri.data.mouse.lLastY != 0) )
 				{
-	    		m_Mouse->OnRawDelta( ri.data.mouse.lLastX,ri.data.mouse.lLastY );
+				m_Events.push(MouseRawEvent{ri.data.mouse.lLastX, ri.data.mouse.lLastY});
 	    	}
 	    	break;
 	    }
 	    ///////////////// END RAW MOUSE MESSAGES /////////////////
         case WM_KILLFOCUS:
-		m_Keyboard->ClearState();
+		// m_Keyboard->ClearState();
+		m_Events.clear();
+		m_Events.push(LoseFocusEvent{});
 		ClipCursor(nullptr); //release cursor confinement
 		break;
-
-		case WM_SETCURSOR:
-		if (m_Mouse->isLocked && LOWORD(Lpr) == HTCLIENT) {
-			SetCursor(nullptr);
-			return true;
-		}
-		break;
-		
 
     }
     return DefWindowProcA(Winhandle, msg, Wpr, Lpr);
@@ -852,4 +828,21 @@ auto CWindow::SwapBuffers() const -> void
     #elif defined(LINUX_PLT)
     ::glXSwapBuffers(m_DrawContext, m_WindowHandle);
     #endif
+}
+
+auto CWindow::Close() -> void
+{
+	--S_WindowsCount;
+    m_Visible = false;
+
+    Hide();
+	// #if defined(WINDOWS_PLT)
+    // PostQuitMessage(0); //hmmmm
+	// #elif defined(LINUX_PLT)
+	// //linux
+	// #elif defined(WEB_PLT)
+	// //web
+	// #endif
+
+    Info("Exit. ");
 }

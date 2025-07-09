@@ -4,13 +4,13 @@
 class CWindow;
 class Mouse
 {
-    friend class CWindow;
+    friend class APP;
 	friend struct std::formatter<Mouse>;
 
 public:
     struct RawDelta
 	{
-		int32_t x,y;
+		int32_t x, y;
 	};
 
 	class Event
@@ -19,20 +19,14 @@ public:
 		friend struct std::formatter<Event>;
 		enum class Type { LPress, LRelease, RPress, RRelease, WheelUp, WheelDown, Move, Enter, Leave };
 		static auto Type_to_string(Type t) -> const char*;
-	public:
-		Event( Type type,const Mouse& parent ) noexcept;
+
+		Event( Type type, uint32_t x, uint32_t y ) noexcept;
 		auto GetType() const noexcept 			-> Type ;
-		auto GetPos() const noexcept 			-> std::pair<int32_t, int32_t> ;
-		auto GetPosX() const noexcept			-> int32_t ;
-		auto GetPosY() const noexcept 			-> int32_t ;
-		auto LeftIsPressed() const noexcept 	-> bool ;
-		auto RightIsPressed() const noexcept 	-> bool ;
-    private:
+		auto GetPos() const noexcept 			-> std::pair<uint32_t, uint32_t> ;
+
 		Type type;
-		bool leftIsPressed;
-		bool rightIsPressed;
-		int32_t x;
-		int32_t y;
+		uint32_t x;
+		uint32_t y;
 	};
 public:
     Mouse();
@@ -47,10 +41,9 @@ public:
 	auto SetPos(int32_t x_, int32_t y_)		-> void ;
 	auto IsInWindow() const noexcept 		-> bool ;
 	auto IsEntered() const noexcept 		-> bool ;
-	auto LeftIsPressed() const noexcept 	-> bool ;
-	auto RightIsPressed() const noexcept 	-> bool ;
 	auto IsEmpty() const noexcept 			-> bool ;
 	auto Flush() noexcept 					-> void ;
+	auto Locked() const 					-> bool ;
 	auto Lock([[maybe_unused]] const CWindow& window) noexcept -> void ;
 	auto UnLock() noexcept 					-> void ;
 private:
@@ -71,8 +64,6 @@ private:
 	static constexpr uint32_t bufferSize = 16u;
 	int32_t x;
 	int32_t y;
-	bool leftIsPressed = false;
-	bool rightIsPressed = false;
 	bool isInWindow = false;
 	bool isEntered = false;
 	bool isLocked = false;
@@ -92,8 +83,8 @@ struct std::formatter<Mouse::Event> {
   }
   auto format(const Mouse::Event& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-		R"({{"Type": {}, "leftIsPressed": {}, "rightIsPressed":{}, "x": {}, "y": {}}})",
-		Mouse::Event::Type_to_string(obj.type), obj.leftIsPressed, obj.rightIsPressed, obj.x, obj.y
+		R"({{"Type": {}, "x": {}, "y": {}}})",
+		Mouse::Event::Type_to_string(obj.type), obj.x, obj.y
   	);
   }
 };
@@ -120,8 +111,8 @@ struct std::formatter<Mouse> {
   }
   auto format(const Mouse& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    R"({{ "x": {}, "y": {}, "leftIsPressed": {}, "rightIsPressed":{}, "isInWindow": {}, "isEntered": {}, "wheelDeltaCarry": {}, "buffer": {}, "rawDeltaBuffer": {} }})"
-    , obj.x, obj.y, obj.leftIsPressed, obj.rightIsPressed, obj.isInWindow, obj.isEntered, obj.wheelDeltaCarry, QueWrapper{obj.buffer}, QueWrapper{obj.rawDeltaBuffer}
+    R"({{ "x": {}, "y": {}, "isInWindow": {}, "isEntered": {}, "wheelDeltaCarry": {}, "buffer": {}, "rawDeltaBuffer": {} }})"
+    , obj.x, obj.y, obj.isInWindow, obj.isEntered, obj.wheelDeltaCarry, QueWrapper{obj.buffer}, QueWrapper{obj.rawDeltaBuffer}
   	);
   }
 };

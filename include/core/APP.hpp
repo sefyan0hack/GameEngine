@@ -20,6 +20,8 @@ private:
     static auto LoopBody(void* ctx) -> void;
 protected:
     CWindow m_Window;
+    Keyboard m_Keyboard;
+    Mouse m_Mouse;
     std::chrono::steady_clock::time_point m_LastFrameTime;
     float m_Fps, m_SmoothedFPS;
 

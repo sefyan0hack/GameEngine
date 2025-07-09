@@ -96,45 +96,20 @@ auto Camera::UpdateVectors() -> void
     this->m_UpDir = glm::normalize(glm::cross(this->m_RightDir, this->m_FrontDir));
 }
 
-auto Camera::MoseMove(bool islocked) -> void
+auto Camera::MoseMove(Mouse& mouse) -> void
 {
     constexpr float LIMIT_ANGLE = 45.0f;
 
-    while (auto op = m_Window->m_Mouse->ReadRawDelta()) {
+    while (auto op = mouse.ReadRawDelta()) {
         float xoff = static_cast<float>(op->x)* m_Sensitivity;
         float yoff = static_cast<float>(-op->y) * m_Sensitivity;
         this->m_Yaw += xoff;
         this->m_Pitch += yoff;
     }
 
-    if(islocked){
+    if(mouse.Locked()){
         this->m_Pitch = std::clamp(this->m_Pitch, -LIMIT_ANGLE, LIMIT_ANGLE);
     }
-
-    //move this code later 
-    static auto on = false;
-    static auto lastState = false;
-
-    auto currentState = m_Window->m_Keyboard->IsKeyDown(Key::L);
-    if (currentState && !lastState) {
-        on = !on;
-    }
-    lastState = currentState;
-    if(on){
-        #if defined(WINDOWS_PLT)
-        m_Window->m_Mouse->SetPos(m_Window->Width()/2, m_Window->Height()/2);
-        ShowCursor(false);
-        #elif defined(WEB_PLT)
-        emscripten_request_pointerlock("#canvas", true);
-        #endif
-    }else{
-        #if defined(WINDOWS_PLT)
-        ShowCursor(true);
-        #elif defined(WEB_PLT)
-        emscripten_exit_pointerlock();
-        #endif
-    }
-    //fin
 
     UpdateVectors();
 }

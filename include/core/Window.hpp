@@ -4,6 +4,7 @@
 #include <core/OpenGL.hpp>
 #include <core/Keyboard.hpp>
 #include <core/Mouse.hpp>
+#include <core/Event.hpp>
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>
@@ -18,6 +19,7 @@
 
 class CWindow
 {
+    friend class APP;
     #if defined(WINDOWS_PLT)
     class WinClass
     {
@@ -55,14 +57,18 @@ class CWindow
         auto Width() const       -> int32_t ;
         auto Height() const      -> int32_t ;
         auto opengl() const         -> std::shared_ptr<gl::OpenGL> ;
-        auto Visible() const        -> bool ;
+        auto Visible() const        -> bool;
         auto Show()                 -> void;
         auto Hide()                 -> void;
         auto ToggleFullScreen()     -> void;
         auto SwapBuffers() const    -> void;
+        auto Close()                -> void;
         static auto WindowsCount()  -> unsigned short ;
         static auto ProcessMessages([[maybe_unused]] CWindow* self)   -> void ;
         static auto WindowShouldClose() -> bool ;
+        bool PollEvent(Event& event) { return m_Events.poll(event); }
+        void WaitEvent(Event& event) { m_Events.wait_and_poll(event); }
+        void ClearEvents() { m_Events.clear(); }
 
     private:
         #if defined(WINDOWS_PLT)
@@ -86,12 +92,9 @@ class CWindow
         std::vector<std::byte> m_RawBuffer;
         std::shared_ptr<gl::OpenGL> m_OpenGl;
         int32_t m_refCount;
+        EventQueue m_Events;
 
         inline static unsigned short S_WindowsCount = 0;
-    public:
-        std::shared_ptr<Keyboard> m_Keyboard;
-        std::shared_ptr<Mouse> m_Mouse;
-        
 
         FOR_TEST
 };

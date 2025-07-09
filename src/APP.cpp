@@ -1,5 +1,7 @@
 #include <core/APP.hpp>
 #include <core/Window.hpp>
+#include <core/Event.hpp>
+#include <core/Utils.hpp>
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>
@@ -15,6 +17,8 @@ constexpr auto Wname = "Main";
 
 APP::APP()
     : m_Window(1180, 640, Wname)
+    , m_Keyboard()
+    , m_Mouse()
     , m_LastFrameTime(std::chrono::steady_clock::now())
     , m_SmoothedFPS(60.0f)
 { 
@@ -24,16 +28,90 @@ APP::APP()
 
 auto APP::Frame(float deltaTime) -> void
 {
-    CWindow::ProcessMessages(&m_Window);
     gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     Update(deltaTime);
     m_Window.SwapBuffers();
-    m_Window.m_Keyboard->UpdatePrevState();
+    // m_Keyboard.UpdatePrevState();
 }
 
 auto APP::LoopBody(void* ctx) -> void
 {
     auto app = static_cast<APP*>(ctx);
+    auto& window = app->m_Window;
+
+    CWindow::ProcessMessages(&window);
+
+    Event event;
+    while (window.PollEvent(event)) {
+        std::visit(overloaded {
+            [&window](const QuitEvent&) {
+                int32_t ret = MessageBoxA(window.Handle(), "Close.", "Exit", MB_YESNO | MB_ICONWARNING);
+                if (ret == IDYES){ window.Close(); }
+            },
+            [&window](const WindowResizeEvent& e) {
+                window.m_Width  = e.width;
+                window.m_Height = e.height;
+                gl::Viewport(0, 0, e.width, e.height);
+            },
+            [&app](const Keyboard::Event& e) {
+                switch (e.type)
+                {
+                case Keyboard::Event::Type::Press:
+				    app->m_Keyboard.OnKeyPressed(e.key);
+                    break;
+                case Keyboard::Event::Type::Release:
+				    app->m_Keyboard.OnKeyReleased(e.key);
+                    break;
+                case Keyboard::Event::Type::Repeat:
+                    app->m_Keyboard.OnKeyRepeat(e.key);
+                    break;
+                default:
+                    std::unreachable();
+                }
+            },
+            [&app](const Mouse::Event& e) {
+                switch (e.type)
+                {
+                    case Mouse::Event::Type::LPress:
+                        app->m_Mouse.OnLeftPressed();
+                        break;
+                    case Mouse::Event::Type::LRelease:
+                        app->m_Mouse.OnLeftReleased();
+                        break;
+                    case Mouse::Event::Type::RPress:
+                        app->m_Mouse.OnRightPressed();
+                        break;
+                    case Mouse::Event::Type::RRelease:
+                        app->m_Mouse.OnRightReleased();
+                        break;
+                    case Mouse::Event::Type::WheelUp:
+                        app->m_Mouse.OnWheelDelta(e.x);
+                        break;
+                    case Mouse::Event::Type::WheelDown:
+                        app->m_Mouse.OnWheelDelta(e.x); //delta is x or y
+                        break;
+                    case Mouse::Event::Type::Move:
+                        app->m_Mouse.OnMouseMove( e.x, e.y );
+                        break;
+                    case Mouse::Event::Type::Enter:
+                        app->m_Mouse.isEntered = true;
+                        break;
+                    case Mouse::Event::Type::Leave:
+                        app->m_Mouse.isEntered = false;
+                        break;
+                    default:
+                    std::unreachable();
+                }
+            },
+            [&app](const MouseRawEvent& e) {
+	    		app->m_Mouse.OnRawDelta( e.dx, e.dy );
+            },
+            [&app](const LoseFocusEvent&) {
+		        app->m_Keyboard.ClearState();
+            },
+            [](const auto&) { /* Unhandeled Events */ },
+        }, event);
+    }
 
     auto now = std::chrono::steady_clock::now();
     float deltaTime = std::chrono::duration<float>(now - app->m_LastFrameTime).count();
@@ -41,6 +119,7 @@ auto APP::LoopBody(void* ctx) -> void
 
     app->m_Fps = 1.0f / deltaTime;
     app->m_SmoothedFPS = 0.9f * app->m_SmoothedFPS + 0.1f * app->m_Fps;
+
 
     app->Frame(deltaTime);
     //todo: Frame Pacing

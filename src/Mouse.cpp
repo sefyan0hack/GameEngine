@@ -56,14 +56,6 @@ auto Mouse::IsEntered() const noexcept -> bool
     return isEntered;
 }
 
-auto Mouse::LeftIsPressed() const noexcept -> bool 
-{
-	return leftIsPressed;
-}
-auto Mouse::RightIsPressed() const noexcept -> bool 
-{
-	return rightIsPressed;
-}
 
 auto Mouse::Flush() noexcept -> void{ buffer = std::queue<Event>(); }
 
@@ -94,7 +86,7 @@ auto Mouse::OnMouseMove( int32_t newx, int32_t newy ) noexcept -> void
 	x = newx;
 	y = newy;
 
-	buffer.push( Mouse::Event( Mouse::Event::Type::Move,*this ) );
+	buffer.push( Mouse::Event( Mouse::Event::Type::Move, x, y ) );
 	TrimBuffer();
 }
 
@@ -102,7 +94,7 @@ auto Mouse::OnMouseLeave() noexcept -> void
 {
 	isInWindow = false;
 	isEntered = false;
-	buffer.push( Mouse::Event( Mouse::Event::Type::Leave,*this ) );
+	buffer.push( Mouse::Event( Mouse::Event::Type::Leave, x, y ) );
 	TrimBuffer();
 }
 
@@ -110,57 +102,51 @@ auto Mouse::OnMouseEnter() noexcept -> void
 {
 	isInWindow = true;
 	isEntered = true;
-	buffer.push( Mouse::Event( Mouse::Event::Type::Enter,*this ) );
+	buffer.push( Mouse::Event( Mouse::Event::Type::Enter, x, y ) );
 	TrimBuffer();
 }
 
 auto Mouse::OnRawDelta( int32_t dx, int32_t dy ) noexcept -> void
 {
-	rawDeltaBuffer.push( { dx,dy } );
+	rawDeltaBuffer.push( { dx, dy } );
 	TrimBuffer();
 }
 
 auto Mouse::OnLeftPressed() noexcept -> void
 {
-	leftIsPressed = true;
-
-	buffer.push( Mouse::Event( Mouse::Event::Type::LPress,*this ) );
+	buffer.push( Mouse::Event( Mouse::Event::Type::LPress, x, y ) );
 	TrimBuffer();
 }
 
 auto Mouse::OnLeftReleased() noexcept -> void
 {
-	leftIsPressed = false;
-
-	buffer.push( Mouse::Event( Mouse::Event::Type::LRelease,*this ) );
+	buffer.push( Mouse::Event( Mouse::Event::Type::LRelease, x, y ) );
 	TrimBuffer();
 }
 
 auto Mouse::OnRightPressed() noexcept -> void
 {
-	rightIsPressed = true;
 
-	buffer.push( Mouse::Event( Mouse::Event::Type::RPress,*this ) );
+	buffer.push( Mouse::Event( Mouse::Event::Type::RPress, x, y ) );
 	TrimBuffer();
 }
 
 auto Mouse::OnRightReleased() noexcept -> void
 {
-	rightIsPressed = false;
 
-	buffer.push( Mouse::Event( Mouse::Event::Type::RRelease,*this ) );
+	buffer.push( Mouse::Event( Mouse::Event::Type::RRelease, x, y ) );
 	TrimBuffer();
 }
 
 auto Mouse::OnWheelUp() noexcept -> void
 {
-	buffer.push( Mouse::Event( Mouse::Event::Type::WheelUp,*this ) );
+	buffer.push( Mouse::Event( Mouse::Event::Type::WheelUp, x, y ) );
 	TrimBuffer();
 }
 
 auto Mouse::OnWheelDown() noexcept -> void
 {
-	buffer.push( Mouse::Event( Mouse::Event::Type::WheelDown,*this ) );
+	buffer.push( Mouse::Event( Mouse::Event::Type::WheelDown, x, y ) );
 	TrimBuffer();
 }
 
@@ -203,38 +189,24 @@ auto Mouse::IsEmpty() const noexcept -> bool
 	return buffer.empty(); 
 }
 
-Mouse::Event::Event( Mouse::Event::Type type, const Mouse& parent ) noexcept
-    : type( type )
-	, leftIsPressed( parent.leftIsPressed )
-	, rightIsPressed( parent.rightIsPressed )
-    , x( parent.x )
-	, y( parent.y ) {}
+Mouse::Event::Event( Mouse::Event::Type type, uint32_t x, uint32_t y  ) noexcept
+    : type(type)
+    , x(x)
+	, y(y) {}
 
 auto Mouse::Event::GetType() const noexcept -> Mouse::Event::Type 
 {
 	return type;
 }
-auto Mouse::Event::GetPos() const noexcept -> std::pair<int32_t, int32_t> 
+auto Mouse::Event::GetPos() const noexcept -> std::pair<uint32_t, uint32_t> 
 {
 	return {x, y};
 }
-auto Mouse::Event::GetPosX() const noexcept -> int32_t
-{
-	return x;
-}
-auto Mouse::Event::GetPosY() const noexcept -> int32_t
-{
-	return y;
-}
-auto Mouse::Event::LeftIsPressed() const noexcept -> bool
-{
-	return leftIsPressed;
-}
-auto Mouse::Event::RightIsPressed() const noexcept -> bool 
-{
-	return rightIsPressed;
-}
 
+auto Mouse::Locked() const -> bool
+{
+    return isLocked;
+}
 
 auto Mouse::Lock([[maybe_unused]] const CWindow& window) noexcept -> void
 {
@@ -252,9 +224,10 @@ auto Mouse::Lock([[maybe_unused]] const CWindow& window) noexcept -> void
 
         // Set cursor to center
         SetCursorPos(centerX + clipRect.left, centerY + clipRect.top);
-        
+
         // Immediately hide cursor
         SetCursor(nullptr);
+		ShowCursor(false);
 
         #elif defined(WEB_PLT)
         emscripten_request_pointerlock("#canvas", EM_TRUE);
@@ -270,6 +243,7 @@ auto Mouse::UnLock() noexcept -> void
         #if defined(WINDOWS_PLT)
 		ClipCursor(nullptr);
         SetCursor(LoadCursor(nullptr, IDC_ARROW));
+		ShowCursor(true);
         #elif defined(WEB_PLT)
         emscripten_exit_pointerlock();
         #endif

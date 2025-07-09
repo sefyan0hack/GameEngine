@@ -5,6 +5,7 @@
 #include <core/fmts.hpp>
 
 class CWindow;
+class Mouse;
 class Material;
 
 class Camera
@@ -26,7 +27,7 @@ public:
     auto MoveRight(float speed)           -> void ;
     auto MoveLeft(float speed)            -> void ;
     auto UpdateVectors()                  -> void ;
-    auto MoseMove(bool islocked = true)   -> void ;
+    auto MoseMove(Mouse& mouse)           -> void ;
     auto View() const                       -> glm::mat4 ;
     auto Perspective() const                -> glm::mat4 ;
     auto Position() const              -> glm::vec3 ;

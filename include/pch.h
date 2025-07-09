@@ -40,6 +40,7 @@
 #include <stdexcept>
 #include <typeinfo>
 #include <concepts>
+#include <variant>
 
 #ifdef __cpp_lib_stacktrace
 #   include <stacktrace>

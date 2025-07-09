@@ -10,10 +10,15 @@
 #endif
 
 // Event/////////////////////////////////////////////////
-Keyboard::Event::Event( Type type, Key code ) noexcept
-    			: type( type )
-    			, code( code )
-    		{}
+Keyboard::Event::Event() noexcept
+    : key( Key::Unknown )
+    , type( Type::Release )
+{}
+
+Keyboard::Event::Event( Key key, Type type ) noexcept
+    : key( key )
+    , type( type )
+{}
 
 auto Keyboard::Event::IsPress() const noexcept -> bool
 {
@@ -23,16 +28,19 @@ auto Keyboard::Event::IsRelease() const noexcept -> bool
 {
 	return type == Type::Release;
 }
+auto Keyboard::Event::IsRepeat() const noexcept -> bool
+{
+	return type == Type::Repeat;
+}
 auto Keyboard::Event::Code() const noexcept -> Key
 {
-	return code;
+	return key;
 }
 /////////////////////////////////////////////////////////
 
 //KeyBoard//////////////////////////////////////////////
 Keyboard::Keyboard(){
 	keystates.reset();
-	prevKeyStates.reset();
 }
 auto Keyboard::IsKeyDown(Key key) const noexcept -> bool
 {
@@ -45,12 +53,38 @@ auto Keyboard::IsKeyUp(Key key) const noexcept -> bool
 
 auto Keyboard::IsKeyPressed(Key key) const noexcept -> bool
 {
-    return keystates[std::to_underlying(key)] && !prevKeyStates[std::to_underlying(key)];
+    bool pressFound = false;
+    std::queue<Event> temp = keybuffer;
+    while (!temp.empty()) {
+        const Event& e = temp.front();
+        if (e.key == key) {
+            if (e.type == Event::Type::Press) {
+                pressFound = true;
+            } else if (e.type == Event::Type::Release) {
+                pressFound = false;
+            }
+        }
+        temp.pop();
+    }
+    return pressFound;
 }
 
 auto Keyboard::IsKeyReleased(Key key) const noexcept -> bool
 {
-    return !keystates[std::to_underlying(key)] && prevKeyStates[std::to_underlying(key)];
+    bool releaseFound = false;
+    std::queue<Event> temp = keybuffer;
+    while (!temp.empty()) {
+        const Event& e = temp.front();
+        if (e.key == key) {
+            if (e.type == Event::Type::Release) {
+                releaseFound = true;
+            } else if (e.type == Event::Type::Press) {
+                releaseFound = false;
+            }
+        }
+        temp.pop();
+    }
+    return releaseFound;
 }
 
 auto Keyboard::ReadKey() noexcept -> std::optional<Keyboard::Event>
@@ -65,73 +99,37 @@ auto Keyboard::ReadKey() noexcept -> std::optional<Keyboard::Event>
 }
 
 
-auto Keyboard::ReadChar() noexcept -> std::optional<unsigned char>
-{
-	if( !charbuffer.empty())
-	{
-		auto charcode = charbuffer.front();
-		charbuffer.pop();
-		return charcode;
-	}
-	return {};
-}
-
 auto Keyboard::FlushKey() noexcept -> void
 {
 	keybuffer = {};
 }
 
-auto Keyboard::FlushChar() noexcept -> void
-{
-	charbuffer = {};
-}
-
 auto Keyboard::Flush() noexcept -> void
 {
 	FlushKey();
-	FlushChar();
 }
 
-auto Keyboard::EnableAutorepeat() noexcept -> void
-{
-	autorepeatEnabled = true;
-}
 
-auto Keyboard::DisableAutorepeat() noexcept -> void
-{
-	autorepeatEnabled = false;
-}
-
-auto Keyboard::AutorepeatIsEnabled() const noexcept -> bool
-{
-	return autorepeatEnabled;
-}
-
-auto Keyboard::UpdatePrevState() noexcept -> void
-{
-    prevKeyStates = keystates;
-}
-
-auto Keyboard::OnKeyPressed( Key key ) noexcept -> void
+auto Keyboard::OnKeyPressed(Key key) noexcept -> void
 {
     const auto index = std::to_underlying(key);
     keystates[index] = true;
-	keybuffer.emplace( Keyboard::Event::Type::Press, key );
-	TrimBuffer( keybuffer );
+	keybuffer.emplace(key, Keyboard::Event::Type::Press);
+	TrimBuffer(keybuffer);
 }
 
-auto Keyboard::OnKeyReleased( Key key ) noexcept -> void
+auto Keyboard::OnKeyReleased(Key key) noexcept -> void
 {
     const auto index = std::to_underlying(key);
     keystates[index] = false;
-	keybuffer.emplace( Keyboard::Event::Type::Release, key );
-	TrimBuffer( keybuffer );
+	keybuffer.emplace(key, Keyboard::Event::Type::Release);
+	TrimBuffer(keybuffer);
 }
 
-auto Keyboard::OnChar( unsigned char character ) noexcept -> void
+auto Keyboard::OnKeyRepeat(Key key) noexcept -> void
 {
-	charbuffer.push( character );
-	TrimBuffer( charbuffer );
+    keybuffer.emplace(key, Keyboard::Event::Type::Repeat);
+    TrimBuffer(keybuffer);
 }
 
 auto Keyboard::ClearState() noexcept -> void
@@ -149,6 +147,11 @@ auto Keyboard::TrimBuffer( Container& buffer ) noexcept -> void
 	}
 }
 /////////////////////////////////////////////////////////
+
+auto Keyboard::FromNative(uint64_t key) -> Key
+{
+    return KeyMaps[key];
+}
 
 auto Keyboard::ToNative(Key key) -> uint64_t
 {
@@ -558,9 +561,4 @@ auto Keyboard::ToNative(Key key) -> uint64_t
     }
 
     return static_cast<uint64_t>(-1);
-}
-
-auto Keyboard::FromNative(uint64_t key) -> Key
-{
-    return KeyMaps[key];
 }

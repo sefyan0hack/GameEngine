@@ -45,24 +45,24 @@ enum class Key : uint8_t {
     Unknown
 };
 
-class CWindow;  // Forward declaration if necessary
-
 class Keyboard
 {
-	friend class CWindow;
-private:
+	friend class APP;
+public:
 	class Event
 	{
 	public:
-		enum class Type { Press, Release };
-	public:
-		Event( Type type, Key code ) noexcept;
+		enum class Type { Press, Release, Repeat };
+
+		Event() noexcept;
+		Event( Key key, Type type ) noexcept;
 		auto IsPress() const noexcept 	-> bool ;
 		auto IsRelease() const noexcept -> bool ;
+		auto IsRepeat() const noexcept -> bool ;
 		auto Code() const noexcept 	-> Key;
-    private:
+
+        Key key;
 		Type type;
-		Key code;
 	};
 public:
 
@@ -70,7 +70,6 @@ public:
 	Keyboard( const Keyboard& ) = delete;
 	auto operator=( const Keyboard& ) -> Keyboard& = delete;
 	auto ReadKey() noexcept 								 	-> std::optional<Event> ;
-	auto ReadChar() noexcept 								 	-> std::optional<unsigned char> ;
 
 	auto IsKeyPressed(Key key ) const noexcept 	    -> bool ;
 	auto IsKeyReleased(Key key) const noexcept      -> bool ;
@@ -78,20 +77,16 @@ public:
 	auto IsKeyUp(Key key) const noexcept 			-> bool ;
 
 	auto FlushKey() noexcept 								 	-> void ;
-	auto FlushChar() noexcept 									-> void ;
 	auto Flush() noexcept 										-> void ;
-	auto EnableAutorepeat() noexcept 							-> void ;
-	auto DisableAutorepeat() noexcept 							-> void ;
-	auto AutorepeatIsEnabled() const noexcept 					-> bool ;
-	auto UpdatePrevState() noexcept 							-> void ;
 
     static auto ToNative(Key key) -> uint64_t;
     static auto FromNative(uint64_t key) -> Key;
 
 private:
-	auto OnKeyPressed( Key key ) noexcept  		-> void ;
-	auto OnKeyReleased( Key key ) noexcept 		-> void ;
-	auto OnChar( unsigned char character ) noexcept 			-> void ;
+	auto OnKeyPressed(Key key) noexcept  		-> void ;
+	auto OnKeyReleased(Key key) noexcept 		-> void ;
+    auto OnKeyRepeat(Key key) noexcept          -> void ;
+
 	auto ClearState() noexcept 									-> void ;
 	template<typename Container>
 	requires requires(Container c) { c.size(); c.pop(); }
@@ -103,12 +98,9 @@ private:
 
 private:
 	static constexpr uint32_t bufferSize = 16u;
-	bool autorepeatEnabled = true;
 
 	std::bitset<std::to_underlying(Key::Unknown)> keystates;
-	std::bitset<std::to_underlying(Key::Unknown)> prevKeyStates;
 	std::queue<Event> keybuffer;
-	std::queue<unsigned char> charbuffer;
     inline static std::map<uint64_t, Key> KeyMaps {
         // Alphabet
         key_to_pair(Key::A),

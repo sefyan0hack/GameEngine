@@ -152,46 +152,46 @@ public:
 
     auto Update(float delta) -> void override {
         float speed = 10.0f;
-        Cam.MoseMove();
+        Cam.MoseMove(m_Mouse);
 
-        if(m_Window.m_Keyboard->IsKeyDown(Key::LeftShift))
+        if(m_Keyboard.IsKeyDown(Key::LeftShift))
                 speed *= 2;
                 
-        if( m_Window.m_Keyboard->IsKeyDown(Key::W)){
+        if(m_Keyboard.IsKeyDown(Key::W)){
             Cam.MoveFroward(speed * delta);
         }
-        if( m_Window.m_Keyboard->IsKeyDown(Key::S)){
+        if(m_Keyboard.IsKeyDown(Key::S)){
             Cam.MoveBackward(speed * delta);
         }
-        if( m_Window.m_Keyboard->IsKeyDown(Key::A)){
+        if(m_Keyboard.IsKeyDown(Key::A)){
             Cam.MoveLeft(speed * delta);
         }
-        if( m_Window.m_Keyboard->IsKeyDown(Key::D)){
+        if(m_Keyboard.IsKeyDown(Key::D)){
             Cam.MoveRight(speed * delta);
         }
-        if( m_Window.m_Keyboard->IsKeyDown(Key::N) ){
+        if(m_Keyboard.IsKeyDown(Key::N) ){
             Cam.MoveUP(speed * delta);
         }
-        if( m_Window.m_Keyboard->IsKeyDown(Key::M) ){
+        if(m_Keyboard.IsKeyDown(Key::M) ){
             Cam.MoveDown(speed * delta);
         }
 
-        if( m_Window.m_Keyboard->IsKeyDown(Key::L) ){
+        if(m_Keyboard.IsKeyPressed(Key::L) ){
             static bool on = false;
             if(!on){
-                m_Window.m_Mouse->Lock(m_Window);
+                m_Mouse.Lock(m_Window);
                 on = true;
             }else{
-                m_Window.m_Mouse->UnLock();
+                m_Mouse.UnLock();
                 on = false;
             }
         }
 
-        if(m_Window.m_Keyboard->IsKeyPressed(Key::F11)){
+        if(m_Keyboard.IsKeyPressed(Key::F11)){
             m_Window.ToggleFullScreen();
         }
         
-        // if (m_Window.m_Keyboard->IsKeyPressed(Key::H)){
+        // if (m_Keyboard.IsKeyPressed(Key::H)){
         //     static bool flip = false;
         //     if(flip == false){
         //         flip = !flip;

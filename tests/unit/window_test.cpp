@@ -14,8 +14,6 @@ using CWindow_Test_Ctor1 = CWindow::Test<1>;
     MEMBER_VAR(m_RawBuffer);\
     MEMBER_VAR(m_OpenGl);\
     MEMBER_VAR(m_refCount);\
-    MEMBER_VAR(m_Keyboard);\
-    MEMBER_VAR(m_Mouse);\
     MEMBER_VAR(S_WindowsCount);\
     \
     MEMBER_FUN(Handle);\

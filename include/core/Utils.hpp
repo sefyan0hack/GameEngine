@@ -21,6 +21,12 @@ concept FunctionPointer =
     std::is_pointer_v<std::remove_cv_t<T>> &&
     std::is_function_v<std::remove_pointer_t<std::remove_cv_t<T>>>;
 
+template<class... Ts>
+struct overloaded : Ts... {
+    using Ts::operator()...;
+};
+template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+
 namespace utils {
 
 template<typename Function, typename... Args>
