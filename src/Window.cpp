@@ -489,7 +489,7 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
 		// Modifier keys
 		if (strcmp(code, "MetaLeft") == 0 || strcmp(code, "MetaRight") == 0) 
 			return DOM_VK_META;
-		
+
 		// Media keys (optional)
 		if (strcmp(code, "VolumeMute") == 0) return 0xAD;  // VK_VOLUME_MUTE
 		if (strcmp(code, "VolumeDown") == 0) return 0xAE;  // VK_VOLUME_DOWN
