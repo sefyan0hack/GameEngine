@@ -578,10 +578,10 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
             if (window->m_ActiveTouchId == -1 && e->numTouches > 0) {
                 const auto& touch = e->touches[0];
                 window->m_ActiveTouchId = touch.identifier;
-                window->m_PrevTouchX = touch.canvasX;
-                window->m_PrevTouchY = touch.canvasY;
-                window->m_IsFirstMove = true;
+                window->m_LastTouchX = touch.canvasX;
+                window->m_LastTouchY = touch.canvasY;
                 
+                // Simulate mouse press
                 window->m_Events.push(Mouse::Event{
                     Mouse::Event::Type::LPress,
                     static_cast<uint16_t>(touch.canvasX),
@@ -597,29 +597,26 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
                         const auto& touch = e->touches[i];
                         int32_t currentX = touch.canvasX;
                         int32_t currentY = touch.canvasY;
-
-                        // Skip delta calculation on first move
-                        if (!window->m_IsFirstMove) {
-                            int32_t deltaX = currentX - window->m_PrevTouchX;
-                            int32_t deltaY = currentY - window->m_PrevTouchY;
+                        
+                        // Only calculate delta if touch has actually moved
+                        if (currentX != window->m_LastTouchX || currentY != window->m_LastTouchY) {
+                            int32_t deltaX = currentX - window->m_LastTouchX;
+                            int32_t deltaY = currentY - window->m_LastTouchY;
                             
                             window->m_Events.push(MouseRawEvent{
                                 static_cast<int16_t>(deltaX),
                                 static_cast<int16_t>(deltaY)
                             });
+                            
+                            window->m_Events.push(Mouse::Event{
+                                Mouse::Event::Type::Move,
+                                static_cast<uint16_t>(currentX),
+                                static_cast<uint16_t>(currentY)
+                            });
+                            
+                            window->m_LastTouchX = currentX;
+                            window->m_LastTouchY = currentY;
                         }
-                        else {
-                            window->m_IsFirstMove = false;
-                        }
-
-                        window->m_Events.push(Mouse::Event{
-                            Mouse::Event::Type::Move,
-                            static_cast<uint16_t>(currentX),
-                            static_cast<uint16_t>(currentY)
-                        });
-
-                        window->m_PrevTouchX = currentX;
-                        window->m_PrevTouchY = currentY;
                         break;
                     }
                 }

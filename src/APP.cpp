@@ -84,7 +84,7 @@ auto APP::LoopBody(void* ctx) -> void
                         break;
                     case Mouse::Event::Type::LRelease:
                         app->Mouse.OnLeftReleased();
-                        Info("LRlease at [{},{}]", e.x, e.y);
+                        Info("LRelease at [{},{}]", e.x, e.y);
                         break;
                     case Mouse::Event::Type::RPress:
                         app->Mouse.OnRightPressed();
@@ -92,7 +92,7 @@ auto APP::LoopBody(void* ctx) -> void
                         break;
                     case Mouse::Event::Type::RRelease:
                         app->Mouse.OnRightReleased();
-                        Info("RRlease at [{},{}]", e.x, e.y);
+                        Info("RRelease at [{},{}]", e.x, e.y);
                         break;
                     case Mouse::Event::Type::Move:
                         app->Mouse.OnMouseMove(e.x, e.y);
