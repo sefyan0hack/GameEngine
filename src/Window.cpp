@@ -577,6 +577,9 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
 
     for (int32_t i = 0; i <  e->numTouches; ++i) {
 		const auto& t = e->touches[i];
+		if (!t.isChanged) 
+			continue;
+
 		int32_t id = t.identifier;
         auto x = static_cast<uint16_t>(t.targetX);
         auto y = static_cast<uint16_t>(t.targetY);
