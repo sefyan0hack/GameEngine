@@ -51,20 +51,10 @@
       <canvas class=emscripten id=canvas oncontextmenu=event.preventDefault() tabindex=-1></canvas>
       <script>
 
-        function resizeCanvas() {
-            const canvas = document.getElementById('canvas');
-            canvas.width = canvas.clientWidth * window.devicePixelRatio;
-            canvas.height = canvas.clientHeight * window.devicePixelRatio;
-        }
-
         window.addEventListener('load', () => {
             const canvas = document.getElementById('canvas');
             window.Module = {canvas: canvas};
             resizeCanvas();
-
-            // Add resize and orientation change listeners
-            window.addEventListener('resize', resizeCanvas);
-            window.addEventListener('orientationchange', resizeCanvas);
         });
       </script>
       <script src=@PROJECT_NAME@.js async></script>
