@@ -589,11 +589,9 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
                 auto x = static_cast<uint16_t>(touch.canvasX);
                 auto y = static_cast<uint16_t>(touch.canvasY);
                 
-                // Store initial position
                 s_LastTouchX = x;
                 s_LastTouchY = y;
                 
-                // Map to left mouse press
                 window->m_Events.push(Mouse::Event{Mouse::Event::Type::LPress, x, y});
             }
             break;
@@ -633,30 +631,16 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
         case EMSCRIPTEN_EVENT_TOUCHCANCEL:
             if (s_ActiveTouchId != -1) 
             {
-                // Check changed touches for our active ID
-                for (int i = 0; i < e->numChangedTouches; ++i) 
-                {
-                    const auto& touch = e->changedTouches[i];
-                    if (touch.identifier == s_ActiveTouchId) 
-                    {
-                        auto x = static_cast<uint16_t>(touch.canvasX);
-                        auto y = static_cast<uint16_t>(touch.canvasY);
-                        
-                        // Map to left mouse release
-                        window->m_Events.push(Mouse::Event{
-                            Mouse::Event::Type::LRelease, x, y
-                        });
-                        
-                        // Reset active touch
-                        s_ActiveTouchId = -1;
-                        break;
-                    }
-                }
+                // Use the last known position for release event
+                window->m_Events.push(Mouse::Event{Mouse::Event::Type::LRelease, s_LastTouchX, s_LastTouchY});
+                
+                // Reset active touch
+                s_ActiveTouchId = -1;
             }
             break;
     }
 
-    return EM_TRUE;
+    return EM_TRUE;  // Prevent default browser behavior
 }
 #endif
 
