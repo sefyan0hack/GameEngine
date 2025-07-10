@@ -623,6 +623,7 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
 				}
                 break;
         }
+
 		window->m_Events.push(Mouse::Event{action, x, y});
     }
 
