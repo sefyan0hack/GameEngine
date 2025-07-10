@@ -640,7 +640,7 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
                 break;
         }
 
-		window->m_Events.push(Mouse::Event{action, static_cast<int16_t>(x), static_cast<int16_t>(y)});
+		window->m_Events.push(Mouse::Event{action, static_cast<uint16_t>(x), static_cast<uint16_t>(y)});
     }
 
     return EM_FALSE;
