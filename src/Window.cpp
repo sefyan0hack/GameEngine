@@ -593,8 +593,8 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
         auto y = static_cast<uint16_t>(t.targetY);
 
 		// Normalize
-		x *= static_cast<float>(screenwidth) / static_cast<float>(canvasWidth);
-        y *= static_cast<float>(screenheight) / static_cast<float>(canvasHeight);
+		x *= static_cast<float>(screenwidth) / static_cast<float>(canvaswidth);
+        y *= static_cast<float>(screenheight) / static_cast<float>(canvasheight);
 
 		Mouse::Event::Type action;
 
