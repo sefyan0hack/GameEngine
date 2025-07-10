@@ -23,27 +23,8 @@
             width: 95vw;
             height: 95vh;
             border: 2px solid #333;
-        }
-        /* Mobile landscape orientation styles */
-        @media (pointer: coarse) and (orientation: portrait) {
-            body {
-                justify-content: flex-start;
-                align-items: flex-start;
-                position: relative;
-            }
-
-            #canvas {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100vh;
-                height: 100vw;
-                transform: rotate(90deg) translateY(-100%);
-                transform-origin: top left;
-                touch-action: none; /* Disables browser touch gestures */
-                -ms-touch-action: none;
-                border: none;
-            }
+            touch-action: none; /* Always disable touch actions */
+            -ms-touch-action: none;
         }
     </style>
    </head>
@@ -54,6 +35,26 @@
         window.addEventListener('load', () => {
             const canvas = document.getElementById('canvas');
             window.Module = {canvas: canvas};
+
+            // Handle orientation changes
+            function handleOrientation() {
+                if (window.matchMedia("(orientation: portrait)").matches) {
+                    // Portrait mode - swap width/height
+                    canvas.style.width = '95vh';
+                    canvas.style.height = '95vw';
+                } else {
+                    // Landscape mode - normal dimensions
+                    canvas.style.width = '95vw';
+                    canvas.style.height = '95vh';
+                }
+            }
+            
+            // Initial orientation setup
+            handleOrientation();
+            
+            // Listen for orientation changes
+            window.addEventListener('resize', handleOrientation);
+            window.addEventListener('orientationchange', handleOrientation);
         });
       </script>
       <script src=@PROJECT_NAME@.js async></script>
