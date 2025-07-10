@@ -23,7 +23,6 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 	emscripten_set_keydown_callback(m_WindowHandle, this, EM_FALSE, &CWindow::KeyHandler);
 	emscripten_set_keyup_callback(m_WindowHandle, this, EM_FALSE, &CWindow::KeyHandler);
 	
-	emscripten_set_click_callback(m_WindowHandle  , nullptr, EM_FALSE, [](int32_t, const EmscriptenMouseEvent*, void*){ return EM_TRUE; });
 	emscripten_set_mousedown_callback(m_WindowHandle , this, EM_FALSE, &CWindow::MouseHandler);
 	emscripten_set_mouseup_callback(m_WindowHandle    , this, EM_FALSE, &CWindow::MouseHandler);
 	emscripten_set_mousemove_callback(m_WindowHandle  , this, EM_FALSE, &CWindow::MouseHandler);
@@ -568,86 +567,57 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
 
     return EM_FALSE;
 }
-
 auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, void* userData) -> EM_BOOL
 {
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_TRUE;
 
+	// Helper to pick the right touch list length
+	auto touchesLength = [](int32_t eventType, const EmscriptenTouchEvent* e) -> int32_t {
+		return (eventType == EMSCRIPTEN_EVENT_TOUCHEND || eventType == EMSCRIPTEN_EVENT_TOUCHCANCEL)
+			? e->numChangedTouches
+			: e->numTouches;
+	}
+	static std::unordered_map<int32_t, std::pair<int16_t, int16_t>> lastPos;
 
-    switch (eventType) {
-        case EMSCRIPTEN_EVENT_TOUCHSTART:
-            if (window->m_ActiveTouchId == -1 && e->numTouches > 0) {
-                // Capture first touch
-                const auto& touch = e->touches[0];
-                window->m_ActiveTouchId = touch.identifier;
-                window->m_LastTouchX = touch.targetX;
-                window->m_LastTouchY = touch.targetY;
-                
-                // Simulate mouse press
-                window->m_Events.push(Mouse::Event{
-                    Mouse::Event::Type::LPress,
-                    static_cast<uint16_t>(touch.targetX),
-                    static_cast<uint16_t>(touch.targetY)
-                });
-            }
-            break;
 
-        case EMSCRIPTEN_EVENT_TOUCHMOVE:
-            if (window->m_ActiveTouchId != -1) {
-                for (int i = 0; i < e->numTouches; ++i) {
-                    if (e->touches[i].identifier == window->m_ActiveTouchId) {
-                        const auto& touch = e->touches[i];
-                        int32_t currentX = touch.targetX;
-                        int32_t currentY = touch.targetY;
-                        
-                        // Calculate movement delta
-                        int32_t deltaX = currentX - window->m_LastTouchX;
-                        int32_t deltaY = currentY - window->m_LastTouchY;
-                        
-                        // Push camera movement event (matches mouse behavior)
-                        window->m_Events.push(MouseRawEvent{
-                            static_cast<int16_t>(deltaX),
-                            static_cast<int16_t>(deltaY)
-                        });
-                        
-                        // Push position update
-                        window->m_Events.push(Mouse::Event{
-                            Mouse::Event::Type::Move,
-                            static_cast<uint16_t>(currentX),
-                            static_cast<uint16_t>(currentY)
-                        });
-                        
-                        // Update last position
-                        window->m_LastTouchX = currentX;
-                        window->m_LastTouchY = currentY;
-                        break;
-                    }
-                }
-            }
-            break;
+    // For touch, we always treat it as a “left” action.
+    Mouse::Event::Type action;
 
-        case EMSCRIPTEN_EVENT_TOUCHEND:
-        case EMSCRIPTEN_EVENT_TOUCHCANCEL:
-            for (int i = 0; i < e->numTouches; ++i) {
-                if (e->touches[i].identifier == window->m_ActiveTouchId) {
-                    // Simulate mouse release
-                    window->m_Events.push(Mouse::Event{
-                        Mouse::Event::Type::LRelease,
-                        static_cast<uint16_t>(e->touches[i].targetX),
-                        static_cast<uint16_t>(e->touches[i].targetY)
-                    });
-                    
-                    // Reset active touch
-                    window->m_ActiveTouchId = -1;
-                    break;
-                }
-            }
-            break;
+    // Iterate all changed touches in this event
+    const auto& touches = touchesLength(eventType, e);
+
+    for (int i = 0; i < touchesLength(eventType, e); ++i) {
+        const EmscriptenTouchPoint& t = touches[i];
+        auto x = static_cast<uint16_t>(t.targetX);
+        auto y = static_cast<uint16_t>(t.targetY);
+
+        switch (eventType) {
+            case EMSCRIPTEN_EVENT_TOUCHSTART:
+                action = Mouse::Event::Type::LPress;
+                window->m_Events.push(Mouse::Event{action, x, y});
+                break;
+
+            case EMSCRIPTEN_EVENT_TOUCHEND:
+            case EMSCRIPTEN_EVENT_TOUCHCANCEL:
+                action = Mouse::Event::Type::LRelease;
+                window->m_Events.push(Mouse::Event{action, x, y});
+                break;
+
+            case EMSCRIPTEN_EVENT_TOUCHMOVE:
+                // Note: we don’t have movementX/Y for touch; 
+                // we just emit a Move at the new location
+                window->m_Events.push(Mouse::Event{Mouse::Event::Type::Move, x, y});
+                break;
+
+            default:
+                break;
+        }
     }
-    
-    return EM_TRUE; // Prevent default touch behavior
+
+    return EM_FALSE;
 }
+
 #endif
 
 auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
