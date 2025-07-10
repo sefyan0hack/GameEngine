@@ -54,7 +54,6 @@
         window.addEventListener('load', () => {
             const canvas = document.getElementById('canvas');
             window.Module = {canvas: canvas};
-            resizeCanvas();
         });
       </script>
       <script src=@PROJECT_NAME@.js async></script>
