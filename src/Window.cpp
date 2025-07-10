@@ -574,20 +574,21 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_TRUE;
 
+
     switch (eventType) {
         case EMSCRIPTEN_EVENT_TOUCHSTART:
             if (window->m_ActiveTouchId == -1 && e->numTouches > 0) {
                 // Capture first touch
                 const auto& touch = e->touches[0];
                 window->m_ActiveTouchId = touch.identifier;
-                window->m_LastTouchX = touch.canvasX;
-                window->m_LastTouchY = touch.canvasY;
+                window->m_LastTouchX = touch.targetX;
+                window->m_LastTouchY = touch.targetY;
                 
                 // Simulate mouse press
                 window->m_Events.push(Mouse::Event{
                     Mouse::Event::Type::LPress,
-                    static_cast<uint16_t>(touch.canvasX),
-                    static_cast<uint16_t>(touch.canvasY)
+                    static_cast<uint16_t>(touch.targetX),
+                    static_cast<uint16_t>(touch.targetY)
                 });
             }
             break;
@@ -597,8 +598,8 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
                 for (int i = 0; i < e->numTouches; ++i) {
                     if (e->touches[i].identifier == window->m_ActiveTouchId) {
                         const auto& touch = e->touches[i];
-                        int32_t currentX = touch.canvasX;
-                        int32_t currentY = touch.canvasY;
+                        int32_t currentX = touch.targetX;
+                        int32_t currentY = touch.targetY;
                         
                         // Calculate movement delta
                         int32_t deltaX = currentX - window->m_LastTouchX;
@@ -633,8 +634,8 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
                     // Simulate mouse release
                     window->m_Events.push(Mouse::Event{
                         Mouse::Event::Type::LRelease,
-                        static_cast<uint16_t>(e->touches[i].canvasX),
-                        static_cast<uint16_t>(e->touches[i].canvasY)
+                        static_cast<uint16_t>(e->touches[i].targetX),
+                        static_cast<uint16_t>(e->touches[i].targetY)
                     });
                     
                     // Reset active touch
