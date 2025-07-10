@@ -79,6 +79,7 @@ class CWindow
         static auto ResizeHandler(int32_t eventType, const EmscriptenUiEvent* e, void* userData)    -> EM_BOOL;
         static auto KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, void* userData) -> EM_BOOL;
         static auto MouseHandler(int32_t eventType, const EmscriptenMouseEvent* e, void* userData)  -> EM_BOOL;
+        static auto TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, void* userData)  -> EM_BOOL;
         #endif
 
         auto new_window(int32_t Width, int32_t Height, const char* Title)       -> std::pair<WindHandl, HDC_D> ;
