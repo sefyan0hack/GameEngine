@@ -95,6 +95,10 @@ class CWindow
         int32_t m_refCount;
         EventQueue m_Events;
 
+        int32_t m_ActiveTouchId = -1;      // -1 = no active touch
+        int32_t m_LastTouchX = 0;          // Last touch X position
+        int32_t m_LastTouchY = 0;          // Last touch Y position
+
         inline static unsigned short S_WindowsCount = 0;
 
         FOR_TEST
