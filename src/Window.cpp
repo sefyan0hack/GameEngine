@@ -572,6 +572,7 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
 {
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_TRUE;
+
 	struct TouchState {
 		bool active;
 		long activeId; // Track the active finger
@@ -581,10 +582,10 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
 
 	static TouchState _TouchState =
 	{
-		.active = false;
-        .activeId = -1;
-        .prevX = 0;
-        .prevY = 0;
+		.active = false,
+        .activeId = -1,
+        .prevX = 0,
+        .prevY = 0,
 	};
 
     switch (eventType) {
