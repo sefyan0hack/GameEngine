@@ -575,6 +575,14 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
 
     static std::unordered_map<int32_t, std::pair<int16_t, int16_t>> lastPos;
 
+	auto screenwidth = EM_ASM_DOUBLE({return window.screen.width;});
+	auto screenheight = EM_ASM_DOUBLE({return window.screen.height;});
+
+	double canvaswidth = 0.0;
+    double canvasheight = 0.0;
+
+    emscripten_get_element_css_size(window->Handle(), &canvaswidth, &canvasheight);
+
     for (int32_t i = 0; i <  e->numTouches; ++i) {
 		const auto& t = e->touches[i];
 		if (!t.isChanged) 
@@ -583,7 +591,11 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
 		int32_t id = t.identifier;
         auto x = static_cast<uint16_t>(t.targetX);
         auto y = static_cast<uint16_t>(t.targetY);
-		
+
+		// Normalize
+		x *= static_cast<float>(screenwidth) / static_cast<float>(canvasWidth);
+        y *= static_cast<float>(screenheight) / static_cast<float>(canvasHeight);
+
 		Mouse::Event::Type action;
 
         switch (eventType) {
