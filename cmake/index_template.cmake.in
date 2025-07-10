@@ -28,6 +28,7 @@
                 align-items: flex-start;
                 position: relative;
             }
+
             #canvas {
                 position: absolute;
                 top: 0;
