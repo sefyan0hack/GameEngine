@@ -634,7 +634,7 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
 					window->m_Events.push(MouseRawEvent{ dx, dy });
 				}
 				// also update stored pos
-				lastPos[id] = { static_cast<int16_t>(x), static_cast<int16_t>(y) };
+				lastPos[id] = { static_cast<uint16_t>(x), static_cast<uint16_t>(y) };
 				action = Mouse::Event::Type::Move;
 				}
                 break;
