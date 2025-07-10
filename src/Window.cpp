@@ -573,10 +573,11 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_TRUE;
 
-    static std::unordered_map<int, std::pair<int16_t, int16_t>> lastPos;
+    static std::unordered_map<int32_t, std::pair<int16_t, int16_t>> lastPos;
 
-    for (int i = 0; i <  e->numTouches; ++i) {
+    for (int32_t i = 0; i <  e->numTouches; ++i) {
 		const auto& t = e->touches[i];
+		int32_t id = t.identifier;
         auto x = static_cast<uint16_t>(t.targetX);
         auto y = static_cast<uint16_t>(t.targetY);
 		
