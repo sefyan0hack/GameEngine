@@ -33,11 +33,16 @@
         /*anything under 768 px is mobile*/
         @media only screen and (max-width: 767px) {
         #canvas {
-            width: 100vh;
-            height: 100vw;
-            transform-origin: 0 0;
-            transform: rotate(90deg);
-            position: absolute;
+            /* Use vmax/vmin for dynamic sizing */
+            width: 100vmax; /* Largest viewport dimension */
+            height: 100vmin; /* Smallest viewport dimension */
+            
+            /* Adjust transform to center after rotation */
+            transform: rotate(90deg) translateY(-100%);
+            transform-origin: top left;
+            
+            /* Ensure proper positioning */
+            position: fixed;
             top: 0;
             left: 0;
         }
