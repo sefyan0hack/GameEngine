@@ -26,6 +26,18 @@
             touch-action: none; /* Always disable touch actions */
             -ms-touch-action: none;
         }
+        /*anything under 768 px is mobile*/
+        @media only screen and (max-width: 767px) {
+        #canvas {
+            width: 100vh;
+            height: 100vw;
+            transform-origin: 0 0;
+            transform: rotate(90deg);
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        }
     </style>
    </head>
    <body>

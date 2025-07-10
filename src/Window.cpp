@@ -574,12 +574,6 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
     if (!window) return EM_TRUE;
 
     static std::unordered_map<int32_t, std::pair<int16_t, int16_t>> lastPos;
-	// Update orientation (call periodically instead of every touch if performance matters)
-	static bool isPortrait = false;
-
-    isPortrait = EM_ASM_INT({
-        return window.matchMedia("(orientation: portrait)").matches ? 1 : 0;
-    });
 
 	auto screenwidth = EM_ASM_DOUBLE({return window.screen.width;});
 	auto screenheight = EM_ASM_DOUBLE({return window.screen.height;});
@@ -595,26 +589,12 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
 			continue;
 
 		int32_t id = t.identifier;
-        auto rawx = static_cast<uint16_t>(t.targetX);
-        auto rawy = static_cast<uint16_t>(t.targetY);
+        auto x = static_cast<uint16_t>(t.targetX);
+        auto y = static_cast<uint16_t>(t.targetY);
 
 		// Normalize
-		rawx *= static_cast<float>(screenwidth) / static_cast<float>(canvaswidth);
-        rawy *= static_cast<float>(screenheight) / static_cast<float>(canvasheight);
-
-		uint16_t x, y;
-        if (isPortrait) {
-            // Swap and invert coordinates for portrait
-            x = static_cast<uint16_t>(window->m_Height - rawy);
-            y = static_cast<uint16_t>(rawx);
-        } else {
-            x = static_cast<uint16_t>(rawx);
-            y = static_cast<uint16_t>(rawy);
-        }
-
-		// Clamp coordinates to canvas size
-        x = std::clamp(x, 0, window->m_Width);
-        y = std::clamp(y, 0, window->m_Height);
+		x *= static_cast<float>(screenwidth) / static_cast<float>(canvaswidth);
+        y *= static_cast<float>(screenheight) / static_cast<float>(canvasheight);
 
 		Mouse::Event::Type action;
 
@@ -649,7 +629,6 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
 
     return EM_FALSE;
 }
-
 #endif
 
 auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
