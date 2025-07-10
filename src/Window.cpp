@@ -573,11 +573,8 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
     if (!window) return EM_TRUE;
 
     // For touch, we always treat it as a “left” action.
-	
-    // Iterate all changed touches in this event
-    const auto& touches = e->numTouches
-	
-    for (int i = 0; i < count; ++i) {
+		
+    for (int i = 0; i <  e->numTouches; ++i) {
 		const auto& t = e->touches[i];
         auto x = static_cast<uint16_t>(t.targetX);
         auto y = static_cast<uint16_t>(t.targetY);
