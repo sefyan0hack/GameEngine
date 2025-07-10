@@ -575,6 +575,8 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
 
     switch (eventType) {
         case EMSCRIPTEN_EVENT_TOUCHSTART:
+			emscripten_request_pointerlock(window->m_WindowHandle, EM_TRUE);
+
             if (window->m_ActiveTouchId == -1 && e->numTouches > 0) {
                 const auto& touch = e->touches[0];
                 window->m_ActiveTouchId = touch.identifier;
@@ -625,6 +627,7 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
 
         case EMSCRIPTEN_EVENT_TOUCHEND:
         case EMSCRIPTEN_EVENT_TOUCHCANCEL:
+			emscripten_exit_pointerlock();
             for (int i = 0; i < e->numTouches; ++i) {
                 if (e->touches[i].identifier == window->m_ActiveTouchId) {
                     window->m_Events.push(Mouse::Event{
