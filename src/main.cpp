@@ -116,7 +116,7 @@ private:
     , frag(SHADER(cube)".frag", GL_FRAGMENT_SHADER)
     , Matt(vert, frag)
     , cubeMesh({cubeMeshVert, indices})
-    , Cam(m_Window)
+    , Cam(Window)
     {
         ResManager.load(TEXTURE(brik.jpg), ResType::Texture2D);
         ResManager.load(TEXTURE(brik.png), ResType::Texture2D);
@@ -152,46 +152,46 @@ public:
 
     auto Update(float delta) -> void override {
         float speed = 10.0f;
-        Cam.MoseMove(m_Mouse);
+        Cam.MoseMove(Mouse);
 
-        if(m_Keyboard.IsKeyDown(Key::LeftShift))
+        if(Keyboard.IsKeyDown(Key::LeftShift))
                 speed *= 2;
                 
-        if(m_Keyboard.IsKeyDown(Key::W)){
+        if(Keyboard.IsKeyDown(Key::W)){
             Cam.MoveFroward(speed * delta);
         }
-        if(m_Keyboard.IsKeyDown(Key::S)){
+        if(Keyboard.IsKeyDown(Key::S)){
             Cam.MoveBackward(speed * delta);
         }
-        if(m_Keyboard.IsKeyDown(Key::A)){
+        if(Keyboard.IsKeyDown(Key::A)){
             Cam.MoveLeft(speed * delta);
         }
-        if(m_Keyboard.IsKeyDown(Key::D)){
+        if(Keyboard.IsKeyDown(Key::D)){
             Cam.MoveRight(speed * delta);
         }
-        if(m_Keyboard.IsKeyDown(Key::N) ){
+        if(Keyboard.IsKeyDown(Key::N) ){
             Cam.MoveUP(speed * delta);
         }
-        if(m_Keyboard.IsKeyDown(Key::M) ){
+        if(Keyboard.IsKeyDown(Key::M) ){
             Cam.MoveDown(speed * delta);
         }
 
-        if(m_Keyboard.IsKeyPressed(Key::L) ){
+        if(Keyboard.IsKeyPressed(Key::L) ){
             static bool on = false;
             if(!on){
-                m_Mouse.Lock(m_Window);
+                Mouse.Lock(Window);
                 on = true;
             }else{
-                m_Mouse.UnLock();
+                Mouse.UnLock();
                 on = false;
             }
         }
 
-        if(m_Keyboard.IsKeyPressed(Key::F11)){
-            m_Window.ToggleFullScreen();
+        if(Keyboard.IsKeyPressed(Key::F11)){
+            Window.ToggleFullScreen();
         }
         
-        // if (m_Keyboard.IsKeyPressed(Key::H)){
+        // if (Keyboard.IsKeyPressed(Key::H)){
         //     static bool flip = false;
         //     if(flip == false){
         //         flip = !flip;

@@ -16,13 +16,13 @@
 constexpr auto Wname = "Main";
 
 APP::APP()
-    : m_Window(1180, 640, Wname)
-    , m_Keyboard()
-    , m_Mouse()
+    : Window(1180, 640, Wname)
+    , Keyboard()
+    , Mouse()
     , m_LastFrameTime(std::chrono::steady_clock::now())
     , m_SmoothedFPS(60.0f)
 { 
-    m_Window.Show();
+    Window.Show();
 }
 
 
@@ -30,14 +30,14 @@ auto APP::Frame(float deltaTime) -> void
 {
     gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     Update(deltaTime);
-    m_Window.SwapBuffers();
+    Window.SwapBuffers();
     // m_Keyboard.UpdatePrevState();
 }
 
 auto APP::LoopBody(void* ctx) -> void
 {
     auto app = static_cast<APP*>(ctx);
-    auto& window = app->m_Window;
+    auto& window = app->Window;
 
     CWindow::ProcessMessages(&window);
 
@@ -63,13 +63,13 @@ auto APP::LoopBody(void* ctx) -> void
                 switch (e.type)
                 {
                 case Keyboard::Event::Type::Press:
-				    app->m_Keyboard.OnKeyPressed(e.key);
+				    app->Keyboard.OnKeyPressed(e.key);
                     break;
                 case Keyboard::Event::Type::Release:
-				    app->m_Keyboard.OnKeyReleased(e.key);
+				    app->Keyboard.OnKeyReleased(e.key);
                     break;
                 case Keyboard::Event::Type::Repeat:
-                    app->m_Keyboard.OnKeyRepeat(e.key);
+                    app->Keyboard.OnKeyRepeat(e.key);
                     break;
                 default:
                     std::unreachable();
@@ -79,38 +79,38 @@ auto APP::LoopBody(void* ctx) -> void
                 switch (e.type)
                 {
                     case Mouse::Event::Type::LPress:
-                        app->m_Mouse.OnLeftPressed();
+                        app->Mouse.OnLeftPressed();
                         break;
                     case Mouse::Event::Type::LRelease:
-                        app->m_Mouse.OnLeftReleased();
+                        app->Mouse.OnLeftReleased();
                         break;
                     case Mouse::Event::Type::RPress:
-                        app->m_Mouse.OnRightPressed();
+                        app->Mouse.OnRightPressed();
                         break;
                     case Mouse::Event::Type::RRelease:
-                        app->m_Mouse.OnRightReleased();
+                        app->Mouse.OnRightReleased();
                         break;
                     case Mouse::Event::Type::Move:
-                        app->m_Mouse.OnMouseMove(e.x, e.y);
+                        app->Mouse.OnMouseMove(e.x, e.y);
                         break;
                     case Mouse::Event::Type::Enter:
-                        app->m_Mouse.OnMouseEnter();
+                        app->Mouse.OnMouseEnter();
                         break;
                     case Mouse::Event::Type::Leave:
-                        app->m_Mouse.OnMouseLeave();
+                        app->Mouse.OnMouseLeave();
                         break;
                     default:
                     std::unreachable();
                 }
             },
             [&app](const MouseWheelEvent& e) {
-                app->m_Mouse.OnWheelDelta(e.delta);
+                app->Mouse.OnWheelDelta(e.delta);
             },
             [&app](const MouseRawEvent& e) {
-	    		app->m_Mouse.OnRawDelta( e.dx, e.dy );
+	    		app->Mouse.OnRawDelta( e.dx, e.dy );
             },
             [&app](const LoseFocusEvent&) {
-		        app->m_Keyboard.ClearState();
+		        app->Keyboard.ClearState();
             },
             [](const auto&) { /* Unhandeled Events */ },
         }, event);
@@ -131,7 +131,7 @@ auto APP::LoopBody(void* ctx) -> void
 auto APP::Run() -> void
 {
     gl::ClearColor(0.2f, 0.21f, 0.22f, 1.0f);
-    gl::Viewport(0, 0, m_Window.Width(), m_Window.Height());
+    gl::Viewport(0, 0, Window.Width(), Window.Height());
 
     #if defined(WINDOWS_PLT) || defined(LINUX_PLT)
     while (!CWindow::WindowShouldClose()) {
