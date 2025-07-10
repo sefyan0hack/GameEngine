@@ -572,50 +572,60 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
 {
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_TRUE;
+	struct TouchState {
+		bool active;
+		long activeId; // Track the active finger
+		double prevX;
+		double prevY;
+	};
+
+	static TouchState _TouchState =
+	{
+		.active = false;
+        .activeId = -1;
+        .prevX = 0;
+        .prevY = 0;
+	};
 
     switch (eventType) {
         case EMSCRIPTEN_EVENT_TOUCHSTART: {
-            if (!window->m_TouchState.active && e->numTouches > 0) {
+            if (!_TouchState.active && e->numTouches > 0) {
                 const auto& touch = e->touches[0];
-                window->m_TouchState.active = true;
-                window->m_TouchState.activeId = touch.identifier;
-                window->m_TouchState.prevX = touch.canvasX;
-                window->m_TouchState.prevY = touch.canvasY;
+                _TouchState.active = true;
+                _TouchState.activeId = touch.identifier;
+                _TouchState.prevX = touch.canvasX;
+                _TouchState.prevY = touch.canvasY;
 
                 // Simulate left mouse button press
                 auto x = static_cast<uint16_t>(touch.canvasX);
                 auto y = static_cast<uint16_t>(touch.canvasY);
-                window->m_Events.push(Mouse::Event{
-                    Mouse::Event::Type::LPress, x, y
-                });
+                window->m_Events.push(Mouse::Event{Mouse::Event::Type::LPress, x, y});
             }
             break;
         }
 
         case EMSCRIPTEN_EVENT_TOUCHMOVE: {
-            if (window->m_TouchState.active) {
+            if (_TouchState.active) {
                 // Find active touch point
                 for (int i = 0; i < e->numTouches; ++i) {
-                    if (e->touches[i].identifier == window->m_TouchState.activeId) {
+                    if (e->touches[i].identifier == _TouchState.activeId) {
                         const auto& touch = e->touches[i];
                         double currentX = touch.canvasX;
                         double currentY = touch.canvasY;
 
                         // Calculate delta from previous position
-                        int16_t dx = static_cast<int16_t>(currentX - window->m_TouchState.prevX);
-                        int16_t dy = static_cast<int16_t>(currentY - window->m_TouchState.prevY);
+                        int16_t dx = static_cast<int16_t>(currentX - _TouchState.prevX);
+                        int16_t dy = static_cast<int16_t>(currentY - _TouchState.prevY);
 
-                        window->m_TouchState.prevX = currentX;
-                        window->m_TouchState.prevY = currentY;
+                        _TouchState.prevX = currentX;
+                        _TouchState.prevY = currentY;
 
                         // Push movement events (same as mouse)
                         window->m_Events.push(MouseRawEvent{dx, dy});
                         
                         auto x = static_cast<uint16_t>(currentX);
                         auto y = static_cast<uint16_t>(currentY);
-                        window->m_Events.push(Mouse::Event{
-                            Mouse::Event::Type::Move, x, y
-                        });
+                        window->m_Events.push(Mouse::Event{Mouse::Event::Type::Move, x, y});
                         break;
                     }
                 }
@@ -627,17 +637,15 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
         case EMSCRIPTEN_EVENT_TOUCHCANCEL: {
             // Check if active touch ended
             for (int i = 0; i < e->numChangedTouches; ++i) {
-                if (e->changedTouches[i].identifier == window->m_TouchState.activeId) {
+                if (e->changedTouches[i].identifier == _TouchState.activeId) {
                     // Simulate left mouse button release
                     auto x = static_cast<uint16_t>(e->changedTouches[i].canvasX);
                     auto y = static_cast<uint16_t>(e->changedTouches[i].canvasY);
-                    window->m_Events.push(Mouse::Event{
-                        Mouse::Event::Type::LRelease, x, y
-                    });
+                    window->m_Events.push(Mouse::Event{Mouse::Event::Type::LRelease, x, y});
 
                     // Reset touch state
-                    window->m_TouchState.active = false;
-                    window->m_TouchState.activeId = -1;
+                    _TouchState.active = false;
+                    _TouchState.activeId = -1;
                     break;
                 }
             }
