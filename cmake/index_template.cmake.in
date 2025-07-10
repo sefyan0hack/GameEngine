@@ -16,67 +16,49 @@
         }
         #canvas {
             display: block;
-            width: 90vw;
-            height: 90vh;
+            box-sizing: border-box;
+            width: 95vw;
+            height: 95vh;
             border: 2px solid #333;
+        }
+        /* Mobile landscape orientation styles */
+        @media (pointer: coarse) and (orientation: portrait) {
+            body {
+                justify-content: flex-start;
+                align-items: flex-start;
+                position: relative;
+            }
+            #canvas {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100vh;
+                height: 100vw;
+                transform: rotate(90deg) translateY(-100%);
+                transform-origin: top left;
+                border: none;
+            }
         }
     </style>
    </head>
    <body>
       <canvas class=emscripten id=canvas oncontextmenu=event.preventDefault() tabindex=-1></canvas>
       <script>
-        function isMobileDevice() {
-            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+        function resizeCanvas() {
+            const canvas = document.getElementById('canvas');
+            canvas.width = canvas.clientWidth * window.devicePixelRatio;
+            canvas.height = canvas.clientHeight * window.devicePixelRatio;
         }
 
         window.addEventListener('load', () => {
             const canvas = document.getElementById('canvas');
-            if (isMobileDevice()) {
-                const container = canvas.parentElement;
-
-                // Set canvas size to viewport
-                canvas.style.width = '100vh';
-                canvas.style.height = '100vw';
-
-                // Rotate canvas 90 degrees and reposition
-                canvas.style.transform = 'rotate(90deg)';
-                canvas.style.transformOrigin = 'top left';
-                canvas.style.position = 'absolute';
-                canvas.style.left = '100%';
-
-                // Update drawing buffer dimensions (swap width/height)
-                canvas.width = window.innerHeight;
-                canvas.height = window.innerWidth;
-
-                // Handle window resizing
-                window.addEventListener('resize', () => {
-                canvas.style.width = '100vh';
-                canvas.style.height = '100vw';
-                canvas.width = window.innerHeight;
-                canvas.height = window.innerWidth;
-                });
-                
-                // Adjust Event Coordinates
-                canvas.addEventListener('mousedown', (e) => {
-                    const rect = canvas.getBoundingClientRect();
-                    const x = e.clientY - rect.top; // Swap axes
-                    const y = rect.width - (e.clientX - rect.left); // Invert and adjust
-                    // Pass (x, y) to your C++ code via Emscripten
-                });
-
-                // Lock orientation (requires user gesture, e.g., in a click handler)
-                screen.orientation.lock('landscape').catch(console.error);
-
-                // Handle orientation changes
-                window.addEventListener('orientationchange', () => {
-                location.reload(); // Reload to reapply canvas settings
-                });
-            }else{
-                canvas.width = canvas.clientWidth * window.devicePixelRatio;
-                canvas.height = canvas.clientHeight * window.devicePixelRatio;
-            }
-            
             window.Module = {canvas: canvas};
+            resizeCanvas();
+
+            // Add resize and orientation change listeners
+            window.addEventListener('resize', resizeCanvas);
+            window.addEventListener('orientationchange', resizeCanvas);
         });
       </script>
       <script src=@PROJECT_NAME@.js async></script>
