@@ -531,6 +531,7 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
 	auto y = static_cast<uint16_t>(e->canvasY);
 
 	switch (eventType) {
+
         case EMSCRIPTEN_EVENT_MOUSEDOWN:
 			if (e->button == 0) action = Mouse::Event::Type::LPress;
 			else if (e->button == 2) action = Mouse::Event::Type::RPress;
