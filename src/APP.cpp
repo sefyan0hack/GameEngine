@@ -80,15 +80,19 @@ auto APP::LoopBody(void* ctx) -> void
                 {
                     case Mouse::Event::Type::LPress:
                         app->Mouse.OnLeftPressed();
+                        Info("LPress at [{},{}]", e.x, e.y);
                         break;
                     case Mouse::Event::Type::LRelease:
                         app->Mouse.OnLeftReleased();
+                        Info("LRlease at [{},{}]", e.x, e.y);
                         break;
                     case Mouse::Event::Type::RPress:
                         app->Mouse.OnRightPressed();
+                        Info("RPress at [{},{}]", e.x, e.y);
                         break;
                     case Mouse::Event::Type::RRelease:
                         app->Mouse.OnRightReleased();
+                        Info("RRlease at [{},{}]", e.x, e.y);
                         break;
                     case Mouse::Event::Type::Move:
                         app->Mouse.OnMouseMove(e.x, e.y);
@@ -108,6 +112,7 @@ auto APP::LoopBody(void* ctx) -> void
             },
             [&app](const MouseRawEvent& e) {
 	    		app->Mouse.OnRawDelta( e.dx, e.dy );
+                Info("Raw  [{},{}]", e.dx, e.dy);
             },
             [&app](const LoseFocusEvent&) {
 		        app->Keyboard.ClearState();
