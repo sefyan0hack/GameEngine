@@ -96,6 +96,9 @@ class CWindow
         EventQueue m_Events;
 
         int32_t m_ActiveTouchId = -1;      // -1 = no active touch
+        bool m_IsFirstMove = true; // Flag for first move event
+        int32_t m_PrevTouchX = 0;  // Last touch X position
+        int32_t m_PrevTouchY = 0;  // Last touch Y position
         int32_t m_LastTouchX = 0;          // Last touch X position
         int32_t m_LastTouchY = 0;          // Last touch Y position
 

@@ -576,13 +576,12 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
     switch (eventType) {
         case EMSCRIPTEN_EVENT_TOUCHSTART:
             if (window->m_ActiveTouchId == -1 && e->numTouches > 0) {
-                // Capture first touch
                 const auto& touch = e->touches[0];
                 window->m_ActiveTouchId = touch.identifier;
-                window->m_LastTouchX = touch.canvasX;
-                window->m_LastTouchY = touch.canvasY;
+                window->m_PrevTouchX = touch.canvasX;
+                window->m_PrevTouchY = touch.canvasY;
+                window->m_IsFirstMove = true;
                 
-                // Simulate mouse press
                 window->m_Events.push(Mouse::Event{
                     Mouse::Event::Type::LPress,
                     static_cast<uint16_t>(touch.canvasX),
@@ -598,27 +597,29 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
                         const auto& touch = e->touches[i];
                         int32_t currentX = touch.canvasX;
                         int32_t currentY = touch.canvasY;
-                        
-                        // Calculate movement delta
-                        int32_t deltaX = currentX - window->m_LastTouchX;
-                        int32_t deltaY = currentY - window->m_LastTouchY;
-                        
-                        // Push camera movement event (matches mouse behavior)
-                        window->m_Events.push(MouseRawEvent{
-                            static_cast<int16_t>(deltaX),
-                            static_cast<int16_t>(deltaY)
-                        });
-                        
-                        // Push position update
+
+                        // Skip delta calculation on first move
+                        if (!window->m_IsFirstMove) {
+                            int32_t deltaX = currentX - window->m_PrevTouchX;
+                            int32_t deltaY = currentY - window->m_PrevTouchY;
+                            
+                            window->m_Events.push(MouseRawEvent{
+                                static_cast<int16_t>(deltaX),
+                                static_cast<int16_t>(deltaY)
+                            });
+                        }
+                        else {
+                            window->m_IsFirstMove = false;
+                        }
+
                         window->m_Events.push(Mouse::Event{
                             Mouse::Event::Type::Move,
                             static_cast<uint16_t>(currentX),
                             static_cast<uint16_t>(currentY)
                         });
-                        
-                        // Update last position
-                        window->m_LastTouchX = currentX;
-                        window->m_LastTouchY = currentY;
+
+                        window->m_PrevTouchX = currentX;
+                        window->m_PrevTouchY = currentY;
                         break;
                     }
                 }
@@ -629,14 +630,11 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
         case EMSCRIPTEN_EVENT_TOUCHCANCEL:
             for (int i = 0; i < e->numTouches; ++i) {
                 if (e->touches[i].identifier == window->m_ActiveTouchId) {
-                    // Simulate mouse release
                     window->m_Events.push(Mouse::Event{
                         Mouse::Event::Type::LRelease,
                         static_cast<uint16_t>(e->touches[i].canvasX),
                         static_cast<uint16_t>(e->touches[i].canvasY)
                     });
-                    
-                    // Reset active touch
                     window->m_ActiveTouchId = -1;
                     break;
                 }
@@ -644,7 +642,7 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
             break;
     }
     
-    return EM_TRUE; // Prevent default touch behavior
+    return EM_TRUE;
 }
 #endif
 

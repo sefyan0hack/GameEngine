@@ -41,6 +41,7 @@
                 transform: rotate(90deg) translateY(-100%);
                 transform-origin: top left;
                 touch-action: none; /* Disables browser touch gestures */
+                -ms-touch-action: none;
                 border: none;
             }
         }
