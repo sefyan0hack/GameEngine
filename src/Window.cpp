@@ -574,6 +574,10 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
     if (!window) return EM_TRUE;
 
     static std::unordered_map<int32_t, std::pair<int16_t, int16_t>> lastPos;
+	// Check if in mobile mode using media query
+	bool isMobile = (bool) EM_ASM_INT({
+        return window.matchMedia('(max-width: 767px)').matches ? 1 : 0;
+    });
 
 	auto screenwidth = EM_ASM_DOUBLE({return window.screen.width;});
 	auto screenheight = EM_ASM_DOUBLE({return window.screen.height;});
@@ -589,18 +593,30 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
 			continue;
 
 		int32_t id = t.identifier;
-        auto x = static_cast<uint16_t>(t.targetX);
-        auto y = static_cast<uint16_t>(t.targetY);
 
-		// Normalize
-		x *= static_cast<float>(screenwidth) / static_cast<float>(canvaswidth);
-        y *= static_cast<float>(screenheight) / static_cast<float>(canvasheight);
+		double x = static_cast<double>(t.targetX);
+        double y = static_cast<double>(t.targetY);
+
+        // 1. Normalize coordinates to screen dimensions
+        x *= (screenwidth / canvaswidth);
+        y *= (screenheight / canvasheight);
+
+		if (isMobile) {
+            // Rotate coordinates 90 degrees counter-clockwise
+            double newX = screenheight - y;  // Inverted y becomes x
+            double newY = x;                 // x becomes y
+            x = newX;
+            y = newY;
+            
+            // Swap width/height references for mobile
+            std::swap(screenwidth, screenheight);
+        }
 
 		Mouse::Event::Type action;
 
         switch (eventType) {
             case EMSCRIPTEN_EVENT_TOUCHSTART:
-				lastPos[id] = { x, y };
+				lastPos[id] = { static_cast<int16_t>(x), static_cast<int16_t>(y) };
                 action = Mouse::Event::Type::LPress;
                 break;
             case EMSCRIPTEN_EVENT_TOUCHEND:
@@ -612,19 +628,19 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
 			 	// lookup previous
 				auto old = lastPos.find(id);
 				if (old != lastPos.end()) {
-					int16_t dx = x - old->second.first;
-					int16_t dy = y - old->second.second;
+					int16_t dx = static_cast<int16_t>(x) - old->second.first;
+					int16_t dy = static_cast<int16_t>(y) - old->second.second;
 					// push a raw‐delta event
 					window->m_Events.push(MouseRawEvent{ dx, dy });
 				}
 				// also update stored pos
-				lastPos[id] = { x, y };
+				lastPos[id] = { static_cast<int16_t>(x), static_cast<int16_t>(y) };
 				action = Mouse::Event::Type::Move;
 				}
                 break;
         }
 
-		window->m_Events.push(Mouse::Event{action, x, y});
+		window->m_Events.push(Mouse::Event{action, static_cast<int16_t>(x), static_cast<int16_t>(y)});
     }
 
     return EM_FALSE;
