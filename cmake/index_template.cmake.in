@@ -25,14 +25,59 @@
    <body>
       <canvas class=emscripten id=canvas oncontextmenu=event.preventDefault() tabindex=-1></canvas>
       <script>
-              window.addEventListener('load', () => {
-                  const canvas = document.getElementById('canvas');
-                  
-                  canvas.width = canvas.clientWidth * window.devicePixelRatio;
-                  canvas.height = canvas.clientHeight * window.devicePixelRatio;
-                  
-                  window.Module = {canvas: canvas};
-              });
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        window.addEventListener('load', () => {
+            const canvas = document.getElementById('canvas');
+            if (isMobileDevice()) {
+                const container = canvas.parentElement;
+
+                // Set canvas size to viewport
+                canvas.style.width = '100vh';
+                canvas.style.height = '100vw';
+
+                // Rotate canvas 90 degrees and reposition
+                canvas.style.transform = 'rotate(90deg)';
+                canvas.style.transformOrigin = 'top left';
+                canvas.style.position = 'absolute';
+                canvas.style.left = '100%';
+
+                // Update drawing buffer dimensions (swap width/height)
+                canvas.width = window.innerHeight;
+                canvas.height = window.innerWidth;
+
+                // Handle window resizing
+                window.addEventListener('resize', () => {
+                canvas.style.width = '100vh';
+                canvas.style.height = '100vw';
+                canvas.width = window.innerHeight;
+                canvas.height = window.innerWidth;
+                });
+                
+                // Adjust Event Coordinates
+                canvas.addEventListener('mousedown', (e) => {
+                    const rect = canvas.getBoundingClientRect();
+                    const x = e.clientY - rect.top; // Swap axes
+                    const y = rect.width - (e.clientX - rect.left); // Invert and adjust
+                    // Pass (x, y) to your C++ code via Emscripten
+                });
+
+                // Lock orientation (requires user gesture, e.g., in a click handler)
+                screen.orientation.lock('landscape').catch(console.error);
+
+                // Handle orientation changes
+                window.addEventListener('orientationchange', () => {
+                location.reload(); // Reload to reapply canvas settings
+                });
+            }else{
+                canvas.width = canvas.clientWidth * window.devicePixelRatio;
+                canvas.height = canvas.clientHeight * window.devicePixelRatio;
+            }
+            
+            window.Module = {canvas: canvas};
+        });
       </script>
       <script src=@PROJECT_NAME@.js async></script>
    </body>
