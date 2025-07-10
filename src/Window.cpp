@@ -602,19 +602,19 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
 		rawx *= static_cast<float>(screenwidth) / static_cast<float>(canvaswidth);
         rawy *= static_cast<float>(screenheight) / static_cast<float>(canvasheight);
 
-		int32_t x, y;
+		uint16_t x, y;
         if (isPortrait) {
             // Swap and invert coordinates for portrait
-            x = window->m_Height - rawy;
-            y = rawx;
+            x = static_cast<uint16_t>(window->m_Height - rawy);
+            y = static_cast<uint16_t>(rawx);
         } else {
-            x = rawx;
-            y = rawy;
+            x = static_cast<uint16_t>(rawx);
+            y = static_cast<uint16_t>(rawy);
         }
 
 		// Clamp coordinates to canvas size
-        x = std::clamp(x, 0, static_cast<int32_t>(window->m_Width));
-        y = std::clamp(y, 0, static_cast<int32_t>(window->m_Height));
+        x = std::clamp(x, 0, window->m_Width);
+        y = std::clamp(y, 0, window->m_Height);
 
 		Mouse::Event::Type action;
 
