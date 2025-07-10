@@ -572,47 +572,31 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_TRUE;
 
-	// Helper to pick the right touch list length
-	auto touchesLength = [](int32_t eventType, const EmscriptenTouchEvent* e) -> int32_t {
-		return (eventType == EMSCRIPTEN_EVENT_TOUCHEND || eventType == EMSCRIPTEN_EVENT_TOUCHCANCEL)
-			? e->numChangedTouches
-			: e->numTouches;
-	}
-	static std::unordered_map<int32_t, std::pair<int16_t, int16_t>> lastPos;
-
-
     // For touch, we always treat it as a “left” action.
-    Mouse::Event::Type action;
-
+	
     // Iterate all changed touches in this event
-    const auto& touches = touchesLength(eventType, e);
-
-    for (int i = 0; i < touchesLength(eventType, e); ++i) {
-        const EmscriptenTouchPoint& t = touches[i];
+    const auto& touches = e->numTouches
+	
+    for (int i = 0; i < count; ++i) {
+		const auto& t = e->touches[i];
         auto x = static_cast<uint16_t>(t.targetX);
         auto y = static_cast<uint16_t>(t.targetY);
+		
+		Mouse::Event::Type action;
 
         switch (eventType) {
             case EMSCRIPTEN_EVENT_TOUCHSTART:
                 action = Mouse::Event::Type::LPress;
-                window->m_Events.push(Mouse::Event{action, x, y});
                 break;
-
             case EMSCRIPTEN_EVENT_TOUCHEND:
             case EMSCRIPTEN_EVENT_TOUCHCANCEL:
                 action = Mouse::Event::Type::LRelease;
-                window->m_Events.push(Mouse::Event{action, x, y});
                 break;
-
             case EMSCRIPTEN_EVENT_TOUCHMOVE:
-                // Note: we don’t have movementX/Y for touch; 
-                // we just emit a Move at the new location
-                window->m_Events.push(Mouse::Event{Mouse::Event::Type::Move, x, y});
-                break;
-
-            default:
+				action = Mouse::Event::Type::Move;
                 break;
         }
+		window->m_Events.push(Mouse::Event{action, x, y});
     }
 
     return EM_FALSE;
