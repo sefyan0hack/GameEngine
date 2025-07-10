@@ -567,13 +567,14 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
 
     return EM_FALSE;
 }
+
 auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, void* userData) -> EM_BOOL
 {
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_TRUE;
 
-    // For touch, we always treat it as a “left” action.
-		
+    static std::unordered_map<int, std::pair<int16_t, int16_t>> lastPos;
+
     for (int i = 0; i <  e->numTouches; ++i) {
 		const auto& t = e->touches[i];
         auto x = static_cast<uint16_t>(t.targetX);
@@ -583,14 +584,27 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
 
         switch (eventType) {
             case EMSCRIPTEN_EVENT_TOUCHSTART:
+				lastPos[id] = { x, y };
                 action = Mouse::Event::Type::LPress;
                 break;
             case EMSCRIPTEN_EVENT_TOUCHEND:
             case EMSCRIPTEN_EVENT_TOUCHCANCEL:
+				lastPos.erase(id);
                 action = Mouse::Event::Type::LRelease;
                 break;
-            case EMSCRIPTEN_EVENT_TOUCHMOVE:
+            case EMSCRIPTEN_EVENT_TOUCHMOVE:{
+			 	// lookup previous
+				auto old = lastPos.find(id);
+				if (old != lastPos.end()) {
+					int16_t dx = x - old->second.first;
+					int16_t dy = y - old->second.second;
+					// push a raw‐delta event
+					window->m_Events.push(MouseRawEvent{ dx, dy });
+				}
+				// also update stored pos
+				lastPos[id] = { x, y };
 				action = Mouse::Event::Type::Move;
+				}
                 break;
         }
 		window->m_Events.push(Mouse::Event{action, x, y});
