@@ -386,7 +386,7 @@ auto CWindow::ResizeHandler(int32_t eventType, const EmscriptenUiEvent* e, void*
 {
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_FALSE;
-	m_Events.push(WindowResizeEvent{e->windowInnerWidth, e->windowInnerHeight});
+	window.m_Events.push(WindowResizeEvent{e->windowInnerWidth, e->windowInnerHeight});
     return EM_TRUE;
 }
 
@@ -400,7 +400,7 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
 
     // Alphanumeric keys
 	if (strncmp(e->code, "Key", 3) == 0 && e->code[3] >= 'A' && e->code[3] <= 'Z') {
-        vk = DOM_VK_A + (ce->ode[3] - 'A');
+        vk = DOM_VK_A + (e->code[3] - 'A');
     }
 	else if (strncmp(e->code, "Digit", 5) == 0 && e->code[5] >= '0' && e->code[5] <= '9') {
         vk = DOM_VK_0 + (e->code[5] - '0');
