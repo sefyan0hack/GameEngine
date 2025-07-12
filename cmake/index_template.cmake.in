@@ -48,16 +48,21 @@
         }
         }
     </style>
+    <script>
+    // Initialize Module IMMEDIATELY after canvas declaration
+    window.Module = {
+      canvas: (function() {
+        const canvas = document.createElement('canvas');
+        canvas.id = 'canvas';
+        canvas.className = 'emscripten';
+        canvas.oncontextmenu = e => e.preventDefault();
+        canvas.tabIndex = -1;
+        document.body.appendChild(canvas);
+        return canvas;
+      })()
+    };
    </head>
    <body>
-      <canvas class=emscripten id=canvas oncontextmenu=event.preventDefault() tabindex=-1></canvas>
-      <script>
-
-        window.addEventListener('load', () => {
-            const canvas = document.getElementById('canvas');
-            window.Module = {canvas: canvas};
-        });
-      </script>
-      <script src=@PROJECT_NAME@.js async></script>
+      <script src=@PROJECT_NAME@.js></script>
    </body>
 </html>
