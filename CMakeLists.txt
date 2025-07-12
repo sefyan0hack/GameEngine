@@ -77,8 +77,8 @@ if(EMSCRIPTEN)
     set(RTTI OFF)
     
     add_compile_options(
-        -O2
-        -g0
+        # -Oz
+        # -g0
         -std=c++23
         -Wno-character-conversion -Wno-dollar-in-identifier-extension
         -pthread
@@ -88,29 +88,30 @@ if(EMSCRIPTEN)
     )
 
     add_link_options(
-        -O2
-        -g0
+        # -Oz
+        # -g0
         -sASYNCIFY
         -sUSE_WEBGL2=1
         -sMIN_WEBGL_VERSION=1
         -sMAX_WEBGL_VERSION=2
         -sALLOW_MEMORY_GROWTH=1
         -sSAFE_HEAP=1
-        -sNO_EXIT_RUNTIME=1
+        # -sNO_EXIT_RUNTIME=1
         -sFULL_ES3=1
-        -sSTB_IMAGE=1
+        # -sSTB_IMAGE=1
         -sDISABLE_EXCEPTION_THROWING=1
         -sDISABLE_EXCEPTION_CATCHING=1 
         -sWASM_LEGACY_EXCEPTIONS=0
         -fno-exceptions -fno-rtti
         --embed-file ${CMAKE_SOURCE_DIR}/res
-        -sSTRICT=1
-        -sMALLOC=dlmalloc
-        -sENVIRONMENT=web
-        -sDYNAMIC_EXECUTION=0
-        -sWASM=1
-        -lGL
-        -sASSERTIONS=1
+        # -sSTRICT=1
+        # -sMALLOC=emmalloc
+        # -sENVIRONMENT=web
+        # -sDYNAMIC_EXECUTION=0
+        # -sWASM=1
+        # -lGL
+        -sSTACK_OVERFLOW_CHECK=2
+        -sASSERTIONS=2
     )
 
     configure_file(
