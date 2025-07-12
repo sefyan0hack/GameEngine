@@ -399,11 +399,11 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
     uint32_t vk = MAX_UINT32_T;
 
     // Alphanumeric keys
-	if (strncmp(code, "Key", 3) == 0 && code[3] >= 'A' && code[3] <= 'Z') {
-        vk = DOM_VK_A + (code[3] - 'A');
+	if (strncmp(e->code, "Key", 3) == 0 && e->code[3] >= 'A' && e->code[3] <= 'Z') {
+        vk = DOM_VK_A + (ce->ode[3] - 'A');
     }
-	else if (strncmp(code, "Digit", 5) == 0 && code[5] >= '0' && code[5] <= '9') {
-        vk = DOM_VK_0 + (code[5] - '0');
+	else if (strncmp(e->code, "Digit", 5) == 0 && e->code[5] >= '0' && e->code[5] <= '9') {
+        vk = DOM_VK_0 + (e->code[5] - '0');
     }
 
 	// Function keys (F1-F24)
