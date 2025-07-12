@@ -95,12 +95,12 @@ if(EMSCRIPTEN)
         -sMIN_WEBGL_VERSION=1
         -sMAX_WEBGL_VERSION=2
         -sALLOW_MEMORY_GROWTH=1
-        # -sNO_EXIT_RUNTIME=1
+        -sNO_EXIT_RUNTIME=1
         -sFULL_ES3=1
-        # -sSTB_IMAGE=1
-        # -sDISABLE_EXCEPTION_THROWING=1
-        # -sDISABLE_EXCEPTION_CATCHING=1 
-        # -sWASM_LEGACY_EXCEPTIONS=0
+        -sSTB_IMAGE=1
+        -sDISABLE_EXCEPTION_THROWING=1
+        -sDISABLE_EXCEPTION_CATCHING=1 
+        -sWASM_LEGACY_EXCEPTIONS=0
         -fno-exceptions -fno-rtti
         --embed-file ${CMAKE_SOURCE_DIR}/res
         --profiling
@@ -110,8 +110,8 @@ if(EMSCRIPTEN)
         # -sDYNAMIC_EXECUTION=0
         # -sWASM=1
         # -lGL
-        -sSTACK_OVERFLOW_CHECK=2
-        -sASSERTIONS=2
+        # -sSTACK_OVERFLOW_CHECK=2
+        # -sASSERTIONS=2
     )
 
     configure_file(
