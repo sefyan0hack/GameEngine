@@ -85,17 +85,15 @@ private:
     std::bitset<KeyCount> m_PrevKeyState;
 
     inline static auto KeyMaps = [](){
-        using UKey = std::underlying_type_t<Key>;
-
-        constexpr UKey start = std::to_underlying(Key::A);
-        constexpr UKey end = std::to_underlying(Key::Unknown);
-
         std::map<uint64_t, Key> r;
-        
-        for (UKey k = start; k < end; ++k) {
-            Key key = static_cast<Key>(k);
-            r.try_emplace(ToNative(key), key);
+
+        for(auto k :
+            std::views::iota(std::to_underlying(Key::A), std::to_underlying(Key::Unknown)) |
+            std::views::transform([](auto&& a){ return static_cast<Key>(a); })
+        ){
+            r.try_emplace(ToNative(k), k);
         }
+
         return r;
     }();
 

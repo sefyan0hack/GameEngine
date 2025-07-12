@@ -463,7 +463,7 @@ auto Keyboard::ToNative(Key key) -> uint64_t
         // case Key::MediaStop: 		return "MediaStop";
         // case Key::MediaPlayPause: 	return "MediaPlayPause";
 #endif
-        case Key::Unknown:  Error("Unknown key not accepted"); break;
+        case Key::Unknown:
         default: Error("unreachable");
     }
 
