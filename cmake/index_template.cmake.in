@@ -48,6 +48,7 @@
         }
         }
     </style>
+
     <script>
     // Initialize Module IMMEDIATELY after canvas declaration
     window.Module = {
@@ -61,8 +62,9 @@
         return canvas;
       })()
     };
+    </script>
    </head>
    <body>
-      <script src=@PROJECT_NAME@.js></script>
+      <script src=@PROJECT_NAME@.js ></script>
    </body>
 </html>
