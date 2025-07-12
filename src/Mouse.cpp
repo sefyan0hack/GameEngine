@@ -8,7 +8,13 @@
 #include <emscripten/html5.h>
 #endif
 
-Mouse::Mouse() : x(0), y(0)
+Mouse::Mouse() 
+	: x(0), y(0)
+	, dx(0), dy(0)
+	, isMouseIn(false)
+	, isLocked(false)
+	, hasNewRawDelta(false)
+	, wheelDeltaCarry(0)
 {
 	#if defined(WINDOWS_PLT)
 	// regester mouse raw data
@@ -25,168 +31,71 @@ Mouse::Mouse() : x(0), y(0)
 	#endif
 }
 
-auto Mouse::GetPos() const noexcept -> std::pair<uint16_t, uint16_t>
+auto Mouse::GetPos() const noexcept -> std::pair<int32_t, int32_t>
 {
 	return {x, y};
 }
 
-auto Mouse::GetPosX() const noexcept -> uint16_t
+auto Mouse::GetRawDelta() const noexcept -> std::pair<int32_t, int32_t>
 {
-	return x;
-}
-auto Mouse::GetPosY() const noexcept -> uint16_t
-{
-	return y;
+    return {dx, dy};
 }
 
-auto Mouse::SetPos([[maybe_unused]] uint16_t x_, [[maybe_unused]] uint16_t y_) -> void
+auto Mouse::SetPos([[maybe_unused]] int32_t x_, [[maybe_unused]] int32_t y_) -> void
 {
 	#if defined(WINDOWS_PLT)
 	SetCursorPos(x_, y_);
 	#endif
 }
 
-auto Mouse::IsInWindow() const noexcept -> bool
+auto Mouse::ReadRawDelta() noexcept -> std::optional<std::pair<int32_t, int32_t>>
 {
-	return isInWindow;
-}
-
-auto Mouse::IsEntered() const noexcept -> bool
-{
-    return isEntered;
-}
-
-
-auto Mouse::Flush() noexcept -> void{ buffer = std::queue<Event>(); }
-
-auto Mouse::ReadRawDelta() noexcept -> std::optional<Mouse::RawDelta>
-{
-	if( rawDeltaBuffer.empty() )
-	{
-		return std::nullopt;
+	if(hasNewRawDelta) {
+		hasNewRawDelta = false;
+		auto delta = std::make_pair(dx, dy);
+		dx = dy = 0;
+		return delta;
 	}
-	const RawDelta d = rawDeltaBuffer.front();
-	rawDeltaBuffer.pop();
-	return d;
+	return std::nullopt;
 }
 
-auto Mouse::Read() noexcept -> std::optional<Mouse::Event>
+auto Mouse::OnMouseMove( int32_t x, int32_t y ) noexcept -> void
 {
-	if( buffer.size() > 0u )
-	{
-		Mouse::Event e = buffer.front();
-		buffer.pop();
-		return e;
-	}
-	return {};
+	std::tie(this->x, this->y) = { x, y };
 }
 
-auto Mouse::OnMouseMove( uint16_t newx, uint16_t newy ) noexcept -> void
-{
-	x = newx;
-	y = newy;
 
-	buffer.push( Mouse::Event( Mouse::Event::Type::Move, x, y ) );
-	TrimBuffer();
+auto Mouse::OnRawDelta( int32_t dx, int32_t dy ) noexcept -> void
+{
+	std::tie(this->dx, this->dy) = { dx, dy };
+	hasNewRawDelta = true;
 }
 
 auto Mouse::OnMouseLeave() noexcept -> void
 {
-	isInWindow = false;
-	isEntered = false;
-	buffer.push( Mouse::Event( Mouse::Event::Type::Leave, x, y ) );
-	TrimBuffer();
+	isMouseIn = false;
 }
 
 auto Mouse::OnMouseEnter() noexcept -> void
 {
-	isInWindow = true;
-	isEntered = true;
-	buffer.push( Mouse::Event( Mouse::Event::Type::Enter, x, y ) );
-	TrimBuffer();
+	isMouseIn = true;
 }
 
-auto Mouse::OnRawDelta( int16_t dx, int16_t dy ) noexcept -> void
+auto Mouse::OnButtonChange(bool left, bool middle, bool right) noexcept -> void
 {
-	rawDeltaBuffer.push( { dx, dy } );
-	TrimBuffer();
+	this->left = left;
+	this->middle = middle;
+	this->right = right;
 }
 
-auto Mouse::OnLeftPressed() noexcept -> void
+auto Mouse::OnWheelDelta([[maybe_unused]] int32_t delta ) noexcept -> void
 {
-	buffer.push( Mouse::Event( Mouse::Event::Type::LPress, x, y ) );
-	TrimBuffer();
-}
-
-auto Mouse::OnLeftReleased() noexcept -> void
-{
-	buffer.push( Mouse::Event( Mouse::Event::Type::LRelease, x, y ) );
-	TrimBuffer();
-}
-
-auto Mouse::OnRightPressed() noexcept -> void
-{
-
-	buffer.push( Mouse::Event( Mouse::Event::Type::RPress, x, y ) );
-	TrimBuffer();
-}
-
-auto Mouse::OnRightReleased() noexcept -> void
-{
-
-	buffer.push( Mouse::Event( Mouse::Event::Type::RRelease, x, y ) );
-	TrimBuffer();
-}
-
-auto Mouse::TrimBuffer() noexcept -> void
-{
-	while( buffer.size() > bufferSize )
-	{
-		buffer.pop();
-	}
-}
-
-auto Mouse::TrimRawInputBuffer() noexcept -> void
-{
-	while( rawDeltaBuffer.size() > bufferSize )
-	{
-		rawDeltaBuffer.pop();
-	}
-}
-
-
-auto Mouse::OnWheelDelta([[maybe_unused]] int16_t delta ) noexcept -> void
-{
+	this->delta = delta;
 	#if defined(WINDOWS_PLT)
 	wheelDeltaCarry += delta;
-	while( wheelDeltaCarry >= WHEEL_DELTA )
-	{
-		wheelDeltaCarry -= WHEEL_DELTA;
-	}
-	while( wheelDeltaCarry <= -WHEEL_DELTA )
-	{
-		wheelDeltaCarry += WHEEL_DELTA;
-	}
+	while(wheelDeltaCarry >= WHEEL_DELTA) wheelDeltaCarry -= WHEEL_DELTA;
+	while(wheelDeltaCarry <= -WHEEL_DELTA) wheelDeltaCarry += WHEEL_DELTA;
 	#endif
-}
-
-auto Mouse::IsEmpty() const noexcept -> bool 
-{
-	return buffer.empty(); 
-}
-
-Mouse::Event::Event( Mouse::Event::Type type, uint16_t x, uint16_t y  ) noexcept
-    : type(type)
-    , x(x)
-	, y(y) {}
-
-auto Mouse::Event::GetType() const noexcept -> Mouse::Event::Type 
-{
-	return type;
-}
-auto Mouse::Event::GetPos() const noexcept -> std::pair<uint16_t, uint16_t> 
-{
-	return {x, y};
 }
 
 auto Mouse::Locked() const -> bool
@@ -199,25 +108,31 @@ auto Mouse::Lock([[maybe_unused]] const CWindow& window) noexcept -> void
 	if(!isLocked){
         #if defined(WINDOWS_PLT)
 		auto window_handle =  window.Handle();
-		auto centerX = window.Width() / 2;
-        auto centerY = window.Height() / 2;
 
-        // Confine cursor to window
+        RECT clientRect;
+        GetClientRect(window_handle, &clientRect);
+        const int centerX = (clientRect.right - clientRect.left) / 2;
+        const int centerY = (clientRect.bottom - clientRect.top) / 2;
+
+        POINT center{centerX, centerY};
+        ClientToScreen(window_handle, &center);
+
+        SetCursorPos(center.x, center.y);
+        
         RECT clipRect;
         GetClientRect(window_handle, &clipRect);
         MapWindowPoints(window_handle, nullptr, reinterpret_cast<POINT*>(&clipRect), 2);
         ClipCursor(&clipRect);
 
-        // Set cursor to center
-        SetCursorPos(centerX + clipRect.left, centerY + clipRect.top);
-
-        // Immediately hide cursor
         SetCursor(nullptr);
-		ShowCursor(false);
+        ShowCursor(false);
 
+        x = centerX;
+        y = centerY;
         #elif defined(WEB_PLT)
         emscripten_request_pointerlock("#canvas", EM_TRUE);
         #endif
+
 		isLocked = true;
     }
 
@@ -233,30 +148,37 @@ auto Mouse::UnLock() noexcept -> void
         #elif defined(WEB_PLT)
         emscripten_exit_pointerlock();
         #endif
+
 		isLocked = false;
     }
 }
 
-auto Mouse::Event::Type_to_string(Type t) -> const char *
+auto Mouse::IsLeftButtonDown() const -> bool
 {
-	using Type = Mouse::Event::Type;
-	switch (t)
-	{
-		case Type::LPress:
-			return "LPress";
-		case Type::LRelease:
-			return "LRelease";
-		case Type::RPress:
-			return "RPress";
-		case Type::RRelease:
-			return "RRelease";
-		case Type::Move:
-			return "Move";
-		case Type::Enter:
-			return "Enter";
-		case Type::Leave:
-			return "Leave";
-		default:
-			std::unreachable();
-	}
+    return left;
+}
+
+auto Mouse::IsMiddleButtonDown() 	const -> bool
+{
+	return middle;
+}
+
+auto Mouse::IsRightButtonDown() 		const -> bool
+{
+	return right;
+}
+
+auto Mouse::IsLeftButtonUp() const -> bool
+{
+    return !left;
+}
+
+auto Mouse::IsMiddleButtonUp() 	const -> bool
+{
+	return !middle;
+}
+
+auto Mouse::IsRightButtonUp() 		const -> bool
+{
+	return !right;
 }

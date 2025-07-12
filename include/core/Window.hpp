@@ -4,7 +4,7 @@
 #include <core/OpenGL.hpp>
 #include <core/Keyboard.hpp>
 #include <core/Mouse.hpp>
-#include <core/Event.hpp>
+#include <core/EventQueue.hpp>
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>
@@ -66,9 +66,9 @@ class CWindow
         static auto WindowsCount()  -> unsigned short ;
         static auto ProcessMessages([[maybe_unused]] CWindow* self)   -> void ;
         static auto WindowShouldClose() -> bool ;
-        bool PollEvent(Event& event) { return m_Events.poll(event); }
-        void WaitEvent(Event& event) { m_Events.wait_and_poll(event); }
-        void ClearEvents() { m_Events.clear(); }
+        auto PollEvent(Event& event) -> bool;
+        auto WaitEvent(Event& event) -> void;
+        auto ClearEvents() -> void;
 
     private:
         #if defined(WINDOWS_PLT)
@@ -94,10 +94,6 @@ class CWindow
         std::shared_ptr<gl::OpenGL> m_OpenGl;
         int32_t m_refCount;
         EventQueue m_Events;
-
-        int32_t m_ActiveTouchId = -1;      // -1 = no active touch
-        int32_t m_LastTouchX = 0;          // Last touch X position
-        int32_t m_LastTouchY = 0;          // Last touch Y position
 
         inline static unsigned short S_WindowsCount = 0;
 

@@ -34,14 +34,18 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 	emscripten_set_touchend_callback(m_WindowHandle, this, EM_FALSE, &CWindow::TouchHandler);
 	emscripten_set_touchcancel_callback(m_WindowHandle, this, EM_FALSE, &CWindow::TouchHandler);
 
-	emscripten_set_focusout_callback(m_WindowHandle, this, EM_FALSE,
+	emscripten_set_focus_callback(m_WindowHandle, this, EM_FALSE,
 		[](int32_t eventType, const EmscriptenFocusEvent *, void* userData) -> EM_BOOL {
 			CWindow* window = static_cast<CWindow*>(userData);
     		if (!window) return EM_TRUE;
+
 			switch (eventType)
 			{
 				case EMSCRIPTEN_EVENT_BLUR:
-					window->m_Events.push(LoseFocusEvent{});
+					window->m_Events.push(WindowFocusEvent{true});
+					break;
+				case EMSCRIPTEN_EVENT_BLUR:
+					window->m_Events.push(WindowFocusEvent{false});
 					break;
 			}
 			return EM_TRUE;
@@ -52,7 +56,7 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 		[]([[maybe_unused]] int32_t eventType, const EmscriptenWheelEvent* e, void* userData) -> EM_BOOL  {
 			CWindow* window = static_cast<CWindow*>(userData);
 			
-			window->m_Events.push(MouseWheelEvent{static_cast<int16_t>(e->deltaY * -120)});
+			window->m_Events.push(Mouse::WheelEvent{static_cast<int32_t>(e->deltaY * -120)});
 			return EM_TRUE;
 		}
 	);
@@ -66,7 +70,7 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 			auto* window = static_cast<CWindow*>(userData);
 
 			if (e->isFullscreen) Info("Enable FullScreen");
-			window->m_Events.push(WindowResizeEvent{ static_cast<uint16_t>(e->elementWidth), static_cast<uint16_t>(e->elementHeight)});
+			window->m_Events.push(WindowResizeEvent{ e->elementWidth, e->elementHeight});
 			return EM_TRUE;
 	});
 	
@@ -165,7 +169,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
             return 0;
         }
         case WM_CLOSE:{
-			m_Events.push(QuitEvent{});
+			m_Events.push(WindowQuitEvent{});
 			return 0;
         }
         case WM_SIZE:{
@@ -177,7 +181,6 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    case WM_SYSKEYDOWN: {
 
 			const bool isExtended   = (Lpr & (1 << 24)) != 0;
-        	const bool isAutoRepeat = (Lpr & (1 << 30)) != 0;  
 
 			Key key = Key::Unknown;
 				
@@ -199,8 +202,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 			}
 				
 			if (key != Key::Unknown) {
-				auto keyAction = isAutoRepeat ? Keyboard::Event::Type::Repeat : Keyboard::Event::Type::Press;
-				m_Events.push(Keyboard::Event{key, keyAction});
+				m_Events.push(Keyboard::Event{Keyboard::Action::Press, key});
 			}
 		}
 		break;
@@ -229,7 +231,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 			}
 			
 			if (key != Key::Unknown) {
-				m_Events.push(Keyboard::Event{key, Keyboard::Event::Type::Release});
+				m_Events.push(Keyboard::Event{Keyboard::Action::Release, key});
             	break;
 			}
 			break;
@@ -241,55 +243,37 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    case WM_MOUSEMOVE:
 	    {
 	    	const POINTS pt = MAKEPOINTS( Lpr );
-			m_Events.push(Mouse::Event{Mouse::Event::Type::Move, static_cast<uint16_t>(pt.x), static_cast<uint16_t>(pt.y)});
+			m_Events.push(Mouse::MoveEvent{pt.x, pt.y});
 			return 0;
 	    }
 		case WM_MOUSEHOVER :{
-			const POINTS pt = MAKEPOINTS( Lpr );
-
-			m_Events.push(Mouse::Event{Mouse::Event::Type::Enter, static_cast<uint16_t>(pt.x), static_cast<uint16_t>(pt.y)});
+			m_Events.push(Mouse::EnterEvent{});
 			return 0;
 		}
 		case WM_MOUSELEAVE :{
-			const POINTS pt = MAKEPOINTS( Lpr );
-
-			m_Events.push(Mouse::Event{Mouse::Event::Type::Leave, static_cast<uint16_t>(pt.x), static_cast<uint16_t>(pt.y)});
+			m_Events.push(Mouse::LeaveEvent{});
 			return 0;
 		}
+		// SetForegroundWindow( Winhandle );
 	    case WM_LBUTTONDOWN:
-	    {
-			const POINTS pt = MAKEPOINTS( Lpr );
-
-	    	SetForegroundWindow( Winhandle );
-			m_Events.push(Mouse::Event{Mouse::Event::Type::LPress, static_cast<uint16_t>(pt.x), static_cast<uint16_t>(pt.y)});
-	    	break;
-	    }
 	    case WM_RBUTTONDOWN:
-	    {
-			const POINTS pt = MAKEPOINTS( Lpr );
-
-	    	m_Events.push(Mouse::Event{Mouse::Event::Type::RPress, static_cast<uint16_t>(pt.x), static_cast<uint16_t>(pt.y)});
-	    	break;
-	    }
+		case WM_MBUTTONDOWN:
+	    case WM_MBUTTONUP:
 	    case WM_LBUTTONUP:
-	    {
-			const POINTS pt = MAKEPOINTS( Lpr );
-			m_Events.push(Mouse::Event{Mouse::Event::Type::LRelease, static_cast<uint16_t>(pt.x), static_cast<uint16_t>(pt.y)});
-	    	break;
-	    }
 	    case WM_RBUTTONUP:
 	    {
-	    	const POINTS pt = MAKEPOINTS( Lpr );
-
-			m_Events.push(Mouse::Event{Mouse::Event::Type::RRelease, static_cast<uint16_t>(pt.x), static_cast<uint16_t>(pt.y)});
-	    	break;
+			m_Events.push(Mouse::ButtonEvent{
+				static_cast<bool>(Wpr & MK_LBUTTON),
+				static_cast<bool>(Wpr & MK_MBUTTON),
+				static_cast<bool>(Wpr & MK_RBUTTON)
+			});
 			
+			break;
 	    }
 	    case WM_MOUSEWHEEL:
 	    {
 	    	const auto delta = GET_WHEEL_DELTA_WPARAM( Wpr );
-			
-			m_Events.push(MouseWheelEvent{delta});
+			m_Events.push(Mouse::WheelEvent{delta});
 	    	break;
 	    }
 	    ///////////////// END MOUSE MESSAGES /////////////////
@@ -321,14 +305,14 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    	if( ri.header.dwType == RIM_TYPEMOUSE &&
 	    		(ri.data.mouse.lLastX != 0 || ri.data.mouse.lLastY != 0) )
 				{
-				m_Events.push(MouseRawEvent{static_cast<int16_t>(ri.data.mouse.lLastX), static_cast<int16_t>(ri.data.mouse.lLastY)});
+				m_Events.push(Mouse::RawDeltaEvent{ri.data.mouse.lLastX, ri.data.mouse.lLastY});
 	    	}
 	    	break;
 	    }
 	    ///////////////// END RAW MOUSE MESSAGES /////////////////
         case WM_KILLFOCUS:
 		m_Events.clear();
-		m_Events.push(LoseFocusEvent{});
+		m_Events.push(WindowFocusEvent{});
 		ClipCursor(nullptr); //release cursor confinement
 		break;
 
@@ -375,7 +359,7 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
     Expect(window_handle != 0, "window_handle are null ???");
     XStoreName(DrawContext, window_handle, Title);
 
-	XkbSetDetectableAutoRepeat(DrawContext, true, NULL);
+	// XkbSetDetectableAutoRepeat(DrawContext, true, NULL);
 
     /* Select input events */
     XSelectInput(DrawContext, window_handle,
@@ -507,16 +491,12 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
         case EMSCRIPTEN_EVENT_KEYDOWN: {
             uint32_t vk = MapToVirtualKey(e->code);
 
-            auto keyAction = e->repeat 
-                ? Keyboard::Event::Type::Repeat 
-                : Keyboard::Event::Type::Press;
-
-				window->m_Events.push(Keyboard::Event{Keyboard::FromNative(vk), keyAction});
+			window->m_Events.push(Keyboard::Event{Keyboard::Action::Press, Keyboard::FromNative(vk)});
         } break;
 
         case EMSCRIPTEN_EVENT_KEYUP: {
             uint32_t vk = MapToVirtualKey(e->code);
-			window->m_Events.push(Keyboard::Event{Keyboard::FromNative(vk), Keyboard::Event::Type::Release});
+			window->m_Events.push(Keyboard::Event{Keyboard::Action::Release, Keyboard::FromNative(vk)});
         } break;
     }
 
@@ -528,40 +508,31 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_TRUE;
 
-	Mouse::Event::Type action;
-	if (e->button == 0) action = Mouse::Event::Type::LPress;
-	else if (e->button == 2) action = Mouse::Event::Type::RPress;
-
-	auto x = static_cast<uint16_t>(e->targetX); 
-	auto y = static_cast<uint16_t>(e->targetY);
+	constexpr size_t MOUSE_BUTTON_LEFT = 1;
+	constexpr size_t MOUSE_BUTTON_RIGHT = 2;
+	constexpr size_t MOUSE_BUTTON_MIDDLE = 4;
 
 	switch (eventType) {
 
         case EMSCRIPTEN_EVENT_MOUSEDOWN:
-			if (e->button == 0) action = Mouse::Event::Type::LPress;
-			else if (e->button == 2) action = Mouse::Event::Type::RPress;
-
-			window->m_Events.push(Mouse::Event{action, x, y});
-            break;
-
         case EMSCRIPTEN_EVENT_MOUSEUP:
-			if (e->button == 0) action = Mouse::Event::Type::LRelease;
-			else if (e->button == 2) action = Mouse::Event::Type::RRelease;
-
-            window->m_Events.push(Mouse::Event{action, x, y});
+			window->m_Events.push(Mouse::ButtonEvent{
+				static_cast<bool>(e->buttons & MOUSE_BUTTON_LEFT),
+				static_cast<bool>(e->buttons & MOUSE_BUTTON_MIDDLE),
+				static_cast<bool>(e->buttons & MOUSE_BUTTON_RIGHT),
+			});
             break;
-
         case EMSCRIPTEN_EVENT_MOUSEMOVE:
-			window->m_Events.push(MouseRawEvent{static_cast<int16_t>(e->movementX), static_cast<int16_t>(e->movementY)});
-            window->m_Events.push(Mouse::Event{Mouse::Event::Type::Move, x, y});
+			window->m_Events.push(Mouse::RawDeltaEvent{e->movementX, e->movementY});
+            window->m_Events.push(Mouse::MoveEvent{e->targetX, e->targetY});
             break;
 
         case EMSCRIPTEN_EVENT_MOUSEENTER:
-            window->m_Events.push(Mouse::Event{Mouse::Event::Type::Enter, x, y});
+            window->m_Events.push(Mouse::EnterEvent{});
             break;
 
         case EMSCRIPTEN_EVENT_MOUSELEAVE:
-			window->m_Events.push(Mouse::Event{Mouse::Event::Type::Leave, x, y});
+			window->m_Events.push(Mouse::LeaveEvent{});
             break;
     }
 
@@ -612,35 +583,31 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
             std::swap(screenwidth, screenheight);
         }
 
-		Mouse::Event::Type action;
-
         switch (eventType) {
             case EMSCRIPTEN_EVENT_TOUCHSTART:
 				lastPos[id] = { static_cast<int16_t>(x), static_cast<int16_t>(y) };
-                action = Mouse::Event::Type::LPress;
+				window->m_Events.push(Mouse::EnterEvent{});
                 break;
-            case EMSCRIPTEN_EVENT_TOUCHEND:
-            case EMSCRIPTEN_EVENT_TOUCHCANCEL:
+				case EMSCRIPTEN_EVENT_TOUCHEND:
+				case EMSCRIPTEN_EVENT_TOUCHCANCEL:
 				lastPos.erase(id);
-                action = Mouse::Event::Type::LRelease;
+				window->m_Events.push(Mouse::LeaveEvent{});
                 break;
-            case EMSCRIPTEN_EVENT_TOUCHMOVE:{
+				case EMSCRIPTEN_EVENT_TOUCHMOVE:{
 			 	// lookup previous
 				auto old = lastPos.find(id);
 				if (old != lastPos.end()) {
-					int16_t dx = static_cast<int16_t>(x) - old->second.first;
-					int16_t dy = static_cast<int16_t>(y) - old->second.second;
+					int32_t dx = static_cast<int32_t>(x) - old->second.first;
+					int32_t dy = static_cast<int32_t>(y) - old->second.second;
 					// push a raw‐delta event
-					window->m_Events.push(MouseRawEvent{ dx, dy });
+					window->m_Events.push(Mouse::RawDeltaEvent{ dx, dy });
 				}
 				// also update stored pos
-				lastPos[id] = { static_cast<int16_t>(x), static_cast<int16_t>(y) };
-				action = Mouse::Event::Type::Move;
-				}
-                break;
+				lastPos[id] = { x, y };
+				window->m_Events.push(Mouse::MoveEvent{x, y});
+			}
+            break;
         }
-
-		window->m_Events.push(Mouse::Event{action, static_cast<uint16_t>(x), static_cast<uint16_t>(y)});
     }
 
     return EM_FALSE;
@@ -677,7 +644,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 
 			case ConfigureNotify:
 				// Handle window resize
-				self->m_Events.push(WindowResizeEvent{static_cast<uint16_t>(event.xconfigure.width), static_cast<uint16_t>(event.xconfigure.height)});
+				self->m_Events.push(WindowResizeEvent{event.xconfigure.width, event.xconfigure.height});
 				break;
 
 			case KeyPress:
@@ -706,22 +673,21 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 				}
 
 				if (event.type == KeyPress) {
-					self->m_Events.push(Keyboard::Event{Keyboard::FromNative(vk), Keyboard::Event::Type::Press});
+					self->m_Events.push(Keyboard::Event{Keyboard::Action::Press, Keyboard::FromNative(vk)});
 				} else {
-					self->m_Events.push(Keyboard::Event{Keyboard::FromNative(vk), Keyboard::Event::Type::Release});
+					self->m_Events.push(Keyboard::Event{Keyboard::Action::Release, Keyboard::FromNative(vk)});
 				}
-				break;
 				break;
 			}
 
 			case FocusOut:
 				// Clear keyboard state when window loses focus
-				self->m_Events.push(LoseFocusEvent{});
+				self->m_Events.push(WindowFocusEvent{});
 				break;
 
 			case ClientMessage:
 				if (event.xclient.data.l[0] == wmDeleteMessage){
-					self->m_Events.push(QuitEvent{});
+					self->m_Events.push(WindowQuitEvent{});
 				}
 				break;
 		}
@@ -780,6 +746,10 @@ auto CWindow::Hide() -> void
 	m_Visible = false;
 }
 
+bool CWindow::PollEvent(Event& event) { return m_Events.poll(event); }
+void CWindow::WaitEvent(Event& event) { m_Events.wait_and_poll(event); }
+void CWindow::ClearEvents() { m_Events.clear(); }
+
 auto CWindow::WindowShouldClose() -> bool
 {
 	#if !defined(WEB_PLT)
@@ -789,6 +759,7 @@ auto CWindow::WindowShouldClose() -> bool
 	return false;
 	#endif
 }
+
 auto CWindow::ToggleFullScreen() -> void
 {
 	#if defined(WINDOWS_PLT)

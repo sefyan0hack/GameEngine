@@ -9,143 +9,50 @@
 #include <emscripten/key_codes.h>
 #endif
 
-// Event/////////////////////////////////////////////////
-Keyboard::Event::Event() noexcept
-    : key( Key::Unknown )
-    , type( Type::Release )
-{}
 
-Keyboard::Event::Event( Key key, Type type ) noexcept
-    : key( key )
-    , type( type )
-{}
-
-auto Keyboard::Event::IsPress() const noexcept -> bool
-{
-	return type == Type::Press;
-}
-auto Keyboard::Event::IsRelease() const noexcept -> bool
-{
-	return type == Type::Release;
-}
-auto Keyboard::Event::IsRepeat() const noexcept -> bool
-{
-	return type == Type::Repeat;
-}
-auto Keyboard::Event::Code() const noexcept -> Key
-{
-	return key;
-}
-/////////////////////////////////////////////////////////
-
-//Keyboard//////////////////////////////////////////////
-Keyboard::Keyboard(){
-	keystates.reset();
-}
 auto Keyboard::IsKeyDown(Key key) const noexcept -> bool
 {
-    return keystates[std::to_underlying(key)];
+    return m_CurrKeyState[std::to_underlying(key)];
 }
 auto Keyboard::IsKeyUp(Key key) const noexcept -> bool
 {
-    return !keystates[std::to_underlying(key)];
+    return !m_CurrKeyState[std::to_underlying(key)];
 }
 
 auto Keyboard::IsKeyPressed(Key key) const noexcept -> bool
 {
-    bool pressFound = false;
-    std::queue<Event> temp = keybuffer;
-    while (!temp.empty()) {
-        const Event& e = temp.front();
-        if (e.key == key) {
-            if (e.type == Event::Type::Press) {
-                pressFound = true;
-            } else if (e.type == Event::Type::Release) {
-                pressFound = false;
-            }
-        }
-        temp.pop();
-    }
-    return pressFound;
+    const auto index = std::to_underlying(key);
+    return m_CurrKeyState[index] && !m_PrevKeyState[index];
 }
 
 auto Keyboard::IsKeyReleased(Key key) const noexcept -> bool
 {
-    bool releaseFound = false;
-    std::queue<Event> temp = keybuffer;
-    while (!temp.empty()) {
-        const Event& e = temp.front();
-        if (e.key == key) {
-            if (e.type == Event::Type::Release) {
-                releaseFound = true;
-            } else if (e.type == Event::Type::Press) {
-                releaseFound = false;
-            }
-        }
-        temp.pop();
-    }
-    return releaseFound;
+    const auto index = std::to_underlying(key);
+    return !m_CurrKeyState[index] && m_PrevKeyState[index];
 }
-
-auto Keyboard::ReadKey() noexcept -> std::optional<Keyboard::Event>
-{
-	if( !keybuffer.empty() )
-	{
-		Keyboard::Event e = keybuffer.front();
-		keybuffer.pop();
-		return e;
-	}
-	return {};
-}
-
-
-auto Keyboard::FlushKey() noexcept -> void
-{
-	keybuffer = {};
-}
-
-auto Keyboard::Flush() noexcept -> void
-{
-	FlushKey();
-}
-
 
 auto Keyboard::OnKeyPressed(Key key) noexcept -> void
 {
     const auto index = std::to_underlying(key);
-    keystates[index] = true;
-	keybuffer.emplace(key, Keyboard::Event::Type::Press);
-	TrimBuffer(keybuffer);
+    m_CurrKeyState[index] = true;
 }
 
 auto Keyboard::OnKeyReleased(Key key) noexcept -> void
 {
     const auto index = std::to_underlying(key);
-    keystates[index] = false;
-	keybuffer.emplace(key, Keyboard::Event::Type::Release);
-	TrimBuffer(keybuffer);
+    m_CurrKeyState[index] = false;
 }
 
-auto Keyboard::OnKeyRepeat(Key key) noexcept -> void
-{
-    keybuffer.emplace(key, Keyboard::Event::Type::Repeat);
-    TrimBuffer(keybuffer);
+auto Keyboard::SavePrevState() noexcept -> void { 
+    m_PrevKeyState = m_CurrKeyState;
 }
 
 auto Keyboard::ClearState() noexcept -> void
 {
-	keystates.reset();
+	m_CurrKeyState.reset();
+	m_PrevKeyState.reset();
 }
 
-template<typename Container>
-requires requires(Container c){ c.size(); c.pop(); }
-auto Keyboard::TrimBuffer( Container& buffer ) noexcept -> void
-{
-	while( buffer.size() > bufferSize )
-	{
-		buffer.pop();
-	}
-}
 /////////////////////////////////////////////////////////
 
 auto Keyboard::FromNative(uint64_t key) -> Key

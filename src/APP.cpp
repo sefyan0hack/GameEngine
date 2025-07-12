@@ -25,13 +25,12 @@ APP::APP()
     Window.Show();
 }
 
-
 auto APP::Frame(float deltaTime) -> void
 {
     gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     Update(deltaTime);
     Window.SwapBuffers();
-    // m_Keyboard.UpdatePrevState();
+    Keyboard.SavePrevState();
 }
 
 auto APP::LoopBody(void* ctx) -> void
@@ -44,7 +43,7 @@ auto APP::LoopBody(void* ctx) -> void
     Event event;
     while (window.PollEvent(event)) {
         std::visit(overloaded {
-            [&window](const QuitEvent&) {
+            [&window](const WindowQuitEvent&) {
                 #if defined(WINDOWS_PLT)
                 int32_t ret = MessageBoxA(window.Handle(), "Close.", "Exit", MB_YESNO | MB_ICONWARNING);
                 if (ret == IDYES)
@@ -60,62 +59,39 @@ auto APP::LoopBody(void* ctx) -> void
                 gl::Viewport(0, 0, e.width, e.height);
             },
             [&app](const Keyboard::Event& e) {
-                switch (e.type)
+                switch (e.action)
                 {
-                case Keyboard::Event::Type::Press:
+                case Keyboard::Action::Press:
 				    app->Keyboard.OnKeyPressed(e.key);
                     break;
-                case Keyboard::Event::Type::Release:
+                case Keyboard::Action::Release:
 				    app->Keyboard.OnKeyReleased(e.key);
-                    break;
-                case Keyboard::Event::Type::Repeat:
-                    app->Keyboard.OnKeyRepeat(e.key);
                     break;
                 default:
                     std::unreachable();
                 }
             },
-            [&app](const Mouse::Event& e) {
-                switch (e.type)
-                {
-                    case Mouse::Event::Type::LPress:
-                        app->Mouse.OnLeftPressed();
-                        Info("LPress at [{},{}]", e.x, e.y);
-                        break;
-                    case Mouse::Event::Type::LRelease:
-                        app->Mouse.OnLeftReleased();
-                        Info("LRelease at [{},{}]", e.x, e.y);
-                        break;
-                    case Mouse::Event::Type::RPress:
-                        app->Mouse.OnRightPressed();
-                        Info("RPress at [{},{}]", e.x, e.y);
-                        break;
-                    case Mouse::Event::Type::RRelease:
-                        app->Mouse.OnRightReleased();
-                        Info("RRelease at [{},{}]", e.x, e.y);
-                        break;
-                    case Mouse::Event::Type::Move:
-                        app->Mouse.OnMouseMove(e.x, e.y);
-                        break;
-                    case Mouse::Event::Type::Enter:
-                        app->Mouse.OnMouseEnter();
-                        break;
-                    case Mouse::Event::Type::Leave:
-                        app->Mouse.OnMouseLeave();
-                        break;
-                    default:
-                    std::unreachable();
-                }
+            [&app](const Mouse::ButtonEvent& e) {
+                app->Mouse.OnButtonChange(e.left, e.middle, e.right);
+                Info("[{}|{}|{}]",e.left, e.middle, e.right);
             },
-            [&app](const MouseWheelEvent& e) {
+            [&app](const Mouse::EnterEvent&) {
+                app->Mouse.OnMouseEnter();
+            },
+            [&app](const Mouse::LeaveEvent&) {
+                app->Mouse.OnMouseLeave();
+            },
+            [&app](const Mouse::MoveEvent& e) {
+                app->Mouse.OnMouseMove(e.x, e.y);
+            },
+            [&app](const Mouse::RawDeltaEvent& e) {
+                app->Mouse.OnRawDelta(e.dx, e.dy);
+            },
+            [&app](const Mouse::WheelEvent& e) {
                 app->Mouse.OnWheelDelta(e.delta);
             },
-            [&app](const MouseRawEvent& e) {
-	    		app->Mouse.OnRawDelta( e.dx, e.dy );
-                Info("Raw  [{},{}]", e.dx, e.dy);
-            },
-            [&app](const LoseFocusEvent&) {
-		        app->Keyboard.ClearState();
+            [&app](const WindowFocusEvent& e) {
+		        if(!e.focus) app->Keyboard.ClearState();
             },
             [](const auto&) { /* Unhandeled Events */ },
         }, event);

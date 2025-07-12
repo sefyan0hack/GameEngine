@@ -101,8 +101,11 @@ auto Camera::MoseMove(Mouse& mouse) -> void
     constexpr float LIMIT_ANGLE = 45.0f;
 
     while (auto op = mouse.ReadRawDelta()) {
-        float xoff = static_cast<float>(op->x)* m_Sensitivity;
-        float yoff = static_cast<float>(-op->y) * m_Sensitivity;
+        auto [dx, dy] = op.value();
+
+        float xoff = static_cast<float>(dx)* m_Sensitivity;
+        float yoff = static_cast<float>(-dy) * m_Sensitivity;
+
         this->m_Yaw += xoff;
         this->m_Pitch += yoff;
     }
