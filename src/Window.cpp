@@ -37,7 +37,7 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 	emscripten_set_focus_callback(m_WindowHandle, this, EM_FALSE,
 		[](int32_t eventType, const EmscriptenFocusEvent *, void* userData) -> EM_BOOL {
 			CWindow* window = static_cast<CWindow*>(userData);
-    		if (!window) return EM_TRUE;
+    		if (!window) return EM_FALSE;
 
 			switch (eventType)
 			{
@@ -385,128 +385,118 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
 auto CWindow::ResizeHandler(int32_t eventType, const EmscriptenUiEvent* e, void* userData) -> EM_BOOL
 {
     CWindow* window = static_cast<CWindow*>(userData);
-    if (!window) return EM_TRUE;
-
-    window->m_Width  = e->windowInnerWidth;
-    window->m_Height = e->windowInnerHeight;
-
-	gl::Viewport(0, 0, window->m_Width, window->m_Height);
+    if (!window) return EM_FALSE;
+	self->m_Events.push(WindowResizeEvent{e->windowInnerWidth, e->windowInnerHeight});
     return EM_TRUE;
 }
 
 auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, void* userData) -> EM_BOOL
 {
     CWindow* window = static_cast<CWindow*>(userData);
-    if (!window) return EM_TRUE;
+    if (!window) return EM_FALSE;
+	constexpr auto MAX_UINT32_T = std::numeric_limits<uint32_t>::max();
 
-    auto MapToVirtualKey = [](const char* code) -> uint32_t {
-        // Alphanumeric keys
-        if (strlen(code) == 4 && code[0] == 'K' && code[1] == 'e' && code[2] == 'y') 
-            return DOM_VK_A + (code[3] - 'A'); // 'A'-'Z'
-        if (strlen(code) == 6 && !strncmp(code, "Digit", 5)) 
-            return DOM_VK_0 + (code[5] - '0');  // '0'-'9'
+    uint32_t vk = MAX_UINT32_T;
 
-		// Function keys (F1-F24)
-        if (strlen(code) > 1 && code[0] == 'F') {
-            int fnum = atoi(code + 1);
-            if (fnum >= 1 && fnum <= 24)
-                return DOM_VK_F1 + (fnum - 1);
-        }
-
-        // Special keys
-        if (strcmp(code, "Backspace") == 0) return DOM_VK_BACK_SPACE;
-        if (strcmp(code, "Tab") == 0) return DOM_VK_TAB;
-        if (strcmp(code, "Enter") == 0) return DOM_VK_ENTER;
-        if (strcmp(code, "ShiftLeft") == 0 || strcmp(code, "ShiftRight") == 0) return DOM_VK_SHIFT;
-        if (strcmp(code, "ControlLeft") == 0 || strcmp(code, "ControlRight") == 0) return DOM_VK_CONTROL;
-        if (strcmp(code, "AltLeft") == 0) return DOM_VK_ALT;
-		if (strcmp(code, "AltRight") == 0) return DOM_VK_ALTGR;
-        if (strcmp(code, "Escape") == 0) return DOM_VK_ESCAPE;
-        if (strcmp(code, "Space") == 0) return DOM_VK_SPACE;
-
-		if (strcmp(code, "CapsLock") == 0) return DOM_VK_CAPS_LOCK;
-		if (strcmp(code, "PrintScreen") == 0) return DOM_VK_PRINTSCREEN;
-		if (strcmp(code, "ScrollLock") == 0) return DOM_VK_SCROLL_LOCK;
-		if (strcmp(code, "Pause") == 0) return DOM_VK_PAUSE;
-		
-		// Navigation keys
-		if (strcmp(code, "Insert") == 0) return DOM_VK_INSERT;
-		if (strcmp(code, "Delete") == 0) return DOM_VK_DELETE;
-		if (strcmp(code, "Home") == 0) return DOM_VK_HOME;
-		if (strcmp(code, "End") == 0) return DOM_VK_END;
-		if (strcmp(code, "PageUp") == 0) return DOM_VK_PAGE_UP;
-		if (strcmp(code, "PageDown") == 0) return DOM_VK_PAGE_DOWN;
-		
-		// Arrow keys
-		if (strcmp(code, "ArrowLeft") == 0) return DOM_VK_LEFT;
-		if (strcmp(code, "ArrowRight") == 0) return DOM_VK_RIGHT;
-		if (strcmp(code, "ArrowUp") == 0) return DOM_VK_UP;
-		if (strcmp(code, "ArrowDown") == 0) return DOM_VK_DOWN;
-		
-		// Numpad keys
-		if (strcmp(code, "Numpad0") == 0) return DOM_VK_NUMPAD0;
-		if (strcmp(code, "Numpad1") == 0) return DOM_VK_NUMPAD1;
-		if (strcmp(code, "Numpad2") == 0) return DOM_VK_NUMPAD2;
-		if (strcmp(code, "Numpad3") == 0) return DOM_VK_NUMPAD3;
-		if (strcmp(code, "Numpad4") == 0) return DOM_VK_NUMPAD4;
-		if (strcmp(code, "Numpad5") == 0) return DOM_VK_NUMPAD5;
-		if (strcmp(code, "Numpad6") == 0) return DOM_VK_NUMPAD6;
-		if (strcmp(code, "Numpad7") == 0) return DOM_VK_NUMPAD7;
-		if (strcmp(code, "Numpad8") == 0) return DOM_VK_NUMPAD8;
-		if (strcmp(code, "Numpad9") == 0) return DOM_VK_NUMPAD9;
-		if (strcmp(code, "NumpadDecimal") == 0) return DOM_VK_DECIMAL;
-		if (strcmp(code, "NumpadDivide") == 0) return DOM_VK_DIVIDE;
-		if (strcmp(code, "NumpadMultiply") == 0) return DOM_VK_MULTIPLY;
-		if (strcmp(code, "NumpadSubtract") == 0) return DOM_VK_SUBTRACT;
-		if (strcmp(code, "NumpadAdd") == 0) return DOM_VK_ADD;
-		if (strcmp(code, "NumpadEnter") == 0) return DOM_VK_ENTER;
-		if (strcmp(code, "NumpadEqual") == 0) return DOM_VK_EQUALS;
-		
-		// Punctuation keys
-		if (strcmp(code, "Comma") == 0) return DOM_VK_COMMA;
-		if (strcmp(code, "Period") == 0) return DOM_VK_PERIOD;
-		if (strcmp(code, "Semicolon") == 0) return DOM_VK_SEMICOLON;
-		if (strcmp(code, "Quote") == 0) return DOM_VK_QUOTE;
-		if (strcmp(code, "BracketLeft") == 0) return DOM_VK_OPEN_BRACKET;
-		if (strcmp(code, "BracketRight") == 0) return DOM_VK_CLOSE_BRACKET;
-		if (strcmp(code, "Backslash") == 0) return DOM_VK_BACK_SLASH;
-		if (strcmp(code, "Slash") == 0) return DOM_VK_SLASH;
-		if (strcmp(code, "Backquote") == 0) return DOM_VK_BACK_QUOTE;
-		if (strcmp(code, "Minus") == 0) return DOM_VK_HYPHEN_MINUS;
-		if (strcmp(code, "Equal") == 0) return DOM_VK_EQUALS;
-		
-		// Modifier keys
-		if (strcmp(code, "MetaLeft") == 0 || strcmp(code, "MetaRight") == 0) 
-			return DOM_VK_META;
-
-		// Media keys (optional)
-		if (strcmp(code, "VolumeMute") == 0) return 0xAD;  // VK_VOLUME_MUTE
-		if (strcmp(code, "VolumeDown") == 0) return 0xAE;  // VK_VOLUME_DOWN
-		if (strcmp(code, "VolumeUp") == 0) return 0xAF;   // VK_VOLUME_UP
-        return 0;
-    };
-
-
-    switch (eventType) {
-        case EMSCRIPTEN_EVENT_KEYDOWN: {
-            uint32_t vk = MapToVirtualKey(e->code);
-
-			window->m_Events.push(Keyboard::Event{Keyboard::Action::Press, Keyboard::FromNative(vk)});
-        } break;
-
-        case EMSCRIPTEN_EVENT_KEYUP: {
-            uint32_t vk = MapToVirtualKey(e->code);
-			window->m_Events.push(Keyboard::Event{Keyboard::Action::Release, Keyboard::FromNative(vk)});
-        } break;
+    // Alphanumeric keys
+	if (strncmp(code, "Key", 3) == 0 && code[3] >= 'A' && code[3] <= 'Z') {
+        vk = DOM_VK_A + (code[3] - 'A');
+    }
+	else if (strncmp(code, "Digit", 5) == 0 && code[5] >= '0' && code[5] <= '9') {
+        vk = DOM_VK_0 + (code[5] - '0');
     }
 
-    return MapToVirtualKey(e->code) ? EM_TRUE : EM_FALSE;
+	// Function keys (F1-F24)
+    else if (strlen(e->code) > 1 && e->code[0] == 'F') {
+        int fnum = atoi(e->code + 1);
+        if (fnum >= 1 && fnum <= 24)
+            vk = DOM_VK_F1 + (fnum - 1);
+    }
+
+    // Special keys
+    else if (strcmp(e->code, "Backspace") == 0) vk = DOM_VK_BACK_SPACE;
+    else if (strcmp(e->code, "Tab") == 0) vk = DOM_VK_TAB;
+    else if (strcmp(e->code, "Enter") == 0) vk = DOM_VK_ENTER;
+    else if (strcmp(e->code, "ShiftLeft") == 0 || strcmp(e->code, "ShiftRight") == 0) vk = DOM_VK_SHIFT;
+    else if (strcmp(e->code, "ControlLeft") == 0 || strcmp(e->code, "ControlRight") == 0) vk = DOM_VK_CONTROL;
+    else if (strcmp(e->code, "AltLeft") == 0) vk = DOM_VK_ALT;
+	else if (strcmp(e->code, "AltRight") == 0) vk = DOM_VK_ALTGR;
+    else if (strcmp(e->code, "Escape") == 0) vk = DOM_VK_ESCAPE;
+    else if (strcmp(e->code, "Space") == 0) vk = DOM_VK_SPACE;
+
+	else if (strcmp(e->code, "CapsLock") == 0) vk = DOM_VK_CAPS_LOCK;
+	else if (strcmp(e->code, "PrintScreen") == 0) vk = DOM_VK_PRINTSCREEN;
+	else if (strcmp(e->code, "ScrollLock") == 0) vk = DOM_VK_SCROLL_LOCK;
+	else if (strcmp(e->code, "Pause") == 0) vk = DOM_VK_PAUSE;
+
+	// Navigation keys
+	else if (strcmp(e->code, "Insert") == 0) vk = DOM_VK_INSERT;
+	else if (strcmp(e->code, "Delete") == 0) vk = DOM_VK_DELETE;
+	else if (strcmp(e->code, "Home") == 0) vk = DOM_VK_HOME;
+	else if (strcmp(e->code, "End") == 0) vk = DOM_VK_END;
+	else if (strcmp(e->code, "PageUp") == 0) vk = DOM_VK_PAGE_UP;
+	else if (strcmp(e->code, "PageDown") == 0) vk = DOM_VK_PAGE_DOWN;
+
+	// Arrow keys
+	else if (strcmp(e->code, "ArrowLeft") == 0) vk = DOM_VK_LEFT;
+	else if (strcmp(e->code, "ArrowRight") == 0) vk = DOM_VK_RIGHT;
+	else if (strcmp(e->code, "ArrowUp") == 0) vk = DOM_VK_UP;
+	else if (strcmp(e->code, "ArrowDown") == 0) vk = DOM_VK_DOWN;
+
+	// Numpad keys
+	else if (strcmp(e->code, "Numpad0") == 0) vk = DOM_VK_NUMPAD0;
+	else if (strcmp(e->code, "Numpad1") == 0) vk = DOM_VK_NUMPAD1;
+	else if (strcmp(e->code, "Numpad2") == 0) vk = DOM_VK_NUMPAD2;
+	else if (strcmp(e->code, "Numpad3") == 0) vk = DOM_VK_NUMPAD3;
+	else if (strcmp(e->code, "Numpad4") == 0) vk = DOM_VK_NUMPAD4;
+	else if (strcmp(e->code, "Numpad5") == 0) vk = DOM_VK_NUMPAD5;
+	else if (strcmp(e->code, "Numpad6") == 0) vk = DOM_VK_NUMPAD6;
+	else if (strcmp(e->code, "Numpad7") == 0) vk = DOM_VK_NUMPAD7;
+	else if (strcmp(e->code, "Numpad8") == 0) vk = DOM_VK_NUMPAD8;
+	else if (strcmp(e->code, "Numpad9") == 0) vk = DOM_VK_NUMPAD9;
+	else if (strcmp(e->code, "NumpadDecimal") == 0) vk = DOM_VK_DECIMAL;
+	else if (strcmp(e->code, "NumpadDivide") == 0) vk = DOM_VK_DIVIDE;
+	else if (strcmp(e->code, "NumpadMultiply") == 0) vk = DOM_VK_MULTIPLY;
+	else if (strcmp(e->code, "NumpadSubtract") == 0) vk = DOM_VK_SUBTRACT;
+	else if (strcmp(e->code, "NumpadAdd") == 0) vk = DOM_VK_ADD;
+	else if (strcmp(e->code, "NumpadEnter") == 0) vk = DOM_VK_ENTER;
+	else if (strcmp(e->code, "NumpadEqual") == 0) vk = DOM_VK_EQUALS;
+
+	// Punctuation keys
+	else if (strcmp(e->code, "Comma") == 0) vk = DOM_VK_COMMA;
+	else if (strcmp(e->code, "Period") == 0) vk = DOM_VK_PERIOD;
+	else if (strcmp(e->code, "Semicolon") == 0) vk = DOM_VK_SEMICOLON;
+	else if (strcmp(e->code, "Quote") == 0) vk = DOM_VK_QUOTE;
+	else if (strcmp(e->code, "BracketLeft") == 0) vk = DOM_VK_OPEN_BRACKET;
+	else if (strcmp(e->code, "BracketRight") == 0) vk = DOM_VK_CLOSE_BRACKET;
+	else if (strcmp(e->code, "Backslash") == 0) vk = DOM_VK_BACK_SLASH;
+	else if (strcmp(e->code, "Slash") == 0) vk = DOM_VK_SLASH;
+	else if (strcmp(e->code, "Backquote") == 0) vk = DOM_VK_BACK_QUOTE;
+	else if (strcmp(e->code, "Minus") == 0) vk = DOM_VK_HYPHEN_MINUS;
+	else if (strcmp(e->code, "Equal") == 0) vk = DOM_VK_EQUALS;
+
+	// Modifier keys
+	else if (strcmp(e->code, "MetaLeft") == 0 || strcmp(e->code, "MetaRight") == 0) 
+		vk = DOM_VK_META;
+
+	// Media keys (optional)
+	else if (strcmp(e->code, "VolumeMute") == 0) vk = 0xAD;   // VK_VOLUME_MUTE
+	else if (strcmp(e->code, "VolumeDown") == 0) vk = 0xAE;  // VK_VOLUME_DOWN
+	else if (strcmp(e->code, "VolumeUp") == 0) vk = 0xAF;   // VK_VOLUME_UP
+	
+	if( vk != MAX_UINT32_T){
+		Keyboard::Action action = (eventType == EMSCRIPTEN_EVENT_KEYDOWN) ? Keyboard::Action::Press : Keyboard::Action::Release;
+		window->m_Events.push(Keyboard::Event{ action, Keyboard::FromNative(vk) });
+		return EM_TRUE;
+	}else{
+		return EM_FALSE;
+	}
 }
 
 auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, void* userData) -> EM_BOOL
 {
     CWindow* window = static_cast<CWindow*>(userData);
-    if (!window) return EM_TRUE;
+    if (!window) return EM_FALSE;
 
 	constexpr size_t MOUSE_BUTTON_LEFT = 1;
 	constexpr size_t MOUSE_BUTTON_RIGHT = 2;
@@ -536,13 +526,13 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
             break;
     }
 
-    return EM_FALSE;
+    return EM_TRUE;
 }
 
 auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, void* userData) -> EM_BOOL
 {
     CWindow* window = static_cast<CWindow*>(userData);
-    if (!window) return EM_TRUE;
+    if (!window) return EM_FALSE;
 
     static std::unordered_map<int32_t, std::pair<int16_t, int16_t>> lastPos;
 	// Check if in mobile mode using media query
