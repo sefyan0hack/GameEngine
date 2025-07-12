@@ -77,7 +77,7 @@ if(EMSCRIPTEN)
     set(RTTI OFF)
     
     add_compile_options(
-        -Oz
+        -O2
         -g0
         -std=c++23
         -Wno-character-conversion -Wno-dollar-in-identifier-extension
@@ -88,7 +88,7 @@ if(EMSCRIPTEN)
     )
 
     add_link_options(
-        -Oz
+        -O2
         -g0
         -sASYNCIFY
         -sUSE_WEBGL2=1
@@ -105,12 +105,12 @@ if(EMSCRIPTEN)
         -fno-exceptions -fno-rtti
         --embed-file ${CMAKE_SOURCE_DIR}/res
         -sSTRICT=1
-        -sMALLOC=emmalloc
+        -sMALLOC=dlmalloc
         -sENVIRONMENT=web
         -sDYNAMIC_EXECUTION=0
         -sWASM=1
         -lGL
-        -sASSERTIONS=0
+        -sASSERTIONS=1
     )
 
     configure_file(
