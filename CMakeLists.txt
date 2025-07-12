@@ -95,7 +95,6 @@ if(EMSCRIPTEN)
         -sMIN_WEBGL_VERSION=1
         -sMAX_WEBGL_VERSION=2
         -sALLOW_MEMORY_GROWTH=1
-        -sSAFE_HEAP=1
         # -sNO_EXIT_RUNTIME=1
         -sFULL_ES3=1
         # -sSTB_IMAGE=1
