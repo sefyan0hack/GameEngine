@@ -41,10 +41,10 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 
 			switch (eventType)
 			{
-				case EMSCRIPTEN_EVENT_BLUR:
+				case EMSCRIPTEN_EVENT_FOCUS:
 					window->m_Events.push(WindowFocusEvent{true});
 					break;
-				case EMSCRIPTEN_EVENT_BLUR:
+				case EMSCRIPTEN_EVENT_:
 					window->m_Events.push(WindowFocusEvent{false});
 					break;
 			}
@@ -604,7 +604,7 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
 				}
 				// also update stored pos
 				lastPos[id] = { x, y };
-				window->m_Events.push(Mouse::MoveEvent{x, y});
+				window->m_Events.push(Mouse::MoveEvent{static_cast<int32_t>(x), static_cast<int32_t>(y)});
 			}
             break;
         }
