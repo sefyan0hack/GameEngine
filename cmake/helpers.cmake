@@ -86,7 +86,7 @@ function(apply_warning_options)
             -Wall -Wextra -Wpedantic -Wconversion -Wfloat-equal -Wwrite-strings -Wno-sign-conversion
             -Wnull-dereference -Wswitch-enum
             -Wuninitialized -Wpointer-arith -Wreturn-type -Wredundant-decls
-            -fno-operator-names
+            -fno-operator-names -Wno-changes-meaning
         )
 
         target_compile_options(${target} PRIVATE
