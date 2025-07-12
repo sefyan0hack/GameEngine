@@ -44,7 +44,7 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 				case EMSCRIPTEN_EVENT_FOCUS:
 					window->m_Events.push(WindowFocusEvent{true});
 					break;
-				case EMSCRIPTEN_EVENT_:
+				case EMSCRIPTEN_EVENT_BLUR:
 					window->m_Events.push(WindowFocusEvent{false});
 					break;
 			}
