@@ -11,9 +11,6 @@ constexpr uint32_t DOM_VK_BROWSER_FAVORITES = 171;
 constexpr uint32_t DOM_VK_BROWSER_HOME = 172;
 
 // Media control keys (DOM Level 3)
-constexpr uint32_t DOM_VK_VOLUME_MUTE = 173;
-constexpr uint32_t DOM_VK_VOLUME_DOWN = 174;
-constexpr uint32_t DOM_VK_VOLUME_UP = 175;
 constexpr uint32_t DOM_VK_MEDIA_TRACK_NEXT = 176;
 constexpr uint32_t DOM_VK_MEDIA_TRACK_PREVIOUS = 177;
 constexpr uint32_t DOM_VK_MEDIA_STOP = 178;
