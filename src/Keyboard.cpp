@@ -464,7 +464,7 @@ auto Keyboard::ToNative(Key key) -> uint64_t
         // case Key::MediaPlayPause: 	return "MediaPlayPause";
 #endif
         case Key::Unknown:  Error("Unknown key not accepted"); break;
-        default: std::unreachable();
+        default: Error("unreachable");;
     }
 
     return static_cast<uint64_t>(-1);
