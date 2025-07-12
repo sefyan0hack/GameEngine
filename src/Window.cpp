@@ -198,7 +198,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 					key = isExtended ? Key::RightAlt : Key::LeftAlt;
 					break;
 				default:
-					key = Keyboard::FromNative(Wpr);
+					key = Keyboard::FromNative(static_cast<uint32_t>(Wpr));
 			}
 				
 			if (key != Key::Unknown) {
@@ -226,7 +226,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 					key = isExtended ? Key::RightAlt : Key::LeftAlt;
 					break;
 				default:
-					key = Keyboard::FromNative(Wpr);
+					key = Keyboard::FromNative(static_cast<uint32_t>(Wpr));
 					break;
 			}
 			
@@ -479,18 +479,38 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
 	else if (strcmp(e->code, "MetaLeft") == 0 || strcmp(e->code, "MetaRight") == 0) 
 		vk = DOM_VK_META;
 
-	// Media keys (optional)
-	else if (strcmp(e->code, "VolumeMute") == 0) vk = 0xAD;   // VK_VOLUME_MUTE
-	else if (strcmp(e->code, "VolumeDown") == 0) vk = 0xAE;  // VK_VOLUME_DOWN
-	else if (strcmp(e->code, "VolumeUp") == 0) vk = 0xAF;   // VK_VOLUME_UP
-	
-	if( vk != MAX_UINT32_T){
-		Keyboard::Action action = (eventType == EMSCRIPTEN_EVENT_KEYDOWN) ? Keyboard::Action::Press : Keyboard::Action::Release;
-		window->m_Events.push(Keyboard::Event{ action, Keyboard::FromNative(vk) });
-		return EM_TRUE;
-	}else{
-		return EM_FALSE;
-	}
+	// Browser control keys (DOM Level 3)
+	else if (strcmp(e->code, "BrowserBack") == 0) vk = DOM_VK_BROWSER_BACK;
+	else if (strcmp(e->code, "BrowserForward") == 0) vk = DOM_VK_BROWSER_FORWARD;
+	else if (strcmp(e->code, "BrowserRefresh") == 0) vk = DOM_VK_BROWSER_REFRESH;
+	else if (strcmp(e->code, "BrowserStop") == 0) vk = DOM_VK_BROWSER_STOP;
+	else if (strcmp(e->code, "BrowserSearch") == 0) vk = DOM_VK_BROWSER_SEARCH;
+	else if (strcmp(e->code, "BrowserFavorites") == 0) vk = DOM_VK_BROWSER_FAVORITES;
+	else if (strcmp(e->code, "BrowserHome") == 0) vk = DOM_VK_BROWSER_HOME;
+
+	// Media control keys (DOM Level 3)
+	else if (strcmp(e->code, "VolumeMute") == 0) vk = DOM_VK_VOLUME_MUTE;
+	else if (strcmp(e->code, "VolumeDown") == 0) vk = DOM_VK_VOLUME_DOWN;
+	else if (strcmp(e->code, "VolumeUp") == 0) vk =  DOM_VK_VOLUME_UP;
+	else if (strcmp(e->code, "MediaTrackNext") == 0) vk = DOM_VK_MEDIA_TRACK_NEXT;
+	else if (strcmp(e->code, "MediaTrackPrevious") == 0) vk = DOM_VK_MEDIA_TRACK_PREVIOUS;
+	else if (strcmp(e->code, "MediaStop") == 0) vk = DOM_VK_MEDIA_STOP;
+	else if (strcmp(e->code, "MediaPlayPause") == 0) vk = DOM_VK_MEDIA_PLAY_PAUSE;
+
+	if (vk != MAX_UINT32_T) {
+        Key key = Keyboard::FromNative(vk);
+        
+        if (key != Key::Unknown) {
+            Keyboard::Action action = (eventType == EMSCRIPTEN_EVENT_KEYDOWN) 
+                ? Keyboard::Action::Press 
+                : Keyboard::Action::Release;
+            
+            window->m_Events.push(Keyboard::Event{action, key});
+            return EM_TRUE;
+        }
+    }
+
+	return EM_FALSE;
 }
 
 auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, void* userData) -> EM_BOOL

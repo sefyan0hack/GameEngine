@@ -55,12 +55,12 @@ auto Keyboard::ClearState() noexcept -> void
 
 /////////////////////////////////////////////////////////
 
-auto Keyboard::FromNative(uint64_t key) -> Key
+auto Keyboard::FromNative(uint32_t key) -> Key
 {
     return KeyMaps[key];
 }
 
-auto Keyboard::ToNative(Key key) -> uint64_t
+auto Keyboard::ToNative(Key key) -> uint32_t
 {
     switch (key) {
 
@@ -448,24 +448,22 @@ auto Keyboard::ToNative(Key key) -> uint64_t
         case Key::Equal: 		return DOM_VK_EQUALS;
        
         // Web-specific
-        // case Key::BrowserBack: 		return "BrowserBack";
-        // case Key::BrowserForward: 	return "BrowserForward";
-        // case Key::BrowserRefresh: 	return "BrowserRefresh";
-        // case Key::BrowserStop: 		return "BrowserStop";
-        // case Key::BrowserSearch: 	return "BrowserSearch";
-        // case Key::BrowserFavorites:  return "BrowserFavorites";
-        // case Key::BrowserHome: 		return "BrowserHome";
-        // case Key::VolumeMute: 		return "VolumeMute";
-        // case Key::VolumeDown: 		return "VolumeDown";
-        // case Key::VolumeUp: 		    return "VolumeUp";
-        // case Key::MediaNext: 		return "MediaTrackNext";
-        // case Key::MediaPrevious: 	return "MediaTrackPrevious";
-        // case Key::MediaStop: 		return "MediaStop";
-        // case Key::MediaPlayPause: 	return "MediaPlayPause";
+        case Key::BrowserBack:         return DOM_VK_BROWSER_BACK;
+        case Key::BrowserForward:      return DOM_VK_BROWSER_FORWARD;
+        case Key::BrowserRefresh:      return DOM_VK_BROWSER_REFRESH;
+        case Key::BrowserStop:         return DOM_VK_BROWSER_STOP;
+        case Key::BrowserSearch:       return DOM_VK_BROWSER_SEARCH;
+        case Key::BrowserFavorites:    return DOM_VK_BROWSER_FAVORITES;
+        case Key::BrowserHome:         return DOM_VK_BROWSER_HOME;
+        case Key::VolumeMute:          return DOM_VK_VOLUME_MUTE;
+        case Key::VolumeDown:          return DOM_VK_VOLUME_DOWN;
+        case Key::VolumeUp:            return DOM_VK_VOLUME_UP;
+        case Key::MediaNext:           return DOM_VK_MEDIA_TRACK_NEXT;
+        case Key::MediaPrevious:       return DOM_VK_MEDIA_TRACK_PREVIOUS;
+        case Key::MediaStop:           return DOM_VK_MEDIA_STOP;
+        case Key::MediaPlayPause:      return DOM_VK_MEDIA_PLAY_PAUSE;
 #endif
-        case Key::Unknown:
-        default: Error("unreachable");
+        case Key::Unknown: return 0;
+        default: return static_cast<uint32_t>(-1);
     }
-
-    return static_cast<uint64_t>(-1);
 }

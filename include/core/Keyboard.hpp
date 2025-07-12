@@ -1,5 +1,25 @@
 #pragma once
 
+#if defined(WEB_PLT)
+// Browser control keys (DOM Level 3)
+constexpr uint32_t DOM_VK_BROWSER_BACK = 166;
+constexpr uint32_t DOM_VK_BROWSER_FORWARD = 167;
+constexpr uint32_t DOM_VK_BROWSER_REFRESH = 168;
+constexpr uint32_t DOM_VK_BROWSER_STOP = 169;
+constexpr uint32_t DOM_VK_BROWSER_SEARCH = 170;
+constexpr uint32_t DOM_VK_BROWSER_FAVORITES = 171;
+constexpr uint32_t DOM_VK_BROWSER_HOME = 172;
+
+// Media control keys (DOM Level 3)
+constexpr uint32_t DOM_VK_VOLUME_MUTE = 173;
+constexpr uint32_t DOM_VK_VOLUME_DOWN = 174;
+constexpr uint32_t DOM_VK_VOLUME_UP = 175;
+constexpr uint32_t DOM_VK_MEDIA_TRACK_NEXT = 176;
+constexpr uint32_t DOM_VK_MEDIA_TRACK_PREVIOUS = 177;
+constexpr uint32_t DOM_VK_MEDIA_STOP = 178;
+constexpr uint32_t DOM_VK_MEDIA_PLAY_PAUSE = 179;
+#endif
+
 enum class Key : uint8_t {
 
     // Alphanumeric keys (A-Z, 0-9)
@@ -68,8 +88,8 @@ public:
 	auto IsKeyDown(Key key) const noexcept          -> bool ;
 	auto IsKeyUp(Key key) const noexcept            -> bool ;
 
-    static auto ToNative(Key key) -> uint64_t;
-    static auto FromNative(uint64_t key) -> Key;
+    static auto ToNative(Key key) -> uint32_t;
+    static auto FromNative(uint32_t key) -> Key;
 
 private:
 	auto OnKeyPressed(Key key) noexcept  		-> void ;
@@ -85,7 +105,7 @@ private:
     std::bitset<KeyCount> m_PrevKeyState;
 
     inline static auto KeyMaps = [](){
-        std::map<uint64_t, Key> r;
+        std::map<uint32_t, Key> r;
 
         for(auto k :
             std::views::iota(std::to_underlying(Key::A), std::to_underlying(Key::Unknown)) |
