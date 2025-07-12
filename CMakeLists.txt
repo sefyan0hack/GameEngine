@@ -98,11 +98,12 @@ if(EMSCRIPTEN)
         # -sNO_EXIT_RUNTIME=1
         -sFULL_ES3=1
         # -sSTB_IMAGE=1
-        -sDISABLE_EXCEPTION_THROWING=1
-        -sDISABLE_EXCEPTION_CATCHING=1 
-        -sWASM_LEGACY_EXCEPTIONS=0
+        # -sDISABLE_EXCEPTION_THROWING=1
+        # -sDISABLE_EXCEPTION_CATCHING=1 
+        # -sWASM_LEGACY_EXCEPTIONS=0
         -fno-exceptions -fno-rtti
         --embed-file ${CMAKE_SOURCE_DIR}/res
+        --profiling
         # -sSTRICT=1
         # -sMALLOC=emmalloc
         # -sENVIRONMENT=web

@@ -68,7 +68,7 @@ auto APP::LoopBody(void* ctx) -> void
 				    app->Keyboard.OnKeyReleased(e.key);
                     break;
                 default:
-                    Error("unreachable");;
+                    Error("unreachable");
                 }
             },
             [&app](const Mouse::ButtonEvent& e) {
