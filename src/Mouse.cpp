@@ -100,8 +100,8 @@ auto Mouse::Locked() const -> bool
 auto Mouse::Lock([[maybe_unused]] const CWindow& window) noexcept -> void
 {
 	if(!isLocked){
-        #if defined(WINDOWS_PLT)
 		auto window_handle =  window.Handle();
+        #if defined(WINDOWS_PLT)
 
         RECT clientRect;
         GetClientRect(window_handle, &clientRect);
