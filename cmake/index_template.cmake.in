@@ -33,7 +33,7 @@
   </style>
 </head>
 <body>
-  <canvas id="canvas" oncontextmenu = event.preventDefault() autofocus></canvas>
-  <script src="@PROJECT_NAME@.js"></script>
+  <canvas  id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1" ></canvas>
+  <script async="" type="text/javascript" src="@PROJECT_NAME@.js"></script>
 </body>
 </html>
