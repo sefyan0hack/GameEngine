@@ -14,7 +14,6 @@ Mouse::Mouse()
 	, isMouseIn(false)
 	, isLocked(false)
 	, hasNewRawDelta(false)
-	, wheelDeltaCarry(0)
 {
 	#if defined(WINDOWS_PLT)
 	// regester mouse raw data
@@ -81,21 +80,16 @@ auto Mouse::OnMouseEnter() noexcept -> void
 	isMouseIn = true;
 }
 
-auto Mouse::OnButtonChange(bool left, bool middle, bool right) noexcept -> void
+auto Mouse::OnButtonDown(Button btn) noexcept	-> void
 {
-	this->left = left;
-	this->middle = middle;
-	this->right = right;
+	const auto index = std::to_underlying(btn);
+	m_CurrButtonState[index] = true;
 }
 
-auto Mouse::OnWheelDelta([[maybe_unused]] int32_t delta ) noexcept -> void
+auto Mouse::OnButtonUp(Button btn) noexcept		-> void
 {
-	this->delta = delta;
-	#if defined(WINDOWS_PLT)
-	wheelDeltaCarry += delta;
-	while(wheelDeltaCarry >= WHEEL_DELTA) wheelDeltaCarry -= WHEEL_DELTA;
-	while(wheelDeltaCarry <= -WHEEL_DELTA) wheelDeltaCarry += WHEEL_DELTA;
-	#endif
+	const auto index = std::to_underlying(btn);
+	m_CurrButtonState[index] = false;
 }
 
 auto Mouse::Locked() const -> bool
@@ -130,7 +124,7 @@ auto Mouse::Lock([[maybe_unused]] const CWindow& window) noexcept -> void
         x = centerX;
         y = centerY;
         #elif defined(WEB_PLT)
-        emscripten_request_pointerlock("#canvas", EM_TRUE);
+        emscripten_request_pointerlock(window_handle, EM_TRUE);
         #endif
 
 		isLocked = true;
@@ -153,32 +147,36 @@ auto Mouse::UnLock() noexcept -> void
     }
 }
 
-auto Mouse::IsLeftButtonDown() const -> bool
+auto Mouse::ClearState() noexcept -> void
 {
-    return left;
+	m_CurrButtonState.reset();
+	m_PrevButtonState.reset();
 }
 
-auto Mouse::IsMiddleButtonDown() 	const -> bool
-{
-	return middle;
+auto Mouse::SavePrevState() noexcept -> void { 
+    m_PrevButtonState = m_CurrButtonState;
 }
 
-auto Mouse::IsRightButtonDown() 		const -> bool
+auto Mouse::IsDown(Button btn) const -> bool
 {
-	return right;
+	const auto index = std::to_underlying(btn);
+	return m_CurrButtonState[index];
 }
 
-auto Mouse::IsLeftButtonUp() const -> bool
+auto Mouse::IsUp(Button btn) const -> bool
 {
-    return !left;
+    const auto index = std::to_underlying(btn);
+	return !m_CurrButtonState[index];
 }
 
-auto Mouse::IsMiddleButtonUp() 	const -> bool
+auto Mouse::IsPressed(Button btn) const -> bool
 {
-	return !middle;
+	const auto index = std::to_underlying(btn);
+	return m_CurrButtonState[index] && !m_PrevButtonState[index];;
 }
 
-auto Mouse::IsRightButtonUp() 		const -> bool
+auto Mouse::IsReleased(Button btn) const -> bool
 {
-	return !right;
+    const auto index = std::to_underlying(btn);
+	return !m_CurrButtonState[index] && m_PrevButtonState[index];
 }

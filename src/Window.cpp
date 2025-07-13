@@ -52,15 +52,6 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 		}
 	);
 
-	emscripten_set_wheel_callback(m_WindowHandle, this, EM_FALSE,
-		[]([[maybe_unused]] int32_t eventType, const EmscriptenWheelEvent* e, void* userData) -> EM_BOOL  {
-			CWindow* window = static_cast<CWindow*>(userData);
-			
-			window->m_Events.push(Mouse::WheelEvent{static_cast<int32_t>(e->deltaY * -120)});
-			return EM_TRUE;
-		}
-	);
-
 	emscripten_set_fullscreenchange_callback(m_WindowHandle, this, EM_FALSE, 
 		[](
 			int32_t eventType, 
@@ -202,7 +193,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 			}
 				
 			if (key != Key::Unknown) {
-				m_Events.push(Keyboard::Event{Keyboard::Action::Press, key});
+				m_Events.push(Keyboard::KeyDownEvent{key});
 			}
 		}
 		break;
@@ -231,7 +222,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 			}
 			
 			if (key != Key::Unknown) {
-				m_Events.push(Keyboard::Event{Keyboard::Action::Release, key});
+				m_Events.push(Keyboard::KeyUpEvent{key});
             	break;
 			}
 			break;
@@ -254,30 +245,26 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 			m_Events.push(Mouse::LeaveEvent{});
 			return 0;
 		}
-		// SetForegroundWindow( Winhandle );
 	    case WM_LBUTTONDOWN:
-	    case WM_RBUTTONDOWN:
-		case WM_MBUTTONDOWN:
-	    case WM_MBUTTONUP:
-	    case WM_LBUTTONUP:
-	    case WM_RBUTTONUP:
-	    {
-			m_Events.push(Mouse::ButtonEvent{
-				static_cast<bool>(Wpr & MK_LBUTTON),
-				static_cast<bool>(Wpr & MK_MBUTTON),
-				static_cast<bool>(Wpr & MK_RBUTTON)
-			});
-			
+			m_Events.push(Mouse::ButtonDownEvent{Mouse::Button::Left});
 			break;
-	    }
-	    case WM_MOUSEWHEEL:
-	    {
-	    	const auto delta = GET_WHEEL_DELTA_WPARAM( Wpr );
-			m_Events.push(Mouse::WheelEvent{delta});
-	    	break;
-	    }
+		case WM_MBUTTONDOWN:
+			m_Events.push(Mouse::ButtonDownEvent{Mouse::Button::Middle});
+			break;
+	    case WM_RBUTTONDOWN:
+			m_Events.push(Mouse::ButtonDownEvent{Mouse::Button::Right});
+			break;
+		case WM_LBUTTONUP:
+			m_Events.push(Mouse::ButtonUpEvent{Mouse::Button::Left});
+			break;
+		case WM_MBUTTONUP:
+			m_Events.push(Mouse::ButtonUpEvent{Mouse::Button::Middle});
+			break;
+	    case WM_RBUTTONUP:
+	    	m_Events.push(Mouse::ButtonUpEvent{Mouse::Button::Right});
+			break;
 	    ///////////////// END MOUSE MESSAGES /////////////////
-    
+
 	    ///////////////// RAW MOUSE MESSAGES /////////////////
 	    case WM_INPUT:
 	    {
@@ -499,15 +486,19 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
 
 	if (vk != MAX_UINT32_T) {
         Key key = Keyboard::FromNative(vk);
-        
-        if (key != Key::Unknown) {
-            Keyboard::Action action = (eventType == EMSCRIPTEN_EVENT_KEYDOWN) 
-                ? Keyboard::Action::Press 
-                : Keyboard::Action::Release;
-            
-            window->m_Events.push(Keyboard::Event{action, key});
-            return EM_TRUE;
-        }
+
+		switch (eventType)
+		{
+			case EMSCRIPTEN_EVENT_KEYDOWN:
+				window->m_Events.push(Keyboard::KeyDownEvent{key});
+				break;
+			case EMSCRIPTEN_EVENT_KEYUP:
+				window->m_Events.push(Keyboard::KeyUpEvent{key});
+				break;
+			default:
+				break;
+		}
+        return EM_TRUE;
     }
 
 	return EM_FALSE;
@@ -522,15 +513,17 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
 	constexpr size_t MOUSE_BUTTON_RIGHT = 2;
 	constexpr size_t MOUSE_BUTTON_MIDDLE = 4;
 
+	auto btn = 
+		e->button == 0 ? Mouse::Button::Left:
+		e->button == 1 ? Mouse::Button::Middle: Mouse::Button::Right;
+
 	switch (eventType) {
 
         case EMSCRIPTEN_EVENT_MOUSEDOWN:
+			window->m_Events.push(Mouse::ButtonDownEvent{btn})
+			break;
         case EMSCRIPTEN_EVENT_MOUSEUP:
-			window->m_Events.push(Mouse::ButtonEvent{
-				static_cast<bool>(e->buttons & MOUSE_BUTTON_LEFT),
-				static_cast<bool>(e->buttons & MOUSE_BUTTON_MIDDLE),
-				static_cast<bool>(e->buttons & MOUSE_BUTTON_RIGHT),
-			});
+			window->m_Events.push(Mouse::ButtonUpEvent{btn});
             break;
         case EMSCRIPTEN_EVENT_MOUSEMOVE:
 			window->m_Events.push(Mouse::RawDeltaEvent{e->movementX, e->movementY});
@@ -683,9 +676,9 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 				}
 
 				if (event.type == KeyPress) {
-					self->m_Events.push(Keyboard::Event{Keyboard::Action::Press, Keyboard::FromNative(vk)});
+					self->m_Events.push(Keyboard::KeyDownEvent{Keyboard::FromNative(vk)});
 				} else {
-					self->m_Events.push(Keyboard::Event{Keyboard::Action::Release, Keyboard::FromNative(vk)});
+					self->m_Events.push(Keyboard::KeyUpEvent{Keyboard::FromNative(vk)});
 				}
 				break;
 			}

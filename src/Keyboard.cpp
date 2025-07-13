@@ -10,34 +10,34 @@
 #endif
 
 
-auto Keyboard::IsKeyDown(Key key) const noexcept -> bool
+auto Keyboard::IsDown(Key key) const noexcept -> bool
 {
     return m_CurrKeyState[std::to_underlying(key)];
 }
-auto Keyboard::IsKeyUp(Key key) const noexcept -> bool
+auto Keyboard::IsUp(Key key) const noexcept -> bool
 {
     return !m_CurrKeyState[std::to_underlying(key)];
 }
 
-auto Keyboard::IsKeyPressed(Key key) const noexcept -> bool
+auto Keyboard::IsPressed(Key key) const noexcept -> bool
 {
     const auto index = std::to_underlying(key);
     return m_CurrKeyState[index] && !m_PrevKeyState[index];
 }
 
-auto Keyboard::IsKeyReleased(Key key) const noexcept -> bool
+auto Keyboard::IsReleased(Key key) const noexcept -> bool
 {
     const auto index = std::to_underlying(key);
     return !m_CurrKeyState[index] && m_PrevKeyState[index];
 }
 
-auto Keyboard::OnKeyPressed(Key key) noexcept -> void
+auto Keyboard::OnKeyDown(Key key) noexcept -> void
 {
     const auto index = std::to_underlying(key);
     m_CurrKeyState[index] = true;
 }
 
-auto Keyboard::OnKeyReleased(Key key) noexcept -> void
+auto Keyboard::OnKeyUp(Key key) noexcept -> void
 {
     const auto index = std::to_underlying(key);
     m_CurrKeyState[index] = false;

@@ -9,13 +9,14 @@ struct WindowQuitEvent {};
 
 using Event = std::variant<
     std::monostate,
-    Keyboard::Event,
-    Mouse::ButtonEvent,
+    Keyboard::KeyDownEvent,
+    Keyboard::KeyUpEvent,
+    Mouse::ButtonDownEvent,
+    Mouse::ButtonUpEvent,
     Mouse::MoveEvent,
     Mouse::EnterEvent,
     Mouse::LeaveEvent,
     Mouse::RawDeltaEvent,
-    Mouse::WheelEvent,
     WindowResizeEvent,
     WindowFocusEvent,
     WindowQuitEvent

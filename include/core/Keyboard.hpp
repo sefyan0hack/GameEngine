@@ -66,13 +66,9 @@ class Keyboard
 {
 	friend class APP;
 public:
-    enum class Action { Press, Release };
 	
-    struct Event
-	{
-		Action action;
-        Key key;
-	};
+    struct KeyDownEvent { Key key; };
+    struct KeyUpEvent { Key key; };
 
 public:
 
@@ -80,17 +76,17 @@ public:
 	Keyboard(const Keyboard&) = delete;
 	auto operator=(const Keyboard&) -> Keyboard& = delete;
 
-	auto IsKeyPressed(Key key) const noexcept      -> bool ;
-	auto IsKeyReleased(Key key) const noexcept      -> bool ;
-	auto IsKeyDown(Key key) const noexcept          -> bool ;
-	auto IsKeyUp(Key key) const noexcept            -> bool ;
+	auto IsPressed(Key key) const noexcept      -> bool ;
+	auto IsReleased(Key key) const noexcept      -> bool ;
+	auto IsDown(Key key) const noexcept          -> bool ;
+	auto IsUp(Key key) const noexcept            -> bool ;
 
     static auto ToNative(Key key) -> uint32_t;
     static auto FromNative(uint32_t key) -> Key;
 
 private:
-	auto OnKeyPressed(Key key) noexcept  		-> void ;
-	auto OnKeyReleased(Key key) noexcept 		-> void ;
+	auto OnKeyDown(Key key) noexcept  		-> void ;
+	auto OnKeyUp(Key key) noexcept 		-> void ;
 
 	auto ClearState() noexcept                  -> void ;
     auto SavePrevState() noexcept                   -> void ;
