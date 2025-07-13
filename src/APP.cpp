@@ -65,11 +65,9 @@ auto APP::LoopBody(void* ctx) -> void
             },
             [&app](const Keyboard::KeyDownEvent& e) {
 				    app->Keyboard.OnKeyDown(e.key);
-                    Info("KeyDownEvent sent");
             },
             [&app](const Keyboard::KeyUpEvent& e) {
 				    app->Keyboard.OnKeyUp(e.key);
-                    Info("KeyUpEvent sent");
             },
             [&app](const Mouse::ButtonDownEvent& e) {
                 app->Mouse.OnButtonDown(e.btn);

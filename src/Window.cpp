@@ -537,7 +537,7 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
             break;
     }
 
-    return EM_TRUE;
+    return EM_FALSE;
 }
 
 auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, void* userData) -> EM_BOOL
