@@ -520,7 +520,7 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
 	switch (eventType) {
 
         case EMSCRIPTEN_EVENT_MOUSEDOWN:
-			window->m_Events.push(Mouse::ButtonDownEvent{btn})
+			window->m_Events.push(Mouse::ButtonDownEvent{btn});
 			break;
         case EMSCRIPTEN_EVENT_MOUSEUP:
 			window->m_Events.push(Mouse::ButtonUpEvent{btn});
