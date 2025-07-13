@@ -375,10 +375,9 @@ auto CWindow::ResizeHandler(int32_t eventType, const EmscriptenUiEvent* e, void*
     if (!window) return EM_FALSE;
 	if(eventType == EMSCRIPTEN_EVENT_RESIZE){
 		window->m_Events.push(WindowResizeEvent{e->windowInnerWidth, e->windowInnerHeight});
-		return EM_TRUE;
 	}
 
-	return EM_FALSE;
+	return EM_TRUE;
 }
 
 auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, void* userData) -> EM_BOOL
@@ -500,10 +499,9 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
 				window->m_Events.push(Keyboard::KeyUpEvent{key});
 				break;
 		}
-        return EM_TRUE;
     }
 
-	return EM_FALSE;
+	return EM_TRUE;
 }
 
 auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, void* userData) -> EM_BOOL
@@ -537,7 +535,7 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
             break;
     }
 
-    return EM_FALSE;
+    return EM_TRUE;
 }
 
 auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, void* userData) -> EM_BOOL
@@ -611,7 +609,7 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
         }
     }
 
-    return EM_FALSE;
+    return EM_TRUE;
 }
 #endif
 
