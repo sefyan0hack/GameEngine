@@ -67,13 +67,10 @@ auto APP::LoopBody(void* ctx) -> void
                 case Keyboard::Action::Release:
 				    app->Keyboard.OnKeyReleased(e.key);
                     break;
-                default:
-                    Error("unreachable");
                 }
             },
             [&app](const Mouse::ButtonEvent& e) {
                 app->Mouse.OnButtonChange(e.left, e.middle, e.right);
-                Info("[{}|{}|{}]",e.left, e.middle, e.right);
             },
             [&app](const Mouse::EnterEvent&) {
                 app->Mouse.OnMouseEnter();

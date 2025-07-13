@@ -1,70 +1,52 @@
 <!DOCTYPE html>
-<html lang=EN-us>
-   <head>
-      <meta charset=utf-8>
-      <meta content="text/html; charset=utf-8" http-equiv=Content-Type>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-      <style>
-        * {
-            touch-action: manipulation
-        }
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <style>
+    * { touch-action: manipulation }
 
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: #1a1a1a;
-        }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden; 
+      background: #1a1a1a;
+    }
 
-        #canvas {
-            display: block;
-            box-sizing: border-box;
-            width: 95vw;
-            height: 95vh;
-            touch-action: none; /* Always disable touch actions */
-            -ms-touch-action: none;
-        }
+    #canvas {
+      display: block;
+      box-sizing: border-box;
+      width: 95vw;
+      height: 95vh;
+      touch-action: none;
+      -ms-touch-action: none;
+      margin: auto;
+    }
 
-        /*anything under 768 px is mobile*/
-        @media only screen and (max-width: 767px) {
-        #canvas {
-            /* Use vmax/vmin for dynamic sizing */
-            width: 100vmax; /* Largest viewport dimension */
-            height: 100vmin; /* Smallest viewport dimension */
-            
-            /* Adjust transform to center after rotation */
-            transform: rotate(90deg) translateY(-100%);
-            transform-origin: top left;
-            
-            /* Ensure proper positioning */
-            position: fixed;
-            top: 0;
-            left: 0;
-        }
-        }
-    </style>
+    @media only screen and (max-width: 767px) {
+      #canvas {
+        width: 100vmin;
+        height: 100vmax;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(90deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" class="emscripten" tabindex="-1"></canvas>
 
-    <script>
-    // Initialize Module IMMEDIATELY after canvas declaration
+  <script>
     window.Module = {
-      canvas: (function() {
-        const canvas = document.createElement('canvas');
-        canvas.id = 'canvas';
-        canvas.className = 'emscripten';
-        canvas.oncontextmenu = e => e.preventDefault();
-        canvas.tabIndex = -1;
-        document.body.appendChild(canvas);
-        return canvas;
-      })()
+      canvas: document.getElementById('canvas')
     };
-    </script>
-   </head>
-   <body>
-      <script src=@PROJECT_NAME@.js ></script>
-   </body>
+    Module.canvas.oncontextmenu = e => e.preventDefault();
+  </script>
+  
+  <script src="@PROJECT_NAME@.js"></script>
+</body>
 </html>

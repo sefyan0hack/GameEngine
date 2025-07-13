@@ -131,7 +131,7 @@ auto OpenGL::init_opengl_web() -> void
 
     EmscriptenWebGLContextAttributes attrs;
     emscripten_webgl_init_context_attributes(&attrs);
-    
+
     attrs.alpha = EM_TRUE;
     attrs.depth = EM_TRUE;
     attrs.stencil = EM_TRUE;
@@ -145,15 +145,10 @@ auto OpenGL::init_opengl_web() -> void
     attrs.enableExtensionsByDefault = EM_TRUE;
 
     m_Context = emscripten_webgl_create_context("#canvas", &attrs);
-    
+
     if (m_Context <= 0) {
-        attrs.majorVersion = 1;
-        m_Context = emscripten_webgl_create_context("#canvas", &attrs);
-        
-        if (m_Context <= 0) {
-            Error("Failed to create WebGL context: error {}", static_cast<int32_t>(m_Context));
-            return;
-        }
+        Error("Failed to create WebGL context: error {}", static_cast<int32_t>(m_Context));
+        return;
     }
 }
 
