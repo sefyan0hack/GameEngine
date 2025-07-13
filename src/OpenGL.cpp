@@ -215,14 +215,14 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     gl::DepthFunc(GL_LESS);
     
     
-    if constexpr (sys::Target != sys::Target::Web){
+    #if !defined(WEB_PLT)
         gl::Enable(GL_LINE_SMOOTH);
         gl::Enable(GL_MULTISAMPLE);
         gl::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
         gl::Enable(GL_PROGRAM_POINT_SIZE);
         gl::PointSize(5.0f);
-    }
+    #endif
 
     Info("Platform : {}, Arch : {}", sys::TargetName, sys::ArchName);
     Info("GL Version : Wanted:({}.{}) -> Got:({}.{})", GLMajorVersion, GLMinorVersion, m_Major, m_Minor);
