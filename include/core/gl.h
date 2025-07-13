@@ -165,6 +165,5 @@ inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
   // desktop GL
   #define GLFUNCS(X)\
       GLFUNCS_COMMON(X)\
-      X(PolygonMode);\
-      X(LineStipple);
+      X(PolygonMode);
 #endif
