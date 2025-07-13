@@ -7,10 +7,6 @@
     * { touch-action: manipulation }
 
     html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
       overflow: hidden; 
       background: #1a1a1a;
     }
@@ -18,7 +14,6 @@
     #canvas {
       display: block;
       box-sizing: border-box;
-      width: 95vw;
       height: 95vh;
       touch-action: none;
       -ms-touch-action: none;
@@ -38,15 +33,7 @@
   </style>
 </head>
 <body>
-  <canvas id="canvas" class="emscripten" tabindex="0" autofocus></canvas>
-
-  <script>
-    window.Module = {
-      canvas: document.getElementById('canvas')
-    };
-    Module.canvas.oncontextmenu = e => e.preventDefault();
-  </script>
-  
+  <canvas id="canvas" oncontextmenu = event.preventDefault() autofocus></canvas>
   <script src="@PROJECT_NAME@.js"></script>
 </body>
 </html>
