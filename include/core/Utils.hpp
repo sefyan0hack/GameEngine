@@ -266,11 +266,11 @@ inline auto GetProcAddress([[maybe_unused]] const char* module, const char* name
     address = (void *)dlsym(lib, name);
     #elif defined(WEB_PLT)
     address = reinterpret_cast<void*>(emscripten_webgl_get_proc_address(name));
-    failreson = lib ? "" : "emscripten_webgl_get_proc_address faild";
+    failreson = lib ? "" : emscripten_webgl_get_proc_address(name);
     #endif
 
     if(lib == nullptr){
-        Error("Couldn't load lib {} reason: {}", module, failreson);
+        Error("Couldn't load lib {} reason: {}, fn name: {}", module, failreson, name);
     }
 
     return address;
