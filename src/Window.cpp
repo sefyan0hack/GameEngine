@@ -373,8 +373,12 @@ auto CWindow::ResizeHandler(int32_t eventType, const EmscriptenUiEvent* e, void*
 {
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_FALSE;
-	window->m_Events.push(WindowResizeEvent{e->windowInnerWidth, e->windowInnerHeight});
-    return EM_TRUE;
+	if(eventType == EMSCRIPTEN_EVENT_RESIZE){
+		window->m_Events.push(WindowResizeEvent{e->windowInnerWidth, e->windowInnerHeight});
+		return EM_TRUE;
+	}
+
+	return EM_FALSE;
 }
 
 auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, void* userData) -> EM_BOOL
@@ -506,10 +510,6 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
 {
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_FALSE;
-
-	constexpr size_t MOUSE_BUTTON_LEFT = 1;
-	constexpr size_t MOUSE_BUTTON_RIGHT = 2;
-	constexpr size_t MOUSE_BUTTON_MIDDLE = 4;
 
 	auto btn = 
 		e->button == 0 ? Mouse::Button::Left:
