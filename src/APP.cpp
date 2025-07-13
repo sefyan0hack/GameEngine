@@ -102,7 +102,7 @@ auto APP::LoopBody(void* ctx) -> void
     app->m_Fps = 1.0f / deltaTime;
     app->m_SmoothedFPS = 0.9f * app->m_SmoothedFPS + 0.1f * app->m_Fps;
 
-    if constexpr( sys::Target != sys::Target::Web ){
+    #if !defined(WEB_PLT)
         // Wireframe Mode
         if (app->Keyboard.IsPressed(Key::H)){
             static bool flip = false;
@@ -125,8 +125,8 @@ auto APP::LoopBody(void* ctx) -> void
                 flip = !flip;
                 gl::PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             }
-        }   
-    }
+        }
+    #endif
 
     // Fullscreen 
     if(app->Keyboard.IsPressed(Key::F11)){
