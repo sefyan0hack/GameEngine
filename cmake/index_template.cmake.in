@@ -38,7 +38,7 @@
   </style>
 </head>
 <body>
-  <canvas id="canvas" class="emscripten" tabindex="-1"></canvas>
+  <canvas id="canvas" class="emscripten" tabindex="0" autofocus></canvas>
 
   <script>
     window.Module = {

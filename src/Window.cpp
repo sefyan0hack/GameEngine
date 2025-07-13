@@ -495,8 +495,6 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
 			case EMSCRIPTEN_EVENT_KEYUP:
 				window->m_Events.push(Keyboard::KeyUpEvent{key});
 				break;
-			default:
-				break;
 		}
         return EM_TRUE;
     }
