@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include <core/Camera.hpp>
-#include <core/Window.hpp>
 
 using namespace std;
 using namespace glm;
@@ -13,22 +12,27 @@ using Camera_Test_Ctor2 = Camera::Test<2>;
     MEMBER_VAR(m_FrontDir);\
     MEMBER_VAR(m_UpDir);\
     MEMBER_VAR(m_RightDir);\
-    MEMBER_VAR(m_Window);\
     MEMBER_VAR(m_Sensitivity);\
     MEMBER_VAR(m_Yaw);\
     MEMBER_VAR(m_Pitch);\
+    MEMBER_VAR(m_FOV);\
+    MEMBER_VAR(m_Near);\
+    MEMBER_VAR(m_Far);\
+    MEMBER_VAR(m_AspectRatio);\
     \
     MEMBER_FUN(SetFrontVector);\
     MEMBER_FUN(SetUpVector);\
     MEMBER_FUN(SetRightVector);\
-    MEMBER_FUN(MoveFroward);\
+    MEMBER_FUN(SetFOV);\
+    MEMBER_FUN(SetClipping);\
+    MEMBER_FUN(MoveForward);\
     MEMBER_FUN(MoveBackward);\
-    MEMBER_FUN(MoveUP);\
+    MEMBER_FUN(MoveUp);\
     MEMBER_FUN(MoveDown);\
     MEMBER_FUN(MoveRight);\
     MEMBER_FUN(MoveLeft)\
     MEMBER_FUN(UpdateVectors);\
-    MEMBER_FUN(MoseMove);\
+    MEMBER_FUN(UpdateCameraPosition);\
     MEMBER_FUN(View);\
     MEMBER_FUN(Perspective);\
     MEMBER_FUN(Position);\
@@ -46,12 +50,15 @@ struct Camera::Test<1> : public ::testing::Test {
 TEST_F(Camera_Test_Ctor1, ctor) {
     EXPECT_EQ(m_Position, vec3(0, 1, 4));
     EXPECT_EQ(m_FrontDir, vec3(0, 0, -1));
-    EXPECT_EQ(m_UpDir, vec3(0, 1, 0));
+    EXPECT_EQ(m_UpDir, Camera::WORLD_UP);
     EXPECT_EQ(m_RightDir, vec3(1, 0, 0));
-    EXPECT_EQ(m_Window, nullptr);
     EXPECT_EQ(m_Sensitivity, 0.11f);
     EXPECT_EQ(m_Yaw, -90);
     EXPECT_EQ(m_Pitch, 0);
+    EXPECT_EQ(m_FOV, 45.0f);
+    EXPECT_EQ(m_Near, 0.1f);
+    EXPECT_EQ(m_Far, 1000.0f);
+    EXPECT_EQ(m_AspectRatio, 16.0f/9.0f);
 }
 
 TEST_F(Camera_Test_Ctor1, SetFrontVector) {
@@ -72,10 +79,10 @@ TEST_F(Camera_Test_Ctor1, SetRightVector) {
     EXPECT_EQ(m_RightDir, value);
 }
 
-TEST_F(Camera_Test_Ctor1, MoveFroward) {
+TEST_F(Camera_Test_Ctor1, MoveForward) {
     auto speed = 5.0f;
     auto e = m_Position - (-m_FrontDir * speed);
-    MoveFroward(speed);
+    MoveForward(speed);
     EXPECT_EQ(m_Position, e);
 }
 
@@ -86,10 +93,10 @@ TEST_F(Camera_Test_Ctor1, MoveBackward) {
     EXPECT_EQ(m_Position, e);
 }
 
-TEST_F(Camera_Test_Ctor1, MoveUP) {
+TEST_F(Camera_Test_Ctor1, MoveUp) {
     auto speed = 5.0f; 
     auto e = m_Position + (m_UpDir  * speed);
-    MoveUP(speed);
+    MoveUp(speed);
     EXPECT_EQ(m_Position, e);
 }
 

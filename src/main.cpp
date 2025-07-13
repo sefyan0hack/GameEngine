@@ -102,7 +102,6 @@ private:
     Material Matt;
     Mesh cubeMesh;
 
-    Camera Cam;
     Scene Scn;
     Renderer rndr;
     public: // init here
@@ -116,7 +115,6 @@ private:
     , frag(SHADER(cube)".frag", GL_FRAGMENT_SHADER)
     , Matt(vert, frag)
     , cubeMesh({cubeMeshVert, indices})
-    , Cam(Window)
     {
         ResManager.load(TEXTURE(brik.jpg), ResType::Texture2D);
         ResManager.load(TEXTURE(brik.png), ResType::Texture2D);
@@ -152,57 +150,30 @@ public:
 
     auto Update(float delta) -> void override {
         float speed = 10.0f;
-        Cam.MoseMove(Mouse);
 
-        if(Keyboard.IsKeyDown(Key::LeftShift))
+        if(Keyboard.IsDown(Key::LeftShift))
                 speed *= 2;
-                
-        if(Keyboard.IsKeyDown(Key::W)){
-            Cam.MoveFroward(speed * delta);
+    
+        if(Keyboard.IsDown(Key::W)){
+            ViewCamera.MoveForward(speed * delta);
         }
-        if(Keyboard.IsKeyDown(Key::S)){
-            Cam.MoveBackward(speed * delta);
+        if(Keyboard.IsDown(Key::S)){
+            ViewCamera.MoveBackward(speed * delta);
         }
-        if(Keyboard.IsKeyDown(Key::A)){
-            Cam.MoveLeft(speed * delta);
+        if(Keyboard.IsDown(Key::A)){
+            ViewCamera.MoveLeft(speed * delta);
         }
-        if(Keyboard.IsKeyDown(Key::D)){
-            Cam.MoveRight(speed * delta);
+        if(Keyboard.IsDown(Key::D)){
+            ViewCamera.MoveRight(speed * delta);
         }
-        if(Keyboard.IsKeyDown(Key::N) ){
-            Cam.MoveUP(speed * delta);
+        if(Keyboard.IsDown(Key::N) ){
+            ViewCamera.MoveUp(speed * delta);
         }
-        if(Keyboard.IsKeyDown(Key::M) ){
-            Cam.MoveDown(speed * delta);
-        }
-
-        if(Keyboard.IsKeyPressed(Key::L) ){
-            static bool on = false;
-            if(!on){
-                Mouse.Lock(Window);
-                on = true;
-            }else{
-                Mouse.UnLock();
-                on = false;
-            }
+        if(Keyboard.IsDown(Key::M) ){
+            ViewCamera.MoveDown(speed * delta);
         }
 
-        if(Keyboard.IsKeyPressed(Key::F11)){
-            Window.ToggleFullScreen();
-        }
-        
-        // if (Keyboard.IsKeyPressed(Key::H)){
-        //     static bool flip = false;
-        //     if(flip == false){
-        //         flip = !flip;
-        //         gl::PolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        //     }else{
-        //         flip = !flip;
-        //         gl::PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        //     }
-        // }
-
-        rndr.render(Scn, Cam);
+        rndr.render(Scn, ViewCamera);
     }
 
 public: // distroy hire

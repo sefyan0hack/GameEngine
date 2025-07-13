@@ -16,7 +16,8 @@
 constexpr auto Wname = "Main";
 
 APP::APP()
-    : Window(1180, 640, Wname)
+    : Window(WINDOW_WIDTH, WINDOW_HIEGHT, Wname)
+    , ViewCamera()
     , Keyboard()
     , Mouse()
     , m_LastFrameTime(std::chrono::steady_clock::now())
@@ -83,9 +84,7 @@ auto APP::LoopBody(void* ctx) -> void
             },
             [&app](const Mouse::RawDeltaEvent& e) {
                 app->Mouse.OnRawDelta(e.dx, e.dy);
-            },
-            [&app](const Mouse::WheelEvent& e) {
-                app->Mouse.OnWheelDelta(e.delta);
+                app->ViewCamera.UpdateCameraPosition(app->Mouse);
             },
             [&app](const WindowFocusEvent& e) {
 		        if(!e.focus) app->Keyboard.ClearState();
