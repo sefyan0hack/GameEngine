@@ -4,37 +4,43 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <core/fmts.hpp>
 
-class CWindow;
 class Mouse;
-class Material;
 
 class Camera
 {
 public:
     friend struct std::formatter<Camera>;
     
-    Camera();
-    Camera(CWindow &window);
+    Camera() noexcept;
     ~Camera();
+
+    auto MoveForward(float speed)  noexcept -> void ;
+    auto MoveBackward(float speed) noexcept -> void ;
+    auto MoveUp(float speed)       noexcept -> void ;
+    auto MoveDown(float speed)     noexcept -> void ;
+    auto MoveRight(float speed)    noexcept -> void ;
+    auto MoveLeft(float speed)     noexcept -> void ;
 
     auto SetFrontVector(glm::vec3 front)  -> void ;
     auto SetUpVector(glm::vec3 up)        -> void ;
     auto SetRightVector(glm::vec3 right)  -> void ;
-    auto MoveFroward(float speed)         -> void ;
-    auto MoveBackward(float speed)        -> void ;
-    auto MoveUP(float speed)              -> void ;
-    auto MoveDown(float speed)            -> void ;
-    auto MoveRight(float speed)           -> void ;
-    auto MoveLeft(float speed)            -> void ;
-    auto UpdateVectors()                  -> void ;
-    auto MoseMove(Mouse& mouse)           -> void ;
+    auto SetFOV(float fov)                 -> void ;
+    auto SetClipping(float nearValue, float farValue) -> void ; 
+
+    auto UpdateVectors()                    -> void ;
+    auto UpdateCameraPosition(Mouse& mouse) -> void ;
     auto View() const                       -> glm::mat4 ;
     auto Perspective() const                -> glm::mat4 ;
     auto Position() const              -> glm::vec3 ;
     auto FrontDir() const              -> glm::vec3 ;
     auto UpDir() const                 -> glm::vec3 ;
     auto RightDir() const              -> glm::vec3 ;
-    auto Sensitivity() const              -> float ;
+    auto Sensitivity() const           -> float ;
+
+public:
+    constexpr static glm::vec3 WORLD_UP = { 0, 1, 0 };
+    constexpr static float MAX_SAFE_PITCH = 89.0f;
+    constexpr static float LOCKED_PITCH_LIMIT = 45.0f;  
 
 private:
     glm::vec3 m_Position;
@@ -42,10 +48,14 @@ private:
     glm::vec3 m_UpDir;
     glm::vec3 m_RightDir;
 
+
     //
-    std::shared_ptr<CWindow> m_Window;
     float m_Sensitivity;
     float m_Yaw, m_Pitch;
+
+    float m_FOV;
+    float m_Near, m_Far;
+    float m_AspectRatio;
 
     FOR_TEST
 };

@@ -13,7 +13,10 @@
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
 #endif
+
 constexpr auto Wname = "Main";
+constexpr auto WINDOW_WIDTH = 1180;
+constexpr auto WINDOW_HIEGHT = 640;
 
 APP::APP()
     : Window(WINDOW_WIDTH, WINDOW_HIEGHT, Wname)
@@ -32,6 +35,7 @@ auto APP::Frame(float deltaTime) -> void
     Update(deltaTime);
     Window.SwapBuffers();
     Keyboard.SavePrevState();
+    Mouse.SavePrevState();
 }
 
 auto APP::LoopBody(void* ctx) -> void
@@ -55,23 +59,21 @@ auto APP::LoopBody(void* ctx) -> void
                 }
             },
             [&window](const WindowResizeEvent& e) {
-                window.m_Width  = e.width;
+                window.m_Width = e.width;
                 window.m_Height = e.height;
                 gl::Viewport(0, 0, e.width, e.height);
             },
-            [&app](const Keyboard::Event& e) {
-                switch (e.action)
-                {
-                case Keyboard::Action::Press:
-				    app->Keyboard.OnKeyPressed(e.key);
-                    break;
-                case Keyboard::Action::Release:
-				    app->Keyboard.OnKeyReleased(e.key);
-                    break;
-                }
+            [&app](const Keyboard::KeyDownEvent& e) {
+				    app->Keyboard.OnKeyDown(e.key);
             },
-            [&app](const Mouse::ButtonEvent& e) {
-                app->Mouse.OnButtonChange(e.left, e.middle, e.right);
+            [&app](const Keyboard::KeyUpEvent& e) {
+				    app->Keyboard.OnKeyUp(e.key);
+            },
+            [&app](const Mouse::ButtonDownEvent& e) {
+                app->Mouse.OnButtonDown(e.btn);
+            },
+            [&app](const Mouse::ButtonUpEvent& e) {
+                app->Mouse.OnButtonUp(e.btn);
             },
             [&app](const Mouse::EnterEvent&) {
                 app->Mouse.OnMouseEnter();
@@ -100,6 +102,48 @@ auto APP::LoopBody(void* ctx) -> void
     app->m_Fps = 1.0f / deltaTime;
     app->m_SmoothedFPS = 0.9f * app->m_SmoothedFPS + 0.1f * app->m_Fps;
 
+    if constexpr( sys::Target != sys::Target::Web ){
+        // Wireframe Mode
+        if (app->Keyboard.IsPressed(Key::H)){
+            static bool flip = false;
+            if(flip == false){
+                flip = !flip;
+                gl::PolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            }else{
+                flip = !flip;
+                gl::PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            }
+        }
+
+        // Points Mode
+        if (app->Keyboard.IsPressed(Key::P)){
+            static bool flip = false;
+            if(flip == false){
+                flip = !flip;
+                gl::PolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+            }else{
+                flip = !flip;
+                gl::PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            }
+        }   
+    }
+
+    // Fullscreen 
+    if(app->Keyboard.IsPressed(Key::F11)){
+        app->Window.ToggleFullScreen();
+    }
+
+    // Lock Mouse
+    if(app->Keyboard.IsPressed(Key::L) ){
+        static bool on = false;
+        if(!on){
+            app->Mouse.Lock(app->Window);
+            on = true;
+        }else{
+            app->Mouse.UnLock();
+            on = false;
+        }
+    }
 
     app->Frame(deltaTime);
     //todo: Frame Pacing
