@@ -104,7 +104,7 @@ if(EMSCRIPTEN)
         -fno-exceptions -fno-rtti
         --embed-file ${CMAKE_SOURCE_DIR}/res
         --profiling
-        -sASSERTIONS=2
+        # -sASSERTIONS=2
         # -sSTRICT=1
         # -sMALLOC=emmalloc
         # -sENVIRONMENT=web
