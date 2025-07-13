@@ -154,9 +154,7 @@ inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
     X(IsEnabled);\
     X(GetFloatv);\
     X(TexSubImage2D);\
-    X(Uniform2fv);\
-    X(PointSize);
-
+    X(Uniform2fv);
 
 #if defined(WEB_PLT)
   // web (or ES-only) build
@@ -165,5 +163,7 @@ inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
   // desktop GL
   #define GLFUNCS(X)\
       GLFUNCS_COMMON(X)\
-      X(PolygonMode);
+      X(PolygonMode);\
+      X(PointSize);
+
 #endif
