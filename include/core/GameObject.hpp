@@ -75,7 +75,7 @@ public:
     mat->Use();
     mat->SetUniform("View", glm::mat4(glm::mat3(camera.View())));
     mat->SetUniform("Projection", camera.Perspective());
-    mat->SetUniform("albedo", TextureUnit);
+    mat->SetUniform("uDiffuseMap", TextureUnit);
     mesh->Bind();
     gl::DrawArrays(GL_TRIANGLES, 0, mesh->VextexSize());
     mesh->DisableAttribs();

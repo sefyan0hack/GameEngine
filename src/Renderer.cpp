@@ -21,9 +21,9 @@ auto Renderer::render(Scene &scene, Camera &camera) -> void
         material->Use();
         material->SetUniform("View", camera.View());
         material->SetUniform("Projection", camera.Perspective());
-        material->SetUniform("cameraPos", camera.Position());
-        material->SetUniform("skybox", scene.skyBox()->gameObject().material()->texture()->TextureUnit());
-        material->SetUniform("albedo", TextureUnit);
+        material->SetUniform("uCameraPos", camera.Position());
+        material->SetUniform("uDiffuseMap", TextureUnit);
+        material->SetUniform("uSkyboxMap", scene.skyBox()->gameObject().material()->texture()->TextureUnit());
         auto sizeIns = static_cast<GLsizei>(obj.InstancePos().size());
         auto mesh = obj.mesh();
         draw(*mesh.get(), sizeIns);

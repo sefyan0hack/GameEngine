@@ -1,8 +1,8 @@
 out vec4 FragColor;
 in vec3 Uv;
 
-uniform samplerCube albedo;
+uniform samplerCube uDiffuseMap;
 
 void main() {
-    FragColor = texture(albedo, Uv);
+    FragColor = texture(uDiffuseMap, Uv);
 }

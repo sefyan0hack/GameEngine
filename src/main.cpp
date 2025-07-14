@@ -112,7 +112,7 @@ private:
     , skyMesh(cubeMeshVert)
 
     , vert(SHADER(cube)".vert", GL_VERTEX_SHADER)
-    , frag(SHADER(cube)".frag", GL_FRAGMENT_SHADER)
+    , frag(SHADER(generic)".frag", GL_FRAGMENT_SHADER)
     , Matt(vert, frag)
     , cubeMesh({cubeMeshVert, indices})
     {

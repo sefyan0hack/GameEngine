@@ -17,7 +17,8 @@ void main() {
     WorldPos = worldPos_.xyz;
     
     // Pass through normal (if using lighting)
-    vNormal = mat3(uModel) * aNormal;
+    mat3 normalMatrix = mat3(transpose(inverse(Model)));
+    Normal = normalMatrix * aNormal;
     
     // Pass through texture coordinate
     Uv = aUv;
