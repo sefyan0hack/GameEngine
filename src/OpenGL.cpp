@@ -213,15 +213,14 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
 
     gl::Enable(GL_DEPTH_TEST);
     gl::DepthFunc(GL_LESS);
-    
-    
-    #if !defined(WEB_PLT)
-        gl::Enable(GL_LINE_SMOOTH);
-        gl::Enable(GL_MULTISAMPLE);
-        gl::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-        gl::Enable(GL_PROGRAM_POINT_SIZE);
-        gl::PointSize(5.0f);
+    gl::Enable(GL_BLEND);
+    gl::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    #if !defined(WEB_PLT)
+    gl::Enable(GL_LINE_SMOOTH);
+    gl::Enable(GL_MULTISAMPLE);
+    gl::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     #endif
 
     Info("Platform : {}, Arch : {}", sys::TargetName, sys::ArchName);

@@ -108,10 +108,19 @@ auto APP::LoopBody(void* ctx) -> void
             static bool flip = false;
             if(flip == false){
                 flip = !flip;
+                gl::Enable(GL_LINE_SMOOTH);
+
+                gl::Enable(GL_POLYGON_OFFSET_LINE);
+                gl::PolygonOffset(-1.0f, -1.0f);
+
                 gl::PolygonMode(GL_FRONT_AND_BACK, GL_LINE);
             }else{
                 flip = !flip;
+                gl::Disable(GL_POLYGON_OFFSET_LINE);
+                gl::Disable(GL_LINE_SMOOTH);
+
                 gl::PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
             }
         }
 
@@ -120,9 +129,17 @@ auto APP::LoopBody(void* ctx) -> void
             static bool flip = false;
             if(flip == false){
                 flip = !flip;
+                gl::Enable(GL_PROGRAM_POINT_SIZE);
+                GLfloat widths[2];
+                auto& min = widths[0];
+                auto& max = widths[1];
+                gl::GetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, widths);
+                gl::PointSize((max-min)/2);
+
                 gl::PolygonMode(GL_FRONT_AND_BACK, GL_POINT);
             }else{
                 flip = !flip;
+                gl::Disable(GL_PROGRAM_POINT_SIZE);
                 gl::PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             }
         }

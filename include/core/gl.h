@@ -154,7 +154,10 @@ inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
     X(IsEnabled);\
     X(GetFloatv);\
     X(TexSubImage2D);\
-    X(Uniform2fv);
+    X(Uniform2fv);\
+    X(LineWidth);\
+    X(Hint);\
+    X(PolygonOffset);\
 
 #if defined(WEB_PLT)
   // web (or ES-only) build
