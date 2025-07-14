@@ -22,7 +22,7 @@ public:
     auto SetScale(const glm::vec3 &Scale)                       -> void ;
     auto Rotate(const float &x, const float &y, const float &z) -> void ;
     auto transform() const                                   -> Transform ;
-    auto Modle() const                                 -> glm::mat4 ;
+    auto Model() const                                 -> glm::mat4 ;
     auto mesh() const                                        -> std::shared_ptr<Mesh> ;
     auto material() const                                    -> std::shared_ptr<Material> ;
     auto InstancePos() const                                 -> const std::vector<glm::vec3>&;
@@ -74,7 +74,7 @@ public:
     gl::DepthFunc(GL_LEQUAL);
     mat->Use();
     mat->SetUniform("View", glm::mat4(glm::mat3(camera.View())));
-    mat->SetUniform("Perspective", camera.Perspective());
+    mat->SetUniform("Projection", camera.Perspective());
     mat->SetUniform("albedo", TextureUnit);
     mesh->Bind();
     gl::DrawArrays(GL_TRIANGLES, 0, mesh->VextexSize());

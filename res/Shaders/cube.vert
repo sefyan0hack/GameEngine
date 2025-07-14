@@ -4,21 +4,21 @@ layout (location = 2) in vec2 aUv;
 layout (location = 3) in vec3 InstancePosition;
 
 out vec3 Normal;
-out vec3 FragPos;
+out vec3 WorldPos;
 out vec2 Uv;
 
-uniform mat4 Modle;
-uniform mat4 Perspective;
+uniform mat4 Model;
+uniform mat4 Projection;
 uniform mat4 View;
 
 void main() {
-    vec4 worldPos = Modle * vec4(aPos + InstancePosition, 1.0);
-    
-    mat3 normalMatrix = mat3(transpose(inverse(Modle)));
+    vec4 worldPos_ = Model * vec4(aPos + InstancePosition, 1.0);
+    WorldPos = worldPos_.xyz;
+
+    mat3 normalMatrix = mat3(transpose(inverse(Model)));
     Normal = normalMatrix * aNormal;
-    
-    FragPos = worldPos.xyz;
+
     Uv = aUv;
-    
-    gl_Position = Perspective * View * worldPos;
+
+    gl_Position = Projection * View * worldPos_;
 }

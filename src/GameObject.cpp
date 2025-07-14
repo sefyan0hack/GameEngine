@@ -34,9 +34,9 @@ GameObject::~GameObject()
 auto GameObject::UpMatrix() -> void
 {
     auto Uniforms = m_Material->Uniforms();
-    auto it = Uniforms.find("Modle");
+    auto it = Uniforms.find("Model");
     if (it != Uniforms.end()){
-        m_Material->SetUniform("Modle", Transformation());
+        m_Material->SetUniform("Model", Transformation());
     }
 }
 
@@ -79,7 +79,7 @@ auto GameObject::transform() const -> Transform
     return m_Transform;
 }
 
-auto GameObject::Modle() const -> glm::mat4
+auto GameObject::Model() const -> glm::mat4
 {
     return Transformation();
 }

@@ -1,5 +1,5 @@
 in vec3 Normal;
-in vec3 FragPos;
+in vec3 WorldPos;
 in vec2 Uv;
 
 out vec4 FragColor;
@@ -16,7 +16,7 @@ void main() {
     vec4 baseColor = texture(albedo, Uv);
 
     // Calculate the view vector (from the fragment to the camera)
-    vec3 viewDir = normalize(FragPos - cameraPos);
+    vec3 viewDir = normalize(WorldPos - cameraPos);
 
     // Compute the reflection vector using the normalized normal
     vec3 reflVec = reflect(viewDir, normalize(Normal));

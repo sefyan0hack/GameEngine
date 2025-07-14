@@ -20,7 +20,7 @@ auto Renderer::render(Scene &scene, Camera &camera) -> void
         auto TextureUnit = material->texture()->TextureUnit();
         material->Use();
         material->SetUniform("View", camera.View());
-        material->SetUniform("Perspective", camera.Perspective());
+        material->SetUniform("Projection", camera.Perspective());
         material->SetUniform("cameraPos", camera.Position());
         material->SetUniform("skybox", scene.skyBox()->gameObject().material()->texture()->TextureUnit());
         material->SetUniform("albedo", TextureUnit);
