@@ -4,7 +4,7 @@ in vec2 Uv;
 
 out vec4 FragColor;
 
-uniform vec3 uCameraPos = vec3( 1,1,1 );
+uniform vec3 uCameraPos;
 uniform sampler2D uDiffuseMap;
 uniform samplerCube uSkyboxMap;
 

@@ -43,9 +43,9 @@ using GLCTX     = __GLXcontextRec*;
 #include <emscripten/html5.h>
 #include <emscripten/html5_webgl.h>
 #include <emscripten/key_codes.h>
-#include <GL/gl.h>
+#include <GL/gl.h> // im including gl.h for some defines :) so it may caus prbblloooom
 #define GL_GLES_PROTOTYPES 1
-#include <gl32.h> // im including opengl es 3.2 just for some defines :) so it may caus prbblloooom
+#include <gl3.h>
 #include <gl2ext.h>
 
 #define XXXGetProcAddress(name) emscripten_webgl_get_proc_address(name)
@@ -61,13 +61,13 @@ inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
 {
     switch (glError)
     {
+        case GL_NO_ERROR: return "GL_NO_ERROR";
         case GL_INVALID_ENUM: return "GL_INVALID_ENUM";
         case GL_INVALID_VALUE: return "GL_INVALID_VALUE";
         case GL_INVALID_OPERATION: return "GL_INVALID_OPERATION";
-        case GL_INVALID_FRAMEBUFFER_OPERATION: return "GL_INVALID_FRAMEBUFFER_OPERATION";
-        case GL_OUT_OF_MEMORY: return "GL_OUT_OF_MEMORY";
         case GL_STACK_OVERFLOW: return "GL_STACK_OVERFLOW";
         case GL_STACK_UNDERFLOW: return "GL_STACK_UNDERFLOW";
+        case GL_OUT_OF_MEMORY: return "GL_OUT_OF_MEMORY";
         default: return "GL_UNKNOWN";
     }
 }
