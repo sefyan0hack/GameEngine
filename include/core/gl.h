@@ -7,6 +7,7 @@
 #include <windows.h>
 #include <GL/gl.h>
 #include <GL/wglext.h>
+#include <GL/glcorearb.h>
 
 using WindHandl = HWND;
 using HDC_D     = HDC;
@@ -26,6 +27,7 @@ using GLCTX     = HGLRC;
 #include <GL/gl.h>
 #include <GL/glx.h>
 #include <GL/glxext.h>
+#include <GL/glcorearb.h>
 
 #define XXXGetProcAddress(name) glXGetProcAddress((const GLubyte*)name)
 
@@ -52,8 +54,6 @@ using HDC_D     = void*;
 using GLCTX     = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
 
 #endif
-
-#include <GL/glcorearb.h>
 
 
 inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
