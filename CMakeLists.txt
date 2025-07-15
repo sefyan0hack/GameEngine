@@ -101,9 +101,9 @@ if(EMSCRIPTEN)
         -sDISABLE_EXCEPTION_THROWING=1
         -sDISABLE_EXCEPTION_CATCHING=1 
         -sWASM_LEGACY_EXCEPTIONS=0
-        -fno-exceptions -fno-rtti
         --embed-file ${CMAKE_SOURCE_DIR}/res
         --profiling
+        -sASSERTIONS=1
         -sPTHREAD_POOL_SIZE=4
         -sEXIT_RUNTIME=1
         # -sASSERTIONS=2
