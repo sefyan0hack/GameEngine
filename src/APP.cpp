@@ -102,28 +102,45 @@ auto APP::LoopBody(void* ctx) -> void
     app->m_Fps = 1.0f / deltaTime;
     app->m_SmoothedFPS = 0.9f * app->m_SmoothedFPS + 0.1f * app->m_Fps;
 
-    #if !defined(WEB_PLT)
-        // Wireframe Mode
-        if (app->Keyboard.IsPressed(Key::H)){
-            static bool flip = false;
-            if(flip == false){
-                flip = !flip;
-                gl::Enable(GL_LINE_SMOOTH);
+    // Wireframe Mode
+    if (app->Keyboard.IsPressed(Key::H)){
+    #if defined(WEB_PLT)
+        std::string extname = "WEBGL_polygon_mode";
+        if(std::ranges::contains(app->Window.opengl()->Extensions(), extname)){
+            EM_ASM({
+                const name = Module.UTF8ToString($0);
+                const gl = Module.ctx;
+                const ext = gl.getExtension(name);
 
-                gl::Enable(GL_POLYGON_OFFSET_LINE);
-                gl::PolygonOffset(-1.0f, -1.0f);
-
-                gl::PolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            }else{
-                flip = !flip;
-                gl::Disable(GL_POLYGON_OFFSET_LINE);
-                gl::Disable(GL_LINE_SMOOTH);
-
-                gl::PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-            }
+                if (ext) {
+                    ext.polygonModeWEBGL(gl.FRONT_AND_BACK, ext.LINE_WEBGL);
+                } else {
+                    console.warn("Extension", name, "not supported by this context");
+                }
+            }, extname.c_str());
         }
+    #else 
+        static bool flip = false;
+        if(flip == false){
+            flip = !flip;
+            gl::Enable(GL_LINE_SMOOTH);
 
+            gl::Enable(GL_POLYGON_OFFSET_LINE);
+            gl::PolygonOffset(-1.0f, -1.0f);
+
+            gl::PolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        }else{
+            flip = !flip;
+            gl::Disable(GL_POLYGON_OFFSET_LINE);
+            gl::Disable(GL_LINE_SMOOTH);
+
+            gl::PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+        }
+    #endif
+    }
+
+    #if !defined(WEB_PLT)
         // Points Mode
         if (app->Keyboard.IsPressed(Key::P)){
             static bool flip = false;
