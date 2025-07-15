@@ -6,7 +6,7 @@
 #if defined(WINDOWS_PLT)
 #include <windows.h>
 #include <GL/gl.h>
-#include <GL/wglext.h>
+#include <wglext.h>
 #include <GL/glcorearb.h>
 
 using WindHandl = HWND;

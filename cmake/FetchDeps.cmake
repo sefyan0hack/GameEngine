@@ -19,11 +19,11 @@ add_library(stb_image INTERFACE)
 target_include_directories(stb_image SYSTEM INTERFACE ${STB_IMG_HEADER})
 
 CPMAddPackage(
-    NAME glext
-    URL https://registry.khronos.org/OpenGL/api/GL/glext.h
+    NAME wglext
+    URL https://registry.khronos.org/OpenGL/api/GL/wglext.h
     DOWNLOAD_ONLY YES
     DOWNLOAD_NO_EXTRACT TRUE
-    DOWNLOAD_NAME glext.h
+    DOWNLOAD_NAME wglext.h
 )
 
 CPMAddPackage(
@@ -44,6 +44,6 @@ if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/KHR/khrplatform.h)
 endif()
 
 include_directories(
-    ${CMAKE_CURRENT_BINARY_DIR}/_deps/glext-src  # For glext.h
-    ${CMAKE_CURRENT_BINARY_DIR}                  # For KHR/khrplatform.h
+    ${CMAKE_CURRENT_BINARY_DIR}/_deps/wglext-src  # For wglext.h
+    ${CMAKE_CURRENT_BINARY_DIR}                   # For KHR/khrplatform.h
 )
