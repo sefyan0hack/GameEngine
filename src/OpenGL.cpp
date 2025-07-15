@@ -41,8 +41,8 @@ auto OpenGL::init_opengl_win32() -> void
         Error("Failed to activate dummy OpenGL rendering context. : {}", GetLastError());
     }
 
-    wglGetExtensionsStringARB   = (decltype(wglGetExtensionsStringARB))wglGetProcAddress("wglGetExtensionsStringARB");
-    wglCreateContextAttribsARB  = (decltype(wglCreateContextAttribsARB))wglGetProcAddress("wglCreateContextAttribsARB");
+    wglGetExtensionsStringARB  = reinterpret_cast<PFNWGLGETEXTENSIONSSTRINGARBPROC>(wglGetProcAddress("wglGetExtensionsStringARB"));
+    wglCreateContextAttribsARB = reinterpret_cast<PFNWGLCREATECONTEXTATTRIBSARBPROC>(wglGetProcAddress("wglCreateContextAttribsARB"));
 
     if (!wglGetExtensionsStringARB){
         Error("Failed to load wglGetExtensionsStringARB. : {}", GetLastError());
@@ -53,10 +53,10 @@ auto OpenGL::init_opengl_win32() -> void
     }
 
     int32_t gl_attribs[] = { 
-        CONTEXT_MAJOR_VERSION_ARB, GLMajorVersion,
-        CONTEXT_MINOR_VERSION_ARB, GLMinorVersion,
+        WGL_CONTEXT_MAJOR_VERSION_ARB, GLMajorVersion,
+        WGL_CONTEXT_MINOR_VERSION_ARB, GLMinorVersion,
     #ifdef DEBUG
-        CONTEXT_FLAGS_ARB, 0x0001 | 0x0002,  // CONTEXT_DEBUG_BIT_ARB | CONTEXT_FORWARD_COMPATIBLE_BIT_ARB
+        WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB | WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
     #endif
         0,
     };
@@ -107,10 +107,10 @@ auto OpenGL::init_opengl_linux() -> void
     }
 
     int32_t contextAttribs[] = {
-        CONTEXT_MAJOR_VERSION_ARB, GLMajorVersion,
-        CONTEXT_MINOR_VERSION_ARB, GLMinorVersion,
+        GLX_CONTEXT_MAJOR_VERSION_ARB, GLMajorVersion,
+        GLX_CONTEXT_MINOR_VERSION_ARB, GLMinorVersion,
         #ifdef DEBUG
-        CONTEXT_FLAGS_ARB, 0x0001 | 0x0002,  // CONTEXT_DEBUG_BIT_ARB | CONTEXT_FORWARD_COMPATIBLE_BIT_ARB
+        GLX_CONTEXT_FLAGS_ARB, GLX_CONTEXT_DEBUG_BIT_ARB | GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
         #endif
         0
     };

@@ -1,11 +1,10 @@
 #pragma once
 #include <core/Function.hpp>
 
-#define GL_GLEXT_PROTOTYPES
 #if defined(WINDOWS_PLT)
 #include <windows.h>
 #include <GL/gl.h>
-#include <glext.h>
+#include <GL/wglext.h>
 
 using WindHandl = HWND;
 using HDC_D     = HDC;
@@ -13,9 +12,10 @@ using GLCTX     = HGLRC;
 
 #define XXXGetProcAddress(name) wglGetProcAddress(name)
 
-[[maybe_unused]] inline static auto wglCreateContextAttribsARB = (GLCTX(WINAPI*)(HDC_D, GLCTX, const int*))(nullptr);
-[[maybe_unused]] inline static auto wglGetExtensionsStringARB = (const char *(WINAPI*)(HDC_D))(nullptr);
-[[maybe_unused]] inline static auto wglSwapIntervalEXT = (BOOL(APIENTRY*)(int))(nullptr);
+// Declare function pointers using typedefs
+[[maybe_unused]] inline static PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB = nullptr;
+[[maybe_unused]] inline static PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = nullptr;
+[[maybe_unused]] inline static PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = nullptr;
 
 #elif defined(LINUX_PLT)
 #include <X11/Xlib.h>
@@ -23,7 +23,7 @@ using GLCTX     = HGLRC;
 #include <X11/XKBlib.h>
 #include <GL/gl.h>
 #include <GL/glx.h>
-#include <glext.h>
+#include <GL/glxext.h>
 
 #define XXXGetProcAddress(name) glXGetProcAddress((const GLubyte*)name)
 
@@ -39,8 +39,9 @@ using GLCTX     = __GLXcontextRec*;
 #include <emscripten/html5.h>
 #include <emscripten/html5_webgl.h>
 #include <emscripten/key_codes.h>
-#include <GL/gl.h>
-#include "glext.h"
+
+#define GL_GLES_PROTOTYPES
+#include <GLES3/gl32.h>
 
 #define XXXGetProcAddress(name) emscripten_webgl_get_proc_address(name)
 
@@ -49,6 +50,10 @@ using HDC_D     = void*;
 using GLCTX     = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
 
 #endif
+
+#define GL_GLEXT_PROTOTYPES
+#include <GL/glcorearb.h>
+
 
 inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
 {
