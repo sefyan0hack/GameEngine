@@ -45,7 +45,7 @@ using GLCTX     = __GLXcontextRec*;
 #include <emscripten/key_codes.h>
 
 #define GL_GLES_PROTOTYPES 1
-#include <gl3.h>
+#include <gl32.h> // im including opengl es 3.2 just for some defines :) so it may caus prbblloooom
 #include <gl2ext.h>
 
 #define XXXGetProcAddress(name) emscripten_webgl_get_proc_address(name)
@@ -66,10 +66,8 @@ inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
         case GL_INVALID_OPERATION: return "GL_INVALID_OPERATION";
         case GL_INVALID_FRAMEBUFFER_OPERATION: return "GL_INVALID_FRAMEBUFFER_OPERATION";
         case GL_OUT_OF_MEMORY: return "GL_OUT_OF_MEMORY";
-        #if !defined(WEB_PLT)
         case GL_STACK_OVERFLOW: return "GL_STACK_OVERFLOW";
         case GL_STACK_UNDERFLOW: return "GL_STACK_UNDERFLOW";
-        #endif
         default: return "GL_UNKNOWN";
     }
 }

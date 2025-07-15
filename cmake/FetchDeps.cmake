@@ -61,11 +61,11 @@ CPMAddPackage(
 
 
 CPMAddPackage(
-    NAME gl3
-    URL https://registry.khronos.org/OpenGL/api/GLES3/gl3.h
+    NAME gl32
+    URL https://registry.khronos.org/OpenGL/api/GLES3/gl32.h
     DOWNLOAD_ONLY YES
     DOWNLOAD_NO_EXTRACT TRUE
-    DOWNLOAD_NAME gl3.h
+    DOWNLOAD_NAME gl32.h
 )
 
 CPMAddPackage(
@@ -82,6 +82,6 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/wglext-src  # For wglext.h
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/glxext-src  # For glxext.h
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/gl2ext-src  # For gl2ext.h
-    ${CMAKE_CURRENT_BINARY_DIR}/_deps/gl3-src     # For gl3.h
+    ${CMAKE_CURRENT_BINARY_DIR}/_deps/gl32-src    # For gl32.h
     ${CMAKE_CURRENT_BINARY_DIR}                   # For KHR/khrplatform.h
 )
