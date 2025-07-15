@@ -2,9 +2,11 @@
 
 class Keyboard;
 class Mouse;
+class CWindow;
 
 struct WindowResizeEvent { int32_t width, height; };
-struct WindowFocusEvent { bool focus; };
+struct WindowLoseFocusEvent { const CWindow* window; };
+struct WindowSetFocusEvent  { const CWindow* window; };
 struct WindowQuitEvent {};
 
 using Event = std::variant<
@@ -18,6 +20,7 @@ using Event = std::variant<
     Mouse::LeaveEvent,
     Mouse::RawDeltaEvent,
     WindowResizeEvent,
-    WindowFocusEvent,
+    WindowLoseFocusEvent,
+    WindowSetFocusEvent,
     WindowQuitEvent
 >;

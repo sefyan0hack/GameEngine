@@ -42,10 +42,10 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 			switch (eventType)
 			{
 				case EMSCRIPTEN_EVENT_FOCUS:
-					window->m_Events.push(WindowFocusEvent{true});
+					window->m_Events.push(WindowSetFocusEvent{window});
 					break;
 				case EMSCRIPTEN_EVENT_BLUR:
-					window->m_Events.push(WindowFocusEvent{false});
+					window->m_Events.push(WindowLoseFocusEvent{window});
 					break;
 			}
 			return EM_TRUE;
@@ -297,11 +297,14 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    	break;
 	    }
 	    ///////////////// END RAW MOUSE MESSAGES /////////////////
+		case WM_SETFOCUS:
+			m_Events.push(WindowSetFocusEvent{this});
+			break;
         case WM_KILLFOCUS:
-		m_Events.clear();
-		m_Events.push(WindowFocusEvent{});
-		ClipCursor(nullptr); //release cursor confinement
-		break;
+			m_Events.clear();
+			m_Events.push(WindowLoseFocusEvent{this});
+			ClipCursor(nullptr); //release cursor confinement
+			break;
 
     }
     return DefWindowProcA(Winhandle, msg, Wpr, Lpr);
@@ -681,7 +684,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 
 			case FocusOut:
 				// Clear keyboard state when window loses focus
-				self->m_Events.push(WindowFocusEvent{});
+				self->m_Events.push(WindowLoseFocusEvent{self});
 				break;
 
 			case ClientMessage:

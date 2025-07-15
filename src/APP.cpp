@@ -63,6 +63,9 @@ auto APP::LoopBody(void* ctx) -> void
                 window.m_Height = e.height;
                 gl::Viewport(0, 0, e.width, e.height);
             },
+            [&app](const WindowLoseFocusEvent&) {
+		        app->Keyboard.ClearState();
+            },
             [&app](const Keyboard::KeyDownEvent& e) {
 				    app->Keyboard.OnKeyDown(e.key);
             },
@@ -87,9 +90,6 @@ auto APP::LoopBody(void* ctx) -> void
             [&app](const Mouse::RawDeltaEvent& e) {
                 app->Mouse.OnRawDelta(e.dx, e.dy);
                 app->ViewCamera.UpdateCameraPosition(app->Mouse);
-            },
-            [&app](const WindowFocusEvent& e) {
-		        if(!e.focus) app->Keyboard.ClearState();
             },
             [](const auto& e) { Info("Unhandeled Event: {}", ::type_name<decltype(e)>()); },
         }, event);
