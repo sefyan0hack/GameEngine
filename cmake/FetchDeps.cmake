@@ -8,37 +8,37 @@ include(helpers)
 CPMAddPackage("gh:g-truc/glm#1.0.1")
 
 # stb_image v2.30
-add_single_file(stb_image https://raw.githubusercontent.com/nothings/stb/5c205738c191bcb0abc65c4febfa9bd25ff35234/stb_image.h)
+fetch_and_include_file(stb_image https://raw.githubusercontent.com/nothings/stb/5c205738c191bcb0abc65c4febfa9bd25ff35234/stb_image.h)
 
 add_library(stb_image INTERFACE)
 target_include_directories(stb_image SYSTEM INTERFACE ${stb_image_SOURCE_DIR})
 
 
-add_single_file(khrplatform https://raw.githubusercontent.com/KhronosGroup/EGL-Registry/main/api/KHR/khrplatform.h)
+fetch_and_include_file(khrplatform https://raw.githubusercontent.com/KhronosGroup/EGL-Registry/main/api/KHR/khrplatform.h)
 
 if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/KHR/khrplatform.h)
     file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/KHR)
     include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
     file(RENAME
-        ${CMAKE_CURRENT_BINARY_DIR}/_deps/khr-src/khrplatform.h
+        ${khrplatform_SOURCE_DIR}/khrplatform.h
         ${CMAKE_CURRENT_BINARY_DIR}/KHR/khrplatform.h
     )
 endif()
 
 # fetch Opengl headers
 
-add_single_file(glext https://registry.khronos.org/OpenGL/api/GL/glext.h)
+fetch_and_include_file(glext https://registry.khronos.org/OpenGL/api/GL/glext.h)
 
 if(WIN32)
-    add_single_file(wglext https://registry.khronos.org/OpenGL/api/GL/wglext.h)
+    fetch_and_include_file(wglext https://registry.khronos.org/OpenGL/api/GL/wglext.h)
 endif()
 
 if(UNIX)
-    add_single_file(glxext https://registry.khronos.org/OpenGL/api/GL/glxext.h)
+    fetch_and_include_file(glxext https://registry.khronos.org/OpenGL/api/GL/glxext.h)
 endif()
 
 if(EMSCRIPTEN)
-    add_single_file(gl3 https://registry.khronos.org/OpenGL/api/GLES3/gl3.h)
-    add_single_file(gl2ext https://registry.khronos.org/OpenGL/api/GLES2/gl2ext.h)
+    fetch_and_include_file(gl3 https://registry.khronos.org/OpenGL/api/GLES3/gl3.h)
+    fetch_and_include_file(gl2ext https://registry.khronos.org/OpenGL/api/GLES2/gl2ext.h)
 endif()

@@ -324,7 +324,7 @@ macro(remove_global_flags target)
 endmacro()
 
 #
-macro(add_single_file name url)
+macro(fetch_and_include_file name url)
     CPMAddPackage(
         NAME ${name}
         URL ${url}
@@ -332,5 +332,5 @@ macro(add_single_file name url)
         DOWNLOAD_NO_EXTRACT TRUE
         DOWNLOAD_NAME ${name}.h
     )
-    include_directories(${CMAKE_CURRENT_BINARY_DIR}/_deps/${name}-src)
+    include_directories(${${name}_SOURCE_DIR})
 endmacro()
