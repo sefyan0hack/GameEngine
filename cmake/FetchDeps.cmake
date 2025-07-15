@@ -1,23 +1,17 @@
 
 include(CPM)
 include(helpers)
+
 # deps :
 
     # add glm 1.0.1
 CPMAddPackage("gh:g-truc/glm#1.0.1")
 
 # stb_image v2.30
-CPMAddPackage(
-    NAME stb_image_header
-    URL https://raw.githubusercontent.com/nothings/stb/5c205738c191bcb0abc65c4febfa9bd25ff35234/stb_image.h
-    DOWNLOAD_ONLY YES
-    DOWNLOAD_NO_EXTRACT TRUE
-    DOWNLOAD_NAME stb_image.h
-)
+add_single_file(stb_image https://raw.githubusercontent.com/nothings/stb/5c205738c191bcb0abc65c4febfa9bd25ff35234/stb_image.h)
 
-set(STB_IMG_HEADER ${stb_image_header_SOURCE_DIR})
 add_library(stb_image INTERFACE)
-target_include_directories(stb_image SYSTEM INTERFACE ${STB_IMG_HEADER})
+target_include_directories(stb_image SYSTEM INTERFACE ${stb_image_SOURCE_DIR})
 
 
 add_single_file(khrplatform https://raw.githubusercontent.com/KhronosGroup/EGL-Registry/main/api/KHR/khrplatform.h)
