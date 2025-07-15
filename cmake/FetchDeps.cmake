@@ -59,9 +59,20 @@ CPMAddPackage(
     DOWNLOAD_NAME glxext.h
 )
 
+
+CPMAddPackage(
+    NAME gl2ext
+    URL https://registry.khronos.org/OpenGL/api/GLES3/gl2ext.h
+    DOWNLOAD_ONLY YES
+    DOWNLOAD_NO_EXTRACT TRUE
+    DOWNLOAD_NAME gl2ext.h
+)
+
+
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/glext-src   # For glext.h
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/wglext-src  # For wglext.h
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/glxext-src  # For glxext.h
+    ${CMAKE_CURRENT_BINARY_DIR}/_deps/gl2ext-src  # For gl2ext.h
     ${CMAKE_CURRENT_BINARY_DIR}                   # For KHR/khrplatform.h
 )
