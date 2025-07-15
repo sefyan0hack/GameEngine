@@ -103,41 +103,51 @@ auto APP::LoopBody(void* ctx) -> void
     app->m_SmoothedFPS = 0.9f * app->m_SmoothedFPS + 0.1f * app->m_Fps;
 
     // Wireframe Mode
-    if (app->Keyboard.IsPressed(Key::H)){
-    #if defined(WEB_PLT)
-        std::string extname = "WEBGL_polygon_mode";
-        if(std::ranges::contains(app->Window.opengl()->Extensions(), extname)){
-            EM_ASM({
-                const name = Module.UTF8ToString($0);
-                const gl = Module.ctx;
-                const ext = gl.getExtension(name);
-
-                if (ext) {
-                    ext.polygonModeWEBGL(gl.FRONT_AND_BACK, ext.LINE_WEBGL);
-                } else {
-                    console.warn("Extension", name, "not supported by this context");
-                }
-            }, extname.c_str());
-        }
-    #else 
+    if (app->Keyboard.IsPressed(Key::H)) {
         static bool flip = false;
-        if(flip == false){
-            flip = !flip;
+    
+        #if defined(WEB_PLT)
+        static bool webPolyModeChecked = false;
+        static bool webPolyModeAvailable = false;
+        if (!webPolyModeChecked) {
+            auto exts = app->Window.opengl()->Extensions();
+            webPolyModeAvailable = std::ranges::contains(exts, "WEBGL_polygon_mode");
+            webPolyModeChecked = true;
+        }
+        #endif
+    
+        if (!flip) {
+            #if defined(WEB_PLT)
+            if (webPolyModeAvailable) {
+                EM_ASM({
+                    const gl = Module.ctx;
+                    const ext = gl.getExtension("WEBGL_polygon_mode");
+                    ext.polygonModeWEBGL(gl.FRONT_AND_BACK, ext.LINE_WEBGL);
+                });
+            }
+            #else
             gl::Enable(GL_LINE_SMOOTH);
-
             gl::Enable(GL_POLYGON_OFFSET_LINE);
             gl::PolygonOffset(-1.0f, -1.0f);
-
             gl::PolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        }else{
-            flip = !flip;
+            #endif
+            flip = true;
+        } else {
+            #if defined(WEB_PLT)
+            if (webPolyModeAvailable) {
+                EM_ASM({
+                    const gl = Module.ctx;
+                    const ext = gl.getExtension("WEBGL_polygon_mode");
+                    ext.polygonModeWEBGL(gl.FRONT_AND_BACK, ext.FILL_WEBGL);
+                });
+            }
+            #else
             gl::Disable(GL_POLYGON_OFFSET_LINE);
             gl::Disable(GL_LINE_SMOOTH);
-
             gl::PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
+            #endif
+            flip = false;
         }
-    #endif
     }
 
     #if !defined(WEB_PLT)
