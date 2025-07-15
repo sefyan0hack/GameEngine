@@ -322,3 +322,15 @@ macro(remove_global_flags target)
         set_target_properties(${target} PROPERTIES COMPILE_OPTIONS "${TARGET_OPTS}")
     endif()
 endmacro()
+
+#
+macro(add_single_file name url)
+    CPMAddPackage(
+        NAME ${name}
+        URL ${url}
+        DOWNLOAD_ONLY YES
+        DOWNLOAD_NO_EXTRACT TRUE
+        DOWNLOAD_NAME ${name}.h
+    )
+    include_directories(${CMAKE_CURRENT_BINARY_DIR}/_deps/${name}-src)
+endmacro()
