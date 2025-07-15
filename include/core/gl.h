@@ -6,8 +6,8 @@
 #if defined(WINDOWS_PLT)
 #include <windows.h>
 #include <GL/gl.h>
+#include <glext.h>
 #include <wglext.h>
-#include <GL/glcorearb.h>
 
 using WindHandl = HWND;
 using HDC_D     = HDC;
@@ -26,8 +26,8 @@ using GLCTX     = HGLRC;
 #include <X11/XKBlib.h>
 #include <GL/gl.h>
 #include <GL/glx.h>
-#include <GL/glxext.h>
-#include <GL/glcorearb.h>
+#include <glext.h>
+#include <glxext.h>
 
 #define XXXGetProcAddress(name) glXGetProcAddress((const GLubyte*)name)
 
@@ -45,7 +45,8 @@ using GLCTX     = __GLXcontextRec*;
 #include <emscripten/key_codes.h>
 
 #define GL_GLES_PROTOTYPES
-#include <GLES3/gl32.h>
+#include <GLES3/gl3.h>
+#include <GLES3/gl3ext.h>
 
 #define XXXGetProcAddress(name) emscripten_webgl_get_proc_address(name)
 

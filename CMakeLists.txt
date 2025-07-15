@@ -80,7 +80,7 @@ if(EMSCRIPTEN)
         # -Oz
         # -g0
         -std=c++23
-        -Wno-character-conversion -Wno-dollar-in-identifier-extension
+        -Wno-character-conversion -Wno-dollar-in-identifier-extension -Wno-error=depscan
         -pthread
         -msimd128
         -fPIC
