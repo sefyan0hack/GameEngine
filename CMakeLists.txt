@@ -95,7 +95,7 @@ if(EMSCRIPTEN)
         -sMIN_WEBGL_VERSION=1
         -sMAX_WEBGL_VERSION=2
         -sALLOW_MEMORY_GROWTH=1
-        -sNO_EXIT_RUNTIME=1
+        # -sNO_EXIT_RUNTIME=1
         -sFULL_ES3=1
         -sSTB_IMAGE=1
         -sDISABLE_EXCEPTION_THROWING=1
@@ -104,6 +104,8 @@ if(EMSCRIPTEN)
         -fno-exceptions -fno-rtti
         --embed-file ${CMAKE_SOURCE_DIR}/res
         --profiling
+        -sPTHREAD_POOL_SIZE=4
+        -sEXIT_RUNTIME=1
         # -sASSERTIONS=2
         # -sSTRICT=1
         # -sMALLOC=emmalloc

@@ -9,6 +9,7 @@
 #include <core/Material.hpp>
 #include <core/Log.hpp>
 #include <core/ResourceManager.hpp>
+#include <core/Utils.hpp>
 
 // #define USE_EBO
 
@@ -144,7 +145,9 @@ private:
         Scn << GameObject({0,0,1}, Matt, cubeMesh);
         Scn << GameObject({1,1,0}, Matt, cubeMesh);
         Scn << GameObject({1,1,1}, Matt, cubeMesh);
-
+        utils::setTimeOut(5000, [](){
+            Info("This Trigred after 5 s");
+        });
     }
 public:
 
