@@ -44,7 +44,7 @@ using GLCTX     = __GLXcontextRec*;
 #include <emscripten/html5_webgl.h>
 #include <emscripten/key_codes.h>
 
-#define GL_GLES_PROTOTYPES
+#define GL_GLES_PROTOTYPES 1
 #include <gl3.h>
 #include <gl2ext.h>
 
