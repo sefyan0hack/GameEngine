@@ -45,7 +45,7 @@ using GLCTX     = __GLXcontextRec*;
 #include <emscripten/key_codes.h>
 
 #define GL_GLES_PROTOTYPES
-#include <GLES3/gl3.h>
+#include <gl3.h>
 #include <gl2ext.h>
 
 #define XXXGetProcAddress(name) emscripten_webgl_get_proc_address(name)
