@@ -62,7 +62,7 @@ CPMAddPackage(
 
 CPMAddPackage(
     NAME gl2ext
-    URL https://registry.khronos.org/OpenGL/api/GLES3/gl2ext.h
+    URL https://registry.khronos.org/OpenGL/api/GLES2/gl2ext.h
     DOWNLOAD_ONLY YES
     DOWNLOAD_NO_EXTRACT TRUE
     DOWNLOAD_NAME gl2ext.h
