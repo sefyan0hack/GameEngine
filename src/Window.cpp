@@ -34,7 +34,7 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 	emscripten_set_touchend_callback(m_WindowHandle, this, EM_FALSE, &CWindow::TouchHandler);
 	emscripten_set_touchcancel_callback(m_WindowHandle, this, EM_FALSE, &CWindow::TouchHandler);
 
-	emscripten_set_focus_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, EM_FALSE,
+	emscripten_set_focus_callback(m_WindowHandle, this, EM_FALSE,
 		[](int32_t, const EmscriptenFocusEvent *, void* userData) -> EM_BOOL {
 			CWindow* window = static_cast<CWindow*>(userData);
     		if (!window) return EM_FALSE;
@@ -44,7 +44,7 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 		}
 	);
 
-	emscripten_set_blur_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, EM_FALSE,
+	emscripten_set_blur_callback(m_WindowHandle, this, EM_FALSE,
 		[](int32_t, const EmscriptenFocusEvent *, void* userData) -> EM_BOOL {
 			CWindow* window = static_cast<CWindow*>(userData);
     		if (!window) return EM_FALSE;
@@ -370,6 +370,22 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
 
 	emscripten_set_window_title(Title);
 	emscripten_set_canvas_element_size(window_handle, Width, Height);
+	EM_ASM({
+        var canvas = document.getElementById('canvas');
+        if (!canvas) canvas = document.querySelector('#canvas');
+        
+        canvas.tabIndex = 0;
+        
+        canvas.addEventListener('click', function() {
+            canvas.focus();
+        });
+        
+        canvas.addEventListener('touchstart', function() {
+            canvas.focus();
+        });
+        
+        canvas.focus();
+	});
 
 	return {window_handle, DrawContext};
 }
