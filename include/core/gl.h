@@ -1,6 +1,8 @@
 #pragma once
 #include <core/Function.hpp>
 
+#define GL_GLEXT_PROTOTYPES
+
 #if defined(WINDOWS_PLT)
 #include <windows.h>
 #include <GL/gl.h>
@@ -51,7 +53,6 @@ using GLCTX     = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
 
 #endif
 
-#define GL_GLEXT_PROTOTYPES
 #include <GL/glcorearb.h>
 
 
