@@ -9,7 +9,6 @@
 #include <core/Material.hpp>
 #include <core/Log.hpp>
 #include <core/ResourceManager.hpp>
-#include <core/Utils.hpp>
 
 // #define USE_EBO
 
@@ -145,9 +144,11 @@ private:
         Scn << GameObject({0,0,1}, Matt, cubeMesh);
         Scn << GameObject({1,1,0}, Matt, cubeMesh);
         Scn << GameObject({1,1,1}, Matt, cubeMesh);
-        utils::setTimeOut(5000, [](){
-            std::cout << "This Trigred after 5 s\n";
-        });
+
+        std::thread([](){
+            std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+            std::cout << "After 5s \n";
+        }).detach();
     }
 public:
 
