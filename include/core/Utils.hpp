@@ -26,30 +26,13 @@ struct overloaded : Ts... { using Ts::operator()...; };
 
 namespace utils {
 
-// template<typename Function, typename... Args>
-// auto setTimeOut(unsigned long delay, Function&& func, Args&&... args) -> void
-// {
-//     std::thread([delay, func = std::forward<Function>(func), ...args = std::forward<Args>(args)]() mutable {
-//         std::this_thread::sleep_for(std::chrono::milliseconds(delay));
-//         std::invoke(func, std::forward<Args>(args)...);
-//     }).detach();
-// }
 
 template<typename Function, typename... Args>
 auto setTimeOut(unsigned long delay, Function&& func, Args&&... args) -> void
 {
-    auto task = std::make_shared<std::tuple<std::decay_t<Function>, std::decay_t<Args>...>>(
-        std::forward<Function>(func),
-        std::forward<Args>(args)...
-    );
-    
-    std::thread([delay, task] {
+    std::thread([delay, func = std::forward<Function>(func), ...args = std::forward<Args>(args)]() mutable {
         std::this_thread::sleep_for(std::chrono::milliseconds(delay));
-        
-        std::apply([](auto&& func, auto&&... args) {
-            std::invoke(std::forward<decltype(func)>(func), 
-                        std::forward<decltype(args)>(args)...);
-        }, *task);
+        std::invoke(func, std::forward<Args>(args)...);
     }).detach();
 }
 

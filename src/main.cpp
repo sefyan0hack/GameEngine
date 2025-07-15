@@ -146,7 +146,7 @@ private:
         Scn << GameObject({1,1,0}, Matt, cubeMesh);
         Scn << GameObject({1,1,1}, Matt, cubeMesh);
         utils::setTimeOut(5000, [](){
-            Info("This Trigred after 5 s");
+            std::cout << "This Trigred after 5 s\n";
         });
     }
 public:
