@@ -368,6 +368,7 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
 
 	emscripten_set_window_title(Title);
 	emscripten_set_canvas_element_size(window_handle, Width, Height);
+	emscripten_run_script(std::format("document.querySelector('{}').focus();", window_handle).c_str());
 
 	return {window_handle, DrawContext};
 }
