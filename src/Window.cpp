@@ -19,40 +19,40 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 
 	#if defined(WEB_PLT)
 
-	emscripten_set_keypress_callback(m_WindowHandle, this, EM_FALSE, &CWindow::KeyHandler);
-	emscripten_set_keydown_callback(m_WindowHandle, this, EM_FALSE, &CWindow::KeyHandler);
-	emscripten_set_keyup_callback(m_WindowHandle, this, EM_FALSE, &CWindow::KeyHandler);
+	emscripten_set_keypress_callback(m_WindowHandle, this, EM_TRUE, &CWindow::KeyHandler);
+	emscripten_set_keydown_callback(m_WindowHandle, this, EM_TRUE, &CWindow::KeyHandler);
+	emscripten_set_keyup_callback(m_WindowHandle, this, EM_TRUE, &CWindow::KeyHandler);
 	
-	emscripten_set_mousedown_callback(m_WindowHandle , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseup_callback(m_WindowHandle    , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mousemove_callback(m_WindowHandle  , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseenter_callback(m_WindowHandle , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseleave_callback(m_WindowHandle , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mousedown_callback(m_WindowHandle , this, EM_TRUE, &CWindow::MouseHandler);
+	emscripten_set_mouseup_callback(m_WindowHandle    , this, EM_TRUE, &CWindow::MouseHandler);
+	emscripten_set_mousemove_callback(m_WindowHandle  , this, EM_TRUE, &CWindow::MouseHandler);
+	emscripten_set_mouseenter_callback(m_WindowHandle , this, EM_TRUE, &CWindow::MouseHandler);
+	emscripten_set_mouseleave_callback(m_WindowHandle , this, EM_TRUE, &CWindow::MouseHandler);
 
-	emscripten_set_touchstart_callback(m_WindowHandle, this, EM_FALSE, &CWindow::TouchHandler);
-	emscripten_set_touchmove_callback(m_WindowHandle, this, EM_FALSE, &CWindow::TouchHandler);
-	emscripten_set_touchend_callback(m_WindowHandle, this, EM_FALSE, &CWindow::TouchHandler);
-	emscripten_set_touchcancel_callback(m_WindowHandle, this, EM_FALSE, &CWindow::TouchHandler);
+	emscripten_set_touchstart_callback(m_WindowHandle, this, EM_TRUE, &CWindow::TouchHandler);
+	emscripten_set_touchmove_callback(m_WindowHandle, this, EM_TRUE, &CWindow::TouchHandler);
+	emscripten_set_touchend_callback(m_WindowHandle, this, EM_TRUE, &CWindow::TouchHandler);
+	emscripten_set_touchcancel_callback(m_WindowHandle, this, EM_TRUE, &CWindow::TouchHandler);
 
-	// emscripten_set_focus_callback(m_WindowHandle, this, EM_FALSE,
-	// 	[](int32_t eventType, const EmscriptenFocusEvent *, void* userData) -> EM_BOOL {
-	// 		CWindow* window = static_cast<CWindow*>(userData);
-    // 		if (!window) return EM_FALSE;
+	emscripten_set_focus_callback(m_WindowHandle, this, EM_TRUE,
+		[](int32_t eventType, const EmscriptenFocusEvent *, void* userData) -> EM_BOOL {
+			CWindow* window = static_cast<CWindow*>(userData);
+    		if (!window) return EM_FALSE;
 
-	// 		switch (eventType)
-	// 		{
-	// 			case EMSCRIPTEN_EVENT_FOCUS:
-	// 				window->m_Events.push(WindowSetFocusEvent{window});
-	// 				break;
-	// 			case EMSCRIPTEN_EVENT_BLUR:
-	// 				window->m_Events.push(WindowLoseFocusEvent{window});
-	// 				break;
-	// 		}
-	// 		return EM_TRUE;
-	// 	}
-	// );
+			switch (eventType)
+			{
+				case EMSCRIPTEN_EVENT_FOCUS:
+					window->m_Events.push(WindowSetFocusEvent{window});
+					break;
+				case EMSCRIPTEN_EVENT_BLUR:
+					window->m_Events.push(WindowLoseFocusEvent{window});
+					break;
+			}
+			return EM_TRUE;
+		}
+	);
 
-	emscripten_set_fullscreenchange_callback(m_WindowHandle, this, EM_FALSE, 
+	emscripten_set_fullscreenchange_callback(m_WindowHandle, this, EM_TRUE, 
 		[](
 			int32_t eventType, 
 			const EmscriptenFullscreenChangeEvent* e,
