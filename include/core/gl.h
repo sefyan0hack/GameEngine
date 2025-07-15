@@ -43,7 +43,7 @@ using GLCTX     = __GLXcontextRec*;
 #include <emscripten/html5.h>
 #include <emscripten/html5_webgl.h>
 #include <emscripten/key_codes.h>
-
+#include <GL/gl.h>
 #define GL_GLES_PROTOTYPES 1
 #include <gl32.h> // im including opengl es 3.2 just for some defines :) so it may caus prbblloooom
 #include <gl2ext.h>
