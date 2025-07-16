@@ -93,6 +93,7 @@ if(EMSCRIPTEN)
         -fno-exceptions -fno-rtti
         -pthread
         -matomics
+        -sCANVAS_ID=canvas
         -sASYNCIFY
         -sUSE_WEBGL2=1
         -sMIN_WEBGL_VERSION=1
