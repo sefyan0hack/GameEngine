@@ -104,6 +104,7 @@ if(EMSCRIPTEN)
         --embed-file ${CMAKE_SOURCE_DIR}/res
         -sPTHREAD_POOL_SIZE=4
         -sPTHREAD_POOL_SIZE_STRICT=0
+        -sPROXY_TO_PTHREAD
         --profiling
         -g3
         -sASSERTIONS=2
