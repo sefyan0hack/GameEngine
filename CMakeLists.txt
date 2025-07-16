@@ -105,7 +105,7 @@ if(EMSCRIPTEN)
         --profiling
         -sASSERTIONS=2
         -sPTHREAD_POOL_SIZE=4
-        -sEXIT_RUNTIME=1
+        # -sEXIT_RUNTIME=1
         # -sASSERTIONS=2
         # -sSTRICT=1
         # -sMALLOC=emmalloc
