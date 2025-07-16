@@ -75,40 +75,39 @@ if(EMSCRIPTEN)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
     set(STATIC_LINK OFF)
     set(RTTI OFF)
+
     
     add_compile_options(
-        # -Oz
-        -g3
+        -Oz
         -std=c++23
-        -Wno-character-conversion -Wno-dollar-in-identifier-extension -Wno-error -Wno-invalid-token-paste
-        -pthread
+        -Wno-character-conversion -Wno-dollar-in-identifier-extension
         -msimd128
         -fPIC
-        # -fno-exceptions -fno-rtti
+        -fno-exceptions -fno-rtti
     )
 
     add_link_options(
+        -Oz
         -pthread
-        # -Oz
-        # -g0
         -sASYNCIFY
         -sUSE_WEBGL2=1
         -sMIN_WEBGL_VERSION=1
         -sMAX_WEBGL_VERSION=2
         -sALLOW_MEMORY_GROWTH=1
-        # -sNO_EXIT_RUNTIME=1
         -sFULL_ES3=1
         -sSTB_IMAGE=1
-        -sDISABLE_EXCEPTION_THROWING=0
-        -sDISABLE_EXCEPTION_CATCHING=0
+        -sDISABLE_EXCEPTION_THROWING=1
+        -sDISABLE_EXCEPTION_CATCHING=1
         --embed-file ${CMAKE_SOURCE_DIR}/res
         -sPTHREAD_POOL_SIZE=4
-        -sPTHREAD_POOL_SIZE_STRICT=0
         -sPROXY_TO_PTHREAD
-        --profiling
-        -g3
-        -sASSERTIONS=2
-        # -sEXIT_RUNTIME=1
+        -sEXIT_RUNTIME=1
+        -fno-exceptions -fno-rtti
+
+        # -sNO_EXIT_RUNTIME=1
+        # --profiling
+        # -g3
+        # -sASSERTIONS=2
         # -sASSERTIONS=2
         # -sSTRICT=1
         # -sMALLOC=emmalloc
