@@ -85,14 +85,14 @@ if(EMSCRIPTEN)
         -fPIC
         -fno-exceptions -fno-rtti
         -pthread
-        -matomic 
+        -matomics
     )
 
     add_link_options(
         -Oz
         -fno-exceptions -fno-rtti
         -pthread
-        -matomic 
+        -matomics
         -sASYNCIFY
         -sUSE_WEBGL2=1
         -sMIN_WEBGL_VERSION=1
