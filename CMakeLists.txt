@@ -84,7 +84,7 @@ if(EMSCRIPTEN)
         -pthread
         -msimd128
         -fPIC
-        -fno-exceptions -fno-rtti
+        # -fno-exceptions -fno-rtti
     )
 
     add_link_options(
@@ -98,12 +98,12 @@ if(EMSCRIPTEN)
         # -sNO_EXIT_RUNTIME=1
         -sFULL_ES3=1
         -sSTB_IMAGE=1
-        -sDISABLE_EXCEPTION_THROWING=1
-        -sDISABLE_EXCEPTION_CATCHING=1 
-        -sWASM_LEGACY_EXCEPTIONS=0
+        # -sDISABLE_EXCEPTION_THROWING=1
+        # -sDISABLE_EXCEPTION_CATCHING=1 
+        # -sWASM_LEGACY_EXCEPTIONS=0
         --embed-file ${CMAKE_SOURCE_DIR}/res
         --profiling
-        -sASSERTIONS=1
+        -sASSERTIONS=2
         -sPTHREAD_POOL_SIZE=4
         -sEXIT_RUNTIME=1
         # -sASSERTIONS=2
