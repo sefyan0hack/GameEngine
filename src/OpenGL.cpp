@@ -22,22 +22,22 @@ auto OpenGL::init_opengl_win32() -> void
         PFD_MAIN_PLANE,
         0, 0, 0
     };
-    auto pixel_format = ChoosePixelFormat(m_DrawContext, &pfd);
+    auto pixel_format = ChoosePixelFormat(m_Surface, &pfd);
     if (!pixel_format) {
         Error("Failed to find a suitable pixel format. : {}", GetLastError());
     }
-    if (!SetPixelFormat(m_DrawContext, pixel_format, &pfd)) {
+    if (!SetPixelFormat(m_Surface, pixel_format, &pfd)) {
         Error("Failed to set the pixel format. : {}", GetLastError());
     }
 
     GLCTX dummy_context = nullptr;
 
-    dummy_context = wglCreateContext(m_DrawContext);
+    dummy_context = wglCreateContext(m_Surface);
     if (!dummy_context) {
         Error("Failed to create a dummy OpenGL rendering context. : {}", GetLastError());
     }
 
-    if (!wglMakeCurrent(m_DrawContext, dummy_context)) {
+    if (!wglMakeCurrent(m_Surface, dummy_context)) {
         Error("Failed to activate dummy OpenGL rendering context. : {}", GetLastError());
     }
 
@@ -63,7 +63,7 @@ auto OpenGL::init_opengl_win32() -> void
 
 
     GLCTX opengl_context = nullptr;
-    if (nullptr == (opengl_context = wglCreateContextAttribsARB(m_DrawContext, nullptr, gl_attribs))) {
+    if (nullptr == (opengl_context = wglCreateContextAttribsARB(m_Surface, nullptr, gl_attribs))) {
         m_Context = nullptr;
 
         if (GetLastError() == ERROR_INVALID_VERSION_ARB){ // ?
@@ -95,12 +95,12 @@ auto OpenGL::init_opengl_linux() -> void
     };
     
     int32_t fbcount;
-    GLXFBConfig* fbc = glXChooseFBConfig(m_DrawContext, DefaultScreen(m_DrawContext), visualAttribs, &fbcount);
+    GLXFBConfig* fbc = glXChooseFBConfig(m_Surface, DefaultScreen(m_Surface), visualAttribs, &fbcount);
     if (!fbc || fbcount == 0) {
         Error("Failed to get framebuffer config.");
     }
 
-    XVisualInfo* visInfo = glXGetVisualFromFBConfig(m_DrawContext, fbc[0]);
+    XVisualInfo* visInfo = glXGetVisualFromFBConfig(m_Surface, fbc[0]);
     if (!visInfo) {
         XFree(fbc);
         Error("Failed to get visual info.");
@@ -117,7 +117,7 @@ auto OpenGL::init_opengl_linux() -> void
 
     glXCreateContextAttribsARB = (decltype(glXCreateContextAttribsARB))glXGetProcAddress((const GLubyte*)"glXCreateContextAttribsARB");
 
-    m_Context = glXCreateContextAttribsARB(m_DrawContext, fbc[0], nullptr, True, contextAttribs);
+    m_Context = glXCreateContextAttribsARB(m_Surface, fbc[0], nullptr, True, contextAttribs);
     XFree(fbc);
     XFree(visInfo);
 
@@ -154,21 +154,21 @@ auto OpenGL::init_opengl_web() -> void
 
 #endif
 
-OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
+OpenGL::OpenGL([[maybe_unused]] H_WIN window, H_SRF surface)
     : m_Context(GLCTX{})
-    , m_DrawContext(drawContext)
+    , m_Surface(surface)
     , m_Major(0)
     , m_Minor(0)
     , m_CreationTime(std::time(nullptr))
 {
     #if defined(WINDOWS_PLT)
     init_opengl_win32();
-    if (!wglMakeCurrent(m_DrawContext, m_Context)){
+    if (!wglMakeCurrent(m_Surface, m_Context)){
 		Error("Failed to make context current.");
 	}
     #elif defined(LINUX_PLT)
     init_opengl_linux();
-    if (!glXMakeCurrent(m_DrawContext, window, m_Context)) {
+    if (!glXMakeCurrent(m_Surface, window, m_Context)) {
         Error("Failed to make context current.");
     }
     #elif defined(WEB_PLT)
@@ -200,9 +200,9 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
     m_Renderer = renderer ? renderer : "unknown";
 
     #if defined(WINDOWS_PLT)
-    auto exts = reinterpret_cast<const char*>(wglGetExtensionsStringARB(m_DrawContext));
+    auto exts = reinterpret_cast<const char*>(wglGetExtensionsStringARB(m_Surface));
     #elif defined(LINUX_PLT)
-    auto exts = reinterpret_cast<const char*>(glXQueryExtensionsString(m_DrawContext, DefaultScreen(m_DrawContext)));
+    auto exts = reinterpret_cast<const char*>(glXQueryExtensionsString(m_Surface, DefaultScreen(m_Surface)));
     #elif defined(WEB_PLT)
     auto exts = emscripten_webgl_get_supported_extensions();
     #endif
@@ -233,7 +233,7 @@ OpenGL::OpenGL([[maybe_unused]] WindHandl window, HDC_D drawContext)
 
 OpenGL::OpenGL(const OpenGL &other)
     : m_Context(GLCTX{})
-    , m_DrawContext(other.m_DrawContext)
+    , m_Surface(other.m_Surface)
     , m_Major(other.m_Major)
     , m_Minor(other.m_Minor)
     , m_CreationTime(std::time(nullptr))
@@ -242,7 +242,7 @@ OpenGL::OpenGL(const OpenGL &other)
     auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
     if(tst != TRUE) Error("couldn't Copy Opengl Context");
     #elif defined(LINUX_PLT)
-    glXCopyContext(this->m_DrawContext, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
+    glXCopyContext(this->m_Surface, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
     // no error check for now  ` X11 ` Shit
     #endif
 }
@@ -251,7 +251,7 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL&
 {
     if(*this != other){
         this->m_Context = GLCTX{};
-        this->m_DrawContext = other.m_DrawContext;    
+        this->m_Surface = other.m_Surface;    
         this->m_Major = other.m_Major;
         this->m_Minor = other.m_Minor;
         this->m_CreationTime = std::time(nullptr);
@@ -260,7 +260,7 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL&
         auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
         if(tst != TRUE) Error("couldn't Copy Opengl Context");
         #elif defined(LINUX_PLT)
-        glXCopyContext(this->m_DrawContext, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
+        glXCopyContext(this->m_Surface, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
         // no error check for now  ` X11 ` Shit
         #endif //_WIN32
     }
@@ -269,7 +269,7 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL&
 
 OpenGL::OpenGL(OpenGL &&other) noexcept
     : m_Context(std::exchange(other.m_Context, GLCTX{}))
-    , m_DrawContext(std::exchange(other.m_DrawContext, nullptr))
+    , m_Surface(std::exchange(other.m_Surface, nullptr))
     , m_Major(std::exchange(other.m_Major, 0))
     , m_Minor(std::exchange(other.m_Minor, 0))
     , m_CreationTime(std::exchange(other.m_CreationTime, 0))
@@ -280,7 +280,7 @@ auto OpenGL::operator=(OpenGL &&other) noexcept -> OpenGL&
 {
     if(*this != other){
         this->m_Context = std::exchange(other.m_Context, GLCTX{});
-        this->m_DrawContext = std::exchange(other.m_DrawContext, nullptr);
+        this->m_Surface = std::exchange(other.m_Surface, nullptr);
         this->m_Major = std::exchange(other.m_Major, 0);
         this->m_Minor = std::exchange(other.m_Minor, 0);
         this->m_CreationTime = std::exchange(other.m_CreationTime, 0);
@@ -310,8 +310,8 @@ OpenGL::~OpenGL()
     wglMakeCurrent(nullptr, nullptr);
     wglDeleteContext(m_Context);
     #elif defined(LINUX_PLT)
-    glXMakeCurrent(m_DrawContext, Window{},  GLCTX{});
-    glXDestroyContext(m_DrawContext, m_Context);
+    glXMakeCurrent(m_Surface, Window{},  GLCTX{});
+    glXDestroyContext(m_Surface, m_Context);
     #elif defined(WEB_PLT)
     if (m_Context > 0) {
         emscripten_webgl_destroy_context(m_Context);
@@ -324,9 +324,9 @@ auto OpenGL::Context() const -> GLCTX
     return m_Context;
 }
 
-auto OpenGL::DrawContext() const -> HDC_D
+auto OpenGL::Surface() const -> H_SRF
 {
-    return m_DrawContext;
+    return m_Surface;
 }
 
 auto OpenGL::MajorV() const -> GLint

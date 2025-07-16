@@ -42,7 +42,7 @@ class CWindow
     #endif
     
     public:
-        CWindow(int32_t Width, int32_t Height, const char* Title, bool withopengl = true);
+        CWindow(EventQueue& Events, int32_t Width, int32_t Height, const char* Title, bool withopengl = true);
         CWindow(const CWindow& other);
         CWindow(CWindow&&) = delete;
     
@@ -52,8 +52,8 @@ class CWindow
         ~CWindow();
     
     public:
-        auto Handle() const              -> WindHandl ;
-        auto DrawContext() const         -> HDC_D ;
+        auto Handle() const              -> H_WIN ;
+        auto Surface() const         -> H_SRF ;
         auto Width() const       -> int32_t ;
         auto Height() const      -> int32_t ;
         auto opengl() const         -> std::shared_ptr<gl::OpenGL> ;
@@ -66,10 +66,7 @@ class CWindow
         static auto WindowsCount()  -> unsigned short ;
         static auto ProcessMessages([[maybe_unused]] CWindow* self)   -> void ;
         static auto WindowShouldClose() -> bool ;
-        auto PollEvent(Event& event) -> bool;
-        auto WaitEvent(Event& event) -> void;
-        auto ClearEvents() -> void;
-        auto PushEvent(Event&& event) -> void;
+
     private:
         #if defined(WINDOWS_PLT)
         static auto CALLBACK WinProcThunk(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)  -> LRESULT ;
@@ -82,18 +79,16 @@ class CWindow
         static auto TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, void* userData)  -> EM_BOOL;
         #endif
 
-        auto new_window(int32_t Width, int32_t Height, const char* Title)       -> std::pair<WindHandl, HDC_D> ;
+        auto new_window(int32_t Width, int32_t Height, const char* Title)       -> std::pair<H_WIN, H_SRF> ;
 
     private:
-        WindHandl m_WindowHandle;
-        HDC_D m_DrawContext;
-        int32_t m_Width;
-        int32_t m_Height;
+        H_WIN m_Handle;
+        H_SRF m_Surface;
+        int32_t m_Width, m_Height;
         bool m_Visible;
-        std::vector<std::byte> m_RawBuffer;
         std::shared_ptr<gl::OpenGL> m_OpenGl;
         int32_t m_refCount;
-        EventQueue m_Events;
+        EventQueue& m_EventQueue;
 
         inline static unsigned short S_WindowsCount = 0;
 

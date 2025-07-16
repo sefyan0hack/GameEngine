@@ -18,7 +18,7 @@ namespace gl {
 class OpenGL
 {
     public:
-        explicit OpenGL(WindHandl window, HDC_D drawContext);
+        explicit OpenGL(H_WIN window, H_SRF surface);
         OpenGL(const OpenGL& other);
         OpenGL(OpenGL&& other) noexcept;
         ~OpenGL();
@@ -30,7 +30,7 @@ class OpenGL
 
     public:
         auto Context() const -> GLCTX;
-        auto DrawContext() const -> HDC_D;
+        auto Surface() const -> H_SRF;
         auto MajorV() const -> GLint;
         auto MinorV() const -> GLint;
         auto isValid() const -> bool;
@@ -53,7 +53,7 @@ class OpenGL
 
     private:
         GLCTX m_Context;
-        HDC_D m_DrawContext;
+        H_SRF m_Surface;
         GLint m_Major;
         GLint m_Minor;
         std::time_t m_CreationTime;

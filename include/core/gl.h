@@ -9,8 +9,8 @@
 #include <glext.h>
 #include <wglext.h>
 
-using WindHandl = HWND;
-using HDC_D     = HDC;
+using H_WIN = HWND;
+using H_SRF     = HDC;
 using GLCTX     = HGLRC;
 
 #define XXXGetProcAddress(name) wglGetProcAddress(name)
@@ -32,11 +32,11 @@ using GLCTX     = HGLRC;
 #define XXXGetProcAddress(name) glXGetProcAddress((const GLubyte*)name)
 
 struct __GLXcontextRec;
-using WindHandl = Window;
-using HDC_D     = Display*;
+using H_WIN = Window;
+using H_SRF     = Display*;
 using GLCTX     = __GLXcontextRec*;
 
-[[maybe_unused]] inline static auto glXCreateContextAttribsARB = (GLCTX(*)(HDC_D dpy, GLXFBConfig config, GLCTX share_context, Bool direct, const int *attrib_list))(nullptr);
+[[maybe_unused]] inline static auto glXCreateContextAttribsARB = (GLCTX(*)(H_SRF dpy, GLXFBConfig config, GLCTX share_context, Bool direct, const int *attrib_list))(nullptr);
 
 #elif defined(WEB_PLT)
 #include <emscripten/emscripten.h>
@@ -50,8 +50,8 @@ using GLCTX     = __GLXcontextRec*;
 
 #define XXXGetProcAddress(name) emscripten_webgl_get_proc_address(name)
 
-using WindHandl = const char*;
-using HDC_D     = void*;
+using H_WIN     = const char*;
+using H_SRF     = const char*;
 using GLCTX     = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
 
 #endif

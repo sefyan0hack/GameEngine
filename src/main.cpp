@@ -146,7 +146,7 @@ private:
         Scn << GameObject({1,1,1}, Matt, cubeMesh);
         
         utils::Repeat(3000, [this](){
-            Window.PushEvent(Keyboard::KeyDownEvent{Key::H});
+            PushEvent(Keyboard::KeyDownEvent{Key::H});
         });
     }
 public:

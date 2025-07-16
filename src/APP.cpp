@@ -19,7 +19,7 @@ constexpr auto WINDOW_WIDTH = 1180;
 constexpr auto WINDOW_HIEGHT = 640;
 
 APP::APP()
-    : Window(WINDOW_WIDTH, WINDOW_HIEGHT, Wname)
+    : Window(ApplicationEventQueue, WINDOW_WIDTH, WINDOW_HIEGHT, Wname)
     , ViewCamera()
     , Keyboard()
     , Mouse()
@@ -27,6 +27,10 @@ APP::APP()
     , m_SmoothedFPS(60.0f)
 { 
     Window.Show();
+}
+APP::~APP()
+{
+    ClearEvents();
 }
 
 auto APP::Frame(float deltaTime) -> void
@@ -46,7 +50,7 @@ auto APP::LoopBody(void* ctx) -> void
     CWindow::ProcessMessages(&window);
 
     Event event;
-    while (window.PollEvent(event)) {
+    while (app->PollEvent(event)) {
         std::visit(overloaded {
             [&window](const WindowQuitEvent&) {
                 #if defined(WINDOWS_PLT)
@@ -220,3 +224,8 @@ auto APP::DeltaTime() const -> float
 {
     return 1.0f/m_Fps;
 }
+
+bool APP::PollEvent(Event& event) { return ApplicationEventQueue.poll(event); }
+void APP::WaitEvent(Event& event) { ApplicationEventQueue.wait_and_poll(event); }
+void APP::ClearEvents() { ApplicationEventQueue.clear(); }
+auto APP::PushEvent(Event&& event) -> void { ApplicationEventQueue.push(std::move(event)); }

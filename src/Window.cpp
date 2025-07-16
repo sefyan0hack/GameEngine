@@ -4,57 +4,61 @@
 #include <core/Event.hpp>
 
 
-CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height, [[maybe_unused]] const char* Title, [[maybe_unused]] bool withopengl) 
+CWindow::CWindow(
+	EventQueue& Events,
+	[[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height, 
+	[[maybe_unused]] const char* Title, 
+	[[maybe_unused]] bool withopengl)
 	: m_Width(Width)
 	, m_Height(Height)
 	, m_Visible(false)
 	, m_refCount(1)
-	, m_Events()
+	, m_EventQueue(Events)
 {
-	std::tie(m_WindowHandle, m_DrawContext) = new_window(m_Width, m_Height, Title);
+	std::tie(m_Handle, m_Surface) = new_window(m_Width, m_Height, Title);
 
 	S_WindowsCount++;
 
-	if(withopengl) m_OpenGl = std::make_shared<gl::OpenGL>(m_WindowHandle, m_DrawContext);
+	if(withopengl) m_OpenGl = std::make_shared<gl::OpenGL>(m_Handle, m_Surface);
 
 	#if defined(WEB_PLT)
 
-	emscripten_set_keypress_callback(m_WindowHandle, this, EM_FALSE, &CWindow::KeyHandler);
-	emscripten_set_keydown_callback(m_WindowHandle, this, EM_FALSE, &CWindow::KeyHandler);
-	emscripten_set_keyup_callback(m_WindowHandle, this, EM_FALSE, &CWindow::KeyHandler);
+	emscripten_set_keypress_callback(m_Surface, this, EM_FALSE, &CWindow::KeyHandler);
+	emscripten_set_keydown_callback(m_Surface, this, EM_FALSE, &CWindow::KeyHandler);
+	emscripten_set_keyup_callback(m_Surface, this, EM_FALSE, &CWindow::KeyHandler);
 	
-	emscripten_set_mousedown_callback(m_WindowHandle , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseup_callback(m_WindowHandle    , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mousemove_callback(m_WindowHandle  , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseenter_callback(m_WindowHandle , this, EM_FALSE, &CWindow::MouseHandler);
-	emscripten_set_mouseleave_callback(m_WindowHandle , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mousedown_callback(m_Surface , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseup_callback(m_Surface    , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mousemove_callback(m_Surface  , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseenter_callback(m_Surface , this, EM_FALSE, &CWindow::MouseHandler);
+	emscripten_set_mouseleave_callback(m_Surface , this, EM_FALSE, &CWindow::MouseHandler);
 
-	emscripten_set_touchstart_callback(m_WindowHandle, this, EM_FALSE, &CWindow::TouchHandler);
-	emscripten_set_touchmove_callback(m_WindowHandle, this, EM_FALSE, &CWindow::TouchHandler);
-	emscripten_set_touchend_callback(m_WindowHandle, this, EM_FALSE, &CWindow::TouchHandler);
-	emscripten_set_touchcancel_callback(m_WindowHandle, this, EM_FALSE, &CWindow::TouchHandler);
+	emscripten_set_touchstart_callback(m_Surface, this, EM_FALSE, &CWindow::TouchHandler);
+	emscripten_set_touchmove_callback(m_Surface, this, EM_FALSE, &CWindow::TouchHandler);
+	emscripten_set_touchend_callback(m_Surface, this, EM_FALSE, &CWindow::TouchHandler);
+	emscripten_set_touchcancel_callback(m_Surface, this, EM_FALSE, &CWindow::TouchHandler);
 
-	emscripten_set_focus_callback(m_WindowHandle, this, EM_FALSE,
+	emscripten_set_focus_callback(m_Surface, this, EM_FALSE,
 		[](int32_t, const EmscriptenFocusEvent *, void* userData) -> EM_BOOL {
 			CWindow* window = static_cast<CWindow*>(userData);
     		if (!window) return EM_FALSE;
 
-			window->m_Events.push(WindowSetFocusEvent{window});
+			window->m_EventQueue.push(WindowSetFocusEvent{window});
 			return EM_TRUE;
 		}
 	);
 
-	emscripten_set_blur_callback(m_WindowHandle, this, EM_FALSE,
+	emscripten_set_blur_callback(m_Surface, this, EM_FALSE,
 		[](int32_t, const EmscriptenFocusEvent *, void* userData) -> EM_BOOL {
 			CWindow* window = static_cast<CWindow*>(userData);
     		if (!window) return EM_FALSE;
 
-			window->m_Events.push(WindowLoseFocusEvent{window});
+			window->m_EventQueue.push(WindowLoseFocusEvent{window});
 			return EM_TRUE;
 		}
 	);
 
-	emscripten_set_fullscreenchange_callback(m_WindowHandle, this, EM_FALSE, 
+	emscripten_set_fullscreenchange_callback(m_Surface, this, EM_FALSE, 
 		[](
 			int32_t eventType, 
 			const EmscriptenFullscreenChangeEvent* e,
@@ -63,7 +67,7 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 			auto* window = static_cast<CWindow*>(userData);
 
 			if (e->isFullscreen) Info("Enable FullScreen");
-			window->m_Events.push(WindowResizeEvent{ e->elementWidth, e->elementHeight});
+			window->m_EventQueue.push(WindowResizeEvent{ e->elementWidth, e->elementHeight});
 			return EM_TRUE;
 	});
 	
@@ -71,15 +75,14 @@ CWindow::CWindow([[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height
 }
 
 CWindow::CWindow(const CWindow& other)
-	: m_WindowHandle(other.m_WindowHandle)
-	, m_DrawContext(other.m_DrawContext)
+	: m_Handle(other.m_Handle)
+	, m_Surface(other.m_Surface)
 	, m_Width(other.m_Width)
 	, m_Height(other.m_Height)
 	, m_Visible(other.m_Visible)
-	, m_RawBuffer(other.m_RawBuffer)
 	, m_OpenGl(other.m_OpenGl)
 	, m_refCount(other.m_refCount)
-	, m_Events(other.m_Events)
+	, m_EventQueue(other.m_EventQueue)
 {
 	m_refCount++;
 }
@@ -90,11 +93,11 @@ CWindow::~CWindow()
 	if (m_refCount == 0) {
 		m_OpenGl.reset();
 		#if defined(WINDOWS_PLT)
-		DestroyWindow(m_WindowHandle);
+		DestroyWindow(m_Handle);
 		#elif defined(LINUX_PLT)
-		XDestroyWindow(m_DrawContext, m_WindowHandle);
-		if (m_DrawContext) {
-			XCloseDisplay(m_DrawContext);
+		XDestroyWindow(m_Surface, m_Handle);
+		if (m_Surface) {
+			XCloseDisplay(m_Surface);
 		}
 		#elif defined(WEB_PLT)
 		if (m_OpenGl->Context()) {
@@ -162,11 +165,11 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
             return 0;
         }
         case WM_CLOSE:{
-			m_Events.push(WindowQuitEvent{});
+			m_EventQueue.push(WindowQuitEvent{});
 			return 0;
         }
         case WM_SIZE:{
-			m_Events.push(WindowResizeEvent{LOWORD(Lpr), HIWORD(Lpr)});
+			m_EventQueue.push(WindowResizeEvent{LOWORD(Lpr), HIWORD(Lpr)});
             return 0;
         }
         /*********** KEYBOARD MESSAGES ***********/
@@ -195,7 +198,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 			}
 				
 			if (key != Key::Unknown) {
-				m_Events.push(Keyboard::KeyDownEvent{key});
+				m_EventQueue.push(Keyboard::KeyDownEvent{key});
 			}
 		}
 		break;
@@ -224,7 +227,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 			}
 			
 			if (key != Key::Unknown) {
-				m_Events.push(Keyboard::KeyUpEvent{key});
+				m_EventQueue.push(Keyboard::KeyUpEvent{key});
             	break;
 			}
 			break;
@@ -236,40 +239,41 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    case WM_MOUSEMOVE:
 	    {
 	    	const POINTS pt = MAKEPOINTS( Lpr );
-			m_Events.push(Mouse::MoveEvent{pt.x, pt.y});
+			m_EventQueue.push(Mouse::MoveEvent{pt.x, pt.y});
 			return 0;
 	    }
 		case WM_MOUSEHOVER :{
-			m_Events.push(Mouse::EnterEvent{});
+			m_EventQueue.push(Mouse::EnterEvent{});
 			return 0;
 		}
 		case WM_MOUSELEAVE :{
-			m_Events.push(Mouse::LeaveEvent{});
+			m_EventQueue.push(Mouse::LeaveEvent{});
 			return 0;
 		}
 	    case WM_LBUTTONDOWN:
-			m_Events.push(Mouse::ButtonDownEvent{Mouse::Button::Left});
+			m_EventQueue.push(Mouse::ButtonDownEvent{Mouse::Button::Left});
 			break;
 		case WM_MBUTTONDOWN:
-			m_Events.push(Mouse::ButtonDownEvent{Mouse::Button::Middle});
+			m_EventQueue.push(Mouse::ButtonDownEvent{Mouse::Button::Middle});
 			break;
 	    case WM_RBUTTONDOWN:
-			m_Events.push(Mouse::ButtonDownEvent{Mouse::Button::Right});
+			m_EventQueue.push(Mouse::ButtonDownEvent{Mouse::Button::Right});
 			break;
 		case WM_LBUTTONUP:
-			m_Events.push(Mouse::ButtonUpEvent{Mouse::Button::Left});
+			m_EventQueue.push(Mouse::ButtonUpEvent{Mouse::Button::Left});
 			break;
 		case WM_MBUTTONUP:
-			m_Events.push(Mouse::ButtonUpEvent{Mouse::Button::Middle});
+			m_EventQueue.push(Mouse::ButtonUpEvent{Mouse::Button::Middle});
 			break;
 	    case WM_RBUTTONUP:
-	    	m_Events.push(Mouse::ButtonUpEvent{Mouse::Button::Right});
+	    	m_EventQueue.push(Mouse::ButtonUpEvent{Mouse::Button::Right});
 			break;
 	    ///////////////// END MOUSE MESSAGES /////////////////
 
 	    ///////////////// RAW MOUSE MESSAGES /////////////////
 	    case WM_INPUT:
 	    {
+			static std::vector<std::byte> RawBuffer;
 	    	UINT size{};
 	    	// first get the size of the input data
 	    	if( GetRawInputData( reinterpret_cast<HRAWINPUT>(Lpr), RID_INPUT, nullptr, &size, sizeof( RAWINPUTHEADER ) ) == (UINT)-1)
@@ -277,12 +281,12 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    		//my log error hire
 	    		break;
 	    	}
-	    	m_RawBuffer.resize( size );
+	    	RawBuffer.resize( size );
 	    	// read in the input data
 	    	if( GetRawInputData(
 	    		reinterpret_cast<HRAWINPUT>(Lpr),
 	    		RID_INPUT,
-	    		m_RawBuffer.data(),
+	    		RawBuffer.data(),
 	    		&size,
 	    		sizeof( RAWINPUTHEADER ) ) != size )
 	    	{
@@ -290,21 +294,21 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    		break;
 	    	}
 	    	// process the raw input data
-	    	auto& ri = reinterpret_cast<const RAWINPUT&>(*m_RawBuffer.data());
+	    	auto& ri = reinterpret_cast<const RAWINPUT&>(*RawBuffer.data());
 	    	if( ri.header.dwType == RIM_TYPEMOUSE &&
 	    		(ri.data.mouse.lLastX != 0 || ri.data.mouse.lLastY != 0) )
 				{
-				m_Events.push(Mouse::RawDeltaEvent{ri.data.mouse.lLastX, ri.data.mouse.lLastY});
+				m_EventQueue.push(Mouse::RawDeltaEvent{ri.data.mouse.lLastX, ri.data.mouse.lLastY});
 	    	}
 	    	break;
 	    }
 	    ///////////////// END RAW MOUSE MESSAGES /////////////////
 		case WM_SETFOCUS:
-			m_Events.push(WindowSetFocusEvent{this});
+			m_EventQueue.push(WindowSetFocusEvent{this});
 			break;
         case WM_KILLFOCUS:
-			m_Events.clear();
-			m_Events.push(WindowLoseFocusEvent{this});
+			m_EventQueue.clear();
+			m_EventQueue.push(WindowLoseFocusEvent{this});
 			ClipCursor(nullptr); //release cursor confinement
 			break;
 
@@ -312,7 +316,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
     return DefWindowProcA(Winhandle, msg, Wpr, Lpr);
 }
 
-auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::pair<WindHandl, HDC_D>
+auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::pair<H_WIN, H_SRF>
 {
     WinClass::Instance();
 
@@ -335,38 +339,38 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
 
 #elif defined(LINUX_PLT)
 
-auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::pair<WindHandl, HDC_D>
+auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::pair<H_WIN, H_SRF>
 {
-	auto DrawContext = XOpenDisplay(nullptr);
+	auto Surface = XOpenDisplay(nullptr);
 
-    if (!DrawContext) {
+    if (!Surface) {
 		Error("Failed to open X display connection.");
 	}
-    int32_t screen = DefaultScreen(DrawContext);
+    int32_t screen = DefaultScreen(Surface);
 
     /* Create a window */
-    auto window_handle = XCreateSimpleWindow(DrawContext, RootWindow(DrawContext, screen), 
+    auto window_handle = XCreateSimpleWindow(Surface, RootWindow(Surface, screen), 
                                  10, 10, static_cast<uint32_t>(Width), static_cast<uint32_t>(Height), 1, 
-                                 BlackPixel(DrawContext, screen), WhitePixel(DrawContext, screen));
+                                 BlackPixel(Surface, screen), WhitePixel(Surface, screen));
     Expect(window_handle != 0, "window_handle are null ???");
-    XStoreName(DrawContext, window_handle, Title);
+    XStoreName(Surface, window_handle, Title);
 
-	// XkbSetDetectableAutoRepeat(DrawContext, true, NULL);
+	// XkbSetDetectableAutoRepeat(Surface, true, NULL);
 
     /* Select input events */
-    XSelectInput(DrawContext, window_handle,
+    XSelectInput(Surface, window_handle,
 		 KeyPressMask | KeyReleaseMask | ExposureMask |
 		 ResizeRedirectMask | FocusChangeMask | StructureNotifyMask
 		);
 
-	return {window_handle, DrawContext};
+	return {window_handle, Surface};
 }
 
 #elif defined(WEB_PLT)
-auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::pair<WindHandl, HDC_D>
+auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::pair<H_WIN, H_SRF>
 {
-	auto window_handle = "#canvas";
-	void* DrawContext = nullptr;
+	auto window_handle = EMSCRIPTEN_EVENT_TARGET_WINDOW;
+	auto Surface = "#canvas";
 
 	emscripten_set_window_title(Title);
 	emscripten_set_canvas_element_size(window_handle, Width, Height);
@@ -387,7 +391,7 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
         canvas.focus();
 	});
 
-	return {window_handle, DrawContext};
+	return {window_handle, Surface};
 }
 
 auto CWindow::ResizeHandler(int32_t eventType, const EmscriptenUiEvent* e, void* userData) -> EM_BOOL
@@ -395,7 +399,7 @@ auto CWindow::ResizeHandler(int32_t eventType, const EmscriptenUiEvent* e, void*
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_FALSE;
 	if(eventType == EMSCRIPTEN_EVENT_RESIZE){
-		window->m_Events.push(WindowResizeEvent{e->windowInnerWidth, e->windowInnerHeight});
+		window->m_EventQueue.push(WindowResizeEvent{e->windowInnerWidth, e->windowInnerHeight});
 	}
 
 	return EM_TRUE;
@@ -514,10 +518,10 @@ auto CWindow::KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, vo
 		switch (eventType)
 		{
 			case EMSCRIPTEN_EVENT_KEYDOWN:
-				window->m_Events.push(Keyboard::KeyDownEvent{key});
+				window->m_EventQueue.push(Keyboard::KeyDownEvent{key});
 				break;
 			case EMSCRIPTEN_EVENT_KEYUP:
-				window->m_Events.push(Keyboard::KeyUpEvent{key});
+				window->m_EventQueue.push(Keyboard::KeyUpEvent{key});
 				break;
 		}
     }
@@ -537,22 +541,22 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
 	switch (eventType) {
 
         case EMSCRIPTEN_EVENT_MOUSEDOWN:
-			window->m_Events.push(Mouse::ButtonDownEvent{btn});
+			window->m_EventQueue.push(Mouse::ButtonDownEvent{btn});
 			break;
         case EMSCRIPTEN_EVENT_MOUSEUP:
-			window->m_Events.push(Mouse::ButtonUpEvent{btn});
+			window->m_EventQueue.push(Mouse::ButtonUpEvent{btn});
             break;
         case EMSCRIPTEN_EVENT_MOUSEMOVE:
-			window->m_Events.push(Mouse::RawDeltaEvent{e->movementX, e->movementY});
-            window->m_Events.push(Mouse::MoveEvent{e->targetX, e->targetY});
+			window->m_EventQueue.push(Mouse::RawDeltaEvent{e->movementX, e->movementY});
+            window->m_EventQueue.push(Mouse::MoveEvent{e->targetX, e->targetY});
             break;
 
         case EMSCRIPTEN_EVENT_MOUSEENTER:
-            window->m_Events.push(Mouse::EnterEvent{});
+            window->m_EventQueue.push(Mouse::EnterEvent{});
             break;
 
         case EMSCRIPTEN_EVENT_MOUSELEAVE:
-			window->m_Events.push(Mouse::LeaveEvent{});
+			window->m_EventQueue.push(Mouse::LeaveEvent{});
             break;
     }
 
@@ -606,12 +610,12 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
         switch (eventType) {
             case EMSCRIPTEN_EVENT_TOUCHSTART:
 				lastPos[id] = { static_cast<int16_t>(x), static_cast<int16_t>(y) };
-				window->m_Events.push(Mouse::EnterEvent{});
+				window->m_EventQueue.push(Mouse::EnterEvent{});
                 break;
 				case EMSCRIPTEN_EVENT_TOUCHEND:
 				case EMSCRIPTEN_EVENT_TOUCHCANCEL:
 				lastPos.erase(id);
-				window->m_Events.push(Mouse::LeaveEvent{});
+				window->m_EventQueue.push(Mouse::LeaveEvent{});
                 break;
 				case EMSCRIPTEN_EVENT_TOUCHMOVE:{
 			 	// lookup previous
@@ -620,11 +624,11 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
 					int32_t dx = static_cast<int32_t>(x) - old->second.first;
 					int32_t dy = static_cast<int32_t>(y) - old->second.second;
 					// push a raw‐delta event
-					window->m_Events.push(Mouse::RawDeltaEvent{ dx, dy });
+					window->m_EventQueue.push(Mouse::RawDeltaEvent{ dx, dy });
 				}
 				// also update stored pos
 				lastPos[id] = { x, y };
-				window->m_Events.push(Mouse::MoveEvent{static_cast<int32_t>(x), static_cast<int32_t>(y)});
+				window->m_EventQueue.push(Mouse::MoveEvent{static_cast<int32_t>(x), static_cast<int32_t>(y)});
 			}
             break;
         }
@@ -638,8 +642,8 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 {
 	Expect(self != nullptr, "Cwindow* self Can't be null");
 	
-	[[maybe_unused]] auto winHandle = self->m_WindowHandle;
-	[[maybe_unused]] auto DrawCtx = self->m_DrawContext;
+	[[maybe_unused]] auto winHandle = self->m_Handle;
+	[[maybe_unused]] auto surface = self->m_Surface;
 
 	#if defined(WINDOWS_PLT)
     MSG Msg = {};
@@ -649,13 +653,13 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
         DispatchMessageA(&Msg);
     }
 	#elif defined(LINUX_PLT)
-	int32_t screen = DefaultScreen(DrawCtx);
-	Atom wmDeleteMessage = XInternAtom(DrawCtx, "WM_DELETE_WINDOW", false);
-	XSetWMProtocols(DrawCtx, winHandle, &wmDeleteMessage, 1);
+	int32_t screen = DefaultScreen(surface);
+	Atom wmDeleteMessage = XInternAtom(surface, "WM_DELETE_WINDOW", false);
+	XSetWMProtocols(surface, winHandle, &wmDeleteMessage, 1);
 
 	XEvent event{};
-	while (XPending(DrawCtx)) {
-		XNextEvent(DrawCtx, &event);
+	while (XPending(surface)) {
+		XNextEvent(surface, &event);
 		
 		switch (event.type) {
 			case Expose:
@@ -664,13 +668,13 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 
 			case ConfigureNotify:
 				// Handle window resize
-				self->m_Events.push(WindowResizeEvent{event.xconfigure.width, event.xconfigure.height});
+				self->m_EventQueue.push(WindowResizeEvent{event.xconfigure.width, event.xconfigure.height});
 				break;
 
 			case KeyPress:
 			case KeyRelease: {
 				const KeyCode keycode = event.xkey.keycode;
-				KeySym keysym = XkbKeycodeToKeysym(DrawCtx, keycode, 0, 0); // US layout
+				KeySym keysym = XkbKeycodeToKeysym(surface, keycode, 0, 0); // US layout
 				
 				// Handle alphanumeric keys separately
 				uint32_t vk = 0;
@@ -693,21 +697,21 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 				}
 
 				if (event.type == KeyPress) {
-					self->m_Events.push(Keyboard::KeyDownEvent{Keyboard::FromNative(vk)});
+					self->m_EventQueue.push(Keyboard::KeyDownEvent{Keyboard::FromNative(vk)});
 				} else {
-					self->m_Events.push(Keyboard::KeyUpEvent{Keyboard::FromNative(vk)});
+					self->m_EventQueue.push(Keyboard::KeyUpEvent{Keyboard::FromNative(vk)});
 				}
 				break;
 			}
 
 			case FocusOut:
 				// Clear keyboard state when window loses focus
-				self->m_Events.push(WindowLoseFocusEvent{self});
+				self->m_EventQueue.push(WindowLoseFocusEvent{self});
 				break;
 
 			case ClientMessage:
 				if (event.xclient.data.l[0] == wmDeleteMessage){
-					self->m_Events.push(WindowQuitEvent{});
+					self->m_EventQueue.push(WindowQuitEvent{});
 				}
 				break;
 		}
@@ -716,14 +720,14 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 	#endif
 }
 
-auto CWindow::Handle() const -> WindHandl
+auto CWindow::Handle() const -> H_WIN
 {
-    return m_WindowHandle;
+    return m_Handle;
 }
 
-auto CWindow::DrawContext() const -> HDC_D
+auto CWindow::Surface() const -> H_SRF
 {
-    return m_DrawContext;
+    return m_Surface;
 }
 
 auto CWindow::Width() const -> int32_t
@@ -750,26 +754,23 @@ auto CWindow::WindowsCount() -> unsigned short
 auto CWindow::Show() -> void
 {
 	#if defined(WINDOWS_PLT)
-	ShowWindow(m_WindowHandle, SW_SHOW);
+	ShowWindow(m_Handle, SW_SHOW);
 	#elif defined(LINUX_PLT)
-	XMapWindow(m_DrawContext, m_WindowHandle);
+	XMapWindow(m_Surface, m_Handle);
 	#endif
 	m_Visible = true;
 }
 auto CWindow::Hide() -> void
 {
 	#if defined(WINDOWS_PLT)
-	ShowWindow(m_WindowHandle, SW_HIDE);
+	ShowWindow(m_Handle, SW_HIDE);
 	#elif defined(LINUX_PLT)
-	XUnmapWindow(m_DrawContext, m_WindowHandle);
+	XUnmapWindow(m_Surface, m_Handle);
 	#endif
 	m_Visible = false;
 }
 
-bool CWindow::PollEvent(Event& event) { return m_Events.poll(event); }
-void CWindow::WaitEvent(Event& event) { m_Events.wait_and_poll(event); }
-void CWindow::ClearEvents() { m_Events.clear(); }
-auto CWindow::PushEvent(Event&& event) -> void { m_Events.push(std::move(event)); }
+
 auto CWindow::WindowShouldClose() -> bool
 {
 	#if !defined(WEB_PLT)
@@ -790,26 +791,26 @@ auto CWindow::ToggleFullScreen() -> void
         bool wasMaximized;
     };
     const char* propName = "FullscreenData";
-    FullscreenData* data = static_cast<FullscreenData*>(GetProp(m_WindowHandle, propName));
+    FullscreenData* data = static_cast<FullscreenData*>(GetProp(m_Handle, propName));
     
     if (!data) {
         // ENTER FULLSCREEN
         data = new FullscreenData();
         
         // Save current state
-        data->style = GetWindowLongPtr(m_WindowHandle, GWL_STYLE);
-        data->exStyle = GetWindowLongPtr(m_WindowHandle, GWL_EXSTYLE);
-        data->wasMaximized = !!::IsZoomed(m_WindowHandle);
-        GetWindowRect(m_WindowHandle, &data->restoreRect);
+        data->style = GetWindowLongPtr(m_Handle, GWL_STYLE);
+        data->exStyle = GetWindowLongPtr(m_Handle, GWL_EXSTYLE);
+        data->wasMaximized = !!::IsZoomed(m_Handle);
+        GetWindowRect(m_Handle, &data->restoreRect);
         
         // Get monitor info
-        HMONITOR hmon = MonitorFromWindow(m_WindowHandle, MONITOR_DEFAULTTONEAREST);
+        HMONITOR hmon = MonitorFromWindow(m_Handle, MONITOR_DEFAULTTONEAREST);
         MONITORINFO mi{};
 		mi.cbSize = sizeof(mi);
         GetMonitorInfo(hmon, &mi);
         
         // Set window to cover entire monitor WITHOUT changing style
-        SetWindowPos(m_WindowHandle, HWND_TOP,
+        SetWindowPos(m_Handle, HWND_TOP,
             mi.rcMonitor.left,
             mi.rcMonitor.top,
             mi.rcMonitor.right - mi.rcMonitor.left,
@@ -818,17 +819,17 @@ auto CWindow::ToggleFullScreen() -> void
         );
         
         // Optional: Remove window decorations if desired
-        SetWindowLongPtr(m_WindowHandle, GWL_STYLE, WS_VISIBLE | WS_POPUP);
+        SetWindowLongPtr(m_Handle, GWL_STYLE, WS_VISIBLE | WS_POPUP);
         
-        SetProp(m_WindowHandle, propName, data);
+        SetProp(m_Handle, propName, data);
     } else {
         // EXIT FULLSCREEN
         // Restore original style
-        SetWindowLongPtr(m_WindowHandle, GWL_STYLE, data->style);
-        SetWindowLongPtr(m_WindowHandle, GWL_EXSTYLE, data->exStyle);
+        SetWindowLongPtr(m_Handle, GWL_STYLE, data->style);
+        SetWindowLongPtr(m_Handle, GWL_EXSTYLE, data->exStyle);
         
         // Restore window position
-        SetWindowPos(m_WindowHandle, nullptr,
+        SetWindowPos(m_Handle, nullptr,
             data->restoreRect.left,
             data->restoreRect.top,
             data->restoreRect.right - data->restoreRect.left,
@@ -838,15 +839,15 @@ auto CWindow::ToggleFullScreen() -> void
         
         // Restore maximized state if needed
         if (data->wasMaximized) {
-            ShowWindow(m_WindowHandle, SW_MAXIMIZE);
+            ShowWindow(m_Handle, SW_MAXIMIZE);
         }
         
-        RemoveProp(m_WindowHandle, propName);
+        RemoveProp(m_Handle, propName);
         delete data;
     }
     
     // Update window immediately
-    UpdateWindow(m_WindowHandle);
+    UpdateWindow(m_Handle);
 	#elif defined(LINUX_PLT)
 	#elif defined(WEB_PLT)
 
@@ -865,9 +866,9 @@ auto CWindow::ToggleFullScreen() -> void
 auto CWindow::SwapBuffers() const -> void
 {
 	#if defined(WINDOWS_PLT)
-    ::SwapBuffers(m_DrawContext);
+    ::SwapBuffers(m_Surface);
     #elif defined(LINUX_PLT)
-    ::glXSwapBuffers(m_DrawContext, m_WindowHandle);
+    ::glXSwapBuffers(m_Surface, m_Handle);
     #endif
 }
 
