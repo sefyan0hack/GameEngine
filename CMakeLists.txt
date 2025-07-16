@@ -84,11 +84,15 @@ if(EMSCRIPTEN)
         -msimd128
         -fPIC
         -fno-exceptions -fno-rtti
+        -pthread
+        -matomic 
     )
 
     add_link_options(
         -Oz
+        -fno-exceptions -fno-rtti
         -pthread
+        -matomic 
         -sASYNCIFY
         -sUSE_WEBGL2=1
         -sMIN_WEBGL_VERSION=1
@@ -102,7 +106,6 @@ if(EMSCRIPTEN)
         -sPTHREAD_POOL_SIZE=4
         -sPROXY_TO_PTHREAD
         -sEXIT_RUNTIME=1
-        -fno-exceptions -fno-rtti
 
         # -sNO_EXIT_RUNTIME=1
         # --profiling
