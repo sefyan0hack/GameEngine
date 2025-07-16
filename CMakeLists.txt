@@ -78,7 +78,7 @@ if(EMSCRIPTEN)
     
     add_compile_options(
         # -Oz
-        # -g0
+        -g3
         -std=c++23
         -Wno-character-conversion -Wno-dollar-in-identifier-extension -Wno-error -Wno-invalid-token-paste
         -pthread
@@ -98,13 +98,13 @@ if(EMSCRIPTEN)
         # -sNO_EXIT_RUNTIME=1
         -sFULL_ES3=1
         -sSTB_IMAGE=1
-        # -sDISABLE_EXCEPTION_THROWING=1
-        # -sDISABLE_EXCEPTION_CATCHING=1 
-        # -sWASM_LEGACY_EXCEPTIONS=0
+        -sDISABLE_EXCEPTION_THROWING=0
+        -sDISABLE_EXCEPTION_CATCHING=0
         --embed-file ${CMAKE_SOURCE_DIR}/res
-        --profiling
-        -sASSERTIONS=2
         -sPTHREAD_POOL_SIZE=4
+        --profiling
+        -g3
+        -sASSERTIONS=2
         # -sEXIT_RUNTIME=1
         # -sASSERTIONS=2
         # -sSTRICT=1
