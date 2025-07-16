@@ -37,11 +37,6 @@
 <body>
   <canvas  id="canvas" oncontextmenu="event.preventDefault()" tabindex="0" ></canvas>
   <script type="text/javascript" src="coi-serviceworker.min.js"></script>
-  <script>
-  Module = {
-    canvas: document.getElementById('canvas')
-  };
-  </script>
   <script async="" type="text/javascript" src="@PROJECT_NAME@.js"></script>
 </body>
 </html>
