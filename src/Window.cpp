@@ -371,7 +371,7 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
 	auto Surface = "#canvas";
 
 	emscripten_set_window_title(Title);
-	emscripten_set_canvas_element_size(window_handle, Width, Height);
+	emscripten_set_canvas_element_size(Surface, Width, Height);
 	EM_ASM({
         var canvas = document.getElementById('canvas');
         if (!canvas) canvas = document.querySelector('#canvas');
