@@ -105,6 +105,7 @@ if(EMSCRIPTEN)
         --embed-file ${CMAKE_SOURCE_DIR}/res
         -sPTHREAD_POOL_SIZE=4
         -sPROXY_TO_PTHREAD
+        -sOFFSCREENCANVAS_SUPPORT=1
         -sEXIT_RUNTIME=1
 
         # -sNO_EXIT_RUNTIME=1
