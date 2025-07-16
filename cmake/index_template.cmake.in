@@ -5,7 +5,6 @@
   <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <script src="coi-serviceworker.min.js"></script>
   <style>
     * { touch-action: manipulation }
 
@@ -37,6 +36,7 @@
 </head>
 <body>
   <canvas  id="canvas" oncontextmenu="event.preventDefault()" tabindex="0" ></canvas>
+  <script src="coi-serviceworker.min.js"></script>
   <script async="" type="text/javascript" src="@PROJECT_NAME@.js"></script>
 </body>
 </html>
