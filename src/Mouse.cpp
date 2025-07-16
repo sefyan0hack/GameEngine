@@ -100,7 +100,9 @@ auto Mouse::Locked() const -> bool
 auto Mouse::Lock([[maybe_unused]] const CWindow& window) noexcept -> void
 {
 	if(!isLocked){
-		auto window_handle =  window.Handle();
+		[[maybe_unused]] auto window_handle =  window.Handle();
+		[[maybe_unused]] auto surface = window.Surface();
+
         #if defined(WINDOWS_PLT)
 
         RECT clientRect;
@@ -124,7 +126,7 @@ auto Mouse::Lock([[maybe_unused]] const CWindow& window) noexcept -> void
         x = centerX;
         y = centerY;
         #elif defined(WEB_PLT)
-        emscripten_request_pointerlock(window_handle, EM_TRUE);
+        emscripten_request_pointerlock(surface, EM_TRUE);
         #endif
 
 		isLocked = true;
