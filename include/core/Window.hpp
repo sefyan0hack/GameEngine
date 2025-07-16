@@ -20,6 +20,8 @@
 class CWindow
 {
     friend class APP;
+    using EventPusher = std::function<void(const Event&)>;
+
     #if defined(WINDOWS_PLT)
     class WinClass
     {
@@ -42,7 +44,7 @@ class CWindow
     #endif
     
     public:
-        CWindow(EventQueue& Events, int32_t Width, int32_t Height, const char* Title, bool withopengl = true);
+        CWindow(int32_t Width, int32_t Height, const char* Title, EventPusher eventPusher = [](const Event&){});
         CWindow(const CWindow& other);
         CWindow(CWindow&&) = delete;
     
@@ -88,7 +90,7 @@ class CWindow
         bool m_Visible;
         std::shared_ptr<gl::OpenGL> m_OpenGl;
         int32_t m_refCount;
-        EventQueue& m_EventQueue;
+        EventPusher m_EventPusher;
 
         inline static unsigned short S_WindowsCount = 0;
 

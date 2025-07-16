@@ -19,7 +19,7 @@ constexpr auto WINDOW_WIDTH = 1180;
 constexpr auto WINDOW_HIEGHT = 640;
 
 APP::APP()
-    : Window(ApplicationEventQueue, WINDOW_WIDTH, WINDOW_HIEGHT, Wname)
+    : Window(WINDOW_WIDTH, WINDOW_HIEGHT, Wname, [this](const Event& e) { ApplicationEventQueue.push(e); })
     , ViewCamera()
     , Keyboard()
     , Mouse()
@@ -69,6 +69,8 @@ auto APP::LoopBody(void* ctx) -> void
             },
             [&app](const WindowLoseFocusEvent&) {
 		        app->Keyboard.ClearState();
+		        app->Mouse.ClearState();
+		        app->ApplicationEventQueue.clear();
             },
             [&app](const Keyboard::KeyDownEvent& e) {
 				    app->Keyboard.OnKeyDown(e.key);
