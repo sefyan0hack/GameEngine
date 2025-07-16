@@ -69,7 +69,7 @@ class CWindow
         auto PollEvent(Event& event) -> bool;
         auto WaitEvent(Event& event) -> void;
         auto ClearEvents() -> void;
-
+        auto PushEvent(Event&& event) -> void;
     private:
         #if defined(WINDOWS_PLT)
         static auto CALLBACK WinProcThunk(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)  -> LRESULT ;

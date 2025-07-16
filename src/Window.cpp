@@ -769,7 +769,7 @@ auto CWindow::Hide() -> void
 bool CWindow::PollEvent(Event& event) { return m_Events.poll(event); }
 void CWindow::WaitEvent(Event& event) { m_Events.wait_and_poll(event); }
 void CWindow::ClearEvents() { m_Events.clear(); }
-
+auto CWindow::PushEvent(Event&& event) -> void { m_Events.push(std::move(event)); }
 auto CWindow::WindowShouldClose() -> bool
 {
 	#if !defined(WEB_PLT)

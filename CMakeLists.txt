@@ -134,6 +134,13 @@ if(EMSCRIPTEN)
     add_custom_target(generate_index_html ALL
         DEPENDS ${CMAKE_BINARY_DIR}/index.html
     )
+
+    # COOP and COEP headers trick
+    file(DOWNLOAD
+        "https://raw.githubusercontent.com/gzuidhof/coi-serviceworker/master/coi-serviceworker.min.js"
+        "${CMAKE_BINARY_DIR}/coi-serviceworker.min.js"
+        SHOW_PROGRESS
+    )
 endif()
 ####################################################################################################
 # 

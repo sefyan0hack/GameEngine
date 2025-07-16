@@ -144,11 +144,10 @@ private:
         Scn << GameObject({0,0,1}, Matt, cubeMesh);
         Scn << GameObject({1,1,0}, Matt, cubeMesh);
         Scn << GameObject({1,1,1}, Matt, cubeMesh);
-
-        std::thread([](){
-            std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-            std::cout << "After 5s \n";
-        }).detach();
+        
+        utils::Repeat(3000, [this](){
+            Window.PushEvent(Keyboard::KeyDownEvent{Key::H});
+        });
     }
 public:
 
