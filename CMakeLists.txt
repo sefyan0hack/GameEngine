@@ -142,7 +142,7 @@ if(EMSCRIPTEN)
     # COOP and COEP headers trick
     file(DOWNLOAD
         "https://raw.githubusercontent.com/gzuidhof/coi-serviceworker/master/coi-serviceworker.js"
-        "${CMAKE_BINARY_DIR}/coi-serviceworker.min.js"
+        "${CMAKE_BINARY_DIR}/coi-serviceworker.js"
         SHOW_PROGRESS
     )
 endif()

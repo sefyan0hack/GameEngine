@@ -31,10 +31,10 @@
       }
     }
   </style>
+  <script src="coi-serviceworker.js"></script>
 </head>
 <body>
   <canvas  id="canvas" oncontextmenu="event.preventDefault()" tabindex="0" ></canvas>
-  <script type="text/javascript" src="coi-serviceworker.js"></script>
   <script async="" type="text/javascript" src="@PROJECT_NAME@.js"></script>
 </body>
 </html>
