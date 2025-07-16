@@ -101,7 +101,8 @@ if(EMSCRIPTEN)
         -sDISABLE_EXCEPTION_THROWING=0
         -sDISABLE_EXCEPTION_CATCHING=0
         --embed-file ${CMAKE_SOURCE_DIR}/res
-        -sPTHREAD_POOL_SIZE=4
+        -sPTHREAD_POOL_SIZE=8
+        -sPTHREAD_POOL_SIZE_STRICT=0
         --profiling
         -g3
         -sASSERTIONS=2
