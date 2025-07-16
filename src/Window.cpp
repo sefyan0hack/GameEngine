@@ -580,7 +580,7 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
 	double canvaswidth = 0.0;
     double canvasheight = 0.0;
 
-    emscripten_get_element_css_size(window->Handle(), &canvaswidth, &canvasheight);
+    emscripten_get_element_css_size(window->Surface(), &canvaswidth, &canvasheight);
 
     for (int32_t i = 0; i <  e->numTouches; ++i) {
 		const auto& t = e->touches[i];
