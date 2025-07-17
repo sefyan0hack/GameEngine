@@ -1,11 +1,5 @@
 #pragma once
 
-#include <core/OpenGL.hpp>
-#include <core/OpenGL.hpp>
-#include <core/Keyboard.hpp>
-#include <core/Mouse.hpp>
-#include <core/EventQueue.hpp>
-
 #if defined(WINDOWS_PLT)
 #include <windows.h>
 #elif defined(LINUX_PLT)
@@ -16,6 +10,11 @@
 #include <emscripten/html5_webgl.h>
 #include <emscripten/key_codes.h>
 #endif
+
+#include <core/gl.h>
+#include <core/Event.hpp>
+
+namespace gl { class OpenGL; }
 
 class CWindow
 {
@@ -87,7 +86,7 @@ class CWindow
         H_WIN m_Handle;
         H_SRF m_Surface;
         int32_t m_Width, m_Height;
-        bool m_Visible;
+        bool m_Visible, m_FullScreen;
         std::shared_ptr<gl::OpenGL> m_OpenGl;
         int32_t m_refCount;
         EventPusher m_EventPusher;

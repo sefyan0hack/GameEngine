@@ -144,7 +144,7 @@ auto OpenGL::init_opengl_web() -> void
     attrs.minorVersion = 0;
     attrs.enableExtensionsByDefault = EM_TRUE;
 
-    m_Context = emscripten_webgl_create_context("#canvas", &attrs);
+    m_Context = emscripten_webgl_create_context(m_Surface, &attrs);
 
     if (m_Context <= 0) {
         Error("Failed to create WebGL context: error {}", static_cast<int32_t>(m_Context));

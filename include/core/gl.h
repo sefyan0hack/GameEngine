@@ -9,7 +9,7 @@
 #include <glext.h>
 #include <wglext.h>
 
-using H_WIN = HWND;
+using H_WIN     = HWND;
 using H_SRF     = HDC;
 using GLCTX     = HGLRC;
 
@@ -32,7 +32,7 @@ using GLCTX     = HGLRC;
 #define XXXGetProcAddress(name) glXGetProcAddress((const GLubyte*)name)
 
 struct __GLXcontextRec;
-using H_WIN = Window;
+using H_WIN     = Window;
 using H_SRF     = Display*;
 using GLCTX     = __GLXcontextRec*;
 

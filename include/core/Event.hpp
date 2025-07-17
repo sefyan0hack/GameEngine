@@ -1,8 +1,7 @@
 #pragma once
 
-class Keyboard;
-class Mouse;
-class CWindow;
+#include <core/Keyboard.hpp>
+#include <core/Mouse.hpp>
 
 struct WindowResizeEvent { int32_t width, height; };
 struct WindowLoseFocusEvent { const CWindow* window; };

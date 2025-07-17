@@ -1,8 +1,9 @@
 #include <core/Window.hpp>
 #include <core/Log.hpp>
 #include <core/OpenGL.hpp>
+#include <core/Keyboard.hpp>
+#include <core/Mouse.hpp>
 #include <core/Event.hpp>
-
 
 CWindow::CWindow(
 	[[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height, 
@@ -11,6 +12,7 @@ CWindow::CWindow(
 	: m_Width(Width)
 	, m_Height(Height)
 	, m_Visible(false)
+	, m_FullScreen(false)
 	, m_refCount(1)
 	, m_EventPusher(std::move(eventPusher))
 {
@@ -79,6 +81,7 @@ CWindow::CWindow(const CWindow& other)
 	, m_Width(other.m_Width)
 	, m_Height(other.m_Height)
 	, m_Visible(other.m_Visible)
+	, m_FullScreen(other.m_FullScreen)
 	, m_OpenGl(other.m_OpenGl)
 	, m_refCount(other.m_refCount)
 	, m_EventPusher(other.m_EventPusher)
@@ -674,30 +677,27 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 				const KeyCode keycode = event.xkey.keycode;
 				KeySym keysym = XkbKeycodeToKeysym(surface, keycode, 0, 0); // US layout
 				
-				// Handle alphanumeric keys separately
 				uint32_t vk = 0;
 				
-				// Letters (A-Z) - normalize to uppercase
 				if (keysym >= XK_A && keysym <= XK_Z) {
 					vk = 'A' + (keysym - XK_A);
 				}
-				// Letters (a-z) - normalize to uppercase
 				else if (keysym >= XK_a && keysym <= XK_z) {
 					vk = 'A' + (keysym - XK_a);
 				}
-				// Numbers (0-9)
 				else if (keysym >= XK_0 && keysym <= XK_9) {
 					vk = '0' + (keysym - XK_0);
 				}
-				// Other keys - use keysym directly
 				else {
 					vk = static_cast<uint32_t>(keysym);
 				}
 
+				Key key = Keyboard::FromNative(vk);
+
 				if (event.type == KeyPress) {
-					self->m_EventPusher(Keyboard::KeyDownEvent{Keyboard::FromNative(vk)});
+					self->m_EventPusher(Keyboard::KeyDownEvent{key});
 				} else {
-					self->m_EventPusher(Keyboard::KeyUpEvent{Keyboard::FromNative(vk)});
+					self->m_EventPusher(Keyboard::KeyUpEvent{key});
 				}
 				break;
 			}
@@ -842,13 +842,14 @@ auto CWindow::ToggleFullScreen() -> void
 	}
 
 	#elif defined(LINUX_PLT)
+	//not impl yet
 	#elif defined(WEB_PLT)
 
 	EmscriptenFullscreenChangeEvent fullscrendata;
     EMSCRIPTEN_RESULT ret = emscripten_get_fullscreen_status(&fullscrendata);
 
 	if (!fullscrendata.isFullscreen) {
-		ret = emscripten_request_fullscreen("#canvas", 1);
+		ret = emscripten_request_fullscreen(m_Surface, 1);
 	} else {
 		ret = emscripten_exit_fullscreen();
 	}

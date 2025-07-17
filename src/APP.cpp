@@ -2,6 +2,7 @@
 #include <core/Window.hpp>
 #include <core/Event.hpp>
 #include <core/Utils.hpp>
+#include <core/OpenGL.hpp>
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>
