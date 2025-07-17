@@ -21,6 +21,11 @@ concept FunctionPointer =
     std::is_pointer_v<std::remove_cv_t<T>> &&
     std::is_function_v<std::remove_pointer_t<std::remove_cv_t<T>>>;
 
+template <typename T>
+concept Variant = requires {
+    typename std::variant_size<std::remove_cvref_t<T>>::type;
+};
+
 template<class... Ts>
 struct overloaded : Ts... { using Ts::operator()...; };
 
