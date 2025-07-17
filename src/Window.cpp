@@ -782,70 +782,65 @@ auto CWindow::WindowShouldClose() -> bool
 auto CWindow::ToggleFullScreen() -> void
 {
 	#if defined(WINDOWS_PLT)
-	struct FullscreenData {
-        RECT restoreRect;
-        LONG_PTR style;
-        LONG_PTR exStyle;
-        bool wasMaximized;
-    };
-    const char* propName = "FullscreenData";
-    FullscreenData* data = static_cast<FullscreenData*>(GetProp(m_Handle, propName));
-    
-    if (!data) {
-        // ENTER FULLSCREEN
-        data = new FullscreenData();
-        
-        // Save current state
-        data->style = GetWindowLongPtr(m_Handle, GWL_STYLE);
-        data->exStyle = GetWindowLongPtr(m_Handle, GWL_EXSTYLE);
-        data->wasMaximized = !!::IsZoomed(m_Handle);
-        GetWindowRect(m_Handle, &data->restoreRect);
-        
-        // Get monitor info
-        HMONITOR hmon = MonitorFromWindow(m_Handle, MONITOR_DEFAULTTONEAREST);
-        MONITORINFO mi{};
-		mi.cbSize = sizeof(mi);
-        GetMonitorInfo(hmon, &mi);
-        
-        // Set window to cover entire monitor WITHOUT changing style
-        SetWindowPos(m_Handle, HWND_TOP,
-            mi.rcMonitor.left,
-            mi.rcMonitor.top,
-            mi.rcMonitor.right - mi.rcMonitor.left,
-            mi.rcMonitor.bottom - mi.rcMonitor.top,
-            SWP_NOOWNERZORDER | SWP_FRAMECHANGED | SWP_NOZORDER
-        );
-        
-        // Optional: Remove window decorations if desired
-        SetWindowLongPtr(m_Handle, GWL_STYLE, WS_VISIBLE | WS_POPUP);
-        
-        SetProp(m_Handle, propName, data);
-    } else {
-        // EXIT FULLSCREEN
-        // Restore original style
-        SetWindowLongPtr(m_Handle, GWL_STYLE, data->style);
-        SetWindowLongPtr(m_Handle, GWL_EXSTYLE, data->exStyle);
-        
-        // Restore window position
-        SetWindowPos(m_Handle, nullptr,
-            data->restoreRect.left,
-            data->restoreRect.top,
-            data->restoreRect.right - data->restoreRect.left,
-            data->restoreRect.bottom - data->restoreRect.top,
-            SWP_NOZORDER | SWP_FRAMECHANGED
-        );
-        
-        // Restore maximized state if needed
-        if (data->wasMaximized) {
-            ShowWindow(m_Handle, SW_MAXIMIZE);
-        }
-        
-        RemoveProp(m_Handle, propName);
-        delete data;
-    }
-    
-    // Update window immediately
-    UpdateWindow(m_Handle);
+	struct WindowedState
+	{
+		RECT rect;
+		DWORD style, exStyle;
+	};
+
+	static const TCHAR* FULLSCREEN_STATE_PROP = TEXT("FullscreenStateData");
+
+	if (m_FullScreen)
+	{
+		WindowedState state;
+		UINT_PTR stored = reinterpret_cast<UINT_PTR>(RemoveProp(m_Handle, FULLSCREEN_STATE_PROP));
+		if (stored) {
+			state.style = static_cast<DWORD>(stored & 0xFFFFFFFF);
+			state.exStyle = static_cast<DWORD>(stored >> 32);
+	
+			RECT currentRect;
+			GetWindowRect(m_Handle, &currentRect);
+	
+			SetWindowLongPtr(m_Handle, GWL_STYLE, state.style);
+			SetWindowLongPtr(m_Handle, GWL_EXSTYLE, state.exStyle);
+			
+			SetWindowPos(
+				m_Handle, nullptr,
+				currentRect.left, currentRect.top,
+				currentRect.right - currentRect.left,
+				currentRect.bottom - currentRect.top,
+				SWP_FRAMECHANGED | SWP_NOZORDER
+			);
+		}
+		m_FullScreen = false;
+	}
+	else
+	{
+		WindowedState state;
+		state.style = static_cast<DWORD>(GetWindowLongPtr(m_Handle, GWL_STYLE));
+		state.exStyle = static_cast<DWORD>(GetWindowLongPtr(m_Handle, GWL_EXSTYLE));
+		
+		UINT_PTR storedState = (static_cast<UINT_PTR>(state.exStyle) << 32) | state.style;
+	
+		HMONITOR hmon = MonitorFromWindow(m_Handle, MONITOR_DEFAULTTONEAREST);
+		MONITORINFO mi = { sizeof(mi) };
+		GetMonitorInfo(hmon, &mi);
+	
+		SetWindowLongPtr(m_Handle, GWL_STYLE, state.style & ~(WS_CAPTION | WS_THICKFRAME));
+		SetWindowLongPtr(m_Handle, GWL_EXSTYLE, state.exStyle & ~(WS_EX_DLGMODALFRAME | WS_EX_WINDOWEDGE));
+	
+		SetWindowPos(
+			m_Handle, HWND_TOP,
+			mi.rcMonitor.left, mi.rcMonitor.top,
+			mi.rcMonitor.right - mi.rcMonitor.left,
+			mi.rcMonitor.bottom - mi.rcMonitor.top,
+			SWP_FRAMECHANGED | SWP_NOZORDER
+		);
+	
+		SetProp(m_Handle, FULLSCREEN_STATE_PROP, reinterpret_cast<HANDLE>(storedState));
+		m_FullScreen = true;
+	}
+
 	#elif defined(LINUX_PLT)
 	#elif defined(WEB_PLT)
 
