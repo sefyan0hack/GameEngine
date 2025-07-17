@@ -12,7 +12,13 @@ public:
     friend struct std::formatter<Camera>;
     
     Camera() noexcept;
-    ~Camera();
+    ~Camera() = default;
+
+    Camera(const Camera& other) = default;
+    auto operator=(const Camera& other) -> Camera& = default;
+
+    Camera(Camera&& other) noexcept = default;
+    auto operator=(Camera&& other) noexcept -> Camera& = default;
 
     auto MoveForward(float speed)  noexcept -> void ;
     auto MoveBackward(float speed) noexcept -> void ;
@@ -22,8 +28,6 @@ public:
     auto MoveLeft(float speed)     noexcept -> void ;
 
     auto SetFrontVector(glm::vec3 front)  -> void ;
-    auto SetUpVector(glm::vec3 up)        -> void ;
-    auto SetRightVector(glm::vec3 right)  -> void ;
     auto SetFOV(float fov)                 -> void ;
     auto SetClipping(float nearValue, float farValue) -> void ; 
 
@@ -40,7 +44,7 @@ public:
 public:
     constexpr static glm::vec3 WORLD_UP = { 0, 1, 0 };
     constexpr static float MAX_SAFE_PITCH = 89.0f;
-    constexpr static float LOCKED_PITCH_LIMIT = 45.0f;  
+    constexpr static float LOCKED_PITCH_LIMIT = 45.0f;
 
 private:
     glm::vec3 m_Position;
@@ -48,8 +52,6 @@ private:
     glm::vec3 m_UpDir;
     glm::vec3 m_RightDir;
 
-
-    //
     float m_Sensitivity;
     float m_Yaw, m_Pitch;
 

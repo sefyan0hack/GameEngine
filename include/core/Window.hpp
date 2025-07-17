@@ -43,15 +43,15 @@ class CWindow
     #endif
     
     public:
-        CWindow(int32_t Width, int32_t Height, const char* Title, EventPusher eventPusher = [](const Event&){});
-        CWindow(const CWindow& other);
-        CWindow(CWindow&&) = delete;
-    
-        auto operator = (const CWindow &) -> CWindow& = delete ;
-        auto operator = (CWindow &&)      -> CWindow& = delete ;
-    
+        CWindow(int32_t Width, int32_t Height, const char* Title, EventPusher eventPusher = [](const Event&){}) noexcept;
         ~CWindow();
-    
+
+        CWindow(const CWindow& other) = delete;
+        auto operator = (const CWindow &) -> CWindow& = delete ;
+
+        CWindow(CWindow&&) noexcept= default;
+        auto operator = (CWindow &&) noexcept -> CWindow& = default ;
+
     public:
         auto Handle() const              -> H_WIN ;
         auto Surface() const         -> H_SRF ;
@@ -88,7 +88,6 @@ class CWindow
         int32_t m_Width, m_Height;
         bool m_Visible, m_FullScreen;
         std::shared_ptr<gl::OpenGL> m_OpenGl;
-        int32_t m_refCount;
         EventPusher m_EventPusher;
 
         inline static unsigned short S_WindowsCount = 0;

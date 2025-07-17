@@ -32,7 +32,7 @@ public:
 
     auto operator=(Buffer&& other) -> Buffer&
     {
-        if(*this != other){
+        if(this != &other){
             this->m_Size = std::exchange(other.m_Size, 0);
             this->m_Data = std::exchange(other.m_Data, nullptr);
             this->m_Cursor = std::exchange(other.m_Cursor, 0);

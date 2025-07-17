@@ -21,8 +21,6 @@ using Camera_Test_Ctor2 = Camera::Test<2>;
     MEMBER_VAR(m_AspectRatio);\
     \
     MEMBER_FUN(SetFrontVector);\
-    MEMBER_FUN(SetUpVector);\
-    MEMBER_FUN(SetRightVector);\
     MEMBER_FUN(SetFOV);\
     MEMBER_FUN(SetClipping);\
     MEMBER_FUN(MoveForward);\
@@ -65,18 +63,6 @@ TEST_F(Camera_Test_Ctor1, SetFrontVector) {
     auto value = vec3(0,0,1);
     SetFrontVector(value);
     EXPECT_EQ(m_FrontDir, value);
-}
-
-TEST_F(Camera_Test_Ctor1, SetUpVector) {
-    auto value = vec3(1,0,0);
-    SetUpVector(value);
-    EXPECT_EQ(m_UpDir, value);
-}
-
-TEST_F(Camera_Test_Ctor1, SetRightVector) {
-    auto value = vec3(1,0,0);
-    SetRightVector(value);
-    EXPECT_EQ(m_RightDir, value);
 }
 
 TEST_F(Camera_Test_Ctor1, MoveForward) {

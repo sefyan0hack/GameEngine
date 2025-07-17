@@ -8,12 +8,11 @@
 CWindow::CWindow(
 	[[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height, 
 	[[maybe_unused]] const char* Title,
-	[[maybe_unused]] EventPusher eventPusher)
+	[[maybe_unused]] EventPusher eventPusher) noexcept
 	: m_Width(Width)
 	, m_Height(Height)
 	, m_Visible(false)
 	, m_FullScreen(false)
-	, m_refCount(1)
 	, m_EventPusher(std::move(eventPusher))
 {
 	std::tie(m_Handle, m_Surface) = new_window(m_Width, m_Height, Title);
@@ -75,38 +74,22 @@ CWindow::CWindow(
     #endif
 }
 
-CWindow::CWindow(const CWindow& other)
-	: m_Handle(other.m_Handle)
-	, m_Surface(other.m_Surface)
-	, m_Width(other.m_Width)
-	, m_Height(other.m_Height)
-	, m_Visible(other.m_Visible)
-	, m_FullScreen(other.m_FullScreen)
-	, m_OpenGl(other.m_OpenGl)
-	, m_refCount(other.m_refCount)
-	, m_EventPusher(other.m_EventPusher)
-{
-	m_refCount++;
-}
 
 CWindow::~CWindow()
 {
-	m_refCount--;
-	if (m_refCount == 0) {
-		m_OpenGl.reset();
-		#if defined(WINDOWS_PLT)
-		DestroyWindow(m_Handle);
-		#elif defined(LINUX_PLT)
-		XDestroyWindow(m_Surface, m_Handle);
-		if (m_Surface) {
-			XCloseDisplay(m_Surface);
-		}
-		#elif defined(WEB_PLT)
-		if (m_OpenGl->Context()) {
-			emscripten_webgl_destroy_context(m_OpenGl->Context());
-		}
-		#endif
+	m_OpenGl.reset();
+	#if defined(WINDOWS_PLT)
+	DestroyWindow(m_Handle);
+	#elif defined(LINUX_PLT)
+	XDestroyWindow(m_Surface, m_Handle);
+	if (m_Surface) {
+		XCloseDisplay(m_Surface);
 	}
+	#elif defined(WEB_PLT)
+	if (m_OpenGl->Context()) {
+		emscripten_webgl_destroy_context(m_OpenGl->Context());
+	}
+	#endif
 }
 
 #if defined(WINDOWS_PLT)

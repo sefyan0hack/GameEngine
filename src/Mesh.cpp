@@ -147,7 +147,7 @@ Mesh::Mesh(const Mesh& other)
 
 auto Mesh::operator=(const Mesh& other) -> Mesh&
 {
-    if(*this != other){
+    if(this != &other){
         this->name = other.name;
         this->vertices = other.vertices;
         this->attribs = other.attribs;
@@ -173,7 +173,7 @@ Mesh::Mesh(Mesh&& other) noexcept
 
 auto Mesh::operator=(Mesh &&other) noexcept -> Mesh&
 {
-    if(*this != other){
+    if(this != &other){
         this->name = std::exchange(other.name, {});
         this->vertices = std::exchange(other.vertices, {});
         this->attribs = std::exchange(other.attribs, {});

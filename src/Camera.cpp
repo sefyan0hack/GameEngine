@@ -20,8 +20,6 @@ Camera::Camera() noexcept
       m_AspectRatio(16.0f / 9.0f)
 {}
 
-Camera::~Camera() {
-}
 
 auto Camera::View() const -> glm::mat4
 {
@@ -85,11 +83,7 @@ auto Camera::UpdateCameraPosition(Mouse& mouse) -> void
 }
 
 auto Camera::SetFrontVector(glm::vec3 front)  -> void { m_FrontDir = front; }
-auto Camera::SetUpVector(glm::vec3 up)        -> void { m_UpDir = up; }
-auto Camera::SetRightVector(glm::vec3 right)  -> void { m_RightDir = right; }
-
 void Camera::SetFOV(float fov) { m_FOV = fov; }
-
 void Camera::SetClipping(float nearValue, float farValue) { m_Near = nearValue; m_Far = farValue; }
 
 auto Camera::Position() const -> glm::vec3 { return m_Position; }

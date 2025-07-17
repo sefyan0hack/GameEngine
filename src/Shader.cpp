@@ -58,7 +58,7 @@ Shader::Shader(Shader&& other) noexcept
 
 Shader &Shader::operator=(const Shader& other)
 {
-    if(*this != other){
+    if(this != &other){
         this->m_Id = gl::CreateShader(other.m_Type);
         this->m_Type = other.m_Type;
         this->m_File = other.m_File;

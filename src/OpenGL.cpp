@@ -249,7 +249,7 @@ OpenGL::OpenGL(const OpenGL &other)
 
 auto OpenGL::operator=(const OpenGL &other) -> OpenGL&
 {
-    if(*this != other){
+    if(this != &other){
         this->m_Context = GLCTX{};
         this->m_Surface = other.m_Surface;    
         this->m_Major = other.m_Major;
@@ -278,7 +278,7 @@ OpenGL::OpenGL(OpenGL &&other) noexcept
 
 auto OpenGL::operator=(OpenGL &&other) noexcept -> OpenGL&
 {
-    if(*this != other){
+    if(this != &other){
         this->m_Context = std::exchange(other.m_Context, GLCTX{});
         this->m_Surface = std::exchange(other.m_Surface, nullptr);
         this->m_Major = std::exchange(other.m_Major, 0);
