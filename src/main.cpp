@@ -144,10 +144,7 @@ private:
         Scn << GameObject({0,0,1}, Matt, cubeMesh);
         Scn << GameObject({1,1,0}, Matt, cubeMesh);
         Scn << GameObject({1,1,1}, Matt, cubeMesh);
-        
-        utils::Repeat(3000, [this](){
-            PushEvent(Keyboard::KeyDownEvent{Key::H});
-        });
+
     }
 public:
 
