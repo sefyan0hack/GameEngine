@@ -2,6 +2,7 @@
 
 #include <core/Keyboard.hpp>
 #include <core/Mouse.hpp>
+#include <core/Utils.hpp>
 
 struct WindowResizeEvent { int32_t width, height; };
 struct WindowLoseFocusEvent { const CWindow* window; };
@@ -24,16 +25,18 @@ using Event = std::variant<
     WindowQuitEvent
 >;
 
-constexpr auto TotaleEvents = std::variant_size_v<Event> - 1;  // (- monostate)
-
-template <size_t... I>
-constexpr auto EventNamesImpl(std::index_sequence<I...>) 
-    -> std::array<const char*, sizeof...(I)> 
+constexpr auto Events()
 {
-    return { ::type_name<std::variant_alternative_t<I+1, Event>>().c_str()... };
+    return utils::Variant_to_Array<Event>();
 }
 
-constexpr auto Events() -> std::array<const char*, TotaleEvents>
-{
-    return EventNamesImpl(std::make_index_sequence<TotaleEvents>{});
-}
+// constexpr auto Events() -> std::array<TypeInfo, TotaleEvents>
+// {
+//     return []<std::size_t... I>(std::index_sequence<I...>) {
+//         return std::array<TypeInfo, sizeof...(I)> {{
+//             { ::type_hash<std::variant_alternative_t<I + 1, Event>>(),
+//               ::type_name<std::variant_alternative_t<I + 1, Event>>()
+//             }...
+//         }};
+//     }(std::make_index_sequence<TotaleEvents>{});
+// }

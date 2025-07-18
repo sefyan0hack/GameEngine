@@ -91,13 +91,13 @@ inline static auto demangle(const char* name) -> std::string
 
 
 template <typename T>
-inline static auto type_name() -> std::string
+inline static constexpr auto type_name() -> std::string_view
 {
 #ifdef __cpp_rtti
     return ::demangle(typeid(T).name());
 #else
     #if defined(CLANG_CPL) || defined(GNU_CPL)
-        std::string name = __PRETTY_FUNCTION__;
+        constexpr std::string_view name = __PRETTY_FUNCTION__;
         auto start = name.find("T = ") + 4;
     #   if defined(CLANG_CPL)
         auto end = name.find(']', start);
@@ -105,15 +105,15 @@ inline static auto type_name() -> std::string
         auto end = name.find(';', start);
     #   endif
 
-        return std::string(name.substr(start, end - start));
+        return std::string_view(name.substr(start, end - start));
 
     #elif defined(MSVC_CPL)
-        std::string name = __FUNCSIG__;
+        constexpr std::string_view name = __FUNCSIG__;
         auto start = name.find("type_name<") + 10;
         auto end = name.find(">(void)");
-        std::string result = std::string(name.substr(start, end - start));
+        constexpr std::string_view result = std::string_view(name.substr(start, end - start));
 
-        static const std::string prefixes[] = {"class ", "struct ", "union ", "enum "};
+        static constexpr std::string_view prefixes[] = {"class ", "struct ", "union ", "enum "};
         for (const auto& prefix : prefixes) {
             if (result.rfind(prefix, 0) == 0) {
                 result.erase(0, prefix.length());
@@ -124,6 +124,37 @@ inline static auto type_name() -> std::string
     #endif
 #endif
 }
+
+inline static constexpr auto DJB2_hash(std::string_view str) -> std::size_t
+{
+    std::size_t hash = 5381;
+    for (char c : str) {
+        hash = (hash * 33) ^ static_cast<std::size_t>(c);
+    }
+    return hash;
+}
+
+template <typename T>
+inline static constexpr auto type_hash() -> std::size_t
+{
+#ifdef __cpp_rtti
+    return typeid(T).hash_code();
+#else
+    return DJB2_hash(type_name<T>());
+#endif
+}
+
+inline static constexpr auto type_hash(auto type) -> std::size_t
+{
+#ifdef __cpp_rtti
+    return typeid(type).hash_code();
+#else
+    return DJB2_hash(type_name<decltype(type)>());
+#endif
+}
+
+using TypeInfo = std::pair<std::size_t, std::string_view>;
+
 
 namespace sys {
     enum class Target : uint8_t

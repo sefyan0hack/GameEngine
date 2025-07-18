@@ -31,6 +31,17 @@ struct overloaded : Ts... { using Ts::operator()...; };
 
 namespace utils {
 
+template<class T>
+constexpr auto Variant_to_Array() -> std::array<TypeInfo, std::variant_size_v<T>>
+{
+    return []<std::size_t... I>(std::index_sequence<I...>) {
+        return std::array<TypeInfo, sizeof...(I)> {{
+            { ::type_hash<std::variant_alternative_t<I, T>>(),
+              ::type_name<std::variant_alternative_t<I, T>>()
+            }...
+        }};
+    }(std::make_index_sequence<std::variant_size_v<T>>{});
+}
 
 template<typename Function, typename... Args>
 auto setTimeOut(unsigned long delay, Function&& func, Args&&... args) -> void
