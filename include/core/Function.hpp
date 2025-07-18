@@ -28,9 +28,9 @@ public:
 
     static auto PLT_CALL default_([[maybe_unused]] Args... args) -> R;
     
-    auto ReturnType() const -> std::string;
+    auto ReturnType() const -> std::string_view;
     auto ArgsValues() const -> std::array<std::string, sizeof...(Args)>;
-    auto ArgsTypes() const  -> std::array<std::string, sizeof...(Args)>;
+    auto ArgsTypes() const  -> std::array<std::string_view, sizeof...(Args)>;
     constexpr auto ArgsCount() const -> std::size_t;
     auto CallsCount() const -> std::size_t;
 
@@ -50,8 +50,8 @@ public:
     AfterType m_After;
     std::string m_Name;
 private:
-    std::string m_ReturnType;
-    std::array<std::string, sizeof...(Args)> m_ArgsTypes;
+    std::string_view m_ReturnType;
+    std::array<std::string_view, sizeof...(Args)> m_ArgsTypes;
     std::tuple<Args...> m_ArgsValues;
     std::size_t m_CallCount;
     inline static std::size_t m_Count = 0;
@@ -82,7 +82,7 @@ auto Function<R(PLT_CALL *)(Args...)>::operator=(Function &&other) -> Function &
     this->m_Befor = std::exchange(other.m_Befor, nullptr);
     this->m_After = std::exchange(other.m_After, nullptr);
     this->m_Name = std::exchange(other.m_Name, std::string());
-    this->m_ReturnType = std::exchange(other.m_ReturnType, std::string());
+    this->m_ReturnType = std::exchange(other.m_ReturnType, std::string_view());
     this->m_ArgsTypes = std::exchange(other.m_ArgsTypes, {});
     this->m_ArgsValues = std::exchange(other.m_ArgsValues, {});
     this->m_CallCount = std::exchange(other.m_CallCount, 0);
@@ -129,13 +129,13 @@ auto Function<R(PLT_CALL*)(Args...)>::ArgsValues() const -> std::array<std::stri
 }
 
 template <typename R, typename... Args>
-auto Function<R(PLT_CALL*)(Args...)>::ReturnType() const -> std::string
+auto Function<R(PLT_CALL*)(Args...)>::ReturnType() const -> std::string_view
 {
     return m_ReturnType;
 }
 
 template <typename R, typename... Args>
-auto Function<R(PLT_CALL*)(Args...)>::ArgsTypes() const -> std::array<std::string, sizeof...(Args)>
+auto Function<R(PLT_CALL*)(Args...)>::ArgsTypes() const -> std::array<std::string_view, sizeof...(Args)>
 {
     return m_ArgsTypes;
 }
