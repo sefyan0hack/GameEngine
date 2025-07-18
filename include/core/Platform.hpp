@@ -98,25 +98,25 @@ inline static constexpr auto type_name() -> std::string_view
 #else
     #if defined(CLANG_CPL) || defined(GNU_CPL)
         constexpr std::string_view name = __PRETTY_FUNCTION__;
-        auto start = name.find("T = ") + 4;
+        constexpr auto start = name.find("T = ") + 4;
     #   if defined(CLANG_CPL)
-        auto end = name.find(']', start);
+        constexpr auto end = name.find(']', start);
     #   elif defined(GNU_CPL)
-        auto end = name.find(';', start);
+        constexpr auto end = name.find(';', start);
     #   endif
 
         return std::string_view(name.substr(start, end - start));
 
     #elif defined(MSVC_CPL)
         constexpr std::string_view name = __FUNCSIG__;
-        auto start = name.find("type_name<") + 10;
-        auto end = name.find(">(void)");
-        constexpr std::string_view result = std::string_view(name.substr(start, end - start));
+        constexpr auto start = name.find("type_name<") + 10;
+        constexpr auto end = name.find(">(void)");
+        std::string_view result = std::string_view(name.substr(start, end - start));
 
         static constexpr std::string_view prefixes[] = {"class ", "struct ", "union ", "enum "};
         for (const auto& prefix : prefixes) {
-            if (result.rfind(prefix, 0) == 0) {
-                result.erase(0, prefix.length());
+            if (result.starts_with(prefix)) {
+                result = result.substr(prefix.length());
                 break;
             }
         }
