@@ -806,7 +806,8 @@ auto CWindow::ToggleFullScreen() -> void
 		UINT_PTR storedState = (static_cast<UINT_PTR>(state.exStyle) << 32) | state.style;
 	
 		HMONITOR hmon = MonitorFromWindow(m_Handle, MONITOR_DEFAULTTONEAREST);
-		MONITORINFO mi = { sizeof(mi) };
+		MONITORINFO mi {};
+		mi.cbSize = sizeof(mi);
 		GetMonitorInfo(hmon, &mi);
 	
 		SetWindowLongPtr(m_Handle, GWL_STYLE, state.style & ~(WS_CAPTION | WS_THICKFRAME));
