@@ -11,9 +11,8 @@ using CWindow_Test_Ctor1 = CWindow::Test<1>;
     MEMBER_VAR(m_Width);\
     MEMBER_VAR(m_Height);\
     MEMBER_VAR(m_Visible);\
-    MEMBER_VAR(m_RawBuffer);\
     MEMBER_VAR(m_OpenGl);\
-    MEMBER_VAR(m_refCount);\
+    MEMBER_VAR(m_EventQueue);\
     MEMBER_VAR(S_WindowsCount);\
     \
     MEMBER_FUN(Handle);\

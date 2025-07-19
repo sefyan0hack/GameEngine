@@ -20,7 +20,7 @@ constexpr auto WINDOW_WIDTH = 1180;
 constexpr auto WINDOW_HIEGHT = 640;
 
 APP::APP()
-    : Window(WINDOW_WIDTH, WINDOW_HIEGHT, Wname, [this](const Event& e) { ApplicationEventQueue.push(e); })
+    : Window(WINDOW_WIDTH, WINDOW_HIEGHT, Wname, ApplicationEventQueue)
     , ViewCamera()
     , Keyboard()
     , Mouse()
@@ -53,7 +53,7 @@ auto APP::LoopBody(void* ctx) -> void
     Event event;
     while (app->PollEvent(event)) {
         std::visit(overloaded {
-            [&window](const WindowQuitEvent&) {
+            [&window](const CWindow::QuitEvent&) {
                 #if defined(WINDOWS_PLT)
                 int32_t ret = MessageBoxA(window.Handle(), "Close.", "Exit", MB_YESNO | MB_ICONWARNING);
                 if (ret == IDYES)
@@ -63,12 +63,12 @@ auto APP::LoopBody(void* ctx) -> void
                     window.Close();
                 }
             },
-            [&window](const WindowResizeEvent& e) {
+            [&window](const CWindow::ResizeEvent& e) {
                 window.m_Width = e.width;
                 window.m_Height = e.height;
                 gl::Viewport(0, 0, e.width, e.height);
             },
-            [&app](const WindowLoseFocusEvent&) {
+            [&app](const CWindow::LoseFocusEvent&) {
 		        app->Keyboard.ClearState();
 		        app->Mouse.ClearState();
 		        app->ApplicationEventQueue.clear();
@@ -231,4 +231,4 @@ auto APP::DeltaTime() const -> float
 bool APP::PollEvent(Event& event) { return ApplicationEventQueue.poll(event); }
 void APP::WaitEvent(Event& event) { ApplicationEventQueue.wait_and_poll(event); }
 void APP::ClearEvents() { ApplicationEventQueue.clear(); }
-auto APP::PushEvent(Event&& event) -> void { ApplicationEventQueue.push(std::move(event)); }
+auto APP::PushEvent(const Event& event) -> void { ApplicationEventQueue.push(event); }

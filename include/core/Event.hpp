@@ -2,12 +2,9 @@
 
 #include <core/Keyboard.hpp>
 #include <core/Mouse.hpp>
+#include <core/Window.hpp>
 #include <core/Utils.hpp>
 
-struct WindowResizeEvent { int32_t width, height; };
-struct WindowLoseFocusEvent { const CWindow* window; };
-struct WindowSetFocusEvent  { const CWindow* window; };
-struct WindowQuitEvent {};
 
 using Event = std::variant<
     std::monostate,
@@ -19,10 +16,10 @@ using Event = std::variant<
     Mouse::EnterEvent,
     Mouse::LeaveEvent,
     Mouse::RawDeltaEvent,
-    WindowResizeEvent,
-    WindowLoseFocusEvent,
-    WindowSetFocusEvent,
-    WindowQuitEvent
+    CWindow::ResizeEvent,
+    CWindow::LoseFocusEvent,
+    CWindow::SetFocusEvent,
+    CWindow::QuitEvent
 >;
 
 constexpr auto Events()

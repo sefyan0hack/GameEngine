@@ -19,7 +19,7 @@ public:
     auto SmoothedFPS() const -> float;
     auto DeltaTime() const -> float;
 
-    auto PushEvent(Event&& event) -> void;
+    auto PushEvent(const Event& event) -> void;
 
 private:
     auto PollEvent(Event& event) -> bool;

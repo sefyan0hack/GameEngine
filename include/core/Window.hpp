@@ -12,14 +12,13 @@
 #endif
 
 #include <core/gl.h>
-#include <core/Event.hpp>
 
+class EventQueue;
 namespace gl { class OpenGL; }
 
 class CWindow
 {
     friend class APP;
-    using EventPusher = std::function<void(const Event&)>;
 
     #if defined(WINDOWS_PLT)
     class WinClass
@@ -41,16 +40,23 @@ class CWindow
             inline static WNDCLASSEX m_WinclassEx = {};
     };
     #endif
-    
     public:
-        CWindow(int32_t Width, int32_t Height, const char* Title, EventPusher eventPusher = [](const Event&){}) noexcept;
+        struct ResizeEvent { int32_t width, height; };
+        struct LoseFocusEvent { const CWindow* window; };
+        struct SetFocusEvent  { const CWindow* window; };
+        struct QuitEvent {};
+
+    private:
+        CWindow(int32_t Width, int32_t Height, const char* Title, EventQueue& Queue) noexcept;
+
+    public:
         ~CWindow();
 
         CWindow(const CWindow& other) = delete;
         auto operator = (const CWindow &) -> CWindow& = delete ;
 
-        CWindow(CWindow&&) noexcept= default;
-        auto operator = (CWindow &&) noexcept -> CWindow& = default ;
+        CWindow(CWindow&&) noexcept= delete;
+        auto operator = (CWindow &&) noexcept -> CWindow& = delete ;
 
     public:
         auto Handle() const              -> H_WIN ;
@@ -88,7 +94,7 @@ class CWindow
         int32_t m_Width, m_Height;
         bool m_Visible, m_FullScreen;
         std::shared_ptr<gl::OpenGL> m_OpenGl;
-        EventPusher m_EventPusher;
+        EventQueue& m_EventQueue;
 
         inline static unsigned short S_WindowsCount = 0;
 
