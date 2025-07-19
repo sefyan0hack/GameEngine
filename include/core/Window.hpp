@@ -78,10 +78,12 @@ class CWindow
         auto CALLBACK WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)           -> LRESULT ;
         #endif
         #if defined(WEB_PLT)
-        static auto ResizeHandler(int32_t eventType, const EmscriptenUiEvent* e, void* userData)    -> EM_BOOL;
-        static auto KeyHandler(int32_t eventType, const EmscriptenKeyboardEvent* e, void* userData) -> EM_BOOL;
-        static auto MouseHandler(int32_t eventType, const EmscriptenMouseEvent* e, void* userData)  -> EM_BOOL;
-        static auto TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, void* userData)  -> EM_BOOL;
+        static auto ResizeCallback(int32_t eventType, const EmscriptenUiEvent* e, void* userData)    -> EM_BOOL;
+        static auto KeyboardCallback(int32_t eventType, const EmscriptenKeyboardEvent* e, void* userData) -> EM_BOOL;
+        static auto MouseCallback(int32_t eventType, const EmscriptenMouseEvent* e, void* userData)  -> EM_BOOL;
+        static auto TouchCallback(int32_t eventType, const EmscriptenTouchEvent* e, void* userData)  -> EM_BOOL;
+
+        auto RegisterEventCallbacks() -> void;
         #endif
 
         auto new_window(int32_t Width, int32_t Height, const char* Title)       -> std::pair<H_WIN, H_SRF> ;
