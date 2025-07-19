@@ -34,6 +34,7 @@ protected:
     Keyboard Keyboard;
     Mouse Mouse;
 private:
+    bool m_Running;
     EventQueue ApplicationEventQueue;
     std::chrono::steady_clock::time_point m_LastFrameTime;
     float m_Fps, m_SmoothedFPS;

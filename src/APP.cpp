@@ -24,11 +24,13 @@ APP::APP()
     , ViewCamera()
     , Keyboard()
     , Mouse()
+    , m_Running(true)
     , m_LastFrameTime(std::chrono::steady_clock::now())
     , m_SmoothedFPS(60.0f)
 { 
     Window.Show();
 }
+
 APP::~APP()
 {
     ClearEvents();
@@ -53,14 +55,15 @@ auto APP::LoopBody(void* ctx) -> void
     Event event;
     while (app->PollEvent(event)) {
         std::visit(overloaded {
-            [&window](const CWindow::QuitEvent&) {
+            [&app](const CWindow::QuitEvent&) {
                 #if defined(WINDOWS_PLT)
-                int32_t ret = MessageBoxA(window.Handle(), "Close.", "Exit", MB_YESNO | MB_ICONWARNING);
+                int32_t ret = MessageBoxA(app->Window.Handle(), "Close.", "Exit", MB_YESNO | MB_ICONWARNING);
                 if (ret == IDYES)
                 #elif defined(LINUX_PLT)
                 #endif
                 {
-                    window.Close();
+                    app->Window.Close();
+                    app->m_Running = false;
                 }
             },
             [&window](const CWindow::ResizeEvent& e) {
@@ -94,7 +97,7 @@ auto APP::LoopBody(void* ctx) -> void
             [&app](const Mouse::MoveEvent& e) {
                 app->Mouse.OnMouseMove(e.x, e.y);
             },
-            [&app](const Mouse::RawDeltaEvent& e) {
+            [&app](const Mouse::MovementEvent& e) {
                 app->Mouse.OnRawDelta(e.dx, e.dy);
                 app->ViewCamera.UpdateCameraPosition(app->Mouse);
             },
@@ -206,7 +209,7 @@ auto APP::Run() -> void
     gl::Viewport(0, 0, Window.Width(), Window.Height());
 
     #if defined(WINDOWS_PLT) || defined(LINUX_PLT)
-    while (!CWindow::WindowShouldClose()) {
+    while (m_Running) {
         LoopBody(this);
     }
     #elif defined(WEB_PLT)

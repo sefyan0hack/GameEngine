@@ -13,7 +13,6 @@ using CWindow_Test_Ctor1 = CWindow::Test<1>;
     MEMBER_VAR(m_Visible);\
     MEMBER_VAR(m_OpenGl);\
     MEMBER_VAR(m_EventQueue);\
-    MEMBER_VAR(S_WindowsCount);\
     \
     MEMBER_FUN(Handle);\
     MEMBER_FUN(Surface);\
@@ -23,7 +22,6 @@ using CWindow_Test_Ctor1 = CWindow::Test<1>;
     MEMBER_FUN(Visible);\
     MEMBER_FUN(Show);\
     MEMBER_FUN(Hide);\
-    MEMBER_FUN(WindowsCount);
 
 
 // template<>

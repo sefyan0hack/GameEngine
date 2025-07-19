@@ -18,7 +18,7 @@ public:
 	struct EnterEvent {};
 	struct LeaveEvent {};
 	struct MoveEvent { int32_t x, y; };
-	struct RawDeltaEvent { int32_t dx, dy; };
+	struct MovementEvent { int32_t dx, dy; };
 
 public:
     Mouse();

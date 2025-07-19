@@ -17,8 +17,7 @@ CWindow::CWindow(
 {
 	std::tie(m_Handle, m_Surface) = new_window(m_Width, m_Height, Title);
 
-	if(S_WindowsCount == 0)
-		m_OpenGl = std::make_shared<gl::OpenGL>(m_Handle, m_Surface);
+	m_OpenGl = std::make_shared<gl::OpenGL>(m_Handle, m_Surface);
 
 	#if defined(WEB_PLT)
 
@@ -71,8 +70,6 @@ CWindow::CWindow(
 	});
 	
     #endif
-
-	S_WindowsCount++;
 }
 
 
@@ -91,7 +88,6 @@ CWindow::~CWindow()
 		emscripten_webgl_destroy_context(m_OpenGl->Context());
 	}
 	#endif
-	S_WindowsCount--;
 }
 
 #if defined(WINDOWS_PLT)
@@ -285,7 +281,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    	if( ri.header.dwType == RIM_TYPEMOUSE &&
 	    		(ri.data.mouse.lLastX != 0 || ri.data.mouse.lLastY != 0) )
 				{
-				m_EventQueue.push(Mouse::RawDeltaEvent{ri.data.mouse.lLastX, ri.data.mouse.lLastY});
+				m_EventQueue.push(Mouse::MovementEvent{ri.data.mouse.lLastX, ri.data.mouse.lLastY});
 	    	}
 	    	break;
 	    }
@@ -533,7 +529,7 @@ auto CWindow::MouseHandler( int32_t eventType, const EmscriptenMouseEvent* e, vo
 			window->m_EventQueue.push(Mouse::ButtonUpEvent{btn});
             break;
         case EMSCRIPTEN_EVENT_MOUSEMOVE:
-			window->m_EventQueue.push(Mouse::RawDeltaEvent{e->movementX, e->movementY});
+			window->m_EventQueue.push(Mouse::MovementEvent{e->movementX, e->movementY});
             window->m_EventQueue.push(Mouse::MoveEvent{e->targetX, e->targetY});
             break;
 
@@ -610,7 +606,7 @@ auto CWindow::TouchHandler(int32_t eventType, const EmscriptenTouchEvent* e, voi
 					int32_t dx = static_cast<int32_t>(x) - old->second.first;
 					int32_t dy = static_cast<int32_t>(y) - old->second.second;
 					// push a raw‐delta event
-					window->m_EventQueue.push(Mouse::RawDeltaEvent{ dx, dy });
+					window->m_EventQueue.push(Mouse::MovementEvent{ dx, dy });
 				}
 				// also update stored pos
 				lastPos[id] = { x, y };
@@ -730,10 +726,7 @@ auto CWindow::Visible() const -> bool
 {
 	return m_Visible;
 }
-auto CWindow::WindowsCount() -> unsigned short
-{
-	return S_WindowsCount;
-}
+
 auto CWindow::Show() -> void
 {
 	#if defined(WINDOWS_PLT)
@@ -751,17 +744,6 @@ auto CWindow::Hide() -> void
 	XUnmapWindow(m_Surface, m_Handle);
 	#endif
 	m_Visible = false;
-}
-
-
-auto CWindow::WindowShouldClose() -> bool
-{
-	#if !defined(WEB_PLT)
-	return S_WindowsCount == 0;
-	#else
-	emscripten_sleep(12);
-	return false;
-	#endif
 }
 
 auto CWindow::ToggleFullScreen() -> void
@@ -855,6 +837,5 @@ auto CWindow::SwapBuffers() const -> void
 auto CWindow::Close() -> void
 {
     Hide();
-	--S_WindowsCount;
     Info("Exit. ");
 }

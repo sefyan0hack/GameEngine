@@ -59,10 +59,10 @@ class CWindow
         auto operator = (CWindow &&) noexcept -> CWindow& = delete ;
 
     public:
-        auto Handle() const              -> H_WIN ;
-        auto Surface() const         -> H_SRF ;
-        auto Width() const       -> int32_t ;
-        auto Height() const      -> int32_t ;
+        auto Handle() const         -> H_WIN ;
+        auto Surface() const        -> H_SRF ;
+        auto Width() const          -> int32_t ;
+        auto Height() const         -> int32_t ;
         auto opengl() const         -> std::shared_ptr<gl::OpenGL> ;
         auto Visible() const        -> bool;
         auto Show()                 -> void;
@@ -70,9 +70,7 @@ class CWindow
         auto ToggleFullScreen()     -> void;
         auto SwapBuffers() const    -> void;
         auto Close()                -> void;
-        static auto WindowsCount()  -> unsigned short ;
         static auto ProcessMessages([[maybe_unused]] CWindow* self)   -> void ;
-        static auto WindowShouldClose() -> bool ;
 
     private:
         #if defined(WINDOWS_PLT)
@@ -95,8 +93,6 @@ class CWindow
         bool m_Visible, m_FullScreen;
         std::shared_ptr<gl::OpenGL> m_OpenGl;
         EventQueue& m_EventQueue;
-
-        inline static unsigned short S_WindowsCount = 0;
 
         FOR_TEST
 };
