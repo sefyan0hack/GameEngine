@@ -66,15 +66,22 @@ class Keyboard
 {
 	friend class APP;
 public:
-	
+
     struct KeyDownEvent { Key key; };
     struct KeyUpEvent { Key key; };
 
+private:
+    Keyboard() = default;
+
 public:
 
-	Keyboard() = default;
+    ~Keyboard() = default;
+
 	Keyboard(const Keyboard&) = delete;
 	auto operator=(const Keyboard&) -> Keyboard& = delete;
+
+	Keyboard(Keyboard&&) = delete;
+	auto operator=(Keyboard&&) -> Keyboard& = delete;
 
 	auto IsPressed(Key key) const noexcept      -> bool ;
 	auto IsReleased(Key key) const noexcept      -> bool ;

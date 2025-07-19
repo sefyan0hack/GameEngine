@@ -20,11 +20,19 @@ public:
 	struct MoveEvent { int32_t x, y; };
 	struct MovementEvent { int32_t dx, dy; };
 
-public:
+private:
     Mouse();
-	Mouse( const Mouse& ) = delete;
+
 public:
-	auto operator=( const Mouse& )			-> Mouse& = delete ;
+	~Mouse() = default;
+
+	Mouse( const Mouse& ) = delete;
+	auto operator=(const Mouse&) -> Mouse& = delete;
+
+	Mouse(Mouse&&) = delete;
+	auto operator=(Mouse&&) -> Mouse& = delete;
+
+public:
 	auto GetPos() const noexcept			-> std::pair<int32_t, int32_t> ;
 	auto GetRawDelta() const noexcept		-> std::pair<int32_t, int32_t> ;
 	auto ReadRawDelta() noexcept 			-> std::optional<std::pair<int32_t, int32_t>> ;
