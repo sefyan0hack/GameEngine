@@ -123,6 +123,9 @@ inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
     X(Uniform2f);\
     X(Uniform3f);\
     X(Uniform4f);\
+    X(Uniform2fv);\
+    X(Uniform3fv);\
+    X(Uniform4fv);\
     X(UniformMatrix2fv);\
     X(UniformMatrix3fv);\
     X(UniformMatrix4fv);\
@@ -141,7 +144,6 @@ inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
     X(BlendEquation);\
     X(BlendFunc);\
     X(CullFace);\
-    X(Uniform3fv);\
     X(DeleteTextures);\
     X(DeleteVertexArrays);\
     X(DeleteBuffers);\
@@ -161,7 +163,6 @@ inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
     X(IsEnabled);\
     X(GetFloatv);\
     X(TexSubImage2D);\
-    X(Uniform2fv);\
     X(LineWidth);\
     X(Hint);\
     X(PolygonOffset);\
