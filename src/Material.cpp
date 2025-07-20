@@ -351,6 +351,16 @@ auto Material::SetUniform(const std::string& name, const glm::vec3 &value) const
     }
 }
 
+auto Material::SetUniform(const std::string& name, const glm::vec4 &value) const -> void
+{
+    auto it = m_Uniforms.find(name);
+    if (it != m_Uniforms.end()){
+        gl::Uniform4fv(static_cast<GLint>(it->second), 1, &value[0]);
+    }else{
+        Error("the Uniform {} not exist", name);
+    }
+}
+
 auto Material::SetUniform(const std::string& name, const glm::mat2 &value) const -> void
 {
     auto it = m_Uniforms.find(name);
