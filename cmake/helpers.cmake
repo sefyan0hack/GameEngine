@@ -73,7 +73,7 @@ function(apply_warning_options)
             set(target ${original_target})
         endif()
 
-        set(MSVC_WARNING_FLAGS /W4 /D_CRT_SECURE_NO_WARNINGS)
+        set(MSVC_WARNING_FLAGS /W4 /D_CRT_SECURE_NO_WARNINGS /DNOMINMAX )
 
         set(GNU_WARNING_FLAGS
             -Wno-cast-function-type -Winit-self -Wcast-qual
