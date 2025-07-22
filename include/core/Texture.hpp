@@ -12,7 +12,6 @@ public:
 public:
     virtual auto id() const -> GLuint final;
     virtual auto Bind() const -> void  final;
-    virtual auto UnBind() const -> void  final;
     virtual auto Type() const -> GLenum final;
     virtual auto TypeName() const -> std::string final;
     virtual auto TextureUnit() const -> GLint final;

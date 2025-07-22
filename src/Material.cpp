@@ -11,7 +11,6 @@ Material::Material(const Shader& vertex, const Shader& fragment)
     : m_Id(gl::CreateProgram())
     , m_Shaders({vertex, fragment})
     , m_Albedo(nullptr)
-    , m_Previd(Current_Program())
 {
 
     for(const auto &shader : m_Shaders ){
@@ -31,7 +30,6 @@ Material::Material(std::initializer_list<Shader> shaders)
     : m_Id(gl::CreateProgram())
     , m_Shaders(std::move(shaders))
     , m_Albedo(nullptr)
-    , m_Previd(Current_Program())
 {
     for(const auto &shader : m_Shaders ){
         gl::AttachShader(m_Id, shader.id());
@@ -49,7 +47,6 @@ Material::Material(const Material& other)
     : m_Id(gl::CreateProgram())
     , m_Shaders(other.m_Shaders)
     , m_Albedo(other.m_Albedo)
-    , m_Previd(Current_Program())
 {
     for(const auto& shader : m_Shaders ){
         gl::AttachShader(m_Id, shader.id());
@@ -68,8 +65,6 @@ Material::Material(Material&& other) noexcept
     , m_Attribs(std::exchange(other.m_Attribs, {}))
     , m_Uniforms(std::exchange(other.m_Uniforms, {})) // dnt forget  to check if the id are the same in the new Programe
     , m_Albedo(std::exchange(other.m_Albedo, {}))
-    , m_Previd(Current_Program())
-
 {
 }
 
@@ -85,19 +80,11 @@ auto Material::id() const noexcept -> GLuint
 
 auto Material::Use() const -> void
 {
-    m_Previd = Current_Program();
     if(m_Id != 0){
         gl::UseProgram(m_Id); // crache hire even i'm checking the id
         if(m_Albedo)
            m_Albedo->Bind();
     }
-}
-
-auto Material::UnUse() const -> void
-{
-    gl::UseProgram(m_Previd);
-    if(m_Albedo)
-        m_Albedo->UnBind();
 }
 
 auto Material::Link() const -> void

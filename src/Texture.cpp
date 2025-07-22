@@ -42,12 +42,6 @@ auto Texture::Bind() const -> void
     gl::BindTexture(m_Type, m_Id);
 }
 
-auto Texture::UnBind() const -> void
-{
-    gl::BindTexture(m_Type, 0);
-}
-
-
 auto Texture::Type() const -> GLenum
 {
     return m_Type;

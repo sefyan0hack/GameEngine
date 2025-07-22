@@ -19,7 +19,6 @@ public:
 
     auto id() const noexcept -> GLuint ;
     auto Use() const -> void ;
-    auto UnUse() const -> void ;
     auto UniformCount() const                  -> GLint ;
     auto AttribsCount() const                  -> GLint ;
     auto UniformLocation(const char*) const -> GLuint;
@@ -71,7 +70,6 @@ private:
     std::map<std::string, GLuint> m_Attribs;
     std::map<std::string, GLuint> m_Uniforms;
     std::shared_ptr<Texture> m_Albedo;
-    mutable GLuint m_Previd;
 
     FOR_TEST
 };
