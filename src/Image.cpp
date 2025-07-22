@@ -96,6 +96,11 @@ auto Image::Channels() const -> int32_t
     return m_Channels;
 }
 
+auto Image::Size() const -> std::size_t
+{
+    return static_cast<std::size_t>(m_Width * m_Height * m_Channels);
+}
+
 auto Image::Valid() const ->bool
 {
     return
@@ -110,6 +115,31 @@ auto Image::Data() const -> std::span<std::byte>
 {
     if(!Valid()) Error(" Image not Valid  {}", *this);
 
-    return { m_Data, m_Width * m_Height * m_Channels};
+    return { m_Data, Size() };
+}
+
+auto Image::Format() const -> GLenum
+{
+    switch(m_Channels) {
+        case 1: return GL_RED;
+        case 2: return GL_RG;
+        case 3: return GL_RGB;
+        case 4: return GL_RGBA;
+        default:
+            Error("Unsupported image channel count");
+    }
+}
+
+
+auto Image::InternalFormat() const -> GLint
+{
+    switch(m_Channels) {
+        case 1: return GL_R8;
+        case 2: return GL_RG8;
+        case 3: return GL_RGB8;
+        case 4: return GL_RGBA8;
+        default:
+            Error("Unsupported image channel count");
+    }
 }
 

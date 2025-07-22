@@ -79,26 +79,8 @@ Texture2D::Texture2D(const std::string &name)
     //     gl::TexParameteri(m_Type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     //     once = true;
     // }
-    GLint internalFormat{};
-    GLenum format = GL_NONE;
 
-    if(m_Img.Valid()){
-        internalFormat  = 
-            m_Img.Channels() == 1 ? GL_RED :
-            m_Img.Channels() == 3 ? GL_RGB8 : GL_RGBA8;
-        format  = 
-            m_Img.Channels() == 1 ? GL_RED :
-            m_Img.Channels() == 3 ? GL_RGB : GL_RGBA;
-
-        Info("Loding {} ", name);
-    }
-    else
-    {
-        internalFormat = GL_RGBA8;
-        format = GL_RGBA;
-    }
-    
-    ToGPUImg2D( reinterpret_cast<GLubyte*>(m_Img.Data().data()), m_Img.Width(), m_Img.Height(), internalFormat, format);
+    ToGPUImg2D( reinterpret_cast<GLubyte*>(m_Img.Data().data()), m_Img.Width(), m_Img.Height(), m_Img.InternalFormat(), m_Img.Format());
 
     if (m_Mipmapped) GenerateMipMap();
 
@@ -190,30 +172,12 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
     for (std::size_t i = 0; i < m_Imgs.size(); ++i) {
         auto& img = m_Imgs[i];
 
-        GLint internalFormat{};
-        GLenum format = GL_NONE;
-
-        if(img.Valid()){
-            internalFormat =
-                img.Channels() == 1 ? GL_RED :
-                img.Channels() == 3 ? GL_RGB8 : GL_RGBA8;
-            format =
-                img.Channels() == 1 ? GL_RED :
-                img.Channels() == 3 ? GL_RGB : GL_RGBA;
-
-            Info("Loding {} ", faces[i]);
-        }
-        else
-        {
-            internalFormat = GL_RGBA8;
-            format = GL_RGBA;
-        }
 
         GLint rowBytes = img.Width() * img.Channels();
         GLint alignment = (rowBytes % 8 == 0)? 8 : (rowBytes % 4 == 0)? 4 : (rowBytes % 2 == 0)? 2 : 1;
         gl::PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
 
-        gl::TexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, internalFormat, img.Width(), img.Height(), 0, format, GL_UNSIGNED_BYTE, img.Data().data());
+        gl::TexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, img.InternalFormat(), img.Width(), img.Height(), 0, img.Format(), GL_UNSIGNED_BYTE, img.Data().data());
 
         Info("Loding {} ", faces[i]);
     }
