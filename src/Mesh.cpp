@@ -327,19 +327,6 @@ auto Mesh::EnableAttribs() const -> void
     }
 }
 
-auto Mesh::DisableAttribs() const -> void
-{
-    auto currentVAO = CurrentVAO();
-    auto currentVBO = CurrentVBO();
-
-    BindVertexArray(VAO);
-    BindVertexBuffer(VBO);
-    for(GLuint i = 0; i < attribs.size(); i++){
-        gl::DisableVertexAttribArray(i);
-    }
-    BindVertexBuffer(currentVBO);
-    BindVertexArray(currentVAO);
-}
 
 auto Mesh::CurrentVAO() -> GLuint
 {

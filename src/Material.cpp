@@ -274,20 +274,6 @@ auto Material::GetProgramInfo(GLint id, GLenum what) -> std::optional<GLint>
     }
 }
 
-// auto Material::EnableAttribs() const -> void
-// {
-//     for(const auto& [aName, aIndex] : Attribs | std::views::reverse){
-//         gl::EnableVertexAttribArray(aIndex);
-//     }
-// }
-
-// auto Material::DisableAttribs() const -> void
-// {
-//     for(const auto& [aName, aIndex] : Attribs | std::views::reverse){
-//         gl::DisableVertexAttribArray(aIndex);
-//     }
-// }
-
 ///////
 auto Material::SetUniform(const std::string& name, const GLint &value) const -> void
 {

@@ -78,7 +78,6 @@ public:
     mat->SetUniform("uDiffuseMap", TextureUnit);
     mesh->Bind();
     gl::DrawArrays(GL_TRIANGLES, 0, mesh->VextexSize());
-    mesh->DisableAttribs();
     gl::DepthFunc(GL_LESS);
   }
   auto gameObject() const -> const GameObject&

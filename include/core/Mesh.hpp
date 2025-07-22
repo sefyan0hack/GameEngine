@@ -44,7 +44,6 @@ public:
     ~Mesh();
     auto setAttribute(GLuint index, AttributeInfo att) -> void;
     auto EnableAttribs() const -> void;
-    auto DisableAttribs() const -> void;
     auto Bind() const -> void;
     auto VextexSize() const noexcept -> GLsizei;
 

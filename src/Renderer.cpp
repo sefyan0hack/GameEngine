@@ -46,5 +46,4 @@ auto Renderer::draw(const Mesh& mesh, GLsizei count) -> void
         gl::DrawArrays(GL_TRIANGLES, 0, mesh.VextexSize());
         #endif
     }
-    mesh.DisableAttribs();
 }

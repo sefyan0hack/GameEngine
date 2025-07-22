@@ -29,9 +29,6 @@ public:
     auto texture() const noexcept -> std::shared_ptr<Texture>;
     auto SetTexture(const std::string &name) -> void;
     auto Shaders() const noexcept -> const std::vector<Shader>&;
-    // auto EnableAttribs() const -> void;
-    // auto DisableAttribs() const -> void;
-
 
     auto SetUniform(const std::string &name, const GLuint &value) const -> void;
     auto SetUniform(const std::string &name, const GLfloat &value) const -> void;
