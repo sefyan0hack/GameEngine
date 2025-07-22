@@ -2,34 +2,7 @@
 #include <core/Log.hpp>
 #include <core/Utils.hpp>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
 namespace {
-    template <typename T, std::size_t Width, std::size_t Height>
-    constexpr auto generate_checkerboard(const uint32_t color1, const uint32_t color2) {
-        constexpr std::size_t color_width = sizeof(color1);
-
-        std::array<T, Width * Height * color_width> data{};
-        
-        for (std::size_t y = 0; y < Height; ++y) {
-            for (std::size_t x = 0; x < Width; ++x) {
-                const bool is_color1 = ( (x/5 + y/5) % 2) == 0;
-                const uint32_t color = is_color1 ? color1 : color2;
-                
-                const std::size_t base_index = (y * Width + x) * color_width;
-                
-                for(std::size_t i = 0; i < color_width; i++){
-                    data[base_index + i] = static_cast<T>((color >> (8 * i)));
-                }
-            }
-        }
-        return data;
-    }
-
-    // magenta/gray checkerboard 20x20
-    constexpr auto checkerboard = generate_checkerboard<uint32_t, 20, 20>(0xFFFF00FF, 0xFF808080);
-
 constexpr auto to_string(GLenum type) -> const char*
 {
   switch(type){
@@ -47,46 +20,11 @@ constexpr auto to_string(GLenum type) -> const char*
   }
 }
 
-[[nodiscard]] auto load_img(const char* name, bool flip = true) -> std::optional<Image>
-{
-    Image img{};
-
-    stbi_set_flip_vertically_on_load(flip);
-
-    img.data = stbi_load(name, &img.width, &img.height, &img.Channels, 0);
-
-    if(img.data == nullptr) return std::nullopt;
-    
-    return img;
 }
-
-// check error for this later
-auto ubyte_to_vector(GLubyte* data, GLsizei size) -> std::vector<GLubyte>
-{
-  std::vector<GLubyte> result(data, data + size); 
-  stbi_image_free(data);
-
-  return result;
-}
-template <typename T, std::size_t N>
-auto ubyte_to_vector(const std::array<T, N>& data) -> std::vector<GLubyte>
-{
-  std::vector<GLubyte> result(data.data(), data.data() + (N * sizeof(T)));
-  return result;
-}
-
-}
-
-Texture2D Texture2D::Default{
-    checkerboard.data(),
-    20, 20
-};
 
 Texture::Texture(GLenum texType)
     : m_Id(0)
     , m_Type(texType)
-    , m_Width(1)
-    , m_Height(1)
     , m_TextureUnit(m_TextureUnitCount++)
 {
     gl::GenTextures(1, &m_Id);
@@ -110,16 +48,6 @@ auto Texture::UnBind() const -> void
 }
 
 
-auto Texture::Width() const -> GLsizei
-{
-    return m_Width;
-}
-
-auto Texture::Height() const -> GLsizei
-{
-    return m_Height;
-}
-
 auto Texture::Type() const -> GLenum
 {
     return m_Type;
@@ -133,10 +61,16 @@ auto Texture::TextureUnit() const -> GLint
     return m_TextureUnit;
 }
 
+Texture2D::Texture2D()
+    : Texture(GL_TEXTURE_2D), m_Img(), m_Mipmapped(true)
+{
+}
+
 //////////
 Texture2D::Texture2D(const std::string &name)
-    : Texture(GL_TEXTURE_2D), m_Mipmapped(true)
+    : Texture2D()
 {
+    m_Img = std::move(Image(name));
     // static bool once = false;
     // if(!once){
     //     gl::TexParameteri(m_Type, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -148,34 +82,23 @@ Texture2D::Texture2D(const std::string &name)
     GLint internalFormat{};
     GLenum format = GL_NONE;
 
-    if (auto result = load_img(name.c_str()); result)
-    {
-        auto [Width, Height, Channel, Data] = result.value();
-        m_Width = Width;
-        m_Height = Height;
-        m_Data = ubyte_to_vector(Data, m_Width * m_Height * Channel);
-
+    if(m_Img.Valid()){
         internalFormat  = 
-            Channel == 1 ? GL_RED :
-            Channel == 3 ? GL_RGB8 : GL_RGBA8;
-
+            m_Img.Channels() == 1 ? GL_RED :
+            m_Img.Channels() == 3 ? GL_RGB8 : GL_RGBA8;
         format  = 
-            Channel == 1 ? GL_RED :
-            Channel == 3 ? GL_RGB : GL_RGBA;
+            m_Img.Channels() == 1 ? GL_RED :
+            m_Img.Channels() == 3 ? GL_RGB : GL_RGBA;
 
         Info("Loding {} ", name);
     }
     else
     {
-        m_Width = 20;
-        m_Height = 20;
-        m_Data = ubyte_to_vector(checkerboard);
         internalFormat = GL_RGBA8;
         format = GL_RGBA;
-        Info("{}", std::format("failed to load {} : {}", name, stbi_failure_reason()));
     }
     
-    ToGPUImg2D( m_Data.data(), m_Width, m_Height, internalFormat, format);
+    ToGPUImg2D( reinterpret_cast<GLubyte*>(m_Img.Data().data()), m_Img.Width(), m_Img.Height(), internalFormat, format);
 
     if (m_Mipmapped) GenerateMipMap();
 
@@ -233,15 +156,26 @@ auto Texture2D::GenerateMipMap() -> void
     gl::GenerateMipmap(m_Type);
 }
 
-auto Texture2D::isMipMapped() const -> GLboolean
+auto Texture2D::isMipMapped() const -> bool
 {
     return m_Mipmapped;
 }
 
 //////
+TextureCubeMap::TextureCubeMap()
+: Texture(GL_TEXTURE_CUBE_MAP), m_Imgs()
+{}
+
 TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
-    : Texture(GL_TEXTURE_CUBE_MAP)
+    : TextureCubeMap()
 {
+    m_Imgs = std::move(
+        std::array<Image, 6>{
+            Image(faces[0], false), Image(faces[1], false), Image(faces[2], false),
+            Image(faces[3], false), Image(faces[4], false), Image(faces[5], false)
+        }
+    );
+
     // static bool once = false;
     // if(!once){
     //     gl::TexParameteri(m_Type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -253,36 +187,35 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
     // }
     
 
-    for (std::size_t i = 0; i < faces.size(); ++i) {
-        const auto& face = faces[i];
+    for (std::size_t i = 0; i < m_Imgs.size(); ++i) {
+        auto& img = m_Imgs[i];
 
-        if (auto result = load_img(face.c_str(), false); result) {
-            auto [Width, Height, Channel, Data] = result.value();
-            
-            std::vector<GLubyte> DataFace = ubyte_to_vector(Data, Width * Height * Channel);
+        GLint internalFormat{};
+        GLenum format = GL_NONE;
 
-            m_Width = Width;
-            m_Height = Height;
-            m_Data[i] = DataFace;
-    
-            GLenum internalFormat  = 
-                    Channel == 1 ? GL_RED :
-                    Channel == 3 ? GL_RGB8 : GL_RGBA8;
+        if(img.Valid()){
+            internalFormat =
+                img.Channels() == 1 ? GL_RED :
+                img.Channels() == 3 ? GL_RGB8 : GL_RGBA8;
+            format =
+                img.Channels() == 1 ? GL_RED :
+                img.Channels() == 3 ? GL_RGB : GL_RGBA;
 
-            GLenum format  = 
-                    Channel == 1 ? GL_RED :
-                    Channel == 3 ? GL_RGB : GL_RGBA;
-            
-            GLint rowBytes = Width * Channel;
-            GLint alignment = (rowBytes % 8 == 0)? 8 : (rowBytes % 4 == 0)? 4 : (rowBytes % 2 == 0)? 2 : 1;
-            gl::PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
-
-            gl::TexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, static_cast<GLint>(internalFormat), m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, DataFace.data());
-
-            Info("Loding {} ", face);
-        }else{
-            Error("{}", std::format("failed to load {} : {}", face, stbi_failure_reason()));
+            Info("Loding {} ", faces[i]);
         }
+        else
+        {
+            internalFormat = GL_RGBA8;
+            format = GL_RGBA;
+        }
+
+        GLint rowBytes = img.Width() * img.Channels();
+        GLint alignment = (rowBytes % 8 == 0)? 8 : (rowBytes % 4 == 0)? 4 : (rowBytes % 2 == 0)? 2 : 1;
+        gl::PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
+
+        gl::TexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, internalFormat, img.Width(), img.Height(), 0, format, GL_UNSIGNED_BYTE, img.Data().data());
+
+        Info("Loding {} ", faces[i]);
     }
     gl::GenerateMipmap(m_Type);
     gl::PixelStorei(GL_UNPACK_ALIGNMENT, 4);

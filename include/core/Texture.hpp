@@ -1,11 +1,7 @@
 #pragma once
 
 #include <core/OpenGL.hpp>
-
-struct Image {
-  GLsizei width, height, Channels;
-  GLubyte* data;
-};
+#include <core/Image.hpp>
 
 class Texture
 {
@@ -17,8 +13,6 @@ public:
     virtual auto id() const -> GLuint final;
     virtual auto Bind() const -> void  final;
     virtual auto UnBind() const -> void  final;
-    virtual auto Width() const -> GLsizei final;
-    virtual auto Height() const -> GLsizei final;
     virtual auto Type() const -> GLenum final;
     virtual auto TypeName() const -> std::string final;
     virtual auto TextureUnit() const -> GLint final;
@@ -27,7 +21,6 @@ public:
 protected:
     GLuint m_Id;
     GLenum m_Type;
-    GLsizei m_Width, m_Height;
     GLint m_TextureUnit;
     inline static GLint m_TextureUnitCount = 0;
     FOR_TEST
@@ -36,25 +29,25 @@ protected:
 class Texture2D final : public Texture
 {
   public:
+    Texture2D();
     Texture2D(const std::string &name);
     Texture2D(auto* data, GLint width, GLint height, GLenum intformat = GL_RGBA8, GLenum format = GL_RGBA);
-    auto isMipMapped() const -> GLboolean;
-
-    static Texture2D Default;
+    auto isMipMapped() const -> bool;
 
   private:
     auto GenerateMipMap() -> void ;
-  
-    std::vector<GLubyte> m_Data;
-    GLboolean m_Mipmapped;
+
+    Image m_Img;
+    bool m_Mipmapped;
 };
 
 class TextureCubeMap final : public Texture
 {
   public:
+    TextureCubeMap();
     TextureCubeMap(const std::vector<std::string> faces);
   private:
-    std::array<std::vector<GLubyte>, 6> m_Data;
+    std::array<Image, 6> m_Imgs;
 };
 
 // custom Texture Format
@@ -65,7 +58,7 @@ struct std::formatter<Texture> {
   }
   auto format(const Texture& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    R"({{ "id": {}, "width": {}, "height": {}, "type": "{}" }})"
-    , obj.m_Id, obj.m_Width, obj.m_Height, obj.TypeName());
+    R"({{ "id": {}, "type": "{}" }})"
+    , obj.m_Id, obj.TypeName());
   }
 };
