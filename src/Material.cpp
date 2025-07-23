@@ -7,10 +7,80 @@
 #include <glm/glm.hpp>
 
 
+auto Material::GLSL_Type_to_string(GLenum type) -> const char*
+{
+    switch (type)
+    {
+        case GL_FLOAT: return "GL_FLOAT";
+        case GL_FLOAT_VEC2: return "GL_FLOAT_VEC2";
+        case GL_FLOAT_VEC3: return "GL_FLOAT_VEC3";
+        case GL_FLOAT_VEC4: return "GL_FLOAT_VEC4";
+        case GL_DOUBLE: return "GL_DOUBLE";
+        case GL_INT: return "GL_INT";
+        case GL_INT_VEC2: return "GL_INT_VEC2";
+        case GL_INT_VEC3: return "GL_INT_VEC3";
+        case GL_INT_VEC4: return "GL_INT_VEC4";
+        case GL_UNSIGNED_INT: return "GL_UNSIGNED_INT";
+        case GL_UNSIGNED_INT_VEC2: return "GL_UNSIGNED_INT_VEC2";
+        case GL_UNSIGNED_INT_VEC3: return "GL_UNSIGNED_INT_VEC3";
+        case GL_UNSIGNED_INT_VEC4: return "GL_UNSIGNED_INT_VEC4";
+        case GL_BOOL: return "GL_BOOL";
+        case GL_BOOL_VEC2: return "GL_BOOL_VEC2";
+        case GL_BOOL_VEC3: return "GL_BOOL_VEC3";
+        case GL_BOOL_VEC4: return "GL_BOOL_VEC4";
+        case GL_FLOAT_MAT2: return "GL_FLOAT_MAT2";
+        case GL_FLOAT_MAT3: return "GL_FLOAT_MAT3";
+        case GL_FLOAT_MAT4: return "GL_FLOAT_MAT4";
+        case GL_FLOAT_MAT2x3: return "GL_FLOAT_MAT2x3";
+        case GL_FLOAT_MAT2x4: return "GL_FLOAT_MAT2x4";
+        case GL_FLOAT_MAT3x2: return "GL_FLOAT_MAT3x2";
+        case GL_FLOAT_MAT3x4: return "GL_FLOAT_MAT3x4";
+        case GL_FLOAT_MAT4x2: return "GL_FLOAT_MAT4x2";
+        case GL_FLOAT_MAT4x3: return "GL_FLOAT_MAT4x3";
+        case GL_SAMPLER_1D: return "GL_SAMPLER_1D";
+        case GL_SAMPLER_2D: return "GL_SAMPLER_2D";
+        case GL_SAMPLER_3D: return "GL_SAMPLER_3D";
+        case GL_SAMPLER_CUBE: return "GL_SAMPLER_CUBE";
+        case GL_SAMPLER_1D_SHADOW: return "GL_SAMPLER_1D_SHADOW";
+        case GL_SAMPLER_2D_SHADOW: return "GL_SAMPLER_2D_SHADOW";
+        case GL_SAMPLER_1D_ARRAY: return "GL_SAMPLER_1D_ARRAY";
+        case GL_SAMPLER_2D_ARRAY: return "GL_SAMPLER_2D_ARRAY";
+        case GL_SAMPLER_1D_ARRAY_SHADOW: return "GL_SAMPLER_1D_ARRAY_SHADOW";
+        case GL_SAMPLER_2D_ARRAY_SHADOW: return "GL_SAMPLER_2D_ARRAY_SHADOW";
+        case GL_SAMPLER_2D_MULTISAMPLE: return "GL_SAMPLER_2D_MULTISAMPLE";
+        case GL_SAMPLER_2D_MULTISAMPLE_ARRAY: return "GL_SAMPLER_2D_MULTISAMPLE_ARRAY";
+        case GL_SAMPLER_CUBE_SHADOW: return "GL_SAMPLER_CUBE_SHADOW";
+        case GL_SAMPLER_BUFFER: return "GL_SAMPLER_BUFFER";
+        case GL_SAMPLER_2D_RECT: return "GL_SAMPLER_2D_RECT";
+        case GL_SAMPLER_2D_RECT_SHADOW: return "GL_SAMPLER_2D_RECT_SHADOW";
+        case GL_INT_SAMPLER_1D: return "GL_INT_SAMPLER_1D";
+        case GL_INT_SAMPLER_2D: return "GL_INT_SAMPLER_2D";
+        case GL_INT_SAMPLER_3D: return "GL_INT_SAMPLER_3D";
+        case GL_INT_SAMPLER_CUBE: return "GL_INT_SAMPLER_CUBE";
+        case GL_INT_SAMPLER_1D_ARRAY: return "GL_INT_SAMPLER_1D_ARRAY";
+        case GL_INT_SAMPLER_2D_ARRAY: return "GL_INT_SAMPLER_2D_ARRAY";
+        case GL_INT_SAMPLER_2D_MULTISAMPLE: return "GL_INT_SAMPLER_2D_MULTISAMPLE";
+        case GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY: return "GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY";
+        case GL_INT_SAMPLER_BUFFER: return "GL_INT_SAMPLER_BUFFER";
+        case GL_INT_SAMPLER_2D_RECT: return "GL_INT_SAMPLER_2D_RECT";
+        case GL_UNSIGNED_INT_SAMPLER_1D: return "GL_UNSIGNED_INT_SAMPLER_1D";
+        case GL_UNSIGNED_INT_SAMPLER_2D: return "GL_UNSIGNED_INT_SAMPLER_2D";
+        case GL_UNSIGNED_INT_SAMPLER_3D: return "GL_UNSIGNED_INT_SAMPLER_3D";
+        case GL_UNSIGNED_INT_SAMPLER_CUBE: return "GL_UNSIGNED_INT_SAMPLER_CUBE";
+        case GL_UNSIGNED_INT_SAMPLER_1D_ARRAY: return "GL_UNSIGNED_INT_SAMPLER_1D_ARRAY";
+        case GL_UNSIGNED_INT_SAMPLER_2D_ARRAY: return "GL_UNSIGNED_INT_SAMPLER_2D_ARRAY";
+        case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE: return "GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE";
+        case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY: return "GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY";
+        case GL_UNSIGNED_INT_SAMPLER_BUFFER: return "GL_UNSIGNED_INT_SAMPLER_BUFFER";
+        case GL_UNSIGNED_INT_SAMPLER_2D_RECT: return "GL_UNSIGNED_INT_SAMPLER_2D_RECT";
+        default: return "unknown";
+    }
+}
+
+
 Material::Material(const Shader& vertex, const Shader& fragment)
     : m_Id(gl::CreateProgram())
     , m_Shaders({vertex, fragment})
-    , m_Albedo(nullptr)
 {
 
     for(const auto &shader : m_Shaders ){
@@ -24,24 +94,23 @@ Material::Material(const Shader& vertex, const Shader& fragment)
     Info("Uniforms count is {}", UniformCount());
     DumpAttribs();
     DumpUniforms();
-    
+
+    Info("{}", *this);
 }
-Material::Material(std::initializer_list<Shader> shaders)
-    : m_Id(gl::CreateProgram())
-    , m_Shaders(std::move(shaders))
-    , m_Albedo(nullptr)
-{
-    for(const auto &shader : m_Shaders ){
-        gl::AttachShader(m_Id, shader.id());
-    }
+// Material::Material(std::initializer_list<Shader> shaders)
+//     : m_Id(gl::CreateProgram())
+//     , m_Shaders(std::move(shaders))
+// {
+//     for(const auto &shader : m_Shaders ){
+//         gl::AttachShader(m_Id, shader.id());
+//     }
     
-    Link();
-    checkProgramLinkStatus(*this);
-    gl::UseProgram(m_Id);
-    DumpAttribs();
-    DumpUniforms();
-    
-}
+//     Link();
+//     checkProgramLinkStatus(*this);
+//     gl::UseProgram(m_Id);
+//     DumpAttribs();
+//     DumpUniforms();
+// }
 
 Material::Material(const Material& other)
     : m_Id(gl::CreateProgram())
@@ -57,8 +126,8 @@ Material::Material(const Material& other)
     gl::UseProgram(m_Id);
     DumpAttribs();
     DumpUniforms();
-    
 }
+
 Material::Material(Material&& other) noexcept
     : m_Id(std::exchange(other.m_Id, 0))
     , m_Shaders(std::exchange(other.m_Shaders, {}))
@@ -97,7 +166,8 @@ auto Material::UniformLocation(const char *name) const -> GLuint
     auto it = m_Uniforms.find(name);
     
     if (it != m_Uniforms.end()){
-        return it->second;
+        auto [loc, type, size] = it->second;
+        return loc;
     }else{
         Error("the Uniform {} not exist", name);
         return static_cast<GLuint>(-1);
@@ -180,15 +250,19 @@ auto Material::DumpUniforms() -> void
     if(count > 0){
 
         GLsizei len = 0;
-        [[maybe_unused]] GLsizei count_out;
+        [[maybe_unused]] GLsizei size;
         [[maybe_unused]] GLenum type;
 
         for(GLint i = 0; i < count; i++){
             std::string Uniform_name(static_cast<std::size_t>(max_len), '\0');
-            gl::GetActiveUniform(m_Id, static_cast<GLuint>(i), static_cast<GLsizei>(max_len), &len, &count_out, &type, Uniform_name.data());
+            gl::GetActiveUniform(m_Id, static_cast<GLuint>(i), static_cast<GLsizei>(max_len), &len, &size, &type, Uniform_name.data());
             if(len > 0) Uniform_name.resize(static_cast<std::size_t>(len));
 
-            m_Uniforms[Uniform_name] =  UniformLocation_Prv(Uniform_name.c_str());
+            m_Uniforms[Uniform_name] = std::make_tuple(
+                static_cast<GLuint>(UniformLocation_Prv(Uniform_name.c_str())),
+                static_cast<GLenum>(type),
+                static_cast<GLsizei>(size)
+            );
         }
     }
 }
@@ -224,7 +298,7 @@ auto Material::Current_Program() -> GLuint
     return static_cast<GLuint>(prog);
 }
 
-auto Material::Uniforms() const noexcept -> const std::map<std::string, GLuint>&
+auto Material::Uniforms() const noexcept -> const std::map<std::string, GLSLVar>&
 {
     return m_Uniforms;
 }
@@ -279,7 +353,11 @@ auto Material::SetUniform(const std::string& name, const GLint &value) const -> 
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        gl::Uniform1i(static_cast<GLint>(it->second), value);
+        auto [loc, type, size] = it->second;
+
+        Expect(size == 1, "GLSL Uniform size:{} > 1", size);
+       
+        gl::Uniform1i(static_cast<GLint>(loc), value);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -289,7 +367,10 @@ auto Material::SetUniform(const std::string& name, const GLfloat &value) const -
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        gl::Uniform1f(static_cast<GLint>(it->second), value);
+        auto [loc, type, size] = it->second;
+        Expect(size == 1, "GLSL Uniform size:{} > 1", size);
+       
+        gl::Uniform1f(static_cast<GLint>(loc), value);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -298,7 +379,10 @@ auto Material::SetUniform(const std::string& name, const GLuint &value) const ->
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        gl::Uniform1ui(static_cast<GLint>(it->second), value);
+        auto [loc, type, size] = it->second;
+        Expect(size == 1, "GLSL Uniform size:{} > 1", size);
+       
+        gl::Uniform1ui(static_cast<GLint>(loc), value);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -308,7 +392,10 @@ auto Material::SetUniform(const std::string& name, const glm::vec2 &value) const
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        gl::Uniform2fv(static_cast<GLint>(it->second), 1, &value[0]);
+        auto [loc, type, size] = it->second;
+        Expect(size == 1, "GLSL Uniform size:{} > 1", size);
+       
+        gl::Uniform2fv(static_cast<GLint>(loc), 1, &value[0]);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -318,7 +405,10 @@ auto Material::SetUniform(const std::string& name, const glm::vec3 &value) const
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        gl::Uniform3fv(static_cast<GLint>(it->second), 1, &value[0]);
+        auto [loc, type, size] = it->second;
+        Expect(size == 1, "GLSL Uniform size:{} > 1", size);
+       
+        gl::Uniform3fv(static_cast<GLint>(loc), 1, &value[0]);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -328,7 +418,10 @@ auto Material::SetUniform(const std::string& name, const glm::vec4 &value) const
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        gl::Uniform4fv(static_cast<GLint>(it->second), 1, &value[0]);
+        auto [loc, type, size] = it->second;
+        Expect(size == 1, "GLSL Uniform size:{} > 1", size);
+
+        gl::Uniform4fv(static_cast<GLint>(loc), 1, &value[0]);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -338,7 +431,10 @@ auto Material::SetUniform(const std::string& name, const glm::mat2 &value) const
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        gl::UniformMatrix2fv(static_cast<GLint>(it->second), 1, GL_FALSE, &value[0][0]);
+        auto [loc, type, size] = it->second;
+        Expect(size == 1, "GLSL Uniform size:{} > 1", size);
+       
+        gl::UniformMatrix2fv(static_cast<GLint>(loc), 1, GL_FALSE, &value[0][0]);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -348,7 +444,10 @@ auto Material::SetUniform(const std::string& name, const glm::mat3 &value) const
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        gl::UniformMatrix3fv(static_cast<GLint>(it->second), 1, GL_FALSE, &value[0][0]);
+        auto [loc, type, size] = it->second;
+        Expect(size == 1, "GLSL Uniform size:{} > 1", size);
+       
+        gl::UniformMatrix3fv(static_cast<GLint>(loc), 1, GL_FALSE, &value[0][0]);
     }else{
         Error("the Uniform {} not exist", name);
     }
@@ -358,100 +457,10 @@ auto Material::SetUniform(const std::string& name, const glm::mat4 &value) const
 {
     auto it = m_Uniforms.find(name);
     if (it != m_Uniforms.end()){
-        gl::UniformMatrix4fv(static_cast<GLint>(it->second), 1, GL_FALSE, &value[0][0]);
-    }else{
-        Error("the Uniform {} not exist", name);
-    }
-}
-///////
+        auto [loc, type, size] = it->second;
+        Expect(size == 1, "GLSL Uniform size:{} > 1", size);
 
-auto Material::SetUniform(const std::string& name, const GLint &value1, const GLint &value2) const -> void
-{
-    auto it = m_Uniforms.find(name);
-    if (it != m_Uniforms.end()){
-        gl::Uniform2i(static_cast<GLint>(it->second), value1, value2);
-    }else{
-        Error("the Uniform {} not exist", name);
-    }
-}
-
-auto Material::SetUniform(const std::string& name, const GLfloat &value1, const GLfloat &value2) const -> void
-{
-    auto it = m_Uniforms.find(name);
-    if (it != m_Uniforms.end()){
-        gl::Uniform2f(static_cast<GLint>(it->second), value1, value2);
-    }else{
-        Error("the Uniform {} not exist", name);
-    }
-}
-
-auto Material::SetUniform(const std::string& name, const GLuint &value1, const GLuint &value2) const -> void
-{
-    auto it = m_Uniforms.find(name);
-    if (it != m_Uniforms.end()){
-        gl::Uniform2ui(static_cast<GLint>(it->second), value1, value2);
-    }else{
-        Error("the Uniform {} not exist", name);
-    }
-}
-///////
-
-auto Material::SetUniform(const std::string& name, const GLint &value1, const GLint &value2, const GLint &value3) const -> void
-{
-    auto it = m_Uniforms.find(name);
-    if (it != m_Uniforms.end()){
-        gl::Uniform3i(static_cast<GLint>(it->second), value1, value2, value3);
-    }else{
-        Error("the Uniform {} not exist", name);
-    }
-}
-
-auto Material::SetUniform(const std::string& name, const GLfloat &value1, const GLfloat &value2, const GLfloat &value3) const -> void
-{
-    auto it = m_Uniforms.find(name);
-    if (it != m_Uniforms.end()){
-        gl::Uniform3f(static_cast<GLint>(it->second), value1, value2, value3);
-    }else{
-        Error("the Uniform {} not exist", name);
-    }
-}
-
-auto Material::SetUniform(const std::string& name, const GLuint &value1, const GLuint &value2, const GLuint &value3) const -> void
-{
-    auto it = m_Uniforms.find(name);
-    if (it != m_Uniforms.end()){
-        gl::Uniform3ui(static_cast<GLint>(it->second), value1, value2, value3);
-    }else{
-        Error("the Uniform {} not exist", name);
-    }
-}
-///////
-
-auto Material::SetUniform(const std::string& name, const GLint &value1, const GLint &value2, const GLint &value3, const GLint &value4) const -> void
-{
-    auto it = m_Uniforms.find(name);
-    if (it != m_Uniforms.end()){
-        gl::Uniform4i(static_cast<GLint>(it->second), value1, value2, value3, value4);
-    }else{
-        Error("the Uniform {} not exist", name);
-    }
-}
-
-auto Material::SetUniform(const std::string& name, const GLfloat &value1, const GLfloat &value2, const GLfloat &value3, const GLfloat &value4) const -> void
-{
-    auto it = m_Uniforms.find(name);
-    if (it != m_Uniforms.end()){
-        gl::Uniform4f(static_cast<GLint>(it->second), value1, value2, value3, value4);
-    }else{
-        Error("the Uniform {} not exist", name);
-    }
-}
-
-auto Material::SetUniform(const std::string& name, const GLuint &value1, const GLuint &value2, const GLuint &value3, const GLuint &value4) const -> void
-{
-    auto it = m_Uniforms.find(name);
-    if (it != m_Uniforms.end()){
-        gl::Uniform4ui(static_cast<GLint>(it->second), value1, value2, value3, value4);
+        gl::UniformMatrix4fv(static_cast<GLint>(loc), 1, GL_FALSE, &value[0][0]);
     }else{
         Error("the Uniform {} not exist", name);
     }
