@@ -75,7 +75,7 @@ concept is_static = std::is_object_v<std::remove_pointer_t<decltype(var)>> && !s
 #include <memory>
 #include <string>
 
-inline static auto demangle(const char* name) -> std::string
+inline static auto demangle(const char* name) noexcept -> std::string
 {
     [[maybe_unused]] int32_t status = -1;
     #if defined(CLANG_CPL) && !defined(WINDOWS_PLT) || defined(GNU_CPL)
@@ -127,7 +127,7 @@ inline static constexpr auto DJB2_hash(std::string_view str) -> std::size_t
 }
 
 template <typename T>
-inline static constexpr auto type_hash() -> std::size_t
+inline static constexpr auto type_hash() noexcept -> std::size_t
 {
 #ifdef __cpp_rtti
     return typeid(T).hash_code();
@@ -136,7 +136,7 @@ inline static constexpr auto type_hash() -> std::size_t
 #endif
 }
 
-inline static constexpr auto type_hash(auto type) -> std::size_t
+inline static constexpr auto type_hash(auto type) noexcept -> std::size_t
 {
 #ifdef __cpp_rtti
     return typeid(type).hash_code();
@@ -145,7 +145,42 @@ inline static constexpr auto type_hash(auto type) -> std::size_t
 #endif
 }
 
+
+template<typename T>
+inline static constexpr auto type_kind()  noexcept -> std::string_view
+{
+    if constexpr (std::is_fundamental_v<T>)  return "primitive";
+    else if constexpr (std::is_enum_v<T>)    return "enum";
+    else if constexpr (std::is_union_v<T>)   return "union";
+    else if constexpr (std::is_class_v<T>)   return "class/struct";
+    else                                     return "unknown";
+}
+
 using TypeInfo = std::pair<std::size_t, std::string_view>;
+
+template<class T>
+struct Type {
+    constexpr static std::string_view name = ::type_name<T>();
+    constexpr static std::string_view kind = ::type_kind<T>();
+    constexpr static std::size_t hash = ::type_hash<T>();
+    constexpr static std::size_t size = sizeof(T);
+    constexpr static std::size_t alignment = alignof(T);
+    constexpr static bool empty = std::is_empty_v<T>;
+};
+
+template<typename T>
+struct std::formatter<Type<T>> {
+    constexpr auto parse(std::format_parse_context& ctx) {
+        return ctx.begin();
+    }
+
+    auto format(const Type<T>& type, std::format_context& ctx) const {
+        return std::format_to(ctx.out(), 
+            "{{ Type: {}, Kind: {}, Hash: {}, Size: {}, Align: {}, Empty: {} }}",
+            type.name, type.kind, type.hash, type.size, type.alignment, type.empty
+        );
+    }
+};
 
 
 namespace sys {
