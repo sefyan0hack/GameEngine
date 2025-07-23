@@ -10,7 +10,6 @@ using Scene_Test_Ctor1 = Scene::Test<1>;
     MEMBER_VAR(m_Entities);\
     \
     MEMBER_FUN(operator <<);\
-    MEMBER_FUN(add);\
     MEMBER_FUN(Entities);\
     MEMBER_FUN(setSkyBox);\
     MEMBER_FUN(skyBox);\
