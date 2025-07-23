@@ -95,7 +95,8 @@ auto Material::AttribLocation(const char *name) const -> GLuint
     auto it = m_Attribs.find(name);
     
     if (it != m_Attribs.end()){
-        return it->second;
+        auto [loc, type, size] = it->second;
+        return loc;
     }else{
         Error("the Attrib {} not exist", name);
         return static_cast<GLuint>(-1);
@@ -195,14 +196,19 @@ auto Material::DumpAttribs() -> void
     auto count = AttribsCount();
     if(count > 0){
         GLsizei len = 0;
+        [[maybe_unused]] GLsizei size;
         [[maybe_unused]] GLenum type;
 
         for(GLint i = 0; i < count; i++){
             std::string attrib_name(static_cast<std::size_t>(max_len), '\0');
-            gl::GetActiveAttrib(m_Id, static_cast<GLuint>(i), max_len, &len, nullptr, &type, attrib_name.data());
+            gl::GetActiveAttrib(m_Id, static_cast<GLuint>(i), max_len, &len, &size, &type, attrib_name.data());
             if(len > 0) attrib_name.resize(static_cast<std::size_t>(len));
 
-            m_Attribs[attrib_name] = AttribLocation_Prv(attrib_name.c_str());
+            m_Attribs[attrib_name] = std::make_tuple(
+                static_cast<GLuint>(AttribLocation_Prv(attrib_name.c_str())),
+                static_cast<GLenum>(type),
+                static_cast<GLsizei>(size)
+            );
         }
     }
 }
@@ -219,7 +225,8 @@ auto Material::Uniforms() const noexcept -> const std::map<std::string, GLSLVar>
 {
     return m_Uniforms;
 }
-auto Material::Attribs() const noexcept -> const std::map<std::string, GLuint>&
+
+auto Material::Attribs() const noexcept -> const std::map<std::string, GLSLVar>&
 {
     return m_Attribs;
 }
@@ -229,15 +236,6 @@ auto Material::Shaders() const noexcept -> const std::vector<Shader>&
     return m_Shaders;
 }
 
-// auto Material::GetShaders() const -> std::vector<GLuint>
-// {
-//     constexpr GLsizei maxShaderCount = 5;
-//     GLsizei count = 0;
-//     std::vector<GLuint> shaders(maxShaderCount, 0);
-//     gl::GetAttachedShaders(id, maxShaderCount, &count, shaders.data());
-//     shaders.resize(count);
-//     return shaders;
-// }
 
 auto Material::texture(const std::string& name) const noexcept-> std::shared_ptr<Texture>
 {

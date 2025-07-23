@@ -26,7 +26,7 @@ public:
     auto UniformLocation(const char*) const -> GLuint;
     auto AttribLocation(const char*) const -> GLuint;
     auto Uniforms() const noexcept -> const std::map<std::string, GLSLVar>&;
-    auto Attribs() const noexcept -> const std::map<std::string, GLuint>&;
+    auto Attribs() const noexcept -> const std::map<std::string, GLSLVar>&;
     static auto Current_Program() -> GLuint;
     auto texture(const std::string& name) const noexcept -> std::shared_ptr<Texture>;
     auto SetTexture(const std::string &name, std::shared_ptr<Texture> texture) -> void;
@@ -55,7 +55,7 @@ private:
 private:
     GLuint m_Id;
     std::vector<Shader> m_Shaders;
-    std::map<std::string, GLuint> m_Attribs;
+    std::map<std::string, GLSLVar> m_Attribs;
     std::map<std::string, GLSLVar> m_Uniforms;
     std::map<std::string, std::shared_ptr<Texture>> m_Textuers;
 
