@@ -7,77 +7,6 @@
 #include <glm/glm.hpp>
 
 
-auto Material::GLSL_Type_to_string(GLenum type) -> const char*
-{
-    switch (type)
-    {
-        case GL_FLOAT: return "GL_FLOAT";
-        case GL_FLOAT_VEC2: return "GL_FLOAT_VEC2";
-        case GL_FLOAT_VEC3: return "GL_FLOAT_VEC3";
-        case GL_FLOAT_VEC4: return "GL_FLOAT_VEC4";
-        case GL_DOUBLE: return "GL_DOUBLE";
-        case GL_INT: return "GL_INT";
-        case GL_INT_VEC2: return "GL_INT_VEC2";
-        case GL_INT_VEC3: return "GL_INT_VEC3";
-        case GL_INT_VEC4: return "GL_INT_VEC4";
-        case GL_UNSIGNED_INT: return "GL_UNSIGNED_INT";
-        case GL_UNSIGNED_INT_VEC2: return "GL_UNSIGNED_INT_VEC2";
-        case GL_UNSIGNED_INT_VEC3: return "GL_UNSIGNED_INT_VEC3";
-        case GL_UNSIGNED_INT_VEC4: return "GL_UNSIGNED_INT_VEC4";
-        case GL_BOOL: return "GL_BOOL";
-        case GL_BOOL_VEC2: return "GL_BOOL_VEC2";
-        case GL_BOOL_VEC3: return "GL_BOOL_VEC3";
-        case GL_BOOL_VEC4: return "GL_BOOL_VEC4";
-        case GL_FLOAT_MAT2: return "GL_FLOAT_MAT2";
-        case GL_FLOAT_MAT3: return "GL_FLOAT_MAT3";
-        case GL_FLOAT_MAT4: return "GL_FLOAT_MAT4";
-        case GL_FLOAT_MAT2x3: return "GL_FLOAT_MAT2x3";
-        case GL_FLOAT_MAT2x4: return "GL_FLOAT_MAT2x4";
-        case GL_FLOAT_MAT3x2: return "GL_FLOAT_MAT3x2";
-        case GL_FLOAT_MAT3x4: return "GL_FLOAT_MAT3x4";
-        case GL_FLOAT_MAT4x2: return "GL_FLOAT_MAT4x2";
-        case GL_FLOAT_MAT4x3: return "GL_FLOAT_MAT4x3";
-        case GL_SAMPLER_1D: return "GL_SAMPLER_1D";
-        case GL_SAMPLER_2D: return "GL_SAMPLER_2D";
-        case GL_SAMPLER_3D: return "GL_SAMPLER_3D";
-        case GL_SAMPLER_CUBE: return "GL_SAMPLER_CUBE";
-        case GL_SAMPLER_1D_SHADOW: return "GL_SAMPLER_1D_SHADOW";
-        case GL_SAMPLER_2D_SHADOW: return "GL_SAMPLER_2D_SHADOW";
-        case GL_SAMPLER_1D_ARRAY: return "GL_SAMPLER_1D_ARRAY";
-        case GL_SAMPLER_2D_ARRAY: return "GL_SAMPLER_2D_ARRAY";
-        case GL_SAMPLER_1D_ARRAY_SHADOW: return "GL_SAMPLER_1D_ARRAY_SHADOW";
-        case GL_SAMPLER_2D_ARRAY_SHADOW: return "GL_SAMPLER_2D_ARRAY_SHADOW";
-        case GL_SAMPLER_2D_MULTISAMPLE: return "GL_SAMPLER_2D_MULTISAMPLE";
-        case GL_SAMPLER_2D_MULTISAMPLE_ARRAY: return "GL_SAMPLER_2D_MULTISAMPLE_ARRAY";
-        case GL_SAMPLER_CUBE_SHADOW: return "GL_SAMPLER_CUBE_SHADOW";
-        case GL_SAMPLER_BUFFER: return "GL_SAMPLER_BUFFER";
-        case GL_SAMPLER_2D_RECT: return "GL_SAMPLER_2D_RECT";
-        case GL_SAMPLER_2D_RECT_SHADOW: return "GL_SAMPLER_2D_RECT_SHADOW";
-        case GL_INT_SAMPLER_1D: return "GL_INT_SAMPLER_1D";
-        case GL_INT_SAMPLER_2D: return "GL_INT_SAMPLER_2D";
-        case GL_INT_SAMPLER_3D: return "GL_INT_SAMPLER_3D";
-        case GL_INT_SAMPLER_CUBE: return "GL_INT_SAMPLER_CUBE";
-        case GL_INT_SAMPLER_1D_ARRAY: return "GL_INT_SAMPLER_1D_ARRAY";
-        case GL_INT_SAMPLER_2D_ARRAY: return "GL_INT_SAMPLER_2D_ARRAY";
-        case GL_INT_SAMPLER_2D_MULTISAMPLE: return "GL_INT_SAMPLER_2D_MULTISAMPLE";
-        case GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY: return "GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY";
-        case GL_INT_SAMPLER_BUFFER: return "GL_INT_SAMPLER_BUFFER";
-        case GL_INT_SAMPLER_2D_RECT: return "GL_INT_SAMPLER_2D_RECT";
-        case GL_UNSIGNED_INT_SAMPLER_1D: return "GL_UNSIGNED_INT_SAMPLER_1D";
-        case GL_UNSIGNED_INT_SAMPLER_2D: return "GL_UNSIGNED_INT_SAMPLER_2D";
-        case GL_UNSIGNED_INT_SAMPLER_3D: return "GL_UNSIGNED_INT_SAMPLER_3D";
-        case GL_UNSIGNED_INT_SAMPLER_CUBE: return "GL_UNSIGNED_INT_SAMPLER_CUBE";
-        case GL_UNSIGNED_INT_SAMPLER_1D_ARRAY: return "GL_UNSIGNED_INT_SAMPLER_1D_ARRAY";
-        case GL_UNSIGNED_INT_SAMPLER_2D_ARRAY: return "GL_UNSIGNED_INT_SAMPLER_2D_ARRAY";
-        case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE: return "GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE";
-        case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY: return "GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY";
-        case GL_UNSIGNED_INT_SAMPLER_BUFFER: return "GL_UNSIGNED_INT_SAMPLER_BUFFER";
-        case GL_UNSIGNED_INT_SAMPLER_2D_RECT: return "GL_UNSIGNED_INT_SAMPLER_2D_RECT";
-        default: return "unknown";
-    }
-}
-
-
 Material::Material(const Shader& vertex, const Shader& fragment)
     : m_Id(gl::CreateProgram())
     , m_Shaders({vertex, fragment})
@@ -97,25 +26,11 @@ Material::Material(const Shader& vertex, const Shader& fragment)
 
     Info("{}", *this);
 }
-// Material::Material(std::initializer_list<Shader> shaders)
-//     : m_Id(gl::CreateProgram())
-//     , m_Shaders(std::move(shaders))
-// {
-//     for(const auto &shader : m_Shaders ){
-//         gl::AttachShader(m_Id, shader.id());
-//     }
-    
-//     Link();
-//     checkProgramLinkStatus(*this);
-//     gl::UseProgram(m_Id);
-//     DumpAttribs();
-//     DumpUniforms();
-// }
 
 Material::Material(const Material& other)
     : m_Id(gl::CreateProgram())
     , m_Shaders(other.m_Shaders)
-    , m_Albedo(other.m_Albedo)
+    , m_Textuers(other.m_Textuers)
 {
     for(const auto& shader : m_Shaders ){
         gl::AttachShader(m_Id, shader.id());
@@ -133,7 +48,7 @@ Material::Material(Material&& other) noexcept
     , m_Shaders(std::exchange(other.m_Shaders, {}))
     , m_Attribs(std::exchange(other.m_Attribs, {}))
     , m_Uniforms(std::exchange(other.m_Uniforms, {})) // dnt forget  to check if the id are the same in the new Programe
-    , m_Albedo(std::exchange(other.m_Albedo, {}))
+    , m_Textuers(std::exchange(other.m_Textuers, {}))
 {
 }
 
@@ -151,8 +66,10 @@ auto Material::Use() const -> void
 {
     if(m_Id != 0){
         gl::UseProgram(m_Id); // crache hire even i'm checking the id
-        if(m_Albedo)
-           m_Albedo->Bind();
+        for(const auto& [name, texture]: m_Textuers){
+            texture->Bind();
+            SetUniform(name, texture->TextureUnit());
+        }
     }
 }
 
@@ -322,14 +239,14 @@ auto Material::Shaders() const noexcept -> const std::vector<Shader>&
 //     return shaders;
 // }
 
-auto Material::texture() const noexcept-> std::shared_ptr<Texture>
+auto Material::texture(const std::string& name) const noexcept-> std::shared_ptr<Texture>
 {
-    return m_Albedo;
+    return m_Textuers.at(name);
 }
 
-auto Material::SetTexture(const std::string &name) -> void
+auto Material::SetTexture(const std::string &name, std::shared_ptr<Texture> texture) -> void
 {
-    m_Albedo = ResManager.getTexture(name);
+    m_Textuers[name] = texture;
 }
 
 
@@ -463,5 +380,76 @@ auto Material::SetUniform(const std::string& name, const glm::mat4 &value) const
         gl::UniformMatrix4fv(static_cast<GLint>(loc), 1, GL_FALSE, &value[0][0]);
     }else{
         Error("the Uniform {} not exist", name);
+    }
+}
+
+
+auto Material::GLSL_Type_to_string(GLenum type) -> const char*
+{
+    switch (type)
+    {
+        case GL_FLOAT: return "GL_FLOAT";
+        case GL_FLOAT_VEC2: return "GL_FLOAT_VEC2";
+        case GL_FLOAT_VEC3: return "GL_FLOAT_VEC3";
+        case GL_FLOAT_VEC4: return "GL_FLOAT_VEC4";
+        case GL_DOUBLE: return "GL_DOUBLE";
+        case GL_INT: return "GL_INT";
+        case GL_INT_VEC2: return "GL_INT_VEC2";
+        case GL_INT_VEC3: return "GL_INT_VEC3";
+        case GL_INT_VEC4: return "GL_INT_VEC4";
+        case GL_UNSIGNED_INT: return "GL_UNSIGNED_INT";
+        case GL_UNSIGNED_INT_VEC2: return "GL_UNSIGNED_INT_VEC2";
+        case GL_UNSIGNED_INT_VEC3: return "GL_UNSIGNED_INT_VEC3";
+        case GL_UNSIGNED_INT_VEC4: return "GL_UNSIGNED_INT_VEC4";
+        case GL_BOOL: return "GL_BOOL";
+        case GL_BOOL_VEC2: return "GL_BOOL_VEC2";
+        case GL_BOOL_VEC3: return "GL_BOOL_VEC3";
+        case GL_BOOL_VEC4: return "GL_BOOL_VEC4";
+        case GL_FLOAT_MAT2: return "GL_FLOAT_MAT2";
+        case GL_FLOAT_MAT3: return "GL_FLOAT_MAT3";
+        case GL_FLOAT_MAT4: return "GL_FLOAT_MAT4";
+        case GL_FLOAT_MAT2x3: return "GL_FLOAT_MAT2x3";
+        case GL_FLOAT_MAT2x4: return "GL_FLOAT_MAT2x4";
+        case GL_FLOAT_MAT3x2: return "GL_FLOAT_MAT3x2";
+        case GL_FLOAT_MAT3x4: return "GL_FLOAT_MAT3x4";
+        case GL_FLOAT_MAT4x2: return "GL_FLOAT_MAT4x2";
+        case GL_FLOAT_MAT4x3: return "GL_FLOAT_MAT4x3";
+        case GL_SAMPLER_1D: return "GL_SAMPLER_1D";
+        case GL_SAMPLER_2D: return "GL_SAMPLER_2D";
+        case GL_SAMPLER_3D: return "GL_SAMPLER_3D";
+        case GL_SAMPLER_CUBE: return "GL_SAMPLER_CUBE";
+        case GL_SAMPLER_1D_SHADOW: return "GL_SAMPLER_1D_SHADOW";
+        case GL_SAMPLER_2D_SHADOW: return "GL_SAMPLER_2D_SHADOW";
+        case GL_SAMPLER_1D_ARRAY: return "GL_SAMPLER_1D_ARRAY";
+        case GL_SAMPLER_2D_ARRAY: return "GL_SAMPLER_2D_ARRAY";
+        case GL_SAMPLER_1D_ARRAY_SHADOW: return "GL_SAMPLER_1D_ARRAY_SHADOW";
+        case GL_SAMPLER_2D_ARRAY_SHADOW: return "GL_SAMPLER_2D_ARRAY_SHADOW";
+        case GL_SAMPLER_2D_MULTISAMPLE: return "GL_SAMPLER_2D_MULTISAMPLE";
+        case GL_SAMPLER_2D_MULTISAMPLE_ARRAY: return "GL_SAMPLER_2D_MULTISAMPLE_ARRAY";
+        case GL_SAMPLER_CUBE_SHADOW: return "GL_SAMPLER_CUBE_SHADOW";
+        case GL_SAMPLER_BUFFER: return "GL_SAMPLER_BUFFER";
+        case GL_SAMPLER_2D_RECT: return "GL_SAMPLER_2D_RECT";
+        case GL_SAMPLER_2D_RECT_SHADOW: return "GL_SAMPLER_2D_RECT_SHADOW";
+        case GL_INT_SAMPLER_1D: return "GL_INT_SAMPLER_1D";
+        case GL_INT_SAMPLER_2D: return "GL_INT_SAMPLER_2D";
+        case GL_INT_SAMPLER_3D: return "GL_INT_SAMPLER_3D";
+        case GL_INT_SAMPLER_CUBE: return "GL_INT_SAMPLER_CUBE";
+        case GL_INT_SAMPLER_1D_ARRAY: return "GL_INT_SAMPLER_1D_ARRAY";
+        case GL_INT_SAMPLER_2D_ARRAY: return "GL_INT_SAMPLER_2D_ARRAY";
+        case GL_INT_SAMPLER_2D_MULTISAMPLE: return "GL_INT_SAMPLER_2D_MULTISAMPLE";
+        case GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY: return "GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY";
+        case GL_INT_SAMPLER_BUFFER: return "GL_INT_SAMPLER_BUFFER";
+        case GL_INT_SAMPLER_2D_RECT: return "GL_INT_SAMPLER_2D_RECT";
+        case GL_UNSIGNED_INT_SAMPLER_1D: return "GL_UNSIGNED_INT_SAMPLER_1D";
+        case GL_UNSIGNED_INT_SAMPLER_2D: return "GL_UNSIGNED_INT_SAMPLER_2D";
+        case GL_UNSIGNED_INT_SAMPLER_3D: return "GL_UNSIGNED_INT_SAMPLER_3D";
+        case GL_UNSIGNED_INT_SAMPLER_CUBE: return "GL_UNSIGNED_INT_SAMPLER_CUBE";
+        case GL_UNSIGNED_INT_SAMPLER_1D_ARRAY: return "GL_UNSIGNED_INT_SAMPLER_1D_ARRAY";
+        case GL_UNSIGNED_INT_SAMPLER_2D_ARRAY: return "GL_UNSIGNED_INT_SAMPLER_2D_ARRAY";
+        case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE: return "GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE";
+        case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY: return "GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY";
+        case GL_UNSIGNED_INT_SAMPLER_BUFFER: return "GL_UNSIGNED_INT_SAMPLER_BUFFER";
+        case GL_UNSIGNED_INT_SAMPLER_2D_RECT: return "GL_UNSIGNED_INT_SAMPLER_2D_RECT";
+        default: return "unknown";
     }
 }

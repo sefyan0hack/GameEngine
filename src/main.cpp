@@ -51,21 +51,23 @@ private:
                 positions[index++] = {i, 0, j};
         }
 
-        skyMat.SetTexture(TEXTURE(forest.jpg));
+        skyMat.SetTexture("uDiffuseMap", ResManager.getTexture(TEXTURE(forest.jpg)));
+        
         Scn.setSkyBox(std::make_unique<SkyBox>(glm::vec3(0,0,0), skyMat, skyMesh));
-
-        Matt.SetTexture(TEXTURE(brik.png));
-        Scn << GameObject({0,0,0}, Matt, cubeMesh) ;
-
-        Matt.SetTexture(TEXTURE(annie_spratt.jpg));
+        
+        Matt.SetTexture("uDiffuseMap", ResManager.getTexture(TEXTURE(brik.png)));
+        Scn << GameObject({0,0,0}, Matt, cubeMesh);
+        
+        Matt.SetTexture("uDiffuseMap", ResManager.getTexture(TEXTURE(annie_spratt.jpg)));
         Scn << GameObject({0,1,0}, Matt, cubeMesh);
-
-        Matt.SetTexture(TEXTURE(gravelly_sand_diff_4k.png));
+        
+        Matt.SetTexture("uDiffuseMap", ResManager.getTexture(TEXTURE(gravelly_sand_diff_4k.png)));
         Scn << GameObject({1,0,0}, Matt, cubeMesh);
         Scn << GameObject({0,0,1}, Matt, cubeMesh);
         Scn << GameObject({1,1,0}, Matt, cubeMesh);
         Scn << GameObject({1,1,1}, Matt, cubeMesh);
 
+        Matt.SetTexture("uSkyboxMap", skyMat.texture("uDiffuseMap"));
     }
 public:
 

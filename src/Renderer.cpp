@@ -17,13 +17,10 @@ auto Renderer::render(Scene &scene, Camera &camera) -> void
     //Drwaing        
     for(auto &obj: scene.Entities()){
         auto material = obj.material();
-        auto TextureUnit = material->texture()->TextureUnit();
         material->Use();
         material->SetUniform("View", camera.View());
         material->SetUniform("Projection", camera.Perspective());
         material->SetUniform("uCameraPos", camera.Position());
-        material->SetUniform("uDiffuseMap", TextureUnit);
-        material->SetUniform("uSkyboxMap", scene.skyBox()->gameObject().material()->texture()->TextureUnit());
         auto sizeIns = static_cast<GLsizei>(obj.InstancePos().size());
         auto mesh = obj.mesh();
         draw(*mesh.get(), sizeIns);

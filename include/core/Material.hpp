@@ -28,8 +28,8 @@ public:
     auto Uniforms() const noexcept -> const std::map<std::string, GLSLVar>&;
     auto Attribs() const noexcept -> const std::map<std::string, GLuint>&;
     static auto Current_Program() -> GLuint;
-    auto texture() const noexcept -> std::shared_ptr<Texture>;
-    auto SetTexture(const std::string &name) -> void;
+    auto texture(const std::string& name) const noexcept -> std::shared_ptr<Texture>;
+    auto SetTexture(const std::string &name, std::shared_ptr<Texture> texture) -> void;
     auto Shaders() const noexcept -> const std::vector<Shader>&;
     static auto GLSL_Type_to_string(GLenum type) -> const char*;
 
@@ -57,7 +57,7 @@ private:
     std::vector<Shader> m_Shaders;
     std::map<std::string, GLuint> m_Attribs;
     std::map<std::string, GLSLVar> m_Uniforms;
-    std::shared_ptr<Texture> m_Albedo;
+    std::map<std::string, std::shared_ptr<Texture>> m_Textuers;
 
     FOR_TEST
 };

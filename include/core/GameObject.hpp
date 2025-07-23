@@ -69,13 +69,11 @@ public:
   {
     auto mat = m_skybox.material();
     auto mesh = m_skybox.mesh();
-    auto TextureUnit = mat->texture()->TextureUnit();
     
     gl::DepthFunc(GL_LEQUAL);
     mat->Use();
     mat->SetUniform("View", glm::mat4(glm::mat3(camera.View())));
     mat->SetUniform("Projection", camera.Perspective());
-    mat->SetUniform("uDiffuseMap", TextureUnit);
     mesh->Bind();
     gl::DrawArrays(GL_TRIANGLES, 0, mesh->VextexSize());
     gl::DepthFunc(GL_LESS);
