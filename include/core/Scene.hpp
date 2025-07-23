@@ -32,7 +32,7 @@ struct std::formatter<Scene> {
   }
   auto format(const Scene& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    R"({{"SkyBox": {}, "Entities": {}}})"
-    , static_cast<GameObject>(*obj.m_SkyBox), VecWrapper{obj.m_Entities});
+    R"({{ "Entities": {} }})"
+    , VecWrapper{obj.m_Entities});
   }
 };

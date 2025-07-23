@@ -58,31 +58,24 @@ struct std::formatter<GameObject> {
 class SkyBox
 {
 public:
-  SkyBox(glm::vec3 position, Material& matt, Mesh& mesh)
-    : m_skybox(GameObject(position, matt, mesh))
+  SkyBox(Material& matt)
+    : m_Material(matt)
+    , m_Mesh(Mesh::CUBE)
   {
   }
-  operator GameObject() const {
-    return m_skybox;
-  }
+
   auto render(const Camera& camera) -> void
   {
-    auto mat = m_skybox.material();
-    auto mesh = m_skybox.mesh();
-    
     gl::DepthFunc(GL_LEQUAL);
-    mat->Use();
-    mat->SetUniform("View", glm::mat4(glm::mat3(camera.View())));
-    mat->SetUniform("Projection", camera.Perspective());
-    mesh->Bind();
-    gl::DrawArrays(GL_TRIANGLES, 0, mesh->VextexSize());
+    m_Material.Use();
+    m_Material.SetUniform("View", glm::mat4(glm::mat3(camera.View())));
+    m_Material.SetUniform("Projection", camera.Perspective());
+    m_Mesh.Bind();
+    gl::DrawArrays(GL_TRIANGLES, 0, m_Mesh.VextexSize());
     gl::DepthFunc(GL_LESS);
-  }
-  auto gameObject() const -> const GameObject&
-  {
-    return m_skybox;
   }
 
 private:
-    const GameObject m_skybox;
+    Material m_Material;
+    Mesh m_Mesh;
 };

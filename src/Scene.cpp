@@ -29,6 +29,7 @@ auto Scene::skyBox() -> std::unique_ptr<SkyBox>&
 {
     return m_SkyBox;
 }
+
 auto Scene::operator<<(GameObject obj) -> void
 {
     add(std::move(obj));

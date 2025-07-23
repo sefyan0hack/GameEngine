@@ -33,11 +33,7 @@ GameObject::~GameObject()
 
 auto GameObject::UpMatrix() -> void
 {
-    auto Uniforms = m_Material->Uniforms();
-    auto it = Uniforms.find("Model");
-    if (it != Uniforms.end()){
-        m_Material->SetUniform("Model", Transformation());
-    }
+    m_Material->SetUniform("Model", Transformation());
 }
 
 auto GameObject::SetUp(std::vector<glm::vec3> InsPos) -> void

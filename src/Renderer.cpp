@@ -14,7 +14,7 @@ Renderer::~Renderer(){
 auto Renderer::render(Scene &scene, Camera &camera) -> void
 {
     scene.skyBox()->render(camera);
-    //Drwaing        
+    //Drwaing
     for(auto &obj: scene.Entities()){
         auto material = obj.material();
         material->Use();

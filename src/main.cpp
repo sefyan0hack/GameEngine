@@ -52,15 +52,15 @@ private:
         }
 
         skyMat.SetTexture("uDiffuseMap", ResManager.getTexture(TEXTURE(forest.jpg)));
-        
-        Scn.setSkyBox(std::make_unique<SkyBox>(glm::vec3(0,0,0), skyMat, skyMesh));
-        
+
+        Scn.setSkyBox(std::make_unique<SkyBox>(skyMat));
+
         Matt.SetTexture("uDiffuseMap", ResManager.getTexture(TEXTURE(brik.png)));
         Scn << GameObject({0,0,0}, Matt, cubeMesh);
-        
+
         Matt.SetTexture("uDiffuseMap", ResManager.getTexture(TEXTURE(annie_spratt.jpg)));
         Scn << GameObject({0,1,0}, Matt, cubeMesh);
-        
+
         Matt.SetTexture("uDiffuseMap", ResManager.getTexture(TEXTURE(gravelly_sand_diff_4k.png)));
         Scn << GameObject({1,0,0}, Matt, cubeMesh);
         Scn << GameObject({0,0,1}, Matt, cubeMesh);
