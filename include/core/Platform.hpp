@@ -174,10 +174,10 @@ struct std::formatter<Type<T>, char> {
         return ctx.begin();
     }
 
-    auto format(const Type<T>& type, std::format_context& ctx) const {
+    auto format(const Type<T>&, std::format_context& ctx) const {
         return std::format_to(ctx.out(), 
             "{{ Type: {}, Kind: {}, Hash: {}, Size: {}, Align: {}, Empty: {} }}",
-            type.name, type.kind, type.hash, type.size, type.alignment, type.empty
+            Type<T>::name, Type<T>::kind, Type<T>::hash, Type<T>::size, Type<T>::alignment, Type<T>::empty
         );
     }
 };
