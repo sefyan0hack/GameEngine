@@ -15,10 +15,6 @@ using namespace std;
 class Game : public APP
 {
 private:
-    Shader skyVert, skyfrag;
-    Material skyMat;
-    Mesh skyMesh;
-
     Shader vert, frag;
     Material Matt;
     Mesh cubeMesh;
@@ -27,15 +23,10 @@ private:
     Renderer rndr;
     public: // init here
     Game()
-    : skyVert(SHADER(skybox)".vert", GL_VERTEX_SHADER)
-    , skyfrag(SHADER(skybox)".frag", GL_FRAGMENT_SHADER)
-    , skyMat(skyVert, skyfrag)
-    , skyMesh(Mesh::CUBE)
-
-    , vert(SHADER(cube)".vert", GL_VERTEX_SHADER)
-    , frag(SHADER(cube)".frag", GL_FRAGMENT_SHADER)
-    , Matt(vert, frag)
-    , cubeMesh(Mesh::CUBE)
+        : vert(SHADER(cube)".vert", GL_VERTEX_SHADER)
+        , frag(SHADER(cube)".frag", GL_FRAGMENT_SHADER)
+        , Matt(vert, frag)
+        , cubeMesh(Mesh::CUBE)
     {
         ResManager.load(TEXTURE(brik.jpg), ResType::Texture2D);
         ResManager.load(TEXTURE(brik.png), ResType::Texture2D);
@@ -51,9 +42,7 @@ private:
                 positions[index++] = {i, 0, j};
         }
 
-        skyMat.SetTexture("uDiffuseMap", ResManager.getTexture(TEXTURE(forest.jpg)));
-
-        Scn.setSkyBox(std::make_unique<SkyBox>(skyMat));
+        Scn.setSkyBox(TEXTURE(forest.jpg));
 
         Matt.SetTexture("uDiffuseMap", ResManager.getTexture(TEXTURE(brik.png)));
         Scn << GameObject({0,0,0}, Matt, cubeMesh);
@@ -67,7 +56,7 @@ private:
         Scn << GameObject({1,1,0}, Matt, cubeMesh);
         Scn << GameObject({1,1,1}, Matt, cubeMesh);
 
-        Matt.SetTexture("uSkyboxMap", skyMat.texture("uDiffuseMap"));
+        Matt.SetTexture("uSkyboxMap", Scn.skyBox()->texture());
     }
 public:
 

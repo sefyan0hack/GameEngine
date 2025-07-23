@@ -58,10 +58,21 @@ struct std::formatter<GameObject> {
 class SkyBox
 {
 public:
-  SkyBox(Material& matt)
-    : m_Material(matt)
+  
+  SkyBox()
+    : m_VertShader(SHADER(skybox)".vert", GL_VERTEX_SHADER)
+    , m_FragShader(SHADER(skybox)".frag", GL_FRAGMENT_SHADER)
     , m_Mesh(Mesh::CUBE)
+    , m_Material(m_VertShader, m_FragShader)
   {
+  }
+
+  SkyBox(const std::string& BasePathName)
+    :  SkyBox()
+  {
+    m_Material.SetTexture("uDiffuseMap", std::make_shared<TextureCubeMap>(
+      TextureCubeMap::base_to_6faces(BasePathName))
+    );
   }
 
   auto render(const Camera& camera) -> void
@@ -75,7 +86,14 @@ public:
     gl::DepthFunc(GL_LESS);
   }
 
+  auto texture() -> std::shared_ptr<Texture>
+  {
+    return m_Material.texture("uDiffuseMap");
+  }
+
 private:
-    Material m_Material;
-    Mesh m_Mesh;
+  const Shader m_VertShader;
+  const Shader m_FragShader;
+  Mesh m_Mesh;
+  Material m_Material;
 };

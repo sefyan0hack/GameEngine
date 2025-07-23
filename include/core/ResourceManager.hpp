@@ -31,6 +31,4 @@ private:
     FOR_TEST
 };
 
-auto strig_to_vector(const std::string& path) -> std::vector<std::string>;
-
 inline static ResourceManager& ResManager = ResourceManager::getInstance();

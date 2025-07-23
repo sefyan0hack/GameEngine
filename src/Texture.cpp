@@ -179,3 +179,19 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
     gl::PixelStorei(GL_UNPACK_ALIGNMENT, 4);
     Info("{}", static_cast<const Texture&>(*this));
 }
+
+auto TextureCubeMap::base_to_6faces(const std::string& path) -> std::vector<std::string>
+{
+    std::vector<std::string> result;
+    std::array<std::string, 6> directions = {"posx", "negx", "posy", "negy", "posz", "negz"};
+    auto dot = path.find_last_of(".");
+    auto ext = path.substr(dot, path.size());
+
+    for (const auto &dir : directions) {
+        auto newPath = path.substr(0, dot);
+        newPath += "_" + dir + ext;
+        result.push_back(newPath);
+    }
+
+    return result;
+}

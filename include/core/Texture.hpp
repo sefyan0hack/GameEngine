@@ -45,6 +45,9 @@ class TextureCubeMap final : public Texture
   public:
     TextureCubeMap();
     TextureCubeMap(const std::vector<std::string> faces);
+
+    static auto base_to_6faces(const std::string& path) -> std::vector<std::string>;
+
   private:
     std::array<Image, 6> m_Imgs;
 };

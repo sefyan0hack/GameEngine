@@ -7,14 +7,12 @@ class Scene
 {
 public:
     friend struct std::formatter<Scene>;
-    Scene() = default;
-    Scene(std::unique_ptr<SkyBox> skybox);
+    Scene();
     ~Scene();
     auto operator << (GameObject obj) -> void;
 
-    auto add(GameObject gobj)   -> void;
-    auto Entities()       -> std::vector<GameObject>&;
-    auto setSkyBox(std::unique_ptr<SkyBox> skybox) -> void;
+    auto Entities() -> std::vector<GameObject>&;
+    auto setSkyBox(const std::string& BasePathName) -> void;
     auto skyBox() -> std::unique_ptr<SkyBox>&;
     auto to_json() const -> std::string;
 private:

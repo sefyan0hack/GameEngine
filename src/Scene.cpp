@@ -1,18 +1,12 @@
 #include <core/Scene.hpp>
 #include <core/GameObject.hpp>
 
-Scene::Scene(std::unique_ptr<SkyBox> skybox)
-    : m_SkyBox(std::move(skybox))
+Scene::Scene()
+    : m_SkyBox()
 {}
 
 Scene::~Scene()
 {
-}
-
-auto Scene::add(GameObject gobj) -> void
-{
-    
-    m_Entities.emplace_back(std::move(gobj));
 }
 
 auto Scene::Entities() -> std::vector<GameObject>&
@@ -20,9 +14,10 @@ auto Scene::Entities() -> std::vector<GameObject>&
     return m_Entities;
 }
 
-auto Scene::setSkyBox(std::unique_ptr<SkyBox> skybox) -> void
+
+auto Scene::setSkyBox(const std::string& BasePathName) -> void
 {
-    m_SkyBox = std::move(skybox);
+    m_SkyBox = std::make_unique<SkyBox>(BasePathName);
 }
 
 auto Scene::skyBox() -> std::unique_ptr<SkyBox>&
@@ -32,8 +27,10 @@ auto Scene::skyBox() -> std::unique_ptr<SkyBox>&
 
 auto Scene::operator<<(GameObject obj) -> void
 {
-    add(std::move(obj));
+    m_Entities.emplace_back(std::move(obj));
 }
+
+
 auto Scene::to_json() const -> std::string
 {
     return std::format("{}", *this);
