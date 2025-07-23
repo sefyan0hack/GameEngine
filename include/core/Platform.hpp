@@ -169,7 +169,7 @@ struct Type {
 };
 
 template<typename T>
-struct std::formatter<Type<T>> {
+struct std::formatter<Type<T>, char> {
     constexpr auto parse(std::format_parse_context& ctx) {
         return ctx.begin();
     }
