@@ -3,6 +3,12 @@
 #pragma GCC system_header
 #endif
 
+#if defined(__cpp_lib_format)
+#   include <format>
+#else
+#error "This project uses <format>, and it need's modern compiler with -std=c++23"
+#endif
+
 // disable warning
 #if defined(MSVC_CPL)
     #define NO_WARNING_BEGIN \
@@ -169,7 +175,7 @@ struct Type {
 };
 
 template<typename T>
-struct std::formatter<Type<T>, char> {
+struct std::formatter<Type<T>> {
     constexpr auto parse(std::format_parse_context& ctx) {
         return ctx.begin();
     }
@@ -181,7 +187,6 @@ struct std::formatter<Type<T>, char> {
         );
     }
 };
-
 
 namespace sys {
     enum class Target : uint8_t
