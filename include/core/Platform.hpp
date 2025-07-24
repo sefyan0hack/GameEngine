@@ -3,12 +3,6 @@
 #pragma GCC system_header
 #endif
 
-#if defined(__cpp_lib_format)
-#   include <format>
-#else
-#error "This project uses <format>, and it need's modern compiler with -std=c++23"
-#endif
-
 // disable warning
 #if defined(MSVC_CPL)
     #define NO_WARNING_BEGIN \
@@ -174,19 +168,6 @@ struct Type {
     constexpr static bool empty = std::is_empty_v<T>;
 };
 
-template<typename T>
-struct std::formatter<Type<T>> {
-    constexpr auto parse(std::format_parse_context& ctx) {
-        return ctx.begin();
-    }
-
-    auto format(const Type<T>&, std::format_context& ctx) const {
-        return std::format_to(ctx.out(), 
-            "{{ Type: {}, Kind: {}, Hash: {}, Size: {}, Align: {}, Empty: {} }}",
-            Type<T>::name, Type<T>::kind, Type<T>::hash, Type<T>::size, Type<T>::alignment, Type<T>::empty
-        );
-    }
-};
 
 namespace sys {
     enum class Target : uint8_t
