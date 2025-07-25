@@ -22,7 +22,7 @@ string(REGEX MATCH "^[0-9]+" COMPILER_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSIO
 ####################################################################################################
 # Options
 ####################################################################################################
-option(TESTS            "enable tests"               OFF)
+option(TESTS            "enable tests"               ON)
 option(ENABLE_COVERAGE  "enable code coverage"       OFF)
 option(HARDEN           "enable Hardening"           OFF)
 option(STATIC_LINK      "enable Static link C++"     ON)
