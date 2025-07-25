@@ -19,13 +19,15 @@ public:
 
     Camera(Camera&& other) noexcept = default;
     auto operator=(Camera&& other) noexcept -> Camera& = default;
+    
+    auto Move(const glm::vec3& vec)     noexcept -> void ;
 
-    auto MoveForward(float speed)  noexcept -> void ;
-    auto MoveBackward(float speed) noexcept -> void ;
-    auto MoveUp(float speed)       noexcept -> void ;
-    auto MoveDown(float speed)     noexcept -> void ;
-    auto MoveRight(float speed)    noexcept -> void ;
-    auto MoveLeft(float speed)     noexcept -> void ;
+    auto MoveForward(float by)  noexcept -> void ;
+    auto MoveBackward(float by) noexcept -> void ;
+    auto MoveUp(float by)       noexcept -> void ;
+    auto MoveDown(float by)     noexcept -> void ;
+    auto MoveRight(float by)    noexcept -> void ;
+    auto MoveLeft(float by)     noexcept -> void ;
 
     auto SetFrontVector(glm::vec3 front)  -> void ;
     auto SetFOV(float fov)                 -> void ;

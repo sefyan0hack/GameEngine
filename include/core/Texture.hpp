@@ -30,7 +30,7 @@ class Texture2D final : public Texture
   public:
     Texture2D();
     Texture2D(const std::string &name);
-    Texture2D(auto* data, GLint width, GLint height, GLenum intformat = GL_RGBA8, GLenum format = GL_RGBA);
+    Texture2D(auto* data, GLint width, GLint height, GLenum format = GL_RGBA);
     auto isMipMapped() const -> bool;
 
   private:

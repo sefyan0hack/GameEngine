@@ -2,7 +2,7 @@
 #include <core/GameObject.hpp>
 
 Scene::Scene()
-    : m_SkyBox()
+    : m_SkyBox(std::make_unique<SkyBox>())
 {}
 
 Scene::~Scene()

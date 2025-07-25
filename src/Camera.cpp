@@ -37,12 +37,14 @@ auto Camera::Perspective() const ->  glm::mat4
     );
 }
 
-void Camera::MoveForward(float speed) noexcept { m_Position += m_FrontDir * speed; }
-void Camera::MoveBackward(float speed) noexcept { m_Position -= m_FrontDir * speed; }
-void Camera::MoveUp(float speed) noexcept { m_Position += m_UpDir * speed; }
-void Camera::MoveDown(float speed) noexcept { m_Position -= m_UpDir * speed; }
-void Camera::MoveRight(float speed) noexcept { m_Position += m_RightDir * speed; }
-void Camera::MoveLeft(float speed) noexcept { m_Position -= m_RightDir * speed; }
+void Camera::Move(const glm::vec3 &vec) noexcept { m_Position += vec; }
+
+void Camera::MoveForward(float by) noexcept { m_Position += m_FrontDir * by; }
+void Camera::MoveBackward(float by) noexcept { m_Position -= m_FrontDir * by; }
+void Camera::MoveUp(float by) noexcept { m_Position += m_UpDir * by; }
+void Camera::MoveDown(float by) noexcept { m_Position -= m_UpDir * by; }
+void Camera::MoveRight(float by) noexcept { m_Position += m_RightDir * by; }
+void Camera::MoveLeft(float by) noexcept { m_Position -= m_RightDir * by; }
 
 auto Camera::UpdateVectors() -> void
 {

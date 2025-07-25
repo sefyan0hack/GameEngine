@@ -28,6 +28,7 @@ auto ResourceManager::load(const std::string& path, ResType type) -> void
 
 auto ResourceManager::getTexture(const std::string& path ) -> std::shared_ptr<Texture>
 {
+    
     return m_Textures[path];
 }
 

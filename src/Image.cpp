@@ -8,7 +8,7 @@
 template <std::size_t Size>
 constexpr auto generate_checkerboard(const uint32_t color1, const uint32_t color2)
 {
-    constexpr std::size_t bytes_per_pixel = sizeof(uint32_t);
+    constexpr std::size_t bytes_per_pixel = 3;
     constexpr std::size_t total_bytes = Size * Size * bytes_per_pixel;
 
     std::array<std::byte, total_bytes> data{};
@@ -30,20 +30,28 @@ constexpr auto generate_checkerboard(const uint32_t color1, const uint32_t color
     return data;
 }
 
-// magenta/black checkerboard 100x100
-constexpr auto checkerboard = generate_checkerboard<100>(0xFFFF00FF, 0x00000000);
+// magenta/black checkerboard 50x50
+// constexpr auto checkerboard = generate_checkerboard<50>(0xFFFF00FF, 0x00000000);
 
 Image::Image()
-    : m_Width(100), m_Height(100), m_Channels(sizeof(uint32_t))
-    , m_Data(const_cast<std::byte*>(checkerboard.data()))
+    : m_Width(50), m_Height(50), m_Channels(3)
+    , m_Data(static_cast<std::byte*>(STBI_MALLOC(Size())))
 {
+    // magenta/black checkerboard 50x50
+    std::memcpy(m_Data, generate_checkerboard<50>(0xFFFF00FF, 0x00000000).data(), Size());
 }
 
 Image::Image(Pointer auto Data, uint32_t Width, uint32_t Height, uint32_t Channels)
-    : m_Width(Width), m_Height(Height), m_Channels(Channels)
-    , m_Data(reinterpret_cast<std::byte*>(Data))
+    : Image()
 {
-    if(!Valid()) Error(" Image not Valid  {}", *this);
+    if(Data != nullptr && Width > 0 && Height > 0 && Channels > 0){
+        m_Width = Width;
+        m_Height = Height;
+        m_Channels = Channels;
+        m_Data = reinterpret_cast<std::byte*>(Data);
+    }else{
+        Info(" Image not Valid  {}", *this);
+    }
 }
 
 Image::Image(const std::string& filename, bool flip)
@@ -113,33 +121,74 @@ auto Image::Valid() const ->bool
 
 auto Image::Data() const -> std::span<std::byte>
 {
-    if(!Valid()) Error(" Image not Valid  {}", *this);
+    Expect(Valid(), " Image not Valid  {}", *this);
 
     return { m_Data, Size() };
 }
 
-auto Image::Format() const -> GLenum
+auto Image::CPUFormat() const -> GLenum
 {
     switch(m_Channels) {
         case 1: return GL_RED;
         case 2: return GL_RG;
         case 3: return GL_RGB;
         case 4: return GL_RGBA;
-        default:
-            Error("Unsupported image channel count");
+        default: Error("Unsupported channel count: {}", m_Channels);
     }
 }
 
 
-auto Image::InternalFormat() const -> GLint
+auto Image::GPUFormat() const -> GLint
 {
     switch(m_Channels) {
         case 1: return GL_R8;
         case 2: return GL_RG8;
         case 3: return GL_RGB8;
         case 4: return GL_RGBA8;
-        default:
-            Error("Unsupported image channel count");
+        default: Error("Unsupported channel count: {}", m_Channels);
     }
 }
 
+auto Image::CPUtoCGPUFormat(GLenum cpuformat) -> GLint
+{
+    switch(cpuformat) {
+        case GL_RED: return GL_R8;
+        case GL_RG: return GL_RG8;
+        case GL_RGB: return GL_RGB8;
+        case GL_RGBA: return GL_RGBA8;
+        default: Error("Unsupported Fromat: {:X}", cpuformat);
+    }
+}
+
+auto Image::GPUtoCPUFormat(GLint gpuformt) -> GLenum
+{
+    switch(gpuformt) {
+        case GL_R8: return GL_RED;
+        case GL_RG8: return GL_RG;
+        case GL_RGB8: return GL_RGB;
+        case GL_RGBA8: return GL_RGBA;
+        default: Error("Unsupported Fromat: {:X}", gpuformt);
+    }
+}
+
+auto Image::ChannelFromCPUFormat(GLenum format) -> std::int32_t
+{
+    switch(format) {
+        case GL_R8: return 1;
+        case GL_RG8: return 2;
+        case GL_RGB8: return 3;
+        case GL_RGBA8: return 4;
+        default: Error("Unsupported Fromat: {:X}", format);
+    }
+}
+
+auto Image::ChannelFromGPUFormat(GLint format) -> std::int32_t
+{
+    switch(format) {
+        case GL_RED: return 1;
+        case GL_RG: return 2;
+        case GL_RGB: return 3;
+        case GL_RGBA: return 4;
+        default: Error("Unsupported Fromat: {:X}", format);
+    }
+}

@@ -65,6 +65,7 @@ public:
     , m_Mesh(Mesh::CUBE)
     , m_Material(m_VertShader, m_FragShader)
   {
+    m_Material.SetTexture("uDiffuseMap", std::make_shared<TextureCubeMap>());
   }
 
   SkyBox(const std::string& BasePathName)

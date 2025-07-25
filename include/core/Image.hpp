@@ -22,9 +22,16 @@ public:
     auto Width() const -> int32_t;
     auto Height() const -> int32_t;
     auto Channels() const -> int32_t;
-    auto Format() const -> GLenum;
-    auto InternalFormat() const -> GLint;
-    
+
+    auto CPUFormat() const -> GLenum;
+    auto GPUFormat() const -> GLint;
+
+    static auto CPUtoCGPUFormat(GLenum cpuformat) -> GLint;
+    static auto GPUtoCPUFormat(GLint gpuformt) -> GLenum;
+
+    static auto ChannelFromCPUFormat(GLenum format) -> std::int32_t;
+    static auto ChannelFromGPUFormat(GLint format) -> std::int32_t;
+
     auto Data() const -> std::span<std::byte>;
     auto Size() const -> std::size_t;
     auto Valid() const -> bool;
