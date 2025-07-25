@@ -7,6 +7,7 @@ using SubType = int32_t;
 
 using AutoRelease_Test_Ctor1 = AutoRelease<SubType>::Test<1>;
 
+
 #define TEST_INTERFACE \
     MEMBER_VAR(resource);\
     MEMBER_VAR(deleter);\

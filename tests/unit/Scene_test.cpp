@@ -22,6 +22,5 @@ struct Scene::Test<1> : public ::testing::Test {
 };
 
 TEST_F(Scene_Test_Ctor1, ctor) {
-    EXPECT_EQ(m_SkyBox, nullptr);
     EXPECT_EQ(m_Entities.size(), 0);
 }

@@ -22,19 +22,19 @@ string(REGEX MATCH "^[0-9]+" COMPILER_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSIO
 ####################################################################################################
 # Options
 ####################################################################################################
-option(TESTS            "enable tests"               ON)
-option(ENABLE_COVERAGE  "enable code coverage"       OFF)
-option(HARDEN           "enable Hardening"           OFF)
-option(STATIC_LINK      "enable Static link C++"     ON)
-option(ASAN             "enable Address Sanitizer"   OFF)
-option(USAN             "enable Undefined Sanitizer" OFF)
-option(TSAN             "enable Thread Sanitizer"    OFF)
-option(EXCEPTIONS       "enable Exciptions"          OFF)
+option(TESTS            "Tests"               ON)
+option(ENABLE_COVERAGE  "Code coverage"       OFF)
+option(HARDEN           "Hardening"           OFF)
+option(STATIC_LINK      "Static link C++"     ON)
+option(ASAN             "Address Sanitizer"   OFF)
+option(USAN             "Undefined Sanitizer" OFF)
+option(TSAN             "Thread Sanitizer"    OFF)
+option(EXCEPTIONS       "Exciptions"          OFF)
 
 if(MINGW) #disable RTTI becaus of bug in mingw redifinition when static link libstdc++
-option(RTTI             "enable RunTime Type Info"   OFF)
+option(RTTI             "RunTime Type Info"   OFF)
 else()
-option(RTTI             "enable RunTime Type Info"   ON)
+option(RTTI             "RunTime Type Info"   ON)
 endif(MINGW)
 
 if(TESTS)
