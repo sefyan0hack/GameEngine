@@ -463,6 +463,7 @@ add_compile_definitions(
 if(TESTS)
     message(STATUS "[Tests `ON`]")
     enable_testing()
+    include(GoogleTest)
     add_subdirectory(tests/unit)
 endif()
 
