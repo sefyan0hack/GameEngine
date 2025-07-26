@@ -80,8 +80,8 @@ TEST(Formatters, Camera){
     auto obj = Camera();
     auto r = std::format("{}", obj);
     auto e = format(
-        R"({{ "position": {}, "sensitivity": {}, "view": {} }})",
-        obj.Position(), obj.Sensitivity(), obj.View()
+        R"({{ "position": {}, "view": {} }})",
+        obj.Position(), obj.View()
     );
 
     EXPECT_EQ(r, e);
