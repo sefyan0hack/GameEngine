@@ -233,7 +233,10 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 	    	if( ri.header.dwType == RIM_TYPEMOUSE &&
 	    		(ri.data.mouse.lLastX != 0 || ri.data.mouse.lLastY != 0) )
 				{
-				m_EventQueue.push(Mouse::MovementEvent{ri.data.mouse.lLastX, ri.data.mouse.lLastY});
+				m_EventQueue.push(Mouse::MovementEvent{
+					static_cast<float>(ri.data.mouse.lLastX),
+					static_cast<float>(ri.data.mouse.lLastY)
+				});
 	    	}
 	    	break;
 	    }
@@ -481,8 +484,8 @@ auto CWindow::MouseCallback( int32_t eventType, const EmscriptenMouseEvent* e, v
 			window->m_EventQueue.push(Mouse::ButtonUpEvent{btn});
             break;
         case EMSCRIPTEN_EVENT_MOUSEMOVE:
-			window->m_EventQueue.push(Mouse::MovementEvent{e->movementX, e->movementY});
-            window->m_EventQueue.push(Mouse::MoveEvent{e->targetX, e->targetY});
+			window->m_EventQueue.push(Mouse::MoveEvent{e->targetX, e->targetY});
+			window->m_EventQueue.push(Mouse::MovementEvent{static_cast<float>, static_cast<float>});
             break;
 
         case EMSCRIPTEN_EVENT_MOUSEENTER:
@@ -558,7 +561,7 @@ auto CWindow::TouchCallback(int32_t eventType, const EmscriptenTouchEvent* e, vo
 					int32_t dx = static_cast<int32_t>(x) - old->second.first;
 					int32_t dy = static_cast<int32_t>(y) - old->second.second;
 					// push a raw‐delta event
-					window->m_EventQueue.push(Mouse::MovementEvent{ dx, dy });
+					window->m_EventQueue.push(Mouse::MovementEvent{ static_cast<float>(dx), static_cast<float>(dy) });
 				}
 				// also update stored pos
 				lastPos[id] = { x, y };

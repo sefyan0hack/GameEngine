@@ -99,7 +99,8 @@ auto APP::LoopBody(void* ctx) -> void
             },
             [&app](const Mouse::MovementEvent& e) {
                 app->Mouse.OnRawDelta(e.dx, e.dy);
-                app->ViewCamera.UpdateCameraPosition(app->Mouse);
+                auto [dx, dy] = app->Mouse.GetRawDelta();
+                app->ViewCamera.ProcessMouseMovement(dx, -dy);
             },
             [](const auto& e) { Info("Unhandeled Event: {}", ::type_name<decltype(e)>()); },
         }, event);

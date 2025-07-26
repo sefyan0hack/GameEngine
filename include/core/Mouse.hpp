@@ -18,7 +18,7 @@ public:
 	struct EnterEvent {};
 	struct LeaveEvent {};
 	struct MoveEvent { int32_t x, y; };
-	struct MovementEvent { int32_t dx, dy; };
+	struct MovementEvent { float dx, dy; };
 
 private:
     Mouse();
@@ -34,8 +34,7 @@ public:
 
 public:
 	auto GetPos() const noexcept			-> std::pair<int32_t, int32_t> ;
-	auto GetRawDelta() const noexcept		-> std::pair<int32_t, int32_t> ;
-	auto ReadRawDelta() noexcept 			-> std::optional<std::pair<int32_t, int32_t>> ;
+	auto GetRawDelta() const noexcept		-> std::pair<float, float> ;
 	auto SetPos(int32_t x_, int32_t y_)		-> void ;
 	auto Locked() const						-> bool ;
 	auto Lock([[maybe_unused]] const CWindow& window) noexcept -> void ;
@@ -52,9 +51,12 @@ private:
 	auto OnButtonDown(Button btn) noexcept			-> void ;
 	auto OnButtonUp(Button btn) noexcept			-> void ;
 	auto OnMouseMove(int32_t x, int32_t y) noexcept		-> void ;
-	auto OnRawDelta(int32_t dx, int32_t dy) noexcept	-> void ;
+	auto OnRawDelta(float dx, float dy) noexcept	-> void ;
 	auto OnMouseLeave() noexcept						-> void ;
 	auto OnMouseEnter() noexcept						-> void ;
+
+public:
+	float Sensitivity;
 
 private:
 	constexpr static size_t ButtonCoun = std::to_underlying(Button::Unknown) + 1;
@@ -64,11 +66,10 @@ private:
 
 	// int32_t delta;
 	int32_t x, y;
-	int32_t dx, dy;
+	float dx, dy;
 
 	bool isMouseIn = false;
 	bool isLocked = false;
-	bool hasNewRawDelta = false;
 
 	FOR_TEST
 };

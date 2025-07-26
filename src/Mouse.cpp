@@ -9,11 +9,11 @@
 #endif
 
 Mouse::Mouse() 
-	: x(0), y(0)
+	: Sensitivity(0.11f)
+	, x(0), y(0)
 	, dx(0), dy(0)
 	, isMouseIn(false)
 	, isLocked(false)
-	, hasNewRawDelta(false)
 {
 	#if defined(WINDOWS_PLT)
 	// regester mouse raw data
@@ -35,9 +35,9 @@ auto Mouse::GetPos() const noexcept -> std::pair<int32_t, int32_t>
 	return {x, y};
 }
 
-auto Mouse::GetRawDelta() const noexcept -> std::pair<int32_t, int32_t>
+auto Mouse::GetRawDelta() const noexcept -> std::pair<float, float>
 {
-    return {dx, dy};
+    return {Sensitivity * dx, Sensitivity * dy};
 }
 
 auto Mouse::SetPos([[maybe_unused]] int32_t x_, [[maybe_unused]] int32_t y_) -> void
@@ -47,16 +47,6 @@ auto Mouse::SetPos([[maybe_unused]] int32_t x_, [[maybe_unused]] int32_t y_) -> 
 	#endif
 }
 
-auto Mouse::ReadRawDelta() noexcept -> std::optional<std::pair<int32_t, int32_t>>
-{
-	if(hasNewRawDelta) {
-		hasNewRawDelta = false;
-		auto delta = std::make_pair(dx, dy);
-		dx = dy = 0;
-		return delta;
-	}
-	return std::nullopt;
-}
 
 auto Mouse::OnMouseMove( int32_t x, int32_t y ) noexcept -> void
 {
@@ -64,10 +54,9 @@ auto Mouse::OnMouseMove( int32_t x, int32_t y ) noexcept -> void
 }
 
 
-auto Mouse::OnRawDelta( int32_t dx, int32_t dy ) noexcept -> void
+auto Mouse::OnRawDelta( float dx, float dy ) noexcept -> void
 {
 	std::tie(this->dx, this->dy) = { dx, dy };
-	hasNewRawDelta = true;
 }
 
 auto Mouse::OnMouseLeave() noexcept -> void

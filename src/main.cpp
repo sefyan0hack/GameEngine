@@ -64,26 +64,13 @@ public:
         float speed = 10.0f;
 
         if(Keyboard.IsDown(Key::LeftShift))
-                speed *= 2;
-    
-        if(Keyboard.IsDown(Key::W)){
-            ViewCamera.MoveForward(speed * delta);
-        }
-        if(Keyboard.IsDown(Key::S)){
-            ViewCamera.MoveBackward(speed * delta);
-        }
-        if(Keyboard.IsDown(Key::A)){
-            ViewCamera.MoveLeft(speed * delta);
-        }
-        if(Keyboard.IsDown(Key::D)){
-            ViewCamera.MoveRight(speed * delta);
-        }
-        if(Keyboard.IsDown(Key::N) ){
-            ViewCamera.MoveUp(speed * delta);
-        }
-        if(Keyboard.IsDown(Key::M) ){
-            ViewCamera.MoveDown(speed * delta);
-        }
+            speed *= 2;
+
+        auto Hori = Keyboard.IsDown(Key::W) ? 1 : Keyboard.IsDown(Key::S) ? -1 : 0;
+        auto Vert = Keyboard.IsDown(Key::D) ? 1 : Keyboard.IsDown(Key::A) ? -1 : 0;
+        auto Up   = Keyboard.IsDown(Key::M) ? 1 : Keyboard.IsDown(Key::N) ? -1 : 0;
+
+        ViewCamera.Move({ Vert * speed * delta, Up * speed * delta, Hori * speed * delta });
 
         rndr.render(Scn, ViewCamera);
     }
