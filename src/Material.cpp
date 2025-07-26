@@ -10,6 +10,8 @@
 Material::Material(const Shader& vertex, const Shader& fragment)
     : m_Id(gl::CreateProgram())
     , m_Shaders({vertex, fragment})
+    , m_Textuers{ {"uDiffuseMap", std::make_shared<Texture2D>()} }
+
 {
 
     for(const auto &shader : m_Shaders ){
@@ -247,6 +249,10 @@ auto Material::SetTexture(const std::string &name, std::shared_ptr<Texture> text
     m_Textuers[name] = texture;
 }
 
+auto Material::SetDiffuse(std::shared_ptr<Texture> texture) -> void
+{
+    m_Textuers["uDiffuseMap"] = texture;
+}
 
 auto Material::GetProgramInfo(GLint id, GLenum what) -> std::optional<GLint>
 {

@@ -30,6 +30,7 @@ public:
     static auto Current_Program() -> GLuint;
     auto texture(const std::string& name) const noexcept -> std::shared_ptr<Texture>;
     auto SetTexture(const std::string &name, std::shared_ptr<Texture> texture) -> void;
+    auto SetDiffuse(std::shared_ptr<Texture> texture) -> void;
     auto Shaders() const noexcept -> const std::vector<Shader>&;
     static auto GLSL_Type_to_string(GLenum type) -> const char*;
 
