@@ -5,6 +5,7 @@ add_executable(unit_tests ${TEST_SOURCES})
 
 apply_all_options(TARGETS unit_tests )
 apply_harden_options(TARGETS unit_tests)
+
 if(ONLINE)
         CPMAddPackage(
             URI "gh:google/googletest@1.17.0" 
@@ -18,8 +19,6 @@ else()
 endif()
 
 target_link_libraries(unit_tests PRIVATE GTest::gtest GTest::gtest_main glm::glm core)
-
-include(GoogleTest)
 
 if(NOT EMSCRIPTEN)
 gtest_discover_tests(unit_tests PROPERTIES RUN_SERIAL TRUE)
