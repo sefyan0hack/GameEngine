@@ -485,7 +485,7 @@ auto CWindow::MouseCallback( int32_t eventType, const EmscriptenMouseEvent* e, v
             break;
         case EMSCRIPTEN_EVENT_MOUSEMOVE:
 			window->m_EventQueue.push(Mouse::MoveEvent{e->targetX, e->targetY});
-			window->m_EventQueue.push(Mouse::MovementEvent{static_cast<float>, static_cast<float>});
+			window->m_EventQueue.push(Mouse::MovementEvent{static_cast<float>(e->movementX), static_cast<float>(e->movementY)});
             break;
 
         case EMSCRIPTEN_EVENT_MOUSEENTER:
