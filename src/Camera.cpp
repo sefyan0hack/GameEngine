@@ -7,17 +7,14 @@
 #include <glm/gtx/fast_trigonometry.hpp>
 
 Camera::Camera() noexcept
-    : m_Position(0.0f, 1.0f, 4.0f),
-      m_FrontDir(0.0f, 0.0f, -1.0f),
-      m_UpDir(WORLD_UP),
-      m_RightDir(1.0f, 0.0f, 0.0f),
-      m_Sensitivity(0.11f),
-      m_Yaw(-90.0f),
-      m_Pitch(0.0f),
-      m_FOV(45.0f),
-      m_Near(0.1f),
-      m_Far(1000.0f),
-      m_AspectRatio(16.0f / 9.0f)
+    : m_Position(0.0f, 1.0f, 4.0f)
+    , m_FrontDir(0.0f, 0.0f, -1.0f)
+    , m_UpDir(WORLD_UP)
+    , m_RightDir(1.0f, 0.0f, 0.0f)
+    , m_Yaw(-90.0f), m_Pitch(0.0f)
+    , m_FOV(45.0f)
+    , m_Near(0.1f), m_Far(1000.0f)
+    , m_AspectRatio(16.0f / 9.0f)
 {}
 
 
@@ -30,21 +27,21 @@ auto Camera::View() const -> glm::mat4
 auto Camera::Perspective() const ->  glm::mat4
 {
     return glm::perspective(
-        glm::radians(m_FOV), 
-        m_AspectRatio, 
-        m_Near, 
+        glm::radians(m_FOV),
+        m_AspectRatio,
+        m_Near,
         m_Far
     );
 }
 
-void Camera::Move(const glm::vec3 &vec) noexcept { m_Position += vec; }
+auto Camera::Move(const glm::vec3 &delta) noexcept -> void
+{ 
+    m_Position 
+        += m_RightDir * delta.x
+        + m_UpDir    * delta.y
+        + m_FrontDir * delta.z;
+}
 
-void Camera::MoveForward(float by) noexcept { m_Position += m_FrontDir * by; }
-void Camera::MoveBackward(float by) noexcept { m_Position -= m_FrontDir * by; }
-void Camera::MoveUp(float by) noexcept { m_Position += m_UpDir * by; }
-void Camera::MoveDown(float by) noexcept { m_Position -= m_UpDir * by; }
-void Camera::MoveRight(float by) noexcept { m_Position += m_RightDir * by; }
-void Camera::MoveLeft(float by) noexcept { m_Position -= m_RightDir * by; }
 
 auto Camera::UpdateVectors() -> void
 {
@@ -62,34 +59,26 @@ auto Camera::UpdateVectors() -> void
     m_UpDir = glm::normalize(glm::cross(m_RightDir, m_FrontDir));
 }
 
-auto Camera::UpdateCameraPosition(Mouse& mouse) -> void
+auto Camera::ProcessMouseMovement(float xoffset, float yoffset) -> void
 {
-    while (auto op = mouse.ReadRawDelta()) {
-        auto [dx, dy] = op.value();
-
-        float xoff = static_cast<float>(dx)* m_Sensitivity;
-        float yoff = static_cast<float>(-dy) * m_Sensitivity;
-
-        this->m_Yaw += xoff;
-        this->m_Pitch += yoff;
-    }
+    m_Yaw += xoffset;
+    m_Pitch += yoffset;
 
     // Always clamp pitch to avoid gimbal lock
     m_Pitch = std::clamp(m_Pitch, -MAX_SAFE_PITCH, MAX_SAFE_PITCH);
 
-    if(mouse.Locked()){
-        this->m_Pitch = std::clamp(this->m_Pitch, -LOCKED_PITCH_LIMIT, LOCKED_PITCH_LIMIT);
-    }
+    // Normalize yaw to 0°, 360° for stability
+    m_Yaw = std::fmod(m_Yaw, 360.0f);
+    if (m_Yaw < 0.0f) m_Yaw += 360.0f;
 
     UpdateVectors();
 }
 
-auto Camera::SetFrontVector(glm::vec3 front)  -> void { m_FrontDir = front; }
-void Camera::SetFOV(float fov) { m_FOV = fov; }
-void Camera::SetClipping(float nearValue, float farValue) { m_Near = nearValue; m_Far = farValue; }
+auto Camera::SetFOV(float fov) -> void { m_FOV = fov; }
+auto Camera::SetAspectRatio(float aspect) -> void { m_AspectRatio = aspect; }
+auto Camera::SetClipping(float nearValue, float farValue) -> void { m_Near = nearValue; m_Far = farValue; }
 
 auto Camera::Position() const -> glm::vec3 { return m_Position; }
 auto Camera::FrontDir() const -> glm::vec3 { return m_FrontDir; }
 auto Camera::UpDir() const    -> glm::vec3 { return m_UpDir; }
 auto Camera::RightDir() const -> glm::vec3 { return m_RightDir; }
-auto Camera::Sensitivity() const -> float  { return m_Sensitivity; }
