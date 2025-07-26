@@ -70,7 +70,9 @@ public:
         auto Vert = Keyboard.IsDown(Key::D) ? 1 : Keyboard.IsDown(Key::A) ? -1 : 0;
         auto Up   = Keyboard.IsDown(Key::M) ? 1 : Keyboard.IsDown(Key::N) ? -1 : 0;
 
-        ViewCamera.Move({ Vert * speed * delta, Up * speed * delta, Hori * speed * delta });
+        auto by = speed * delta;
+
+        ViewCamera.Move({ Vert * by, Up * by, Hori * by });
 
         rndr.render(Scn, ViewCamera);
     }
