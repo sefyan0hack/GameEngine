@@ -5,6 +5,18 @@
 namespace gl {
     constexpr auto OPENGL_MODULE_NAME = OPENGL_LIB;
 
+    inline static auto OPENGL_FUNCTIONS_NAME = [](){
+        static std::vector<const char*> r;
+        static std::size_t i = 0;
+
+        #define APPEND_OPENGL_FUNCTIONS(name) r.push_back("gl"#name)
+        GLFUNCS(APPEND_OPENGL_FUNCTIONS)
+
+        return r;
+    }();
+
+    inline static auto OPENGL_FUNCTIONS_COUNT = OPENGL_FUNCTIONS_NAME.size();
+
     auto GetProcAddress(const char* name) -> void*;
 
     constexpr int32_t DepthBufferBits   = 24;
