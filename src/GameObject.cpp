@@ -10,9 +10,7 @@ GameObject::GameObject(glm::vec3 position, Material& matt, std::shared_ptr<Mesh>
     , m_Material(std::make_shared<Material>(matt))
     , m_Mesh(mesh)
     , m_Name(Name)
-{   
-    UpMatrix();
-    
+{    
     Count++;
 }
 
@@ -21,19 +19,12 @@ GameObject::GameObject(Transform transform, Material& matt, std::shared_ptr<Mesh
     , m_Material(std::make_shared<Material>(matt))
     , m_Mesh(mesh)
     , m_Name(Name)
-{
-    UpMatrix();
-    
+{    
     Count++;
 }
 
 GameObject::~GameObject()
 {
-}
-
-auto GameObject::UpMatrix() -> void
-{
-    m_Material->SetUniform("Model", Transformation());
 }
 
 auto GameObject::SetUp(std::vector<glm::vec3> InsPos) -> void
@@ -69,7 +60,6 @@ auto GameObject::SetUp(std::vector<glm::vec3> InsPos) -> void
 }
 
 
-
 auto GameObject::transform() const -> Transform
 {
     return m_Transform;
@@ -77,7 +67,7 @@ auto GameObject::transform() const -> Transform
 
 auto GameObject::Model() const -> glm::mat4
 {
-    return Transformation();
+    return m_Transform;
 }
 
 auto GameObject::SetPosition(const glm::vec3 &pos) -> void
@@ -90,31 +80,18 @@ auto GameObject::SetScale(const glm::vec3 &Scale) -> void
     m_Transform.scale = Scale;
 }
 
-auto GameObject::Rotate(const float &x, const float &y, const float &z) -> void
+auto GameObject::Rotate(float angle, glm::vec3 axis) -> void
 {
-    m_Transform.rotation = {x, y, z};
+    auto transformation = glm::mat4(1.0f); // wrong
+    m_Transform = glm::rotate((transformation * (glm::mat4)m_Transform), glm::radians(angle), axis);
 }
 
-auto GameObject::Transformation() const -> glm::mat4
-{
-    auto transformation = glm::mat4(1.0f);
-    const auto& t = m_Transform;
-    // Apply translation
-    transformation = glm::translate(transformation, t.position);
-    
-    // Apply rotation (in radians)
-    glm::quat rotation = glm::quat(glm::radians(glm::vec3(t.rotation.x, t.rotation.y, t.rotation.z)));
-    transformation = glm::mat4_cast(rotation) * transformation;
-    
-    // Apply scaling
-    transformation = glm::scale(transformation, t.scale);
-    return transformation;
-}
 
 auto GameObject::mesh() const -> std::shared_ptr<Mesh>
 {
     return m_Mesh;
 }
+
 auto GameObject::InstancePos() const -> const std::vector<glm::vec3> &
 {
     return m_InstancePos;
@@ -127,7 +104,6 @@ auto GameObject::material() const -> std::shared_ptr<Material>
 
 auto GameObject::Bind() const -> void
 {
-    Expect(m_Mesh->VAO != 0, "VAO is 0");
     gl::BindVertexArray(m_Mesh->VAO);
 }
 

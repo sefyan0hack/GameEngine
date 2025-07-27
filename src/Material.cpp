@@ -21,8 +21,6 @@ Material::Material(std::shared_ptr<Shader> vertex, std::shared_ptr<Shader> fragm
     Link();
     checkProgramLinkStatus(*this);
     gl::UseProgram(m_Id);
-    Info("Attribs count is {}", AttribsCount());
-    Info("Uniforms count is {}", UniformCount());
     DumpAttribs();
     DumpUniforms();
 
@@ -66,12 +64,11 @@ auto Material::id() const noexcept -> GLuint
 
 auto Material::Use() const -> void
 {
-    if(m_Id != 0){
-        gl::UseProgram(m_Id); // crache hire even i'm checking the id
-        for(const auto& [name, texture]: m_Textuers){
-            texture->Bind();
-            SetUniform(name, texture->TextureUnit());
-        }
+    gl::UseProgram(m_Id);
+
+    for(const auto& [name, texture]: m_Textuers){
+        texture->Bind();
+        SetUniform(name, texture->TextureUnit());
     }
 }
 

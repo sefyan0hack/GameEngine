@@ -16,21 +16,18 @@ public:
     GameObject(Transform transform, Material& matt, std::shared_ptr<Mesh> mesh, std::string Name = std::format("Obj{}", Count));
     ~GameObject();
 
-    auto UpMatrix()                                             -> void ;
-    auto SetUp(std::vector<glm::vec3> InsPos)                   -> void ;
-    auto SetPosition(const glm::vec3 &pos)                      -> void ;
-    auto SetScale(const glm::vec3 &Scale)                       -> void ;
-    auto Rotate(const float &x, const float &y, const float &z) -> void ;
+    auto SetUp(std::vector<glm::vec3> InsPos)                -> void ;
+    auto SetPosition(const glm::vec3 &pos)                   -> void ;
+    auto SetScale(const glm::vec3 &Scale)                    -> void ;
+    auto Rotate(float angle, glm::vec3 axis)                 -> void ;
     auto transform() const                                   -> Transform ;
-    auto Model() const                                 -> glm::mat4 ;
+    auto Model() const                                       -> glm::mat4 ;
     auto mesh() const                                        -> std::shared_ptr<Mesh> ;
     auto material() const                                    -> std::shared_ptr<Material> ;
     auto InstancePos() const                                 -> const std::vector<glm::vec3>&;
-    auto Bind() const                                           -> void;
-    auto Name() const                                           -> std::string;
+    auto Bind() const                                        -> void;
+    auto Name() const                                        -> std::string;
 
-private:
-    auto Transformation() const                                 -> glm::mat4 ;
 private:
     Transform m_Transform;
     std::shared_ptr<Material> m_Material;

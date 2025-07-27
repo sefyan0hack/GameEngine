@@ -18,6 +18,7 @@ auto Renderer::render(Scene &scene, Camera &camera) -> void
     for(auto &obj: scene.Entities()){
         auto material = obj.material();
         material->Use();
+        material->SetUniform("Model", obj.Model());
         material->SetUniform("View", camera.View());
         material->SetUniform("Projection", camera.Perspective());
         material->SetUniform("uCameraPos", camera.Position());
