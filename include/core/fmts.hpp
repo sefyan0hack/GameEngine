@@ -135,8 +135,8 @@ struct std::formatter<Type<T>> {
 
     auto format(const Type<T>&, std::format_context& ctx) const {
         return std::format_to(ctx.out(), 
-            "{{ Type: {}, Kind: {}, Hash: {}, Size: {}, Align: {}, Empty: {} }}",
-            Type<T>::name, Type<T>::kind, Type<T>::hash, Type<T>::size, Type<T>::alignment, Type<T>::empty
+            R"({{ Type: "{}", Parent: "{}", Kind: "{}", Hash: {}, Size: {}, Align: {}, Empty: {} }})",
+            Type<T>::name, Type<T>::parent, Type<T>::kind, Type<T>::hash, Type<T>::size, Type<T>::alignment, Type<T>::empty
         );
     }
 };

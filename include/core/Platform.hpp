@@ -156,11 +156,23 @@ inline static constexpr auto type_kind()  noexcept -> std::string_view
     else                                     return "unknown";
 }
 
+template<typename T>
+inline static constexpr auto type_parent() noexcept -> std::string_view
+{
+    constexpr auto type = ::type_name<T>();
+    constexpr auto end = type.find("::");
+    if constexpr (end != std::string_view::npos)
+        return type.substr(0, end);
+    else
+        return "";
+}
+
 using TypeInfo = std::pair<std::size_t, std::string_view>;
 
 template<class T>
 struct Type {
     constexpr static std::string_view name = ::type_name<T>();
+    constexpr static std::string_view parent = ::type_parent<T>();
     constexpr static std::string_view kind = ::type_kind<T>();
     constexpr static std::size_t hash = ::type_hash<T>();
     constexpr static std::size_t size = sizeof(T);
