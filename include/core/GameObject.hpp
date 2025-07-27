@@ -12,8 +12,8 @@
 class GameObject {
 public:
     friend struct std::formatter<GameObject>;
-    GameObject(glm::vec3 position, Material& matt, Mesh& mesh, std::string Name = std::format("Obj{}", Count));
-    GameObject(Transform transform, Material& matt, Mesh& mesh, std::string Name = std::format("Obj{}", Count));
+    GameObject(glm::vec3 position, Material& matt, std::shared_ptr<Mesh> mesh, std::string Name = std::format("Obj{}", Count));
+    GameObject(Transform transform, Material& matt, std::shared_ptr<Mesh> mesh, std::string Name = std::format("Obj{}", Count));
     ~GameObject();
 
     auto UpMatrix()                                             -> void ;
@@ -60,8 +60,8 @@ class SkyBox
 public:
   
   SkyBox()
-    : m_VertShader(SHADER(skybox)".vert", GL_VERTEX_SHADER)
-    , m_FragShader(SHADER(skybox)".frag", GL_FRAGMENT_SHADER)
+    : m_VertShader(std::make_shared<Shader>(SHADER(skybox)".vert", GL_VERTEX_SHADER))
+    , m_FragShader(std::make_shared<Shader>(SHADER(skybox)".frag", GL_FRAGMENT_SHADER))
     , m_Mesh(Mesh::CUBE)
     , m_Material(m_VertShader, m_FragShader)
   {
@@ -75,6 +75,9 @@ public:
       TextureCubeMap::base_to_6faces(BasePathName))
     );
   }
+
+  SkyBox(const SkyBox&) = delete;
+  auto operator=(const SkyBox&) -> SkyBox& = delete;
 
   auto render(const Camera& camera) -> void
   {
@@ -93,8 +96,8 @@ public:
   }
 
 private:
-  const Shader m_VertShader;
-  const Shader m_FragShader;
+  const std::shared_ptr<Shader> m_VertShader;
+  const std::shared_ptr<Shader> m_FragShader;
   Mesh m_Mesh;
   Material m_Material;
 };

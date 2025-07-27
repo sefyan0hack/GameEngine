@@ -15,24 +15,23 @@ using namespace std;
 class Game : public APP
 {
 private:
-    Shader vert, frag;
+    std::shared_ptr<Shader> vert, frag;
     Material Matt;
-    Mesh cubeMesh;
+    std::shared_ptr<Mesh> cubeMesh;
 
     Scene Scn;
     Renderer rndr;
     public: // init here
     Game()
-        : vert(SHADER(cube)".vert", GL_VERTEX_SHADER)
-        , frag(SHADER(cube)".frag", GL_FRAGMENT_SHADER)
+        : vert(std::make_shared<Shader>(SHADER(cube)".vert", GL_VERTEX_SHADER))
+        , frag(std::make_shared<Shader>(SHADER(cube)".frag", GL_FRAGMENT_SHADER))
         , Matt(vert, frag)
-        , cubeMesh(Mesh::CUBE)
+        , cubeMesh(std::make_shared<Mesh>(Mesh::CUBE))
     {
         ResManager.load(TEXTURE(brik.jpg), ResType::Texture2D);
         ResManager.load(TEXTURE(brik.png), ResType::Texture2D);
         ResManager.load(TEXTURE(annie_spratt.jpg), ResType::Texture2D);
         ResManager.load(TEXTURE(gravelly_sand_diff_4k.png), ResType::Texture2D);
-        ResManager.load(TEXTURE(forest.jpg), ResType::TextureCube);
 
         constexpr int32_t Grids = 200;
         [[maybe_unused]] std::vector<glm::vec3> positions(Grids * Grids * 4);

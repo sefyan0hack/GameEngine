@@ -5,10 +5,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-GameObject::GameObject(glm::vec3 position, Material& matt, Mesh& mesh, std::string Name)
+GameObject::GameObject(glm::vec3 position, Material& matt, std::shared_ptr<Mesh> mesh, std::string Name)
     : m_Transform(Transform(position))
     , m_Material(std::make_shared<Material>(matt))
-    , m_Mesh(std::make_shared<Mesh>(mesh))
+    , m_Mesh(mesh)
     , m_Name(Name)
 {   
     UpMatrix();
@@ -16,10 +16,10 @@ GameObject::GameObject(glm::vec3 position, Material& matt, Mesh& mesh, std::stri
     Count++;
 }
 
-GameObject::GameObject(Transform transform, Material &matt, Mesh &mesh, std::string Name)
+GameObject::GameObject(Transform transform, Material& matt, std::shared_ptr<Mesh> mesh, std::string Name)
     : m_Transform(transform)
     , m_Material(std::make_shared<Material>(matt))
-    , m_Mesh(std::make_shared<Mesh>(mesh))
+    , m_Mesh(mesh)
     , m_Name(Name)
 {
     UpMatrix();

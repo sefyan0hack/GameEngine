@@ -115,8 +115,8 @@ TEST(Formatters, DISABLED_Mesh){
 
 TEST(Formatters, DISABLED_Material){
     IF_THROWS_IGNOR({
-        auto shader_vert = Shader(SHADER(skybox)".vert", GL_VERTEX_SHADER);
-        auto shader_frag = Shader(SHADER(skybox)".frag", GL_FRAGMENT_SHADER);
+        auto shader_vert = std::make_shared<Shader>(SHADER(skybox)".vert", GL_VERTEX_SHADER);
+        auto shader_frag = std::make_shared<Shader>(SHADER(skybox)".frag", GL_FRAGMENT_SHADER);
 
         auto material = Material(shader_vert, shader_frag);
 
@@ -131,9 +131,9 @@ TEST(Formatters, DISABLED_Material){
 
 TEST(Formatters, DISABLED_GameObject){
     IF_THROWS_IGNOR({
-        auto shader_vert = Shader(SHADER(skybox)".vert", GL_VERTEX_SHADER);
-        auto shader_frag = Shader(SHADER(skybox)".frag", GL_FRAGMENT_SHADER);
-        auto mesh = Mesh(std::vector<Vertex>());
+        auto shader_vert = std::make_shared<Shader>(SHADER(skybox)".vert", GL_VERTEX_SHADER);
+        auto shader_frag = std::make_shared<Shader>(SHADER(skybox)".frag", GL_FRAGMENT_SHADER);
+        auto mesh = std::make_shared<Mesh>(std::vector<Vertex>());
         auto material = Material(shader_vert, shader_frag);
         
         auto gameobj = GameObject(vec3(), material, mesh);

@@ -7,7 +7,7 @@
 #include <glm/glm.hpp>
 
 
-Material::Material(const Shader& vertex, const Shader& fragment)
+Material::Material(std::shared_ptr<Shader> vertex, std::shared_ptr<Shader> fragment)
     : m_Id(gl::CreateProgram())
     , m_Shaders({vertex, fragment})
     , m_Textuers{ {"uDiffuseMap", std::make_shared<Texture2D>()} }
@@ -15,7 +15,7 @@ Material::Material(const Shader& vertex, const Shader& fragment)
 {
 
     for(const auto &shader : m_Shaders ){
-        gl::AttachShader(m_Id, shader.id());
+        gl::AttachShader(m_Id, shader->id());
     }
 
     Link();
@@ -35,7 +35,7 @@ Material::Material(const Material& other)
     , m_Textuers(other.m_Textuers)
 {
     for(const auto& shader : m_Shaders ){
-        gl::AttachShader(m_Id, shader.id());
+        gl::AttachShader(m_Id, shader->id());
     }
 
     Link();
@@ -233,10 +233,10 @@ auto Material::Attribs() const noexcept -> const std::map<std::string, GLSLVar>&
     return m_Attribs;
 }
 
-auto Material::Shaders() const noexcept -> const std::vector<Shader>&
-{
-    return m_Shaders;
-}
+// auto Material::Shaders() const noexcept -> const std::vector<Shader>&
+// {
+//     return m_Shaders;
+// }
 
 
 auto Material::texture(const std::string& name) const noexcept-> std::shared_ptr<Texture>

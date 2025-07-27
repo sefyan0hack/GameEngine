@@ -12,7 +12,7 @@ public:
     using GLSLVar = std::tuple<GLuint, GLenum, GLsizei>;
 
     friend struct std::formatter<Material>;
-    Material(const Shader& vertex, const Shader& fragment);
+    Material(std::shared_ptr<Shader> vertex, std::shared_ptr<Shader> fragment);
     // Material(std::initializer_list<Shader> shaders);
 
     Material(const Material& other);
@@ -31,7 +31,7 @@ public:
     auto texture(const std::string& name) const noexcept -> std::shared_ptr<Texture>;
     auto SetTexture(const std::string &name, std::shared_ptr<Texture> texture) -> void;
     auto SetDiffuse(std::shared_ptr<Texture> texture) -> void;
-    auto Shaders() const noexcept -> const std::vector<Shader>&;
+    // auto Shaders() const noexcept -> const std::vector<std::shared_ptr<Shader>>&;
     static auto GLSL_Type_to_string(GLenum type) -> const char*;
 
     auto SetUniform(const std::string &name, const GLuint &value) const -> void;
@@ -55,7 +55,7 @@ private:
 
 private:
     GLuint m_Id;
-    std::vector<Shader> m_Shaders;
+    std::vector<std::shared_ptr<Shader>> m_Shaders;
     std::map<std::string, GLSLVar> m_Attribs;
     std::map<std::string, GLSLVar> m_Uniforms;
     std::map<std::string, std::shared_ptr<Texture>> m_Textuers;
