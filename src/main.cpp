@@ -6,6 +6,7 @@
 #include <core/Scene.hpp>
 #include <core/Renderer.hpp>
 #include <core/Shader.hpp>
+#include <core/ShaderProgram.hpp>
 #include <core/Material.hpp>
 #include <core/Log.hpp>
 #include <core/ResourceManager.hpp>
@@ -16,7 +17,10 @@ class Game : public APP
 {
 private:
     std::shared_ptr<Shader> vert, frag;
-    Material Matt;
+    std::shared_ptr<ShaderProgram> CubeProgram;
+
+    std::shared_ptr<Material> Matt;
+    std::shared_ptr<Material> Matt2;
     std::shared_ptr<Mesh> cubeMesh;
 
     Scene Scn;
@@ -25,7 +29,9 @@ private:
     Game()
         : vert(std::make_shared<Shader>(SHADER(cube)".vert", GL_VERTEX_SHADER))
         , frag(std::make_shared<Shader>(SHADER(cube)".frag", GL_FRAGMENT_SHADER))
-        , Matt(vert, frag)
+        , CubeProgram(std::make_shared<ShaderProgram>(vert, frag))
+        , Matt(std::make_shared<Material>(CubeProgram))
+        , Matt2(std::make_shared<Material>(CubeProgram))
         , cubeMesh(std::make_shared<Mesh>(Mesh::CUBE))
     {
         ResManager.load(TEXTURE(brik.jpg), ResType::Texture2D);
@@ -33,29 +39,30 @@ private:
         ResManager.load(TEXTURE(annie_spratt.jpg), ResType::Texture2D);
         ResManager.load(TEXTURE(gravelly_sand_diff_4k.png), ResType::Texture2D);
 
-        constexpr int32_t Grids = 200;
-        [[maybe_unused]] std::vector<glm::vec3> positions(Grids * Grids * 4);
-        std::size_t index = 0;
-        for(int32_t i = -Grids; i < Grids; i ++){
-            for(int32_t j = -Grids; j < Grids; j ++)
-                positions[index++] = {i, 0, j};
-        }
+        // constexpr int32_t Grids = 5;
+
+        // for(int32_t i = -Grids; i < Grids; i ++){
+        //     for(int32_t j = -Grids; j < Grids; j ++){
+        //         Scn << GameObject({i, 0, j}, Matt, cubeMesh);
+        //     }
+        // }
 
         Scn.setSkyBox(TEXTURE(forest.jpg));
+        // Matt->SetDiffuse(ResManager.getTexture(TEXTURE(brik.png)));
 
-        Matt.SetDiffuse(ResManager.getTexture(TEXTURE(brik.png)));
         Scn << GameObject({0,0,0}, Matt, cubeMesh);
 
-        Matt.SetDiffuse(ResManager.getTexture(TEXTURE(annie_spratt.jpg)));
+        Matt->SetDiffuse(ResManager.getTexture(TEXTURE(annie_spratt.jpg)));
         Scn << GameObject({0,1,0}, Matt, cubeMesh);
 
-        Matt.SetDiffuse(ResManager.getTexture(TEXTURE(gravelly_sand_diff_4k.png)));
         Scn << GameObject({1,0,0}, Matt, cubeMesh);
         Scn << GameObject({0,0,1}, Matt, cubeMesh);
         Scn << GameObject({1,1,0}, Matt, cubeMesh);
-        Scn << GameObject({1,1,1}, Matt, cubeMesh);
 
-        Matt.SetTexture("uSkyboxMap", Scn.skyBox()->texture());
+        Matt2->SetDiffuse(ResManager.getTexture(TEXTURE(gravelly_sand_diff_4k.png)));
+        Scn << GameObject({1,1,1}, Matt2, cubeMesh);
+
+        Matt->SetTexture("uSkyboxMap", Scn.skyBox()->texture());
     }
 public:
 

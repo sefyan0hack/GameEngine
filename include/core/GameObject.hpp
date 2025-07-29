@@ -12,8 +12,8 @@
 class GameObject {
 public:
     friend struct std::formatter<GameObject>;
-    GameObject(glm::vec3 position, Material& matt, std::shared_ptr<Mesh> mesh, std::string Name = std::format("Obj{}", Count));
-    GameObject(Transform transform, Material& matt, std::shared_ptr<Mesh> mesh, std::string Name = std::format("Obj{}", Count));
+    GameObject(glm::vec3 position, std::shared_ptr<Material> matt, std::shared_ptr<Mesh> mesh, std::string Name = std::format("Obj{}", Count));
+    GameObject(Transform transform, std::shared_ptr<Material> matt, std::shared_ptr<Mesh> mesh, std::string Name = std::format("Obj{}", Count));
     ~GameObject();
 
     auto SetUp(std::vector<glm::vec3> InsPos)                -> void ;

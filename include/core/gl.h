@@ -166,6 +166,10 @@ inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
     X(LineWidth);\
     X(Hint);\
     X(PolygonOffset);\
+    X(BindBufferBase);\
+    X(BufferSubData);\
+    X(GetUniformBlockIndex);\
+    X(UniformBlockBinding);
 
 #if defined(WEB_PLT)
   // web (or ES-only) build

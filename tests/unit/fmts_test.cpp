@@ -122,8 +122,8 @@ TEST(Formatters, DISABLED_Material){
 
         auto r = std::format("{}", material);
         auto e = format(
-            R"({{ "id": {}, "attribs": {}, "uniforms": {} }})",
-            material.id(), MapWrapper{material.Attribs()}, MapWrapper{material.Uniforms()}
+            R"({{ "Program": {} }})",
+            *material.Program()
         );
         EXPECT_EQ(r, e);
     });
@@ -134,7 +134,7 @@ TEST(Formatters, DISABLED_GameObject){
         auto shader_vert = std::make_shared<Shader>(SHADER(skybox)".vert", GL_VERTEX_SHADER);
         auto shader_frag = std::make_shared<Shader>(SHADER(skybox)".frag", GL_FRAGMENT_SHADER);
         auto mesh = std::make_shared<Mesh>(std::vector<Vertex>());
-        auto material = Material(shader_vert, shader_frag);
+        auto material = std::make_shared<Material>(shader_vert, shader_frag);
         
         auto gameobj = GameObject(vec3(), material, mesh);
         

@@ -360,6 +360,7 @@ set(SOURCES
     src/Log.cpp
     src/ResourceManager.cpp
     src/Image.cpp
+    src/ShaderProgram.cpp
 	)
 
 
