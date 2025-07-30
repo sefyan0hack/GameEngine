@@ -13,6 +13,8 @@
 
 
 using namespace std;
+
+/// @brief Game class hire the client put the logic for the game all the variables and stastes
 class Game : public APP
 {
 private:
@@ -24,7 +26,9 @@ private:
 
     Scene Scn;
     Renderer rndr;
-    public: // init here
+    public:
+
+    /// @brief Get called at start of the game
     Game()
         : vert(std::make_shared<Shader>(SHADER(cube)".vert", GL_VERTEX_SHADER))
         , frag(std::make_shared<Shader>(SHADER(cube)".frag", GL_FRAGMENT_SHADER))
@@ -54,7 +58,8 @@ private:
         Matt->Bind(CubeProgram);
     }
 public:
-
+    /// @brief Run every frame at 1/delta fps
+    /// @param delta  inverse of fps how mush time took a frame to render
     auto Update(float delta) -> void override {
         float speed = 10.0f;
 
@@ -72,7 +77,9 @@ public:
         rndr.render(Scn, ViewCamera, CubeProgram);
     }
 
-public: // distroy hire
+public:
+
+    /// @brief Get called when the game quit
     ~Game(){
         Info("Game Destructor");
     }

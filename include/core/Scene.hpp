@@ -3,6 +3,7 @@
 #include <core/GameObject.hpp>
 #include <core/fmts.hpp>
 
+/// @brief  Scene has all the Entities to render + Sky box
 class Scene
 {
 public:
