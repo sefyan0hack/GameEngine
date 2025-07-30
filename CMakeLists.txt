@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.28)
 
-project(Engine LANGUAGES C CXX)
+project(
+    Engine 
+    LANGUAGES C CXX 
+    VERSION 0.0.1
+)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
@@ -23,6 +27,7 @@ string(REGEX MATCH "^[0-9]+" COMPILER_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSIO
 # Options
 ####################################################################################################
 option(TESTS            "Tests"               ON)
+option(DOCS             "Docs"                ON)
 option(ENABLE_COVERAGE  "Code coverage"       OFF)
 option(HARDEN           "Hardening"           OFF)
 option(STATIC_LINK      "Static link C++"     ON)
@@ -39,6 +44,9 @@ endif(MINGW)
 
 if(TESTS)
     message(STATUS "[Testing `ON`]")
+endif()
+if(DOCS)
+    message(STATUS "[Docs `ON`]")
 endif()
 if(ENABLE_COVERAGE)
     message(STATUS "[Coverage `ON`]")
@@ -283,6 +291,22 @@ else()
     rtti(OFF)
 endif()
 
+if(DOCS)
+    find_package(Doxygen REQUIRED)
+
+    set(DOXY_IN    "${CMAKE_SOURCE_DIR}/Doxyfile.in")
+    set(DOXY_OUT   "${CMAKE_BINARY_DIR}/Doxyfile")
+   
+    configure_file(${DOXY_IN} ${DOXY_OUT} @ONLY)
+   
+    add_custom_target(docs
+        COMMAND ${DOXYGEN_EXECUTABLE} ${DOXY_OUT}
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        COMMENT "Generating API documentation with Doxygen"
+        VERBATIM
+    )
+
+endif()
 
 ####################################################################################################
 # Compiler Check

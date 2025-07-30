@@ -1,0 +1,62 @@
+# Doxyfile.in
+PROJECT_NAME           = "@PROJECT_NAME@"
+PROJECT_NUMBER         = "@PROJECT_VERSION@"
+OUTPUT_DIRECTORY       = "@CMAKE_BINARY_DIR@/docs"
+INPUT                  = @CMAKE_SOURCE_DIR@
+EXCLUDE_PATTERNS       = @CMAKE_SOURCE_DIR@/build/* @CMAKE_SOURCE_DIR@/tests/* @CMAKE_SOURCE_DIR@/3party/*
+RECURSIVE              = YES
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+GENERATE_HTML          = YES
+MARKDOWN_SUPPORT       = YES
+GENERATE_LATEX         = NO
+OUTPUT_LANGUAGE        = English
+
+QUIET                  = YES
+WARNINGS               = YES
+
+WARN_IF_UNDOCUMENTED   = YES
+WARN_NO_PARAMDOC       = NO
+
+GENERATE_TODOLIST      = YES
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+TEMPLATE_RELATIONS     = YES
+
+EXCLUDE_SYMBOLS        = std::*
+
+BUILTIN_STL_SUPPORT    = YES
+CPP_CLI_SUPPORT        = YES
+DISTRIBUTE_GROUP_DOC   = YES
+
+# Modern layout options
+GENERATE_TREEVIEW      = YES
+FULL_SIDEBAR           = YES
+DISABLE_INDEX          = YES
+SEARCHENGINE           = YES
+SERVER_BASED_SEARCH    = YES
+
+# Appearance
+HTML_HEADER            = 
+HTML_FOOTER            = 
+HTML_COLORSTYLE        = TOGGLE
+HTML_DYNAMIC_SECTIONS  = YES
+
+# Mobile optimization
+ALWAYS_DETAILED_SEC    = YES
+
+GENERATE_MAN           = NO
+GENERATE_HTMLHELP      = NO
+GENERATE_RTF           = NO
+GENERATE_XML           = NO
+HTML_COLORSTYLE_SAT    = 40
+ENABLED_SECTIONS       = logo_on
+CASE_SENSE_NAMES       = NO
+
+TAGFILES               =
+ALLEXTERNALS           = NO
+PDF_HYPERLINKS         = YES
+USE_PDFLATEX           = YES
+STRIP_CODE_COMMENTS    = NO
+
+HTML_PROJECT_COOKIE    = doxygen_docs
