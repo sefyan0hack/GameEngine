@@ -24,7 +24,7 @@ jobs:
 
         - name: Prepare Artifact
           run: |
-            mkdir -p dist
+            mkdir -p site
             
             # Copy only essential files (js, html, wasm, data)
             find build-web/ -maxdepth 1 -type f \( \
@@ -32,7 +32,7 @@ jobs:
               -o -name "*.html" \
               -o -name "*.wasm" \
               -o -name "*.data" \
-            \) -exec cp {} dist/ \;
+            \) -exec cp {} site/ \;
 
         - name: Setup Pages
           uses: actions/configure-pages@v5
@@ -40,7 +40,7 @@ jobs:
         - name: Upload to Pages
           uses: actions/upload-pages-artifact@v3
           with:
-            path: dist
+            path: site
 
         - name: Deploy to GitHub Pages
           id: deployment

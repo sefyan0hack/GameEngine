@@ -31,13 +31,18 @@ jobs:
       - name: Build Docs
         run: cmake --build build --target docs
 
+      - name: Prepare Site Structure
+        run: |
+          mkdir -p site
+          cp -R build/docs/html site/docs
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Upload to Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: build/docs
+          path: site
 
       - name: Deploy to GitHub Pages
         id: deployment
