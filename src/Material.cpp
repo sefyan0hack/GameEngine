@@ -6,29 +6,18 @@
 #include <core/ResourceManager.hpp>
 #include <glm/glm.hpp>
 
-
-Material::Material(std::shared_ptr<ShaderProgram> program)
-    : m_ShaderProgram(program)
-    , m_Textuers{ {"uDiffuseMap", std::make_shared<Texture2D>()} }
-{
-}
-
-
-Material::Material(std::shared_ptr<Shader> vertex, std::shared_ptr<Shader> fragment)
-    : m_ShaderProgram(std::make_shared<ShaderProgram>(vertex, fragment))
-    , m_Textuers{ {"uDiffuseMap", std::make_shared<Texture2D>()} }
+Material::Material()
+    : m_Textuers{ {"uDiffuseMap", std::make_shared<Texture2D>()} }
 {
 }
 
 Material::Material(const Material& other)
-    : m_ShaderProgram(other.m_ShaderProgram)
-    , m_Textuers(other.m_Textuers)
+    : m_Textuers(other.m_Textuers)
 {
 }
 
 Material::Material(Material&& other) noexcept
-    : m_ShaderProgram(std::exchange(other.m_ShaderProgram, nullptr))
-    , m_Textuers(std::exchange(other.m_Textuers, {}))
+    : m_Textuers(std::exchange(other.m_Textuers, {}))
 {
 }
 
@@ -37,19 +26,13 @@ Material::~Material()
 }
 
 
-auto Material::Use() const -> void
+auto Material::Bind(std::shared_ptr<ShaderProgram> program) const -> void
 {
-    m_ShaderProgram->Use();
 
     for(const auto& [name, texture]: m_Textuers){
         texture->Bind();
-        m_ShaderProgram->SetUniform(name, texture->TextureUnit());
+        program->SetUniform(name, texture->TextureUnit());
     }
-}
-
-auto Material::Program() -> std::shared_ptr<ShaderProgram>
-{
-    return m_ShaderProgram;
 }
 
 

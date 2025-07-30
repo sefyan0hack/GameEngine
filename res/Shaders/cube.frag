@@ -4,7 +4,7 @@ in vec2 Uv;
 
 out vec4 FragColor;
 
-uniform vec3 uCameraPos;
+uniform vec3 Eye;
 uniform sampler2D uDiffuseMap;
 uniform samplerCube uSkyboxMap;
 
@@ -16,7 +16,7 @@ void main() {
     vec4 baseColor = texture(uDiffuseMap, Uv);
 
     // Calculate the view vector (from the fragment to the camera)
-    vec3 viewDir = normalize(WorldPos - uCameraPos);
+    vec3 viewDir = normalize(WorldPos - Eye);
 
     // Compute the reflection vector using the normalized normal
     vec3 reflVec = reflect(viewDir, normalize(Normal));

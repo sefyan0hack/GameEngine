@@ -47,8 +47,8 @@ struct std::formatter<GameObject> {
   }
   auto format(const GameObject& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    R"({{"name": "{}", "transform": {}, "material": {}, "mesh": {} }})"
-    , obj.m_Name, obj.m_Transform, *obj.m_Material, *obj.m_Mesh.get());
+    R"({{"name": "{}", "transform": {}, "mesh": {} }})"
+    , obj.m_Name, obj.m_Transform, *obj.m_Mesh.get());
   }
 };
 
@@ -59,8 +59,9 @@ public:
   SkyBox()
     : m_VertShader(std::make_shared<Shader>(SHADER(skybox)".vert", GL_VERTEX_SHADER))
     , m_FragShader(std::make_shared<Shader>(SHADER(skybox)".frag", GL_FRAGMENT_SHADER))
+    , m_Program(std::make_shared<ShaderProgram>(m_VertShader, m_FragShader))
     , m_Mesh(Mesh::CUBE)
-    , m_Material(m_VertShader, m_FragShader)
+    , m_Material()
   {
     m_Material.SetTexture("uDiffuseMap", std::make_shared<TextureCubeMap>());
   }
@@ -79,10 +80,11 @@ public:
   auto render(const Camera& camera) -> void
   {
     gl::DepthFunc(GL_LEQUAL);
-    m_Material.Use();
-    m_Material.SetUniform("View", glm::mat4(glm::mat3(camera.View())));
-    m_Material.SetUniform("Projection", camera.Perspective());
+    m_Program->Use();
+    m_Program->SetUniform("View", glm::mat4(glm::mat3(camera.View())));
+    m_Program->SetUniform("Projection", camera.Perspective());
     m_Mesh.Bind();
+    m_Material.Bind(m_Program);
     gl::DrawArrays(GL_TRIANGLES, 0, m_Mesh.VextexSize());
     gl::DepthFunc(GL_LESS);
   }
@@ -95,6 +97,7 @@ public:
 private:
   const std::shared_ptr<Shader> m_VertShader;
   const std::shared_ptr<Shader> m_FragShader;
+  const std::shared_ptr<ShaderProgram> m_Program;
   Mesh m_Mesh;
   Material m_Material;
 };

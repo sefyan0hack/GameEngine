@@ -4,6 +4,7 @@
 #include <core/Scene.hpp>
 #include <core/GameObject.hpp>
 #include <core/Camera.hpp>
+#include <core/ShaderProgram.hpp>
 
 Renderer::Renderer() {
 }
@@ -11,19 +12,24 @@ Renderer::~Renderer(){
 }
 
 
-auto Renderer::render(Scene &scene, Camera &camera) -> void
+auto Renderer::render(Scene &scene, Camera &camera, std::shared_ptr<ShaderProgram> program) -> void
 {
-    scene.skyBox()->render(camera);
+    // scene.skyBox()->render(camera);
+
+    // program->Use();
+    program->SetUniform("View", camera.View());
+    program->SetUniform("Projection", camera.Perspective());
+    program->SetUniform("Eye", camera.Position());
+
+    // scene.Entities().back().material()->Bind(program);
+
     //Drwaing
     for(auto &obj: scene.Entities()){
-        auto material = obj.material();
-        material->Use();
-        material->SetUniform("Model", obj.Model());
-        material->SetUniform("View", camera.View());
-        material->SetUniform("Projection", camera.Perspective());
-        material->SetUniform("uCameraPos", camera.Position());
+        program->SetUniform("Model", obj.Model());
+
         auto sizeIns = static_cast<GLsizei>(obj.InstancePos().size());
         auto mesh = obj.mesh();
+        // obj.material()->Bind(program);
         draw(*mesh.get(), sizeIns);
     }
 }

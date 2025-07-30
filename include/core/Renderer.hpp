@@ -5,6 +5,7 @@
 class Scene;
 class Camera;
 class Mesh;
+class ShaderProgram;
 
 class Renderer
 {
@@ -12,7 +13,7 @@ class Renderer
         Renderer();
         ~Renderer();
         
-        auto render(Scene &scene, Camera &camera) -> void;
+        auto render(Scene &scene, Camera &camera, std::shared_ptr<ShaderProgram> program) -> void;
     private:
         auto draw(const Mesh& mesh, GLsizei count = 1) -> void;
         FOR_TEST  

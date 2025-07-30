@@ -113,35 +113,35 @@ TEST(Formatters, DISABLED_Mesh){
     EXPECT_EQ(r, e);
 }
 
-TEST(Formatters, DISABLED_Material){
-    IF_THROWS_IGNOR({
-        auto shader_vert = std::make_shared<Shader>(SHADER(skybox)".vert", GL_VERTEX_SHADER);
-        auto shader_frag = std::make_shared<Shader>(SHADER(skybox)".frag", GL_FRAGMENT_SHADER);
+// TEST(Formatters, DISABLED_Material){
+//     IF_THROWS_IGNOR({
+//         auto shader_vert = std::make_shared<Shader>(SHADER(skybox)".vert", GL_VERTEX_SHADER);
+//         auto shader_frag = std::make_shared<Shader>(SHADER(skybox)".frag", GL_FRAGMENT_SHADER);
 
-        auto material = Material(shader_vert, shader_frag);
+//         auto material = Material();
 
-        auto r = std::format("{}", material);
-        auto e = format(
-            R"({{ "Program": {} }})",
-            *material.Program()
-        );
-        EXPECT_EQ(r, e);
-    });
-}
+//         auto r = std::format("{}", material);
+//         auto e = format(
+//             R"({{ "Program": {} }})", // ??
+//             *material.Program()
+//         );
+//         EXPECT_EQ(r, e);
+//     });
+// }
 
 TEST(Formatters, DISABLED_GameObject){
     IF_THROWS_IGNOR({
         auto shader_vert = std::make_shared<Shader>(SHADER(skybox)".vert", GL_VERTEX_SHADER);
         auto shader_frag = std::make_shared<Shader>(SHADER(skybox)".frag", GL_FRAGMENT_SHADER);
         auto mesh = std::make_shared<Mesh>(std::vector<Vertex>());
-        auto material = std::make_shared<Material>(shader_vert, shader_frag);
+        auto material = std::make_shared<Material>();
         
         auto gameobj = GameObject(vec3(), material, mesh);
         
         auto r = std::format("{}", gameobj);
         auto e = format(
-            R"({{"name": "{}", "transform": {}, "material": {}, "mesh": {} }})",
-            gameobj.Name(), gameobj.transform(), *gameobj.material(), *gameobj.mesh()
+            R"({{"name": "{}", "transform": {}, "mesh": {} }})",
+            gameobj.Name(), gameobj.transform(), *gameobj.mesh()
         );
         EXPECT_EQ(r, e);
     });
