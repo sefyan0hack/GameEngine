@@ -3,7 +3,7 @@
 #pragma GCC system_header
 #endif
 
-// disable warning
+/// @brief Disable warning Macro
 #if defined(MSVC_CPL)
     #define NO_WARNING_BEGIN \
         __pragma(warning(push, 0))
@@ -27,6 +27,7 @@
     #define NO_WARNING_END
 #endif
 
+/// @brief Get correct res directory for Texture and Shader
 #ifdef PROJECT_SOURCE_DIR
     #define TEXTURE(str)  PROJECT_SOURCE_DIR"/res/"#str
     #define SHADER(str)   PROJECT_SOURCE_DIR"/res/Shaders/"#str
@@ -39,13 +40,16 @@
     #error "no opengl lib path"
 #endif
 
+/// @brief Add sub class needed for testing to access non public members
 #define FOR_TEST public: template<uint16_t n> struct Test;
 
 #include <type_traits>
+/// @brief Check if a given variable is static 
 template<auto var>
 concept is_static = std::is_object_v<std::remove_pointer_t<decltype(var)>> && !std::is_member_object_pointer_v<decltype(var)>;
 
 #ifndef MEMBER_VAR
+/// @brief declare member variable in interface to test need it as a hack
 #define MEMBER_VAR(Var) \
     const std::remove_reference_t<decltype(member.Var)>& Var = [&]() -> const std::remove_reference_t<decltype(member.Var)>& { \
         using class_type = std::remove_cvref_t<decltype(member)>; \
@@ -59,10 +63,12 @@ concept is_static = std::is_object_v<std::remove_pointer_t<decltype(var)>> && !s
 #endif
 
 #ifndef MEMBER_FUN
+/// @brief declare member function in interface to test need it as a hack
 #   define MEMBER_FUN(Name) auto Name(auto&&... args) { return member.Name(std::forward<decltype(args)>(args)...); }
 #endif
 
 #ifndef MEMBER_OPCAST
+/// @brief declare cast operator in interface to test need it as a hack
 #   define MEMBER_OPCAST(Type) operator Type() const noexcept { return member.operator Type(); }
 #endif
 
@@ -75,6 +81,7 @@ concept is_static = std::is_object_v<std::remove_pointer_t<decltype(var)>> && !s
 #include <memory>
 #include <string>
 
+/// @brief demangle c++ symbole   only for clang/linux and gcc/(win32, linux)
 inline static auto demangle(const char* name) noexcept -> std::string
 {
     [[maybe_unused]] int32_t status = -1;
@@ -89,7 +96,9 @@ inline static auto demangle(const char* name) noexcept -> std::string
     #endif
 }
 
-
+/// @brief get Type name in string form
+/// @param T is the type
+/// @return string view aka "T"
 template <typename T>
 inline static constexpr auto type_name() noexcept -> std::string_view
 {
@@ -117,6 +126,9 @@ inline static constexpr auto type_name() noexcept -> std::string_view
     #endif
 }
 
+/// @brief simple DJB2 hash algorithm
+/// @param str string to hash
+/// @return size_t integer aka hash
 inline static constexpr auto DJB2_hash(std::string_view str) -> std::size_t
 {
     std::size_t hash = 5381;
@@ -126,6 +138,9 @@ inline static constexpr auto DJB2_hash(std::string_view str) -> std::size_t
     return hash;
 }
 
+/// @brief get Type hash
+/// @param T is the type
+/// @return size_t integer aka hash
 template <typename T>
 inline static constexpr auto type_hash() noexcept -> std::size_t
 {
@@ -136,6 +151,9 @@ inline static constexpr auto type_hash() noexcept -> std::size_t
 #endif
 }
 
+/// @brief get Type hash take that argument aka varable and the type is decltype(type)
+/// @param type variable of type decltype(type)
+/// @return size_t integer aka hash
 inline static constexpr auto type_hash(auto type) noexcept -> std::size_t
 {
 #ifdef __cpp_rtti
@@ -145,7 +163,9 @@ inline static constexpr auto type_hash(auto type) noexcept -> std::size_t
 #endif
 }
 
-
+/// @brief get the king of the T
+/// @param T is the type
+/// @return a string one of of `primitive/class/enum/union`
 template<typename T>
 inline static constexpr auto type_kind()  noexcept -> std::string_view
 {
@@ -156,6 +176,9 @@ inline static constexpr auto type_kind()  noexcept -> std::string_view
     else                                     return "unknown";
 }
 
+/// @brief get the parent aka base class or namespace before `*::T`
+/// @param T is the type
+/// @return the parent is eather a type or some type of namespace
 template<typename T>
 inline static constexpr auto type_parent() noexcept -> std::string_view
 {
@@ -167,21 +190,37 @@ inline static constexpr auto type_parent() noexcept -> std::string_view
         return "";
 }
 
+/// @brief Typeinfo holdes a hash and a name
 using TypeInfo = std::pair<std::size_t, std::string_view>;
 
+/// @brief allot of help full info about type
 template<class T>
 struct Type {
+    /// @brief type name of T
     constexpr static std::string_view name = ::type_name<T>();
+
+    /// @brief  type parent name of T
     constexpr static std::string_view parent = ::type_parent<T>();
+
+    /// @brief  type kind name of T
     constexpr static std::string_view kind = ::type_kind<T>();
+
+    /// @brief  type hash name of T
     constexpr static std::size_t hash = ::type_hash<T>();
+
+    /// @brief  type size name of T
     constexpr static std::size_t size = sizeof(T);
+
+    /// @brief  type allingment name of T
     constexpr static std::size_t alignment = alignof(T);
+
+    /// @brief  is T empty type or not
     constexpr static bool empty = std::is_empty_v<T>;
 };
 
-
+/// @brief sys name space has some usefull info about the system host
 namespace sys {
+    /// @brief enum of Target systems
     enum class Target : uint8_t
     {
         Windows,
@@ -190,6 +229,7 @@ namespace sys {
         Unknown
     };
 
+    /// @brief enum of Arch systems
     enum class Arch : uint8_t
     {
         x86_64,
@@ -200,6 +240,7 @@ namespace sys {
         Unknown
     };
 
+    /// @brief Target system built for
     #if defined(WINDOWS_PLT)
     constexpr auto Target = sys::Target::Windows;
     #elif defined(LINUX_PLT)
@@ -210,6 +251,7 @@ namespace sys {
     constexpr auto Target = sys::Target::Unknown;
     #endif
 
+    /// @brief Arch system built for
     #if   defined(__x86_64__)  || defined(_M_AMD64)
         constexpr auto Arch = sys::Arch::x86_64;
     #elif defined(__aarch64__) || defined(_M_ARM64)
@@ -224,11 +266,13 @@ namespace sys {
         constexpr auto Arch = sys::Arch::Unknown;
     #endif
 
+    /// @brief Target system in string form
     constexpr const char* TargetName = 
         Target == Target::Windows ? "Windows" :
         Target == Target::Linux   ? "Linux"   :
         Target == Target::Web     ? "Web"     : "UNKNOWN";
 
+    /// @brief Arch in string form
     constexpr const char* ArchName =
         Arch == Arch::x86_64 ? "x86_64" :
         Arch == Arch::Arm64  ? "Arm64"  :
@@ -236,6 +280,7 @@ namespace sys {
         Arch == Arch::Arm    ? "Arm"    :
         Arch == Arch::Wasm   ? "Wasm"   : "UNKNOWN";
 
+    /// @brief Time stamp of the build
     constexpr const char* TimeStamp = __TIMESTAMP__;
 } //namespace sys
 
@@ -243,6 +288,7 @@ namespace sys {
 #define CXX_EXCEPTIONS
 #endif
 
+/// @brief helpful macro in testing adapt if im using exceptions or not
 #if defined(CXX_EXCEPTIONS)
 #define IF_THROWS_IGNOR(...) try {__VA_ARGS__} catch(...){}
 #else
