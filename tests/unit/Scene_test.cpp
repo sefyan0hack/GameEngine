@@ -11,9 +11,8 @@ using Scene_Test_Ctor1 = Scene::Test<1>;
     \
     MEMBER_FUN(operator <<);\
     MEMBER_FUN(Entities);\
-    MEMBER_FUN(setSkyBox);\
-    MEMBER_FUN(skyBox);\
-    MEMBER_FUN(to_json);
+    MEMBER_FUN(SetSkyBox);\
+    MEMBER_FUN(SkyBox);
 
 template<>
 struct Scene::Test<1> : public ::testing::Test {

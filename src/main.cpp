@@ -35,13 +35,14 @@ private:
         , CubeProgram(std::make_shared<ShaderProgram>(vert, frag))
         , Matt(std::make_shared<Material>())
         , cubeMesh(std::make_shared<Mesh>(Mesh::CUBE))
+        , rndr(Scn)
     {
         ResManager.load(TEXTURE(brik.jpg), ResType::Texture2D);
         ResManager.load(TEXTURE(brik.png), ResType::Texture2D);
         ResManager.load(TEXTURE(annie_spratt.jpg), ResType::Texture2D);
         ResManager.load(TEXTURE(gravelly_sand_diff_4k.png), ResType::Texture2D);
 
-        constexpr int32_t Grids = 5;
+        constexpr int32_t Grids = 4;
 
         for(int32_t i = -Grids; i < Grids; i ++){
             for(int32_t j = -Grids; j < Grids; j ++){
@@ -49,22 +50,16 @@ private:
             }
         }
 
-
-        Scn.setSkyBox(TEXTURE(forest.jpg));
+        Scn.SetSkyBox(TEXTURE(forest.jpg));
         Matt->SetDiffuse(ResManager.getTexture(TEXTURE(brik.png)));
-        Matt->SetTexture("uSkyboxMap", Scn.skyBox()->texture());
+        Matt->SetTexture("uSkyboxMap", Scn.SkyBox()->texture());
 
-        CubeProgram->Use();
-        Matt->Bind(CubeProgram);
     }
 public:
     /// @brief Run every frame at 1/delta fps
-    /// @param delta  inverse of fps how mush time took a frame to render
+    /// @param delta  inverse of fps how mush time took a frame to Render
     auto Update(float delta) -> void override {
-        float speed = 10.0f;
-
-        if(Keyboard.IsDown(Key::LeftShift))
-            speed *= 2;
+        float speed = Keyboard.IsDown(Key::LeftShift)? 20.0f : 10.0f;
 
         auto Hori = Keyboard.IsDown(Key::W) ? 1 : Keyboard.IsDown(Key::S) ? -1 : 0;
         auto Vert = Keyboard.IsDown(Key::D) ? 1 : Keyboard.IsDown(Key::A) ? -1 : 0;
@@ -73,8 +68,9 @@ public:
         auto by = speed * delta;
 
         ViewCamera.Move({ Vert * by, Up * by, Hori * by });
-        Info("{}", SmoothedFPS());
-        rndr.render(Scn, ViewCamera, CubeProgram);
+
+        // Info("{}", SmoothedFPS());
+        rndr.Render(ViewCamera, CubeProgram);
     }
 
 public:

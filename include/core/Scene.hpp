@@ -3,7 +3,7 @@
 #include <core/GameObject.hpp>
 #include <core/fmts.hpp>
 
-/// @brief  Scene has all the Entities to render + Sky box
+/// @brief  Scene has all the Entities to Render + Sky box
 class Scene
 {
 public:
@@ -12,12 +12,13 @@ public:
     ~Scene();
     auto operator << (GameObject obj) -> void;
 
-    auto Entities() -> std::vector<GameObject>&;
-    auto setSkyBox(const std::string& BasePathName) -> void;
-    auto skyBox() -> std::unique_ptr<SkyBox>&;
-    auto to_json() const -> std::string;
+    auto Entities() const -> std::span<const GameObject>;
+    auto SetSkyBox(const std::string& BasePathName) -> void;
+    auto SkyBox() const -> const std::unique_ptr<class SkyBox>&;
+    auto Clear() -> void;
+
 private:
-    std::unique_ptr<SkyBox> m_SkyBox;
+    std::unique_ptr<class SkyBox> m_SkyBox;
     std::vector<GameObject> m_Entities;
 
     FOR_TEST

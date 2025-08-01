@@ -77,7 +77,7 @@ public:
   SkyBox(const SkyBox&) = delete;
   auto operator=(const SkyBox&) -> SkyBox& = delete;
 
-  auto render(const Camera& camera) -> void
+  auto Render(const Camera& camera) const -> void
   {
     gl::DepthFunc(GL_LEQUAL);
     m_Program->Use();

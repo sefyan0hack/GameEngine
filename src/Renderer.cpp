@@ -6,30 +6,31 @@
 #include <core/Camera.hpp>
 #include <core/ShaderProgram.hpp>
 
-Renderer::Renderer() {
-}
+Renderer::Renderer(const Scene& scene)
+    :m_Scene(scene)
+{}
 Renderer::~Renderer(){
 }
 
 
-auto Renderer::render(Scene &scene, Camera &camera, std::shared_ptr<ShaderProgram> program) -> void
+auto Renderer::Render(Camera &camera, std::shared_ptr<ShaderProgram> program) -> void
 {
-    // scene.skyBox()->render(camera);
+    m_Scene.SkyBox()->Render(camera);
 
-    // program->Use();
+    program->Use();
     program->SetUniform("View", camera.View());
     program->SetUniform("Projection", camera.Perspective());
     program->SetUniform("Eye", camera.Position());
 
-    // scene.Entities().back().material()->Bind(program);
+    // m_Scene.Entities().back().material()->Bind(program);
 
     //Drwaing
-    for(auto &obj: scene.Entities()){
+    for(auto &obj: m_Scene.Entities()){
         program->SetUniform("Model", obj.Model());
 
         auto sizeIns = static_cast<GLsizei>(obj.InstancePos().size());
         auto mesh = obj.mesh();
-        // obj.material()->Bind(program);
+        obj.material()->Bind(program);
         draw(*mesh.get(), sizeIns);
     }
 }

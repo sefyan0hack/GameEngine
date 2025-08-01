@@ -2,36 +2,35 @@
 #include <core/GameObject.hpp>
 
 Scene::Scene()
-    : m_SkyBox(std::make_unique<SkyBox>())
+    : m_SkyBox(std::make_unique<class SkyBox>())
 {}
 
 Scene::~Scene()
 {
 }
 
-auto Scene::Entities() -> std::vector<GameObject>&
-{
-    return m_Entities;
-}
-
-
-auto Scene::setSkyBox(const std::string& BasePathName) -> void
-{
-    m_SkyBox = std::make_unique<SkyBox>(BasePathName);
-}
-
-auto Scene::skyBox() -> std::unique_ptr<SkyBox>&
-{
-    return m_SkyBox;
-}
 
 auto Scene::operator<<(GameObject obj) -> void
 {
     m_Entities.emplace_back(std::move(obj));
 }
 
-
-auto Scene::to_json() const -> std::string
+auto Scene::Entities() const -> std::span<const GameObject>
 {
-    return std::format("{}", *this);
+    return m_Entities;
+}
+
+auto Scene::SetSkyBox(const std::string& BasePathName) -> void
+{
+    m_SkyBox = std::make_unique<class SkyBox>(BasePathName);
+}
+
+auto Scene::SkyBox() const -> const std::unique_ptr<class SkyBox>&
+{
+    return m_SkyBox;
+}
+
+auto Scene::Clear() -> void
+{
+    m_Entities.clear();
 }
