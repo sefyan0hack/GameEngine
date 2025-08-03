@@ -348,6 +348,10 @@ auto OpenGL::CreationTime() const -> std::time_t
     return m_CreationTime;
 }
 
+auto gl::OpenGL::HasExtension(const std::string &ext) const -> bool
+{
+    return std::ranges::contains(m_Extensions, ext);
+}
 
 auto OpenGL::Vendor() -> std::string
 {

@@ -121,8 +121,7 @@ auto APP::LoopBody(void* ctx) -> void
         static bool webPolyModeChecked = false;
         static bool webPolyModeAvailable = false;
         if (!webPolyModeChecked) {
-            auto exts = app->Window.opengl()->Extensions();
-            webPolyModeAvailable = std::ranges::contains(exts, "WEBGL_polygon_mode");
+            webPolyModeAvailable = app->Window.opengl()->HasExtension("WEBGL_polygon_mode");
             webPolyModeChecked = true;
         }
         #endif

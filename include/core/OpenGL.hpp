@@ -47,6 +47,7 @@ class OpenGL
         auto MinorV() const -> GLint;
         auto isValid() const -> bool;
         auto CreationTime() const -> std::time_t;
+        auto HasExtension(const std::string& ext) const -> bool;
 
         static auto Vendor() -> std::string;
         static auto Renderer() -> std::string;

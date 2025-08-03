@@ -69,7 +69,6 @@ public:
 
         ViewCamera.Move({ Vert * by, Up * by, Hori * by });
 
-        // Info("{}", SmoothedFPS());
         rndr.Render(ViewCamera, CubeProgram);
     }
 
