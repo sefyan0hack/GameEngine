@@ -185,12 +185,13 @@ auto Shader::Content() const -> std::vector<GLchar>
 
 auto Shader::GetShaderInfo(GLuint id, GLenum what) -> std::optional<GLint>
 {
-    auto maxGLint = std::numeric_limits<GLint>::max();
-    GLint result = maxGLint;
+    constexpr auto INVALID = std::numeric_limits<GLint>::max();
+
+    GLint result = INVALID;
 
     gl::GetShaderiv(id, what, &result);
 
-    if(result != maxGLint){
+    if(result != INVALID){
         return result;
     }
     else{

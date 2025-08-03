@@ -346,9 +346,9 @@ auto CWindow::KeyboardCallback(int32_t eventType, const EmscriptenKeyboardEvent*
 {
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_FALSE;
-	constexpr auto MAX_UINT32_T = std::numeric_limits<uint32_t>::max();
+    constexpr auto INVALID = std::numeric_limits<uint32_t>::max();
 
-    uint32_t vk = MAX_UINT32_T;
+    uint32_t vk = INVALID;
 
     // Alphanumeric keys
 	if (strncmp(e->code, "Key", 3) == 0 && e->code[3] >= 'A' && e->code[3] <= 'Z') {
@@ -449,7 +449,7 @@ auto CWindow::KeyboardCallback(int32_t eventType, const EmscriptenKeyboardEvent*
 	else if (strcmp(e->code, "MediaStop") == 0) vk = DOM_VK_MEDIA_STOP;
 	else if (strcmp(e->code, "MediaPlayPause") == 0) vk = DOM_VK_MEDIA_PLAY_PAUSE;
 
-	if (vk != MAX_UINT32_T) {
+	if (vk != INVALID) {
         Key key = Keyboard::FromNative(vk);
 
 		switch (eventType)

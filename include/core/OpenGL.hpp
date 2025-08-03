@@ -49,10 +49,15 @@ class OpenGL
         auto CreationTime() const -> std::time_t;
         auto HasExtension(const std::string& ext) const -> bool;
 
+        auto GetInteger(GLenum name) -> std::optional<GLint>;
+
         static auto Vendor() -> std::string;
         static auto Renderer() -> std::string;
         static auto Extensions() -> std::vector<std::string>;
         static auto MaxTextureUnits() -> GLint;
+        static auto MaxTextureSize() -> GLint;
+        static auto MaxTexture3DSize() -> GLint;
+        static auto MaxTextureCubeMapSize() -> GLint;
         
         static auto DummyCtx() -> GLCTX;
     private:
@@ -75,6 +80,9 @@ class OpenGL
         inline static std::string m_Renderer{};
         inline static std::vector<std::string> m_Extensions{};
         inline static GLint m_MaxTextureUnits{};
+        inline static GLint m_MaxTextureSize{};
+        inline static GLint m_MaxTexture3DSize{};
+        inline static GLint m_MaxTextureCubeMapSize{};
 
     public:
         #undef GLFUN
@@ -101,4 +109,4 @@ inline decltype(&gl##name)& name = OpenGL::name
 
 GLFUNCS(GLFUN)
 
-} //namespace gl
+} //namespace g

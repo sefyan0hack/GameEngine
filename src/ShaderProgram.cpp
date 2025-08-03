@@ -226,12 +226,13 @@ auto ShaderProgram::Attribs() const noexcept -> const std::map<std::string, GLSL
 
 auto ShaderProgram::GetProgramInfo(GLint id, GLenum what) -> std::optional<GLint>
 {
-    auto maxGLint = std::numeric_limits<GLint>::max();
-    GLint result = maxGLint;
+    constexpr auto INVALID = std::numeric_limits<GLint>::max();
+
+    GLint result = INVALID;
 
     gl::GetProgramiv(id, what, &result);
 
-    if(result != maxGLint){
+    if(result != INVALID){
         return result;
     }else{
         Info("{}", GL_ERR_to_string(glGetError()));
