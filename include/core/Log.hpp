@@ -174,7 +174,14 @@ public:
   {}
   auto throwing_routine() const noexcept -> const char* { return m_Location.function_name(); }
 
-  auto trace() const noexcept -> const char* { return to_string(m_Trace).c_str(); }
+  auto trace() const noexcept -> const char* { 
+    #ifdef __cpp_lib_stacktrace
+      return to_string(m_Trace).c_str();
+    #else
+      return "no_stack_trace";
+    #endif
+
+  }
   auto when()  const noexcept -> const char* { return std::format("{:%Y-%m-%d %H:%M:%OS}", m_Timestamp).c_str(); }
   auto where() const noexcept -> const char* { return std::format("{}:{}", m_Location.file_name(), m_Location.line()).c_str(); }
   auto what()  const noexcept -> const char* override { return runtime_error::what(); }
