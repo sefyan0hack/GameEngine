@@ -123,12 +123,7 @@ auto Log(
   }
   
   if constexpr (lvl == Log_LvL::ERR || lvl == Log_LvL::EXPT){
-    #ifdef CXX_EXCEPTIONS
-      throw std::runtime_error(msg);
-    #else
-      std::cerr << msg;
-      std::abort();
-    #endif
+    throw std::runtime_error(msg);
   }
 }
 

@@ -41,7 +41,6 @@ option(STATIC_LINK      "Static link C++"     ON)
 option(ASAN             "Address Sanitizer"   OFF)
 option(USAN             "Undefined Sanitizer" OFF)
 option(TSAN             "Thread Sanitizer"    OFF)
-option(EXCEPTIONS       "Exciptions"          OFF)
 
 if(MINGW) #disable RTTI becaus of bug in mingw redifinition when static link libstdc++
 option(RTTI             "RunTime Type Info"   OFF)
@@ -76,9 +75,6 @@ endif()
 if(RTTI)
     message(STATUS "[Rtti `ON`]")
 endif()
-if(EXCEPTIONS)
-    message(STATUS "[Exceptions `ON`]")
-endif()
 
 ####################################################################################################
 # Emscripten-specific setup 
@@ -89,12 +85,9 @@ if(EMSCRIPTEN)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
     set(STATIC_LINK OFF)
-    set(RTTI OFF)
 
-    
     add_compile_options(
         -Oz
-        -std=c++23
         -Wno-character-conversion -Wno-dollar-in-identifier-extension
         -msimd128
         -fPIC
@@ -113,26 +106,12 @@ if(EMSCRIPTEN)
         -sALLOW_MEMORY_GROWTH=1
         -sFULL_ES3=1
         -sSTB_IMAGE=1
-        -sDISABLE_EXCEPTION_THROWING=1
-        -sDISABLE_EXCEPTION_CATCHING=1
-        --embed-file ${CMAKE_SOURCE_DIR}/res
+        -sDISABLE_EXCEPTION_THROWING=0
+        -sDISABLE_EXCEPTION_CATCHING=0
         -sPTHREAD_POOL_SIZE=4
         -sEXIT_RUNTIME=1
-        # -sPROXY_TO_PTHREAD
-        # -sOFFSCREENCANVAS_SUPPORT=1
-
-        # -sNO_EXIT_RUNTIME=1
-        # --profiling
-        # -g3
-        # -sASSERTIONS=2
-        # -sASSERTIONS=2
-        # -sSTRICT=1
-        # -sMALLOC=emmalloc
-        # -sENVIRONMENT=web
-        # -sDYNAMIC_EXECUTION=0
-        # -sWASM=1
-        # -lGL
-        # -sSTACK_OVERFLOW_CHECK=2
+        -sASSERTIONS=1
+        --embed-file ${CMAKE_SOURCE_DIR}/res
     )
 
     configure_file(
@@ -280,23 +259,6 @@ endif()
 
 rtti(${RTTI})
 
-if(EXCEPTIONS)
-    add_compile_options( 
-        "$<$<CXX_COMPILER_ID:MSVC>:/EHsc>"
-        "$<$<CXX_COMPILER_ID:Clang,GNU>:-fexceptions>"
-    )
-else()
-    if(MSVC)
-    add_definitions(/D_HAS_EXCEPTIONS=0)
-    string(REGEX REPLACE "/EH[a-z]+" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-    endif()
-    add_compile_options(
-        "$<$<CXX_COMPILER_ID:MSVC>:/EHs-c-;/wd4530>"
-        "$<$<CXX_COMPILER_ID:Clang,GNU>:-fno-exceptions>"
-    )
-    # disable rtti when exception off
-    rtti(OFF)
-endif()
 
 if(DOCS)
     find_package(Doxygen REQUIRED)

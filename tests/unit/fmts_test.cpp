@@ -90,16 +90,14 @@ TEST(Formatters, Camera){
 // disable opengl tests `Github Runner are headless`
 
 TEST(Formatters, DISABLED_Shader){
-    IF_THROWS_IGNOR({
-        auto shader = Shader();
+    auto shader = Shader();
 
-        auto r = std::format("{}", shader);
-        auto e = format(
-            R"({{ "id": {}, "type": "{}", "file": "{}" }})",
-            shader.id(), shader.TypeName(), shader.File()
-        );
-        EXPECT_EQ(r, e);
-    });
+    auto r = std::format("{}", shader);
+    auto e = format(
+        R"({{ "id": {}, "type": "{}", "file": "{}" }})",
+        shader.id(), shader.TypeName(), shader.File()
+    );
+    EXPECT_EQ(r, e);
 }
 
 TEST(Formatters, DISABLED_Mesh){
@@ -114,35 +112,31 @@ TEST(Formatters, DISABLED_Mesh){
 }
 
 // TEST(Formatters, DISABLED_Material){
-//     IF_THROWS_IGNOR({
-//         auto shader_vert = std::make_shared<Shader>(SHADER(skybox)".vert", GL_VERTEX_SHADER);
-//         auto shader_frag = std::make_shared<Shader>(SHADER(skybox)".frag", GL_FRAGMENT_SHADER);
+//     auto shader_vert = std::make_shared<Shader>(SHADER(skybox)".vert", GL_VERTEX_SHADER);
+//     auto shader_frag = std::make_shared<Shader>(SHADER(skybox)".frag", GL_FRAGMENT_SHADER);
 
-//         auto material = Material();
+//     auto material = Material();
 
-//         auto r = std::format("{}", material);
-//         auto e = format(
-//             R"({{ "Program": {} }})", // ??
-//             *material.Program()
-//         );
-//         EXPECT_EQ(r, e);
-//     });
+//     auto r = std::format("{}", material);
+//     auto e = format(
+//         R"({{ "Program": {} }})", // ??
+//         *material.Program()
+//     );
+//     EXPECT_EQ(r, e);
 // }
 
 TEST(Formatters, DISABLED_GameObject){
-    IF_THROWS_IGNOR({
-        auto shader_vert = std::make_shared<Shader>(SHADER(skybox)".vert", GL_VERTEX_SHADER);
-        auto shader_frag = std::make_shared<Shader>(SHADER(skybox)".frag", GL_FRAGMENT_SHADER);
-        auto mesh = std::make_shared<Mesh>(std::vector<Vertex>());
-        auto material = std::make_shared<Material>();
-        
-        auto gameobj = GameObject(vec3(), material, mesh);
-        
-        auto r = std::format("{}", gameobj);
-        auto e = format(
-            R"({{"name": "{}", "transform": {}, "mesh": {} }})",
-            gameobj.Name(), gameobj.transform(), *gameobj.mesh()
-        );
-        EXPECT_EQ(r, e);
-    });
+    auto shader_vert = std::make_shared<Shader>(SHADER(skybox)".vert", GL_VERTEX_SHADER);
+    auto shader_frag = std::make_shared<Shader>(SHADER(skybox)".frag", GL_FRAGMENT_SHADER);
+    auto mesh = std::make_shared<Mesh>(std::vector<Vertex>());
+    auto material = std::make_shared<Material>();
+    
+    auto gameobj = GameObject(vec3(), material, mesh);
+    
+    auto r = std::format("{}", gameobj);
+    auto e = format(
+        R"({{"name": "{}", "transform": {}, "mesh": {} }})",
+        gameobj.Name(), gameobj.transform(), *gameobj.mesh()
+    );
+    EXPECT_EQ(r, e);
 }

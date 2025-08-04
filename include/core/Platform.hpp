@@ -129,7 +129,7 @@ inline static constexpr auto type_name() noexcept -> std::string_view
 /// @brief simple DJB2 hash algorithm
 /// @param str string to hash
 /// @return size_t integer aka hash
-inline static constexpr auto DJB2_hash(std::string_view str) -> std::size_t
+inline static constexpr auto DJB2_hash(std::string_view str) noexcept -> std::size_t
 {
     std::size_t hash = 5381;
     for (char c : str) {
@@ -138,17 +138,28 @@ inline static constexpr auto DJB2_hash(std::string_view str) -> std::size_t
     return hash;
 }
 
+/// @brief FNV-1a 64-bit hash function
+/// @param str string to hash
+/// @return size_t integer aka hash
+inline static constexpr auto (std::string_view str) noexcept -> std::size_t
+{
+    std::size_t result = sizeof(std::size_t) == 4 ? 0x811C9DC5u : 0xCBF29CE484222325u;
+    constexpr std::size_t prime = sizeof(std::size_t) == 4 ? 0x01000193u : 0x00000100000001B3u;
+
+    for (char c : str) {
+        const auto byte = static_cast<unsigned char>(c);
+        result = (result ^ static_cast<std::size_t>(byte)) * prime;
+    }
+    return result;
+}
+
 /// @brief get Type hash
 /// @param T is the type
 /// @return size_t integer aka hash
 template <typename T>
 inline static constexpr auto type_hash() noexcept -> std::size_t
 {
-#ifdef __cpp_rtti
-    return typeid(T).hash_code();
-#else
-    return DJB2_hash(type_name<T>());
-#endif
+    return fnv1a_hash(type_name<T>());
 }
 
 /// @brief get Type hash take that argument aka varable and the type is decltype(type)
@@ -156,11 +167,7 @@ inline static constexpr auto type_hash() noexcept -> std::size_t
 /// @return size_t integer aka hash
 inline static constexpr auto type_hash(auto type) noexcept -> std::size_t
 {
-#ifdef __cpp_rtti
-    return typeid(type).hash_code();
-#else
-    return DJB2_hash(type_name<decltype(type)>());
-#endif
+    return type_hash<decltype(type)>();
 }
 
 /// @brief get the king of the T
@@ -283,14 +290,3 @@ namespace sys {
     /// @brief Time stamp of the build
     constexpr const char* TimeStamp = __TIMESTAMP__;
 } //namespace sys
-
-#if defined(__cpp_exceptions) || defined(_CPPUNWIND) || defined(__EXCEPTIONS)
-#define CXX_EXCEPTIONS
-#endif
-
-/// @brief helpful macro in testing adapt if im using exceptions or not
-#if defined(CXX_EXCEPTIONS)
-#define IF_THROWS_IGNOR(...) try {__VA_ARGS__} catch(...){}
-#else
-#define IF_THROWS_IGNOR(...) __VA_ARGS__
-#endif
