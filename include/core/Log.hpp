@@ -161,15 +161,16 @@ public:
 
   template <typename... Args>
   CoreException(
-    std::stacktrace trace,
     const std::source_location& loc,
     const std::format_string<Args...>& fmt,
     Args&&... args
   )
     : std::runtime_error(std::format(fmt, std::forward<Args>(args)...))
-    , m_Trace(std::move(trace))
     , m_Location(loc)
     , m_Timestamp(clock::now())
+    #ifdef __cpp_lib_stacktrace
+    , m_Trace(std::stacktrace::current(1))
+    #endif
   {}
   auto throwing_routine() const noexcept -> const char* { return m_Location.function_name(); }
 
@@ -185,14 +186,20 @@ public:
       "\t-> what : `{}`\n"
       "Stack Trace ({} Frame): {{\n{}}}\n",
       when(), what(),
+      #ifdef __cpp_lib_stacktrace
       m_Trace.size(), trace()
+      #else
+      "0", "no_stack_trace"
+      #endif
     ).c_str();
   }
 
 private:
-  std::stacktrace m_Trace;
   std::source_location m_Location;
   clock::time_point m_Timestamp;
+  #ifdef __cpp_lib_stacktrace
+  std::stacktrace m_Trace;
+  #endif
 };
 
-#define CException(...) CoreException(std::stacktrace::current(), std::source_location::current(), __VA_ARGS__)
+#define CException(...) CoreException(std::source_location::current(), __VA_ARGS__)
