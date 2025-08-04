@@ -1,16 +1,20 @@
 #pragma once
 
+
+
 namespace config {
-    constexpr auto LogFileName = "Engine.log";
+  constexpr auto LogFileName = "Engine.log";
 }
 namespace {
-
-enum class Log_LvL : char {
-  ERR,
-  INFO,
-  EXPT,
-  PRT,
-};
+  
+  enum class Log_LvL : char {
+    ERR,
+    INFO,
+    EXPT,
+    PRT,
+    };
+    
+ 
 
 inline std::string formatedTime() {
   const auto now = std::chrono::system_clock::now();
@@ -150,3 +154,45 @@ auto Log(
 #ifndef Expect
 #define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); Log<Log_LvL::EXPT, LOGPolicy>(std::source_location::current(), __VA_ARGS__); } } while (0)
 #endif
+
+class CoreException : public std::runtime_error {
+public:
+  using clock = std::chrono::system_clock;
+
+  template <typename... Args>
+  CoreException(
+    std::stacktrace trace,
+    const std::source_location& loc,
+    const std::format_string<Args...>& fmt,
+    Args&&... args
+  )
+    : std::runtime_error(std::format(fmt, std::forward<Args>(args)...))
+    , m_Trace(std::move(trace))
+    , m_Location(loc)
+    , m_Timestamp(clock::now())
+  {}
+  auto throwing_routine() const noexcept -> const char* { return m_Location.function_name(); }
+
+  auto trace() const noexcept -> const char* { return to_string(m_Trace).c_str(); }
+  auto when()  const noexcept -> const char* { return std::format("{:%Y-%m-%d %H:%M:%OS}", m_Timestamp).c_str(); }
+  auto where() const noexcept -> const char* { return std::format("{}:{}", m_Location.file_name(), m_Location.line()).c_str(); }
+  auto what()  const noexcept -> const char* override { return runtime_error::what(); }
+
+  auto all() const noexcept -> const char*
+  {
+    return std::format(
+      "{} :\n"
+      "\t-> what : `{}`\n"
+      "Stack Trace ({} Frame): {{\n{}}}\n",
+      when(), what(),
+      m_Trace.size(), trace()
+    ).c_str();
+  }
+
+private:
+  std::stacktrace m_Trace;
+  std::source_location m_Location;
+  clock::time_point m_Timestamp;
+};
+
+#define CException(...) CoreException(std::stacktrace::current(), std::source_location::current(), __VA_ARGS__)

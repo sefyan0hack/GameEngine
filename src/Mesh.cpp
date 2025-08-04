@@ -123,12 +123,12 @@ auto Mesh::operator==(const Mesh &other) const -> bool
 // {
 //     GLuint clone = 0;
 //     gl::GenVertexArrays(1, &clone);
-//     if(clone == 0) Error("clone is 0");
+//     if(clone == 0) throw CException("clone is 0");
     
 //     GLint maxAttributes = 0;
 //     gl::GetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxAttributes);
 
-//     if(attribs.size() >= maxAttributes) Error("attribs reched max `{}`", maxAttributes);
+//     if(attribs.size() >= maxAttributes) throw CException("attribs reched max `{}`", maxAttributes);
 
 //     // gl::BindVertexArray(src);
 
@@ -161,7 +161,7 @@ auto Mesh::operator==(const Mesh &other) const -> bool
 auto Mesh::CloneBuffer(GLenum type, GLuint src) -> GLuint
 {
     GLuint clone = GenBuffer();
-    if(clone == 0) Error("VBO clone is 0");
+    if(clone == 0) throw CException("VBO clone is 0");
 
     BindBuffer(type, src);
     
@@ -175,7 +175,7 @@ auto Mesh::CloneBuffer(GLenum type, GLuint src) -> GLuint
         gl::CopyBufferSubData(type, GL_COPY_WRITE_BUFFER, 0, 0, bufferSize);
     } else {
         gl::DeleteBuffers(1, &clone);
-        Error("VBO bufferSize is 0");
+        throw CException("VBO bufferSize is 0");
     }
 
     return clone;

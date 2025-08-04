@@ -72,7 +72,7 @@ auto ShaderProgram::UniformLocation(const char *name) const -> GLuint
         auto [loc, type, size] = it->second;
         return loc;
     }else{
-        Error("the Uniform {} not exist", name);
+        throw CException("the Uniform {} not exist", name);
         return static_cast<GLuint>(-1);
     }
 }
@@ -84,7 +84,7 @@ auto ShaderProgram::AttribLocation(const char *name) const -> GLuint
         auto [loc, type, size] = it->second;
         return loc;
     }else{
-        Error("the Attrib {} not exist", name);
+        throw CException("the Attrib {} not exist", name);
         return static_cast<GLuint>(-1);
     }
 }
@@ -103,7 +103,7 @@ auto ShaderProgram::AttribLocation_Prv(const char *name) const -> GLuint
 {
     GLint location = gl::GetAttribLocation(m_Id, name);
     if (location == -1) {
-        Error("Attrib {} doesn't exist!", name);
+        throw CException("Attrib {} doesn't exist!", name);
     }
     return static_cast<GLuint>(location);
 }
@@ -118,7 +118,7 @@ auto ShaderProgram::checkProgramLinkStatus(const ShaderProgram& material) -> voi
         if(infologlength > 0){
             std::string infoLog(infologlength, '\0');
             gl::GetProgramInfoLog(id, infologlength, nullptr, infoLog.data());
-            Error("{}", infoLog);
+            throw CException("{}", infoLog);
         }
     }
 }
@@ -251,7 +251,7 @@ auto ShaderProgram::SetUniform(const std::string& name, const GLint &value) cons
        
         gl::Uniform1i(static_cast<GLint>(loc), value);
     }else{
-        Error("the Uniform {} not exist", name);
+        throw CException("the Uniform {} not exist", name);
     }
 }
 
@@ -264,7 +264,7 @@ auto ShaderProgram::SetUniform(const std::string& name, const GLfloat &value) co
        
         gl::Uniform1f(static_cast<GLint>(loc), value);
     }else{
-        Error("the Uniform {} not exist", name);
+        throw CException("the Uniform {} not exist", name);
     }
 }
 auto ShaderProgram::SetUniform(const std::string& name, const GLuint &value) const -> void
@@ -276,7 +276,7 @@ auto ShaderProgram::SetUniform(const std::string& name, const GLuint &value) con
        
         gl::Uniform1ui(static_cast<GLint>(loc), value);
     }else{
-        Error("the Uniform {} not exist", name);
+        throw CException("the Uniform {} not exist", name);
     }
 }
 
@@ -289,7 +289,7 @@ auto ShaderProgram::SetUniform(const std::string& name, const glm::vec2 &value) 
        
         gl::Uniform2fv(static_cast<GLint>(loc), 1, &value[0]);
     }else{
-        Error("the Uniform {} not exist", name);
+        throw CException("the Uniform {} not exist", name);
     }
 }
 
@@ -302,7 +302,7 @@ auto ShaderProgram::SetUniform(const std::string& name, const glm::vec3 &value) 
        
         gl::Uniform3fv(static_cast<GLint>(loc), 1, &value[0]);
     }else{
-        Error("the Uniform {} not exist", name);
+        throw CException("the Uniform {} not exist", name);
     }
 }
 
@@ -315,7 +315,7 @@ auto ShaderProgram::SetUniform(const std::string& name, const glm::vec4 &value) 
 
         gl::Uniform4fv(static_cast<GLint>(loc), 1, &value[0]);
     }else{
-        Error("the Uniform {} not exist", name);
+        throw CException("the Uniform {} not exist", name);
     }
 }
 
@@ -328,7 +328,7 @@ auto ShaderProgram::SetUniform(const std::string& name, const glm::mat2 &value) 
        
         gl::UniformMatrix2fv(static_cast<GLint>(loc), 1, GL_FALSE, &value[0][0]);
     }else{
-        Error("the Uniform {} not exist", name);
+        throw CException("the Uniform {} not exist", name);
     }
 }
 
@@ -341,7 +341,7 @@ auto ShaderProgram::SetUniform(const std::string& name, const glm::mat3 &value) 
        
         gl::UniformMatrix3fv(static_cast<GLint>(loc), 1, GL_FALSE, &value[0][0]);
     }else{
-        Error("the Uniform {} not exist", name);
+        throw CException("the Uniform {} not exist", name);
     }
 }
 
@@ -354,7 +354,7 @@ auto ShaderProgram::SetUniform(const std::string& name, const glm::mat4 &value) 
 
         gl::UniformMatrix4fv(static_cast<GLint>(loc), 1, GL_FALSE, &value[0][0]);
     }else{
-        Error("the Uniform {} not exist", name);
+        throw CException("the Uniform {} not exist", name);
     }
 }
 

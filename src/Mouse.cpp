@@ -25,7 +25,7 @@ Mouse::Mouse()
 	};
 
 	if(RegisterRawInputDevices(&_rid, 1, sizeof(_rid)) == false){
-		Error("Mouse row data not regesterd");
+		throw CException("Mouse row data not regesterd");
 	}
 	#endif
 }

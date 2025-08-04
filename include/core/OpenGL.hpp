@@ -7,7 +7,6 @@ namespace gl {
 
     inline static auto OPENGL_FUNCTIONS_NAME = [](){
         static std::vector<const char*> r;
-        static std::size_t i = 0;
 
         #define APPEND_OPENGL_FUNCTIONS(name) r.push_back("gl"#name)
         GLFUNCS(APPEND_OPENGL_FUNCTIONS)

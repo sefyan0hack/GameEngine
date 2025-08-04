@@ -67,7 +67,7 @@ CWindow::WinClass::WinClass(){
 	m_Windclass = RegisterClassEx(&m_WinclassEx);
 		
     if(m_Windclass == 0){
-        Error("faild to regester class {}", GetLastError());
+        throw CException("faild to regester class {}", GetLastError());
     }
 }
 
@@ -268,7 +268,7 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
     );
 
     if(window_handle == nullptr){
-        Error("faild to creat CWindow code : {}", GetLastError());
+        throw CException("faild to creat CWindow code : {}", GetLastError());
     }
 
 	return {window_handle, GetDC(window_handle)};
@@ -281,7 +281,7 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
 	auto Surface = XOpenDisplay(nullptr);
 
     if (!Surface) {
-		Error("Failed to open X display connection.");
+		throw CException("Failed to open X display connection.");
 	}
     int32_t screen = DefaultScreen(Surface);
 

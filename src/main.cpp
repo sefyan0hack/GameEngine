@@ -61,9 +61,9 @@ public:
     auto Update(float delta) -> void override {
         float speed = Keyboard.IsDown(Key::LeftShift)? 20.0f : 10.0f;
 
-        auto Hori = Keyboard.IsDown(Key::W) ? 1 : Keyboard.IsDown(Key::S) ? -1 : 0;
-        auto Vert = Keyboard.IsDown(Key::D) ? 1 : Keyboard.IsDown(Key::A) ? -1 : 0;
-        auto Up   = Keyboard.IsDown(Key::M) ? 1 : Keyboard.IsDown(Key::N) ? -1 : 0;
+        auto Hori = Keyboard.IsDown(Key::W) ? 1.0f : Keyboard.IsDown(Key::S) ? -1.0f : 0.0f;
+        auto Vert = Keyboard.IsDown(Key::D) ? 1.0f : Keyboard.IsDown(Key::A) ? -1.0f : 0.0f;
+        auto Up   = Keyboard.IsDown(Key::M) ? 1.0f : Keyboard.IsDown(Key::N) ? -1.0f : 0.0f;
 
         auto by = speed * delta;
 
@@ -82,7 +82,18 @@ public:
 
 
 int main() {
-    Game my_game ;
-    my_game.Run();
+    try {
+        Game my_game ;
+        my_game.Run();
+
+    } catch(const CoreException& e) {
+        std::cerr << e.all() << '\n';
+
+    } catch(const std::exception& e) {
+        std::cerr << e.what() << '\n';
+
+    } catch(...) {
+        std::cerr << "Unknown Exception"<< '\n';
+    }
     return 0;
 }

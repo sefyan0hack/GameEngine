@@ -116,7 +116,7 @@ auto Shader::LoadFile(const char* filename) -> std::vector<GLchar>
 {
     auto fileContent = utils::file_to_str(filename);
     if (!fileContent) {
-        Error("Couldn't open file {}: {}", filename, std::strerror(errno));
+        throw CException("Couldn't open file {}: {}", filename, std::strerror(errno));
     }
 
     std::string preprocessed = PreProcess();
@@ -153,7 +153,7 @@ auto Shader::checkShaderCompileStatus(const Shader &shader) -> void
 
             gl::GetShaderInfoLog(id, infologlength, nullptr, infoLog.data());
             gl::DeleteShader(id);
-            Error("[{}] {} \n", shader.File(), infoLog);
+            throw CException("[{}] {} \n", shader.File(), infoLog);
         }
     }
 }

@@ -284,7 +284,7 @@ inline auto GetProcAddress([[maybe_unused]] const char* module, const char* name
     #endif
 
     if(lib == nullptr){
-        Error("Couldn't load lib {} reason: {}, fn name: {}", module, failreson, name);
+        throw CException("Couldn't load lib {} reason: {}, fn name: {}", module, failreson, name);
     }
 
     return address;
