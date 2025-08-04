@@ -141,7 +141,7 @@ inline static constexpr auto DJB2_hash(std::string_view str) noexcept -> std::si
 /// @brief FNV-1a 64-bit hash function
 /// @param str string to hash
 /// @return size_t integer aka hash
-inline static constexpr auto (std::string_view str) noexcept -> std::size_t
+inline static constexpr auto fnv1a_hash(std::string_view str) noexcept -> std::size_t
 {
     std::size_t result = sizeof(std::size_t) == 4 ? 0x811C9DC5u : 0xCBF29CE484222325u;
     constexpr std::size_t prime = sizeof(std::size_t) == 4 ? 0x01000193u : 0x00000100000001B3u;
