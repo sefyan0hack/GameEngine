@@ -37,10 +37,11 @@ private:
         , cubeMesh(std::make_shared<Mesh>(Mesh::CUBE))
         , rndr(Scn)
     {
-        ResManager.load(TEXTURE(brik.jpg), ResType::Texture2D);
-        ResManager.load(TEXTURE(brik.png), ResType::Texture2D);
-        ResManager.load(TEXTURE(annie_spratt.jpg), ResType::Texture2D);
-        ResManager.load(TEXTURE(gravelly_sand_diff_4k.png), ResType::Texture2D);
+
+        ResManager.load<Texture2D>(TEXTURE(brik.jpg));
+        ResManager.load<Texture2D>(TEXTURE(brik.png));
+        ResManager.load<Texture2D>(TEXTURE(annie_spratt.jpg));
+        ResManager.load<Texture2D>(TEXTURE(gravelly_sand_diff_4k.png));
 
         constexpr int32_t Grids = 4;
 
@@ -51,7 +52,7 @@ private:
         }
 
         Scn.SetSkyBox(TEXTURE(forest.jpg));
-        Matt->SetDiffuse(ResManager.getTexture(TEXTURE(brik.png)));
+        Matt->SetDiffuse(ResManager.get<Texture2D>(TEXTURE(brik.png)));
         Matt->SetTexture("uSkyboxMap", Scn.SkyBox()->texture());
 
     }
@@ -83,7 +84,7 @@ public:
 
 int main() {
     try {
-        Game my_game ;
+        Game my_game;
         my_game.Run();
 
     } catch(const CoreException& e) {

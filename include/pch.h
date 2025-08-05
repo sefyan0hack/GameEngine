@@ -41,6 +41,7 @@
 #include <typeinfo>
 #include <concepts>
 #include <variant>
+#include <any>
 
 #ifdef __cpp_lib_stacktrace
 #   include <stacktrace>
