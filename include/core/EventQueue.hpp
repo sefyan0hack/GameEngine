@@ -21,7 +21,7 @@ public:
 
     bool poll(Event& event) {
         // std::lock_guard<std::mutex> lock(mutex_);
-        // if (queue_.empty()) return false;
+        if (queue_.empty()) return false;
         event = std::move(queue_.front());
         queue_.pop();
         return true;
@@ -31,6 +31,7 @@ public:
         // std::unique_lock<std::mutex> lock(mutex_);
         // cv_.wait(lock, [this]{ return !queue_.empty(); });
         event = std::move(queue_.front());
+        if (queue_.empty()) return;
         queue_.pop();
     }
 

@@ -102,7 +102,10 @@ auto APP::LoopBody(void* ctx) -> void
                 auto [dx, dy] = app->Mouse.GetRawDelta();
                 app->ViewCamera.ProcessMouseMovement(dx, -dy);
             },
-            [](const auto& e) { Info("Unhandeled Event: {}", ::type_name<decltype(e)>()); },
+            [](const auto& e) {
+                if( ::type_name<decltype(e)>() == "const std::monostate&") throw CException(" nnnnnn ");
+                Info("Unhandeled Event: {}", ::type_name<decltype(e)>()); 
+            },
         }, event);
     }
 

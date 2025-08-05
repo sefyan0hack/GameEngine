@@ -1,34 +1,14 @@
 #pragma once
 
-
-
 namespace config {
   constexpr auto LogFileName = "Engine.log";
 }
+
 namespace {
-  
-  enum class Log_LvL : char {
-    ERR,
-    INFO,
-    EXPT,
-    PRT,
-    };
-    
- 
 
 inline std::string formatedTime() {
   const auto now = std::chrono::system_clock::now();
   return std::format("{:%Y-%m-%d %H:%M:%OS}", now);
-}
-
-constexpr const char* levelToString(Log_LvL level) {
-  switch (level) {
-    case Log_LvL::ERR:  return "ERROR";
-    case Log_LvL::INFO: return "INFO";
-    case Log_LvL::EXPT: return "EXPECT";
-    case Log_LvL::PRT:  return "PRINT";
-    default:            return "UNKNOWN";
-  }
 }
 
 struct CerrPolicy {
@@ -76,84 +56,33 @@ inline auto& get_logger_mutex() {
   return mtx;
 }
 
-template <Log_LvL lvl, typename ...Ts>
-auto Log_msg(
-  [[maybe_unused]] const std::source_location loc,
-  [[maybe_unused]] const std::format_string<Ts...>& fmt,
-  [[maybe_unused]] Ts&& ... ts) -> std::string
-{
-  std::scoped_lock lock(get_logger_mutex());
-  auto formatted_msg = std::format(fmt, std::forward<Ts>(ts)...);
-  auto lvl_str = levelToString(lvl);
-  auto msg = std::stringstream{};
-  
-  if constexpr (lvl == Log_LvL::ERR || lvl == Log_LvL::EXPT){
-    msg << std::format(
-      "{} : [{}] {}\n"
-      "\t-> `{}` [{}:{}]\n"
-      "{}\n",
-      formatedTime(), lvl_str, formatted_msg,
-      loc.function_name(), loc.file_name(), loc.line(),
-      #ifdef __cpp_lib_stacktrace
-      std::stacktrace::current(2)
-      #else
-      "no_stack_trace"
-      #endif
-    );
-  }
-  else if constexpr (lvl == Log_LvL::INFO){
-    msg << std::format("{} : [{}] {}\n", formatedTime(), lvl_str, formatted_msg);
-  }
-  else if constexpr (lvl == Log_LvL::PRT){
-    msg << std::format("{} : {}\n", formatedTime(), formatted_msg);
-  }
-  
-  return msg.str();
-}
 
-template <Log_LvL lvl, StreamOut Out, typename ...Ts>
+#if defined(DEBUG) || defined(WEB_PLT)
+using LOGPolicy = ClogPolicy;
+#else
+using LOGPolicy = FilePolicy;
+#endif
+
+template <typename ...Ts>
 auto Log(
-  [[maybe_unused]] const std::source_location loc,
   [[maybe_unused]] const std::format_string<Ts...>& fmt,
   [[maybe_unused]] Ts&& ... ts) -> void
 {
   auto Is_Testing_Enabled = std::getenv("TESTING_ENABLED");
 
-  [[maybe_unused]] auto& out = Out::get_stream();
-  [[maybe_unused]] auto msg = Log_msg<lvl>(loc, fmt, std::forward<Ts>(ts)...);
-  
+  std::scoped_lock lock(get_logger_mutex());
+
+  auto formatted_msg = std::format(fmt, std::forward<Ts>(ts)...);
+  [[maybe_unused]] auto& out = LOGPolicy::get_stream();
+
   if(Is_Testing_Enabled == nullptr){
-    out << msg;
+    out << std::format("{} : {}\n", formatedTime(), formatted_msg);
   }
   
-  if constexpr (lvl == Log_LvL::ERR || lvl == Log_LvL::EXPT){
-    throw std::runtime_error(msg);
-  }
 }
 
 }
 
-#if defined(DEBUG) || defined(WEB_PLT)
-#define LOGPolicy ClogPolicy
-#else
-#define LOGPolicy FilePolicy
-#endif
-
-#ifndef Error
-#define Error(...) Log<Log_LvL::ERR, LOGPolicy>(std::source_location::current(), __VA_ARGS__)
-#endif
-
-#ifndef Info
-#define Info(...)  Log<Log_LvL::INFO, LOGPolicy>(std::source_location::current(), __VA_ARGS__)
-#endif
-
-#ifndef print
-#define print(...) Log<Log_LvL::PRT, LOGPolicy>(std::source_location::current(), __VA_ARGS__)
-#endif
-
-#ifndef Expect
-#define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); Log<Log_LvL::EXPT, LOGPolicy>(std::source_location::current(), __VA_ARGS__); } } while (0)
-#endif
 
 class CoreException : public std::runtime_error {
 public:
@@ -209,4 +138,21 @@ private:
   #endif
 };
 
+
+template <typename... Ts>
+inline void print(const std::format_string<Ts...>& fmt, Ts&&... ts) {
+    Log(fmt, std::forward<Ts>(ts)...);
+}
+
+template <typename... Ts>
+inline void Info(const std::format_string<Ts...>& fmt, Ts&&... ts) {
+    Log(fmt, std::forward<Ts>(ts)...);
+}
+
+#ifndef CException
 #define CException(...) CoreException(std::source_location::current(), __VA_ARGS__)
+#endif
+
+#ifndef Expect
+#define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); throw CException(__VA_ARGS__); } } while (0)
+#endif
