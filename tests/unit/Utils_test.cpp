@@ -4,22 +4,24 @@
 
 using namespace std;
 using namespace utils;
+using namespace filesystem;
 
 #if !defined(WEB_PLT)
 TEST(load_file_async, exist) {
-    auto filename = "Hello.txt";
-    ofstream file { filename };
-    if(!file.is_open()){
-        SUCCEED();
-    }
-    
-    auto r = load_file_async(filename).get();
-    EXPECT_EQ(r.has_value(), true);
+    auto tmpDir  = temp_directory_path();
+    auto tmpFile = tmpDir / tmpnam(nullptr);
+    auto _ = ofstream { tmpFile };
+
+    EXPECT_NO_THROW({
+        load_file_async(tmpFile.string()).get();
+    });
+
 }
 
 TEST(load_file_async, not_exist) {
-    auto r = load_file_async("filenotexist.ext").get();
-    EXPECT_EQ(r.has_value(), false);
+    EXPECT_ANY_THROW(
+        load_file_async("filenotexist.ext").get();
+    );
 }
 #endif
 

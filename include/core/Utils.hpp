@@ -112,7 +112,7 @@ inline std::future<std::vector<char>> load_file_async(const std::string& filenam
     return async(launch::async, [filename]() -> vector<char> {
         ifstream file(filename, ios::binary | ios::ate);
         if (!file)
-            throw CException("file {} not open", filename);
+            throw CException("Cant open file {}", filename);
 
         streamsize size = static_cast<std::streamsize>(file.tellg());
         file.seekg(0, ios::beg);
