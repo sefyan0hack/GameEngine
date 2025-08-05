@@ -52,7 +52,6 @@ public:
     private:
         auto CloneBuffer(GLenum type, GLuint src) -> GLuint;
         auto CloneVBO(GLuint src) -> GLuint;
-        auto CloneEBO(GLuint src) -> GLuint;
         auto PrepareAttribs() ->void;
         auto PrepareVertexdata() -> void;
         static auto Updata(GLuint buffer, const std::vector<VetexData>& vrtx) -> void;
@@ -66,7 +65,7 @@ public:
     std::string name;
     std::vector<VetexData> vertices;
     std::vector<AttributeInfo> attribs;
-    GLuint VBO, EBO, VAO;
+    GLuint VBO, VAO;
     inline static std::size_t Count = 1;
     inline static std::vector<Vertex> CUBE {
       // Front Face
@@ -129,7 +128,7 @@ struct std::formatter<Mesh> {
   }
   auto format(const Mesh& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    R"({{ "name": "{}", "VAO": {}, "VBO": {}, "EBO": {}, "verticesSize": {} }})"
-    , obj.name, obj.VAO, obj.VBO, obj.EBO, obj.VextexSize());
+    R"({{ "name": "{}", "VAO": {}, "VBO": {}, "verticesSize": {} }})"
+    , obj.name, obj.VAO, obj.VBO, obj.VextexSize());
   }
 };

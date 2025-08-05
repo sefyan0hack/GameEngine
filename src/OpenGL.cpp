@@ -148,7 +148,6 @@ auto OpenGL::init_opengl_web() -> void
 
     if (m_Context <= 0) {
         throw CException("Failed to create WebGL context: error {}", static_cast<int32_t>(m_Context));
-        return;
     }
 }
 
@@ -191,13 +190,13 @@ OpenGL::OpenGL([[maybe_unused]] H_WIN window, H_SRF surface)
 
 	GLFUNCS(RESOLVEGL)
 
-    m_Major = GetInteger(GL_MAJOR_VERSION).value();
-    m_Minor = GetInteger(GL_MINOR_VERSION).value();
+    m_Major = GetInteger(GL_MAJOR_VERSION);
+    m_Minor = GetInteger(GL_MINOR_VERSION);
 
-    m_MaxTextureUnits       = GetInteger(GL_MAX_TEXTURE_IMAGE_UNITS).value();
-    m_MaxTextureSize        = GetInteger(GL_MAX_TEXTURE_SIZE).value();
-    m_MaxTexture3DSize      = GetInteger(GL_MAX_3D_TEXTURE_SIZE).value();
-    m_MaxTextureCubeMapSize = GetInteger(GL_MAX_CUBE_MAP_TEXTURE_SIZE).value();
+    m_MaxTextureUnits       = GetInteger(GL_MAX_TEXTURE_IMAGE_UNITS);
+    m_MaxTextureSize        = GetInteger(GL_MAX_TEXTURE_SIZE);
+    m_MaxTexture3DSize      = GetInteger(GL_MAX_3D_TEXTURE_SIZE);
+    m_MaxTextureCubeMapSize = GetInteger(GL_MAX_CUBE_MAP_TEXTURE_SIZE);
 
     auto vendor = reinterpret_cast<const char*>(gl::GetString(GL_VENDOR));
     auto renderer = reinterpret_cast<const char*>(gl::GetString(GL_RENDERER));
@@ -361,7 +360,7 @@ auto OpenGL::HasExtension(const std::string &ext) const -> bool
     return std::ranges::contains(m_Extensions, ext);
 }
 
-auto OpenGL::GetInteger(GLenum name) -> std::optional<GLint>
+auto OpenGL::GetInteger(GLenum name) -> GLint
 {
     constexpr auto INVALID = std::numeric_limits<GLint>::max();
 
@@ -372,7 +371,7 @@ auto OpenGL::GetInteger(GLenum name) -> std::optional<GLint>
     if (maxTexSize != INVALID)
         return maxTexSize;
     else
-        return std::nullopt;
+        throw CException("GetIntegerv Failed");
 }
 
 auto OpenGL::Vendor() -> std::string

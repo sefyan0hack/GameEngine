@@ -107,18 +107,18 @@ constexpr std::array<char, sizeof(Str.value)> ToUpper<Str>::value;
 
 #define TO_UPPER(str) std::string_view(ToUpper<FixedString{str}>::value.data())
 
-inline std::future<std::optional<std::vector<char>>> load_file_async(const std::string& filename) {
+inline std::future<std::vector<char>> load_file_async(const std::string& filename) {
     using namespace std;
-    return async(launch::async, [filename]() -> optional<vector<char>> {
+    return async(launch::async, [filename]() -> vector<char> {
         ifstream file(filename, ios::binary | ios::ate);
-        if (!file) {
-            return std::nullopt;
-        }
+        if (!file)
+            throw CException("file {} not open", filename);
+
         streamsize size = static_cast<std::streamsize>(file.tellg());
         file.seekg(0, ios::beg);
-        
+ 
         if (static_cast<std::size_t>(size) > vector<char>().max_size()){
-            return nullopt;
+            throw CException("file too big {}", size);
         }
 
         vector<char> buffer(static_cast<std::size_t>(size));
@@ -171,16 +171,16 @@ std::string to_string(const std::vector<T>& vec) {
     return result;
 }
 
-inline auto file_to_str(std::ifstream& file) -> std::optional<std::string>
+inline auto file_to_str(std::ifstream& file) -> std::string
 {
     if (!file){ 
-        return std::nullopt;
+        throw CException("file not open");
     }else{
         return std::string(std::istreambuf_iterator<char>(file), {});
     }
 }
 
-inline auto file_to_str(const char* path) -> std::optional<std::string>
+inline auto file_to_str(const char* path) -> std::string
 {
     std::ifstream file(path, std::ios::binary);
 
@@ -188,20 +188,14 @@ inline auto file_to_str(const char* path) -> std::optional<std::string>
 }
 
 
-inline auto file_to_vec(std::ifstream& file) -> std::optional<std::vector<std::byte>>
+inline auto file_to_vec(std::ifstream& file) -> std::vector<std::byte>
 {
-    auto op = file_to_str(file);
-
-    if(op){
-        auto r = op.value();
-        const auto* data_start = reinterpret_cast<const std::byte*>(r.data());
-        return std::vector<std::byte>(data_start, data_start + r.size());
-    }else{
-        return std::nullopt;
-    }
+    auto filestr = file_to_str(file);
+    const auto* data_start = reinterpret_cast<const std::byte*>(filestr.data());
+    return std::vector<std::byte>(data_start, data_start + filestr.size());
 }
 
-inline auto file_to_vec(const char* path) -> std::optional<std::vector<std::byte>>
+inline auto file_to_vec(const char* path) -> std::vector<std::byte>
 {
     std::ifstream file(path, std::ios::binary);
     return file_to_vec(file);

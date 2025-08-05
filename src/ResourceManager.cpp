@@ -18,11 +18,10 @@ auto ResourceManager::load(const std::string& path, ResType type) -> void
         }
         case ResType::TextureCube:
         {
-            // throw CException("{}", VecWrapper{strig_to_vector(path)});
             m_Textures[path] = std::make_shared<TextureCubeMap>(TextureCubeMap::base_to_6faces(path));
             break;
         }
-        default: throw CException("Unsupported Resource Type");
+        default: throw CException("failed to load : `{}` Unsupported Resource Type `{}`", path, std::to_underlying(type));
     }
 }
 

@@ -115,19 +115,16 @@ auto Shader::PreProcess() -> std::string
 auto Shader::LoadFile(const char* filename) -> std::vector<GLchar>
 {
     auto fileContent = utils::file_to_str(filename);
-    if (!fileContent) {
-        throw CException("Couldn't open file {}: {}", filename, std::strerror(errno));
-    }
 
     std::string preprocessed = PreProcess();
     
-    size_t totalSize = preprocessed.size() + fileContent->size();
+    size_t totalSize = preprocessed.size() + fileContent.size();
     
     std::vector<GLchar> result;
     result.reserve(totalSize + 1);
 
     result.insert(result.end(), preprocessed.begin(), preprocessed.end());
-    result.insert(result.end(), fileContent->begin(), fileContent->end());
+    result.insert(result.end(), fileContent.begin(), fileContent.end());
     
     result.push_back('\0');
 
@@ -143,10 +140,10 @@ auto Shader::Compile(GLuint shader) -> void
 auto Shader::checkShaderCompileStatus(const Shader &shader) -> void
 {
     auto id = shader.id();
-    GLint success = GetShaderInfo(id, GL_COMPILE_STATUS).value_or(0);
+    GLint success = GetShaderInfo(id, GL_COMPILE_STATUS);
 
     if (!success) {
-        GLint infologlength = GetShaderInfo(id, GL_INFO_LOG_LENGTH).value_or(0);
+        GLint infologlength = GetShaderInfo(id, GL_INFO_LOG_LENGTH);
 
         if(infologlength > 0){
             std::string infoLog(infologlength, '\0');
@@ -183,7 +180,7 @@ auto Shader::Content() const -> std::vector<GLchar>
     return m_Content;
 }
 
-auto Shader::GetShaderInfo(GLuint id, GLenum what) -> std::optional<GLint>
+auto Shader::GetShaderInfo(GLuint id, GLenum what) -> GLint
 {
     constexpr auto INVALID = std::numeric_limits<GLint>::max();
 
@@ -191,10 +188,8 @@ auto Shader::GetShaderInfo(GLuint id, GLenum what) -> std::optional<GLint>
 
     gl::GetShaderiv(id, what, &result);
 
-    if(result != INVALID){
+    if(result != INVALID)
         return result;
-    }
-    else{
-        return std::nullopt;
-    }
+    else
+        throw CException("GetShaderiv Failed");
 }

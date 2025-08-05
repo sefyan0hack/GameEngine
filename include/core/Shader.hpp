@@ -30,7 +30,7 @@ class Shader
       static auto LoadSource(const std::vector<GLchar>& src, GLuint shader) -> void;
       static auto PreProcess() -> std::string;
       static auto checkShaderCompileStatus(const Shader &shader) -> void;
-      static auto GetShaderInfo(GLuint id, GLenum what) -> std::optional<GLint>; //what : GL_SHADER_TYPE, GL_DELETE_STATUS, GL_COMPILE_STATUS, GL_INFO_LOG_LENGTH, GL_SHADER_SOURCE_LENGTH.
+      static auto GetShaderInfo(GLuint id, GLenum what) -> GLint; //what : GL_SHADER_TYPE, GL_DELETE_STATUS, GL_COMPILE_STATUS, GL_INFO_LOG_LENGTH, GL_SHADER_SOURCE_LENGTH.
 
   private:
       auto LoadSource()                   -> void;

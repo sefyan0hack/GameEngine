@@ -105,8 +105,8 @@ TEST(Formatters, DISABLED_Mesh){
         
     auto r = std::format("{}", mesh);
     auto e = format(
-        R"({{ "name": "{}", "VAO": {}, "VBO": {}, "EBO": {}, "verticesSize": {} }})",
-        mesh.name, mesh.VAO, mesh.VBO, mesh.EBO, mesh.VextexSize()
+        R"({{ "name": "{}", "VAO": {}, "VBO": {}, "verticesSize": {} }})",
+        mesh.name, mesh.VAO, mesh.VBO, mesh.VextexSize()
     );
     EXPECT_EQ(r, e);
 }

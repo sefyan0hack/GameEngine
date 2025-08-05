@@ -35,17 +35,8 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vect
     , vertices(vertices)
     , attribs({position, normals, texCoords})
     , VBO(GenBuffer())
-    , EBO(0)
     , VAO(GenVertexArray())
 {
-#ifdef USE_EBO
-        if(vertices.size() != indices.size()){
-            ERR("vert size != indces size");
-        }
-        gl::GenBuffers(1, &EBO);
-        gl::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        gl::BufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
-#endif
 
     PrepareVertexdata();
     PrepareAttribs();
@@ -57,7 +48,6 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vect
 Mesh::~Mesh()
 {
     Count--;
-    gl::DeleteBuffers(1, &EBO);
     gl::DeleteBuffers(1, &VBO);
     gl::DeleteVertexArrays(1, &VAO);
 }
@@ -67,7 +57,6 @@ Mesh::Mesh(const Mesh& other)
     , vertices(other.vertices)
     , attribs(other.attribs)
     , VBO(GenBuffer())
-    , EBO(0)
     , VAO(GenVertexArray())
 {
 
@@ -82,7 +71,6 @@ auto Mesh::operator=(const Mesh& other) -> Mesh&
         this->vertices = other.vertices;
         this->attribs = other.attribs;
         this->VBO = GenBuffer();
-        this->EBO = 0;
         this->VAO = GenVertexArray();
         
         PrepareVertexdata();
@@ -96,7 +84,6 @@ Mesh::Mesh(Mesh&& other) noexcept
     , vertices(std::exchange(other.vertices, {}))
     , attribs(std::exchange(other.attribs, {}))
     , VBO(std::exchange(other.VBO, 0))
-    , EBO(std::exchange(other.EBO, 0))
     , VAO(std::exchange(other.VAO, 0))
 {
 }
@@ -108,7 +95,6 @@ auto Mesh::operator=(Mesh &&other) noexcept -> Mesh&
         this->vertices = std::exchange(other.vertices, {});
         this->attribs = std::exchange(other.attribs, {});
         this->VBO = std::exchange(other.VBO, 0);
-        this->EBO = std::exchange(other.EBO, 0);
         this->VAO = std::exchange(other.VAO, 0);
     }
     return *this;
@@ -186,14 +172,6 @@ auto Mesh::CloneVBO(GLuint src) -> GLuint
     return CloneBuffer(GL_ARRAY_BUFFER, src);
 }
 
-auto Mesh::CloneEBO([[maybe_unused]] GLuint src) -> GLuint
-{
-    #ifdef USE_EBO
-    return CloneBuffer(GL_ELEMENT_ARRAY_BUFFER, src);
-    #else
-    return 0;
-    #endif
-}
 auto Mesh::setAttribute(GLuint index, AttributeInfo att) -> void
 {
     Expect(att.size > 0 && att.size <= 4, "position.size : 0<{}<4 wrong", att.size);

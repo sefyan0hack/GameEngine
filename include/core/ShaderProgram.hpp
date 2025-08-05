@@ -37,7 +37,7 @@ public:
     auto SetUniform(const std::string &name, const glm::mat4 &value) const -> void;
 
 private:
-    static auto GetProgramInfo(GLint id, GLenum what)           -> std::optional<GLint>;
+    static auto GetProgramInfo(GLint id, GLenum what)           -> GLint;
     static auto checkProgramLinkStatus(const ShaderProgram& aterial) -> void;
     auto Link() const -> void;
     auto UniformLocation_Prv(const char* name) const -> GLuint;

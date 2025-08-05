@@ -22,8 +22,6 @@ auto Renderer::Render(Camera &camera, std::shared_ptr<ShaderProgram> program) ->
     program->SetUniform("Projection", camera.Perspective());
     program->SetUniform("Eye", camera.Position());
 
-    // m_Scene.Entities().back().material()->Bind(program);
-
     //Drwaing
     for(auto &obj: m_Scene.Entities()){
         program->SetUniform("Model", obj.Model());
@@ -39,16 +37,8 @@ auto Renderer::draw(const Mesh& mesh, GLsizei count) -> void
 {
     mesh.Bind();
     if(count > 1){
-        #ifdef USE_EBO
-        gl::DrawElementsInstanced(GL_TRIANGLES, mesh.VextexSize(), GL_UNSIGNED_INT, 0, count);
-        #else
         gl::DrawArraysInstanced(GL_TRIANGLES, 0, mesh.VextexSize(), count);
-        #endif
     }else{
-        #ifdef USE_EBO
-        gl::DrawElements(GL_TRIANGLES, mesh.VextexSize(), GL_UNSIGNED_INT, 0);
-        #else
         gl::DrawArrays(GL_TRIANGLES, 0, mesh.VextexSize());
-        #endif
     }
 }

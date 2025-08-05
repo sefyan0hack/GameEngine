@@ -48,7 +48,7 @@ class OpenGL
         auto CreationTime() const -> std::time_t;
         auto HasExtension(const std::string& ext) const -> bool;
 
-        auto GetInteger(GLenum name) -> std::optional<GLint>;
+        auto GetInteger(GLenum name) -> GLint;
 
         static auto Vendor() -> std::string;
         static auto Renderer() -> std::string;
