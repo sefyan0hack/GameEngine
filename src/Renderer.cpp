@@ -19,7 +19,7 @@ auto Renderer::Render(Camera &camera, std::shared_ptr<ShaderProgram> program) ->
 
     program->Use();
     program->SetUniform("View", camera.View());
-    program->SetUniform("Projection", camera.Perspective());
+    program->SetUniform("Projection", camera.Projection());
     program->SetUniform("Eye", camera.Position());
 
     //Drwaing

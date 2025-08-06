@@ -11,11 +11,6 @@ inline std::string formatedTime() {
   return std::format("{:%Y-%m-%d %H:%M:%OS}", now);
 }
 
-struct CerrPolicy {
-  static std::ostream& get_stream() {
-    return std::cerr;
-  }
-};
 
 struct ClogPolicy {
   static std::ostream& get_stream() {
@@ -44,11 +39,6 @@ struct FilePolicy {
 
     return (open_failed || !stream) ? std::clog : *stream;
   }
-};
-
-template<class T>
-concept StreamOut = requires(){
-  { T::get_stream() } -> std::convertible_to<std::ostream&>;
 };
 
 inline auto& get_logger_mutex() {
@@ -88,13 +78,13 @@ class CoreException : public std::runtime_error {
 public:
   using clock = std::chrono::system_clock;
 
-  template <typename... Args>
+  template <typename... Ts>
   CoreException(
     const std::source_location& loc,
-    const std::format_string<Args...>& fmt,
-    Args&&... args
+    const std::format_string<Ts...>& fmt,
+    Ts&&... args
   )
-    : std::runtime_error(std::format(fmt, std::forward<Args>(args)...))
+    : std::runtime_error(std::format(fmt, std::forward<Ts>(args)...))
     , m_Location(loc)
     , m_Timestamp(clock::now())
     #ifdef __cpp_lib_stacktrace
@@ -138,15 +128,14 @@ private:
   #endif
 };
 
-
 template <typename... Ts>
 inline void print(const std::format_string<Ts...>& fmt, Ts&&... ts) {
-    Log(fmt, std::forward<Ts>(ts)...);
+  Log(fmt, std::forward<Ts>(ts)...);
 }
 
 template <typename... Ts>
 inline void Info(const std::format_string<Ts...>& fmt, Ts&&... ts) {
-    Log(fmt, std::forward<Ts>(ts)...);
+  Log(fmt, std::forward<Ts>(ts)...);
 }
 
 #ifndef CException

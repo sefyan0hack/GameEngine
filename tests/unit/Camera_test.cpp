@@ -9,9 +9,9 @@ using Camera_Test_Ctor2 = Camera::Test<2>;
 
 #define TEST_INTERFACE \
     MEMBER_VAR(m_Position);\
-    MEMBER_VAR(m_FrontDir);\
-    MEMBER_VAR(m_UpDir);\
-    MEMBER_VAR(m_RightDir);\
+    MEMBER_VAR(m_Forward);\
+    MEMBER_VAR(m_Up);\
+    MEMBER_VAR(m_Right);\
     MEMBER_VAR(m_Yaw);\
     MEMBER_VAR(m_Pitch);\
     MEMBER_VAR(m_FOV);\
@@ -28,9 +28,9 @@ using Camera_Test_Ctor2 = Camera::Test<2>;
     MEMBER_FUN(View);\
     MEMBER_FUN(Perspective);\
     MEMBER_FUN(Position);\
-    MEMBER_FUN(FrontDir);\
-    MEMBER_FUN(UpDir);\
-    MEMBER_FUN(RightDir);\
+    MEMBER_FUN(Forward);\
+    MEMBER_FUN(Up);\
+    MEMBER_FUN(Right);\
 
 template<>
 struct Camera::Test<1> : public ::testing::Test {
@@ -40,9 +40,9 @@ struct Camera::Test<1> : public ::testing::Test {
 
 TEST_F(Camera_Test_Ctor1, ctor) {
     EXPECT_EQ(m_Position, vec3(0, 1, 4));
-    EXPECT_EQ(m_FrontDir, vec3(0, 0, -1));
-    EXPECT_EQ(m_UpDir, Camera::WORLD_UP);
-    EXPECT_EQ(m_RightDir, vec3(1, 0, 0));
+    EXPECT_EQ(m_Forward, vec3(0, 0, -1));
+    EXPECT_EQ(m_Up, Camera::WORLD_UP);
+    EXPECT_EQ(m_Right, vec3(1, 0, 0));
     EXPECT_EQ(m_Yaw, -90);
     EXPECT_EQ(m_Pitch, 0);
     EXPECT_EQ(m_FOV, 45.0f);
@@ -52,21 +52,21 @@ TEST_F(Camera_Test_Ctor1, ctor) {
 }
 
 TEST_F(Camera_Test_Ctor1, View) {
-    EXPECT_EQ(lookAt(m_Position, m_Position + m_FrontDir, m_UpDir), View());
+    EXPECT_EQ(lookAt(m_Position, m_Position + m_Forward, m_Up), View());
 }
 
 TEST_F(Camera_Test_Ctor1, Position) {
     EXPECT_EQ(m_Position, Position());
 }
 
-TEST_F(Camera_Test_Ctor1, FrontDir) {
-    EXPECT_EQ(m_FrontDir, FrontDir());
+TEST_F(Camera_Test_Ctor1, Forward) {
+    EXPECT_EQ(m_Forward, Forward());
 }
 
-TEST_F(Camera_Test_Ctor1, UpDir) {
-    EXPECT_EQ(m_UpDir, UpDir());
+TEST_F(Camera_Test_Ctor1, Up) {
+    EXPECT_EQ(m_Up, Up());
 }
 
-TEST_F(Camera_Test_Ctor1, RightDir) {
-    EXPECT_EQ(m_RightDir, RightDir());
+TEST_F(Camera_Test_Ctor1, Right) {
+    EXPECT_EQ(m_Right, Right());
 }
