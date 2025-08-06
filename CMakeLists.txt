@@ -41,6 +41,7 @@ option(STATIC_LINK      "Static link C++"     ON)
 option(ASAN             "Address Sanitizer"   OFF)
 option(USAN             "Undefined Sanitizer" OFF)
 option(TSAN             "Thread Sanitizer"    OFF)
+option(NATIVE_OPT       "Native opt build"    ON)
 
 if(MINGW) #disable RTTI becaus of bug in mingw redifinition when static link libstdc++
 option(RTTI             "RunTime Type Info"   OFF)
@@ -71,6 +72,9 @@ if(USAN)
 endif()
 if(TSAN)
     message(STATUS "[Thread Sanitizer `ON`]")
+endif()
+if(NATIVE_OPT)
+    message(STATUS "[Native opt build `ON`]")
 endif()
 if(RTTI)
     message(STATUS "[Rtti `ON`]")
@@ -277,6 +281,13 @@ if(DOCS)
 
 endif()
 
+if(NATIVE_OPT)
+    if(NOT MSVC)
+        add_compile_options(-march=native)
+    else()
+        add_compile_options($<IF:$<BOOL:${CMAKE_SYSTEM_PROCESSOR}>,/arch:AVX2,>)
+    endif()
+endif()
 ####################################################################################################
 # Compiler Check
 ####################################################################################################
