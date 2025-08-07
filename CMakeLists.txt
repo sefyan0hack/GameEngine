@@ -252,7 +252,7 @@ if(DOCS)
 
 endif()
 
-if(NATIVE_OPT)
+if(NATIVE_OPT AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
     if(NOT MSVC)
         add_compile_options(-march=native)
     else()
