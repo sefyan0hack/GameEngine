@@ -26,6 +26,8 @@ namespace gl {
     constexpr int32_t  GLMajorVersion   = 3;
     constexpr int32_t  GLMinorVersion   = 3;
 
+    auto GetInteger(GLenum name) -> GLuint;
+
 class OpenGL
 {
     public:
@@ -48,7 +50,6 @@ class OpenGL
         auto CreationTime() const -> std::time_t;
         auto HasExtension(const std::string& ext) const -> bool;
 
-        auto GetInteger(GLenum name) -> GLint;
 
         static auto Vendor() -> std::string;
         static auto Renderer() -> std::string;
