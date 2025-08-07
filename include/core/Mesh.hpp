@@ -30,7 +30,7 @@ public:
 
 public:
     friend struct std::formatter<Mesh>;
-    Mesh(const std::vector<VetexData> &vertices, std::string Name = std::format("Mesh{}", Count));
+    Mesh(const std::vector<VetexData> &vertices, const std::vector<GLuint> &indices = {}, std::string Name = std::format("Mesh{}", Count));
     // Mesh(const std::vector<GLfloat> vertices, std::string Name = std::format("Mesh{}", Count));
 
     Mesh(const Mesh& other);
@@ -124,7 +124,7 @@ public:
 template<>
 struct std::formatter<Mesh> {
   constexpr auto parse(std::format_parse_context& context) {
-    return context.end();
+    return context.begin();
   }
   auto format(const Mesh& obj, std::format_context& context) const {
     return std::format_to(context.out(),

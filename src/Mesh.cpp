@@ -30,17 +30,20 @@ namespace {
     };
 }
 
-Mesh::Mesh(const std::vector<Vertex> &vertices, std::string Name)
+Mesh::Mesh(const std::vector<Vertex> &vertices, [[maybe_unused]] const std::vector<GLuint> &indices, std::string Name)
     : name(Name)
     , vertices(vertices)
     , attribs({position, normals, texCoords})
     , VBO(GenBuffer())
     , VAO(GenVertexArray())
 {
+
     PrepareVertexdata();
     PrepareAttribs();
     Count++;
+    
 }
+
 
 Mesh::~Mesh()
 {
@@ -102,6 +105,45 @@ auto Mesh::operator==(const Mesh &other) const -> bool
     return this->VAO == other.VAO; // for now every vao is unique
 }
 
+// auto Mesh::CloneVAO(GLuint src) -> GLuint
+// {
+//     GLuint clone = 0;
+//     gl::GenVertexArrays(1, &clone);
+//     if(clone == 0) throw CException("clone is 0");
+    
+//     GLint maxAttributes = 0;
+//     gl::GetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxAttributes);
+
+//     if(attribs.size() >= maxAttributes) throw CException("attribs reched max `{}`", maxAttributes);
+
+//     // gl::BindVertexArray(src);
+
+//     // std::vector<AttributeInfo> attributes(attribs);
+//     // for (GLuint atrInd = 0; atrInd < attribs; ++atrInd)
+//     // {
+//     //     gl::GetVertexAttribiv(atrInd, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &attributes[atrInd].enabled);
+
+//     //     if(attributes[atrInd].enabled){
+//     //         gl::GetVertexAttribiv(atrInd, GL_VERTEX_ATTRIB_ARRAY_SIZE, &attributes[atrInd].size);
+//     //         gl::GetVertexAttribiv(atrInd, GL_VERTEX_ATTRIB_ARRAY_TYPE, (GLint*)&attributes[atrInd].type);
+//     //         gl::GetVertexAttribiv(atrInd, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, (GLint*)&attributes[atrInd].normalized);
+//     //         gl::GetVertexAttribiv(atrInd, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &attributes[atrInd].stride);
+//     //         gl::GetVertexAttribiv(atrInd, GL_VERTEX_ATTRIB_ARRAY_DIVISOR, &attributes[atrInd].divisor);
+//     //         gl::GetVertexAttribPointerv(atrInd, GL_VERTEX_ATTRIB_ARRAY_POINTER, &attributes[atrInd].offset);
+//     //     }
+//     // }
+
+//     gl::BindVertexArray(clone);
+//     gl::BindBuffer(GL_ARRAY_BUFFER, this->VBO);
+//     for (auto atrb : attribs)
+//     {
+//         setAttribute(atrb);
+//     }
+//     // gl::BindVertexArray(0);
+//     // gl::BindBuffer(GL_ARRAY_BUFFER, 0);
+
+//     return clone;
+// }
 auto Mesh::CloneBuffer(GLenum type, GLuint src) -> GLuint
 {
     GLuint clone = GenBuffer();
@@ -176,27 +218,36 @@ auto Mesh::EnableAttribs() const -> void
     auto currentVAO = CurrentVAO();
     auto currentVBO = CurrentVBO();
 
-    if(currentVAO != VAO){
+    if(currentVAO == VAO){
+        for(GLuint i = 0; i < attribs.size(); i++){
+            gl::EnableVertexAttribArray(i);
+        }
+    }else{   
         BindVertexArray(VAO);
-    }
-
-    if(currentVBO != VBO){
-        BindVertexBuffer(VBO);  
-    }
-
-    for(GLuint i = 0; i < attribs.size(); i++){
-        gl::EnableVertexAttribArray(i);
+        BindVertexBuffer(VBO);
+        
+        for(GLuint i = 0; i < attribs.size(); i++){
+            gl::EnableVertexAttribArray(i);
+        }
+        
+        BindVertexBuffer(currentVBO);
+        BindVertexArray(currentVAO);
     }
 }
 
+
 auto Mesh::CurrentVAO() -> GLuint
-{    
-    return static_cast<GLuint>(gl::GetInteger(GL_VERTEX_ARRAY_BINDING));
+{
+    GLint currentVAO = 0;
+    gl::GetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
+    return static_cast<GLuint>(currentVAO);
 }
 
 auto Mesh::CurrentVBO() -> GLuint
 {
-    return static_cast<GLuint>(gl::GetInteger(GL_ARRAY_BUFFER_BINDING));
+    GLint currentVBO = 0;
+    gl::GetIntegerv(GL_ARRAY_BUFFER_BINDING, &currentVBO);
+    return static_cast<GLuint>(currentVBO);
 }
 
 auto Mesh::Updata(GLuint buffer, const std::vector<VetexData>& vrtx) -> void

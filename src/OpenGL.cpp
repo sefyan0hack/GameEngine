@@ -4,20 +4,6 @@
 
 namespace gl {
 
-auto GetInteger(GLenum name) -> GLuint
-{
-    constexpr auto INVALID = std::numeric_limits<GLint>::max();
-
-    GLint maxTexSize = INVALID;
-
-    gl::GetIntegerv(name, &maxTexSize);
-
-    if (maxTexSize != INVALID)
-        return static_cast<GLuint>(maxTexSize);
-    else
-        throw CException("GetIntegerv Failed");
-}
-
 #if defined(WINDOWS_PLT)
 
 auto OpenGL::init_opengl_win32() -> void
@@ -372,6 +358,20 @@ auto OpenGL::CreationTime() const -> std::time_t
 auto OpenGL::HasExtension(const std::string &ext) const -> bool
 {
     return std::ranges::contains(m_Extensions, ext);
+}
+
+auto OpenGL::GetInteger(GLenum name) -> GLint
+{
+    constexpr auto INVALID = std::numeric_limits<GLint>::max();
+
+    GLint maxTexSize = INVALID;
+
+    gl::GetIntegerv(name, &maxTexSize);
+
+    if (maxTexSize != INVALID)
+        return maxTexSize;
+    else
+        throw CException("GetIntegerv Failed");
 }
 
 auto OpenGL::Vendor() -> std::string
