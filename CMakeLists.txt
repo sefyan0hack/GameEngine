@@ -44,6 +44,12 @@ option(TSAN             "Thread Sanitizer"    OFF)
 option(NATIVE_OPT       "Native opt build"    OFF)
 
 
+if(MINGW) #disable RTTI becaus of bug in mingw redifinition when static link libstdc++
+option(RTTI             "RunTime Type Info"   OFF)
+else()
+option(RTTI             "RunTime Type Info"   ON)
+endif(MINGW)
+
 ####################################################################################################
 # Emscripten-specific setup 
 ####################################################################################################
@@ -447,12 +453,6 @@ print_target_compile_options(${PROJECT_NAME})
 ####################################################################################################
 # Print Option Status
 ####################################################################################################
-
-if(MINGW) #disable RTTI becaus of bug in mingw redifinition when static link libstdc++
-option(RTTI             "RunTime Type Info"   OFF)
-else()
-option(RTTI             "RunTime Type Info"   ON)
-endif(MINGW)
 
 if(TESTS)
     message(STATUS "[Testing `ON`]")
