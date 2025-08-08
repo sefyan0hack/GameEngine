@@ -61,43 +61,38 @@ public:
     , m_FragShader(std::make_shared<Shader>(SHADER(skybox)".frag", GL_FRAGMENT_SHADER))
     , m_Program(std::make_shared<ShaderProgram>(m_VertShader, m_FragShader))
     , m_Mesh(Mesh::CUBE)
-    , m_Material()
+    , m_Texture(std::make_shared<TextureCubeMap>())
   {
-    m_Material.SetTexture("uDiffuseMap", std::make_shared<TextureCubeMap>());
   }
 
   SkyBox(std::shared_ptr<TextureCubeMap> texture)
     :  SkyBox()
   {
-    m_Material.SetTexture("uDiffuseMap", texture);
+    m_Texture = texture;
   }
 
   SkyBox(const std::string& BasePathName)
     :  SkyBox()
   {
-    m_Material.SetTexture("uDiffuseMap", std::make_shared<TextureCubeMap>(
-      TextureCubeMap::base_to_6faces(BasePathName))
-    );
+    m_Texture = std::make_shared<TextureCubeMap>(TextureCubeMap::base_to_6faces(BasePathName));
   }
 
   SkyBox(const SkyBox&) = delete;
   auto operator=(const SkyBox&) -> SkyBox& = delete;
 
-  auto Render(const Camera& camera) const -> void
+  auto texture() const -> std::shared_ptr<TextureCubeMap>
   {
-    gl::DepthFunc(GL_LEQUAL);
-    m_Program->Use();
-    m_Program->SetUniform("View", glm::mat4(glm::mat3(camera.View())));
-    m_Program->SetUniform("Projection", camera.Perspective());
-    // m_Mesh.Bind();
-    m_Material.Bind(m_Program);
-    gl::DrawArrays(GL_TRIANGLES, 0, m_Mesh.VextexSize());
-    gl::DepthFunc(GL_LESS);
+    return m_Texture;
   }
 
-  auto texture() -> std::shared_ptr<Texture>
+  auto mesh() const -> const Mesh&
   {
-    return m_Material.texture("uDiffuseMap");
+    return m_Mesh;
+  }
+
+  auto Program() const -> std::shared_ptr<ShaderProgram>
+  {
+    return m_Program;
   }
 
 private:
@@ -105,5 +100,5 @@ private:
   const std::shared_ptr<Shader> m_FragShader;
   const std::shared_ptr<ShaderProgram> m_Program;
   Mesh m_Mesh;
-  Material m_Material;
+  std::shared_ptr<TextureCubeMap> m_Texture;
 };

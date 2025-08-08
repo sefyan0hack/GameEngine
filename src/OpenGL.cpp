@@ -4,6 +4,16 @@
 
 namespace gl {
 
+#ifdef DEBUG
+inline static auto After_Func = []([[maybe_unused]] std::string info) {
+    GLenum err = glGetError();
+    if(err != GL_NO_ERROR){
+        if(!info.contains("glClear"))
+            throw CException("[{}] {}", GL_ERR_to_string(err), info);
+    }
+};
+#endif
+
 #if defined(WINDOWS_PLT)
 
 auto OpenGL::init_opengl_win32() -> void
@@ -181,7 +191,7 @@ OpenGL::OpenGL([[maybe_unused]] H_WIN window, H_SRF surface)
     #   define RESOLVEGL(name)\
         OpenGL::name = Function<decltype(&gl##name)>{};\
         OpenGL::name.m_Func  = reinterpret_cast<decltype(&gl##name)>(gl::GetProcAddress("gl"#name));\
-        OpenGL::name.m_After = []([[maybe_unused]] std::string info) { GLenum err = glGetError(); if(err != GL_NO_ERROR) Info("[{}] {}", GL_ERR_to_string(err), info); };\
+        OpenGL::name.m_After = After_Func;\
         OpenGL::name.m_Name  = "gl"#name
     #else
     #   define RESOLVEGL(name)\
@@ -572,7 +582,7 @@ auto gl::OpenGL::DummyCtx() -> GLCTX
     #   define RESOLVEGL(name)\
         OpenGL::name = Function<decltype(&gl##name)>{};\
         OpenGL::name.m_Func  = reinterpret_cast<decltype(&gl##name)>(gl::GetProcAddress("gl"#name));\
-        OpenGL::name.m_After = []([[maybe_unused]] std::string info) { GLenum err = glGetError(); if(err != GL_NO_ERROR) Info("[{}] {}", GL_ERR_to_string(err), info); };\
+        OpenGL::name.m_After = After_Func;\
         OpenGL::name.m_Name  = "gl"#name
     #else
     #   define RESOLVEGL(name)\

@@ -14,6 +14,7 @@ public:
     ~Renderer();
     
     auto Render(Camera &camera, std::shared_ptr<ShaderProgram> program) -> void;
+    auto RenderSky(Camera &camera)      -> void;
 
     // TODO: add it later
     // auto ChangeScene(Camera &camera, std::shared_ptr<ShaderProgram> program) -> void;

@@ -23,6 +23,7 @@ public:
     auto texture(const std::string& name) const noexcept -> std::shared_ptr<Texture>;
     auto SetTexture(const std::string &name, std::shared_ptr<Texture> texture) -> void;
     auto SetDiffuse(std::shared_ptr<Texture> texture) -> void;
+    auto RemoveTexture(const std::string &name) -> bool;
 
 private:
     std::map<std::string, std::shared_ptr<Texture>> m_Textuers;

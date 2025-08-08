@@ -50,3 +50,8 @@ auto Material::SetDiffuse(std::shared_ptr<Texture> texture) -> void
 {
     m_Textuers["uDiffuseMap"] = texture;
 }
+
+auto Material::RemoveTexture(const std::string &name) -> bool
+{
+    return m_Textuers.erase(name);
+}

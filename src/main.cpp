@@ -45,21 +45,21 @@ private:
         ResManager["forest.jpg"] = TextureCubeMap(TextureCubeMap::base_to_6faces(TEXTURE(forest.jpg)));
         ResManager["cube.vert"] = Shader(SHADER(cube)".vert", GL_VERTEX_SHADER);
 
-        constexpr int32_t Grids = 4;
+        constexpr int32_t Grids = 20;
 
         for(int32_t i = -Grids; i < Grids; i ++){
             for(int32_t j = -Grids; j < Grids; j ++){
-                Scn << GameObject({i, 0, j}, Matt, cubeMesh);
+                Scn << GameObject(Transform({i, 0, j}, {0, 0, 0}, { 0.90f, 0.90f, 0.90f}), Matt, cubeMesh);
             }
         }
 
-        auto skyBoxTex = ResManager["forest.jpg"];
+        std::shared_ptr<TextureCubeMap> skyBoxTex = ResManager["forest.jpg"];
+        std::shared_ptr<Texture2D> cubeTex = ResManager["brik.jpg"];
 
         Scn.SetSkyBox(skyBoxTex);
-        Matt->SetDiffuse(ResManager["gravelly_sand_diff_4k.png"]);
+        Matt->SetDiffuse(cubeTex);
 
         Matt->SetTexture("uSkyboxMap", skyBoxTex);
-
     }
 public:
     /// @brief Run every frame at 1/delta fps
@@ -76,7 +76,6 @@ public:
         ViewCamera.Move({ Vert * by, Up * by, Hori * by });
 
         rndr.Render(ViewCamera, CubeProgram);
-        Info("{}", SmoothedFPS());
     }
 
 public:
