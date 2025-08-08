@@ -1,4 +1,5 @@
 #include <core/Mesh.hpp>
+#include <core/ResourceManager.hpp>
 #include <core/APP.hpp>
 #include <core/GameObject.hpp>
 #include <core/Camera.hpp>
@@ -9,7 +10,6 @@
 #include <core/ShaderProgram.hpp>
 #include <core/Material.hpp>
 #include <core/Log.hpp>
-#include <core/ResourceManager.hpp>
 
 
 using namespace std;
@@ -38,10 +38,12 @@ private:
         , rndr(Scn)
     {
 
-        ResManager.load<Texture2D>(TEXTURE(brik.jpg));
-        ResManager.load<Texture2D>(TEXTURE(brik.png));
-        ResManager.load<Texture2D>(TEXTURE(annie_spratt.jpg));
-        ResManager.load<Texture2D>(TEXTURE(gravelly_sand_diff_4k.png));
+        ResManager["brik.jpg"] = Texture2D(TEXTURE(brik.jpg));
+        ResManager["brik.png"] = Texture2D(TEXTURE(brik.png));
+        ResManager["annie_spratt.jpg"] = Texture2D(TEXTURE(annie_spratt.jpg));
+        ResManager["gravelly_sand_diff_4k.png"] = Texture2D(TEXTURE(gravelly_sand_diff_4k.png));
+        ResManager["forest.jpg"] = TextureCubeMap(TextureCubeMap::base_to_6faces(TEXTURE(forest.jpg)));
+        ResManager["cube.vert"] = Shader(SHADER(cube)".vert", GL_VERTEX_SHADER);
 
         constexpr int32_t Grids = 4;
 
@@ -51,9 +53,12 @@ private:
             }
         }
 
-        Scn.SetSkyBox(TEXTURE(forest.jpg));
-        Matt->SetDiffuse(ResManager.get<Texture2D>(TEXTURE(brik.png)));
-        Matt->SetTexture("uSkyboxMap", Scn.SkyBox()->texture());
+        auto skyBoxTex = ResManager["forest.jpg"];
+
+        Scn.SetSkyBox(skyBoxTex);
+        Matt->SetDiffuse(ResManager["gravelly_sand_diff_4k.png"]);
+
+        Matt->SetTexture("uSkyboxMap", skyBoxTex);
 
     }
 public:
@@ -71,6 +76,7 @@ public:
         ViewCamera.Move({ Vert * by, Up * by, Hori * by });
 
         rndr.Render(ViewCamera, CubeProgram);
+        Info("{}", SmoothedFPS());
     }
 
 public:
