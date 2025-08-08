@@ -5,6 +5,8 @@
 #include <core/GameObject.hpp>
 #include <core/Camera.hpp>
 #include <core/ShaderProgram.hpp>
+#include <core/ResourceManager.hpp>
+
 
 Renderer::Renderer(const Scene& scene)
     :m_Scene(scene)
@@ -23,19 +25,22 @@ auto Renderer::Render(Camera &camera, std::shared_ptr<ShaderProgram> program) ->
     program->SetUniform("Eye", camera.Position());
 
     //Drwaing
+    std::shared_ptr<Texture2D> cubeTex = ResManager["gravelly_sand_diff_4k.png"];
+    program->SetUniform("uDiffuseMap", cubeTex->TextureUnit());
+
     for(auto &obj: m_Scene.Entities()){
         program->SetUniform("Model", obj.Model());
 
         auto sizeIns = static_cast<GLsizei>(obj.InstancePos().size());
         auto mesh = obj.mesh();
-        obj.material()->Bind(program);
-        draw(*mesh.get(), sizeIns);
+        // obj.material()->Bind(program);
+        draw(*mesh, sizeIns);
     }
 }
 
 auto Renderer::draw(const Mesh& mesh, GLsizei count) -> void
 {
-    mesh.Bind();
+    // mesh.Bind();
     if(count > 1){
         gl::DrawArraysInstanced(GL_TRIANGLES, 0, mesh.VextexSize(), count);
     }else{
