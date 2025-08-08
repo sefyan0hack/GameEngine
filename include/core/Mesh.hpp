@@ -30,21 +30,19 @@ public:
 
 public:
     friend struct std::formatter<Mesh>;
-    Mesh(const std::vector<VetexData> &vertices, const std::vector<GLuint> &indices = {}, std::string Name = std::format("Mesh{}", Count));
-    // Mesh(const std::vector<GLfloat> vertices, std::string Name = std::format("Mesh{}", Count));
+    Mesh(const std::vector<VetexData> &vertices, std::string Name = std::format("Mesh{}", Count));
 
-    Mesh(const Mesh& other);
-    auto operator=(const Mesh& other) -> Mesh&;
+    Mesh(const Mesh& other) = delete;
+    auto operator=(const Mesh& other) -> Mesh& = delete;
 
-    Mesh(Mesh&& other) noexcept;
-    auto operator=(Mesh&& other) noexcept -> Mesh&;
+    Mesh(Mesh&& other) noexcept = delete;
+    auto operator=(Mesh&& other) noexcept -> Mesh& = delete;
 
     auto operator==(const Mesh& other) const -> bool;
 
     ~Mesh();
     auto setAttribute(GLuint index, AttributeInfo att) -> void;
     auto EnableAttribs() const -> void;
-    auto Bind() const -> void;
     auto VextexSize() const noexcept -> GLsizei;
 
     static auto CurrentVAO() -> GLuint;
@@ -53,7 +51,6 @@ public:
         auto CloneBuffer(GLenum type, GLuint src) -> GLuint;
         auto CloneVBO(GLuint src) -> GLuint;
         auto PrepareAttribs() ->void;
-        auto PrepareVertexdata() -> void;
         static auto Updata(GLuint buffer, const std::vector<VetexData>& vrtx) -> void;
         static auto GenVertexArray() -> GLuint;
         static auto GenBuffer() -> GLuint;
