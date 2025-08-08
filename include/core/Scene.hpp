@@ -14,6 +14,7 @@ public:
 
     auto Entities() const -> std::span<const GameObject>;
     auto SetSkyBox(const std::string& BasePathName) -> void;
+    auto SetSkyBox(std::shared_ptr<TextureCubeMap> texture) -> void;
     auto SkyBox() const -> const std::unique_ptr<class SkyBox>&;
     auto Clear() -> void;
 

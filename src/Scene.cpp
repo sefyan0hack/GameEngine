@@ -25,6 +25,11 @@ auto Scene::SetSkyBox(const std::string& BasePathName) -> void
     m_SkyBox = std::make_unique<class SkyBox>(BasePathName);
 }
 
+auto Scene::SetSkyBox(std::shared_ptr<TextureCubeMap> texture) -> void
+{
+    m_SkyBox = std::make_unique<class SkyBox>(texture);
+}
+
 auto Scene::SkyBox() const -> const std::unique_ptr<class SkyBox>&
 {
     return m_SkyBox;
