@@ -60,7 +60,7 @@ struct std::formatter<Texture> {
   }
   auto format(const Texture& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    R"({{ "id": {}, "type": "{}" }})"
-    , obj.m_Id, obj.TypeName());
+    R"({{ "id": {}, "type": "{}", "uint": {}, "number": {} }})"
+    , obj.m_Id, obj.TypeName(), obj.m_TextureUnit, Texture::m_TextureUnitCount);
   }
 };
