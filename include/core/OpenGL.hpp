@@ -78,7 +78,7 @@ class OpenGL
         inline static std::string m_Vendor{};
         inline static std::string m_Renderer{};
         inline static std::vector<std::string> m_Extensions{};
-        inline static GLint m_MaxTextureUnits{};
+        inline static GLint m_MaxTextureUnits{}; // how many textures a `fragment` shader can sample
         inline static GLint m_MaxTextureSize{};
         inline static GLint m_MaxTexture3DSize{};
         inline static GLint m_MaxTextureCubeMapSize{};
