@@ -66,6 +66,12 @@ public:
     m_Material.SetTexture("uDiffuseMap", std::make_shared<TextureCubeMap>());
   }
 
+  SkyBox(std::shared_ptr<TextureCubeMap> texture)
+    :  SkyBox()
+  {
+    m_Material.SetTexture("uDiffuseMap", texture);
+  }
+
   SkyBox(const std::string& BasePathName)
     :  SkyBox()
   {
@@ -83,7 +89,7 @@ public:
     m_Program->Use();
     m_Program->SetUniform("View", glm::mat4(glm::mat3(camera.View())));
     m_Program->SetUniform("Projection", camera.Perspective());
-    m_Mesh.Bind();
+    // m_Mesh.Bind();
     m_Material.Bind(m_Program);
     gl::DrawArrays(GL_TRIANGLES, 0, m_Mesh.VextexSize());
     gl::DepthFunc(GL_LESS);
