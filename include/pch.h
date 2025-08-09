@@ -42,6 +42,7 @@
 #include <concepts>
 #include <variant>
 #include <any>
+#include <random>
 
 #ifdef __cpp_lib_stacktrace
 #   include <stacktrace>

@@ -14,7 +14,6 @@ Renderer::Renderer(const Scene& scene)
 Renderer::~Renderer(){
 }
 
-
 auto Renderer::Render(Camera &camera, const std::shared_ptr<ShaderProgram> program) -> void
 {
     RenderSky(camera);
@@ -25,17 +24,11 @@ auto Renderer::Render(Camera &camera, const std::shared_ptr<ShaderProgram> progr
     program->SetUniform("Eye", camera.Position());
 
     //Drwaing
-    std::shared_ptr<Texture2D> cubeTex = ResManager["sand.png"];
-    std::shared_ptr<TextureCubeMap> skyBoxTex = ResManager["forest.jpg"];
-
-    program->SetUniform("uDiffuseMap", cubeTex->TextureUnit());
-    program->SetUniform("uSkyboxMap", skyBoxTex->TextureUnit());
 
     for(auto &obj: m_Scene.Entities()){
         program->SetUniform("Model", obj.Model());
-
+        obj.material()->Bind(program);
         auto mesh = obj.mesh();
-        // obj.material()->Bind(program);
         draw(*mesh);
     }
 }

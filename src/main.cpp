@@ -21,9 +21,6 @@ private:
     std::shared_ptr<Shader> vert, frag;
     std::shared_ptr<ShaderProgram> CubeProgram;
 
-    std::shared_ptr<Material> Matt;
-    std::shared_ptr<Mesh> cubeMesh;
-
     Scene Scn;
     Renderer rndr;
     public:
@@ -33,33 +30,38 @@ private:
         : vert(std::make_shared<Shader>(SHADER(cube)".vert", GL_VERTEX_SHADER))
         , frag(std::make_shared<Shader>(SHADER(cube)".frag", GL_FRAGMENT_SHADER))
         , CubeProgram(std::make_shared<ShaderProgram>(vert, frag))
-        , Matt(std::make_shared<Material>())
-        , cubeMesh(std::make_shared<Mesh>(Mesh::CUBE))
         , rndr(Scn)
     {
 
-        ResManager["brik.jpg"] = Texture2D(TEXTURE(brik.jpg));
-        ResManager["brik.png"] = Texture2D(TEXTURE(brik.png));
-        ResManager["annie_spratt.jpg"] = Texture2D(TEXTURE(annie_spratt.jpg));
-        ResManager["gravelly_sand_diff_4k.png"] = Texture2D(TEXTURE(gravelly_sand_diff_4k.png));
-        ResManager["forest.jpg"] = TextureCubeMap(TextureCubeMap::base_to_6faces(TEXTURE(forest.jpg)));
+        ResManager["brik.jpg"]          = Texture2D(TEXTURE(brik.jpg));
+        ResManager["brik.png"]          = Texture2D(TEXTURE(brik.png));
+        ResManager["annie_spratt.jpg"]  = Texture2D(TEXTURE(annie_spratt.jpg));
+        ResManager["sand.png"]          = Texture2D(TEXTURE(gravelly_sand_diff_4k.png));
+
+        ResManager["forest.jpg"]= TextureCubeMap(TextureCubeMap::base_to_6faces(TEXTURE(forest.jpg)));
+
         ResManager["cube.vert"] = Shader(SHADER(cube)".vert", GL_VERTEX_SHADER);
 
-        constexpr int32_t Grids = 20;
+        ResManager["CubeMattBrik"]  = Material(ResManager["brik.png"]);
+        ResManager["CubeMattSand"]  = Material(ResManager["sand.png"]);
+        ResManager["cubeMesh"]      = Mesh(Mesh::CUBE);
+
+        constexpr int32_t Grids = 30;
+
+        static thread_local std::mt19937 rng(std::random_device{}());
+        static thread_local std::bernoulli_distribution coin(0.5f);
 
         for(int32_t i = -Grids; i < Grids; i ++){
             for(int32_t j = -Grids; j < Grids; j ++){
-                Scn << GameObject(Transform({i, 0, j}, {0, 0, 0}, { 0.90f, 0.90f, 0.90f}), Matt, cubeMesh);
+                auto m = coin(rng) ? ResManager["CubeMattBrik"] : ResManager["CubeMattSand"];
+                Scn << GameObject(Transform({i, 0, j}, {0, 0, 0}, { 0.5f, 0.5f, 0.5f}), m, ResManager["cubeMesh"]);
             }
         }
 
-        std::shared_ptr<TextureCubeMap> skyBoxTex = ResManager["forest.jpg"];
-        std::shared_ptr<Texture2D> cubeTex = ResManager["brik.jpg"];
+        Scn.SetSkyBox(ResManager["forest.jpg"]);
 
-        Scn.SetSkyBox(skyBoxTex);
-        Matt->SetDiffuse(cubeTex);
-
-        Matt->SetTexture("uSkyboxMap", skyBoxTex);
+        ResManager["CubeMattBrik"].get<Material>()->SetTexture("uSkyboxMap", Scn.SkyBox()->texture());
+        ResManager["CubeMattSand"].get<Material>()->SetTexture("uSkyboxMap", Scn.SkyBox()->texture());
     }
 public:
     /// @brief Run every frame at 1/delta fps
