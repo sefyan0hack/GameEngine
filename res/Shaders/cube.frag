@@ -9,9 +9,9 @@ uniform sampler2D uDiffuseMap;
 uniform samplerCube uSkyboxMap;
 
 void main() {
-    float reflectivity = 0.2;
+    float reflectivity = 0.4;
     float ratio = 1.00 / 1.46;
-
+s
     // Sample the base texture
     vec4 baseColor = texture(uDiffuseMap, Uv);
 
