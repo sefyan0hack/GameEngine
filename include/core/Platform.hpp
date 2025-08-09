@@ -1,9 +1,16 @@
-#pragma once
-#if !defined(MSVC_CPL)
-#pragma GCC system_header
-#endif
+/**
+*   @file Platform.hpp
+*   @author Sofyane Bentaleb
+*   @brief this file has alot of macros and static functions and varables useful for platform determen and more
+*/
 
-/// @brief Disable warning Macro
+#pragma once
+
+/*!
+  \def NO_WARNING_BEGIN
+  \def NO_WARNING_END
+  Disable warning Macro
+*/
 #if defined(MSVC_CPL)
     #define NO_WARNING_BEGIN \
         __pragma(warning(push, 0))
@@ -27,7 +34,11 @@
     #define NO_WARNING_END
 #endif
 
-/// @brief Get correct res directory for Texture and Shader
+/*!
+  \def TEXTURE(str)
+  \def SHADER(str)
+  Get correct res directory for Texture and Shader
+*/
 #ifdef PROJECT_SOURCE_DIR
     #define TEXTURE(str)  PROJECT_SOURCE_DIR"/res/"#str
     #define SHADER(str)   PROJECT_SOURCE_DIR"/res/Shaders/"#str
@@ -44,12 +55,33 @@
 #define FOR_TEST public: template<uint16_t n> struct Test;
 
 #include <type_traits>
-/// @brief Check if a given variable is static 
+/**
+ * @brief  Concept that tests whether a non-type template parameter names a free/static object
+ *         (or pointer to one) and is **not** a pointer-to-member-object.
+ *
+ * @tparam var  A non-type template parameter. The concept is satisfied when
+ *              `std::is_object_v<std::remove_pointer_t<decltype(var)>>` is true
+ *              and `decltype(var)` is not a member-object-pointer.
+ *
+ * @details
+ * Example usage:
+ * @code
+ * static int global_int = 0;
+ * struct S { int m; };
+ *
+ * static_assert(is_static<global_int>);     // OK: global_int is an object
+ * static_assert(is_static<&global_int>);    // OK: pointer to an object
+ * static_assert(!is_static<&S::m>);         // false: pointer-to-member is excluded
+ * @endcode
+ */
 template<auto var>
 concept is_static = std::is_object_v<std::remove_pointer_t<decltype(var)>> && !std::is_member_object_pointer_v<decltype(var)>;
 
 #ifndef MEMBER_VAR
-/// @brief declare member variable in interface to test need it as a hack
+/*!
+  \def MEMBER_VAR(Var)
+  declare member variable \a Var in interface to test need it as a hack
+*/
 #define MEMBER_VAR(Var) \
     const std::remove_reference_t<decltype(member.Var)>& Var = [&]() -> const std::remove_reference_t<decltype(member.Var)>& { \
         using class_type = std::remove_cvref_t<decltype(member)>; \
@@ -63,12 +95,18 @@ concept is_static = std::is_object_v<std::remove_pointer_t<decltype(var)>> && !s
 #endif
 
 #ifndef MEMBER_FUN
-/// @brief declare member function in interface to test need it as a hack
+/*!
+  \def MEMBER_FUN(Name)
+  declare member function \a Name in interface to test need it as a hack
+*/
 #   define MEMBER_FUN(Name) auto Name(auto&&... args) { return member.Name(std::forward<decltype(args)>(args)...); }
 #endif
 
 #ifndef MEMBER_OPCAST
-/// @brief declare cast operator in interface to test need it as a hack
+/*!
+  \def MEMBER_OPCAST(Type)
+  declare cast operator of Type \a Type in interface to test need it as a hack
+*/
 #   define MEMBER_OPCAST(Type) operator Type() const noexcept { return member.operator Type(); }
 #endif
 
@@ -81,7 +119,12 @@ concept is_static = std::is_object_v<std::remove_pointer_t<decltype(var)>> && !s
 #include <memory>
 #include <string>
 
-/// @brief demangle c++ symbole   only for clang/linux and gcc/(win32, linux)
+
+/** 
+ * @brief demangle c++ symbole   only for clang/linux and gcc/(win32, linux)
+ * @param name mangled name
+ * @return demangle name if name is vaid mangled c++ else get back name it self
+ */
 inline static auto demangle(const char* name) noexcept -> std::string
 {
     [[maybe_unused]] int32_t status = -1;
@@ -95,10 +138,11 @@ inline static auto demangle(const char* name) noexcept -> std::string
     return name;
     #endif
 }
-
-/// @brief get Type name in string form
-/// @param T is the type
-/// @return string view aka "T"
+/**
+ * @brief get Type name in string form
+ * @tparam T is the type
+ * @return string view aka "T"
+ */
 template <typename T>
 inline static constexpr auto type_name() noexcept -> std::string_view
 {
@@ -125,10 +169,11 @@ inline static constexpr auto type_name() noexcept -> std::string_view
     #   error "Compiler not Supported"
     #endif
 }
-
-/// @brief simple DJB2 hash algorithm
-/// @param str string to hash
-/// @return size_t integer aka hash
+/**
+ * @brief simple DJB2 hash algorithm
+ * @param str string to hash
+ * @return size_t integer aka hash
+ */
 inline static constexpr auto DJB2_hash(std::string_view str) noexcept -> std::size_t
 {
     std::size_t hash = 5381;
@@ -138,9 +183,11 @@ inline static constexpr auto DJB2_hash(std::string_view str) noexcept -> std::si
     return hash;
 }
 
-/// @brief FNV-1a 64-bit hash function
-/// @param str string to hash
-/// @return size_t integer aka hash
+/**
+ * @brief FNV-1a 64-bit hash function
+ * @param str string to hash
+ * @return size_t integer aka hash
+ */
 inline static constexpr auto fnv1a_hash(std::string_view str) noexcept -> std::size_t
 {
     std::size_t result = sizeof(std::size_t) == 4 ? 0x811C9DC5u : 0xCBF29CE484222325u;
@@ -153,26 +200,32 @@ inline static constexpr auto fnv1a_hash(std::string_view str) noexcept -> std::s
     return result;
 }
 
-/// @brief get Type hash
-/// @param T is the type
-/// @return size_t integer aka hash
+/**
+ * @brief get Type hash
+ * @tparam T is the type
+ * @return size_t integer aka hash
+ */
 template <typename T>
 inline static constexpr auto type_hash() noexcept -> std::size_t
 {
     return fnv1a_hash(type_name<T>());
 }
 
-/// @brief get Type hash take that argument aka varable and the type is decltype(type)
-/// @param type variable of type decltype(type)
-/// @return size_t integer aka hash
+/**
+ * @brief get Type hash take that argument aka varable and the type is decltype(type)
+ * @tparam type variable of type decltype(type)
+ * @return size_t integer aka hash
+ */    
 inline static constexpr auto type_hash(auto type) noexcept -> std::size_t
 {
     return type_hash<decltype(type)>();
 }
 
-/// @brief get the king of the T
-/// @param T is the type
-/// @return a string one of of `primitive/class/enum/union`
+/**
+ * @brief get the king of the T
+ * @tparam T is the type
+ * @return a string one of of `primitive/class/enum/union`
+ */
 template<typename T>
 inline static constexpr auto type_kind()  noexcept -> std::string_view
 {
@@ -183,9 +236,11 @@ inline static constexpr auto type_kind()  noexcept -> std::string_view
     else                                     return "unknown";
 }
 
-/// @brief get the parent aka base class or namespace before `*::T`
-/// @param T is the type
-/// @return the parent is eather a type or some type of namespace
+/**
+ * @brief get the parent aka base class or namespace before `*::T`
+ * @tparam T is the type
+ * @return the parent is eather a type or some type of namespace
+ */
 template<typename T>
 inline static constexpr auto type_parent() noexcept -> std::string_view
 {
@@ -197,35 +252,25 @@ inline static constexpr auto type_parent() noexcept -> std::string_view
         return "";
 }
 
-/// @brief Typeinfo holdes a hash and a name
+/// @typedef Typeinfo holdes a hash and a name
 using TypeInfo = std::pair<std::size_t, std::string_view>;
 
-/// @brief allot of help full info about type
+/**
+ * @brief allot of help full info about type
+ * @tparam T the Type
+ */
 template<class T>
 struct Type {
-    /// @brief type name of T
-    constexpr static std::string_view name = ::type_name<T>();
-
-    /// @brief  type parent name of T
-    constexpr static std::string_view parent = ::type_parent<T>();
-
-    /// @brief  type kind name of T
-    constexpr static std::string_view kind = ::type_kind<T>();
-
-    /// @brief  type hash name of T
-    constexpr static std::size_t hash = ::type_hash<T>();
-
-    /// @brief  type size name of T
-    constexpr static std::size_t size = sizeof(T);
-
-    /// @brief  type allingment name of T
-    constexpr static std::size_t alignment = alignof(T);
-
-    /// @brief  is T empty type or not
-    constexpr static bool empty = std::is_empty_v<T>;
+    constexpr static std::string_view name = ::type_name<T>();      /*!< type name of T */
+    constexpr static std::string_view parent = ::type_parent<T>();  /*!< type parent name of T */
+    constexpr static std::string_view kind = ::type_kind<T>();      /*!< type kind name of T */
+    constexpr static std::size_t      hash = ::type_hash<T>();      /*!< type hash name of T */
+    constexpr static std::size_t      size = sizeof(T);             /*!< type size name of T */
+    constexpr static std::size_t      alignment = alignof(T);       /*!< type allingment name of T */
+    constexpr static bool             empty = std::is_empty_v<T>;   /*!< is T empty type or not */
 };
 
-/// @brief sys name space has some usefull info about the system host
+/// @namespace sys name space has some usefull info about the system host 
 namespace sys {
     /// @brief enum of Target systems
     enum class Target : uint8_t
@@ -247,7 +292,7 @@ namespace sys {
         Unknown
     };
 
-    /// @brief Target system built for
+    /*!< Curent Target Syateme */
     #if defined(WINDOWS_PLT)
     constexpr auto Target = sys::Target::Windows;
     #elif defined(LINUX_PLT)
@@ -258,7 +303,7 @@ namespace sys {
     constexpr auto Target = sys::Target::Unknown;
     #endif
 
-    /// @brief Arch system built for
+    /*!< Curent Arch Syateme */
     #if   defined(__x86_64__)  || defined(_M_AMD64)
         constexpr auto Arch = sys::Arch::x86_64;
     #elif defined(__aarch64__) || defined(_M_ARM64)
@@ -273,20 +318,20 @@ namespace sys {
         constexpr auto Arch = sys::Arch::Unknown;
     #endif
 
-    /// @brief Target system in string form
+    /*!< string form of the Curent Target Syateme */
     constexpr const char* TargetName = 
-        Target == Target::Windows ? "Windows" :
-        Target == Target::Linux   ? "Linux"   :
-        Target == Target::Web     ? "Web"     : "UNKNOWN";
-
-    /// @brief Arch in string form
+    Target == Target::Windows ? "Windows" :
+    Target == Target::Linux   ? "Linux"   :
+    Target == Target::Web     ? "Web"     : "UNKNOWN";
+    
+    /*!< string form of the Curent Arch Syateme */
     constexpr const char* ArchName =
-        Arch == Arch::x86_64 ? "x86_64" :
-        Arch == Arch::Arm64  ? "Arm64"  :
-        Arch == Arch::x86    ? "x86"    :
-        Arch == Arch::Arm    ? "Arm"    :
-        Arch == Arch::Wasm   ? "Wasm"   : "UNKNOWN";
-
-    /// @brief Time stamp of the build
+    Arch == Arch::x86_64 ? "x86_64" :
+    Arch == Arch::Arm64  ? "Arm64"  :
+    Arch == Arch::x86    ? "x86"    :
+    Arch == Arch::Arm    ? "Arm"    :
+    Arch == Arch::Wasm   ? "Wasm"   : "UNKNOWN";
+    
+    /*!< Time stamp of the build */
     constexpr const char* TimeStamp = __TIMESTAMP__;
-} //namespace sys
+} // namespace sys
