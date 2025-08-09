@@ -85,7 +85,7 @@ class OpenGL
 
     public:
         #undef GLFUN
-        #ifdef DEBUG
+        #ifdef ROBUST_GL_CHECK
         #   define GLFUN(name)\
             inline static Function<decltype(&gl##name)> name
         #else
@@ -98,7 +98,7 @@ class OpenGL
 };
 
 #undef GLFUN
-#ifdef DEBUG
+#ifdef ROBUST_GL_CHECK
 #   define GLFUN(name)\
 inline Function<decltype(&gl##name)>& name = OpenGL::name
 #else

@@ -42,6 +42,7 @@ option(ASAN             "Address Sanitizer"   OFF)
 option(USAN             "Undefined Sanitizer" OFF)
 option(TSAN             "Thread Sanitizer"    OFF)
 option(NATIVE_OPT       "Native opt build"    ON)
+option(ROBUST_GL_CHECK  "Robust GL checks in Debug builds `slow` "    ON)
 
 if(MINGW) #disable RTTI becaus of bug in mingw redifinition when static link libstdc++
 option(RTTI             "RunTime Type Info"   OFF)
@@ -259,6 +260,17 @@ if(NATIVE_OPT AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
         add_compile_options($<IF:$<BOOL:${CMAKE_SYSTEM_PROCESSOR}>,/arch:AVX2,>)
     endif()
 endif()
+
+if(ROBUST_GL_CHECK)
+    if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(ROBUST_GL_CHECK OFF)
+    endif()
+
+    add_compile_definitions(
+        $<$<CONFIG:Debug>:ROBUST_GL_CHECK>
+    )
+endif()
+
 ####################################################################################################
 # Compiler Check
 ####################################################################################################
@@ -479,6 +491,9 @@ if(TSAN)
 endif()
 if(NATIVE_OPT)
     message(STATUS "[Native opt build `ON`]")
+endif()
+if(ROBUST_GL_CHECK)
+    message(STATUS "[Robust GL checks in Debug builds `ON` ]")
 endif()
 if(RTTI)
     message(STATUS "[Rtti `ON`]")

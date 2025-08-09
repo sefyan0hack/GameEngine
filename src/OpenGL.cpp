@@ -4,7 +4,7 @@
 
 namespace gl {
 
-#ifdef DEBUG
+#ifdef ROBUST_GL_CHECK
 inline static auto After_Func = []([[maybe_unused]] std::string info) {
     GLenum err = glGetError();
     if(err != GL_NO_ERROR){
@@ -187,7 +187,7 @@ OpenGL::OpenGL([[maybe_unused]] H_WIN window, H_SRF surface)
     }
     #endif
 
-    #ifdef DEBUG
+    #ifdef ROBUST_GL_CHECK
     #   define RESOLVEGL(name)\
         OpenGL::name = Function<decltype(&gl##name)>{};\
         OpenGL::name.m_Func  = reinterpret_cast<decltype(&gl##name)>(gl::GetProcAddress("gl"#name));\
@@ -578,7 +578,7 @@ auto gl::OpenGL::DummyCtx() -> GLCTX
     }
     #endif
 
-    #ifdef DEBUG
+    #ifdef ROBUST_GL_CHECK
     #   define RESOLVEGL(name)\
         OpenGL::name = Function<decltype(&gl##name)>{};\
         OpenGL::name.m_Func  = reinterpret_cast<decltype(&gl##name)>(gl::GetProcAddress("gl"#name));\
