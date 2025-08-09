@@ -74,7 +74,7 @@ auto Log(
 }
 
 
-class CoreException : public std::runtime_error {
+class CoreException final : public std::runtime_error {
 public:
   using clock = std::chrono::system_clock;
 
