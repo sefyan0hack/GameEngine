@@ -47,12 +47,12 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, std::string Name)
 }
 
 
-Mesh::~Mesh()
-{
-    Count--;
-    gl::DeleteBuffers(1, &VBO);
-    gl::DeleteVertexArrays(1, &VAO);
-}
+// Mesh::~Mesh()
+// {
+//     Count--;
+//     gl::DeleteBuffers(1, &VBO);
+//     gl::DeleteVertexArrays(1, &VAO);
+// }
 
 // Mesh::Mesh(const Mesh& other)
 //     : name(other.name)
@@ -85,26 +85,26 @@ Mesh::~Mesh()
 //     return *this;
 // }
 
-// Mesh::Mesh(Mesh&& other) noexcept
-//     : name(std::exchange(other.name, {}))
-//     , vertices(std::exchange(other.vertices, {}))
-//     , attribs(std::exchange(other.attribs, {}))
-//     , VBO(std::exchange(other.VBO, 0))
-//     , VAO(std::exchange(other.VAO, 0))
-// {
-// }
+Mesh::Mesh(Mesh&& other) noexcept
+    : name(std::exchange(other.name, {}))
+    , vertices(std::exchange(other.vertices, {}))
+    , attribs(std::exchange(other.attribs, {}))
+    , VBO(std::exchange(other.VBO, 0))
+    , VAO(std::exchange(other.VAO, 0))
+{
+}
 
-// auto Mesh::operator=(Mesh &&other) noexcept -> Mesh&
-// {
-//     if(this != &other){
-//         this->name = std::exchange(other.name, {});
-//         this->vertices = std::exchange(other.vertices, {});
-//         this->attribs = std::exchange(other.attribs, {});
-//         this->VBO = std::exchange(other.VBO, 0);
-//         this->VAO = std::exchange(other.VAO, 0);
-//     }
-//     return *this;
-// }
+auto Mesh::operator=(Mesh &&other) noexcept -> Mesh&
+{
+    if(this != &other){
+        this->name = std::exchange(other.name, {});
+        this->vertices = std::exchange(other.vertices, {});
+        this->attribs = std::exchange(other.attribs, {});
+        this->VBO = std::exchange(other.VBO, 0);
+        this->VAO = std::exchange(other.VAO, 0);
+    }
+    return *this;
+}
 
 auto Mesh::operator==(const Mesh &other) const -> bool
 {

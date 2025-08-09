@@ -25,7 +25,7 @@ auto Renderer::Render(Camera &camera, const std::shared_ptr<ShaderProgram> progr
     program->SetUniform("Eye", camera.Position());
 
     //Drwaing
-    std::shared_ptr<Texture2D> cubeTex = ResManager["gravelly_sand_diff_4k.png"];
+    std::shared_ptr<Texture2D> cubeTex = ResManager["sand.png"];
     std::shared_ptr<TextureCubeMap> skyBoxTex = ResManager["forest.jpg"];
 
     program->SetUniform("uDiffuseMap", cubeTex->TextureUnit());

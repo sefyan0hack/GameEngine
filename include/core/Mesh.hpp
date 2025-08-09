@@ -31,16 +31,16 @@ public:
 public:
     friend struct std::formatter<Mesh>;
     Mesh(const std::vector<VetexData> &vertices, std::string Name = std::format("Mesh{}", Count));
+    ~Mesh() = default;
 
     Mesh(const Mesh& other) = delete;
     auto operator=(const Mesh& other) -> Mesh& = delete;
 
-    Mesh(Mesh&& other) noexcept = delete;
-    auto operator=(Mesh&& other) noexcept -> Mesh& = delete;
+    Mesh(Mesh&& other) noexcept;
+    auto operator=(Mesh&& other) noexcept -> Mesh&;
 
     auto operator==(const Mesh& other) const -> bool;
 
-    ~Mesh();
     auto setAttribute(GLuint index, AttributeInfo att) -> void;
     auto EnableAttribs() const -> void;
     auto VextexSize() const noexcept -> GLsizei;
