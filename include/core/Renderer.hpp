@@ -19,7 +19,7 @@ public:
     // TODO: add it later
     // auto ChangeScene(Camera &camera, std::shared_ptr<ShaderProgram> program) -> void;
 private:
-    auto draw(const Mesh& mesh, GLsizei count = 1) -> void;
+    auto draw(const Mesh& mesh) -> void;
 
 private:
     const Scene& m_Scene;

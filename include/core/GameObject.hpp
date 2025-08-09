@@ -16,7 +16,6 @@ public:
     GameObject(Transform transform, std::shared_ptr<Material> matt, std::shared_ptr<Mesh> mesh, std::string Name = std::format("Obj{}", Count));
     ~GameObject();
 
-    auto SetUp(std::vector<glm::vec3> InsPos)                -> void ;
     auto SetPosition(const glm::vec3 &pos)                   -> void ;
     auto SetScale(const glm::vec3 &Scale)                    -> void ;
     auto Rotate(float angle, glm::vec3 axis)                 -> void ;
@@ -24,7 +23,6 @@ public:
     auto Model() const                                       -> glm::mat4 ;
     auto mesh() const                                        -> std::shared_ptr<Mesh> ;
     auto material() const                                    -> std::shared_ptr<Material> ;
-    auto InstancePos() const                                 -> const std::vector<glm::vec3>&;
     auto Bind() const                                        -> void;
     auto Name() const                                        -> std::string;
 
@@ -32,7 +30,6 @@ private:
     Transform m_Transform;
     std::shared_ptr<Material> m_Material;
     std::shared_ptr<Mesh> m_Mesh;
-    std::vector<glm::vec3> m_InstancePos;
     std::string m_Name;
     inline static std::size_t Count = 1;
 

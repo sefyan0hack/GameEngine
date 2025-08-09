@@ -34,10 +34,9 @@ auto Renderer::Render(Camera &camera, const std::shared_ptr<ShaderProgram> progr
     for(auto &obj: m_Scene.Entities()){
         program->SetUniform("Model", obj.Model());
 
-        auto sizeIns = static_cast<GLsizei>(obj.InstancePos().size());
         auto mesh = obj.mesh();
         // obj.material()->Bind(program);
-        draw(*mesh, sizeIns);
+        draw(*mesh);
     }
 }
 
@@ -57,12 +56,8 @@ auto Renderer::RenderSky(Camera &camera) -> void
 }
 
 
-auto Renderer::draw(const Mesh& mesh, GLsizei count) -> void
+auto Renderer::draw(const Mesh& mesh) -> void
 {
     // mesh.Bind();
-    if(count > 1){
-        gl::DrawArraysInstanced(GL_TRIANGLES, 0, mesh.VextexSize(), count);
-    }else{
-        gl::DrawArrays(GL_TRIANGLES, 0, mesh.VextexSize());
-    }
+    gl::DrawArrays(GL_TRIANGLES, 0, mesh.VextexSize());
 }
