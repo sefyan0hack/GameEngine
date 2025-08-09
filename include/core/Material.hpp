@@ -15,6 +15,8 @@ public:
     Material();
 
     Material(const Material& other);
+    Material(std::shared_ptr<Texture> diffuse);
+
     Material(Material&& other) noexcept;
     ~Material();
 
