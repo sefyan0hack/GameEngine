@@ -9,12 +9,13 @@ class Shader
       friend struct std::formatter<Shader>;
       Shader();
       Shader(const char* name, GLenum type);
-      ~Shader();
+      ~Shader() = default;
 
-      Shader(const Shader& other) = delete;
-      auto operator=(const Shader& other) -> Shader& = delete;
+      Shader(const Shader&) = delete;
+      auto operator=(const Shader&) -> Shader& = delete;
 
       Shader(Shader&& other) noexcept;
+      auto operator=(Shader&& other) noexcept -> Shader&;
 
       bool operator==(const Shader& other);
   public:

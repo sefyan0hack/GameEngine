@@ -72,16 +72,26 @@ Shader::Shader(Shader&& other) noexcept
 {
 }
 
+auto Shader::operator=(Shader&& other) noexcept -> Shader&
+{
+    if (this != &other) {
+        m_Id = std::exchange(other.m_Id, 0);
+        m_Type = std::exchange(other.m_Type, 0);
+        m_File = std::exchange(other.m_File, "");
+        m_Content = std::exchange(other.m_Content, {});
+    }
+    return *this;
+}
 
 bool Shader::operator==(const Shader &other)
 {
     return this->m_Id == other.m_Id;
 }
 
-Shader::~Shader()
-{
-    gl::DeleteShader(m_Id);
-}
+// Shader::~Shader()
+// {
+//     gl::DeleteShader(m_Id);
+// }
 
 auto Shader::LoadSource() -> void
 {
