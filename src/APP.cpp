@@ -3,6 +3,7 @@
 #include <core/Event.hpp>
 #include <core/Utils.hpp>
 #include <core/OpenGL.hpp>
+#include <core/Scene.hpp>
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>
@@ -21,9 +22,11 @@ constexpr auto WINDOW_HIEGHT = 640;
 
 APP::APP()
     : Window(WINDOW_WIDTH, WINDOW_HIEGHT, Wname, ApplicationEventQueue)
+    , m_Renderer(Window, ViewCamera)
     , ViewCamera()
     , Keyboard()
     , Mouse()
+    , MainScene()
     , m_Running(true)
     , m_LastFrameTime(std::chrono::steady_clock::now())
     , m_SmoothedFPS(60.0f)
@@ -43,6 +46,11 @@ auto APP::Frame(float deltaTime) -> void
     Window.SwapBuffers();
     Keyboard.SavePrevState();
     Mouse.SavePrevState();
+}
+
+auto APP::Render(const Scene& scene, std::shared_ptr<ShaderProgram> program) -> void
+{
+    m_Renderer.Render(scene, program);
 }
 
 auto APP::LoopBody(void* ctx) -> void
@@ -124,7 +132,7 @@ auto APP::LoopBody(void* ctx) -> void
         static bool webPolyModeChecked = false;
         static bool webPolyModeAvailable = false;
         if (!webPolyModeChecked) {
-            webPolyModeAvailable = app->Window.opengl()->HasExtension("WEBGL_polygon_mode");
+            webPolyModeAvailable = app->m_Renderer.opengl()->HasExtension("WEBGL_polygon_mode");
             webPolyModeChecked = true;
         }
         #endif

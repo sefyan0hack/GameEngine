@@ -14,7 +14,6 @@
 #include <core/gl.h>
 
 class EventQueue;
-namespace gl { class OpenGL; }
 
 class CWindow
 {
@@ -63,7 +62,6 @@ class CWindow
         auto Surface() const        -> H_SRF ;
         auto Width() const          -> int32_t ;
         auto Height() const         -> int32_t ;
-        auto opengl() const         -> std::shared_ptr<gl::OpenGL> ;
         auto Visible() const        -> bool;
         auto Show()                 -> void;
         auto Hide()                 -> void;
@@ -93,7 +91,6 @@ class CWindow
         H_SRF m_Surface;
         int32_t m_Width, m_Height;
         bool m_Visible, m_FullScreen;
-        std::shared_ptr<gl::OpenGL> m_OpenGl;
         EventQueue& m_EventQueue;
 
         FOR_TEST

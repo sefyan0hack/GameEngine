@@ -17,8 +17,6 @@ CWindow::CWindow(
 {
 	std::tie(m_Handle, m_Surface) = new_window(m_Width, m_Height, Title);
 
-	m_OpenGl = std::make_shared<gl::OpenGL>(m_Handle, m_Surface);
-
 	#if defined(WEB_PLT)
 	RegisterEventCallbacks();
     #endif
@@ -27,17 +25,12 @@ CWindow::CWindow(
 
 CWindow::~CWindow()
 {
-	m_OpenGl.reset();
 	#if defined(WINDOWS_PLT)
 	DestroyWindow(m_Handle);
 	#elif defined(LINUX_PLT)
 	XDestroyWindow(m_Surface, m_Handle);
 	if (m_Surface) {
 		XCloseDisplay(m_Surface);
-	}
-	#elif defined(WEB_PLT)
-	if (m_OpenGl->Context()) {
-		emscripten_webgl_destroy_context(m_OpenGl->Context());
 	}
 	#endif
 }
@@ -724,10 +717,7 @@ auto CWindow::Height() const -> int32_t
 {
     return m_Height;
 }
-auto CWindow::opengl() const -> std::shared_ptr<gl::OpenGL>
-{
-	return m_OpenGl;
-}
+
 auto CWindow::Visible() const -> bool
 {
 	return m_Visible;

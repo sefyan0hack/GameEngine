@@ -6,26 +6,30 @@
 #include <core/Camera.hpp>
 #include <core/ShaderProgram.hpp>
 #include <core/ResourceManager.hpp>
+#include <core/Window.hpp>
 
 
-Renderer::Renderer(const Scene& scene)
-    :m_Scene(scene)
+Renderer::Renderer(const CWindow& window, const Camera& camera)
+    : m_Window(window)
+    , m_OpenGl(m_Window.Handle(), m_Window.Surface())
+    , m_Camera(camera)
+
 {}
 Renderer::~Renderer(){
 }
 
-auto Renderer::Render(Camera &camera, const std::shared_ptr<ShaderProgram> program) -> void
+auto Renderer::Render(const Scene& scene, const std::shared_ptr<ShaderProgram> program) -> void
 {
-    RenderSky(camera);
+    RenderSky(scene);
 
     program->Use();
-    program->SetUniform("View", camera.View());
-    program->SetUniform("Projection", camera.Projection());
-    program->SetUniform("Eye", camera.Position());
+    program->SetUniform("View", m_Camera.View());
+    program->SetUniform("Projection", m_Camera.Projection());
+    program->SetUniform("Eye", m_Camera.Position());
 
     //Drwaing
 
-    for(auto &obj: m_Scene.Entities()){
+    for(auto &obj: scene.Entities()){
         program->SetUniform("Model", obj.Model());
         obj.material()->Bind(program);
         auto mesh = obj.mesh();
@@ -33,15 +37,15 @@ auto Renderer::Render(Camera &camera, const std::shared_ptr<ShaderProgram> progr
     }
 }
 
-auto Renderer::RenderSky(Camera &camera) -> void
+auto Renderer::RenderSky(const Scene& scene) -> void
 {
-    auto& skyBox = m_Scene.SkyBox();
+    auto& skyBox = scene.SkyBox();
 
     gl::DepthFunc(GL_LEQUAL);
 
     skyBox->Program()->Use();
-    skyBox->Program()->SetUniform("View", glm::mat4(glm::mat3(camera.View())));
-    skyBox->Program()->SetUniform("Projection", camera.Perspective());
+    skyBox->Program()->SetUniform("View", glm::mat4(glm::mat3(m_Camera.View())));
+    skyBox->Program()->SetUniform("Projection", m_Camera.Perspective());
     skyBox->Program()->SetUniform("uDiffuseMap", skyBox->texture()->TextureUnit());
 
     gl::DrawArrays(GL_TRIANGLES, 0, skyBox->mesh().VextexSize());
@@ -53,4 +57,9 @@ auto Renderer::draw(const Mesh& mesh) -> void
 {
     // mesh.Bind();
     gl::DrawArrays(GL_TRIANGLES, 0, mesh.VextexSize());
+}
+
+auto Renderer::opengl() const -> const gl::OpenGL&
+{
+	return m_OpenGl;
 }
