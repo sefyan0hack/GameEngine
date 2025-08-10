@@ -12,7 +12,6 @@ GameObject::GameObject(glm::vec3 position, std::shared_ptr<Material> matt, std::
     , m_Name(Name)
 {    
     Count++;
-    Info("{}", *this);
 }
 
 GameObject::GameObject(Transform transform, std::shared_ptr<Material> matt, std::shared_ptr<Mesh> mesh, std::string Name)
@@ -22,7 +21,6 @@ GameObject::GameObject(Transform transform, std::shared_ptr<Material> matt, std:
     , m_Name(Name)
 {    
     Count++;
-    Info("{}", *this);
 }
 
 GameObject::~GameObject()
@@ -36,7 +34,6 @@ GameObject::GameObject(GameObject&& other) noexcept
     , m_Mesh(std::exchange(other.m_Mesh, nullptr))
     , m_Name(std::exchange(other.m_Name, {}))
 {
-    Info("Move {}", Count);
 }
 
 auto GameObject::operator=(GameObject&& other) noexcept -> GameObject&
