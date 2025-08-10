@@ -132,7 +132,7 @@ auto APP::LoopBody(void* ctx) -> void
         static bool webPolyModeChecked = false;
         static bool webPolyModeAvailable = false;
         if (!webPolyModeChecked) {
-            webPolyModeAvailable = app->m_Renderer.opengl()->HasExtension("WEBGL_polygon_mode");
+            webPolyModeAvailable = app->m_Renderer.opengl().HasExtension("WEBGL_polygon_mode");
             webPolyModeChecked = true;
         }
         #endif
