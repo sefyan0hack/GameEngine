@@ -43,7 +43,7 @@ public:
         ResManager["CubeMattSand"]  = Material(ResManager["sand.png"]);
         ResManager["cubeMesh"]      = Mesh(Mesh::CUBE);
 
-        constexpr int32_t Grids = 30;
+        constexpr int32_t Grids = 100;
 
         static thread_local std::mt19937 rng(std::random_device{}());
         static thread_local std::bernoulli_distribution coin(0.5f);
