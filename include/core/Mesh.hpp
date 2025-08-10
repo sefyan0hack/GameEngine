@@ -129,3 +129,11 @@ struct std::formatter<Mesh> {
     , obj.name, obj.VAO, obj.VBO, obj.VextexSize());
   }
 };
+
+
+// inline auto Obj2Mesh(const char* file) -> Mesh
+// {
+//   auto data = utils::file_to_str(file);
+
+//   Info("{}", data);
+// }

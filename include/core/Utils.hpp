@@ -176,8 +176,12 @@ inline auto file_to_str(std::ifstream& file) -> std::string
     if (!file){ 
         throw CException("file not open");
     }else{
-        return std::string(std::istreambuf_iterator<char>(file), {});
+        auto it = std::istreambuf_iterator<char>(file);
+        auto end = std::istreambuf_iterator<char>();
+        return { it, end };
     }
+
+    
 }
 
 inline auto file_to_str(const char* path) -> std::string

@@ -16,6 +16,12 @@ public:
     GameObject(Transform transform, std::shared_ptr<Material> matt, std::shared_ptr<Mesh> mesh, std::string Name = std::format("Obj{}", Count));
     ~GameObject();
 
+    GameObject(const GameObject&) = default;
+    auto operator=(const GameObject&) -> GameObject& = default;
+
+    GameObject(GameObject&& other) noexcept;
+    auto operator=(GameObject&& other) noexcept -> GameObject&;
+
     auto SetPosition(const glm::vec3 &pos)                   -> void ;
     auto SetScale(const glm::vec3 &Scale)                    -> void ;
     auto Rotate(float angle, glm::vec3 axis)                 -> void ;

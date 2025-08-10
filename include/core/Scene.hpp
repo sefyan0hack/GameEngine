@@ -10,8 +10,7 @@ public:
     friend struct std::formatter<Scene>;
     Scene();
     ~Scene();
-    auto operator << (GameObject obj) -> void;
-
+    auto Add(GameObject&& entity) -> void;
     auto Entities() const -> std::span<const GameObject>;
     auto SetSkyBox(const std::string& BasePathName) -> void;
     auto SetSkyBox(std::shared_ptr<TextureCubeMap> texture) -> void;
@@ -24,6 +23,8 @@ private:
 
     FOR_TEST
 };
+
+auto operator<<(Scene& scene, GameObject&& entity) -> Scene&;
 
 // custom Mesh Format
 template<>

@@ -21,15 +21,6 @@ Material::Material(const Material& other)
 {
 }
 
-Material::Material(Material&& other) noexcept
-    : m_Textuers(std::exchange(other.m_Textuers, {}))
-{
-}
-
-Material::~Material()
-{
-}
-
 
 auto Material::Bind(std::shared_ptr<ShaderProgram> program) const -> void
 {
