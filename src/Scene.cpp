@@ -12,7 +12,7 @@ Scene::~Scene()
 
 auto Scene::operator<<(GameObject obj) -> void
 {
-    m_Entities.emplace_back(std::move(obj));
+    m_Entities.push_back(std::move(obj));
 }
 
 auto Scene::Entities() const -> std::span<const GameObject>
