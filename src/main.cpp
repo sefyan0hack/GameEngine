@@ -21,20 +21,17 @@ private:
     std::shared_ptr<Shader> vert, frag;
     std::shared_ptr<ShaderProgram> CubeProgram;
 
-    Scene Scn;
-    Renderer rndr;
-    public:
-
+public:
     /// @brief Get called at start of the game
     Game()
         : vert(std::make_shared<Shader>(SHADER(cube)".vert", GL_VERTEX_SHADER))
         , frag(std::make_shared<Shader>(SHADER(cube)".frag", GL_FRAGMENT_SHADER))
         , CubeProgram(std::make_shared<ShaderProgram>(vert, frag))
-        , rndr(Scn)
     {
 
         ResManager["brik.jpg"]          = Texture2D(TEXTURE(brik.jpg));
         ResManager["brik.png"]          = Texture2D(TEXTURE(brik.png));
+        ResManager["kimberley.jpg"]     = Texture2D(TEXTURE(kimberley.jpg));
         ResManager["annie_spratt.jpg"]  = Texture2D(TEXTURE(annie_spratt.jpg));
         ResManager["sand.png"]          = Texture2D(TEXTURE(gravelly_sand_diff_4k.png));
 
@@ -42,7 +39,7 @@ private:
 
         ResManager["cube.vert"] = Shader(SHADER(cube)".vert", GL_VERTEX_SHADER);
 
-        ResManager["CubeMattBrik"]  = Material(ResManager["brik.png"]);
+        ResManager["CubeMattkimberley"]  = Material(ResManager["kimberley.jpg"]);
         ResManager["CubeMattSand"]  = Material(ResManager["sand.png"]);
         ResManager["cubeMesh"]      = Mesh(Mesh::CUBE);
 
@@ -53,15 +50,15 @@ private:
 
         for(int32_t i = -Grids; i < Grids; i ++){
             for(int32_t j = -Grids; j < Grids; j ++){
-                auto m = coin(rng) ? ResManager["CubeMattBrik"] : ResManager["CubeMattSand"];
-                Scn << GameObject(Transform({i, 0, j}, {0, 0, 0}, { 0.5f, 0.5f, 0.5f}), m, ResManager["cubeMesh"]);
+                auto m = coin(rng) ? ResManager["CubeMattkimberley"] : ResManager["CubeMattSand"];
+                MainScene << GameObject(Transform({i, 0, j}, {0, 0, 0}, { 0.5f, 0.5f, 0.5f}), m, ResManager["cubeMesh"]);
             }
         }
 
-        Scn.SetSkyBox(ResManager["forest.jpg"]);
+        MainScene.SetSkyBox(ResManager["forest.jpg"]);
 
-        ResManager["CubeMattBrik"].get<Material>()->SetTexture("uSkyboxMap", Scn.SkyBox()->texture());
-        ResManager["CubeMattSand"].get<Material>()->SetTexture("uSkyboxMap", Scn.SkyBox()->texture());
+        ResManager["CubeMattkimberley"].get<Material>()->SetTexture("uSkyboxMap", MainScene.SkyBox()->texture());
+        ResManager["CubeMattSand"].get<Material>()->SetTexture("uSkyboxMap", MainScene.SkyBox()->texture());
     }
 public:
     /// @brief Run every frame at 1/delta fps
@@ -77,7 +74,7 @@ public:
 
         ViewCamera.Move({ Vert * by, Up * by, Hori * by });
 
-        rndr.Render(ViewCamera, CubeProgram);
+        Render(MainScene, CubeProgram);
     }
 
 public:
