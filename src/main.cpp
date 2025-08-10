@@ -20,7 +20,6 @@ class Game : public APP
 private:
     std::shared_ptr<Shader> vert, frag;
     std::shared_ptr<ShaderProgram> CubeProgram;
-
 public:
     /// @brief Get called at start of the game
     Game()
@@ -42,18 +41,22 @@ public:
         ResManager["CubeMattkimberley"]  = Material(ResManager["kimberley.jpg"]);
         ResManager["CubeMattSand"]  = Material(ResManager["sand.png"]);
         ResManager["cubeMesh"]      = Mesh(Mesh::CUBE);
+        ResManager["manMesh"]       = Mesh(Obj2Mesh(TEXTURE(FinalBaseMesh.obj)));
 
-        constexpr int32_t Grids = 100;
+        // constexpr int32_t Grids = 5;
 
-        static thread_local std::mt19937 rng(std::random_device{}());
-        static thread_local std::bernoulli_distribution coin(0.5f);
+        // static thread_local std::mt19937 rng(std::random_device{}());
+        // static thread_local std::bernoulli_distribution coin(0.5f);
 
-        for(int32_t i = -Grids; i < Grids; i ++){
-            for(int32_t j = -Grids; j < Grids; j ++){
-                auto m = coin(rng) ? ResManager["CubeMattkimberley"] : ResManager["CubeMattSand"];
-                MainScene << GameObject(Transform({i, 0, j}, {0, 0, 0}, { 0.5f, 0.5f, 0.5f}), m, ResManager["cubeMesh"]);
-            }
-        }
+        // for(int32_t i = -Grids; i < Grids; i ++){
+        //     for(int32_t j = -Grids; j < Grids; j ++){
+        //         auto m = coin(rng) ? ResManager["CubeMattkimberley"] : ResManager["CubeMattSand"];
+        //         MainScene << GameObject(Transform({i, 0, j}, {0, 0, 0}, { 0.5f, 0.5f, 0.5f}), m, ResManager["cubeMesh"]);
+        //     }
+        // }
+
+        MainScene << GameObject({0, 0, 0}, ResManager["CubeMattkimberley"], ResManager["manMesh"]);
+
 
         MainScene.SetSkyBox(ResManager["forest.jpg"]);
 

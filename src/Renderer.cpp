@@ -48,6 +48,7 @@ auto Renderer::RenderSky(const Scene& scene) -> void
     skyBox->Program()->SetUniform("Projection", m_Camera.Perspective());
     skyBox->Program()->SetUniform("uDiffuseMap", skyBox->texture()->TextureUnit());
 
+    gl::BindVertexArray(skyBox->mesh().VAO);
     gl::DrawArrays(GL_TRIANGLES, 0, skyBox->mesh().VextexSize());
     gl::DepthFunc(GL_LESS);
 }
@@ -55,7 +56,7 @@ auto Renderer::RenderSky(const Scene& scene) -> void
 
 auto Renderer::draw(const Mesh& mesh) -> void
 {
-    // mesh.Bind();
+    gl::BindVertexArray(mesh.VAO);
     gl::DrawArrays(GL_TRIANGLES, 0, mesh.VextexSize());
 }
 
