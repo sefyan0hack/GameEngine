@@ -33,16 +33,19 @@ string(REGEX MATCH "^[0-9]+" COMPILER_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSIO
 ####################################################################################################
 # Options
 ####################################################################################################
-option(TESTS            "Tests"               OFF)
-option(DOCS             "Docs"                OFF)
-option(ENABLE_COVERAGE  "Code coverage"       OFF)
-option(HARDEN           "Hardening"           OFF)
-option(STATIC_LINK      "Static link C++"     ON)
-option(ASAN             "Address Sanitizer"   OFF)
-option(USAN             "Undefined Sanitizer" OFF)
-option(TSAN             "Thread Sanitizer"    OFF)
-option(NATIVE_OPT       "Native opt build"    ON)
-option(ROBUST_GL_CHECK  "Robust GL checks in Debug builds `slow` "    ON)
+include(CMakeDependentOption)
+
+option(TESTS                "Tests"               OFF)
+option(DOCS                 "Docs"                OFF)
+option(ENABLE_COVERAGE      "Code coverage"       OFF)
+option(HARDEN               "Hardening"           OFF)
+option(STATIC_LINK          "Static link C++"     ON)
+option(ASAN                 "Address Sanitizer"   OFF)
+option(USAN                 "Undefined Sanitizer" OFF)
+option(TSAN                 "Thread Sanitizer"    OFF)
+option(NATIVE_OPT           "Native opt build"    ON)
+option(RELEASE_DEBUG_INFO   "Release debug information" OFF)
+cmake_dependent_option(ROBUST_GL_CHECK "Robust GL checks in Debug builds `slow` " ON [[ CMAKE_BUILD_TYPE STREQUAL "Debug" ]] OFF)
 
 if(MINGW) #disable RTTI becaus of bug in mingw redifinition when static link libstdc++
 option(RTTI             "RunTime Type Info"   OFF)
@@ -262,12 +265,16 @@ if(NATIVE_OPT AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 if(ROBUST_GL_CHECK)
-    if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-        set(ROBUST_GL_CHECK OFF)
-    endif()
-
     add_compile_definitions(
         $<$<CONFIG:Debug>:ROBUST_GL_CHECK>
+    )
+endif()
+
+if(RELEASE_DEBUG_INFO)
+    add_compile_options(
+        $<$<CXX_COMPILER_ID:GNU>:-g;-ggdb>
+        $<$<CXX_COMPILER_ID:Clang>:-g;-ggdb>
+        $<$<CXX_COMPILER_ID:MSVC>:/Z7>
     )
 endif()
 
@@ -494,6 +501,9 @@ if(NATIVE_OPT)
 endif()
 if(ROBUST_GL_CHECK)
     message(STATUS "[Robust GL checks in Debug builds `ON` ]")
+endif()
+if(RELEASE_DEBUG_INFO)
+    message(STATUS "[Release debug information]")
 endif()
 if(RTTI)
     message(STATUS "[Rtti `ON`]")
