@@ -288,7 +288,7 @@ endmacro()
 
 function(no_console)
     if(MSVC)
-    target_link_options(
+    add_link_options(
         "$<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>"
         "$<$<CONFIG:Release>:/ENTRY:mainCRTStartup>"
     )
