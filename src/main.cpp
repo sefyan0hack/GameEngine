@@ -85,7 +85,7 @@ public:
 
     /// @brief Get called when the game quit
     ~Game(){
-        Info("Game Destructor");
+        Debug::Print("Game Destructor");
     }
 };
 

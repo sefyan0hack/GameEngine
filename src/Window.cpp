@@ -89,7 +89,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
     switch (msg)
     {
         case WM_CREATE:{
-			Info("Creat Main CWindow");
+			Debug::Print("Creat Main CWindow");
             return 0;
         }
         case WM_CLOSE:{
@@ -612,7 +612,7 @@ auto CWindow::RegisterEventCallbacks() -> void
 		) -> EM_BOOL {
 			auto* window = static_cast<CWindow*>(userData);
 
-			if (e->isFullscreen) Info("Enable FullScreen");
+			if (e->isFullscreen) Debug::Print("Enable FullScreen");
 			window->m_EventQueue.push(CWindow::ResizeEvent{ e->elementWidth, e->elementHeight});
 			return EM_TRUE;
 	});
@@ -833,5 +833,5 @@ auto CWindow::SwapBuffers() const -> void
 auto CWindow::Close() -> void
 {
     Hide();
-    Info("Exit. ");
+    Debug::Print("Exit. ");
 }

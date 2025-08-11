@@ -238,17 +238,17 @@ OpenGL::OpenGL([[maybe_unused]] H_WIN window, H_SRF surface)
     gl::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     #endif
 
-    Info("=================================================================================");
-    Info("Platform : {}, Arch : {}", sys::TargetName, sys::ArchName);
-    Info("GL Version : Wanted:({}.{}) -> Got:({}.{})", GLMajorVersion, GLMinorVersion, m_Major, m_Minor);
-    Info("GL Vendor : {}", m_Vendor);
-    Info("GL Renderer : {}", m_Renderer);
-    Info("GL Exts : {}", utils::to_string(m_Extensions));
-    Info("Max Texture Units : {}", m_MaxTextureUnits);
-    Info("Max Texture Size : {0} x {0}", m_MaxTextureSize);
-    Info("Max Texture3D Size : {0} x {0} x {0}", m_MaxTexture3DSize);
-    Info("Max TextureCubeMap Size : {0} x {0}", m_MaxTextureCubeMapSize);
-    Info("=================================================================================");
+    Debug::Print("=================================================================================");
+    Debug::Print("Platform : {}, Arch : {}", sys::TargetName, sys::ArchName);
+    Debug::Print("GL Version : Wanted:({}.{}) -> Got:({}.{})", GLMajorVersion, GLMinorVersion, m_Major, m_Minor);
+    Debug::Print("GL Vendor : {}", m_Vendor);
+    Debug::Print("GL Renderer : {}", m_Renderer);
+    Debug::Print("GL Exts : {}", utils::to_string(m_Extensions));
+    Debug::Print("Max Texture Units : {}", m_MaxTextureUnits);
+    Debug::Print("Max Texture Size : {0} x {0}", m_MaxTextureSize);
+    Debug::Print("Max Texture3D Size : {0} x {0} x {0}", m_MaxTexture3DSize);
+    Debug::Print("Max TextureCubeMap Size : {0} x {0}", m_MaxTextureCubeMapSize);
+    Debug::Print("=================================================================================");
 }
 
 OpenGL::OpenGL(const OpenGL &other)
@@ -419,7 +419,7 @@ auto GetProcAddress(const char* name) -> void* {
     }
 
     if (address != nullptr) {
-        Info("from LIB:`{}`: load function `{}` at : {}", OPENGL_MODULE_NAME, name, address);
+        Debug::Print("from LIB:`{}`: load function `{}` at : {}", OPENGL_MODULE_NAME, name, address);
     } else {
         throw CException("Couldn't load {} function `{}`", OPENGL_MODULE_NAME, name);
     }

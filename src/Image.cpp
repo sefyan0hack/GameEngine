@@ -50,7 +50,7 @@ Image::Image(Pointer auto Data, uint32_t Width, uint32_t Height, uint32_t Channe
         m_Channels = Channels;
         m_Data = reinterpret_cast<std::byte*>(Data);
     }else{
-        Info(" Image not Valid  {}", *this);
+        Debug::Print(" Image not Valid  {}", *this);
     }
 }
 
@@ -63,7 +63,7 @@ Image::Image(const std::string& filename, bool flip)
     if(data)
         m_Data = reinterpret_cast<std::byte*>(data);
     else
-        Info("Can't read {} . reason : {}", filename.c_str(), stbi_failure_reason());
+        Debug::Print("Can't read {} . reason : {}", filename.c_str(), stbi_failure_reason());
 }
 
 Image::~Image()

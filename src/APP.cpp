@@ -112,7 +112,7 @@ auto APP::LoopBody(void* ctx) -> void
             },
             [](const auto& e) {
                 if( ::type_name<decltype(e)>() == "const std::monostate&") throw CException(" nnnnnn ");
-                Info("Unhandeled Event: {}", ::type_name<decltype(e)>()); 
+                Debug::Print("Unhandeled Event: {}", ::type_name<decltype(e)>()); 
             },
         }, event);
     }

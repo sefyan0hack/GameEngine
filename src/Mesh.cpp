@@ -144,7 +144,7 @@ auto Mesh::setAttribute(GLuint index, AttributeInfo att) -> void
 {
     Expect(att.size > 0 && att.size <= 4, "position.size : 0<{}<4 wrong", att.size);
 
-    Info(
+    Debug::Print(
         "attribute {} : size: {}, type: {}, normalized: {}, stride: {}, offset: {}",
         index,
         att.size,
@@ -205,7 +205,7 @@ auto Mesh::GenVertexArray() -> GLuint
 {
     GLuint result = 0;
     gl::GenVertexArrays(1, &result);
-    Info("GenVertexArray {}", result);
+    Debug::Print("GenVertexArray {}", result);
     return result;
 }
 
@@ -213,7 +213,7 @@ auto Mesh::GenBuffer() -> GLuint
 {
     GLuint result = 0;
     gl::GenBuffers(1, &result);
-    Info("GenBuffer {}", result);
+    Debug::Print("GenBuffer {}", result);
     return result;
 }
 auto Mesh::BindVertexArray(GLuint vao) -> void

@@ -1,77 +1,35 @@
 #pragma once
 
-namespace config {
-  constexpr auto LogFileName = "Engine.log";
-}
 
-namespace {
+namespace Debug {
 
-inline std::string formatedTime() {
-  const auto now = std::chrono::system_clock::now();
-  return std::format("{:%Y-%m-%d %H:%M:%OS}", now);
-}
-
-
-struct ClogPolicy {
-  static std::ostream& get_stream() {
-    return std::cout;
+  inline std::string formatedTime() {
+    const auto now = std::chrono::system_clock::now();
+    return std::format("{:%Y-%m-%d %H:%M:%OS}", now);
   }
-};
 
-struct FilePolicy {
-  static std::ostream& get_stream() {
-    static std::unique_ptr<std::ofstream> stream;
-    static std::once_flag once_flag;
-    static bool open_failed = false;
+  template <typename ...Ts>
+  auto Log(
+    [[maybe_unused]] const std::format_string<Ts...>& fmt,
+    [[maybe_unused]] Ts&& ... ts) -> void
+  {
+    auto formatted_msg = std::format(fmt, std::forward<Ts>(ts)...);
 
-    std::call_once(once_flag, []() {
-      static std::ios_base::Init init_guard;
-      stream = std::make_unique<std::ofstream>(
-        config::LogFileName, 
-        std::ios::app
-      );
-      if (!stream->is_open()) {
-        std::cerr << "Failed to open log file: " << config::LogFileName << "\n";
-        open_failed = true;
-        stream.reset();
-      }
-    });
-
-    return (open_failed || !stream) ? std::clog : *stream;
-  }
-};
-
-inline auto& get_logger_mutex() {
-  static std::mutex mtx;
-  return mtx;
-}
-
-
-#if defined(DEBUG) || defined(WEB_PLT)
-using LOGPolicy = ClogPolicy;
-#else
-using LOGPolicy = FilePolicy;
-#endif
-
-template <typename ...Ts>
-auto Log(
-  [[maybe_unused]] const std::format_string<Ts...>& fmt,
-  [[maybe_unused]] Ts&& ... ts) -> void
-{
-  auto Is_Testing_Enabled = std::getenv("TESTING_ENABLED");
-
-  std::scoped_lock lock(get_logger_mutex());
-
-  auto formatted_msg = std::format(fmt, std::forward<Ts>(ts)...);
-  [[maybe_unused]] auto& out = LOGPolicy::get_stream();
-
-  if(Is_Testing_Enabled == nullptr){
-    out << std::format("{} : {}\n", formatedTime(), formatted_msg);
+    if(std::getenv("TESTING_ENABLED") == nullptr){
+      std::cout << std::format("{} : {}\n", formatedTime(), formatted_msg);
+    }
   }
   
-}
 
-}
+  template <typename... Ts>
+  inline auto Print([[maybe_unused]] const std::format_string<Ts...>& fmt, [[maybe_unused]] Ts&&... ts) -> void
+  {
+    #if defined(DEBUG) && !defined(NDEBUG)
+    Log(fmt, std::forward<Ts>(ts)...);
+    #endif
+  }
+
+} // namespace Debug
 
 
 class CoreException final : public std::runtime_error {
@@ -128,20 +86,10 @@ private:
   #endif
 };
 
-template <typename... Ts>
-inline void print(const std::format_string<Ts...>& fmt, Ts&&... ts) {
-  Log(fmt, std::forward<Ts>(ts)...);
-}
-
-template <typename... Ts>
-inline void Info(const std::format_string<Ts...>& fmt, Ts&&... ts) {
-  Log(fmt, std::forward<Ts>(ts)...);
-}
-
 #ifndef CException
 #define CException(...) CoreException(std::source_location::current(), __VA_ARGS__)
 #endif
 
 #ifndef Expect
-#define Expect(cond, ...) do { if (!(cond)){ print("Expectation `{}` Failed", #cond); throw CException(__VA_ARGS__); } } while (0)
+#define Expect(cond, ...) do { if (!(cond)){ Debug::Print("Expectation `{}` Failed", #cond); throw CException(__VA_ARGS__); } } while (0)
 #endif

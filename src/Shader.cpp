@@ -22,7 +22,7 @@ constexpr auto to_string(GLenum type) -> const char*
 Shader::Shader()
 : m_Id(0), m_Type(0), m_File(""), m_Content({})
 {
-    Info("{}", *this);
+    Debug::Print("{}", *this);
 }
 
 Shader::Shader(const char* name, GLenum type)
@@ -34,7 +34,7 @@ Shader::Shader(const char* name, GLenum type)
     LoadSource();
     Compile(m_Id);
     checkShaderCompileStatus(*this);
-    Info("{}", *this);
+    Debug::Print("{}", *this);
 }
 
 // Shader::Shader(const Shader& other)
@@ -138,7 +138,7 @@ auto Shader::LoadFile(const char* filename) -> std::vector<GLchar>
     
     result.push_back('\0');
 
-    Info("Loaded {}: ({} bytes)", filename, totalSize);
+    Debug::Print("Loaded {}: ({} bytes)", filename, totalSize);
     return result;
 }
 

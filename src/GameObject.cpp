@@ -39,7 +39,7 @@ GameObject::GameObject(GameObject&& other) noexcept
 
 auto GameObject::operator=(GameObject&& other) noexcept -> GameObject&
 {
-    Info("Move {}", Count);
+    Debug::Print("Move {}", Count);
 
     if(this != &other){
         m_Transform = std::exchange(other.m_Transform, {});
