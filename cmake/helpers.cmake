@@ -10,54 +10,6 @@ function(print_target_compile_options target)
     endforeach()
 endfunction()
 
-function(apply_main_options)
-    set(options)
-    set(oneValueArgs)
-    set(multiValueArgs TARGETS)
-    cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-    foreach(target IN LISTS ARG_TARGETS)
-        # check if the target is an ALIAS
-        get_target_property(original_target ${target} ALIASED_TARGET)
-            
-        if (original_target)
-            message(STATUS "Applying compile options to alias target '${target}' (original: '${original_target}')")
-            set(target ${original_target})
-        endif()
-        
-        if(MSVC)
-            target_compile_options(${target} PRIVATE
-
-                # Debug flags
-                "$<$<CONFIG:Debug>:/Od>"
-                "$<$<CONFIG:Debug>:/RTC1>"
-                # Release flags
-                "$<$<CONFIG:Release>:/O2>"
-            )
-            target_link_options(${target} PRIVATE
-                "$<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>"       # no terminale
-                "$<$<CONFIG:Release>:/ENTRY:mainCRTStartup>"    # entry
-                "$<$<CONFIG:Release>:/OPT:REF>"                 # Optimize unused functions
-                "$<$<CONFIG:Release>:/OPT:ICF>"                 # Identical COMDAT folding
-                "$<$<CONFIG:Release>:/INCREMENTAL:NO>"          # Disable incremental linking
-            )
-        endif()
-
-        if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-        target_compile_options(${target} PRIVATE
-            # Debug flags
-            "$<$<CONFIG:Debug>:-g>"
-            "$<$<CONFIG:Debug>:-ggdb>"
-            "$<$<CONFIG:Debug>:-O0>"
-            # Release flags
-            "$<$<CONFIG:Release>:-O3>"
-            "$<$<CONFIG:Release>:-fomit-frame-pointer>"
-        )
-        target_link_options(${target} PRIVATE
-            "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
-        )
-        endif()
-    endforeach()
-endfunction()
 
 function(apply_warning_options)
     set(options)
@@ -254,7 +206,6 @@ function(apply_all_options)
             set(target ${original_target})
         endif()
 
-        apply_main_options(TARGETS ${target})
         apply_warning_options(TARGETS ${target})
     endforeach()
     pre_include_file("${CMAKE_SOURCE_DIR}/include/core/Platform.hpp")
@@ -334,3 +285,16 @@ macro(fetch_and_include_file name url)
     )
     include_directories(${${name}_SOURCE_DIR})
 endmacro()
+
+function(no_console)
+    if(MSVC)
+    target_link_options(${target} PRIVATE
+        "$<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>"
+        "$<$<CONFIG:Release>:/ENTRY:mainCRTStartup>"
+    )
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_link_options(${target} PRIVATE
+        "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
+    )
+    endif()
+endfunction()

@@ -13,6 +13,7 @@ public:
     auto RenderSky(const class Scene& scene)      -> void;
 
     auto opengl() const -> const gl::OpenGL&;
+    auto SetViewPort(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void;
 
     // TODO: add it later
     // auto ChangeScene(Camera &camera, std::shared_ptr<class ShaderProgram> program) -> void;

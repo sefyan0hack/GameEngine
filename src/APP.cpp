@@ -74,10 +74,10 @@ auto APP::LoopBody(void* ctx) -> void
                     app->m_Running = false;
                 }
             },
-            [&window](const CWindow::ResizeEvent& e) {
-                window.m_Width = e.width;
-                window.m_Height = e.height;
-                gl::Viewport(0, 0, e.width, e.height);
+            [&app](const CWindow::ResizeEvent& e) {
+                app->Window.m_Width = e.width;
+                app->Window.m_Height = e.height;
+                app->m_Renderer.SetViewPort(0, 0, e.width, e.height);
             },
             [&app](const CWindow::LoseFocusEvent&) {
 		        app->Keyboard.ClearState();
@@ -85,10 +85,10 @@ auto APP::LoopBody(void* ctx) -> void
 		        app->ApplicationEventQueue.clear();
             },
             [&app](const Keyboard::KeyDownEvent& e) {
-				    app->Keyboard.OnKeyDown(e.key);
+				app->Keyboard.OnKeyDown(e.key);
             },
             [&app](const Keyboard::KeyUpEvent& e) {
-				    app->Keyboard.OnKeyUp(e.key);
+				app->Keyboard.OnKeyUp(e.key);
             },
             [&app](const Mouse::ButtonDownEvent& e) {
                 app->Mouse.OnButtonDown(e.btn);
@@ -216,8 +216,7 @@ auto APP::LoopBody(void* ctx) -> void
 
 auto APP::Run() -> void
 {
-    gl::ClearColor(0.2f, 0.21f, 0.22f, 1.0f);
-    gl::Viewport(0, 0, Window.Width(), Window.Height());
+    // m_Renderer.SetViewPort(0, 0, Window.Width(), Window.Height());
 
     #if defined(WINDOWS_PLT) || defined(LINUX_PLT)
     while (m_Running) {

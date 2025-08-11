@@ -229,6 +229,9 @@ OpenGL::OpenGL([[maybe_unused]] H_WIN window, H_SRF surface)
     gl::Enable(GL_BLEND);
     gl::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    // gl::Enable(GL_CULL_FACE);
+    // gl::CullFace(GL_BACK);  // sky box missed up
+
     #if !defined(WEB_PLT)
     gl::Enable(GL_LINE_SMOOTH);
     gl::Enable(GL_MULTISAMPLE);
@@ -368,20 +371,6 @@ auto OpenGL::CreationTime() const -> std::time_t
 auto OpenGL::HasExtension(const std::string &ext) const -> bool
 {
     return std::ranges::contains(m_Extensions, ext);
-}
-
-auto OpenGL::GetInteger(GLenum name) -> GLint
-{
-    constexpr auto INVALID = std::numeric_limits<GLint>::max();
-
-    GLint maxTexSize = INVALID;
-
-    gl::GetIntegerv(name, &maxTexSize);
-
-    if (maxTexSize != INVALID)
-        return maxTexSize;
-    else
-        throw CException("GetIntegerv Failed");
 }
 
 auto OpenGL::Vendor() -> std::string
@@ -592,6 +581,36 @@ auto gl::OpenGL::DummyCtx() -> GLCTX
 	GLFUNCS(RESOLVEGL)
 
     return dummy_context;
+}
+
+
+
+auto GetInteger(GLenum name) -> GLint
+{
+    constexpr auto INVALID = std::numeric_limits<GLint>::max();
+
+    GLint maxTexSize = INVALID;
+
+    gl::GetIntegerv(name, &maxTexSize);
+
+    if (maxTexSize != INVALID)
+        return maxTexSize;
+    else
+        throw CException("GetIntegerv Failed");
+}
+
+auto GetBoolean(GLenum name) -> GLboolean
+{
+    constexpr auto INVALID = std::numeric_limits<GLboolean>::max();
+
+    GLboolean maxTexSize = INVALID;
+
+    gl::GetBooleanv(name, &maxTexSize);
+
+    if (maxTexSize != INVALID)
+        return maxTexSize;
+    else
+        throw CException("GetBooleanv Failed");
 }
 
 } //namespace gl

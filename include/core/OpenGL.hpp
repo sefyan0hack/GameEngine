@@ -18,7 +18,7 @@ namespace gl {
 
     auto GetProcAddress(const char* name) -> void*;
 
-    constexpr int32_t DepthBufferBits   = 24;
+    constexpr int32_t DepthBufferBits   = 32;
     constexpr int32_t StencilBufferBits = 8;
     constexpr int32_t ChannelBits       = 8;
     constexpr int32_t AlphaBits         = 8;
@@ -47,8 +47,6 @@ class OpenGL
         auto isValid() const -> bool;
         auto CreationTime() const -> std::time_t;
         auto HasExtension(const std::string& ext) const -> bool;
-
-        auto GetInteger(GLenum name) -> GLint;
 
         static auto Vendor() -> std::string;
         static auto Renderer() -> std::string;
@@ -107,5 +105,8 @@ inline decltype(&gl##name)& name = OpenGL::name
 #endif
 
 GLFUNCS(GLFUN)
+
+auto GetInteger(GLenum name) -> GLint;
+auto GetBoolean(GLenum name) -> GLboolean;
 
 } //namespace g

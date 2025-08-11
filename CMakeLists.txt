@@ -46,13 +46,8 @@ option(TSAN                 "Thread Sanitizer"    OFF)
 option(NATIVE_OPT           "Native opt build"    ON)
 option(RELEASE_DEBUG_INFO   "Release debug information" OFF)
 cmake_dependent_option(ROBUST_GL_CHECK "Robust GL checks in Debug builds `slow` " ON [[ CMAKE_BUILD_TYPE STREQUAL "Debug" ]] OFF)
-
-if(MINGW) #disable RTTI becaus of bug in mingw redifinition when static link libstdc++
-option(RTTI             "RunTime Type Info"   OFF)
-else()
-option(RTTI             "RunTime Type Info"   ON)
-endif(MINGW)
-
+cmake_dependent_option(NO_CONSOLE "No Console with Window" ON [[ CMAKE_BUILD_TYPE STREQUAL "Release" ]] OFF)
+cmake_dependent_option(RTTI "RunTime Type Info" ON "NOT MINGW" OFF) # disable RTTI becaus of bug in mingw redifinition when static link libstdc++
 
 ####################################################################################################
 # Emscripten-specific setup 
@@ -265,17 +260,19 @@ if(NATIVE_OPT AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 if(ROBUST_GL_CHECK)
-    add_compile_definitions(
-        $<$<CONFIG:Debug>:ROBUST_GL_CHECK>
-    )
+    add_compile_definitions( ROBUST_GL_CHECK )
 endif()
 
 if(RELEASE_DEBUG_INFO)
     add_compile_options(
-        $<$<CXX_COMPILER_ID:GNU>:-g;-ggdb>
-        $<$<CXX_COMPILER_ID:Clang>:-g;-ggdb>
+        $<$<CXX_COMPILER_ID:GNU>:-g>
+        $<$<CXX_COMPILER_ID:Clang>:-g>
         $<$<CXX_COMPILER_ID:MSVC>:/Z7>
     )
+endif()
+
+if(NO_CONSOLE)
+    no_console()
 endif()
 
 ####################################################################################################
@@ -481,4 +478,5 @@ message(STATUS "TSAN : (${TSAN}) [ Thread Sanitizer ]")
 message(STATUS "NATIVE_OPT : (${NATIVE_OPT}) [ Native opt build ]")
 message(STATUS "ROBUST_GL_CHECK : (${ROBUST_GL_CHECK}) [ Robust GL checks in Debug builds ]")
 message(STATUS "RELEASE_DEBUG_INFO : (${RELEASE_DEBUG_INFO}) [ Release debug information ]")
+message(STATUS "NO_CONSOLE : (${NO_CONSOLE}) [ No Console with Window ]")
 message(STATUS "RTTI : (${RTTI}) [ Rtti ]")

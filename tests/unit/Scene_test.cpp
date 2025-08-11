@@ -9,10 +9,11 @@ using Scene_Test_Ctor1 = Scene::Test<1>;
     MEMBER_VAR(m_SkyBox);\
     MEMBER_VAR(m_Entities);\
     \
-    MEMBER_FUN(operator <<);\
+    MEMBER_FUN(Add);\
     MEMBER_FUN(Entities);\
     MEMBER_FUN(SetSkyBox);\
-    MEMBER_FUN(SkyBox);
+    MEMBER_FUN(SkyBox);\
+    MEMBER_FUN(Clear);
 
 template<>
 struct Scene::Test<1> : public ::testing::Test {

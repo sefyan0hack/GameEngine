@@ -169,7 +169,8 @@ inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
     X(BindBufferBase);\
     X(BufferSubData);\
     X(GetUniformBlockIndex);\
-    X(UniformBlockBinding);
+    X(UniformBlockBinding);\
+    X(GetBooleanv);
 
 #if defined(WEB_PLT)
   // web (or ES-only) build
