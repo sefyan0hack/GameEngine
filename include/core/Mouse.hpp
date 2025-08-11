@@ -1,5 +1,4 @@
 #pragma once
-#include <core/fmts.hpp>
 
 class CWindow;
 class Mouse

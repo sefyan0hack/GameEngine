@@ -1,9 +1,6 @@
 #include <core/Material.hpp>
-#include <core/Log.hpp>
-#include <core/Shader.hpp>
 #include <core/Texture.hpp>
-#include <core/Mesh.hpp>
-#include <core/ResourceManager.hpp>
+#include <core/ShaderProgram.hpp>
 #include <glm/glm.hpp>
 
 Material::Material()

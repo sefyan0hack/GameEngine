@@ -3,10 +3,14 @@
 #include <core/Renderer.hpp>
 #include <core/Scene.hpp>
 #include <core/GameObject.hpp>
+#include <core/SkyBox.hpp>
 #include <core/Camera.hpp>
 #include <core/ShaderProgram.hpp>
 #include <core/ResourceManager.hpp>
 #include <core/Window.hpp>
+#include <core/Mesh.hpp>
+#include <core/Material.hpp>
+#include <core/Texture.hpp>
 
 
 Renderer::Renderer(const CWindow& window, const Camera& camera)
@@ -48,8 +52,8 @@ auto Renderer::RenderSky(const Scene& scene) -> void
     skyBox->Program()->SetUniform("Projection", m_Camera.Perspective());
     skyBox->Program()->SetUniform("uDiffuseMap", skyBox->texture()->TextureUnit());
 
-    gl::BindVertexArray(skyBox->mesh().VAO);
-    gl::DrawArrays(GL_TRIANGLES, 0, skyBox->mesh().VextexSize());
+    gl::BindVertexArray(skyBox->mesh()->VAO);
+    gl::DrawArrays(GL_TRIANGLES, 0, skyBox->mesh()->VextexSize());
     gl::DepthFunc(GL_LESS);
 }
 

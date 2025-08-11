@@ -1,12 +1,14 @@
 #include <core/Mouse.hpp>
-#include <core/Window.hpp>
-#include <core/Log.hpp>
+
 #if defined(WINDOWS_PLT)
 #include <windows.h>
 #elif defined(WEB_PLT)
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
 #endif
+
+#include <core/Window.hpp>
+#include <core/Log.hpp>
 
 Mouse::Mouse() 
 	: Sensitivity(0.11f)

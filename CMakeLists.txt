@@ -352,7 +352,8 @@ set(SOURCES
     src/ResourceManager.cpp
     src/Image.cpp
     src/ShaderProgram.cpp
-	)
+    src/SkyBox.cpp
+)
 
 
 ####################################################################################################

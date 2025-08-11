@@ -1,6 +1,7 @@
 #include <core/Texture.hpp>
 #include <core/Log.hpp>
 #include <core/Utils.hpp>
+#include <core/OpenGL.hpp>
 
 namespace {
 constexpr auto to_string(GLenum type) -> const char*

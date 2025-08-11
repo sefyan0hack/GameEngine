@@ -1,5 +1,6 @@
 #include <core/Mesh.hpp>
 #include <core/Log.hpp>
+#include <core/OpenGL.hpp>
 
 namespace {
     constinit static AttributeInfo position {

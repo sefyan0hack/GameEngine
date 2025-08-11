@@ -7,10 +7,7 @@
 #elif defined(WEB_PLT)
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
-#include <emscripten/html5_webgl.h>
-#include <emscripten/key_codes.h>
 #endif
-
 #include <core/gl.h>
 
 class EventQueue;

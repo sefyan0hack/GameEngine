@@ -2,6 +2,7 @@
 #include <core/ResourceManager.hpp>
 #include <core/APP.hpp>
 #include <core/GameObject.hpp>
+#include <core/SkyBox.hpp>
 #include <core/Camera.hpp>
 #include <core/Texture.hpp>
 #include <core/Scene.hpp>

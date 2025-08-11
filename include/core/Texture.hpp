@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/OpenGL.hpp>
+#include <core/gl.h>
 #include <core/Image.hpp>
 
 class Texture

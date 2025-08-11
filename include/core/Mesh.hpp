@@ -1,9 +1,7 @@
 #pragma once
 
+#include <core/gl.h>
 #include <glm/glm.hpp>
-#include <core/OpenGL.hpp>
-#include <core/fmts.hpp>
-
 
 struct Vertex
 {
@@ -202,24 +200,3 @@ inline auto Obj2Mesh(const char* filename) -> std::vector<Vertex>
   
   return vertices_output;
 }
-
-// inline auto Obj2Mesh(const char* filename) -> Mesh
-// {
-//   std::ifstream file(filename);
-
-//   if(!file) throw CException("Error: Unable to open {}", filename);
-
-//   auto verticies = std::vector<Vertex>{};
-//   std::string line;
-
-//   while (std::getline(file, line)) {
-//     if(line.starts_with("v  ")){
-//       auto verts = utils::split(line.c_str() + 3, " ");
-
-//       verticies.push_back(
-//         Vertex { .Position = { std::stof(verts[0]), std::stof(verts[1]), std::stof(verts[2])} }
-//       );
-//     }
-//   }
-//   return verticies;
-// }

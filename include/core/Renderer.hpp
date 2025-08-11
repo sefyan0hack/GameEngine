@@ -2,7 +2,6 @@
 
 #include <core/OpenGL.hpp>
 
-
 class Renderer
 {
 public:

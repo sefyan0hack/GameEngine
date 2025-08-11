@@ -1,9 +1,5 @@
 #pragma once
 
-#include <core/Texture.hpp>
-#include <core/Shader.hpp>
-#include <core/Log.hpp>
-
 class ResourceManager
 {
 private:

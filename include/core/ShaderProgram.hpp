@@ -1,6 +1,7 @@
 #pragma once
 #include <core/gl.h>
-#include <core/Shader.hpp>
+#include <glm/glm.hpp>
+#include <core/fmts.hpp>
 
 
 class ShaderProgram {
@@ -8,7 +9,7 @@ public:
     using GLSLVar = std::tuple<GLuint, GLenum, GLsizei>;
 
     friend struct std::formatter<ShaderProgram>;
-    ShaderProgram(std::shared_ptr<Shader> vertex, std::shared_ptr<Shader> fragment);
+    ShaderProgram(std::shared_ptr<class Shader> vertex, std::shared_ptr<class Shader> fragment);
     ~ShaderProgram();
 
     // ShaderProgram(const ShaderProgram& other);
@@ -47,7 +48,7 @@ private:
 
 private:
     GLuint m_Id;
-    std::vector<std::shared_ptr<Shader>> m_Shaders;
+    std::vector<std::shared_ptr<class Shader>> m_Shaders;
     std::map<std::string, GLSLVar> m_Attribs;
     std::map<std::string, GLSLVar> m_Uniforms;
 

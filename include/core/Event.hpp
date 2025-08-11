@@ -1,23 +1,20 @@
 #pragma once
-
-class CWindow;
-class Keyboard;
-class Mouse;
+#include <core/Utils.hpp>
 
 using Event = std::variant<
     std::monostate,
-    Keyboard::KeyDownEvent,
-    Keyboard::KeyUpEvent,
-    Mouse::ButtonDownEvent,
-    Mouse::ButtonUpEvent,
-    Mouse::MoveEvent,
-    Mouse::EnterEvent,
-    Mouse::LeaveEvent,
-    Mouse::MovementEvent,
-    CWindow::ResizeEvent,
-    CWindow::LoseFocusEvent,
-    CWindow::SetFocusEvent,
-    CWindow::QuitEvent
+    struct Keyboard::KeyDownEvent,
+    struct Keyboard::KeyUpEvent,
+    struct Mouse::ButtonDownEvent,
+    struct Mouse::ButtonUpEvent,
+    struct Mouse::MoveEvent,
+    struct Mouse::EnterEvent,
+    struct Mouse::LeaveEvent,
+    struct Mouse::MovementEvent,
+    struct CWindow::ResizeEvent,
+    struct CWindow::LoseFocusEvent,
+    struct CWindow::SetFocusEvent,
+    struct CWindow::QuitEvent
 >;
 
 constexpr auto Events = utils::Variant_to_Array<Event>();

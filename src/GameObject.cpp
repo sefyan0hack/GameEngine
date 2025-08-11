@@ -1,6 +1,8 @@
 #include <core/GameObject.hpp>
 #include <core/Material.hpp>
+#include <core/Mesh.hpp>
 #include <core/Log.hpp>
+#include <core/OpenGl.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>

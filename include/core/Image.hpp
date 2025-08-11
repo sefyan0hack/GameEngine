@@ -1,6 +1,5 @@
 #pragma once
 
-#include <core/Utils.hpp>
 #include <core/gl.h>
 
 class Image

@@ -1,5 +1,6 @@
 #include <core/Scene.hpp>
 #include <core/GameObject.hpp>
+#include <core/SkyBox.hpp>
 
 Scene::Scene()
     : m_SkyBox(std::make_unique<class SkyBox>())
@@ -8,7 +9,6 @@ Scene::Scene()
 Scene::~Scene()
 {
 }
-
 
 auto Scene::Add(GameObject&& entity) -> void
 {
