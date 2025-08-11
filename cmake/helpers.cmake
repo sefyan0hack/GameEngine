@@ -288,12 +288,12 @@ endmacro()
 
 function(no_console)
     if(MSVC)
-    target_link_options(${target} PRIVATE
+    target_link_options(
         "$<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>"
         "$<$<CONFIG:Release>:/ENTRY:mainCRTStartup>"
     )
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    target_link_options(${target} PRIVATE
+    add_link_options(
         "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
     )
     endif()
