@@ -22,7 +22,6 @@ public:
     auto Model() const                                       -> glm::mat4 ;
     auto mesh() const                                        -> std::shared_ptr<class Mesh> ;
     auto material() const                                    -> std::shared_ptr<class Material> ;
-    auto Bind() const                                        -> void;
     auto Name() const                                        -> std::string;
 
 private:

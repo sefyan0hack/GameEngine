@@ -87,10 +87,6 @@ auto GameObject::material() const -> std::shared_ptr<Material>
     return m_Material;
 }
 
-auto GameObject::Bind() const -> void
-{
-    gl::BindVertexArray(m_Mesh->VAO);
-}
 
 auto GameObject::Name() const -> std::string
 {
