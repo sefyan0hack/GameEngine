@@ -7,7 +7,9 @@
 #include <chrono>
 #include <exception>
 
-#if defined(WEB_PLT) || !__has_include(<stacktrace>)
+#if defined(WEB_PLT)
+#include <emscripten/emscripten.h>
+
 namespace std {
   struct stacktrace {
     static stacktrace current() noexcept { return {}; }
@@ -17,7 +19,7 @@ namespace std {
 
   inline auto to_string([[maybe_unused]] const stacktrace& st ) -> string
   {
-    return "no_stack_trace";
+    return EM_ASM_STRING({ return new Error().stack; });
   }
 
   template<>
