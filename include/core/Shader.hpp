@@ -9,42 +9,35 @@
 class Shader
 {
   public:
-      friend struct std::formatter<Shader>;
-      Shader();
-      Shader(const char* name, GLenum type);
-      ~Shader() = default;
+    friend struct std::formatter<Shader>;
+    Shader();
+    Shader(const std::string& filename);
+    Shader(const std::string& Src, GLenum type);
+    ~Shader() = default;
 
-      Shader(const Shader&) = delete;
-      auto operator=(const Shader&) -> Shader& = delete;
+    Shader(const Shader&) = delete;
+    auto operator=(const Shader&) -> Shader& = delete;
 
-      Shader(Shader&& other) noexcept;
-      auto operator=(Shader&& other) noexcept -> Shader&;
+    Shader(Shader&& other) noexcept;
+    auto operator=(Shader&& other) noexcept -> Shader&;
 
-      bool operator==(const Shader& other);
+    bool operator==(const Shader& other);
   public:
-      auto id() const                -> GLuint ;
-      auto Type() const              -> GLenum ;
-      auto TypeName() const          -> const char* ;
-      auto File() const              -> std::string;
-      auto Content() const           -> std::vector<GLchar>;
-      
-      
-      static auto LoadFile(const char* filename) -> std::vector<GLchar>;
-      static auto Compile(GLuint shader)             -> void;
-      static auto LoadSource(const std::vector<GLchar>& src, GLuint shader) -> void;
-      static auto PreProcess() -> std::string;
-      static auto checkShaderCompileStatus(const Shader &shader) -> void;
-      static auto GetShaderInfo(GLuint id, GLenum what) -> GLint; //what : GL_SHADER_TYPE, GL_DELETE_STATUS, GL_COMPILE_STATUS, GL_INFO_LOG_LENGTH, GL_SHADER_SOURCE_LENGTH.
+    auto id() const                -> GLuint ;
+    auto Type() const              -> GLenum ;
+    auto TypeName() const          -> const char* ;
 
-  private:
-      auto LoadSource()                   -> void;
+    auto SetSource(const std::string& src) const -> void;
+    auto Compile()                           -> void;
+    auto CheckCompileStatus() -> void;
+    auto GetShaderInfo(GLenum what) const-> GLint; //what : GL_SHADER_TYPE, GL_DELETE_STATUS, GL_COMPILE_STATUS, GL_INFO_LOG_LENGTH, GL_SHADER_SOURCE_LENGTH.
+    static auto PreProcess() -> std::string;
     
   private:
-      GLuint m_Id;
-      GLenum m_Type;
-      std::string m_File;
-      std::vector<GLchar> m_Content;
-      FOR_TEST
+    GLuint m_Id;
+    GLenum m_Type;
+
+    FOR_TEST
 };
 
 // custom Mesh Format
@@ -55,7 +48,7 @@ struct std::formatter<Shader> {
   }
   auto format(const Shader& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    R"({{ "id": {}, "type": "{}", "file": "{}" }})"
-    , obj.m_Id, obj.TypeName(), obj.m_File);
+    R"({{ "id": {}, "type": "{}" }})"
+    , obj.m_Id, obj.TypeName());
   }
 };
