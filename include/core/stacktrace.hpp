@@ -8,10 +8,6 @@ using stacktrace = std::stacktrace;
 
 #else
 
-#if defined(WEB_PLT)
-#include <emscripten/emscripten.h>
-#endif
-
 struct stacktrace {
   static stacktrace current() noexcept { return {}; }
   static stacktrace current([[maybe_unused]] const size_t skip) noexcept { return {}; }
@@ -20,11 +16,7 @@ struct stacktrace {
 
 inline auto to_string([[maybe_unused]] const stacktrace& st ) -> std::string
 {
-#if defined(WEB_PLT)
-    return EM_ASM_STRING({ return new Error().stack; });
-#else
-    return "no_stack_trace";
-#endif
+  return "no_stack_trace";
 }
 
 template<>
