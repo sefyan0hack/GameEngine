@@ -1,4 +1,9 @@
 #pragma once
+#include <tuple>
+#include <memory>
+#include <string>
+#include <map>
+
 #include <core/gl.h>
 
 class Material

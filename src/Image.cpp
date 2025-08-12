@@ -1,3 +1,5 @@
+#include <cstring>
+
 #include <core/Image.hpp>
 #include <core/Log.hpp>
 

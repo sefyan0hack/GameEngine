@@ -1,5 +1,9 @@
 #pragma once
 
+#include <string>
+#include <format>
+#include <span>
+
 #include <core/gl.h>
 
 class Image

@@ -1,4 +1,7 @@
 #pragma once
+#include <ranges>
+#include <bitset>
+#include <map>
 
 #if defined(WEB_PLT)
 // Browser control keys (DOM Level 3)

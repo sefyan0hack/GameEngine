@@ -1,5 +1,12 @@
 #pragma once
 
+#include <source_location>
+#include <stacktrace>
+#include <iostream>
+#include <cstdlib>
+#include <format>
+#include <chrono>
+#include <exception>
 
 namespace Debug {
 

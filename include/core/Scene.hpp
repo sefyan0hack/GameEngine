@@ -1,5 +1,11 @@
 #pragma once
 
+#include <memory>
+#include <span>
+#include <string>
+#include <vector>
+#include <format>
+
 #include <core/GameObject.hpp>
 #include <core/fmts.hpp>
 

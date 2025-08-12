@@ -1,5 +1,9 @@
 #pragma once
 
+#include <format>
+#include <string>
+#include <vector>
+
 #include <core/gl.h>
 
 class Shader

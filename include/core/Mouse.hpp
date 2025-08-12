@@ -1,5 +1,9 @@
 #pragma once
 
+#include <format>
+#include <utility>
+#include <bitset>
+
 class CWindow;
 class Mouse
 {

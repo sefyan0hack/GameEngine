@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include <core/OpenGL.hpp>
 #include <core/Log.hpp>
 #include <core/Utils.hpp>

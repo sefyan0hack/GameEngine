@@ -1,4 +1,6 @@
 #pragma once
+#include <queue>
+
 #include <core/Event.hpp>
 
 class EventQueue {

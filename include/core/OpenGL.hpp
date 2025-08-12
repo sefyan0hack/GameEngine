@@ -1,4 +1,7 @@
 #pragma once
+#include <vector>
+#include <string>
+#include <ctime>
 
 #include <core/gl.h>
 

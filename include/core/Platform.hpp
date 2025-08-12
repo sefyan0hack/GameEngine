@@ -5,7 +5,10 @@
 */
 
 #pragma once
-
+#include <version>
+#include <type_traits>
+#include <string_view>
+#include <utility>
 /*!
   \def NO_WARNING_BEGIN
   \def NO_WARNING_END

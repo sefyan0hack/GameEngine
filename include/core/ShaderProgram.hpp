@@ -1,4 +1,11 @@
 #pragma once
+#include <tuple>
+#include <memory>
+#include <map>
+#include <string>
+#include <vector>
+#include <format>
+
 #include <core/gl.h>
 #include <glm/glm.hpp>
 #include <core/fmts.hpp>

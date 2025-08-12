@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <core/OpenGL.hpp>
 
 class Renderer

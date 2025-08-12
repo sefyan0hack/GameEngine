@@ -427,8 +427,6 @@ if(NOT EMSCRIPTEN)
     )
 endif()
 
-target_precompile_headers(core PUBLIC ${CMAKE_SOURCE_DIR}/include/pch.h)
-
 add_compile_definitions(
     PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
 

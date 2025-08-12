@@ -1,5 +1,9 @@
 #pragma once
 
+#include <memory>
+#include <cstring>
+#include <utility>
+
 #include <core/Utils.hpp>
 #include <core/Log.hpp>
 

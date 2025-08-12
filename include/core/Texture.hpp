@@ -1,4 +1,8 @@
 #pragma once
+#include <string>
+#include <format>
+#include <vector>
+#include <array>
 
 #include <core/gl.h>
 #include <core/Image.hpp>

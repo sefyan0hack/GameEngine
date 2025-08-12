@@ -1,5 +1,9 @@
 #pragma once
 
+#include <memory>
+#include <functional>
+#include <atomic>
+
 template <typename T>
 class AutoRelease {
 
