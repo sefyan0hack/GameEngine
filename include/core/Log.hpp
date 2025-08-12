@@ -7,34 +7,7 @@
 #include <chrono>
 #include <exception>
 
-#if defined(WEB_PLT)
-#include <emscripten/emscripten.h>
-
-namespace std {
-  struct stacktrace {
-    static stacktrace current() noexcept { return {}; }
-    static stacktrace current([[maybe_unused]] const size_t Skip) noexcept { return {}; }
-    size_t size() { return 0; }
-  };
-
-  inline auto to_string([[maybe_unused]] const stacktrace& st ) -> string
-  {
-    return EM_ASM_STRING({ return new Error().stack; });
-  }
-
-  template<>
-  struct formatter<stacktrace> {
-    constexpr auto parse(std::format_parse_context& context) {
-      return context.begin();
-    }
-    auto format(const stacktrace& obj, format_context& context) const {
-      return format_to(context.out(),"{}", to_string(obj));
-    }
-  };
-}
-#else
-  #include <stacktrace>
-#endif
+#include <core/stacktrace.hpp>
 
 namespace Debug {
 
@@ -84,7 +57,7 @@ public:
   auto throwing_routine() const noexcept -> const char* { return m_Location.function_name(); }
 
   auto trace() const noexcept -> const char* { 
-    return std::to_string(std::stacktrace::current(1)).c_str();
+    return std::to_string(stacktrace::current(1)).c_str();
   }
   auto when()  const noexcept -> const char* { return std::format("{:%Y-%m-%d %H:%M:%OS}", m_Timestamp).c_str(); }
   auto where() const noexcept -> const char* { return std::format("{}:{}", m_Location.file_name(), m_Location.line()).c_str(); }
@@ -92,7 +65,7 @@ public:
 
   auto all() const noexcept -> const char*
   {
-    auto trc = std::stacktrace::current(1);
+    auto trc = stacktrace::current(1);
     return std::format(
       "{} :\n"
       "\t-> what : `{}`\n"
