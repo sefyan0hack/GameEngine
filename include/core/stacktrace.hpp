@@ -18,7 +18,7 @@ struct stacktrace {
   size_t size() const { return 0; }
 };
 
-inline auto to_string([[maybe_unused]] const stacktrace& st ) -> string
+inline auto to_string([[maybe_unused]] const stacktrace& st ) -> std::string
 {
 #if defined(WEB_PLT)
     return EM_ASM_STRING({ return new Error().stack; });
@@ -33,7 +33,7 @@ struct std::formatter<stacktrace> {
     return context.begin();
   }
   auto format(const stacktrace& obj, std::format_context& context) const {
-    return format_to(context.out(),"{}", to_string(obj));
+    return std::format_to(context.out(),"{}", to_string(obj));
   }
 };
 
