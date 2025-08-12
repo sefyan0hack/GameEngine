@@ -1,9 +1,12 @@
 #include <core/Log.hpp>
 
+#include <filesystem>
+
 #if defined(WINDOWS_PLT)
 #include <windows.h>
 #include <dbghelp.h>
 #ifdef DEBUG
+[[maybe_unused]]
 std::string resolveSymbol(void* addr, HANDLE proc) {
 
     SymInitialize(proc, nullptr, TRUE);
@@ -19,7 +22,7 @@ std::string resolveSymbol(void* addr, HANDLE proc) {
     }
     return std::string("<unknown>");
 }
-
+[[maybe_unused]]
 inline auto EXCEPTION_RECORD_to_str(const DWORD& exr) -> const char*{
     switch(exr){
         case(STILL_ACTIVE): return "STILL_ACTIVE"; break;
@@ -49,6 +52,7 @@ inline auto EXCEPTION_RECORD_to_str(const DWORD& exr) -> const char*{
         default: return "<unknown>";
     }
 }
+[[maybe_unused]]
 auto PrintStackTrace(unsigned short skip) -> void
 {
     constexpr ULONG maxFrames = 64;
@@ -104,6 +108,7 @@ auto PrintStackTrace(unsigned short skip) -> void
 }
 namespace {
 
+[[maybe_unused]]
 auto PrintStackTracectx(CONTEXT* context) -> void {
     HANDLE process = GetCurrentProcess();
     
