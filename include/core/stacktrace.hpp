@@ -1,6 +1,6 @@
 #pragma once
 
-#if __has_include(<stacktrace>)
+#if __cpp_lib_stacktrace
 
 #include <stacktrace>
 
