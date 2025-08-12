@@ -6,8 +6,8 @@
 #include <core/Texture.hpp>
 
 SkyBox::SkyBox()
-  : m_VertShader(std::make_shared<Shader>(SHADER(skybox)".vert", GL_VERTEX_SHADER))
-  , m_FragShader(std::make_shared<Shader>(SHADER(skybox)".frag", GL_FRAGMENT_SHADER))
+  : m_VertShader(std::make_shared<Shader>(SHADER(skybox)".vert"))
+  , m_FragShader(std::make_shared<Shader>(SHADER(skybox)".frag"))
   , m_Program(std::make_shared<ShaderProgram>(m_VertShader, m_FragShader))
   , m_Mesh(std::make_shared<Mesh>(Mesh::CUBE))
   , m_Texture(std::make_shared<TextureCubeMap>())

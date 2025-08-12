@@ -94,8 +94,8 @@ TEST(Formatters, DISABLED_Shader){
 
     auto r = std::format("{}", shader);
     auto e = format(
-        R"({{ "id": {}, "type": "{}", "file": "{}" }})",
-        shader.id(), shader.TypeName(), shader.File()
+        R"({{ "id": {}, "type": "{}" }})",
+        shader.id(), shader.TypeName()
     );
     EXPECT_EQ(r, e);
 }
@@ -112,8 +112,8 @@ TEST(Formatters, DISABLED_Mesh){
 }
 
 // TEST(Formatters, DISABLED_Material){
-//     auto shader_vert = std::make_shared<Shader>(SHADER(skybox)".vert", GL_VERTEX_SHADER);
-//     auto shader_frag = std::make_shared<Shader>(SHADER(skybox)".frag", GL_FRAGMENT_SHADER);
+//     auto shader_vert = std::make_shared<Shader>(SHADER(skybox)".vert");
+//     auto shader_frag = std::make_shared<Shader>(SHADER(skybox)".frag");
 
 //     auto material = Material();
 
@@ -126,8 +126,8 @@ TEST(Formatters, DISABLED_Mesh){
 // }
 
 TEST(Formatters, DISABLED_GameObject){
-    auto shader_vert = std::make_shared<Shader>(SHADER(skybox)".vert", GL_VERTEX_SHADER);
-    auto shader_frag = std::make_shared<Shader>(SHADER(skybox)".frag", GL_FRAGMENT_SHADER);
+    auto shader_vert = std::make_shared<Shader>(SHADER(skybox)".vert");
+    auto shader_frag = std::make_shared<Shader>(SHADER(skybox)".frag");
     auto mesh = std::make_shared<Mesh>(std::vector<Vertex>());
     auto material = std::make_shared<Material>();
     
