@@ -27,8 +27,8 @@ private:
 public:
     /// @brief Get called at start of the game
     Game()
-        : vert(std::make_shared<Shader>(SHADER(cube)".vert", GL_VERTEX_SHADER))
-        , frag(std::make_shared<Shader>(SHADER(cube)".frag", GL_FRAGMENT_SHADER))
+        : vert(std::make_shared<Shader>(SHADER(cube)".vert"))
+        , frag(std::make_shared<Shader>(SHADER(cube)".frag"))
         , CubeProgram(std::make_shared<ShaderProgram>(vert, frag))
     {
 
@@ -40,14 +40,14 @@ public:
 
         ResManager["forest.jpg"]= TextureCubeMap(TextureCubeMap::base_to_6faces(TEXTURE(forest.jpg)));
 
-        ResManager["cube.vert"] = Shader(SHADER(cube)".vert", GL_VERTEX_SHADER);
+        ResManager["cube.vert"] = Shader(SHADER(cube)".vert");
 
         ResManager["CubeMattkimberley"]  = Material(ResManager["kimberley.jpg"]);
         ResManager["CubeMattSand"]  = Material(ResManager["sand.png"]);
         ResManager["cubeMesh"]      = Mesh(Mesh::CUBE);
         ResManager["manMesh"]       = Mesh(Obj2Mesh(TEXTURE(FinalBaseMesh.obj)));
 
-        constexpr int32_t Grids = 10;
+        constexpr int32_t Grids = 4;
 
         static thread_local std::mt19937 rng(std::random_device{}());
         static thread_local std::bernoulli_distribution coin(0.5f);
@@ -56,9 +56,9 @@ public:
             for(int32_t j = -Grids; j < Grids; j ++){
                 auto m = coin(rng) ? ResManager["CubeMattkimberley"] : ResManager["CubeMattSand"];
                 MainScene << GameObject(Transform({i, 0, j}, {0, 0, 0}, { 0.5f, 0.5f, 0.5f}), m, ResManager["cubeMesh"]);
-                // MainScene << GameObject(Transform({i, 0, j}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), m, ResManager["manMesh"]);
             }
         }
+        MainScene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), ResManager["CubeMattSand"], ResManager["manMesh"]);
 
         MainScene.SetSkyBox(ResManager["forest.jpg"]);
 

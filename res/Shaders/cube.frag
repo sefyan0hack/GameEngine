@@ -2,11 +2,13 @@ in vec3 Normal;
 in vec3 WorldPos;
 in vec2 Uv;
 
+in vec3 Barycentric;
 out vec4 FragColor;
 
 uniform vec3 Eye;
 uniform sampler2D uDiffuseMap;
 uniform samplerCube uSkyboxMap;
+
 
 void main() {
     float reflectivity = 0.4;
@@ -36,6 +38,17 @@ void main() {
     vec4 envColor = mix(envRefractColor, envReflectColor, fresnel);
 
     // Blend the two colors based on the reflectivity factor
-    FragColor = mix(baseColor, envColor, reflectivity);
+    // FragColor = mix(baseColor, envColor, reflectivity);
+    vec4 finalColor = mix(baseColor, envColor, reflectivity);
 
+    vec3 WireColor = vec3(0.0);
+    float LineWidth = 1.2;
+    float WireIntensity = 0.2;
+
+    vec3 dist = fwidth(Barycentric);
+    vec3 edgeFactor = smoothstep(vec3(0.0), dist * LineWidth, Barycentric);
+    float wire = 1.0 - min(min(edgeFactor.x, edgeFactor.y), edgeFactor.z);
+
+    vec3 wireColor = mix(finalColor.rgb, WireColor, wire * WireIntensity);
+    FragColor = vec4(wireColor, finalColor.a);
 }

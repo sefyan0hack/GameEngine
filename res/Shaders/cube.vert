@@ -6,6 +6,7 @@ layout (location = 3) in vec3 InstancePosition;
 out vec3 Normal;
 out vec3 WorldPos;
 out vec2 Uv;
+out vec3 Barycentric;
 
 uniform mat4 Model;
 uniform mat4 Projection;
@@ -19,6 +20,8 @@ void main() {
     Normal = normalMatrix * aNormal;
 
     Uv = aUv;
+    Barycentric = vec3(0.0);
+    Barycentric[gl_VertexID % 3] = 1.0;
 
     gl_Position = Projection * View * worldPos_;
 }
