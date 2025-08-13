@@ -28,7 +28,6 @@ auto Scene::SetSkyBox(const std::string& BasePathName) -> void
 
 auto Scene::SetSkyBox(std::shared_ptr<TextureCubeMap> texture) -> void
 {
-    Expect(1 == 10, "is it right {} or {}", true, "no");
     m_SkyBox = std::make_unique<class SkyBox>(texture);
 }
 
