@@ -40,7 +40,7 @@ class Shader
     FOR_TEST
 };
 
-// custom Mesh Format
+// custom Shader Format
 template<>
 struct std::formatter<Shader> {
   constexpr auto parse(std::format_parse_context& context) {

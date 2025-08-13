@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 #if __cpp_lib_stacktrace
 
@@ -6,6 +7,16 @@
 
 using stacktrace = std::stacktrace;
 
+inline auto to_string([[maybe_unused]] const stacktrace& st ) -> std::string
+{
+  std::string res = std::format("Stack Trace ({} Frame): {{\n", st.size());
+  size_t idx = 0;
+  for(const auto& frame : st){
+     res += std::format("\t{}# {} at {}:{}\n", idx++, frame.description(), frame.source_file(), frame.source_line());
+  }
+  res += "}}\n";
+  return res;
+}
 #else
 
 struct stacktrace {
@@ -16,7 +27,7 @@ struct stacktrace {
 
 inline auto to_string([[maybe_unused]] const stacktrace& st ) -> std::string
 {
-  return "no_stack_trace";
+  return std::format("Stack Trace ({} Frame): {{ }}", st.size());
 }
 
 template<>

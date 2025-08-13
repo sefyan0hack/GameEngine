@@ -96,7 +96,7 @@ int main() {
         Game my_game;
         my_game.Run();
 
-    } catch(const CoreException& e) {
+    } catch(const CException& e) {
         std::cerr << e.all() << '\n';
 
     } catch(const std::exception& e) {

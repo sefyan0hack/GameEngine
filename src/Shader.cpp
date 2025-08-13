@@ -22,7 +22,7 @@ constexpr auto to_string(GLenum type) -> const char*
 Shader::Shader()
 : m_Id(0), m_Type(0)
 {
-    Debug::Print("{}", *this);
+    Debug::Print(*this);
 }
 
 Shader::Shader(const std::string& filename)
@@ -44,7 +44,7 @@ Shader::Shader(const std::string& filename)
     Compile();
     CheckCompileStatus();
 
-    Debug::Print("{}", *this);
+    Debug::Print(*this);
 }
 Shader::Shader(const std::string& Src, GLenum type)
     : m_Id(gl::CreateShader(type))
@@ -55,7 +55,7 @@ Shader::Shader(const std::string& Src, GLenum type)
     SetSource(src);
     Compile();
     CheckCompileStatus();
-    Debug::Print("{}", *this);
+    Debug::Print(*this);
 }
 
 // Shader::Shader(const Shader& other)

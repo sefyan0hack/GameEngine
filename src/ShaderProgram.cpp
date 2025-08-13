@@ -17,7 +17,7 @@ ShaderProgram::ShaderProgram(std::shared_ptr<Shader> vertex, std::shared_ptr<Sha
     DumpAttribs();
     DumpUniforms();
 
-    Debug::Print("{}", *this);
+    Debug::Print(*this);
 }
 
 

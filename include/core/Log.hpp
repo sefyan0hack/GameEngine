@@ -37,55 +37,70 @@ namespace Debug {
     #endif
   }
 
+  template <typename T>
+  inline auto Print(T&& x) -> void
+  {
+    #if defined(DEBUG) && !defined(NDEBUG)
+    Log("{}", std::forward<T>(x));
+    #endif
+  }
+
 } // namespace Debug
 
 
-class CoreException final : public std::runtime_error {
+class CException final : public std::runtime_error {
 public:
   using clock = std::chrono::system_clock;
 
   template <typename... Ts>
-  CoreException(
-    const std::source_location& loc,
+  CException(
     const std::format_string<Ts...>& fmt,
     Ts&&... args
   )
     : std::runtime_error(std::format(fmt, std::forward<Ts>(args)...))
-    , m_Location(loc)
+    , m_Trace(stacktrace::current(1))
     , m_Timestamp(clock::now())
   {}
-  auto throwing_routine() const noexcept -> const char* { return m_Location.function_name(); }
 
-  auto trace() const noexcept -> const char* { return to_string(stacktrace::current(2)).c_str(); }
-  auto when()  const noexcept -> const char* { return std::format("{:%Y-%m-%d %H:%M:%OS}", m_Timestamp).c_str(); }
-  auto where() const noexcept -> const char* { return std::format("{}:{}", m_Location.file_name(), m_Location.line()).c_str(); }
-  auto what()  const noexcept -> const char* override { return runtime_error::what(); }
+  auto what() const noexcept  -> const char* override {
+    return std::runtime_error::what();
+  }
 
-  auto all() const noexcept -> const char*
+  auto trace() const noexcept -> std::string {
+    return to_string(m_Trace);
+  }
+
+  auto when() const noexcept -> std::string {
+    return std::format("{:%Y-%m-%d %H:%M:%OS}", m_Timestamp);
+  }
+
+  auto where() const noexcept -> std::string {
+    return !m_Trace.empty() ? m_Trace.begin()->description() : "??";
+  }
+
+  auto location() const noexcept -> std::string {
+    return !m_Trace.empty() ? std::format("{}:{}", m_Trace.begin()->source_file(), m_Trace.begin()->source_line()) : "??:??";
+  }
+
+
+  auto all() const noexcept -> std::string
   {
-    auto trc = stacktrace::current(1);
     return std::format(
-      "{} :\n"
+      "{} : \n"
+      "(Exception) at [{}] in {}\n"
       "\t-> what : `{}`\n"
-      "Stack Trace ({} Frame): {{\n{}}}\n",
-      when(), what(),
-      #ifdef __cpp_lib_stacktrace
-      trc.size(), trace()
-      #else
-      "0", "no_stack_trace"
-      #endif
-    ).c_str();
+      "{}",
+      when(), location(), where(), what(),
+      trace()
+    );
   }
 
 private:
-  std::source_location m_Location;
+  stacktrace m_Trace;
   clock::time_point m_Timestamp;
 };
 
-#ifndef CException
-#define CException(...) CoreException(std::source_location::current(), __VA_ARGS__)
-#endif
 
 #ifndef Expect
-#define Expect(cond, ...) do { if (!(cond)){ Debug::Print("Expectation `{}` Failed", #cond); throw CException(__VA_ARGS__); } } while (0)
+#define Expect(cond, fmt, ...) if (!(cond)) throw CException("Expectation ["#cond"] Failed : "##fmt, __VA_ARGS__);
 #endif
