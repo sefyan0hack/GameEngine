@@ -102,5 +102,5 @@ private:
 
 
 #ifndef Expect
-#define Expect(cond, fmt, ...) if (!(cond)) throw CException("Expectation ["#cond"] Failed : "fmt, __VA_ARGS__);
+#define Expect(cond, ...) if (!(cond)) throw CException("Expectation ["#cond"] Failed : " __VA_ARGS__);
 #endif
