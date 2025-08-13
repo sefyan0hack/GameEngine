@@ -427,25 +427,6 @@ if(NOT EMSCRIPTEN)
     )
 endif()
 
-include(CheckCXXSourceCompiles)
-
-# Test for stacktrace support
-set(STACKTRACE_TEST_SOURCE
-    "#include <stacktrace>
-     #include <string>
-     int main() {
-        auto trace = std::stacktrace::current();
-        if (!trace.empty()) {
-           auto entry = *trace.begin();
-           std::string desc = entry.description();
-           std::string file = entry.source_file();
-           size_t line = entry.source_line();
-        }
-        return 0;
-    }"
-)
-check_cxx_source_compiles("${STACKTRACE_TEST_SOURCE}" STACKTRACE_SUPPORTED)
-
 add_compile_definitions(
     PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
 
@@ -454,8 +435,6 @@ add_compile_definitions(
     PLATFORM_ARCH="${CMAKE_SYSTEM_PROCESSOR}"
 
     OPENGL_LIB="${OPENGL_LIB_NAME}"
-
-    $<$<BOOL:${STACKTRACE_SUPPORTED}>:STACKTRACE_SUPPORTED>
 
     $<$<PLATFORM_ID:Windows>:WINDOWS_PLT>
     $<$<PLATFORM_ID:Linux>:LINUX_PLT>
