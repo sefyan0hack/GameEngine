@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <array>
 
 #if __cpp_lib_stacktrace
 
@@ -19,10 +20,28 @@ inline auto to_string([[maybe_unused]] const stacktrace& st ) -> std::string
 }
 #else
 
+struct stacktrace_entry {
+  std::string description() const { return "??"; }
+  std::string source_file() const { return "??"; }
+  size_t source_line() const { return 0; }
+};
+
 struct stacktrace {
+  using const_iterator = std::array<stacktrace_entry, 0>::const_iterator;
+  
   static stacktrace current() noexcept { return {}; }
   static stacktrace current([[maybe_unused]] const size_t skip) noexcept { return {}; }
-  size_t size() const { return 0; }
+  
+  // Required members
+  bool empty() const noexcept { return m_entries.empty(); }
+  const_iterator begin() const noexcept { return m_entries.begin(); }
+  const_iterator end() const noexcept { return m_entries.end(); }
+  size_t size() const noexcept { return m_entries.size(); }
+  
+  const stacktrace_entry& operator[](size_t index) const { return m_entries[index]; }
+
+private:
+  std::array<stacktrace_entry, 0> m_entries;
 };
 
 inline auto to_string([[maybe_unused]] const stacktrace& st ) -> std::string
