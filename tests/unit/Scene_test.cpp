@@ -12,7 +12,6 @@ using Scene_Test_Ctor1 = Scene::Test<1>;
     MEMBER_FUN(Add);\
     MEMBER_FUN(Entities);\
     MEMBER_FUN(SetSkyBox);\
-    MEMBER_FUN(SkyBox);\
     MEMBER_FUN(Clear);
 
 template<>
