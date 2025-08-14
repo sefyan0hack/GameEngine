@@ -9,55 +9,10 @@
 #include <type_traits>
 #include <string_view>
 #include <utility>
-/*!
-  \def NO_WARNING_BEGIN
-  \def NO_WARNING_END
-  Disable warning Macro
-*/
-#if defined(MSVC_CPL)
-    #define NO_WARNING_BEGIN \
-        __pragma(warning(push, 0))
-    #define NO_WARNING_END \
-        __pragma(warning(pop))
-#elif defined(GNU_CPL)
-    #define NO_WARNING_BEGIN \
-        _Pragma("GCC diagnostic push") \
-        _Pragma("GCC diagnostic ignored \"-Wall\"") \
-        _Pragma("GCC diagnostic ignored \"-Wextra\"") \
-        _Pragma("GCC diagnostic ignored \"-Wpedantic\"") \
-        _Pragma("GCC diagnostic ignored \"-Wconversion\"") \
-        _Pragma("GCC diagnostic ignored \"-Wshadow\"") \
-        _Pragma("GCC diagnostic ignored \"-Wcast-align\"") \
-        _Pragma("GCC diagnostic ignored \"-Wunused-parameter\"") \
-        _Pragma("GCC diagnostic ignored \"-w\"")
-    #define NO_WARNING_END \
-        _Pragma("GCC diagnostic pop")
-#else
-    #define NO_WARNING_BEGIN
-    #define NO_WARNING_END
-#endif
-
-/*!
-  \def TEXTURE(str)
-  \def SHADER(str)
-  Get correct res directory for Texture and Shader
-*/
-#ifdef PROJECT_SOURCE_DIR
-    #define TEXTURE(str)  PROJECT_SOURCE_DIR"/res/"#str
-    #define SHADER(str)   PROJECT_SOURCE_DIR"/res/Shaders/"#str
-#else
-    #define TEXTURE(str) #str
-    #define SHADER(str)  #str
-#endif
-
-#ifndef OPENGL_LIB
-    #error "no opengl lib path"
-#endif
 
 /// @brief Add sub class needed for testing to access non public members
 #define FOR_TEST public: template<uint16_t n> struct Test;
 
-#include <type_traits>
 /**
  * @brief  Concept that tests whether a non-type template parameter names a free/static object
  *         (or pointer to one) and is **not** a pointer-to-member-object.

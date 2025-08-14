@@ -3,6 +3,7 @@
 #include <variant>
 #include <utility>
 #include <string>
+#include <cstring>
 #include <string_view>
 #include <sstream>
 #include <chrono>
@@ -184,38 +185,25 @@ std::string to_string(const std::vector<T>& vec) {
     return result;
 }
 
-inline auto file_to_str(std::ifstream& file) -> std::string
+inline auto file_to_str(const char* path) -> std::string
 {
+    std::ifstream file(path, std::ios::binary);
+
     if (!file){ 
-        throw CException("file not open");
+        throw CException("Couldnt open file [{}] : {}", path, std::strerror(errno) );
     }else{
         auto it = std::istreambuf_iterator<char>(file);
         auto end = std::istreambuf_iterator<char>();
         return { it, end };
     }
-
-    
 }
 
-inline auto file_to_str(const char* path) -> std::string
-{
-    std::ifstream file(path, std::ios::binary);
-
-    return file_to_str(file);
-}
-
-
-inline auto file_to_vec(std::ifstream& file) -> std::vector<std::byte>
-{
-    auto filestr = file_to_str(file);
-    const auto* data_start = reinterpret_cast<const std::byte*>(filestr.data());
-    return std::vector<std::byte>(data_start, data_start + filestr.size());
-}
 
 inline auto file_to_vec(const char* path) -> std::vector<std::byte>
 {
-    std::ifstream file(path, std::ios::binary);
-    return file_to_vec(file);
+    auto filestr = file_to_str(path);
+    const auto* data_start = reinterpret_cast<const std::byte*>(filestr.data());
+    return std::vector<std::byte>(data_start, data_start + filestr.size());
 }
 
 template <class T>

@@ -26,26 +26,26 @@ private:
 public:
     /// @brief Get called at start of the game
     Game()
-        : vert(std::make_shared<Shader>(SHADER(cube)".vert"))
-        , frag(std::make_shared<Shader>(SHADER(cube)".frag"))
+        : vert(std::make_shared<Shader>(RES_DIR"/Shaders/cube.vert"))
+        , frag(std::make_shared<Shader>(RES_DIR"/Shaders/cube.frag"))
         , CubeProgram(std::make_shared<ShaderProgram>(vert, frag))
         , MainScene(ViewCamera)
     {
 
-        ResManager["brik.jpg"]          = Texture2D(TEXTURE(brik.jpg));
-        ResManager["brik.png"]          = Texture2D(TEXTURE(brik.png));
-        ResManager["kimberley.jpg"]     = Texture2D(TEXTURE(kimberley.jpg));
-        ResManager["annie_spratt.jpg"]  = Texture2D(TEXTURE(annie_spratt.jpg));
-        ResManager["sand.png"]          = Texture2D(TEXTURE(gravelly_sand_diff_4k.png));
+        ResManager["brik.jpg"]          = Texture2D(RES_DIR"/brik.jpg");
+        ResManager["brik.png"]          = Texture2D(RES_DIR"/brik.png");
+        ResManager["kimberley.jpg"]     = Texture2D(RES_DIR"/kimberley.jpg");
+        ResManager["annie_spratt.jpg"]  = Texture2D(RES_DIR"/annie_spratt.jpg");
+        ResManager["sand.png"]          = Texture2D(RES_DIR"/gravelly_sand_diff_4k.png");
 
-        ResManager["forest.jpg"]= TextureCubeMap(TextureCubeMap::base_to_6faces(TEXTURE(forest.jpg)));
+        ResManager["forest.jpg"]= TextureCubeMap(TextureCubeMap::base_to_6faces(RES_DIR"/forest.jpg"));
 
-        ResManager["cube.vert"] = Shader(SHADER(cube)".vert");
+        ResManager["cube.vert"] = Shader(RES_DIR"/Shaders/cube.vert");
 
         ResManager["CubeMattkimberley"]  = Material(ResManager["kimberley.jpg"]);
         ResManager["CubeMattSand"]  = Material(ResManager["sand.png"]);
         ResManager["cubeMesh"]      = Mesh(Mesh::CUBE);
-        ResManager["manMesh"]       = Mesh(Obj2Mesh(TEXTURE(FinalBaseMesh.obj)));
+        ResManager["manMesh"]       = Mesh(Obj2Mesh(RES_DIR"/FinalBaseMesh.obj"));
 
         constexpr int32_t Grids = 4;
 
