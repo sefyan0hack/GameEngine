@@ -97,13 +97,13 @@ int main() {
         my_game.Run();
 
     } catch(const CException& e) {
-        std::cerr << e.all() << '\n';
+        Debug::Print(e.all());
 
     } catch(const std::exception& e) {
-        std::cerr << e.what() << '\n';
+        Debug::Print(e.what());
 
     } catch(...) {
-        std::cerr << "Unknown Exception"<< '\n';
+        Debug::Print("Unknown Exception");
     }
     return 0;
 }
