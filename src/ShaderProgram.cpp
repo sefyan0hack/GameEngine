@@ -65,25 +65,22 @@ auto ShaderProgram::Link() const -> void
 
 auto ShaderProgram::UniformLocation(const char *name) const -> GLuint
 {
-    auto it = m_Uniforms.find(name);
-    
-    if (it != m_Uniforms.end()){
-        auto [loc, type, size] = it->second;
+    try {
+        auto it = m_Uniforms.at(name);
+        auto [loc, type, size] = it;
         return loc;
-    }else{
-        throw CException("the Uniform {} not exist", name);
+    } catch( const std::exception& e){
+        throw CException("[what : {} ] the Uniform `{}` not exist", e.what(), name);
     }
 }
 
 auto ShaderProgram::AttribLocation(const char *name) const -> GLuint
 {
-    auto it = m_Attribs.find(name);
-    
-    if (it != m_Attribs.end()){
-        auto [loc, type, size] = it->second;
+    try {
+        auto [loc, type, size] = m_Attribs.at(name);
         return loc;
-    }else{
-        throw CException("the Attrib {} not exist", name);
+    } catch( const std::exception& e){
+        throw CException("[what : {} ] the Attrib `{}` not exist", e.what(), name);
     }
 }
 
@@ -263,118 +260,108 @@ auto ShaderProgram::GetProgramInfo(GLenum what) const -> GLint
 ///////
 auto ShaderProgram::SetUniform(const std::string& name, const GLint &value) const -> void
 {
-    auto it = m_Uniforms.find(name);
-    if (it != m_Uniforms.end()){
-        auto [loc, type, size] = it->second;
-
+    try {
+        auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
-       
+
         gl::ProgramUniform1i(m_Id, static_cast<GLint>(loc), value);
-    }else{
-        throw CException("the Uniform {} not exist", name);
+    } catch(const std::exception& e) {
+        throw CException("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
 
 auto ShaderProgram::SetUniform(const std::string& name, const GLfloat &value) const -> void
 {
-    auto it = m_Uniforms.find(name);
-    if (it != m_Uniforms.end()){
-        auto [loc, type, size] = it->second;
+    try {
+        auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
-       
+
         gl::ProgramUniform1f(m_Id, static_cast<GLint>(loc), value);
-    }else{
-        throw CException("the Uniform {} not exist", name);
+    } catch(const std::exception& e) {
+        throw CException("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
 auto ShaderProgram::SetUniform(const std::string& name, const GLuint &value) const -> void
 {
-    auto it = m_Uniforms.find(name);
-    if (it != m_Uniforms.end()){
-        auto [loc, type, size] = it->second;
+    try {
+        auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
-       
+
         gl::ProgramUniform1ui(m_Id, static_cast<GLint>(loc), value);
-    }else{
-        throw CException("the Uniform {} not exist", name);
+    } catch(const std::exception& e) {
+        throw CException("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
 
 auto ShaderProgram::SetUniform(const std::string& name, const glm::vec2 &value) const -> void
 {
-    auto it = m_Uniforms.find(name);
-    if (it != m_Uniforms.end()){
-        auto [loc, type, size] = it->second;
+    try {
+        auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
-       
+
         gl::ProgramUniform2fv(m_Id, static_cast<GLint>(loc), 1, &value[0]);
-    }else{
-        throw CException("the Uniform {} not exist", name);
+    } catch(const std::exception& e) {
+        throw CException("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
 
 auto ShaderProgram::SetUniform(const std::string& name, const glm::vec3 &value) const -> void
 {
-    auto it = m_Uniforms.find(name);
-    if (it != m_Uniforms.end()){
-        auto [loc, type, size] = it->second;
+    try {
+        auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
-       
+
         gl::ProgramUniform3fv(m_Id, static_cast<GLint>(loc), 1, &value[0]);
-    }else{
-        throw CException("the Uniform {} not exist", name);
+    } catch(const std::exception& e) {
+        throw CException("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
 
 auto ShaderProgram::SetUniform(const std::string& name, const glm::vec4 &value) const -> void
 {
-    auto it = m_Uniforms.find(name);
-    if (it != m_Uniforms.end()){
-        auto [loc, type, size] = it->second;
+    try {
+        auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
 
         gl::ProgramUniform4fv(m_Id, static_cast<GLint>(loc), 1, &value[0]);
-    }else{
-        throw CException("the Uniform {} not exist", name);
+    } catch(const std::exception& e) {
+        throw CException("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
 
 auto ShaderProgram::SetUniform(const std::string& name, const glm::mat2 &value) const -> void
 {
-    auto it = m_Uniforms.find(name);
-    if (it != m_Uniforms.end()){
-        auto [loc, type, size] = it->second;
+    try {
+        auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
-       
+
         gl::ProgramUniformMatrix2fv(m_Id, static_cast<GLint>(loc), 1, GL_FALSE, &value[0][0]);
-    }else{
-        throw CException("the Uniform {} not exist", name);
+    } catch(const std::exception& e) {
+        throw CException("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
 
 auto ShaderProgram::SetUniform(const std::string& name, const glm::mat3 &value) const -> void
 {
-    auto it = m_Uniforms.find(name);
-    if (it != m_Uniforms.end()){
-        auto [loc, type, size] = it->second;
+    try {
+        auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
-       
+
         gl::ProgramUniformMatrix3fv(m_Id, static_cast<GLint>(loc), 1, GL_FALSE, &value[0][0]);
-    }else{
-        throw CException("the Uniform {} not exist", name);
+    } catch(const std::exception& e) {
+        throw CException("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
 
 auto ShaderProgram::SetUniform(const std::string& name, const glm::mat4 &value) const -> void
 {
-    auto it = m_Uniforms.find(name);
-    if (it != m_Uniforms.end()){
-        auto [loc, type, size] = it->second;
+    try {
+        auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
 
         gl::ProgramUniformMatrix4fv(m_Id, static_cast<GLint>(loc), 1, GL_FALSE, &value[0][0]);
-    }else{
-        throw CException("the Uniform {} not exist", name);
+    } catch(const std::exception& e) {
+        throw CException("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
 
