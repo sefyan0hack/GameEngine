@@ -24,7 +24,7 @@ Renderer::~Renderer(){
 
 auto Renderer::Render(const Scene& scene, const std::shared_ptr<ShaderProgram> program) -> void
 {
-    RenderSky(scene);
+    scene.RenderSky();
 
     program->Use();
     program->SetUniform("View", m_Camera.View());
@@ -39,22 +39,6 @@ auto Renderer::Render(const Scene& scene, const std::shared_ptr<ShaderProgram> p
         auto mesh = obj.mesh();
         draw(*mesh);
     }
-}
-
-auto Renderer::RenderSky(const Scene& scene) -> void
-{
-    auto& skyBox = scene.SkyBox();
-
-    gl::DepthFunc(GL_LEQUAL);
-
-    skyBox->Program()->Use();
-    skyBox->Program()->SetUniform("View", glm::mat4(glm::mat3(m_Camera.View())));
-    skyBox->Program()->SetUniform("Projection", m_Camera.Perspective());
-    skyBox->Program()->SetUniform("uDiffuseMap", skyBox->texture()->TextureUnit());
-
-    gl::BindVertexArray(skyBox->mesh()->VAO);
-    gl::DrawArrays(GL_TRIANGLES, 0, skyBox->mesh()->VextexSize());
-    gl::DepthFunc(GL_LESS);
 }
 
 

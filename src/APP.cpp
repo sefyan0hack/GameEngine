@@ -16,17 +16,16 @@
 #include <emscripten/html5.h>
 #endif
 
-constexpr auto Wname = "Main";
+constexpr auto Wname = "Game";
 constexpr auto WINDOW_WIDTH = 1180;
 constexpr auto WINDOW_HIEGHT = 640;
 
 APP::APP()
     : Window(WINDOW_WIDTH, WINDOW_HIEGHT, Wname, ApplicationEventQueue)
-    , m_Renderer(Window, ViewCamera)
     , ViewCamera()
     , Keyboard()
     , Mouse()
-    , MainScene()
+    , m_Renderer(Window, ViewCamera)
     , m_Running(true)
     , m_LastFrameTime(std::chrono::steady_clock::now())
     , m_SmoothedFPS(60.0f)

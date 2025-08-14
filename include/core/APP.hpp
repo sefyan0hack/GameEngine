@@ -9,7 +9,6 @@
 #include <core/Mouse.hpp>
 #include <core/EventQueue.hpp>
 #include <core/Renderer.hpp>
-#include <core/Scene.hpp>
 
 class APP
 {
@@ -27,7 +26,7 @@ public:
 
     auto PushEvent(const Event& event) -> void;
 
-    auto Render(const Scene& scene, std::shared_ptr<ShaderProgram> program) -> void;
+    auto Render(const class Scene& scene, std::shared_ptr<ShaderProgram> program) -> void;
 
 private:
     auto PollEvent(Event& event) -> bool;
@@ -39,15 +38,13 @@ private:
 
 protected:
     CWindow Window;
+    Camera ViewCamera;
+    Keyboard Keyboard;
+    Mouse Mouse;
 
 private:
     Renderer m_Renderer;
 
-protected:
-    Camera ViewCamera;
-    Keyboard Keyboard;
-    Mouse Mouse;
-    Scene MainScene;
 private:
     bool m_Running;
     EventQueue ApplicationEventQueue;

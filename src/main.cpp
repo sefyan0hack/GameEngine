@@ -6,14 +6,11 @@
 #include <core/ResourceManager.hpp>
 #include <core/APP.hpp>
 #include <core/GameObject.hpp>
-#include <core/SkyBox.hpp>
-#include <core/Camera.hpp>
 #include <core/Texture.hpp>
-#include <core/Scene.hpp>
-#include <core/Renderer.hpp>
 #include <core/Shader.hpp>
 #include <core/ShaderProgram.hpp>
 #include <core/Material.hpp>
+#include <core/Scene.hpp>
 #include <core/Log.hpp>
 
 using namespace std;
@@ -24,12 +21,15 @@ class Game : public APP
 private:
     std::shared_ptr<Shader> vert, frag;
     std::shared_ptr<ShaderProgram> CubeProgram;
+
+    Scene MainScene;
 public:
     /// @brief Get called at start of the game
     Game()
         : vert(std::make_shared<Shader>(SHADER(cube)".vert"))
         , frag(std::make_shared<Shader>(SHADER(cube)".frag"))
         , CubeProgram(std::make_shared<ShaderProgram>(vert, frag))
+        , MainScene(ViewCamera)
     {
 
         ResManager["brik.jpg"]          = Texture2D(TEXTURE(brik.jpg));
@@ -62,8 +62,6 @@ public:
 
         MainScene.SetSkyBox(ResManager["forest.jpg"]);
 
-        ResManager["CubeMattkimberley"].get<Material>()->SetTexture("uSkyboxMap", MainScene.SkyBox()->texture());
-        ResManager["CubeMattSand"].get<Material>()->SetTexture("uSkyboxMap", MainScene.SkyBox()->texture());
     }
 public:
     /// @brief Run every frame at 1/delta fps

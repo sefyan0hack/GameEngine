@@ -14,16 +14,17 @@ class Scene
 {
 public:
     friend struct std::formatter<Scene>;
-    Scene();
+    Scene(const class Camera& camera);
     ~Scene();
     auto Add(GameObject&& entity) -> void;
     auto Entities() const -> std::span<const GameObject>;
     auto SetSkyBox(const std::string& BasePathName) -> void;
     auto SetSkyBox(std::shared_ptr<class TextureCubeMap> texture) -> void;
-    auto SkyBox() const -> const std::unique_ptr<class SkyBox>&;
+    auto RenderSky() const -> void;
     auto Clear() -> void;
 
 private:
+    const class Camera& m_Camera;
     std::unique_ptr<class SkyBox> m_SkyBox;
     std::vector<GameObject> m_Entities;
 
