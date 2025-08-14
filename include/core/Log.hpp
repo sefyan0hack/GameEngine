@@ -50,7 +50,6 @@ namespace Debug {
 
 class CException final : public std::runtime_error {
 public:
-  using clock = std::chrono::system_clock;
 
   template <typename... Ts>
   CException(
@@ -59,7 +58,6 @@ public:
   )
     : std::runtime_error(std::format(fmt, std::forward<Ts>(args)...))
     , m_Trace(stacktrace::current(1))
-    , m_Timestamp(clock::now())
   {}
 
   auto what() const noexcept  -> const char* override {
@@ -68,10 +66,6 @@ public:
 
   auto trace() const noexcept -> std::string {
     return to_string(m_Trace);
-  }
-
-  auto when() const noexcept -> std::string {
-    return std::format("{:%Y-%m-%d %H:%M:%OS}", m_Timestamp);
   }
 
   auto where() const noexcept -> std::string {
@@ -86,20 +80,21 @@ public:
   auto all() const noexcept -> std::string
   {
     return std::format(
-      "{} : \n"
       "(Exception) at [{}] in {}\n"
       "\t-> what : `{}`\n"
       "{}",
-      when(), location(), where(), what(),
+      location(), where(), what(),
       trace()
     );
   }
 
 private:
   stacktrace m_Trace;
-  clock::time_point m_Timestamp;
 };
 
+#ifndef Try
+#define Try(f) try {f;} catch(...){}
+#endif
 
 #ifndef Expect
 #define Expect(cond, ...) if (!(cond)) throw CException("Expectation ["#cond"] Failed : " __VA_ARGS__);
