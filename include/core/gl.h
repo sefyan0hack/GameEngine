@@ -170,19 +170,19 @@ inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
     X(BufferSubData);\
     X(GetUniformBlockIndex);\
     X(UniformBlockBinding);\
-    X(GetBooleanv);\
+    X(GetBooleanv);
+
+#if defined(WEB_PLT)
+  // web (or ES-only) build
+  #define GLFUNCS(X) GLFUNCS_COMMON(X)
+#else
+  // desktop GL
+  #define GLFUNCS(X) GLFUNCS_COMMON(X)\
+    X(PolygonMode);\
+    X(PointSize);\
     X(GetProgramResourceiv);\
     X(GetProgramResourceName);\
     X(GetProgramResourceLocation);\
     X(GetProgramInterfaceiv);
-
-#if defined(WEB_PLT)
-  // web (or ES-only) build
-  #define GLFUNCS(X)  GLFUNCS_COMMON(X)
-#else
-  // desktop GL
-  #define GLFUNCS(X) GLFUNCS_COMMON(X)\
-      X(PolygonMode);\
-      X(PointSize);
 
 #endif

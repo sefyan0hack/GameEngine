@@ -14,6 +14,8 @@ ShaderProgram::ShaderProgram(std::shared_ptr<Shader> vertex, std::shared_ptr<Sha
 
     Link();
     checkLinkStatus();
+
+    gl::UseProgram(m_Id);
     DumpAttribs();
     DumpUniforms();
 
@@ -124,6 +126,7 @@ auto ShaderProgram::UniformCount() const -> GLint
 
     return count;
 }
+
 auto ShaderProgram::AttribsCount() const -> GLint
 {
     GLint count = GetProgramInfo(GL_ACTIVE_ATTRIBUTES);
@@ -133,95 +136,154 @@ auto ShaderProgram::AttribsCount() const -> GLint
     return count;
 }
 
+// auto ShaderProgram::DumpUniforms() -> void
+// {
+//     auto count = UniformCount();
+
+//     // properties we want: name length, type, array size, block index, location
+//     constexpr GLenum props[] = {
+//         GL_NAME_LENGTH,
+//         GL_TYPE,
+//         GL_ARRAY_SIZE,
+//         GL_BLOCK_INDEX,
+//         GL_LOCATION
+//     };
+
+//     constexpr GLint propCount = (GLint)(sizeof(props)/sizeof(props[0]));
+
+//     for (GLint idx = 0; idx < count; ++idx) {
+//         GLint results[propCount];
+//         gl::GetProgramResourceiv(m_Id, GL_UNIFORM, static_cast<GLuint>(idx), propCount, props, propCount, nullptr, results);
+
+//         GLint nameLen    = results[0]; // includes NULL
+//         GLenum type      = static_cast<GLenum>(results[1]);
+//         GLint arraySize  = results[2];
+//         GLint blockIndex = results[3];
+//         GLint location   = results[4];
+
+//         // skip uniforms that are inside uniform blocks (optional)
+//         if (blockIndex != -1) continue;
+
+//         std::string name(static_cast<std::size_t>(std::max(1, nameLen)), '\0');
+//         if (nameLen > 0) {
+//             gl::GetProgramResourceName(m_Id, GL_UNIFORM, static_cast<GLuint>(idx), nameLen, nullptr, &name[0]);
+//             // remove terminating null
+//             if (!name.empty() && name.back() == '\0') name.pop_back();
+//         }
+
+//         if (location == -1) throw CException("loaction is -1 on uniform : {}", name);
+
+//         m_Uniforms[name] = std::make_tuple(
+//             static_cast<GLuint>(location),
+//             static_cast<GLenum>(type),
+//             static_cast<GLsizei>(arraySize)
+//         );
+//     }
+// }
+
+// auto ShaderProgram::DumpAttribs() -> void
+// {
+//     GLint activeInputs = 0;
+//     gl::GetProgramInterfaceiv(m_Id, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &activeInputs);
+//     if (activeInputs <= 0) {
+//         Debug::Print("no active attributes for program {}\n", m_Id);
+//         return;
+//     }
+
+//     constexpr GLenum props[] = {
+//         GL_NAME_LENGTH,
+//         GL_TYPE,
+//         GL_ARRAY_SIZE,
+//         GL_LOCATION
+//     };
+//     constexpr int propCount = sizeof(props)/sizeof(props[0]);
+
+//     for (GLint idx = 0; idx < activeInputs; ++idx) {
+//         GLint results[propCount];
+//         gl::GetProgramResourceiv(m_Id, GL_PROGRAM_INPUT, static_cast<GLuint>(idx),
+//                                  propCount, props, propCount, nullptr, results);
+
+//         GLint nameLen   = results[0]; // includes NULL
+//         GLenum type     = static_cast<GLenum>(results[1]);
+//         GLint arraySize = results[2];
+//         GLint location  = results[3];
+
+//         // get the attribute name
+//         std::string name(std::max(1, nameLen), '\0');
+//         if (nameLen > 0) {
+//             gl::GetProgramResourceName(m_Id, GL_PROGRAM_INPUT, static_cast<GLuint>(idx),
+//                                        nameLen, nullptr, &name[0]);
+//             if (!name.empty() && name.back() == '\0') name.pop_back();
+//         }
+
+//         if(name.starts_with("gl_")) continue;
+
+//         if (location == -1) throw CException("location is -1 for in attribute: {}", name);
+
+//         m_Attribs[name] = std::make_tuple(
+//             static_cast<GLuint>(location),
+//             static_cast<GLenum>(type),
+//             static_cast<GLsizei>(arraySize)
+//         );
+//     }
+// }
+
+
 auto ShaderProgram::DumpUniforms() -> void
 {
+    GLint max_len = GetProgramInfo(GL_ACTIVE_UNIFORM_MAX_LENGTH);
+        
+    if(max_len == 0) {
+        throw CException("error id {}, GetProgramInfo return {}", m_Id, max_len);
+    }
+
     auto count = UniformCount();
+    if(count > 0){
 
-    // properties we want: name length, type, array size, block index, location
-    constexpr GLenum props[] = {
-        GL_NAME_LENGTH,
-        GL_TYPE,
-        GL_ARRAY_SIZE,
-        GL_BLOCK_INDEX,
-        GL_LOCATION
-    };
+        GLsizei len = 0;
+        [[maybe_unused]] GLsizei size;
+        [[maybe_unused]] GLenum type;
 
-    constexpr GLint propCount = (GLint)(sizeof(props)/sizeof(props[0]));
+        for(GLint i = 0; i < count; i++){
+            std::string Uniform_name(static_cast<std::size_t>(max_len), '\0');
+            gl::GetActiveUniform(m_Id, static_cast<GLuint>(i), static_cast<GLsizei>(max_len), &len, &size, &type, Uniform_name.data());
+            if(len > 0) Uniform_name.resize(static_cast<std::size_t>(len));
 
-    for (GLint idx = 0; idx < count; ++idx) {
-        GLint results[propCount];
-        gl::GetProgramResourceiv(m_Id, GL_UNIFORM, static_cast<GLuint>(idx), propCount, props, propCount, nullptr, results);
-
-        GLint nameLen    = results[0]; // includes NULL
-        GLenum type      = static_cast<GLenum>(results[1]);
-        GLint arraySize  = results[2];
-        GLint blockIndex = results[3];
-        GLint location   = results[4];
-
-        // skip uniforms that are inside uniform blocks (optional)
-        if (blockIndex != -1) continue;
-
-        std::string name(static_cast<std::size_t>(std::max(1, nameLen)), '\0');
-        if (nameLen > 0) {
-            gl::GetProgramResourceName(m_Id, GL_UNIFORM, static_cast<GLuint>(idx), nameLen, nullptr, &name[0]);
-            // remove terminating null
-            if (!name.empty() && name.back() == '\0') name.pop_back();
+            m_Uniforms[Uniform_name] = std::make_tuple(
+                static_cast<GLuint>(UniformLocation_Prv(Uniform_name.c_str())),
+                static_cast<GLenum>(type),
+                static_cast<GLsizei>(size)
+            );
         }
-
-        if (location == -1) throw CException("loaction is -1 on uniform : {}", name);
-
-        m_Uniforms[name] = std::make_tuple(
-            static_cast<GLuint>(location),
-            static_cast<GLenum>(type),
-            static_cast<GLsizei>(arraySize)
-        );
     }
 }
 
 auto ShaderProgram::DumpAttribs() -> void
 {
-    GLint activeInputs = 0;
-    gl::GetProgramInterfaceiv(m_Id, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &activeInputs);
-    if (activeInputs <= 0) {
-        Debug::Print("no active attributes for program {}\n", m_Id);
-        return;
+    GLint max_len = GetProgramInfo(GL_ACTIVE_ATTRIBUTE_MAX_LENGTH);
+    if(max_len == 0) {
+        throw CException("max_len is not valid max_len: {}", max_len);
     }
+    
+    auto count = AttribsCount();
+    if(count > 0){
+        GLsizei len = 0;
+        [[maybe_unused]] GLsizei size;
+        [[maybe_unused]] GLenum type;
 
-    constexpr GLenum props[] = {
-        GL_NAME_LENGTH,
-        GL_TYPE,
-        GL_ARRAY_SIZE,
-        GL_LOCATION
-    };
-    constexpr int propCount = sizeof(props)/sizeof(props[0]);
+        for(GLint i = 0; i < count; i++){
+            std::string attrib_name(static_cast<std::size_t>(max_len), '\0');
+            gl::GetActiveAttrib(m_Id, static_cast<GLuint>(i), max_len, &len, &size, &type, attrib_name.data());
+            if(len > 0) attrib_name.resize(static_cast<std::size_t>(len));
 
-    for (GLint idx = 0; idx < activeInputs; ++idx) {
-        GLint results[propCount];
-        gl::GetProgramResourceiv(m_Id, GL_PROGRAM_INPUT, static_cast<GLuint>(idx),
-                                 propCount, props, propCount, nullptr, results);
+            if(attrib_name.starts_with("gl_")) continue;
 
-        GLint nameLen   = results[0]; // includes NULL
-        GLenum type     = static_cast<GLenum>(results[1]);
-        GLint arraySize = results[2];
-        GLint location  = results[3];
-
-        // get the attribute name
-        std::string name(std::max(1, nameLen), '\0');
-        if (nameLen > 0) {
-            gl::GetProgramResourceName(m_Id, GL_PROGRAM_INPUT, static_cast<GLuint>(idx),
-                                       nameLen, nullptr, &name[0]);
-            if (!name.empty() && name.back() == '\0') name.pop_back();
+            m_Attribs[attrib_name] = std::make_tuple(
+                static_cast<GLuint>(AttribLocation_Prv(attrib_name.c_str())),
+                static_cast<GLenum>(type),
+                static_cast<GLsizei>(size)
+            );
         }
-
-        if(name.starts_with("gl_")) continue;
-
-        if (location == -1) throw CException("location is -1 for in attribute: {}", name);
-
-        m_Attribs[name] = std::make_tuple(
-            static_cast<GLuint>(location),
-            static_cast<GLenum>(type),
-            static_cast<GLsizei>(arraySize)
-        );
     }
 }
 
