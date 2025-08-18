@@ -348,7 +348,6 @@ set(SOURCES
     src/Texture.cpp
     src/Scene.cpp
     src/Material.cpp
-    src/Log.cpp
     src/ResourceManager.cpp
     src/Image.cpp
     src/ShaderProgram.cpp
