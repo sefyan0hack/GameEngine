@@ -82,10 +82,10 @@ if(EMSCRIPTEN)
         -sSTB_IMAGE=1
         -sDISABLE_EXCEPTION_THROWING=0
         -sDISABLE_EXCEPTION_CATCHING=0
+        -sFILESYSTEM=0
         -sPTHREAD_POOL_SIZE=4
         -sEXIT_RUNTIME=1
         -sASSERTIONS=1
-        --embed-file ${CMAKE_SOURCE_DIR}/res
     )
 
     configure_file(
