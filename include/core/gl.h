@@ -129,24 +129,6 @@ inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
     X(UniformMatrix2fv);\
     X(UniformMatrix3fv);\
     X(UniformMatrix4fv);\
-    X(ProgramUniform1i);\
-    X(ProgramUniform2i);\
-    X(ProgramUniform3i);\
-    X(ProgramUniform4i);\
-    X(ProgramUniform1ui);\
-    X(ProgramUniform2ui);\
-    X(ProgramUniform3ui);\
-    X(ProgramUniform4ui);\
-    X(ProgramUniform1f);\
-    X(ProgramUniform2f);\
-    X(ProgramUniform3f);\
-    X(ProgramUniform4f);\
-    X(ProgramUniform2fv);\
-    X(ProgramUniform3fv);\
-    X(ProgramUniform4fv);\
-    X(ProgramUniformMatrix2fv);\
-    X(ProgramUniformMatrix3fv);\
-    X(ProgramUniformMatrix4fv);\
     X(GetStringi);\
     X(DrawElementsInstanced);\
     X(DrawElements);\
