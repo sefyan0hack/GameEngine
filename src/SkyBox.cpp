@@ -6,7 +6,8 @@
 #include <core/Texture.hpp>
 #include <cmrc/cmrc.hpp>
 
-extern cmrc::embedded_filesystem fs;
+CMRC_DECLARE(core);
+inline auto fs = cmrc::core::get_filesystem();
 
 SkyBox::SkyBox()
   : m_VertShader(std::make_shared<Shader>(fs.open("res/Shaders/skybox.vert"), GL_VERTEX_SHADER))

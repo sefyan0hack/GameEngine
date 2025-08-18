@@ -15,10 +15,10 @@
 
 #include <cmrc/cmrc.hpp>
 CMRC_DECLARE(core);
+inline auto fs = cmrc::core::get_filesystem();
 
 using namespace std;
 
-auto fs = cmrc::core::get_filesystem();
 
 /// @brief Game class hire the client put the logic for the game all the variables and stastes
 class Game : public APP
