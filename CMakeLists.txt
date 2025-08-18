@@ -85,7 +85,7 @@ if(EMSCRIPTEN)
         -sFILESYSTEM=0
         -sPTHREAD_POOL_SIZE=4
         -sEXIT_RUNTIME=1
-        -sASSERTIONS=1
+        # -sASSERTIONS=1
     )
 
     configure_file(
