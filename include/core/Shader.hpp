@@ -6,6 +6,8 @@
 
 #include <core/gl.h>
 
+#include <cmrc/cmrc.hpp>
+
 class Shader
 {
   public:
@@ -13,6 +15,7 @@ class Shader
     Shader();
     Shader(const std::string& filename);
     Shader(const std::string& Src, GLenum type);
+    Shader(const cmrc::file& Src, GLenum type);
     ~Shader() = default;
 
     Shader(const Shader&) = delete;

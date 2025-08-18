@@ -13,7 +13,12 @@
 #include <core/Scene.hpp>
 #include <core/Log.hpp>
 
+#include <cmrc/cmrc.hpp>
+CMRC_DECLARE(core);
+
 using namespace std;
+
+auto fs = cmrc::core::get_filesystem();
 
 /// @brief Game class hire the client put the logic for the game all the variables and stastes
 class Game : public APP
@@ -26,26 +31,24 @@ private:
 public:
     /// @brief Get called at start of the game
     Game()
-        : vert(std::make_shared<Shader>(RES_DIR"/Shaders/cube.vert"))
-        , frag(std::make_shared<Shader>(RES_DIR"/Shaders/cube.frag"))
+        : vert(std::make_shared<Shader>(fs.open("res/Shaders/cube.vert"), GL_VERTEX_SHADER))
+        , frag(std::make_shared<Shader>(fs.open("res/Shaders/cube.frag"), GL_FRAGMENT_SHADER))
         , CubeProgram(std::make_shared<ShaderProgram>(vert, frag))
         , MainScene(ViewCamera)
     {
 
-        ResManager["brik.jpg"]          = Texture2D(RES_DIR"/brik.jpg");
-        ResManager["brik.png"]          = Texture2D(RES_DIR"/brik.png");
-        ResManager["kimberley.jpg"]     = Texture2D(RES_DIR"/kimberley.jpg");
-        ResManager["annie_spratt.jpg"]  = Texture2D(RES_DIR"/annie_spratt.jpg");
-        ResManager["sand.png"]          = Texture2D(RES_DIR"/gravelly_sand_diff_4k.png");
+        ResManager["brik.jpg"]          = Texture2D(fs.open("res/brik.jpg"));
+        ResManager["brik.png"]          = Texture2D(fs.open("res/brik.png"));
+        ResManager["kimberley.jpg"]     = Texture2D(fs.open("res/kimberley.jpg"));
+        ResManager["annie_spratt.jpg"]  = Texture2D(fs.open("res/annie_spratt.jpg"));
+        ResManager["sand.png"]          = Texture2D(fs.open("res/gravelly_sand_diff_4k.png"));
 
-        ResManager["forest.jpg"]= TextureCubeMap(TextureCubeMap::base_to_6faces(RES_DIR"/forest.jpg"));
-
-        ResManager["cube.vert"] = Shader(RES_DIR"/Shaders/cube.vert");
+        ResManager["forest.jpg"]= TextureCubeMap(TextureCubeMap::base_to_6facesfiles("res/forest.jpg"));
 
         ResManager["CubeMattkimberley"]  = Material(ResManager["kimberley.jpg"]);
         ResManager["CubeMattSand"]  = Material(ResManager["sand.png"]);
         ResManager["cubeMesh"]      = Mesh(Mesh::CUBE);
-        ResManager["manMesh"]       = Mesh(Obj2Mesh(RES_DIR"/FinalBaseMesh.obj"));
+        ResManager["manMesh"]       = Mesh(Obj2Mesh(fs.open("res/FinalBaseMesh.obj")));
 
         constexpr int32_t Grids = 4;
 

@@ -7,6 +7,8 @@
 #include <core/gl.h>
 #include <core/Image.hpp>
 
+#include <cmrc/cmrc.hpp>
+
 class Texture
 {
 public:
@@ -34,6 +36,7 @@ class Texture2D final : public Texture
   public:
     Texture2D();
     Texture2D(const std::string &name);
+    Texture2D(const cmrc::file &src);
     Texture2D(auto* data, GLint width, GLint height, GLenum format = GL_RGBA);
     auto isMipMapped() const -> bool;
 
@@ -49,8 +52,10 @@ class TextureCubeMap final : public Texture
   public:
     TextureCubeMap();
     TextureCubeMap(const std::vector<std::string> faces);
+    TextureCubeMap(const std::vector<cmrc::file>& faces);
 
     static auto base_to_6faces(const std::string& path) -> std::vector<std::string>;
+    static auto base_to_6facesfiles(const std::string& path) -> std::vector<cmrc::file>;
 
   private:
     std::array<Image, 6> m_Imgs;

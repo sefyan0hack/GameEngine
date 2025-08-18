@@ -6,6 +6,8 @@
 #include <core/gl.h>
 #include <glm/glm.hpp>
 
+#include <cmrc/cmrc.hpp>
+
 struct Vertex
 {
     glm::vec3 Position;
@@ -131,75 +133,5 @@ struct std::formatter<Mesh> {
   }
 };
 
-inline auto Obj2Mesh(const char* filename) -> std::vector<Vertex>
-{
-  std::ifstream file(filename);
-
-  if(!file) throw CException("Error: Unable to open {}", filename);
-  std::vector<glm::vec3> positions;      // Store raw vertex positions
-  std::vector<Vertex> vertices_output;    // Final vertex output
-
-  std::string line;
-  while (std::getline(file, line)) {
-      std::istringstream iss(line);
-      std::string type;
-      iss >> type;
-
-      if (type == "v") {  // Vertex position
-          float x, y, z;
-          iss >> x >> y >> z;
-          positions.push_back(glm::vec3(x, y, z));
-      }
-      else if (type == "f") {  // Face definition
-          std::vector<size_t> faceIndices;
-          std::string token;
-          
-          while (iss >> token) {
-              // Extract vertex index part (ignore normals/textures after '/')
-              size_t pos = token.find('/');
-              if (pos != std::string::npos) {
-                  token = token.substr(0, pos);
-              }
-              
-              if (token.empty()) continue;
-              
-              // Convert to index and validate
-              int idx = std::stoi(token);
-              int vertexCount = static_cast<int>(positions.size());
-              
-              // Handle negative indices (relative positions)
-              if (idx < 0) idx = vertexCount + idx + 1;
-              
-              // Convert to 0-based index and validate bounds
-              idx--;
-              if (idx < 0 || idx >= vertexCount) continue;
-              
-              faceIndices.push_back(static_cast<size_t>(idx));
-          }
-
-          // Triangulate face (convert polygon to triangles)
-          if (faceIndices.size() < 3) continue;
-          
-          for (size_t i = 1; i < faceIndices.size() - 1; ++i) {
-              // Create vertices for current triangle
-              Vertex v1, v2, v3;
-              
-              // Set positions only (ignore normals/texcoords)
-              v1.Position = positions[faceIndices[0]];
-              v2.Position = positions[faceIndices[i]];
-              v3.Position = positions[faceIndices[i + 1]];
-              
-              // Set normals and texcoords to zero
-              v1.Normal = v2.Normal = v3.Normal = glm::vec3(0.0f);
-              v1.TexCoords = v2.TexCoords = v3.TexCoords = glm::vec2(0.0f);
-              
-              // Add to output
-              vertices_output.push_back(v1);
-              vertices_output.push_back(v2);
-              vertices_output.push_back(v3);
-          }
-      }
-  }
-  
-  return vertices_output;
-}
+auto Obj2Mesh(const char* filename) -> std::vector<Vertex>;
+auto Obj2Mesh(cmrc::file src) -> std::vector<Vertex>;

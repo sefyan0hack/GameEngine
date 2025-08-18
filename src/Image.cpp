@@ -68,6 +68,21 @@ Image::Image(const std::string& filename, bool flip)
         Debug::Print("Can't read {} . reason : {}", filename.c_str(), stbi_failure_reason());
 }
 
+Image::Image(const cmrc::file& src, bool flip)
+
+{
+    stbi_set_flip_vertically_on_load(flip);
+    auto size = std::distance(src.begin(), src.end());
+
+    auto data = stbi_load_from_memory(reinterpret_cast<const unsigned char*>(src.begin()), size, &m_Width, &m_Height, &m_Channels, 0);
+
+    if(data)
+        m_Data = reinterpret_cast<std::byte*>(data);
+    else
+        Debug::Print("Can't read file . reason : {}", stbi_failure_reason());
+}
+
+
 Image::~Image()
 {
     if(m_Data) stbi_image_free(m_Data);

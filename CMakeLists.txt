@@ -355,6 +355,34 @@ set(SOURCES
     src/SkyBox.cpp
 )
 
+####################################################################################################
+# Resources
+####################################################################################################
+include(CMakeRC)
+cmrc_add_resource_library(
+    core-resources
+
+    ALIAS core::rc
+    NAMESPACE core
+
+    res/forest_negx.jpg
+    res/forest_negy.jpg
+    res/forest_negz.jpg
+    res/forest_posx.jpg
+    res/forest_posy.jpg
+    res/forest_posz.jpg
+    res/kimberley.jpg
+    res/brik.png
+    res/brik.jpg
+    res/gravelly_sand_diff_4k.png
+    res/annie_spratt.jpg
+    res/FinalBaseMesh.obj
+    res/Shaders/cube.vert
+    res/Shaders/cube.frag
+    res/Shaders/skybox.vert
+    res/Shaders/skybox.frag
+
+)
 
 ####################################################################################################
 # Find instaled packages 
@@ -380,6 +408,8 @@ endif()
 # Build Exe 
 ####################################################################################################
 add_library(core ${SOURCES})
+target_link_libraries(core PUBLIC core::rc)
+
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm core)
 ####################################################################################################

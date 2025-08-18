@@ -3,6 +3,8 @@
 #include <core/Utils.hpp>
 #include <core/OpenGL.hpp>
 
+extern cmrc::embedded_filesystem fs;
+
 namespace {
 constexpr auto to_string(GLenum type) -> const char*
 {
@@ -69,6 +71,16 @@ Texture2D::Texture2D()
 //////////
 Texture2D::Texture2D(const std::string &name)
     : Texture(GL_TEXTURE_2D), m_Img(name), m_Mipmapped(true)
+{
+    ToGPUImg2D(reinterpret_cast<GLubyte*>(m_Img.Data().data()), m_Img.Width(), m_Img.Height(), m_Img.GPUFormat(), m_Img.CPUFormat());
+
+    if (m_Mipmapped) GenerateMipMap();
+
+    Debug::Print("{}", static_cast<const Texture&>(*this));
+}
+
+Texture2D::Texture2D(const cmrc::file &src)
+    : Texture(GL_TEXTURE_2D), m_Img(src), m_Mipmapped(true)
 {
     ToGPUImg2D(reinterpret_cast<GLubyte*>(m_Img.Data().data()), m_Img.Width(), m_Img.Height(), m_Img.GPUFormat(), m_Img.CPUFormat());
 
@@ -170,6 +182,32 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
     Debug::Print("{}", static_cast<const Texture&>(*this));
 }
 
+
+TextureCubeMap::TextureCubeMap(const std::vector<cmrc::file>& faces)
+    : TextureCubeMap()
+{
+    m_Imgs = std::move(
+        std::array<Image, 6>{
+            Image(faces[0], false), Image(faces[1], false), Image(faces[2], false),
+            Image(faces[3], false), Image(faces[4], false), Image(faces[5], false)
+        }
+    );
+
+    for (std::size_t i = 0; i < m_Imgs.size(); ++i) {
+        auto& img = m_Imgs[i];
+
+        GLint rowBytes = img.Width() * img.Channels();
+        GLint alignment = (rowBytes % 8 == 0)? 8 : (rowBytes % 4 == 0)? 4 : (rowBytes % 2 == 0)? 2 : 1;
+        gl::PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
+
+        gl::TexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, img.GPUFormat(), img.Width(), img.Height(), 0, img.CPUFormat(), GL_UNSIGNED_BYTE, img.Data().data());
+    }
+
+    gl::GenerateMipmap(m_Type);
+    gl::PixelStorei(GL_UNPACK_ALIGNMENT, 4);
+    Debug::Print("{}", static_cast<const Texture&>(*this));
+}
+
 auto TextureCubeMap::base_to_6faces(const std::string& path) -> std::vector<std::string>
 {
     std::vector<std::string> result;
@@ -184,4 +222,19 @@ auto TextureCubeMap::base_to_6faces(const std::string& path) -> std::vector<std:
     }
 
     return result;
+}
+auto TextureCubeMap::base_to_6facesfiles(const std::string& path) -> std::vector<cmrc::file>
+{
+    std::vector<cmrc::file> files;
+    std::array<std::string, 6> directions = {"posx", "negx", "posy", "negy", "posz", "negz"};
+    auto dot = path.find_last_of(".");
+    auto ext = path.substr(dot, path.size());
+
+    for (const auto &dir : directions) {
+        auto newPath = path.substr(0, dot);
+        newPath += "_" + dir + ext;
+        files.push_back(fs.open(newPath));
+    }
+
+    return files;
 }

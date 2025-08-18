@@ -58,6 +58,10 @@ Shader::Shader(const std::string& Src, GLenum type)
     Debug::Print(*this);
 }
 
+Shader::Shader(const cmrc::file& Src, GLenum type)
+    : Shader(std::string(Src.begin(), Src.end()), type)
+{}
+
 // Shader::Shader(const Shader& other)
 //     : m_Id(gl::CreateShader(other.m_Type))
 //     , m_Type(other.m_Type)
