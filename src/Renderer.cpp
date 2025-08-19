@@ -31,11 +31,16 @@ auto Renderer::Render(const Scene& scene, const std::shared_ptr<ShaderProgram> p
     program->SetUniform("Projection", m_Camera.Projection());
     program->SetUniform("Eye", m_Camera.Position());
 
+    static std::shared_ptr<Material> currMatt = nullptr;
     //Drwaing
-
     for(auto &obj: scene.Entities()){
         program->SetUniform("Model", obj.Model());
-        obj.material()->Bind(program);
+
+        if(currMatt != obj.material()){
+            currMatt = obj.material();
+            obj.material()->Bind(program);
+        }
+
         auto mesh = obj.mesh();
         draw(*mesh);
     }
@@ -44,7 +49,11 @@ auto Renderer::Render(const Scene& scene, const std::shared_ptr<ShaderProgram> p
 
 auto Renderer::draw(const Mesh& mesh) -> void
 {
-    gl::BindVertexArray(mesh.VAO);
+    static GLuint currVAO = mesh.VAO;
+    if(currVAO != mesh.VAO){
+        currVAO = mesh.VAO;
+        gl::BindVertexArray(currVAO);
+    }
     gl::DrawArrays(GL_TRIANGLES, 0, mesh.VextexSize());
 }
 
