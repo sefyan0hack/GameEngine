@@ -13,9 +13,7 @@ ShaderProgram::ShaderProgram(std::shared_ptr<Shader> vertex, std::shared_ptr<Sha
     }
 
     Link();
-    checkLinkStatus();
 
-    gl::UseProgram(m_Id);
     DumpAttribs();
     DumpUniforms();
 
@@ -32,7 +30,7 @@ ShaderProgram::ShaderProgram(std::shared_ptr<Shader> vertex, std::shared_ptr<Sha
 //     }
 
 //     Link();
-//     checkLinkStatus();
+
 //     DumpAttribs();
 //     DumpUniforms();
 // }
@@ -63,6 +61,17 @@ auto ShaderProgram::Use() const -> void
 auto ShaderProgram::Link() const -> void
 {
     gl::LinkProgram(m_Id);
+
+    GLint success = GetProgramInfo(GL_LINK_STATUS);
+
+    if (!success) {
+        GLsizei  infologlength = GetProgramInfo(GL_INFO_LOG_LENGTH);
+        if(infologlength > 0){
+            std::string infoLog(infologlength, '\0');
+            gl::GetProgramInfoLog(m_Id, infologlength, nullptr, infoLog.data());
+            throw CException("{}", infoLog);
+        }
+    }
 }
 
 auto ShaderProgram::UniformLocation(const char *name) const -> GLuint
@@ -105,19 +114,7 @@ auto ShaderProgram::AttribLocation_Prv(const char *name) const -> GLuint
     return static_cast<GLuint>(location);
 }
 
-auto ShaderProgram::checkLinkStatus() -> void
-{
-    GLint success = GetProgramInfo(GL_LINK_STATUS);
 
-    if (!success) {
-        GLsizei  infologlength = GetProgramInfo(GL_INFO_LOG_LENGTH);
-        if(infologlength > 0){
-            std::string infoLog(infologlength, '\0');
-            gl::GetProgramInfoLog(m_Id, infologlength, nullptr, infoLog.data());
-            throw CException("{}", infoLog);
-        }
-    }
-}
 auto ShaderProgram::UniformCount() const -> GLint
 {
     GLint count = GetProgramInfo(GL_ACTIVE_UNIFORMS);
@@ -295,12 +292,12 @@ auto ShaderProgram::Current_Program() -> GLuint
     return static_cast<GLuint>(prog);
 }
 
-auto ShaderProgram::Uniforms() const noexcept -> const std::map<std::string, GLSLVar>&
+auto ShaderProgram::Uniforms() const noexcept -> const std::map<std::string, GlslType>&
 {
     return m_Uniforms;
 }
 
-auto ShaderProgram::Attribs() const noexcept -> const std::map<std::string, GLSLVar>&
+auto ShaderProgram::Attribs() const noexcept -> const std::map<std::string, GlslType>&
 {
     return m_Attribs;
 }
@@ -427,73 +424,50 @@ auto ShaderProgram::SetUniform(const std::string& name, const glm::mat4 &value) 
     }
 }
 
-
-auto ShaderProgram::GLSL_Type_to_string(GLenum type) -> const char*
+auto ShaderProgram::GlslType_to_string(GLenum type) -> const char*
 {
     switch (type)
     {
-        case GL_FLOAT: return "GL_FLOAT";
-        case GL_FLOAT_VEC2: return "GL_FLOAT_VEC2";
-        case GL_FLOAT_VEC3: return "GL_FLOAT_VEC3";
-        case GL_FLOAT_VEC4: return "GL_FLOAT_VEC4";
-        case GL_DOUBLE: return "GL_DOUBLE";
-        case GL_INT: return "GL_INT";
-        case GL_INT_VEC2: return "GL_INT_VEC2";
-        case GL_INT_VEC3: return "GL_INT_VEC3";
-        case GL_INT_VEC4: return "GL_INT_VEC4";
-        case GL_UNSIGNED_INT: return "GL_UNSIGNED_INT";
-        case GL_UNSIGNED_INT_VEC2: return "GL_UNSIGNED_INT_VEC2";
-        case GL_UNSIGNED_INT_VEC3: return "GL_UNSIGNED_INT_VEC3";
-        case GL_UNSIGNED_INT_VEC4: return "GL_UNSIGNED_INT_VEC4";
-        case GL_BOOL: return "GL_BOOL";
-        case GL_BOOL_VEC2: return "GL_BOOL_VEC2";
-        case GL_BOOL_VEC3: return "GL_BOOL_VEC3";
-        case GL_BOOL_VEC4: return "GL_BOOL_VEC4";
-        case GL_FLOAT_MAT2: return "GL_FLOAT_MAT2";
-        case GL_FLOAT_MAT3: return "GL_FLOAT_MAT3";
-        case GL_FLOAT_MAT4: return "GL_FLOAT_MAT4";
-        case GL_FLOAT_MAT2x3: return "GL_FLOAT_MAT2x3";
-        case GL_FLOAT_MAT2x4: return "GL_FLOAT_MAT2x4";
-        case GL_FLOAT_MAT3x2: return "GL_FLOAT_MAT3x2";
-        case GL_FLOAT_MAT3x4: return "GL_FLOAT_MAT3x4";
-        case GL_FLOAT_MAT4x2: return "GL_FLOAT_MAT4x2";
-        case GL_FLOAT_MAT4x3: return "GL_FLOAT_MAT4x3";
-        case GL_SAMPLER_1D: return "GL_SAMPLER_1D";
-        case GL_SAMPLER_2D: return "GL_SAMPLER_2D";
-        case GL_SAMPLER_3D: return "GL_SAMPLER_3D";
-        case GL_SAMPLER_CUBE: return "GL_SAMPLER_CUBE";
-        case GL_SAMPLER_1D_SHADOW: return "GL_SAMPLER_1D_SHADOW";
-        case GL_SAMPLER_2D_SHADOW: return "GL_SAMPLER_2D_SHADOW";
-        case GL_SAMPLER_1D_ARRAY: return "GL_SAMPLER_1D_ARRAY";
-        case GL_SAMPLER_2D_ARRAY: return "GL_SAMPLER_2D_ARRAY";
-        case GL_SAMPLER_1D_ARRAY_SHADOW: return "GL_SAMPLER_1D_ARRAY_SHADOW";
-        case GL_SAMPLER_2D_ARRAY_SHADOW: return "GL_SAMPLER_2D_ARRAY_SHADOW";
-        case GL_SAMPLER_2D_MULTISAMPLE: return "GL_SAMPLER_2D_MULTISAMPLE";
-        case GL_SAMPLER_2D_MULTISAMPLE_ARRAY: return "GL_SAMPLER_2D_MULTISAMPLE_ARRAY";
-        case GL_SAMPLER_CUBE_SHADOW: return "GL_SAMPLER_CUBE_SHADOW";
-        case GL_SAMPLER_BUFFER: return "GL_SAMPLER_BUFFER";
-        case GL_SAMPLER_2D_RECT: return "GL_SAMPLER_2D_RECT";
-        case GL_SAMPLER_2D_RECT_SHADOW: return "GL_SAMPLER_2D_RECT_SHADOW";
-        case GL_INT_SAMPLER_1D: return "GL_INT_SAMPLER_1D";
-        case GL_INT_SAMPLER_2D: return "GL_INT_SAMPLER_2D";
-        case GL_INT_SAMPLER_3D: return "GL_INT_SAMPLER_3D";
-        case GL_INT_SAMPLER_CUBE: return "GL_INT_SAMPLER_CUBE";
-        case GL_INT_SAMPLER_1D_ARRAY: return "GL_INT_SAMPLER_1D_ARRAY";
-        case GL_INT_SAMPLER_2D_ARRAY: return "GL_INT_SAMPLER_2D_ARRAY";
-        case GL_INT_SAMPLER_2D_MULTISAMPLE: return "GL_INT_SAMPLER_2D_MULTISAMPLE";
-        case GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY: return "GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY";
-        case GL_INT_SAMPLER_BUFFER: return "GL_INT_SAMPLER_BUFFER";
-        case GL_INT_SAMPLER_2D_RECT: return "GL_INT_SAMPLER_2D_RECT";
-        case GL_UNSIGNED_INT_SAMPLER_1D: return "GL_UNSIGNED_INT_SAMPLER_1D";
-        case GL_UNSIGNED_INT_SAMPLER_2D: return "GL_UNSIGNED_INT_SAMPLER_2D";
-        case GL_UNSIGNED_INT_SAMPLER_3D: return "GL_UNSIGNED_INT_SAMPLER_3D";
-        case GL_UNSIGNED_INT_SAMPLER_CUBE: return "GL_UNSIGNED_INT_SAMPLER_CUBE";
-        case GL_UNSIGNED_INT_SAMPLER_1D_ARRAY: return "GL_UNSIGNED_INT_SAMPLER_1D_ARRAY";
-        case GL_UNSIGNED_INT_SAMPLER_2D_ARRAY: return "GL_UNSIGNED_INT_SAMPLER_2D_ARRAY";
-        case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE: return "GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE";
-        case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY: return "GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY";
-        case GL_UNSIGNED_INT_SAMPLER_BUFFER: return "GL_UNSIGNED_INT_SAMPLER_BUFFER";
-        case GL_UNSIGNED_INT_SAMPLER_2D_RECT: return "GL_UNSIGNED_INT_SAMPLER_2D_RECT";
+        case GL_FLOAT : return "float";
+        case GL_FLOAT_VEC2 : return "vec2";
+        case GL_FLOAT_VEC3 : return "vec3";
+        case GL_FLOAT_VEC4 : return "vec4";
+        case GL_FLOAT_MAT2 : return "mat2";
+        case GL_FLOAT_MAT3 : return "mat3";
+        case GL_FLOAT_MAT4 : return "mat4";
+        case GL_FLOAT_MAT2x3 : return "mat2x3";
+        case GL_FLOAT_MAT2x4 : return "mat2x4";
+        case GL_FLOAT_MAT3x2 : return "mat3x2";
+        case GL_FLOAT_MAT3x4 : return "mat3x4";
+        case GL_FLOAT_MAT4x2 : return "mat4x2";
+        case GL_FLOAT_MAT4x3 : return "mat4x3";
+        case GL_INT : return "int";
+        case GL_INT_VEC2 : return "ivec2";
+        case GL_INT_VEC3 : return "ivec3";
+        case GL_INT_VEC4 : return "ivec4";
+        case GL_UNSIGNED_INT : return "unsigned int";
+        case GL_UNSIGNED_INT_VEC2 : return "uvec2";
+        case GL_UNSIGNED_INT_VEC3 : return "uvec3";
+        case GL_UNSIGNED_INT_VEC4 : return "uvec4";
+        case GL_BOOL : return	"bool";
+        case GL_BOOL_VEC2 : return	"bvec2";
+        case GL_BOOL_VEC3 : return	"bvec3";
+        case GL_BOOL_VEC4 : return	"bvec4";
+        case GL_SAMPLER_2D : return	"sampler2D";
+        case GL_SAMPLER_3D : return	"sampler3D";
+        case GL_SAMPLER_CUBE : return	"samplerCube";
+        case GL_SAMPLER_2D_SHADOW : return	"sampler2DShadow";
+        case GL_SAMPLER_2D_ARRAY : return	"sampler2DArray";
+        case GL_SAMPLER_2D_ARRAY_SHADOW : return	"sampler2DArrayShadow";
+        case GL_SAMPLER_CUBE_SHADOW : return	"samplerCubeShadow";
+        case GL_INT_SAMPLER_2D : return	"isampler2D";
+        case GL_INT_SAMPLER_3D : return	"isampler3D";
+        case GL_INT_SAMPLER_CUBE : return	"isamplerCube";
+        case GL_INT_SAMPLER_2D_ARRAY : return	"isampler2DArray";
+        case GL_UNSIGNED_INT_SAMPLER_2D : return	"usampler2D";
+        case GL_UNSIGNED_INT_SAMPLER_3D : return	"usampler3D";
+        case GL_UNSIGNED_INT_SAMPLER_CUBE : return	"usamplerCube";
+        case GL_UNSIGNED_INT_SAMPLER_2D_ARRAY : return	"usampler2DArray";
         default: return "unknown";
     }
 }
