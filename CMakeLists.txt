@@ -482,6 +482,8 @@ if(TESTS)
     enable_testing()
     include(GoogleTest)
     add_subdirectory(tests/unit)
+    target_link_libraries(unit_tests PUBLIC core::rc)
+
 endif()
 
 remove_global_flags(Engine)

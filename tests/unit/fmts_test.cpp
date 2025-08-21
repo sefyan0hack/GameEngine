@@ -13,6 +13,10 @@
 #include <map>
 #include <vector>
 
+#include <cmrc/cmrc.hpp>
+CMRC_DECLARE(core);
+inline auto fs = cmrc::core::get_filesystem();
+
 using namespace std;
 using namespace glm;
 
@@ -112,8 +116,8 @@ TEST(Formatters, DISABLED_Mesh){
 }
 
 // TEST(Formatters, DISABLED_Material){
-//     auto shader_vert = std::make_shared<Shader>(RES_DIR"/Shaders/skybox.vert");
-//     auto shader_frag = std::make_shared<Shader>(RES_DIR"/Shaders/skybox.frag");
+//     auto shader_vert = std::make_shared<Shader>(fs.open("res/Shaders/skybox.vert"), GL_VERTEX_SHADER);
+//     auto shader_frag = std::make_shared<Shader>(fs.open("res/Shaders/skybox.frag"), GL_FRAGMENT_SHADER);
 
 //     auto material = Material();
 
@@ -126,8 +130,8 @@ TEST(Formatters, DISABLED_Mesh){
 // }
 
 TEST(Formatters, DISABLED_GameObject){
-    auto shader_vert = std::make_shared<Shader>(RES_DIR"/Shaders/skybox.vert");
-    auto shader_frag = std::make_shared<Shader>(RES_DIR"/Shaders/skybox.frag");
+    auto shader_vert = std::make_shared<Shader>(fs.open("res/Shaders/skybox.vert"), GL_VERTEX_SHADER);
+    auto shader_frag = std::make_shared<Shader>(fs.open("res/Shaders/skybox.frag"), GL_FRAGMENT_SHADER);
     auto mesh = std::make_shared<Mesh>(std::vector<Vertex>());
     auto material = std::make_shared<Material>();
     

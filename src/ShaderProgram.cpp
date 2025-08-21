@@ -99,8 +99,7 @@ auto ShaderProgram::UniformLocation_Prv(const char *name) const -> GLuint
 {
     GLint location = gl::GetUniformLocation(m_Id, name);
     if (location == -1) {
-        Debug::Print("uniform {} doesn't exist!", name);
-        // continue;
+        throw CException("uniform {} doesn't exist!", name);
     }
     return static_cast<GLuint>(location);
 }
