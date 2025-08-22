@@ -50,6 +50,15 @@ cmake_dependent_option(NO_CONSOLE "No Console with Window" ON [[ CMAKE_BUILD_TYP
 cmake_dependent_option(RTTI "RunTime Type Info" ON "NOT MINGW" OFF) # disable RTTI becaus of bug in mingw redifinition when static link libstdc++
 
 ####################################################################################################
+# Link Time OPT 
+####################################################################################################
+include(CheckIPOSupported)
+check_ipo_supported(RESULT IPO_SUPPORTED OUTPUT OUTPUT)
+
+if(IPO_SUPPORTED AND NOT TESTS)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+endif()
+####################################################################################################
 # Emscripten-specific setup 
 ####################################################################################################
 
