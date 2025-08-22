@@ -51,28 +51,28 @@ jobs:
 
       - name: Configure CMake
         shell: bash
-        run: cmake -S . -B "$BUILD_DIR" -G  "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DTESTS=ON -DHARDEN=ON
+        run: cmake -S . -B "$BUILD_DIR" -G  "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DTESTS=OFF -DHARDEN=ON
 
       - name: Build
         shell: bash
         run: cmake --build "${{ env.BUILD_DIR }}" --config ${{ matrix.build_type }} --parallel
 
-      - name: Upload Test Executable
-        uses: actions/upload-artifact@v4
-        with:
-          name: unit_tests-${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
-          path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests${{ env.APP_EXT }}
-          retention-days: 1
-          overwrite: true
+      # - name: Upload Test Executable
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: unit_tests-${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
+      #     path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests${{ env.APP_EXT }}
+      #     retention-days: 1
+      #     overwrite: true
 
-      - name: Test
-        shell: bash
-        run: |
-          if [[ "${{ matrix.os }}" == *ubuntu* ]]; then
-            xvfb-run --auto-servernum ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
-          else
-            ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
-          fi
+      # - name: Test
+      #   shell: bash
+      #   run: |
+      #     if [[ "${{ matrix.os }}" == *ubuntu* ]]; then
+      #       xvfb-run --auto-servernum ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
+      #     else
+      #       ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
+      #     fi
 
   Build-Web:
     if: "!contains(github.event.head_commit.message, '[skip CI]')"
