@@ -76,10 +76,12 @@ if(EMSCRIPTEN)
         -fPIC
         -pthread
         -matomics
+        -flto
     )
 
     add_link_options(
         -Oz
+        -flto
         -pthread
         -matomics
         -sASYNCIFY
@@ -88,13 +90,11 @@ if(EMSCRIPTEN)
         -sMAX_WEBGL_VERSION=2
         -sALLOW_MEMORY_GROWTH=1
         -sFULL_ES3=1
-        -sSTB_IMAGE=1
         -sDISABLE_EXCEPTION_THROWING=0
         -sDISABLE_EXCEPTION_CATCHING=0
         -sFILESYSTEM=0
         -sPTHREAD_POOL_SIZE=4
         -sEXIT_RUNTIME=1
-        # -sASSERTIONS=1
     )
 
     configure_file(
