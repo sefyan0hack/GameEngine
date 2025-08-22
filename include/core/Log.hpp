@@ -19,30 +19,27 @@ namespace Debug {
   template <typename ...Ts>
   auto Log(
     [[maybe_unused]] const std::format_string<Ts...>& fmt,
-    [[maybe_unused]] Ts&& ... ts) -> void
+    [[maybe_unused]] Ts&& ... ts) -> std::string
   {
     auto formatted_msg = std::format(fmt, std::forward<Ts>(ts)...);
-
-    if(std::getenv("TESTING_ENABLED") == nullptr){
-      std::cout << std::format("{} : {}\n", formatedTime(), formatted_msg);
-    }
+    return std::format("{} : {}\n", formatedTime(), formatted_msg);
   }
   
 
   template <typename... Ts>
   inline auto Print([[maybe_unused]] const std::format_string<Ts...>& fmt, [[maybe_unused]] Ts&&... ts) -> void
   {
-    #if defined(DEBUG) && !defined(NDEBUG)
-    Log(fmt, std::forward<Ts>(ts)...);
-    #endif
+    if(std::getenv("TESTING_ENABLED") == nullptr) {
+      #if defined(DEBUG) && !defined(NDEBUG)
+      std::cout << Log(fmt, std::forward<Ts>(ts)...);
+      #endif
+    }
   }
 
   template <typename T>
   inline auto Print(T&& x) -> void
   {
-    #if defined(DEBUG) && !defined(NDEBUG)
-    Log("{}", std::forward<T>(x));
-    #endif
+    Print("{}", std::forward<T>(x));
   }
 
 } // namespace Debug
