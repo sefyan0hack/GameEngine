@@ -39,7 +39,6 @@ option(TESTS                "Tests"               OFF)
 option(DOCS                 "Docs"                OFF)
 option(ENABLE_COVERAGE      "Code coverage"       OFF)
 option(HARDEN               "Hardening"           OFF)
-option(STATIC_LINK          "Static link C++"     OFF)
 option(ASAN                 "Address Sanitizer"   OFF)
 option(USAN                 "Undefined Sanitizer" OFF)
 option(TSAN                 "Thread Sanitizer"    OFF)
@@ -47,6 +46,7 @@ option(NATIVE_OPT           "Native opt build"    ON)
 option(RELEASE_DEBUG_INFO   "Release debug information" OFF)
 cmake_dependent_option(ROBUST_GL_CHECK "Robust GL checks in Debug builds `slow` " ON [[ CMAKE_BUILD_TYPE STREQUAL "Debug" ]] OFF)
 cmake_dependent_option(NO_CONSOLE "No Console with Window" ON [[ CMAKE_BUILD_TYPE STREQUAL "Release" ]] OFF)
+cmake_dependent_option(STATIC_LINK "Static link C++" ON "MINGW" OFF)
 cmake_dependent_option(RTTI "RunTime Type Info" ON "NOT MINGW" OFF) # disable RTTI becaus of bug in mingw redifinition when static link libstdc++
 
 ####################################################################################################
