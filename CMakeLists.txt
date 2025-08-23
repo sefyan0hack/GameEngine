@@ -58,6 +58,16 @@ check_ipo_supported(RESULT IPO_SUPPORTED OUTPUT OUTPUT)
 if(IPO_SUPPORTED AND NOT TESTS)
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
+
+add_compile_options(
+    "$<$<CXX_COMPILER_ID:GNU,Clang>:-ffunction-sections;-fdata-sections>"
+    "$<$<CXX_COMPILER_ID:MSVC>:/Gy;/Gw>"
+)
+
+add_link_options(
+    "$<$<CXX_COMPILER_ID:GNU,Clang>:-Wl,--gc-sections>"
+    "$<$<CXX_COMPILER_ID:MSVC>:/OPT:REF;/OPT:ICF>"
+)
 ####################################################################################################
 # Emscripten-specific setup 
 ####################################################################################################
