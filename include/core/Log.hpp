@@ -2,6 +2,7 @@
 
 #include <source_location>
 #include <iostream>
+#include <fstream>
 #include <cstdlib>
 #include <format>
 #include <chrono>
@@ -29,11 +30,16 @@ namespace Debug {
   template <typename... Ts>
   inline auto Print([[maybe_unused]] const std::format_string<Ts...>& fmt, [[maybe_unused]] Ts&&... ts) -> void
   {
-    if(std::getenv("TESTING_ENABLED") == nullptr) {
-      #if defined(DEBUG) && !defined(NDEBUG)
-      std::cout << Log(fmt, std::forward<Ts>(ts)...);
-      #endif
-    }
+    #if defined(DEBUG) && !defined(NDEBUG)
+      if(std::getenv("TESTING_ENABLED") == nullptr) {
+        std::cout << Log(fmt, std::forward<Ts>(ts)...);
+      }
+    #else
+      if(std::getenv("COUT_TO_FILE") != nullptr){
+        std::ofstream cout("Engine.log", std::ios::app);
+        cout << Log(fmt, std::forward<Ts>(ts)...);
+      }
+    #endif
   }
 
   template <typename T>
