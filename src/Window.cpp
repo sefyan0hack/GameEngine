@@ -852,10 +852,9 @@ auto CWindow::GetTitle() -> std::string
 
 	#elif defined(LINUX_PLT)
 	char* name = nullptr;
-    if (XFetchName(dpy, w, &name) && name) {
+    if (XFetchName(m_Surface, m_Handle, &name) && name) {
 		title.resize(std::strlen(name) + 1);
         XFree(name);
-        return s;
 	}
 	#elif defined(WEB_PLT)
 	title = emscripten_get_window_title();
