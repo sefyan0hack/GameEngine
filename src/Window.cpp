@@ -851,6 +851,7 @@ auto CWindow::GetTitle() -> std::string
         title.resize(len); // remove the extra null char
 
 	#elif defined(LINUX_PLT)
+	// brocken
 	char* name = nullptr;
     if (XFetchName(m_Surface, m_Handle, &name) && name) {
 		title.resize(std::strlen(name) + 1);
