@@ -66,6 +66,8 @@ class CWindow
         auto ToggleFullScreen()     -> void;
         auto SwapBuffers() const    -> void;
         auto Close()                -> void;
+        auto GetTitle() -> std::string;
+        auto SetTitle(std::string title) -> void;
         static auto ProcessMessages([[maybe_unused]] CWindow* self)   -> void ;
 
     private:

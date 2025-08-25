@@ -64,7 +64,7 @@ public:
         MainScene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), ResManager["CubeMattSand"], ResManager["manMesh"]);
 
         MainScene.SetSkyBox(ResManager["forest.jpg"]);
-
+        Debug::Print("Window title: {}", Window.GetTitle());
     }
 public:
     /// @brief Run every frame at 1/delta fps
@@ -81,6 +81,8 @@ public:
         ViewCamera.Move({ Vert * by, Up * by, Hori * by });
 
         Render(MainScene, CubeProgram);
+
+        Window.SetTitle(std::format("{}", SmoothedFPS()));
     }
 
 public:

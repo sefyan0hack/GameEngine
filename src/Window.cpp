@@ -1,3 +1,5 @@
+#include <cstring>
+
 #include <core/Window.hpp>
 #include <core/Log.hpp>
 #include <core/OpenGL.hpp>
@@ -834,4 +836,41 @@ auto CWindow::Close() -> void
 {
     Hide();
     Debug::Print("Exit. ");
+}
+
+auto CWindow::GetTitle() -> std::string 
+{
+	std::string title;
+
+	#if defined(WINDOWS_PLT)
+	int len = GetWindowTextLength(m_Handle);
+    title.resize(len + 1); // room for null
+
+    // GetWindowText returns number of characters copied (excluding null)
+    if (GetWindowText(m_Handle, &title[0], static_cast<int>(title.size())) > 0)
+        title.resize(len); // remove the extra null char
+
+	#elif defined(LINUX_PLT)
+	char* name = nullptr;
+    if (XFetchName(dpy, w, &name) && name) {
+		title.resize(std::strlen(name) + 1);
+        XFree(name);
+        return s;
+	}
+	#elif defined(WEB_PLT)
+	title = emscripten_get_window_title();
+	#endif
+
+	return title;
+}
+
+auto CWindow::SetTitle(std::string  title) -> void
+{
+	#if defined(WINDOWS_PLT)
+	SetWindowText(m_Handle, title.c_str()); 
+	#elif defined(LINUX_PLT)
+    XStoreName(m_Surface, m_Handle, title.c_str());
+	#elif defined(WEB_PLT)
+	emscripten_set_window_title(title.c_str());
+	#endif
 }
