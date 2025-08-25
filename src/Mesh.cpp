@@ -246,7 +246,13 @@ auto Mesh::VextexSize() const noexcept -> GLsizei
     return static_cast<GLsizei>(vertices.size());
 }
 
-
+auto Mesh::FlipFaces(std::vector<Vertex> verts) -> std::vector<Vertex>
+{
+    for (size_t i = 0; i + 2 < verts.size(); i += 3) {
+      std::swap(verts[i + 1], verts[i + 2]);
+    }
+    return verts;
+}
 
 auto Obj2Mesh(const char* filename) -> std::vector<Vertex>
 {

@@ -50,6 +50,7 @@ public:
 
     static auto CurrentVAO() -> GLuint;
     static auto CurrentVBO() -> GLuint;
+    static auto FlipFaces(std::vector<Vertex> verts) -> std::vector<Vertex>;
     private:
         auto CloneBuffer(GLenum type, GLuint src) -> GLuint;
         auto CloneVBO(GLuint src) -> GLuint;

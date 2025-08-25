@@ -53,7 +53,6 @@ auto operator<<(Scene& scene, GameObject&& entity)-> Scene&
 auto Scene::RenderSky() const -> void{
 
     gl::DepthFunc(GL_LEQUAL);
-    gl::FrontFace(GL_CW);
 
     m_SkyBox->Program()->Use();
     m_SkyBox->Program()->SetUniform("View", glm::mat4(glm::mat3(m_Camera.View())));
@@ -63,6 +62,5 @@ auto Scene::RenderSky() const -> void{
     gl::BindVertexArray(m_SkyBox->mesh()->VAO);
     gl::DrawArrays(GL_TRIANGLES, 0, m_SkyBox->mesh()->VextexSize());
 
-    gl::FrontFace(GL_CCW);
     gl::DepthFunc(GL_LESS);
 }
