@@ -70,7 +70,7 @@ public:
     /// @brief Run every frame at 1/delta fps
     /// @param delta  inverse of fps how mush time took a frame to Render
     auto Update(float delta) -> void override {
-        float speed = Keyboard.IsDown(Key::LeftShift)? 20.0f : 10.0f;
+        float speed = Keyboard.IsDown(Key::LeftShift)? 10.0f : 5.0f;
 
         auto Hori = Keyboard.IsDown(Key::W) ? 1.0f : Keyboard.IsDown(Key::S) ? -1.0f : 0.0f;
         auto Vert = Keyboard.IsDown(Key::D) ? 1.0f : Keyboard.IsDown(Key::A) ? -1.0f : 0.0f;

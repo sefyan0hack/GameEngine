@@ -231,8 +231,8 @@ OpenGL::OpenGL([[maybe_unused]] H_WIN window, H_SRF surface)
     gl::Enable(GL_BLEND);
     gl::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // gl::Enable(GL_CULL_FACE);
-    // gl::CullFace(GL_BACK);  // sky box missed up
+    gl::Enable(GL_CULL_FACE);
+    gl::CullFace(GL_BACK);
 
     #if !defined(WEB_PLT)
     gl::Enable(GL_LINE_SMOOTH);
