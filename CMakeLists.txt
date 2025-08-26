@@ -61,6 +61,8 @@ endif()
 
 add_compile_options(
     "$<$<CXX_COMPILER_ID:GNU,Clang>:-ffunction-sections;-fdata-sections>"
+    "$<$<CXX_COMPILER_ID:GNU,Clang>:-funwind-tables>" # generate some exception data (usually disabled for C programs)
+    "$<$<CXX_COMPILER_ID:GNU,Clang>:-fstack-protector-strong>"
     "$<$<CXX_COMPILER_ID:MSVC>:/Gy;/Gw>"
 )
 
