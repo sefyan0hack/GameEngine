@@ -26,18 +26,16 @@ set(CORE_SOURCES
 add_library(core OBJECT ${CORE_SOURCES})
 target_link_libraries(core PUBLIC res)
 
+apply_all_options(TARGETS core)
+apply_coverage_options(TARGETS core)
+apply_harden_options(TARGETS core)
+apply_sanitizer_options(TARGETS core)
+
 add_library( Engine 
     $<TARGET_OBJECTS:core>
 )
 target_link_libraries(Engine PUBLIC res)
 
-target_compile_options(Engine PRIVATE -flto)
-target_link_options(Engine PRIVATE -flto)
-
-apply_all_options(TARGETS Engine)
-apply_coverage_options(TARGETS Engine)
-apply_harden_options(TARGETS Engine)
-apply_sanitizer_options(TARGETS Engine)
 
 ####################################################################################################
 # Link Libs 
