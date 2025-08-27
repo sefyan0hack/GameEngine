@@ -14,8 +14,8 @@
 #include <core/Log.hpp>
 
 #include <cmrc/cmrc.hpp>
-CMRC_DECLARE(core);
-inline auto fs = cmrc::core::get_filesystem();
+CMRC_DECLARE(res);
+inline auto fs = cmrc::res::get_filesystem();
 
 using namespace std;
 

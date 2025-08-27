@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.28)
 
 project(
-    Engine 
+    GameEngine 
     LANGUAGES C CXX 
     VERSION 0.0.1
 )
@@ -15,10 +15,6 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_USE_RELATIVE_PATHS true)
-
-if(NOT CMAKE_BUILD_TYPE)
-set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
-endif()
 
 if(WIN32)
     add_compile_definitions(
@@ -173,7 +169,7 @@ if(TESTS AND ENABLE_COVERAGE)
                 COMMAND ${GCOV_PATH} --version
                 COMMAND ${CMAKE_COMMAND} -E env "TESTING_ENABLED=1"  $<TARGET_FILE:unit_tests>
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                DEPENDS core unit_tests
+                DEPENDS Engine unit_tests
             )
             add_custom_target(coverage
                 COMMAND ${GCOVR_PATH} ${COMMEN_GCOVR_FLAGS} --xml -o coverage
@@ -205,7 +201,7 @@ if(TESTS AND ENABLE_COVERAGE)
             COMMAND ${CMAKE_COMMAND} -E env "LLVM_PROFILE_FILE=default.profraw" "TESTING_ENABLED=1" $<TARGET_FILE:unit_tests>
             COMMAND ${LLVM_PROFDATA_PATH} merge -sparse default.profraw -o coverage.profdata
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            DEPENDS core unit_tests
+            DEPENDS Engine unit_tests
         )
 
         add_custom_target(coverage
@@ -299,27 +295,6 @@ endif()
 ####################################################################################################
 # Compiler Check
 ####################################################################################################
-message(STATUS "=== Detailed Host Information ===")
-message(STATUS "Platform: ${CMAKE_SYSTEM_NAME} (${CMAKE_SYSTEM_VERSION}), Compiler: ${CMAKE_CXX_COMPILER_ID} (${CMAKE_CXX_COMPILER_VERSION}) , Arch: (${CMAKE_SYSTEM_PROCESSOR})")
-set(QUERIES
-    NUMBER_OF_LOGICAL_CORES
-    NUMBER_OF_PHYSICAL_CORES
-    TOTAL_VIRTUAL_MEMORY
-    AVAILABLE_VIRTUAL_MEMORY
-    TOTAL_PHYSICAL_MEMORY
-    AVAILABLE_PHYSICAL_MEMORY
-    HOSTNAME
-    FQDN
-    OS_NAME
-    OS_RELEASE
-    OS_VERSION
-    OS_PLATFORM
-)
-
-foreach(query IN LISTS QUERIES)
-    cmake_host_system_information(RESULT result QUERY ${query})
-    message(STATUS "${query}: ${result}")
-endforeach()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "13")
@@ -351,57 +326,20 @@ endif()
 
 
 ####################################################################################################
-# Source Files 
-####################################################################################################
-
-set(SOURCES
-    src/Keyboard.cpp
-    src/Mouse.cpp
-	src/Window.cpp
-	src/Renderer.cpp
-	src/Shader.cpp
-	src/Transform.cpp
-    src/Camera.cpp
-    src/Mesh.cpp
-    src/OpenGL.cpp
-    src/APP.cpp
-    src/GameObject.cpp
-    src/Texture.cpp
-    src/Scene.cpp
-    src/Material.cpp
-    src/ResourceManager.cpp
-    src/Image.cpp
-    src/ShaderProgram.cpp
-    src/SkyBox.cpp
-)
-
-####################################################################################################
 # Resources
 ####################################################################################################
 include(CMakeRC)
-cmrc_add_resource_library(
-    core-resources
 
-    ALIAS core::rc
-    NAMESPACE core
+file(GLOB_RECURSE RES_FILES
+    RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}"
+    CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/res/*"
+)
 
-    res/forest_negx.jpg
-    res/forest_negy.jpg
-    res/forest_negz.jpg
-    res/forest_posx.jpg
-    res/forest_posy.jpg
-    res/forest_posz.jpg
-    res/kimberley.jpg
-    res/brik.png
-    res/brik.jpg
-    res/gravelly_sand_diff_4k.png
-    res/annie_spratt.jpg
-    res/FinalBaseMesh.obj
-    res/Shaders/cube.vert
-    res/Shaders/cube.frag
-    res/Shaders/skybox.vert
-    res/Shaders/skybox.frag
+cmrc_add_resource_library( resources
+    ALIAS res
+    NAMESPACE res
 
+    ${RES_FILES}
 )
 
 ####################################################################################################
@@ -424,58 +362,10 @@ if(NOT EMSCRIPTEN)
     set(OPENGL_LIB_NAME ${CORE_OPENGL_LIB})
 endif()
 
-####################################################################################################
-# Build Exe 
-####################################################################################################
-add_library(core ${SOURCES})
-target_link_libraries(core PUBLIC core::rc)
-
-add_executable(${PROJECT_NAME} src/main.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm core)
-####################################################################################################
-# Include Dirs 
-####################################################################################################
-
-target_include_directories(core PUBLIC
-    "${CMAKE_SOURCE_DIR}/include"
+include_directories(
+    "${CMAKE_SOURCE_DIR}/Engine/include"
     $<$<PLATFORM_ID:Linux>:${X11_INCLUDE_DIR}>
 )
-
-####################################################################################################
-# Compile Flags 
-####################################################################################################
-
-apply_all_options(TARGETS core ${PROJECT_NAME})
-apply_coverage_options(TARGETS core ${PROJECT_NAME})
-apply_harden_options(TARGETS core)
-apply_sanitizer_options(TARGETS core)
-
-####################################################################################################
-# Link Libs 
-####################################################################################################
-# common Libs
-target_link_libraries(core
-    PRIVATE
-        glm::glm
-        stb_image
-)
-
-# common (Not Web)
-if(NOT EMSCRIPTEN)
-    if(NOT WIN32)
-    target_link_libraries(core PRIVATE $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
-    endif()
-
-    target_link_libraries(core
-        PRIVATE
-            Threads::Threads
-            ${OPENGL_LIBRARIES}
-            $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
-            $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
-            $<$<PLATFORM_ID:Linux>:dl>
-            $<$<PLATFORM_ID:Linux>:${X11_LIBRARIES}>
-    )
-endif()
 
 add_compile_definitions(
     PLATFORM_NAME="${CMAKE_SYSTEM_NAME}"
@@ -497,21 +387,21 @@ add_compile_definitions(
 )
 
 ####################################################################################################
+# ??
+####################################################################################################
+add_subdirectory(Engine)
+add_subdirectory(SandBox)
+
+####################################################################################################
 # TEST
 ####################################################################################################
 if(TESTS)
     enable_testing()
     include(GoogleTest)
     add_subdirectory(tests/unit)
-    target_link_libraries(unit_tests PUBLIC core::rc)
+    target_link_libraries(unit_tests PUBLIC res)
 
 endif()
-
-remove_global_flags(Engine)
-remove_global_flags(core)
-
-print_target_compile_options(core)
-print_target_compile_options(${PROJECT_NAME})
 
 ####################################################################################################
 # Print Option Status

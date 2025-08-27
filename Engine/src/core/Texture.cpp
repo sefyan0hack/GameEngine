@@ -4,8 +4,8 @@
 #include <core/OpenGL.hpp>
 
 
-CMRC_DECLARE(core);
-inline auto fs = cmrc::core::get_filesystem();
+CMRC_DECLARE(res);
+inline auto fs = cmrc::res::get_filesystem();
 
 namespace {
 constexpr auto to_string(GLenum type) -> const char*

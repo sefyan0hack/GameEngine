@@ -83,7 +83,7 @@ jobs:
     - name: Build
       uses: ./.github/actions/emscripten-build
       with:
-        cmake_configure_flags: ""
+        cmake_configure_flags: "-DTESTS=ON"
         system_dependencies: "libgl1-mesa-dev mesa-common-dev libxi-dev xvfb libx11-dev"
 
     - name: Upload Test Executable

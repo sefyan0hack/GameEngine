@@ -7,18 +7,18 @@ apply_all_options(TARGETS unit_tests )
 apply_harden_options(TARGETS unit_tests)
 
 if(ONLINE)
-        CPMAddPackage(
-            URI "gh:google/googletest@1.17.0" 
-            OPTIONS "gtest_force_shared_crt OFF" "INSTALL_GTEST OFF" "gtest_hide_internal_symbols ON"
-        )
+    CPMAddPackage(
+        URI "gh:google/googletest@1.17.0" 
+        OPTIONS "gtest_force_shared_crt OFF" "INSTALL_GTEST OFF" "gtest_hide_internal_symbols ON"
+    )
 else()
-        add_subdirectory(
-            ${CMAKE_SOURCE_DIR}/3party/googletest-1.16.0
-            ${CMAKE_CURRENT_BINARY_DIR}/googletest-1.16.0-build
-        )
+    add_subdirectory(
+        ${CMAKE_SOURCE_DIR}/3party/googletest-1.16.0
+        ${CMAKE_CURRENT_BINARY_DIR}/googletest-1.16.0-build
+    )
 endif()
 
-target_link_libraries(unit_tests PRIVATE GTest::gtest GTest::gtest_main glm::glm core)
+target_link_libraries(unit_tests PRIVATE Engine glm::glm GTest::gtest GTest::gtest_main )
 
 if(NOT EMSCRIPTEN)
 gtest_discover_tests(unit_tests PROPERTIES RUN_SERIAL TRUE)
