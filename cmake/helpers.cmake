@@ -115,7 +115,7 @@ function(apply_sanitizer_options)
                 "$<$<BOOL:${TSAN}>:-fsanitize=thread>"
             )
         endif()
-        if(ASAN OR USAN OR TSAN)
+        if(ASAN OR USAN OR TSAN AND NOT WIN32 )
             target_link_options(${target} PUBLIC
                 "$<$<CXX_COMPILER_ID:GNU>:-static-libasan;-static-libubsan;-static-liblsan>"
                 "$<$<CXX_COMPILER_ID:Clang>:-static-libsan>"
