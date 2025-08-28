@@ -23,38 +23,23 @@ set(CORE_SOURCES
     src/core/SkyBox.cpp
 )
 
-add_library(core OBJECT ${CORE_SOURCES})
+add_library(core ${CORE_SOURCES})
 target_link_libraries(core PUBLIC res)
+target_link_libraries(core PRIVATE glm::glm)
+target_link_libraries(core PRIVATE stb_image)
 
 apply_all_options(TARGETS core)
 apply_coverage_options(TARGETS core)
 apply_harden_options(TARGETS core)
 apply_sanitizer_options(TARGETS core)
 
-add_library( Engine 
-    $<TARGET_OBJECTS:core>
-)
-target_link_libraries(Engine PUBLIC res)
-
-
-####################################################################################################
-# Link Libs 
-####################################################################################################
-# common Libs
-
-target_link_libraries(Engine
-    PRIVATE
-        glm::glm
-        stb_image
-)
-
 # common (Not Web)
 if(NOT EMSCRIPTEN)
     if(NOT WIN32)
-    target_link_libraries(Engine PRIVATE $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
+    target_link_libraries(core PRIVATE $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
     endif()
 
-    target_link_libraries(Engine
+    target_link_libraries(core
         PRIVATE
             Threads::Threads
             ${OPENGL_LIBRARIES}
@@ -64,5 +49,12 @@ if(NOT EMSCRIPTEN)
             $<$<PLATFORM_ID:Linux>:${X11_LIBRARIES}>
     )
 endif()
+
+add_library(Engine INTERFACE)
+
+target_link_libraries(Engine
+    INTERFACE
+        core
+)
 
 print_target_compile_options(Engine)
