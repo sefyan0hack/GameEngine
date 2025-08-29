@@ -5,16 +5,21 @@
 #include <fstream>
 #include <cstdlib>
 #include <format>
-#include <chrono>
+#include <ctime>
+#include <iomanip>
 #include <exception>
-
 #include <core/stacktrace.hpp>
 
-namespace Debug {
+//"{:%Y-%m-%d %H:%M:%OS}"
 
-  inline std::string formatedTime() {
-    const auto now = std::chrono::system_clock::now();
-    return std::format("{:%Y-%m-%d %H:%M:%OS}", now);
+namespace Debug {
+  inline auto CURR_TIME() -> std::string
+  {
+    std::time_t t = std::time(nullptr);
+    std::tm* tm = std::localtime(&t);
+    std::ostringstream oss;
+    oss << std::put_time(tm, "%Y-%m-%d %H:%M:%S %Z");
+    return oss.str();
   }
 
   template <typename ...Ts>
@@ -23,7 +28,7 @@ namespace Debug {
     [[maybe_unused]] Ts&& ... ts) -> std::string
   {
     auto formatted_msg = std::format(fmt, std::forward<Ts>(ts)...);
-    return std::format("{} : {}\n", formatedTime(), formatted_msg);
+    return std::format("{} : {}\n", CURR_TIME(), formatted_msg);
   }
   
 
@@ -40,6 +45,11 @@ namespace Debug {
         cout << Log(fmt, std::forward<Ts>(ts)...);
       }
     #endif
+  }
+
+  template <size_t N>
+  inline auto Print(const char (&str)[N]) -> void {
+    Print("{}", static_cast<const char*>(str));
   }
 
   template <typename T>
