@@ -35,6 +35,6 @@
 </head>
 <body>
   <canvas  id="canvas" oncontextmenu="event.preventDefault()" tabindex="0" ></canvas>
-  <script async="" type="text/javascript" src="@PROJECT_NAME@.js"></script>
+  <script async="" type="text/javascript" src="SandBox.js"></script>
 </body>
 </html>

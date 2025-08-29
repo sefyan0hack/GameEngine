@@ -114,7 +114,7 @@ if(EMSCRIPTEN)
     add_custom_command(
         OUTPUT ${CMAKE_BINARY_DIR}/index.html
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/index_html.cmake ${CMAKE_BINARY_DIR}/index.html
-        DEPENDS ${CMAKE_BINARY_DIR}/index_html.cmake ${PROJECT_NAME}
+        DEPENDS ${CMAKE_BINARY_DIR}/index_html.cmake SandBox
         COMMENT "Generating index.html"
     )
     
