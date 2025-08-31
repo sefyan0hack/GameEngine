@@ -359,32 +359,8 @@ if(NOT EMSCRIPTEN)
     endif()
     # Extract the core OpenGL library (first entry in the list)
     list(GET OPENGL_LIBRARIES 0 CORE_OPENGL_LIB)
-    set(OPENGL_LIB_NAME ${CORE_OPENGL_LIB})
 endif()
 
-include_directories(
-    "${CMAKE_SOURCE_DIR}/Engine/include"
-    $<$<PLATFORM_ID:Linux>:${X11_INCLUDE_DIR}>
-)
-
-add_compile_definitions(
-    PLATFORM_NAME="${CMAKE_SYSTEM_NAME}"
-    PLATFORM_VERSION="${CMAKE_SYSTEM_VERSION}"
-    PLATFORM_ARCH="${CMAKE_SYSTEM_PROCESSOR}"
-
-    OPENGL_LIB="${OPENGL_LIB_NAME}"
-
-    $<$<PLATFORM_ID:Windows>:WINDOWS_PLT>
-    $<$<PLATFORM_ID:Linux>:LINUX_PLT>
-    $<$<PLATFORM_ID:Emscripten>:WEB_PLT>
-
-    $<$<CXX_COMPILER_ID:GNU>:GNU_CPL>
-    $<$<CXX_COMPILER_ID:Clang>:CLANG_CPL>
-    $<$<CXX_COMPILER_ID:MSVC>:MSVC_CPL>
-
-    $<$<CONFIG:Debug>:DEBUG>
-    $<$<CONFIG:Release>:NDEBUG>
-)
 
 ####################################################################################################
 # ??

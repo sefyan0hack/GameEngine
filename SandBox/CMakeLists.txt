@@ -1,7 +1,11 @@
 
 include(helpers)
 
-add_executable(SandBox main.cpp)
+add_executable(SandBox)
+
+target_sources( SandBox PRIVATE
+    main.cpp 
+)
 
 target_link_libraries(SandBox PRIVATE glm::glm Engine)
 

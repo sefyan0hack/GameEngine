@@ -43,6 +43,9 @@ concept Variant = requires {
 template<class... Ts>
 struct overloaded : Ts... { using Ts::operator()...; };
 
+template<typename T, typename ... U>
+concept either = (std::same_as<T, U> || ...);
+
 namespace utils {
 
 template<class T>
