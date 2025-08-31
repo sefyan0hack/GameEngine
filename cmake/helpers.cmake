@@ -25,10 +25,10 @@ function(apply_warning_options)
             set(target ${original_target})
         endif()
 
-        set(MSVC_WARNING_FLAGS /W4)
+        set(MSVC_WARNING_FLAGS /W4 /permissive-)
 
         set(GNU_WARNING_FLAGS
-            -Wno-cast-function-type -Winit-self -Wcast-qual
+            -pedantic -Wno-cast-function-type -Winit-self -Wcast-qual
             -Wsuggest-final-types -Wsuggest-final-methods
         )
 
