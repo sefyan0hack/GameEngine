@@ -3,6 +3,7 @@
 #include <source_location>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <cstdlib>
 #include <format>
 #include <ctime>
