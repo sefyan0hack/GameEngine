@@ -73,25 +73,6 @@ apply_harden_options(TARGETS core)
 apply_sanitizer_options(TARGETS core)
 
 
-target_compile_definitions( core PUBLIC
-    PLATFORM_NAME="${CMAKE_SYSTEM_NAME}"
-    PLATFORM_VERSION="${CMAKE_SYSTEM_VERSION}"
-    PLATFORM_ARCH="${CMAKE_SYSTEM_PROCESSOR}"
-
-    OPENGL_LIB="${CORE_OPENGL_LIB}"
-
-    $<$<PLATFORM_ID:Windows>:WINDOWS_PLT>
-    $<$<PLATFORM_ID:Linux>:LINUX_PLT>
-    $<$<PLATFORM_ID:Emscripten>:WEB_PLT>
-
-    $<$<CXX_COMPILER_ID:GNU>:GNU_CPL>
-    $<$<CXX_COMPILER_ID:Clang>:CLANG_CPL>
-    $<$<CXX_COMPILER_ID:MSVC>:MSVC_CPL>
-
-    $<$<CONFIG:Debug>:DEBUG>
-    $<$<CONFIG:Release>:NDEBUG>
-)
-
 # common (Not Web)
 if(NOT EMSCRIPTEN)
     if(NOT WIN32)
