@@ -874,3 +874,19 @@ auto CWindow::SetTitle(std::string  title) -> void
 	emscripten_set_window_title(title.c_str());
 	#endif
 }
+
+auto CWindow::SetVSync(bool state) -> void
+{
+	
+	#if defined(WINDOWS_PLT)
+	if(!wglSwapIntervalEXT) wglSwapIntervalEXT = reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC>(wglGetProcAddress("wglSwapIntervalEXT"));
+	wglSwapIntervalEXT(state);
+
+	#elif defined(LINUX_PLT)
+	if(!glXSwapIntervalEXT) glXSwapIntervalEXT = wglGetProcAddress((const GLubyte*)"glXSwapIntervalEXT");
+	glXSwapIntervalEXT(m_Surface, m_Handle, state);
+
+	#elif defined(WEB_PLT)
+	Debug::Print("vSync is always enabled in web and no vSync off ");
+	#endif
+}

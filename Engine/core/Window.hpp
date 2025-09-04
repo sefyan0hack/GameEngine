@@ -68,6 +68,7 @@ class CWindow
         auto Close()                -> void;
         auto GetTitle() -> std::string;
         auto SetTitle(std::string title) -> void;
+        auto SetVSync(bool state) -> void;
         static auto ProcessMessages([[maybe_unused]] CWindow* self)   -> void ;
 
     private:

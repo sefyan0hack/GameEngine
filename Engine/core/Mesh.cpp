@@ -40,51 +40,12 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, std::string Name)
 {
     Count++;
 
-    BindVertexArray(VAO);
-    BindVertexBuffer(VBO);
-    Updata(VBO, this->vertices);
+    BindVAO();
+    BindVBO();
+    Updata();
     EnableAttribs();
     PrepareAttribs();
 }
-
-
-// Mesh::~Mesh()
-// {
-//     Count--;
-//     gl::DeleteBuffers(1, &VBO);
-//     gl::DeleteVertexArrays(1, &VAO);
-// }
-
-// Mesh::Mesh(const Mesh& other)
-//     : name(other.name)
-//     , vertices(other.vertices)
-//     , attribs(other.attribs)
-//     , VBO(GenBuffer())
-//     , VAO(GenVertexArray())
-// {
-//     BindVertexArray(VAO);
-//     BindVertexBuffer(VBO);
-
-//     Updata(VBO, this->vertices);
-//     EnableAttribs();
-//     PrepareAttribs();
-// }
-
-// auto Mesh::operator=(const Mesh& other) -> Mesh&
-// {
-//     if(this != &other){
-//         this->name = other.name;
-//         this->vertices = other.vertices;
-//         this->attribs = other.attribs;
-//         this->VBO = GenBuffer();
-//         this->VAO = GenVertexArray();
-        
-//         Updata(VBO, this->vertices);
-//         EnableAttribs();
-//         PrepareAttribs();
-//     }
-//     return *this;
-// }
 
 Mesh::Mesh(Mesh&& other) noexcept
     : name(std::exchange(other.name, {}))
@@ -196,9 +157,9 @@ auto Mesh::CurrentVBO() -> GLuint
     return static_cast<GLuint>(currentVBO);
 }
 
-auto Mesh::Updata(GLuint buffer, const std::vector<VetexData>& vrtx) -> void
+auto Mesh::Updata() -> void
 {
-    gl::BufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(vrtx.size() * sizeof(Mesh::VetexData)), vrtx.data(), GL_STATIC_DRAW);
+    gl::BufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(vertices.size() * sizeof(Mesh::VetexData)), vertices.data(), GL_STATIC_DRAW);
 }
 
 auto Mesh::GenVertexArray() -> GLuint
@@ -216,29 +177,26 @@ auto Mesh::GenBuffer() -> GLuint
     Debug::Print("GenBuffer {}", result);
     return result;
 }
-auto Mesh::BindVertexArray(GLuint vao) -> void
-{
-    gl::BindVertexArray(vao);
-}
+
 
 auto Mesh::BindBuffer(GLenum type, GLuint buffer) -> void
 {
     gl::BindBuffer(type, buffer);
 }
 
-auto Mesh::BindVertexBuffer(GLuint buffer) -> void
+auto Mesh::BindVAO() -> void
 {
-    BindBuffer(GL_ARRAY_BUFFER, buffer);
+    gl::BindVertexArray(VAO);
 }
 
-auto Mesh::BindIndexBuffer(GLuint buffer) -> void
+auto Mesh::BindVBO() -> void
 {
-    BindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
+    BindBuffer(GL_ARRAY_BUFFER, VBO);
 }
 
-// auto Mesh::Bind() const -> void
+// auto Mesh::BindIBO() -> void
 // {
-//     BindVertexArray(this->VAO);
+//     BindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 // }
 
 auto Mesh::VextexSize() const noexcept -> GLsizei

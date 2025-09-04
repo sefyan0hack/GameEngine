@@ -55,13 +55,13 @@ public:
         auto CloneBuffer(GLenum type, GLuint src) -> GLuint;
         auto CloneVBO(GLuint src) -> GLuint;
         auto PrepareAttribs() ->void;
-        static auto Updata(GLuint buffer, const std::vector<VetexData>& vrtx) -> void;
+        auto Updata() -> void;
         static auto GenVertexArray() -> GLuint;
         static auto GenBuffer() -> GLuint;
-        static auto BindVertexArray(GLuint vao) -> void;
         static auto BindBuffer(GLenum type, GLuint buffer) -> void;
-        static auto BindVertexBuffer(GLuint buffer) -> void;
-        static auto BindIndexBuffer(GLuint buffer) -> void;
+        auto BindVAO() -> void;
+        auto BindVBO() -> void;
+        // auto BindIBO() -> void;
   public:
     std::string name;
     std::vector<VetexData> vertices;
