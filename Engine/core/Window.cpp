@@ -887,6 +887,7 @@ auto CWindow::SetVSync(bool state) -> void
 	glXSwapIntervalEXT(m_Surface, m_Handle, state);
 
 	#elif defined(WEB_PLT)
+	(void)state;
 	Debug::Print("vSync is always enabled in web and no vSync off ");
 	#endif
 }
