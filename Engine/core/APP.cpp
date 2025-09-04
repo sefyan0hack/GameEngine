@@ -31,6 +31,7 @@ APP::APP()
     , m_SmoothedFPS(60.0f)
 { 
     Window.Show();
+    Window.SetVSync(true);
 }
 
 APP::~APP()

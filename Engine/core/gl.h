@@ -37,6 +37,7 @@ using H_SRF     = Display*;
 using GLCTX     = __GLXcontextRec*;
 
 [[maybe_unused]] inline static auto glXCreateContextAttribsARB = (GLCTX(*)(H_SRF dpy, GLXFBConfig config, GLCTX share_context, Bool direct, const int *attrib_list))(nullptr);
+[[maybe_unused]] inline static auto glXSwapIntervalEXT = (void(*)(H_SRF *dpy, H_WIN drawable, int interval))(nullptr);
 
 #elif defined(WEB_PLT)
 #include <emscripten/emscripten.h>
@@ -170,7 +171,8 @@ inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
     X(BufferSubData);\
     X(GetUniformBlockIndex);\
     X(UniformBlockBinding);\
-    X(GetBooleanv);
+    X(GetBooleanv);\
+    X(Finish);
 
 #if defined(WEB_PLT)
   // web (or ES-only) build
