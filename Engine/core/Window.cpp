@@ -883,7 +883,7 @@ auto CWindow::SetVSync(bool state) -> void
 	wglSwapIntervalEXT(state);
 
 	#elif defined(LINUX_PLT)
-	if(!glXSwapIntervalEXT) glXSwapIntervalEXT = glXGetProcAddress((const GLubyte*)"glXSwapIntervalEXT");
+	if(!glXSwapIntervalEXT) glXSwapIntervalEXT = reinterpret_cast<PFNGLXSWAPINTERVALEXTPROC>(glXGetProcAddress((const GLubyte*)"glXSwapIntervalEXT"));
 	glXSwapIntervalEXT(m_Surface, m_Handle, state);
 
 	#elif defined(WEB_PLT)
