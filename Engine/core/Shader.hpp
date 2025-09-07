@@ -27,14 +27,14 @@ class Shader
     bool operator==(const Shader& other);
   public:
     auto id() const                -> GLuint ;
-    auto Type() const              -> GLenum ;
-    auto TypeName() const          -> const char* ;
+    auto type() const              -> GLenum ;
+    auto type_name() const          -> const char* ;
 
-    auto SetSource(const std::string& src) const -> void;
-    auto Compile()                           -> void;
-    auto CheckCompileStatus() -> void;
-    auto GetShaderInfo(GLenum what) const-> GLint; //what : GL_SHADER_TYPE, GL_DELETE_STATUS, GL_COMPILE_STATUS, GL_INFO_LOG_LENGTH, GL_SHADER_SOURCE_LENGTH.
-    static auto PreProcess() -> std::string;
+    auto set_source(const std::string& src) const -> void;
+    auto compile()                           -> void;
+    auto check_compile_status() -> void;
+    auto get_shader_info(GLenum what) const-> GLint; //what : GL_SHADER_TYPE, GL_DELETE_STATUS, GL_COMPILE_STATUS, GL_INFO_LOG_LENGTH, GL_SHADER_SOURCE_LENGTH.
+    static auto pre_process() -> std::string;
     
   private:
     GLuint m_Id;
@@ -52,6 +52,6 @@ struct std::formatter<Shader> {
   auto format(const Shader& obj, std::format_context& context) const {
     return std::format_to(context.out(),
     R"({{ "id": {}, "type": "{}" }})"
-    , obj.m_Id, obj.TypeName());
+    , obj.m_Id, obj.type_name());
   }
 };

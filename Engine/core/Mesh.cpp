@@ -35,16 +35,16 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, std::string Name)
     : name(Name)
     , vertices(vertices)
     , attribs({position, normals, texCoords})
-    , VBO(GenBuffer())
-    , VAO(GenVertexArray())
+    , VBO(gen_buffer())
+    , VAO(gen_vertexarray())
 {
     Count++;
 
-    BindVAO();
-    BindVBO();
-    Updata();
-    EnableAttribs();
-    PrepareAttribs();
+    bind_vao();
+    bind_vbo();
+    updata();
+    enable_attribs();
+    prepare_attribs();
 }
 
 Mesh::Mesh(Mesh&& other) noexcept
@@ -73,19 +73,19 @@ auto Mesh::operator==(const Mesh &other) const -> bool
     return this->VAO == other.VAO; // for now every vao is unique
 }
 
-auto Mesh::CloneBuffer(GLenum type, GLuint src) -> GLuint
+auto Mesh::clone_buffer(GLenum type, GLuint src) -> GLuint
 {
-    GLuint clone = GenBuffer();
+    GLuint clone = gen_buffer();
     if(clone == 0) throw CException("VBO clone is 0");
 
-    BindBuffer(type, src);
+    bind_buffer(type, src);
     
     GLint bufferSize = 0, usage = 0;
     gl::GetBufferParameteriv(type, GL_BUFFER_SIZE, &bufferSize);
     gl::GetBufferParameteriv(type, GL_BUFFER_USAGE, &usage);
     
     if (bufferSize > 0) {
-        BindBuffer(GL_COPY_WRITE_BUFFER, clone);
+        bind_buffer(GL_COPY_WRITE_BUFFER, clone);
         gl::BufferData(GL_COPY_WRITE_BUFFER, bufferSize, nullptr, static_cast<GLenum>(usage));
         gl::CopyBufferSubData(type, GL_COPY_WRITE_BUFFER, 0, 0, bufferSize);
     } else {
@@ -96,16 +96,16 @@ auto Mesh::CloneBuffer(GLenum type, GLuint src) -> GLuint
     return clone;
 }
 
-auto Mesh::CloneVBO(GLuint src) -> GLuint
+auto Mesh::clone_vbo(GLuint src) -> GLuint
 {
-    return CloneBuffer(GL_ARRAY_BUFFER, src);
+    return clone_buffer(GL_ARRAY_BUFFER, src);
 }
 
-auto Mesh::setAttribute(GLuint index, AttributeInfo att) -> void
+auto Mesh::set_attribute(GLuint index, AttributeInfo att) -> void
 {
     Expect(att.size > 0 && att.size <= 4, "position.size : 0<{}<4 wrong", att.size);
 
-    Debug::Print(
+    debug::print(
         "attribute {} : size: {}, type: {}, normalized: {}, stride: {}, offset: {}",
         index,
         att.size,
@@ -127,15 +127,15 @@ auto Mesh::setAttribute(GLuint index, AttributeInfo att) -> void
     gl::VertexAttribDivisor(index, static_cast<GLuint>(att.divisor));
 }
 
-auto Mesh::PrepareAttribs() -> void
+auto Mesh::prepare_attribs() -> void
 {
     GLuint index = 0;
     for(const auto& attrib : attribs){
-        setAttribute(index++, attrib);
+        set_attribute(index++, attrib);
     }
 }
 
-auto Mesh::EnableAttribs() const -> void
+auto Mesh::enable_attribs() const -> void
 {
     for(GLuint i = 0; i < attribs.size(); i++){
         gl::EnableVertexAttribArray(i);
@@ -143,68 +143,68 @@ auto Mesh::EnableAttribs() const -> void
 }
 
 
-auto Mesh::CurrentVAO() -> GLuint
+auto Mesh::current_vao() -> GLuint
 {
     GLint currentVAO = 0;
     gl::GetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
     return static_cast<GLuint>(currentVAO);
 }
 
-auto Mesh::CurrentVBO() -> GLuint
+auto Mesh::current_vbo() -> GLuint
 {
     GLint currentVBO = 0;
     gl::GetIntegerv(GL_ARRAY_BUFFER_BINDING, &currentVBO);
     return static_cast<GLuint>(currentVBO);
 }
 
-auto Mesh::Updata() -> void
+auto Mesh::updata() -> void
 {
     gl::BufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(vertices.size() * sizeof(Mesh::VetexData)), vertices.data(), GL_STATIC_DRAW);
 }
 
-auto Mesh::GenVertexArray() -> GLuint
+auto Mesh::gen_vertexarray() -> GLuint
 {
     GLuint result = 0;
     gl::GenVertexArrays(1, &result);
-    Debug::Print("GenVertexArray {}", result);
+    debug::print("GenVertexArray {}", result);
     return result;
 }
 
-auto Mesh::GenBuffer() -> GLuint
+auto Mesh::gen_buffer() -> GLuint
 {
     GLuint result = 0;
     gl::GenBuffers(1, &result);
-    Debug::Print("GenBuffer {}", result);
+    debug::print("GenBuffer {}", result);
     return result;
 }
 
 
-auto Mesh::BindBuffer(GLenum type, GLuint buffer) -> void
+auto Mesh::bind_buffer(GLenum type, GLuint buffer) -> void
 {
     gl::BindBuffer(type, buffer);
 }
 
-auto Mesh::BindVAO() -> void
+auto Mesh::bind_vao() -> void
 {
     gl::BindVertexArray(VAO);
 }
 
-auto Mesh::BindVBO() -> void
+auto Mesh::bind_vbo() -> void
 {
-    BindBuffer(GL_ARRAY_BUFFER, VBO);
+    bind_buffer(GL_ARRAY_BUFFER, VBO);
 }
 
-// auto Mesh::BindIBO() -> void
+// auto Mesh::bind_IBO() -> void
 // {
-//     BindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+//     bind_buffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 // }
 
-auto Mesh::VextexSize() const noexcept -> GLsizei
+auto Mesh::vextex_size() const noexcept -> GLsizei
 {
     return static_cast<GLsizei>(vertices.size());
 }
 
-auto Mesh::FlipFaces(std::vector<Vertex> verts) -> std::vector<Vertex>
+auto Mesh::flip_faces(std::vector<Vertex> verts) -> std::vector<Vertex>
 {
     for (size_t i = 0; i + 2 < verts.size(); i += 3) {
       std::swap(verts[i + 1], verts[i + 2]);
@@ -212,7 +212,7 @@ auto Mesh::FlipFaces(std::vector<Vertex> verts) -> std::vector<Vertex>
     return verts;
 }
 
-auto Obj2Mesh(const char* filename) -> std::vector<Vertex>
+auto obj_to_mesh(const char* filename) -> std::vector<Vertex>
 {
   std::ifstream file(filename);
 
@@ -286,7 +286,7 @@ auto Obj2Mesh(const char* filename) -> std::vector<Vertex>
 }
 
 
-auto Obj2Mesh( cmrc::file src) -> std::vector<Vertex>
+auto obj_to_mesh( cmrc::file src) -> std::vector<Vertex>
 {
   auto begin = src.begin();
   auto end = src.end();

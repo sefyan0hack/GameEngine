@@ -21,7 +21,7 @@ using Event = std::variant<
     struct CWindow::QuitEvent
 >;
 
-constexpr auto Events = utils::Variant_to_Array<Event>();
+constexpr auto Events = utils::variant_to_array<Event>();
 
 template <typename T>
 concept EventType = std::is_same_v<T, std::monostate> || ::type_name<T>().ends_with("Event");

@@ -11,7 +11,7 @@ inline static auto After_Func = []([[maybe_unused]] std::string info) {
     GLenum err = glGetError();
     if(err != GL_NO_ERROR){
         if(!info.contains("glClear"))
-            throw CException("[{}] {}", GL_ERR_to_string(err), info);
+            throw CException("[{}] {}", gl_err_to_string(err), info);
     }
 };
 #endif
@@ -192,23 +192,23 @@ OpenGL::OpenGL([[maybe_unused]] H_WIN window, H_SRF surface)
     #ifdef ROBUST_GL_CHECK
     #   define RESOLVEGL(name)\
         OpenGL::name = Function<decltype(&gl##name)>{};\
-        OpenGL::name.m_Func  = reinterpret_cast<decltype(&gl##name)>(gl::GetProcAddress("gl"#name));\
+        OpenGL::name.m_Func  = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name));\
         OpenGL::name.m_After = After_Func;\
         OpenGL::name.m_Name  = "gl"#name
     #else
     #   define RESOLVEGL(name)\
-        OpenGL::name = reinterpret_cast<decltype(&gl##name)>(gl::GetProcAddress("gl"#name))
+        OpenGL::name = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name))
     #endif
 
 	GLFUNCS(RESOLVEGL)
 
-    m_Major = GetInteger(GL_MAJOR_VERSION);
-    m_Minor = GetInteger(GL_MINOR_VERSION);
+    m_Major = get_integer(GL_MAJOR_VERSION);
+    m_Minor = get_integer(GL_MINOR_VERSION);
 
-    m_MaxTextureUnits       = GetInteger(GL_MAX_TEXTURE_IMAGE_UNITS);
-    m_MaxTextureSize        = GetInteger(GL_MAX_TEXTURE_SIZE);
-    m_MaxTexture3DSize      = GetInteger(GL_MAX_3D_TEXTURE_SIZE);
-    m_MaxTextureCubeMapSize = GetInteger(GL_MAX_CUBE_MAP_TEXTURE_SIZE);
+    m_MaxTextureUnits       = get_integer(GL_MAX_TEXTURE_IMAGE_UNITS);
+    m_MaxTextureSize        = get_integer(GL_MAX_TEXTURE_SIZE);
+    m_MaxTexture3DSize      = get_integer(GL_MAX_3D_TEXTURE_SIZE);
+    m_MaxTextureCubeMapSize = get_integer(GL_MAX_CUBE_MAP_TEXTURE_SIZE);
 
     auto vendor = reinterpret_cast<const char*>(gl::GetString(GL_VENDOR));
     auto renderer = reinterpret_cast<const char*>(gl::GetString(GL_RENDERER));
@@ -240,17 +240,17 @@ OpenGL::OpenGL([[maybe_unused]] H_WIN window, H_SRF surface)
     gl::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     #endif
 
-    Debug::Print("=================================================================================");
-    Debug::Print("Platform : {}, Arch : {}", sys::TargetName, sys::ArchName);
-    Debug::Print("GL Version : Wanted:({}.{}) -> Got:({}.{})", GLMajorVersion, GLMinorVersion, m_Major, m_Minor);
-    Debug::Print("GL Vendor : {}", m_Vendor);
-    Debug::Print("GL Renderer : {}", m_Renderer);
-    Debug::Print("GL Exts : {}", utils::to_string(m_Extensions));
-    Debug::Print("Max Texture Units : {}", m_MaxTextureUnits);
-    Debug::Print("Max Texture Size : {0} x {0}", m_MaxTextureSize);
-    Debug::Print("Max Texture3D Size : {0} x {0} x {0}", m_MaxTexture3DSize);
-    Debug::Print("Max TextureCubeMap Size : {0} x {0}", m_MaxTextureCubeMapSize);
-    Debug::Print("=================================================================================");
+    debug::print("=================================================================================");
+    debug::print("Platform : {}, Arch : {}", sys::TargetName, sys::ArchName);
+    debug::print("GL Version : Wanted:({}.{}) -> Got:({}.{})", GLMajorVersion, GLMinorVersion, m_Major, m_Minor);
+    debug::print("GL Vendor : {}", m_Vendor);
+    debug::print("GL Renderer : {}", m_Renderer);
+    debug::print("GL Exts : {}", utils::to_string(m_Extensions));
+    debug::print("Max Texture Units : {}", m_MaxTextureUnits);
+    debug::print("Max Texture Size : {0} x {0}", m_MaxTextureSize);
+    debug::print("Max Texture3D Size : {0} x {0} x {0}", m_MaxTexture3DSize);
+    debug::print("Max TextureCubeMap Size : {0} x {0}", m_MaxTextureCubeMapSize);
+    debug::print("=================================================================================");
 }
 
 OpenGL::OpenGL(const OpenGL &other)
@@ -323,7 +323,7 @@ auto OpenGL::operator != (const OpenGL& other) const ->bool
 
 OpenGL::operator bool() const
 {
-    return isValid();
+    return is_valid();
 }
 
 OpenGL::~OpenGL()
@@ -341,87 +341,87 @@ OpenGL::~OpenGL()
     #endif
 }
 
-auto OpenGL::Context() const -> GLCTX
+auto OpenGL::context() const -> GLCTX
 {
     return m_Context;
 }
 
-auto OpenGL::Surface() const -> H_SRF
+auto OpenGL::surface() const -> H_SRF
 {
     return m_Surface;
 }
 
-auto OpenGL::MajorV() const -> GLint
+auto OpenGL::major_v() const -> GLint
 {
     return m_Major;
 }
-auto OpenGL::MinorV() const -> GLint
+auto OpenGL::minor_v() const -> GLint
 {
     return m_Minor;
 }
 
-auto OpenGL::isValid() const -> bool
+auto OpenGL::is_valid() const -> bool
 {
     return m_Context != GLCTX{};
 }
 
-auto OpenGL::CreationTime() const -> std::time_t
+auto OpenGL::creation_time() const -> std::time_t
 {
     return m_CreationTime;
 }
 
-auto OpenGL::HasExtension(const std::string &ext) const -> bool
+auto OpenGL::has_extension(const std::string &ext) const -> bool
 {
     return std::ranges::contains(m_Extensions, ext);
 }
 
-auto OpenGL::Vendor() -> std::string
+auto OpenGL::vendor() -> std::string
 {
     return m_Vendor;
 }
 
-auto OpenGL::Renderer() -> std::string
+auto OpenGL::renderer() -> std::string
 {
     return m_Renderer;
 }
 
 
-auto OpenGL::Extensions() -> std::vector<std::string>
+auto OpenGL::extensions() -> std::vector<std::string>
 {
     return m_Extensions;
 }
 
-auto OpenGL::MaxTextureUnits() -> GLint
+auto OpenGL::max_texture_units() -> GLint
 {
     return m_MaxTextureUnits;
 }
 
-auto OpenGL::MaxTextureSize() -> GLint
+auto OpenGL::max_texture_size() -> GLint
 {
     return m_MaxTextureSize;
 }
 
-auto OpenGL::MaxTexture3DSize() -> GLint
+auto OpenGL::max_texture3d_size() -> GLint
 {
     return m_MaxTexture3DSize;
 }
 
-auto OpenGL::MaxTextureCubeMapSize() -> GLint
+auto OpenGL::max_texturecubemap_size() -> GLint
 {
     return m_MaxTextureCubeMapSize;
 }
 
 
 
-auto GetProcAddress(const char* name) -> void* {
+auto get_proc_address(const char* name) -> void* {
     void *address = reinterpret_cast<void*>(XXXGetProcAddress(name));
 
     if(address == nullptr){
-        address = utils::GetProcAddress(OPENGL_MODULE_NAME, name);
+        address = utils::get_proc_address(OPENGL_MODULE_NAME, name);
     }
 
     if (address != nullptr) {
-        Debug::Print("from LIB:`{}`: load function `{}` at : {}", OPENGL_MODULE_NAME, name, address);
+        debug::print("from LIB:`{}`: load function `{}` at : {}", OPENGL_MODULE_NAME, name, address);
     } else {
         throw CException("Couldn't load {} function `{}`", OPENGL_MODULE_NAME, name);
     }
@@ -430,7 +430,7 @@ auto GetProcAddress(const char* name) -> void* {
 }
 
 
-auto gl::OpenGL::DummyCtx() -> GLCTX
+auto gl::OpenGL::dummy_ctx() -> GLCTX
 {
     GLCTX dummy_context{};
 
@@ -572,12 +572,12 @@ auto gl::OpenGL::DummyCtx() -> GLCTX
     #ifdef ROBUST_GL_CHECK
     #   define RESOLVEGL(name)\
         OpenGL::name = Function<decltype(&gl##name)>{};\
-        OpenGL::name.m_Func  = reinterpret_cast<decltype(&gl##name)>(gl::GetProcAddress("gl"#name));\
+        OpenGL::name.m_Func  = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name));\
         OpenGL::name.m_After = After_Func;\
         OpenGL::name.m_Name  = "gl"#name
     #else
     #   define RESOLVEGL(name)\
-        OpenGL::name = reinterpret_cast<decltype(&gl##name)>(gl::GetProcAddress("gl"#name))
+        OpenGL::name = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name))
     #endif
 
 	GLFUNCS(RESOLVEGL)
@@ -587,7 +587,7 @@ auto gl::OpenGL::DummyCtx() -> GLCTX
 
 
 
-auto GetInteger(GLenum name) -> GLint
+auto get_integer(GLenum name) -> GLint
 {
     constexpr auto INVALID = std::numeric_limits<GLint>::max();
 
@@ -601,7 +601,7 @@ auto GetInteger(GLenum name) -> GLint
         throw CException("GetIntegerv Failed");
 }
 
-auto GetBoolean(GLenum name) -> GLboolean
+auto get_boolean(GLenum name) -> GLboolean
 {
     constexpr auto INVALID = std::numeric_limits<GLboolean>::max();
 

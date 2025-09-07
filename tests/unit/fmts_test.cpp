@@ -85,7 +85,7 @@ TEST(Formatters, Camera){
     auto r = std::format("{}", obj);
     auto e = format(
         R"({{ "position": {}, "view": {} }})",
-        obj.Position(), obj.View()
+        obj.position(), obj.view()
     );
 
     EXPECT_EQ(r, e);
@@ -99,7 +99,7 @@ TEST(Formatters, DISABLED_Shader){
     auto r = std::format("{}", shader);
     auto e = format(
         R"({{ "id": {}, "type": "{}" }})",
-        shader.id(), shader.TypeName()
+        shader.id(), shader.type_name()
     );
     EXPECT_EQ(r, e);
 }
@@ -110,7 +110,7 @@ TEST(Formatters, DISABLED_Mesh){
     auto r = std::format("{}", mesh);
     auto e = format(
         R"({{ "name": "{}", "VAO": {}, "VBO": {}, "verticesSize": {} }})",
-        mesh.name, mesh.VAO, mesh.VBO, mesh.VextexSize()
+        mesh.name, mesh.VAO, mesh.VBO, mesh.vextex_size()
     );
     EXPECT_EQ(r, e);
 }
@@ -124,7 +124,7 @@ TEST(Formatters, DISABLED_Mesh){
 //     auto r = std::format("{}", material);
 //     auto e = format(
 //         R"({{ "Program": {} }})", // ??
-//         *material.Program()
+//         *material.program()
 //     );
 //     EXPECT_EQ(r, e);
 // }
@@ -140,7 +140,7 @@ TEST(Formatters, DISABLED_GameObject){
     auto r = std::format("{}", gameobj);
     auto e = format(
         R"({{"name": "{}", "transform": {}, "mesh": {} }})",
-        gameobj.Name(), gameobj.transform(), *gameobj.mesh()
+        gameobj.name(), gameobj.transform(), *gameobj.mesh()
     );
     EXPECT_EQ(r, e);
 }

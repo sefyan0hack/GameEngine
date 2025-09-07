@@ -19,12 +19,12 @@ Material::Material(const Material& other)
 }
 
 
-auto Material::Bind(std::shared_ptr<ShaderProgram> program) const -> void
+auto Material::bind(std::shared_ptr<ShaderProgram> program) const -> void
 {
 
     for(const auto& [name, texture]: m_Textuers){
-        texture->Bind();
-        program->SetUniform(name, texture->TextureUnit());
+        texture->bind();
+        program->set_uniform(name, texture->texture_unit());
     }
 }
 
@@ -34,17 +34,17 @@ auto Material::texture(const std::string& name) const noexcept-> std::shared_ptr
     return m_Textuers.at(name);
 }
 
-auto Material::SetTexture(const std::string &name, std::shared_ptr<Texture> texture) -> void
+auto Material::set_texture(const std::string &name, std::shared_ptr<Texture> texture) -> void
 {
     m_Textuers[name] = texture;
 }
 
-auto Material::SetDiffuse(std::shared_ptr<Texture> texture) -> void
+auto Material::set_diffuse(std::shared_ptr<Texture> texture) -> void
 {
     m_Textuers["uDiffuseMap"] = texture;
 }
 
-auto Material::RemoveTexture(const std::string &name) -> bool
+auto Material::remove_texture(const std::string &name) -> bool
 {
     return m_Textuers.erase(name);
 }

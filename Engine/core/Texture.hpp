@@ -17,12 +17,12 @@ public:
     virtual ~Texture() = default;
 public:
     virtual auto id() const -> GLuint final;
-    virtual auto Bind() const -> void  final;
-    virtual auto Type() const -> GLenum final;
-    virtual auto TypeName() const -> std::string final;
-    virtual auto TextureUnit() const -> GLint final;
+    virtual auto bind() const -> void  final;
+    virtual auto type() const -> GLenum final;
+    virtual auto type_name() const -> std::string final;
+    virtual auto texture_unit() const -> GLint final;
 
-    auto ToGPUImg2D(auto* data, GLsizei width, GLsizei height, GLint intformat = GL_RGBA8, GLenum format = GL_RGBA) const -> void;
+    auto img2d_to_gpu(auto* data, GLsizei width, GLsizei height, GLint intformat = GL_RGBA8, GLenum format = GL_RGBA) const -> void;
 protected:
     GLuint m_Id;
     GLenum m_Type;
@@ -38,10 +38,10 @@ class Texture2D final : public Texture
     Texture2D(const std::string &name);
     Texture2D(const cmrc::file &src);
     Texture2D(auto* data, GLint width, GLint height, GLenum format = GL_RGBA);
-    auto isMipMapped() const -> bool;
+    auto is_mipmapped() const -> bool;
 
   private:
-    auto GenerateMipMap() -> void ;
+    auto generate_mipmap() -> void ;
 
     Image m_Img;
     bool m_Mipmapped;
@@ -70,6 +70,6 @@ struct std::formatter<Texture> {
   auto format(const Texture& obj, std::format_context& context) const {
     return std::format_to(context.out(),
     R"({{ "id": {}, "type": "{}", "uint": {}, "number": {} }})"
-    , obj.m_Id, obj.TypeName(), obj.m_TextureUnit, Texture::m_TextureUnitCount);
+    , obj.m_Id, obj.type_name(), obj.m_TextureUnit, Texture::m_TextureUnitCount);
   }
 };

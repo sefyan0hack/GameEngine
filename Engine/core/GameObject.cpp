@@ -39,7 +39,7 @@ GameObject::GameObject(GameObject&& other) noexcept
 
 auto GameObject::operator=(GameObject&& other) noexcept -> GameObject&
 {
-    Debug::Print("Move {}", Count);
+    debug::print("Move {}", Count);
 
     if(this != &other){
         m_Transform = std::exchange(other.m_Transform, {});
@@ -55,22 +55,22 @@ auto GameObject::transform() const -> Transform
     return m_Transform;
 }
 
-auto GameObject::Model() const -> glm::mat4
+auto GameObject::model() const -> glm::mat4
 {
     return m_Transform;
 }
 
-auto GameObject::SetPosition(const glm::vec3 &pos) -> void
+auto GameObject::set_position(const glm::vec3 &pos) -> void
 {
     m_Transform.position = pos;
 }
 
-auto GameObject::SetScale(const glm::vec3 &Scale) -> void
+auto GameObject::set_scale(const glm::vec3 &Scale) -> void
 {
     m_Transform.scale = Scale;
 }
 
-auto GameObject::Rotate(float angle, glm::vec3 axis) -> void
+auto GameObject::rotate(float angle, glm::vec3 axis) -> void
 {
     auto transformation = glm::mat4(1.0f); // wrong
     m_Transform = glm::rotate((transformation * (glm::mat4)m_Transform), glm::radians(angle), axis);
@@ -88,7 +88,7 @@ auto GameObject::material() const -> std::shared_ptr<Material>
 }
 
 
-auto GameObject::Name() const -> std::string
+auto GameObject::name() const -> std::string
 {
     return m_Name;
 }

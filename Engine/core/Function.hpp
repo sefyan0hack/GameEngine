@@ -36,13 +36,13 @@ public:
 
     static auto PLT_CALL default_([[maybe_unused]] Args... args) -> R;
     
-    auto ReturnType() const -> std::string_view;
-    auto ArgsValues() const -> std::array<std::string, sizeof...(Args)>;
-    auto ArgsTypes() const  -> std::array<std::string_view, sizeof...(Args)>;
-    constexpr auto ArgsCount() const -> std::size_t;
-    auto CallsCount() const -> std::size_t;
+    auto return_type() const -> std::string_view;
+    auto args_values() const -> std::array<std::string, sizeof...(Args)>;
+    auto args_types() const  -> std::array<std::string_view, sizeof...(Args)>;
+    constexpr auto args_count() const -> std::size_t;
+    auto calls_count() const -> std::size_t;
 
-    static auto functionCount() -> std::size_t;
+    static auto function_count() -> std::size_t;
     
 private:
     auto this_func_sig() const -> std::string ;
@@ -126,7 +126,7 @@ auto Function<R(PLT_CALL*)(Args...)>::operator()(Args... args, std::source_locat
 }
 
 template <typename R, typename... Args>
-auto Function<R(PLT_CALL*)(Args...)>::ArgsValues() const -> std::array<std::string, sizeof...(Args)>
+auto Function<R(PLT_CALL*)(Args...)>::args_values() const -> std::array<std::string, sizeof...(Args)>
 {
     std::array<std::string, sizeof...(Args)> result;
     std::size_t i = 0;
@@ -137,31 +137,31 @@ auto Function<R(PLT_CALL*)(Args...)>::ArgsValues() const -> std::array<std::stri
 }
 
 template <typename R, typename... Args>
-auto Function<R(PLT_CALL*)(Args...)>::ReturnType() const -> std::string_view
+auto Function<R(PLT_CALL*)(Args...)>::return_type() const -> std::string_view
 {
     return m_ReturnType;
 }
 
 template <typename R, typename... Args>
-auto Function<R(PLT_CALL*)(Args...)>::ArgsTypes() const -> std::array<std::string_view, sizeof...(Args)>
+auto Function<R(PLT_CALL*)(Args...)>::args_types() const -> std::array<std::string_view, sizeof...(Args)>
 {
     return m_ArgsTypes;
 }
 
 template <typename R, typename... Args>
-auto Function<R(PLT_CALL*)(Args...)>::CallsCount() const -> std::size_t
+auto Function<R(PLT_CALL*)(Args...)>::calls_count() const -> std::size_t
 {
     return m_CallCount;
 }
 
 template <typename R, typename... Args>
-constexpr auto Function<R(PLT_CALL*)(Args...)>::ArgsCount() const -> std::size_t
+constexpr auto Function<R(PLT_CALL*)(Args...)>::args_count() const -> std::size_t
 {
     return sizeof...(Args);
 }
 
 template <typename R, typename... Args>
-auto Function<R(PLT_CALL*)(Args...)>::functionCount() -> std::size_t
+auto Function<R(PLT_CALL*)(Args...)>::function_count() -> std::size_t
 {
     return m_Count;
 }
@@ -203,7 +203,7 @@ auto Function<R(PLT_CALL*)(Args...)>::format_arguments(std::string& result) cons
 {
     std::size_t index = 1;
     bool first = true;
-    auto argsValues = ArgsValues();
+    auto argsValues = args_values();
 
     for (std::size_t i = 0; i < m_ArgsTypes.size(); ++i) {
         if (!first) result += ", ";

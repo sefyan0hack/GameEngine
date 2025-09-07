@@ -17,24 +17,24 @@ protected:
     APP();
     ~APP();
 
-    virtual auto Update(float delta) -> void = 0 ;
+    virtual auto update(float delta) -> void = 0 ;
 public:
-    auto Run() -> void ;
-    auto Fps() const -> float;
-    auto SmoothedFPS() const -> float;
-    auto DeltaTime() const -> float;
+    auto run() -> void ;
+    auto fps() const -> float;
+    auto smooth_fps() const -> float;
+    auto deltatime() const -> float;
 
-    auto PushEvent(const Event& event) -> void;
+    auto push_event(const Event& event) -> void;
 
-    auto Render(const class Scene& scene, std::shared_ptr<ShaderProgram> program) -> void;
+    auto render(const class Scene& scene, std::shared_ptr<ShaderProgram> program) -> void;
 
 private:
-    auto PollEvent(Event& event) -> bool;
-    auto WaitEvent(Event& event) -> void;
-    auto ClearEvents() -> void;
+    auto pull_event(Event& event) -> bool;
+    auto wait_event(Event& event) -> void;
+    auto clear_events() -> void;
 
-    auto Frame(float deltaTime) -> void;
-    static auto LoopBody(void* ctx) -> void;
+    auto frame(float deltaTime) -> void;
+    static auto loop_body(void* ctx) -> void;
 
 protected:
     CWindow Window;

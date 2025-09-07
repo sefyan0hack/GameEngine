@@ -19,7 +19,7 @@ namespace gl {
 
     inline static auto OPENGL_FUNCTIONS_COUNT = OPENGL_FUNCTIONS_NAME.size();
 
-    auto GetProcAddress(const char* name) -> void*;
+    auto get_proc_address(const char* name) -> void*;
 
     constexpr int32_t DepthBufferBits   = 32;
     constexpr int32_t StencilBufferBits = 8;
@@ -43,23 +43,23 @@ class OpenGL
         operator bool () const;
 
     public:
-        auto Context() const -> GLCTX;
-        auto Surface() const -> H_SRF;
-        auto MajorV() const -> GLint;
-        auto MinorV() const -> GLint;
-        auto isValid() const -> bool;
-        auto CreationTime() const -> std::time_t;
-        auto HasExtension(const std::string& ext) const -> bool;
+        auto context() const -> GLCTX;
+        auto surface() const -> H_SRF;
+        auto major_v() const -> GLint;
+        auto minor_v() const -> GLint;
+        auto is_valid() const -> bool;
+        auto creation_time() const -> std::time_t;
+        auto has_extension(const std::string& ext) const -> bool;
 
-        static auto Vendor() -> std::string;
-        static auto Renderer() -> std::string;
-        static auto Extensions() -> std::vector<std::string>;
-        static auto MaxTextureUnits() -> GLint;
-        static auto MaxTextureSize() -> GLint;
-        static auto MaxTexture3DSize() -> GLint;
-        static auto MaxTextureCubeMapSize() -> GLint;
+        static auto vendor() -> std::string;
+        static auto renderer() -> std::string;
+        static auto extensions() -> std::vector<std::string>;
+        static auto max_texture_units() -> GLint;
+        static auto max_texture_size() -> GLint;
+        static auto max_texture3d_size() -> GLint;
+        static auto max_texturecubemap_size() -> GLint;
         
-        static auto DummyCtx() -> GLCTX;
+        static auto dummy_ctx() -> GLCTX;
     private:
         #if defined(WINDOWS_PLT)
         auto init_opengl_win32()  -> void ;
@@ -109,7 +109,7 @@ inline decltype(&gl##name)& name = OpenGL::name
 
 GLFUNCS(GLFUN)
 
-auto GetInteger(GLenum name) -> GLint;
-auto GetBoolean(GLenum name) -> GLboolean;
+auto get_integer(GLenum name) -> GLint;
+auto get_boolean(GLenum name) -> GLboolean;
 
 } //namespace g

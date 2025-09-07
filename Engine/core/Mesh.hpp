@@ -44,24 +44,24 @@ public:
 
     auto operator==(const Mesh& other) const -> bool;
 
-    auto setAttribute(GLuint index, AttributeInfo att) -> void;
-    auto EnableAttribs() const -> void;
-    auto VextexSize() const noexcept -> GLsizei;
+    auto set_attribute(GLuint index, AttributeInfo att) -> void;
+    auto enable_attribs() const -> void;
+    auto vextex_size() const noexcept -> GLsizei;
 
-    static auto CurrentVAO() -> GLuint;
-    static auto CurrentVBO() -> GLuint;
-    static auto FlipFaces(std::vector<Vertex> verts) -> std::vector<Vertex>;
+    static auto current_vao() -> GLuint;
+    static auto current_vbo() -> GLuint;
+    static auto flip_faces(std::vector<Vertex> verts) -> std::vector<Vertex>;
     private:
-        auto CloneBuffer(GLenum type, GLuint src) -> GLuint;
-        auto CloneVBO(GLuint src) -> GLuint;
-        auto PrepareAttribs() ->void;
-        auto Updata() -> void;
-        static auto GenVertexArray() -> GLuint;
-        static auto GenBuffer() -> GLuint;
-        static auto BindBuffer(GLenum type, GLuint buffer) -> void;
-        auto BindVAO() -> void;
-        auto BindVBO() -> void;
-        // auto BindIBO() -> void;
+        auto clone_buffer(GLenum type, GLuint src) -> GLuint;
+        auto clone_vbo(GLuint src) -> GLuint;
+        auto prepare_attribs() ->void;
+        auto updata() -> void;
+        static auto gen_vertexarray() -> GLuint;
+        static auto gen_buffer() -> GLuint;
+        static auto bind_buffer(GLenum type, GLuint buffer) -> void;
+        auto bind_vao() -> void;
+        auto bind_vbo() -> void;
+        // auto bind_ibo() -> void;
   public:
     std::string name;
     std::vector<VetexData> vertices;
@@ -136,9 +136,9 @@ struct std::formatter<Mesh> {
   auto format(const Mesh& obj, std::format_context& context) const {
     return std::format_to(context.out(),
     R"({{ "name": "{}", "VAO": {}, "VBO": {}, "verticesSize": {} }})"
-    , obj.name, obj.VAO, obj.VBO, obj.VextexSize());
+    , obj.name, obj.VAO, obj.VBO, obj.vextex_size());
   }
 };
 
-auto Obj2Mesh(const char* filename) -> std::vector<Vertex>;
-auto Obj2Mesh(cmrc::file src) -> std::vector<Vertex>;
+auto obj_to_mesh(const char* filename) -> std::vector<Vertex>;
+auto obj_to_mesh(cmrc::file src) -> std::vector<Vertex>;

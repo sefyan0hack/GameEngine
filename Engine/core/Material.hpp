@@ -25,11 +25,11 @@ public:
     // auto operator=(Material&& other) noexcept -> Material&;
 
 
-    auto Bind(std::shared_ptr<class ShaderProgram> program) const -> void;
+    auto bind(std::shared_ptr<class ShaderProgram> program) const -> void;
     auto texture(const std::string& name) const noexcept -> std::shared_ptr<class Texture>;
-    auto SetTexture(const std::string &name, std::shared_ptr<class Texture> texture) -> void;
-    auto SetDiffuse(std::shared_ptr<class Texture> texture) -> void;
-    auto RemoveTexture(const std::string &name) -> bool;
+    auto set_texture(const std::string &name, std::shared_ptr<class Texture> texture) -> void;
+    auto set_diffuse(std::shared_ptr<class Texture> texture) -> void;
+    auto remove_texture(const std::string &name) -> bool;
 
 private:
     std::map<std::string, std::shared_ptr<class Texture>> m_Textuers;

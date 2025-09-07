@@ -20,7 +20,7 @@ CWindow::CWindow(
 	std::tie(m_Handle, m_Surface) = new_window(m_Width, m_Height, Title);
 
 	#if defined(WEB_PLT)
-	RegisterEventCallbacks();
+	register_event_callbacks();
     #endif
 }
 
@@ -40,12 +40,12 @@ CWindow::~CWindow()
 #if defined(WINDOWS_PLT)
 
 // CWindow class things///////////////////////////////////
-CWindow::WinClass &CWindow::WinClass::Instance()
+CWindow::WinClass &CWindow::WinClass::instance()
 {
 	static CWindow::WinClass ClassIns; 
     return ClassIns;
 }
-auto CWindow::WinClass::Name() -> const TCHAR*
+auto CWindow::WinClass::name() -> const TCHAR*
 {
 	return m_Name;
 }
@@ -53,7 +53,7 @@ CWindow::WinClass::WinClass(){
 	
 	m_WinclassEx.cbSize = sizeof(WNDCLASSEX);
     m_WinclassEx.style =  CS_HREDRAW | CS_VREDRAW;
-    m_WinclassEx.lpfnWndProc = CWindow::WinProcThunk;
+    m_WinclassEx.lpfnWndProc = CWindow::win_proc_thunk;
     m_WinclassEx.hInstance =  GetModuleHandle(nullptr);
     m_WinclassEx.hCursor = LoadCursor(nullptr, IDC_ARROW);
     m_WinclassEx.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
@@ -68,7 +68,7 @@ CWindow::WinClass::WinClass(){
 
 ///////////////////////////////////////////////////////////////////
 
-auto CWindow::WinProcThunk(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT
+auto CWindow::win_proc_thunk(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT
 {
     if (msg == WM_NCCREATE){
         const auto WinptrStruct = reinterpret_cast<CREATESTRUCTW*>(Lpr);
@@ -80,18 +80,18 @@ auto CWindow::WinProcThunk(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> 
 
 	// Route messages to instance handler
     if (auto pWindow = reinterpret_cast<CWindow*>(GetWindowLongPtrA(Winhandle, GWLP_USERDATA))) {
-        return pWindow->WinProcFun(Winhandle, msg, Wpr, Lpr);
+        return pWindow->win_proc_fun(Winhandle, msg, Wpr, Lpr);
     }
 
     return DefWindowProcA(Winhandle, msg, Wpr, Lpr);
 }
 
-auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT
+auto CALLBACK CWindow::win_proc_fun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT
 {
     switch (msg)
     {
         case WM_CREATE:{
-			Debug::Print("Creat Main CWindow");
+			debug::print("Creat Main CWindow");
             return 0;
         }
         case WM_CLOSE:{
@@ -124,7 +124,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 					key = isExtended ? Key::RightAlt : Key::LeftAlt;
 					break;
 				default:
-					key = Keyboard::FromNative(static_cast<uint32_t>(Wpr));
+					key = Keyboard::from_native(static_cast<uint32_t>(Wpr));
 			}
 				
 			if (key != Key::Unknown) {
@@ -152,7 +152,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 					key = isExtended ? Key::RightAlt : Key::LeftAlt;
 					break;
 				default:
-					key = Keyboard::FromNative(static_cast<uint32_t>(Wpr));
+					key = Keyboard::from_native(static_cast<uint32_t>(Wpr));
 					break;
 			}
 			
@@ -250,7 +250,7 @@ auto CALLBACK CWindow::WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM L
 
 auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::pair<H_WIN, H_SRF>
 {
-    WinClass::Instance();
+    WinClass::instance();
 
     auto window_handle = CreateWindow(
         MAKEINTATOM(WinClass::m_Windclass),
@@ -326,7 +326,7 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
 	return {window_handle, Surface};
 }
 
-auto CWindow::ResizeCallback(int32_t eventType, const EmscriptenUiEvent* e, void* userData) -> EM_BOOL
+auto CWindow::resize_callback(int32_t eventType, const EmscriptenUiEvent* e, void* userData) -> EM_BOOL
 {
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_FALSE;
@@ -337,7 +337,7 @@ auto CWindow::ResizeCallback(int32_t eventType, const EmscriptenUiEvent* e, void
 	return EM_TRUE;
 }
 
-auto CWindow::KeyboardCallback(int32_t eventType, const EmscriptenKeyboardEvent* e, void* userData) -> EM_BOOL
+auto CWindow::keyboard_callback(int32_t eventType, const EmscriptenKeyboardEvent* e, void* userData) -> EM_BOOL
 {
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_FALSE;
@@ -445,7 +445,7 @@ auto CWindow::KeyboardCallback(int32_t eventType, const EmscriptenKeyboardEvent*
 	else if (strcmp(e->code, "MediaPlayPause") == 0) vk = DOM_VK_MEDIA_PLAY_PAUSE;
 
 	if (vk != INVALID) {
-        Key key = Keyboard::FromNative(vk);
+        Key key = Keyboard::from_native(vk);
 
 		switch (eventType)
 		{
@@ -461,7 +461,7 @@ auto CWindow::KeyboardCallback(int32_t eventType, const EmscriptenKeyboardEvent*
 	return EM_TRUE;
 }
 
-auto CWindow::MouseCallback( int32_t eventType, const EmscriptenMouseEvent* e, void* userData) -> EM_BOOL
+auto CWindow::mouse_callback( int32_t eventType, const EmscriptenMouseEvent* e, void* userData) -> EM_BOOL
 {
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_FALSE;
@@ -495,7 +495,7 @@ auto CWindow::MouseCallback( int32_t eventType, const EmscriptenMouseEvent* e, v
     return EM_TRUE;
 }
 
-auto CWindow::TouchCallback(int32_t eventType, const EmscriptenTouchEvent* e, void* userData) -> EM_BOOL
+auto CWindow::touch_callback(int32_t eventType, const EmscriptenTouchEvent* e, void* userData) -> EM_BOOL
 {
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_FALSE;
@@ -569,7 +569,7 @@ auto CWindow::TouchCallback(int32_t eventType, const EmscriptenTouchEvent* e, vo
     return EM_TRUE;
 }
 
-auto CWindow::RegisterEventCallbacks() -> void
+auto CWindow::register_event_callbacks() -> void
 {
 	emscripten_set_keypress_callback(m_Surface, this, EM_FALSE, &CWindow::KeyboardCallback);
 	emscripten_set_keydown_callback(m_Surface, this, EM_FALSE, &CWindow::KeyboardCallback);
@@ -614,14 +614,14 @@ auto CWindow::RegisterEventCallbacks() -> void
 		) -> EM_BOOL {
 			auto* window = static_cast<CWindow*>(userData);
 
-			if (e->isFullscreen) Debug::Print("Enable FullScreen");
+			if (e->isFullscreen) debug::print("Enable FullScreen");
 			window->m_EventQueue.push(CWindow::ResizeEvent{ e->elementWidth, e->elementHeight});
 			return EM_TRUE;
 	});
 }
 #endif
 
-auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
+auto CWindow::process_messages([[maybe_unused]] CWindow* self) -> void
 {
 	Expect(self != nullptr, "Cwindow* self Can't be null");
 	
@@ -674,7 +674,7 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 					vk = static_cast<uint32_t>(keysym);
 				}
 
-				Key key = Keyboard::FromNative(vk);
+				Key key = Keyboard::from_native(vk);
 
 				if (event.type == KeyPress) {
 					self->m_EventQueue.push(Keyboard::KeyDownEvent{key});
@@ -700,32 +700,32 @@ auto CWindow::ProcessMessages([[maybe_unused]] CWindow* self) -> void
 	#endif
 }
 
-auto CWindow::Handle() const -> H_WIN
+auto CWindow::handle() const -> H_WIN
 {
     return m_Handle;
 }
 
-auto CWindow::Surface() const -> H_SRF
+auto CWindow::surface() const -> H_SRF
 {
     return m_Surface;
 }
 
-auto CWindow::Width() const -> int32_t
+auto CWindow::width() const -> int32_t
 {
     return m_Width;
 }
 
-auto CWindow::Height() const -> int32_t
+auto CWindow::height() const -> int32_t
 {
     return m_Height;
 }
 
-auto CWindow::Visible() const -> bool
+auto CWindow::visible() const -> bool
 {
 	return m_Visible;
 }
 
-auto CWindow::Show() -> void
+auto CWindow::show() -> void
 {
 	#if defined(WINDOWS_PLT)
 	ShowWindow(m_Handle, SW_SHOW);
@@ -734,7 +734,7 @@ auto CWindow::Show() -> void
 	#endif
 	m_Visible = true;
 }
-auto CWindow::Hide() -> void
+auto CWindow::hide() -> void
 {
 	#if defined(WINDOWS_PLT)
 	ShowWindow(m_Handle, SW_HIDE);
@@ -744,7 +744,7 @@ auto CWindow::Hide() -> void
 	m_Visible = false;
 }
 
-auto CWindow::ToggleFullScreen() -> void
+auto CWindow::toggle_fullscreen() -> void
 {
 	#if defined(WINDOWS_PLT)
 	struct WindowedState
@@ -823,7 +823,7 @@ auto CWindow::ToggleFullScreen() -> void
 	#endif
 }
 
-auto CWindow::SwapBuffers() const -> void
+auto CWindow::swap_buffers() const -> void
 {
 	#if defined(WINDOWS_PLT)
     ::SwapBuffers(m_Surface);
@@ -832,13 +832,13 @@ auto CWindow::SwapBuffers() const -> void
     #endif
 }
 
-auto CWindow::Close() -> void
+auto CWindow::close() -> void
 {
-    Hide();
-    Debug::Print("Exit. ");
+    hide();
+    debug::print("Exit. ");
 }
 
-auto CWindow::GetTitle() -> std::string 
+auto CWindow::get_title() -> std::string 
 {
 	std::string title;
 
@@ -864,7 +864,7 @@ auto CWindow::GetTitle() -> std::string
 	return title;
 }
 
-auto CWindow::SetTitle(std::string  title) -> void
+auto CWindow::set_title(std::string  title) -> void
 {
 	#if defined(WINDOWS_PLT)
 	SetWindowText(m_Handle, title.c_str()); 
@@ -875,7 +875,7 @@ auto CWindow::SetTitle(std::string  title) -> void
 	#endif
 }
 
-auto CWindow::SetVSync(bool state) -> void
+auto CWindow::set_vsync(bool state) -> void
 {
 	
 	#if defined(WINDOWS_PLT)
@@ -888,6 +888,6 @@ auto CWindow::SetVSync(bool state) -> void
 
 	#elif defined(WEB_PLT)
 	(void)state;
-	Debug::Print("vSync is always enabled in web and no vSync off ");
+	debug::print("vSync is always enabled in web and no vSync off ");
 	#endif
 }

@@ -15,22 +15,22 @@ Camera::Camera() noexcept
     , m_Up(WORLD_UP)
     , m_Right(1.0f, 0.0f, 0.0f)
     , m_Position(0.0f, 1.0f, 4.0f)
-    , m_Projection(PERS ? Perspective() : Orthographic())
+    , m_Projection(PERS ? perspective() : orthographic())
     , m_View(glm::lookAt(m_Position, m_Position + m_Forward, m_Up))
 {}
 
 
-auto Camera::View() const -> glm::mat4
+auto Camera::view() const -> glm::mat4
 {
     return m_View;
 }
 
 
-auto Camera::Projection() const -> glm::mat4 {
+auto Camera::projection() const -> glm::mat4 {
     return m_Projection;
 }
 
-auto Camera::Perspective() const -> glm::mat4
+auto Camera::perspective() const -> glm::mat4
 {
     return glm::perspective(
         glm::radians(m_FOV),
@@ -40,7 +40,7 @@ auto Camera::Perspective() const -> glm::mat4
     );
 }
 
-auto Camera::Orthographic() const -> glm::mat4
+auto Camera::orthographic() const -> glm::mat4
 {
     // Calculate the extents based on orthographic “size” (height) and aspect ratio
     auto OrthoSize = 10.0f;
@@ -56,7 +56,7 @@ auto Camera::Orthographic() const -> glm::mat4
     return glm::ortho(left, right, bottom, top, m_Near, m_Far);
 }
 
-auto Camera::Move(const glm::vec3 &delta) noexcept -> void
+auto Camera::move(const glm::vec3 &delta) noexcept -> void
 { 
     m_Position 
         += m_Right * delta.x
@@ -67,7 +67,7 @@ auto Camera::Move(const glm::vec3 &delta) noexcept -> void
 }
 
 
-auto Camera::UpdateVectors() -> void
+auto Camera::update_vectors() -> void
 {
     const float yawRad = glm::radians(m_Yaw);
     const float pitchRad = glm::radians(m_Pitch);
@@ -84,7 +84,7 @@ auto Camera::UpdateVectors() -> void
     m_View = glm::lookAt(m_Position, m_Position + m_Forward, m_Up);
 }
 
-auto Camera::ProcessMouseMovement(float xoffset, float yoffset) -> void
+auto Camera::process_mouse_movement(float xoffset, float yoffset) -> void
 {
     m_Yaw += xoffset;
     m_Pitch += yoffset;
@@ -96,14 +96,14 @@ auto Camera::ProcessMouseMovement(float xoffset, float yoffset) -> void
     m_Yaw = std::fmod(m_Yaw, 360.0f);
     if (m_Yaw < 0.0f) m_Yaw += 360.0f;
 
-    UpdateVectors();
+    update_vectors();
 }
 
-auto Camera::SetFOV(float fov) -> void { m_FOV = fov; }
-auto Camera::SetAspectRatio(float aspect) -> void { m_AspectRatio = aspect; }
-auto Camera::SetClipping(float nearValue, float farValue) -> void { m_Near = nearValue; m_Far = farValue; }
+auto Camera::set_fov(float fov) -> void { m_FOV = fov; }
+auto Camera::set_aspect_ratio(float aspect) -> void { m_AspectRatio = aspect; }
+auto Camera::set_clipping(float nearValue, float farValue) -> void { m_Near = nearValue; m_Far = farValue; }
 
-auto Camera::Position() const -> glm::vec3 { return m_Position; }
-auto Camera::Forward() const -> glm::vec3 { return m_Forward; }
-auto Camera::Up() const    -> glm::vec3 { return m_Up; }
-auto Camera::Right() const -> glm::vec3 { return m_Right; }
+auto Camera::position() const -> glm::vec3 { return m_Position; }
+auto Camera::forward() const -> glm::vec3 { return m_Forward; }
+auto Camera::up() const    -> glm::vec3 { return m_Up; }
+auto Camera::right() const -> glm::vec3 { return m_Right; }

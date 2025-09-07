@@ -13,8 +13,8 @@
 
 //"{:%Y-%m-%d %H:%M:%OS}"
 
-namespace Debug {
-  inline auto CURR_TIME() -> std::string
+namespace debug {
+  inline auto current_time() -> std::string
   {
     std::time_t t = std::time(nullptr);
     std::tm* tm = std::localtime(&t);
@@ -29,12 +29,12 @@ namespace Debug {
     [[maybe_unused]] Ts&& ... ts) -> std::string
   {
     auto formatted_msg = std::format(fmt, std::forward<Ts>(ts)...);
-    return std::format("{} : {}\n", CURR_TIME(), formatted_msg);
+    return std::format("{} : {}\n", current_time(), formatted_msg);
   }
   
 
   template <typename... Ts>
-  inline auto Print([[maybe_unused]] const std::format_string<Ts...>& fmt, [[maybe_unused]] Ts&&... ts) -> void
+  inline auto print([[maybe_unused]] const std::format_string<Ts...>& fmt, [[maybe_unused]] Ts&&... ts) -> void
   {
     #if defined(DEBUG) && !defined(NDEBUG)
       if(std::getenv("TESTING_ENABLED") == nullptr) {
@@ -49,17 +49,17 @@ namespace Debug {
   }
 
   template <size_t N>
-  inline auto Print(const char (&str)[N]) -> void {
-    Print("{}", static_cast<const char*>(str));
+  inline auto print(const char (&str)[N]) -> void {
+    print("{}", static_cast<const char*>(str));
   }
 
   template <typename T>
-  inline auto Print(T&& x) -> void
+  inline auto print(T&& x) -> void
   {
-    Print("{}", std::forward<T>(x));
+    print("{}", std::forward<T>(x));
   }
 
-} // namespace Debug
+} // namespace debug
 
 
 class CException final : public std::runtime_error {

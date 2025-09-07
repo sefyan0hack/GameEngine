@@ -13,7 +13,7 @@ SkyBox::SkyBox()
   : m_VertShader(std::make_shared<Shader>(fs.open("res/Shaders/skybox.vert"), GL_VERTEX_SHADER))
   , m_FragShader(std::make_shared<Shader>(fs.open("res/Shaders/skybox.frag"), GL_FRAGMENT_SHADER))
   , m_Program(std::make_shared<ShaderProgram>(m_VertShader, m_FragShader))
-  , m_Mesh(std::make_shared<Mesh>(Mesh::FlipFaces(Mesh::CUBE)))
+  , m_Mesh(std::make_shared<Mesh>(Mesh::flip_faces(Mesh::CUBE)))
   , m_Texture(std::make_shared<TextureCubeMap>())
 {
 }
@@ -40,7 +40,7 @@ auto SkyBox::mesh() const -> std::shared_ptr<Mesh>
   return m_Mesh;
 }
 
-auto SkyBox::Program() const -> std::shared_ptr<ShaderProgram>
+auto SkyBox::program() const -> std::shared_ptr<ShaderProgram>
 {
   return m_Program;
 }

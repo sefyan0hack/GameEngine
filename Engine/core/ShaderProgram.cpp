@@ -12,12 +12,12 @@ ShaderProgram::ShaderProgram(std::shared_ptr<Shader> vertex, std::shared_ptr<Sha
         gl::AttachShader(m_Id, shader->id());
     }
 
-    Link();
+    link();
 
-    DumpAttribs();
-    DumpUniforms();
+    dump_attribs();
+    dump_uniforms();
 
-    Debug::Print(*this);
+    debug::print(*this);
 }
 
 
@@ -53,19 +53,19 @@ auto ShaderProgram::id() const noexcept -> GLuint
     return m_Id;
 }
 
-auto ShaderProgram::Use() const -> void
+auto ShaderProgram::use() const -> void
 {
     gl::UseProgram(m_Id);
 }
 
-auto ShaderProgram::Link() const -> void
+auto ShaderProgram::link() const -> void
 {
     gl::LinkProgram(m_Id);
 
-    GLint success = GetProgramInfo(GL_LINK_STATUS);
+    GLint success = get_program_info(GL_LINK_STATUS);
 
     if (!success) {
-        GLsizei  infologlength = GetProgramInfo(GL_INFO_LOG_LENGTH);
+        GLsizei  infologlength = get_program_info(GL_INFO_LOG_LENGTH);
         if(infologlength > 0){
             std::string infoLog(infologlength, '\0');
             gl::GetProgramInfoLog(m_Id, infologlength, nullptr, infoLog.data());
@@ -74,7 +74,7 @@ auto ShaderProgram::Link() const -> void
     }
 }
 
-auto ShaderProgram::UniformLocation(const char *name) const -> GLuint
+auto ShaderProgram::uniform_location(const char *name) const -> GLuint
 {
     try {
         auto it = m_Uniforms.at(name);
@@ -85,7 +85,7 @@ auto ShaderProgram::UniformLocation(const char *name) const -> GLuint
     }
 }
 
-auto ShaderProgram::AttribLocation(const char *name) const -> GLuint
+auto ShaderProgram::attrib_location(const char *name) const -> GLuint
 {
     try {
         auto [loc, type, size] = m_Attribs.at(name);
@@ -95,7 +95,7 @@ auto ShaderProgram::AttribLocation(const char *name) const -> GLuint
     }
 }
 
-auto ShaderProgram::UniformLocation_Prv(const char *name) const -> GLuint
+auto ShaderProgram::uniform_location_prv(const char *name) const -> GLuint
 {
     GLint location = gl::GetUniformLocation(m_Id, name);
     if (location == -1) {
@@ -104,7 +104,7 @@ auto ShaderProgram::UniformLocation_Prv(const char *name) const -> GLuint
     return static_cast<GLuint>(location);
 }
 
-auto ShaderProgram::AttribLocation_Prv(const char *name) const -> GLuint
+auto ShaderProgram::attrib_location_prv(const char *name) const -> GLuint
 {
     GLint location = gl::GetAttribLocation(m_Id, name);
     if (location == -1) {
@@ -114,20 +114,20 @@ auto ShaderProgram::AttribLocation_Prv(const char *name) const -> GLuint
 }
 
 
-auto ShaderProgram::UniformCount() const -> GLint
+auto ShaderProgram::uniform_count() const -> GLint
 {
-    GLint count = GetProgramInfo(GL_ACTIVE_UNIFORMS);
+    GLint count = get_program_info(GL_ACTIVE_UNIFORMS);
 
-    Expect(count >= 0, "GetProgramInfo(GL_ACTIVE_UNIFORMS) failed retuned : {}", count);
+    Expect(count >= 0, "get_program_info(GL_ACTIVE_UNIFORMS) failed retuned : {}", count);
 
     return count;
 }
 
-auto ShaderProgram::AttribsCount() const -> GLint
+auto ShaderProgram::attribs_count() const -> GLint
 {
-    GLint count = GetProgramInfo(GL_ACTIVE_ATTRIBUTES);
+    GLint count = get_program_info(GL_ACTIVE_ATTRIBUTES);
 
-    Expect(count >= 0, "GetProgramInfo(GL_ACTIVE_ATTRIBUTES) failed retuned : {}", count);
+    Expect(count >= 0, "get_program_info(GL_ACTIVE_ATTRIBUTES) failed retuned : {}", count);
 
     return count;
 }
@@ -182,7 +182,7 @@ auto ShaderProgram::AttribsCount() const -> GLint
 //     GLint activeInputs = 0;
 //     gl::GetProgramInterfaceiv(m_Id, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &activeInputs);
 //     if (activeInputs <= 0) {
-//         Debug::Print("no active attributes for program {}\n", m_Id);
+//         debug::print("no active attributes for program {}\n", m_Id);
 //         return;
 //     }
 
@@ -225,15 +225,15 @@ auto ShaderProgram::AttribsCount() const -> GLint
 // }
 
 
-auto ShaderProgram::DumpUniforms() -> void
+auto ShaderProgram::dump_uniforms() -> void
 {
-    GLint max_len = GetProgramInfo(GL_ACTIVE_UNIFORM_MAX_LENGTH);
+    GLint max_len = get_program_info(GL_ACTIVE_UNIFORM_MAX_LENGTH);
         
     if(max_len == 0) {
-        throw CException("error id {}, GetProgramInfo return {}", m_Id, max_len);
+        throw CException("error id {}, get_program_info return {}", m_Id, max_len);
     }
 
-    auto count = UniformCount();
+    auto count = uniform_count();
     if(count > 0){
 
         GLsizei len = 0;
@@ -246,7 +246,7 @@ auto ShaderProgram::DumpUniforms() -> void
             if(len > 0) Uniform_name.resize(static_cast<std::size_t>(len));
 
             m_Uniforms[Uniform_name] = std::make_tuple(
-                static_cast<GLuint>(UniformLocation_Prv(Uniform_name.c_str())),
+                static_cast<GLuint>(uniform_location_prv(Uniform_name.c_str())),
                 static_cast<GLenum>(type),
                 static_cast<GLsizei>(size)
             );
@@ -254,14 +254,14 @@ auto ShaderProgram::DumpUniforms() -> void
     }
 }
 
-auto ShaderProgram::DumpAttribs() -> void
+auto ShaderProgram::dump_attribs() -> void
 {
-    GLint max_len = GetProgramInfo(GL_ACTIVE_ATTRIBUTE_MAX_LENGTH);
+    GLint max_len = get_program_info(GL_ACTIVE_ATTRIBUTE_MAX_LENGTH);
     if(max_len == 0) {
         throw CException("max_len is not valid max_len: {}", max_len);
     }
     
-    auto count = AttribsCount();
+    auto count = attribs_count();
     if(count > 0){
         GLsizei len = 0;
         [[maybe_unused]] GLsizei size;
@@ -275,7 +275,7 @@ auto ShaderProgram::DumpAttribs() -> void
             if(attrib_name.starts_with("gl_")) continue;
 
             m_Attribs[attrib_name] = std::make_tuple(
-                static_cast<GLuint>(AttribLocation_Prv(attrib_name.c_str())),
+                static_cast<GLuint>(attrib_location_prv(attrib_name.c_str())),
                 static_cast<GLenum>(type),
                 static_cast<GLsizei>(size)
             );
@@ -283,7 +283,7 @@ auto ShaderProgram::DumpAttribs() -> void
     }
 }
 
-auto ShaderProgram::Current_Program() -> GLuint
+auto ShaderProgram::current_program() -> GLuint
 {
     GLint prog = 0;
     gl::GetIntegerv(GL_CURRENT_PROGRAM, &prog);
@@ -291,17 +291,17 @@ auto ShaderProgram::Current_Program() -> GLuint
     return static_cast<GLuint>(prog);
 }
 
-auto ShaderProgram::Uniforms() const noexcept -> const std::map<std::string, GlslType>&
+auto ShaderProgram::uniforms() const noexcept -> const std::map<std::string, GlslType>&
 {
     return m_Uniforms;
 }
 
-auto ShaderProgram::Attribs() const noexcept -> const std::map<std::string, GlslType>&
+auto ShaderProgram::attribs() const noexcept -> const std::map<std::string, GlslType>&
 {
     return m_Attribs;
 }
 
-auto ShaderProgram::GetProgramInfo(GLenum what) const -> GLint
+auto ShaderProgram::get_program_info(GLenum what) const -> GLint
 {
     constexpr auto INVALID = std::numeric_limits<GLint>::max();
 
@@ -312,11 +312,11 @@ auto ShaderProgram::GetProgramInfo(GLenum what) const -> GLint
     if(result != INVALID)
         return result;
     else
-        throw CException("{}", GL_ERR_to_string(glGetError()));
+        throw CException("{}", gl_err_to_string(glGetError()));
 }
 
 ///////
-auto ShaderProgram::SetUniform(const std::string& name, const GLint &value) const -> void
+auto ShaderProgram::set_uniform(const std::string& name, const GLint &value) const -> void
 {
     try {
         auto [loc, type, size] = m_Uniforms.at(name);
@@ -328,7 +328,7 @@ auto ShaderProgram::SetUniform(const std::string& name, const GLint &value) cons
     }
 }
 
-auto ShaderProgram::SetUniform(const std::string& name, const GLfloat &value) const -> void
+auto ShaderProgram::set_uniform(const std::string& name, const GLfloat &value) const -> void
 {
     try {
         auto [loc, type, size] = m_Uniforms.at(name);
@@ -339,7 +339,7 @@ auto ShaderProgram::SetUniform(const std::string& name, const GLfloat &value) co
         throw CException("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
-auto ShaderProgram::SetUniform(const std::string& name, const GLuint &value) const -> void
+auto ShaderProgram::set_uniform(const std::string& name, const GLuint &value) const -> void
 {
     try {
         auto [loc, type, size] = m_Uniforms.at(name);
@@ -351,7 +351,7 @@ auto ShaderProgram::SetUniform(const std::string& name, const GLuint &value) con
     }
 }
 
-auto ShaderProgram::SetUniform(const std::string& name, const glm::vec2 &value) const -> void
+auto ShaderProgram::set_uniform(const std::string& name, const glm::vec2 &value) const -> void
 {
     try {
         auto [loc, type, size] = m_Uniforms.at(name);
@@ -363,7 +363,7 @@ auto ShaderProgram::SetUniform(const std::string& name, const glm::vec2 &value) 
     }
 }
 
-auto ShaderProgram::SetUniform(const std::string& name, const glm::vec3 &value) const -> void
+auto ShaderProgram::set_uniform(const std::string& name, const glm::vec3 &value) const -> void
 {
     try {
         auto [loc, type, size] = m_Uniforms.at(name);
@@ -375,7 +375,7 @@ auto ShaderProgram::SetUniform(const std::string& name, const glm::vec3 &value) 
     }
 }
 
-auto ShaderProgram::SetUniform(const std::string& name, const glm::vec4 &value) const -> void
+auto ShaderProgram::set_uniform(const std::string& name, const glm::vec4 &value) const -> void
 {
     try {
         auto [loc, type, size] = m_Uniforms.at(name);
@@ -387,7 +387,7 @@ auto ShaderProgram::SetUniform(const std::string& name, const glm::vec4 &value) 
     }
 }
 
-auto ShaderProgram::SetUniform(const std::string& name, const glm::mat2 &value) const -> void
+auto ShaderProgram::set_uniform(const std::string& name, const glm::mat2 &value) const -> void
 {
     try {
         auto [loc, type, size] = m_Uniforms.at(name);
@@ -399,7 +399,7 @@ auto ShaderProgram::SetUniform(const std::string& name, const glm::mat2 &value) 
     }
 }
 
-auto ShaderProgram::SetUniform(const std::string& name, const glm::mat3 &value) const -> void
+auto ShaderProgram::set_uniform(const std::string& name, const glm::mat3 &value) const -> void
 {
     try {
         auto [loc, type, size] = m_Uniforms.at(name);
@@ -411,7 +411,7 @@ auto ShaderProgram::SetUniform(const std::string& name, const glm::mat3 &value) 
     }
 }
 
-auto ShaderProgram::SetUniform(const std::string& name, const glm::mat4 &value) const -> void
+auto ShaderProgram::set_uniform(const std::string& name, const glm::mat4 &value) const -> void
 {
     try {
         auto [loc, type, size] = m_Uniforms.at(name);
@@ -423,7 +423,7 @@ auto ShaderProgram::SetUniform(const std::string& name, const glm::mat4 &value) 
     }
 }
 
-auto ShaderProgram::GlslType_to_string(GLenum type) -> const char*
+auto ShaderProgram::glsl_type_to_string(GLenum type) -> const char*
 {
     switch (type)
     {

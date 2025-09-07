@@ -29,8 +29,8 @@ class CWindow
             auto operator = (WinClass&&)      -> WinClass& = delete ;
         public:
             ~WinClass() = default;
-            static auto Instance()  -> WinClass& ;
-            static auto Name()      -> const TCHAR* ;
+            static auto instance()  -> WinClass& ;
+            static auto name()      -> const TCHAR* ;
             inline static ATOM m_Windclass = {};
         private:
             inline static const char* m_Name = "singleton WINDOW CLASS";
@@ -56,33 +56,33 @@ class CWindow
         auto operator = (CWindow &&) noexcept -> CWindow& = delete ;
 
     public:
-        auto Handle() const         -> H_WIN ;
-        auto Surface() const        -> H_SRF ;
-        auto Width() const          -> int32_t ;
-        auto Height() const         -> int32_t ;
-        auto Visible() const        -> bool;
-        auto Show()                 -> void;
-        auto Hide()                 -> void;
-        auto ToggleFullScreen()     -> void;
-        auto SwapBuffers() const    -> void;
-        auto Close()                -> void;
-        auto GetTitle() -> std::string;
-        auto SetTitle(std::string title) -> void;
-        auto SetVSync(bool state) -> void;
-        static auto ProcessMessages([[maybe_unused]] CWindow* self)   -> void ;
+        auto handle() const         -> H_WIN ;
+        auto surface() const        -> H_SRF ;
+        auto width() const          -> int32_t ;
+        auto height() const         -> int32_t ;
+        auto visible() const        -> bool;
+        auto show()                 -> void;
+        auto hide()                 -> void;
+        auto toggle_fullscreen()     -> void;
+        auto swap_buffers() const    -> void;
+        auto close()                -> void;
+        auto get_title() -> std::string;
+        auto set_title(std::string title) -> void;
+        auto set_vsync(bool state) -> void;
+        static auto process_messages([[maybe_unused]] CWindow* self)   -> void ;
 
     private:
         #if defined(WINDOWS_PLT)
-        static auto CALLBACK WinProcThunk(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)  -> LRESULT ;
-        auto CALLBACK WinProcFun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)           -> LRESULT ;
+        static auto CALLBACK win_proc_thunk(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)  -> LRESULT ;
+        auto CALLBACK win_proc_fun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr)           -> LRESULT ;
         #endif
         #if defined(WEB_PLT)
-        static auto ResizeCallback(int32_t eventType, const EmscriptenUiEvent* e, void* userData)    -> EM_BOOL;
-        static auto KeyboardCallback(int32_t eventType, const EmscriptenKeyboardEvent* e, void* userData) -> EM_BOOL;
-        static auto MouseCallback(int32_t eventType, const EmscriptenMouseEvent* e, void* userData)  -> EM_BOOL;
-        static auto TouchCallback(int32_t eventType, const EmscriptenTouchEvent* e, void* userData)  -> EM_BOOL;
+        static auto resize_callback(int32_t eventType, const EmscriptenUiEvent* e, void* userData)    -> EM_BOOL;
+        static auto keyboard_callback(int32_t eventType, const EmscriptenKeyboardEvent* e, void* userData) -> EM_BOOL;
+        static auto mouse_callback(int32_t eventType, const EmscriptenMouseEvent* e, void* userData)  -> EM_BOOL;
+        static auto touch_callback(int32_t eventType, const EmscriptenTouchEvent* e, void* userData)  -> EM_BOOL;
 
-        auto RegisterEventCallbacks() -> void;
+        auto register_event_callbacks() -> void;
         #endif
 
         auto new_window(int32_t Width, int32_t Height, const char* Title)       -> std::pair<H_WIN, H_SRF> ;

@@ -49,7 +49,7 @@ concept either = (std::same_as<T, U> || ...);
 namespace utils {
 
 template<class T>
-constexpr auto Variant_to_Array() -> std::array<TypeInfo, std::variant_size_v<T>>
+constexpr auto variant_to_array() -> std::array<TypeInfo, std::variant_size_v<T>>
 {
     return []<std::size_t... I>(std::index_sequence<I...>) {
         return std::array<TypeInfo, sizeof...(I)> {{
@@ -61,7 +61,7 @@ constexpr auto Variant_to_Array() -> std::array<TypeInfo, std::variant_size_v<T>
 }
 
 template<typename Function, typename... Args>
-auto setTimeOut(unsigned long delay, Function&& func, Args&&... args) -> void
+auto set_timeOut(unsigned long delay, Function&& func, Args&&... args) -> void
 {
     std::thread([delay, func = std::forward<Function>(func), ...args = std::forward<Args>(args)]() mutable {
         std::this_thread::sleep_for(std::chrono::milliseconds(delay));
@@ -70,7 +70,7 @@ auto setTimeOut(unsigned long delay, Function&& func, Args&&... args) -> void
 }
 
 template<typename Function, typename... Args>
-auto Repeat( unsigned long interval, Function&& func, Args&&... args) -> void
+auto repeat( unsigned long interval, Function&& func, Args&&... args) -> void
 {
     std::thread([interval, func = std::forward<Function>(func), ...args = std::forward<Args>(args)]() mutable {
         while(true){
@@ -262,7 +262,7 @@ auto pointer_to_string(Pointer auto ptr) -> std::string
     }
 }
 
-inline auto GetProcAddress([[maybe_unused]] const char* module, const char* name) -> void* {
+inline auto get_proc_address([[maybe_unused]] const char* module, const char* name) -> void* {
 
     void* lib = nullptr;
     void* address = nullptr;

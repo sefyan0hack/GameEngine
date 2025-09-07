@@ -18,15 +18,15 @@ Transform::Transform(glm::vec3 position, glm::vec3 rotaion, glm::vec3 scale)
 
 auto Transform::operator=(const glm::mat4 &M) -> Transform
 {
-    return From_mat4(M);
+    return from_mat4(M);
 }
 
 Transform::operator glm::mat4 () const
 {
-    return To_mat4(*this);
+    return to_mat4(*this);
 }
 
-auto Transform::To_mat4(const Transform& t) -> glm::mat4
+auto Transform::to_mat4(const Transform& t) -> glm::mat4
 {
     glm::mat4 M = glm::mat4(1.0f);
 
@@ -43,7 +43,7 @@ auto Transform::To_mat4(const Transform& t) -> glm::mat4
     return M;
 }
 
-auto Transform::From_mat4(const glm::mat4& M) -> Transform
+auto Transform::from_mat4(const glm::mat4& M) -> Transform
 {  
     Transform t;
 

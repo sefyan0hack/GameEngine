@@ -36,27 +36,27 @@ public:
 	auto operator=(Mouse&&) -> Mouse& = delete;
 
 public:
-	auto GetPos() const noexcept			-> std::pair<int32_t, int32_t> ;
-	auto GetRawDelta() const noexcept		-> std::pair<float, float> ;
-	auto SetPos(int32_t x_, int32_t y_)		-> void ;
-	auto Locked() const						-> bool ;
-	auto Lock([[maybe_unused]] const CWindow& window) noexcept -> void ;
-	auto UnLock() noexcept					-> void ;
-	auto ClearState() noexcept				-> void ;
-	auto SavePrevState() noexcept			-> void;
+	auto get_pos() const noexcept			-> std::pair<int32_t, int32_t> ;
+	auto set_pos(int32_t x_, int32_t y_)		-> void ;
+	auto get_rawdelta() const noexcept		-> std::pair<float, float> ;
+	auto locked() const						-> bool ;
+	auto lock([[maybe_unused]] const CWindow& window) noexcept -> void ;
+	auto unlock() noexcept					-> void ;
+	auto clear_state() noexcept				-> void ;
+	auto save_prev_state() noexcept			-> void;
 
-	auto IsDown(Button btn) const -> bool;
-	auto IsUp(Button btn) const -> bool;
-	auto IsPressed(Button btn) const -> bool;
-	auto IsReleased(Button btn) const -> bool;
+	auto is_down(Button btn) const -> bool;
+	auto is_up(Button btn) const -> bool;
+	auto is_pressed(Button btn) const -> bool;
+	auto is_released(Button btn) const -> bool;
 
 private:
-	auto OnButtonDown(Button btn) noexcept			-> void ;
-	auto OnButtonUp(Button btn) noexcept			-> void ;
-	auto OnMouseMove(int32_t x, int32_t y) noexcept		-> void ;
-	auto OnRawDelta(float dx, float dy) noexcept	-> void ;
-	auto OnMouseLeave() noexcept						-> void ;
-	auto OnMouseEnter() noexcept						-> void ;
+	auto on_button_down(Button btn) noexcept			-> void ;
+	auto on_button_up(Button btn) noexcept			-> void ;
+	auto on_rawdelta(float dx, float dy) noexcept	-> void ;
+	auto on_mouse_move(int32_t x, int32_t y) noexcept		-> void ;
+	auto on_mouse_enter() noexcept						-> void ;
+	auto on_mouse_leave() noexcept						-> void ;
 
 public:
 	float Sensitivity;

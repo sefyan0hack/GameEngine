@@ -48,7 +48,7 @@ public:
         ResManager["CubeMattkimberley"]  = Material(ResManager["kimberley.jpg"]);
         ResManager["CubeMattSand"]  = Material(ResManager["sand.png"]);
         ResManager["cubeMesh"]      = Mesh(Mesh::CUBE);
-        ResManager["manMesh"]       = Mesh(Obj2Mesh(fs.open("res/FinalBaseMesh.obj")));
+        ResManager["manMesh"]       = Mesh(obj_to_mesh(fs.open("res/FinalBaseMesh.obj")));
 
         constexpr int32_t Grids = 4;
 
@@ -63,33 +63,33 @@ public:
         }
         MainScene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), ResManager["CubeMattSand"], ResManager["manMesh"]);
 
-        MainScene.SetSkyBox(ResManager["forest.jpg"]);
-        Debug::Print("Window title: {}", Window.GetTitle());
+        MainScene.set_skybox(ResManager["forest.jpg"]);
+        debug::print("Window title: {}", Window.get_title());
     }
 public:
     /// @brief Run every frame at 1/delta fps
     /// @param delta  inverse of fps how mush time took a frame to Render
-    auto Update(float delta) -> void override {
-        float speed = Keyboard.IsDown(Key::LeftShift)? 10.0f : 5.0f;
+    auto update(float delta) -> void override {
+        float speed = Keyboard.is_down(Key::LeftShift)? 10.0f : 5.0f;
 
-        auto Hori = Keyboard.IsDown(Key::W) ? 1.0f : Keyboard.IsDown(Key::S) ? -1.0f : 0.0f;
-        auto Vert = Keyboard.IsDown(Key::D) ? 1.0f : Keyboard.IsDown(Key::A) ? -1.0f : 0.0f;
-        auto Up   = Keyboard.IsDown(Key::M) ? 1.0f : Keyboard.IsDown(Key::N) ? -1.0f : 0.0f;
+        auto Hori = Keyboard.is_down(Key::W) ? 1.0f : Keyboard.is_down(Key::S) ? -1.0f : 0.0f;
+        auto Vert = Keyboard.is_down(Key::D) ? 1.0f : Keyboard.is_down(Key::A) ? -1.0f : 0.0f;
+        auto Up   = Keyboard.is_down(Key::M) ? 1.0f : Keyboard.is_down(Key::N) ? -1.0f : 0.0f;
 
         auto by = speed * delta;
 
-        ViewCamera.Move({ Vert * by, Up * by, Hori * by });
+        ViewCamera.move({ Vert * by, Up * by, Hori * by });
 
-        Render(MainScene, CubeProgram);
+        render(MainScene, CubeProgram);
 
-        Window.SetTitle(std::format("{}", SmoothedFPS()));
+        Window.set_title(std::format("{}", smooth_fps()));
     }
 
 public:
 
     /// @brief Get called when the game quit
     ~Game(){
-        Debug::Print("Game Destructor");
+        debug::print("Game Destructor");
     }
 };
 
@@ -97,16 +97,16 @@ public:
 int main() {
     try {
         Game my_game;
-        my_game.Run();
+        my_game.run();
 
     } catch(const CException& e) {
-        Debug::Print(e.all());
+        debug::print(e.all());
 
     } catch(const std::exception& e) {
-        Debug::Print(e.what());
+        debug::print(e.what());
 
     } catch(...) {
-        Debug::Print("Unknown Exception");
+        debug::print("Unknown Exception");
     }
     return 0;
 }

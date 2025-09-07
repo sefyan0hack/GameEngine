@@ -24,22 +24,22 @@ public:
     Image(Image&& other);
     auto operator=(Image&& other) -> Image&;
 
-    auto Width() const -> int32_t;
-    auto Height() const -> int32_t;
-    auto Channels() const -> int32_t;
+    auto width() const -> int32_t;
+    auto height() const -> int32_t;
+    auto channels() const -> int32_t;
 
-    auto CPUFormat() const -> GLenum;
-    auto GPUFormat() const -> GLint;
+    auto cpu_format() const -> GLenum;
+    auto gpu_format() const -> GLint;
 
-    static auto CPUtoCGPUFormat(GLenum cpuformat) -> GLint;
-    static auto GPUtoCPUFormat(GLint gpuformt) -> GLenum;
+    static auto cpu_to_gpu_format(GLenum cpuformat) -> GLint;
+    static auto gpu_to_cpu_format(GLint gpuformt) -> GLenum;
 
-    static auto ChannelFromCPUFormat(GLenum format) -> std::int32_t;
-    static auto ChannelFromGPUFormat(GLint format) -> std::int32_t;
+    static auto channel_from_cpu_format(GLenum format) -> std::int32_t;
+    static auto channel_from_gpu_format(GLint format) -> std::int32_t;
 
-    auto Data() const -> std::span<std::byte>;
-    auto Size() const -> std::size_t;
-    auto Valid() const -> bool;
+    auto data() const -> std::span<std::byte>;
+    auto size() const -> std::size_t;
+    auto valid() const -> bool;
 
 private:
     int32_t m_Width, m_Height, m_Channels;

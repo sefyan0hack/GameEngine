@@ -15,7 +15,7 @@ public:
 
   auto texture() const -> std::shared_ptr<class TextureCubeMap>;
   auto mesh() const -> std::shared_ptr<class Mesh>;
-  auto Program() const -> std::shared_ptr<class ShaderProgram>;
+  auto program() const -> std::shared_ptr<class ShaderProgram>;
 
 private:
   const std::shared_ptr<class Shader> m_VertShader;

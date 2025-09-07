@@ -15,8 +15,8 @@ public:
     auto operator=(const glm::mat4& M) -> Transform;
     operator glm::mat4 () const;
 
-    static auto To_mat4(const Transform& t) -> glm::mat4;
-    static auto From_mat4(const glm::mat4& M) -> Transform;
+    static auto to_mat4(const Transform& t) -> glm::mat4;
+    static auto from_mat4(const glm::mat4& M) -> Transform;
 
 public:
     glm::vec3 position;

@@ -33,7 +33,7 @@ Texture::Texture(GLenum texType)
     , m_TextureUnit(m_TextureUnitCount++)
 {
     gl::GenTextures(1, &m_Id);
-    Bind();
+    bind();
 }
 
 auto Texture::id() const -> GLuint
@@ -41,21 +41,21 @@ auto Texture::id() const -> GLuint
     return m_Id;
 }
 
-auto Texture::Bind() const -> void
+auto Texture::bind() const -> void
 {
     gl::ActiveTexture(static_cast<GLenum>(GL_TEXTURE0 + m_TextureUnit));
     gl::BindTexture(m_Type, m_Id);
 }
 
-auto Texture::Type() const -> GLenum
+auto Texture::type() const -> GLenum
 {
     return m_Type;
 }
-auto Texture::TypeName() const -> std::string
+auto Texture::type_name() const -> std::string
 {
     return to_string(m_Type);
 }
-auto Texture::TextureUnit() const -> GLint
+auto Texture::texture_unit() const -> GLint
 {
     return m_TextureUnit;
 }
@@ -63,41 +63,41 @@ auto Texture::TextureUnit() const -> GLint
 Texture2D::Texture2D()
     : Texture(GL_TEXTURE_2D), m_Img(), m_Mipmapped(true)
 {
-    ToGPUImg2D(reinterpret_cast<GLubyte*>(m_Img.Data().data()), m_Img.Width(), m_Img.Height(), m_Img.GPUFormat(), m_Img.CPUFormat());
+    img2d_to_gpu(reinterpret_cast<GLubyte*>(m_Img.data().data()), m_Img.width(), m_Img.height(), m_Img.gpu_format(), m_Img.cpu_format());
     
-    if (m_Mipmapped) GenerateMipMap();
+    if (m_Mipmapped) generate_mipmap();
 
-    Debug::Print("{}", static_cast<const Texture&>(*this));
+    debug::print("{}", static_cast<const Texture&>(*this));
 }
 
 //////////
 Texture2D::Texture2D(const std::string &name)
     : Texture(GL_TEXTURE_2D), m_Img(name), m_Mipmapped(true)
 {
-    ToGPUImg2D(reinterpret_cast<GLubyte*>(m_Img.Data().data()), m_Img.Width(), m_Img.Height(), m_Img.GPUFormat(), m_Img.CPUFormat());
+    img2d_to_gpu(reinterpret_cast<GLubyte*>(m_Img.data().data()), m_Img.width(), m_Img.height(), m_Img.gpu_format(), m_Img.cpu_format());
 
-    if (m_Mipmapped) GenerateMipMap();
+    if (m_Mipmapped) generate_mipmap();
 
-    Debug::Print("{}", static_cast<const Texture&>(*this));
+    debug::print("{}", static_cast<const Texture&>(*this));
 }
 
 Texture2D::Texture2D(const cmrc::file &src)
     : Texture(GL_TEXTURE_2D), m_Img(src), m_Mipmapped(true)
 {
-    ToGPUImg2D(reinterpret_cast<GLubyte*>(m_Img.Data().data()), m_Img.Width(), m_Img.Height(), m_Img.GPUFormat(), m_Img.CPUFormat());
+    img2d_to_gpu(reinterpret_cast<GLubyte*>(m_Img.data().data()), m_Img.width(), m_Img.height(), m_Img.gpu_format(), m_Img.cpu_format());
 
-    if (m_Mipmapped) GenerateMipMap();
+    if (m_Mipmapped) generate_mipmap();
 
-    Debug::Print("{}", static_cast<const Texture&>(*this));
+    debug::print("{}", static_cast<const Texture&>(*this));
 }
 
 Texture2D::Texture2D(auto* data, GLint width, GLint height, GLenum format)
-    : Texture(GL_TEXTURE_2D), m_Img(data, width, height, Image::ChannelFromCPUFormat(format)), m_Mipmapped(true)
+    : Texture(GL_TEXTURE_2D), m_Img(data, width, height, Image::channel_from_cpu_format(format)), m_Mipmapped(true)
 {
-    ToGPUImg2D(data, width, height, m_Img.GPUFormat(), m_Img.CPUFormat());
+    img2d_to_gpu(data, width, height, m_Img.gpu_format(), m_Img.cpu_format());
 }
 
-auto Texture::ToGPUImg2D(auto *data, GLsizei width, GLsizei height, GLint intformat, GLenum format) const -> void
+auto Texture::img2d_to_gpu(auto *data, GLsizei width, GLsizei height, GLint intformat, GLenum format) const -> void
 {
     using DataType = std::remove_cv_t<
             std::remove_all_extents_t<
@@ -137,12 +137,12 @@ auto Texture::ToGPUImg2D(auto *data, GLsizei width, GLsizei height, GLint intfor
     gl::TexImage2D(m_Type, 0, intformat, width, height, 0, format, gl_type, data);
 }
 
-auto Texture2D::GenerateMipMap() -> void
+auto Texture2D::generate_mipmap() -> void
 {
     gl::GenerateMipmap(m_Type);
 }
 
-auto Texture2D::isMipMapped() const -> bool
+auto Texture2D::is_mipmapped() const -> bool
 {
     return m_Mipmapped;
 }
@@ -153,7 +153,7 @@ TextureCubeMap::TextureCubeMap()
 {
     for (std::size_t i = 0; i < m_Imgs.size(); ++i) {
         const auto& img = m_Imgs[i];
-        gl::TexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, img.GPUFormat(), img.Width(), img.Height(), 0, img.CPUFormat(), GL_UNSIGNED_BYTE, img.Data().data());
+        gl::TexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, img.gpu_format(), img.width(), img.height(), 0, img.cpu_format(), GL_UNSIGNED_BYTE, img.data().data());
     }
 }
 
@@ -170,18 +170,18 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
     for (std::size_t i = 0; i < m_Imgs.size(); ++i) {
         auto& img = m_Imgs[i];
 
-        GLint rowBytes = img.Width() * img.Channels();
+        GLint rowBytes = img.width() * img.channels();
         GLint alignment = (rowBytes % 8 == 0)? 8 : (rowBytes % 4 == 0)? 4 : (rowBytes % 2 == 0)? 2 : 1;
         gl::PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
 
-        gl::TexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, img.GPUFormat(), img.Width(), img.Height(), 0, img.CPUFormat(), GL_UNSIGNED_BYTE, img.Data().data());
+        gl::TexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, img.gpu_format(), img.width(), img.height(), 0, img.cpu_format(), GL_UNSIGNED_BYTE, img.data().data());
 
-        Debug::Print("Loding {} ", faces[i]);
+        debug::print("Loding {} ", faces[i]);
     }
 
     gl::GenerateMipmap(m_Type);
     gl::PixelStorei(GL_UNPACK_ALIGNMENT, 4);
-    Debug::Print("{}", static_cast<const Texture&>(*this));
+    debug::print("{}", static_cast<const Texture&>(*this));
 }
 
 
@@ -198,16 +198,16 @@ TextureCubeMap::TextureCubeMap(const std::vector<cmrc::file>& faces)
     for (std::size_t i = 0; i < m_Imgs.size(); ++i) {
         auto& img = m_Imgs[i];
 
-        GLint rowBytes = img.Width() * img.Channels();
+        GLint rowBytes = img.width() * img.channels();
         GLint alignment = (rowBytes % 8 == 0)? 8 : (rowBytes % 4 == 0)? 4 : (rowBytes % 2 == 0)? 2 : 1;
         gl::PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
 
-        gl::TexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, img.GPUFormat(), img.Width(), img.Height(), 0, img.CPUFormat(), GL_UNSIGNED_BYTE, img.Data().data());
+        gl::TexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, img.gpu_format(), img.width(), img.height(), 0, img.cpu_format(), GL_UNSIGNED_BYTE, img.data().data());
     }
 
     gl::GenerateMipmap(m_Type);
     gl::PixelStorei(GL_UNPACK_ALIGNMENT, 4);
-    Debug::Print("{}", static_cast<const Texture&>(*this));
+    debug::print("{}", static_cast<const Texture&>(*this));
 }
 
 auto TextureCubeMap::base_to_6faces(const std::string& path) -> std::vector<std::string>

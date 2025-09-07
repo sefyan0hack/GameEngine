@@ -86,20 +86,20 @@ public:
 	Keyboard(Keyboard&&) = delete;
 	auto operator=(Keyboard&&) -> Keyboard& = delete;
 
-	auto IsPressed(Key key) const noexcept      -> bool ;
-	auto IsReleased(Key key) const noexcept      -> bool ;
-	auto IsDown(Key key) const noexcept          -> bool ;
-	auto IsUp(Key key) const noexcept            -> bool ;
+	auto is_pressed(Key key) const noexcept      -> bool ;
+	auto is_released(Key key) const noexcept      -> bool ;
+	auto is_down(Key key) const noexcept          -> bool ;
+	auto is_up(Key key) const noexcept            -> bool ;
 
-    static auto ToNative(Key key) -> uint32_t;
-    static auto FromNative(uint32_t key) -> Key;
+    static auto to_native(Key key) -> uint32_t;
+    static auto from_native(uint32_t key) -> Key;
 
 private:
-	auto OnKeyDown(Key key) noexcept  		-> void ;
-	auto OnKeyUp(Key key) noexcept 		-> void ;
+	auto on_key_down(Key key) noexcept  		-> void ;
+	auto on_key_up(Key key) noexcept 		-> void ;
 
-	auto ClearState() noexcept                  -> void ;
-    auto SavePrevState() noexcept                   -> void ;
+	auto clear_state() noexcept                  -> void ;
+    auto save_prev_state() noexcept                   -> void ;
 
 private:
     static constexpr size_t KeyCount = std::to_underlying(Key::Unknown) + 1 ;
@@ -114,7 +114,7 @@ private:
             std::views::iota(std::to_underlying(Key::A), std::to_underlying(Key::Unknown)) |
             std::views::transform([](auto&& a){ return static_cast<Key>(a); })
         ){
-            r.try_emplace(ToNative(k), k);
+            r.try_emplace(to_native(k), k);
         }
 
         return r;

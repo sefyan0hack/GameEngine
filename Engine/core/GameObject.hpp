@@ -19,14 +19,14 @@ public:
     GameObject(GameObject&& other) noexcept;
     auto operator=(GameObject&& other) noexcept -> GameObject&;
 
-    auto SetPosition(const glm::vec3 &pos)                   -> void ;
-    auto SetScale(const glm::vec3 &Scale)                    -> void ;
-    auto Rotate(float angle, glm::vec3 axis)                 -> void ;
+    auto set_position(const glm::vec3 &pos)                   -> void ;
+    auto set_scale(const glm::vec3 &Scale)                    -> void ;
+    auto rotate(float angle, glm::vec3 axis)                 -> void ;
     auto transform() const                                   -> Transform ;
-    auto Model() const                                       -> glm::mat4 ;
+    auto model() const                                       -> glm::mat4 ;
     auto mesh() const                                        -> std::shared_ptr<class Mesh> ;
     auto material() const                                    -> std::shared_ptr<class Material> ;
-    auto Name() const                                        -> std::string;
+    auto name() const                                        -> std::string;
 
 private:
     Transform m_Transform;

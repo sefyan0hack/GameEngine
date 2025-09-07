@@ -15,17 +15,17 @@ private:
 
         template <class T>
         void operator=(T&& obj) {
-            ResourceManager::getInstance().m_Resources[m_key] = std::make_shared<std::remove_reference_t<T>>(std::forward<T>(obj));
+            ResourceManager::get_instance().m_Resources[m_key] = std::make_shared<std::remove_reference_t<T>>(std::forward<T>(obj));
         }
 
         template <class T>
         operator std::shared_ptr<T>() const {
-            return ResourceManager::getInstance().get<T>(m_key);
+            return ResourceManager::get_instance().get<T>(m_key);
         }
 
         template <class T>
         std::shared_ptr<T> get() const {
-            return ResourceManager::getInstance().get<T>(m_key);
+            return ResourceManager::get_instance().get<T>(m_key);
         }
 
     private:
@@ -46,7 +46,7 @@ public:
         return std::static_pointer_cast<T>(m_Resources.at(path));
     }
 
-    static auto getInstance() -> ResourceManager&
+    static auto get_instance() -> ResourceManager&
     {
         static ResourceManager S_instance;
         return S_instance;
@@ -59,4 +59,4 @@ private:
     FOR_TEST
 };
 
-inline static ResourceManager& ResManager = ResourceManager::getInstance();
+inline static ResourceManager& ResManager = ResourceManager::get_instance();

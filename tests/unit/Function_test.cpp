@@ -21,12 +21,12 @@ using Function_Test_Ctor1 = Function<SubType>::Test<1>;
     \
     MEMBER_FUN(operator());\
     MEMBER_FUN(default_);\
-    MEMBER_FUN(ArgsValues);\
-    MEMBER_FUN(ReturnType);\
-    MEMBER_FUN(ArgsTypes);\
-    MEMBER_FUN(ArgsCount);\
-    MEMBER_FUN(CallsCount);\
-    MEMBER_FUN(functionCount);\
+    MEMBER_FUN(args_values);\
+    MEMBER_FUN(return_type);\
+    MEMBER_FUN(args_types);\
+    MEMBER_FUN(args_count);\
+    MEMBER_FUN(calls_count);\
+    MEMBER_FUN(function_count);\
     MEMBER_FUN(this_func_sig);\
     MEMBER_FUN(function_info);\
     MEMBER_FUN(format_arguments);\
@@ -75,16 +75,16 @@ TEST_F(Function_Test_Ctor1, default_) {
 }
 
 TEST_F(Function_Test_Ctor1, ArgsXXX) {
-    auto got = ArgsValues().size();
+    auto got = args_values().size();
     auto expct = 2;
     EXPECT_EQ(got, expct);
-    EXPECT_EQ(got, ArgsTypes().size());
-    EXPECT_EQ(ArgsCount(), expct);
+    EXPECT_EQ(got, args_types().size());
+    EXPECT_EQ(args_count(), expct);
     
 }
 
 TEST_F(Function_Test_Ctor1, ReturnType) {
-    auto got = ReturnType();
+    auto got = return_type();
     auto expct = ::type_name<std::size_t>();
     EXPECT_EQ(got, expct);
 }

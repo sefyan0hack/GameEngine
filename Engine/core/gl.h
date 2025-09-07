@@ -58,7 +58,7 @@ using GLCTX     = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
 #endif
 
 
-inline constexpr auto GL_ERR_to_string(GLenum glError) -> const char*
+inline constexpr auto gl_err_to_string(GLenum glError) -> const char*
 {
     switch (glError)
     {

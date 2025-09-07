@@ -37,10 +37,10 @@ constexpr auto generate_checkerboard(const uint32_t color1, const uint32_t color
 
 Image::Image()
     : m_Width(50), m_Height(50), m_Channels(3)
-    , m_Data(static_cast<std::byte*>(STBI_MALLOC(Size())))
+    , m_Data(static_cast<std::byte*>(STBI_MALLOC(size())))
 {
     // magenta/black checkerboard 50x50
-    std::memcpy(m_Data, generate_checkerboard<50>(0xFFFF00FF, 0x00000000).data(), Size());
+    std::memcpy(m_Data, generate_checkerboard<50>(0xFFFF00FF, 0x00000000).data(), size());
 }
 
 Image::Image(Pointer auto Data, uint32_t Width, uint32_t Height, uint32_t Channels)
@@ -52,7 +52,7 @@ Image::Image(Pointer auto Data, uint32_t Width, uint32_t Height, uint32_t Channe
         m_Channels = Channels;
         m_Data = reinterpret_cast<std::byte*>(Data);
     }else{
-        Debug::Print(" Image not Valid  {}", *this);
+        debug::print(" Image not Valid  {}", *this);
     }
 }
 
@@ -65,7 +65,7 @@ Image::Image(const std::string& filename, bool flip)
     if(data)
         m_Data = reinterpret_cast<std::byte*>(data);
     else
-        Debug::Print("Can't read {} . reason : {}", filename.c_str(), stbi_failure_reason());
+        debug::print("Can't read {} . reason : {}", filename.c_str(), stbi_failure_reason());
 }
 
 Image::Image(const cmrc::file& src, bool flip)
@@ -79,7 +79,7 @@ Image::Image(const cmrc::file& src, bool flip)
     if(data)
         m_Data = reinterpret_cast<std::byte*>(data);
     else
-        Debug::Print("Can't read file . reason : {}", stbi_failure_reason());
+        debug::print("Can't read file . reason : {}", stbi_failure_reason());
 }
 
 
@@ -108,25 +108,25 @@ auto Image::operator=(Image&& other) -> Image&
     return *this;
 }
 
-auto Image::Width() const -> int32_t
+auto Image::width() const -> int32_t
 {
     return m_Width;
 }
-auto Image::Height() const -> int32_t
+auto Image::height() const -> int32_t
 {
     return m_Height;
 }
-auto Image::Channels() const -> int32_t
+auto Image::channels() const -> int32_t
 {
     return m_Channels;
 }
 
-auto Image::Size() const -> std::size_t
+auto Image::size() const -> std::size_t
 {
     return static_cast<std::size_t>(m_Width * m_Height * m_Channels);
 }
 
-auto Image::Valid() const ->bool
+auto Image::valid() const ->bool
 {
     return
         m_Data != nullptr 
@@ -136,14 +136,14 @@ auto Image::Valid() const ->bool
 }
 
 
-auto Image::Data() const -> std::span<std::byte>
+auto Image::data() const -> std::span<std::byte>
 {
-    Expect(Valid(), " Image not Valid  {}", *this);
+    Expect(valid(), " Image not Valid  {}", *this);
 
-    return { m_Data, Size() };
+    return { m_Data, size() };
 }
 
-auto Image::CPUFormat() const -> GLenum
+auto Image::cpu_format() const -> GLenum
 {
     switch(m_Channels) {
         case 1: return GL_RED;
@@ -155,7 +155,7 @@ auto Image::CPUFormat() const -> GLenum
 }
 
 
-auto Image::GPUFormat() const -> GLint
+auto Image::gpu_format() const -> GLint
 {
     switch(m_Channels) {
         case 1: return GL_R8;
@@ -166,7 +166,7 @@ auto Image::GPUFormat() const -> GLint
     }
 }
 
-auto Image::CPUtoCGPUFormat(GLenum cpuformat) -> GLint
+auto Image::cpu_to_gpu_format(GLenum cpuformat) -> GLint
 {
     switch(cpuformat) {
         case GL_RED: return GL_R8;
@@ -177,7 +177,7 @@ auto Image::CPUtoCGPUFormat(GLenum cpuformat) -> GLint
     }
 }
 
-auto Image::GPUtoCPUFormat(GLint gpuformt) -> GLenum
+auto Image::gpu_to_cpu_format(GLint gpuformt) -> GLenum
 {
     switch(gpuformt) {
         case GL_R8: return GL_RED;
@@ -188,7 +188,7 @@ auto Image::GPUtoCPUFormat(GLint gpuformt) -> GLenum
     }
 }
 
-auto Image::ChannelFromCPUFormat(GLenum format) -> std::int32_t
+auto Image::channel_from_cpu_format(GLenum format) -> std::int32_t
 {
     switch(format) {
         case GL_R8: return 1;
@@ -199,7 +199,7 @@ auto Image::ChannelFromCPUFormat(GLenum format) -> std::int32_t
     }
 }
 
-auto Image::ChannelFromGPUFormat(GLint format) -> std::int32_t
+auto Image::channel_from_gpu_format(GLint format) -> std::int32_t
 {
     switch(format) {
         case GL_RED: return 1;

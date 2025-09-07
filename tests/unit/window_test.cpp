@@ -14,14 +14,14 @@ using CWindow_Test_Ctor1 = CWindow::Test<1>;
     MEMBER_VAR(m_OpenGl);\
     MEMBER_VAR(m_EventQueue);\
     \
-    MEMBER_FUN(Handle);\
-    MEMBER_FUN(Surface);\
-    MEMBER_FUN(Width);\
-    MEMBER_FUN(Height);\
+    MEMBER_FUN(handle);\
+    MEMBER_FUN(surface);\
+    MEMBER_FUN(width);\
+    MEMBER_FUN(height);\
     MEMBER_FUN(opengl);\
-    MEMBER_FUN(Visible);\
-    MEMBER_FUN(Show);\
-    MEMBER_FUN(Hide);\
+    MEMBER_FUN(visible);\
+    MEMBER_FUN(show);\
+    MEMBER_FUN(hide);\
 
 
 // template<>

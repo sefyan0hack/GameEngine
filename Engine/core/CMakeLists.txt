@@ -36,7 +36,6 @@ target_sources( core PUBLIC
         Event.hpp
         EventQueue.hpp
         Function.hpp
-        AutoRelease.hpp
         ResourceManager.hpp
         Keyboard.hpp
         Mouse.hpp

@@ -1,7 +1,6 @@
 #include "OpenGL.hpp"
 #include "Log.hpp"
 #include "OpenGL.hpp"
-#include "Buffer.hpp"
 #include "Shader.hpp"
 
 
@@ -22,7 +21,7 @@ constexpr auto to_string(GLenum type) -> const char*
 Shader::Shader()
 : m_Id(0), m_Type(0)
 {
-    Debug::Print(*this);
+    debug::print(*this);
 }
 
 Shader::Shader(const std::string& filename)
@@ -38,24 +37,25 @@ Shader::Shader(const std::string& filename)
     }
 
     m_Id = gl::CreateShader(m_Type);
-    auto src = PreProcess() + utils::file_to_str(filename.c_str());
+    auto src = pre_process() + utils::file_to_str(filename.c_str());
 
-    SetSource(src);
-    Compile();
-    CheckCompileStatus();
+    set_source(src);
+    compile();
+    check_compile_status();
 
-    Debug::Print(*this);
+    debug::print(*this);
 }
 Shader::Shader(const std::string& Src, GLenum type)
     : m_Id(gl::CreateShader(type))
     , m_Type(type)
 {
-    auto src = PreProcess() + Src;
+    auto src = pre_process() + Src;
 
-    SetSource(src);
-    Compile();
-    CheckCompileStatus();
-    Debug::Print(*this);
+    set_source(src);
+    compile();
+    check_compile_status();
+
+    debug::print(*this);
 }
 
 Shader::Shader(const cmrc::file& Src, GLenum type)
@@ -110,19 +110,19 @@ bool Shader::operator==(const Shader &other)
 //     gl::DeleteShader(m_Id);
 // }
 
-auto Shader::SetSource(const std::string& src) const -> void
+auto Shader::set_source(const std::string& src) const -> void
 {
     const auto ShaderSource = src.data();
     const auto size = static_cast<GLint>(src.size());
     gl::ShaderSource(m_Id, 1, &ShaderSource, &size);
 }
 
-auto Shader::PreProcess() -> std::string
+auto Shader::pre_process() -> std::string
 {
     auto result = std::string();
 
-    GLint m_Major = gl::GetInteger(GL_MAJOR_VERSION);
-    GLint m_Minor = gl::GetInteger(GL_MINOR_VERSION);
+    GLint m_Major = gl::get_integer(GL_MAJOR_VERSION);
+    GLint m_Minor = gl::get_integer(GL_MINOR_VERSION);
 
     auto glsl_verion = std::format("{}{}0", m_Major, m_Minor);
 
@@ -131,17 +131,17 @@ auto Shader::PreProcess() -> std::string
     return result;
 }
 
-auto Shader::Compile() -> void
+auto Shader::compile() -> void
 {
     gl::CompileShader(m_Id);
 }
 
-auto Shader::CheckCompileStatus() -> void
+auto Shader::check_compile_status() -> void
 {
-    auto success = GetShaderInfo(GL_COMPILE_STATUS);
+    auto success = get_shader_info(GL_COMPILE_STATUS);
 
     if (!success) {
-        auto infologlength = GetShaderInfo(GL_INFO_LOG_LENGTH);
+        auto infologlength = get_shader_info(GL_INFO_LOG_LENGTH);
 
         if(infologlength > 0){
             std::string infoLog(infologlength, '\0');
@@ -158,17 +158,17 @@ auto Shader::id() const -> GLuint
     return m_Id;
 }
 
-auto Shader::Type() const -> GLenum
+auto Shader::type() const -> GLenum
 {
     return m_Type;
 }
 
-auto Shader::TypeName() const -> const char*
+auto Shader::type_name() const -> const char*
 {
     return to_string(m_Type);
 }
 
-auto Shader::GetShaderInfo(GLenum what) const -> GLint
+auto Shader::get_shader_info(GLenum what) const -> GLint
 {
     constexpr auto INVALID = std::numeric_limits<GLint>::max();
 

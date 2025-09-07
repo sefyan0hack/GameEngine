@@ -21,26 +21,26 @@ public:
     Camera(Camera&& other) noexcept = default;
     auto operator=(Camera&& other) noexcept -> Camera& = default;
     
-    auto Move(const glm::vec3& delta) noexcept -> void ;
+    auto move(const glm::vec3& delta) noexcept -> void ;
 
-    auto SetFOV(float fov)                 -> void ;
-    auto SetAspectRatio(float aspect)      -> void ;
-    auto SetClipping(float nearValue, float farValue) -> void ; 
+    auto set_fov(float fov)                 -> void ;
+    auto set_aspect_ratio(float aspect)      -> void ;
+    auto set_clipping(float nearValue, float farValue) -> void ; 
 
-    auto ProcessMouseMovement(float xoffset, float yoffset) -> void ;
-    auto Perspective() const                -> glm::mat4 ;
-    auto Orthographic() const               -> glm::mat4 ;
+    auto process_mouse_movement(float xoffset, float yoffset) -> void ;
+    auto perspective() const                -> glm::mat4 ;
+    auto orthographic() const               -> glm::mat4 ;
   
-    auto Position() const                   -> glm::vec3 ;
-    auto Projection() const                 -> glm::mat4 ;
-    auto View() const                       -> glm::mat4 ;
+    auto position() const                   -> glm::vec3 ;
+    auto projection() const                 -> glm::mat4 ;
+    auto view() const                       -> glm::mat4 ;
 
-    auto Forward() const              -> glm::vec3 ;
-    auto Up() const                 -> glm::vec3 ;
-    auto Right() const              -> glm::vec3 ;
+    auto forward() const              -> glm::vec3 ;
+    auto up() const                 -> glm::vec3 ;
+    auto right() const              -> glm::vec3 ;
 
 private:
-    auto UpdateVectors()                    -> void ;
+    auto update_vectors()                    -> void ;
 public:
     constexpr static glm::vec3 WORLD_UP = { 0, 1, 0 };
     constexpr static float MAX_SAFE_PITCH = 89.0f;
@@ -74,6 +74,6 @@ struct std::formatter<Camera> {
   auto format(const Camera& obj, std::format_context& context) const {
     return std::format_to(context.out(),
     R"({{ "position": {}, "view": {} }})"
-    , obj.m_Position, obj.View());
+    , obj.m_Position, obj.view());
   }
 };

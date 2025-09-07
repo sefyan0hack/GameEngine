@@ -23,34 +23,34 @@ public:
     ShaderProgram(ShaderProgram&& other) noexcept;
     
     auto id() const noexcept -> GLuint ;
-    auto Use() const -> void ;
-    auto UniformCount() const                  -> GLint ;
-    auto AttribsCount() const                  -> GLint ;
-    auto UniformLocation(const char*) const -> GLuint;
-    auto AttribLocation(const char*) const -> GLuint;
-    auto Uniforms() const noexcept -> const std::map<std::string, GlslType>&;
-    auto Attribs() const noexcept -> const std::map<std::string, GlslType>&;
-    static auto Current_Program() -> GLuint;
-    static auto GlslType_to_string(GLenum type) -> const char*;
+    auto use() const -> void ;
+    auto uniform_count() const                  -> GLint ;
+    auto attribs_count() const                  -> GLint ;
+    auto uniform_location(const char*) const -> GLuint;
+    auto attrib_location(const char*) const -> GLuint;
+    auto uniforms() const noexcept -> const std::map<std::string, GlslType>&;
+    auto attribs() const noexcept -> const std::map<std::string, GlslType>&;
+    static auto current_program() -> GLuint;
+    static auto glsl_type_to_string(GLenum type) -> const char*;
 
     
-    auto SetUniform(const std::string &name, const GLuint &value) const -> void;
-    auto SetUniform(const std::string &name, const GLfloat &value) const -> void;
-    auto SetUniform(const std::string &name, const GLint &value) const -> void;
-    auto SetUniform(const std::string &name, const glm::vec2 &value) const -> void;
-    auto SetUniform(const std::string &name, const glm::vec3 &value) const -> void;
-    auto SetUniform(const std::string &name, const glm::vec4 &value) const -> void;
-    auto SetUniform(const std::string &name, const glm::mat2 &value) const -> void;
-    auto SetUniform(const std::string &name, const glm::mat3 &value) const -> void;
-    auto SetUniform(const std::string &name, const glm::mat4 &value) const -> void;
+    auto set_uniform(const std::string &name, const GLuint &value) const -> void;
+    auto set_uniform(const std::string &name, const GLfloat &value) const -> void;
+    auto set_uniform(const std::string &name, const GLint &value) const -> void;
+    auto set_uniform(const std::string &name, const glm::vec2 &value) const -> void;
+    auto set_uniform(const std::string &name, const glm::vec3 &value) const -> void;
+    auto set_uniform(const std::string &name, const glm::vec4 &value) const -> void;
+    auto set_uniform(const std::string &name, const glm::mat2 &value) const -> void;
+    auto set_uniform(const std::string &name, const glm::mat3 &value) const -> void;
+    auto set_uniform(const std::string &name, const glm::mat4 &value) const -> void;
 
 private:
-    auto GetProgramInfo(GLenum what) const -> GLint;
-    auto Link() const -> void;
-    auto UniformLocation_Prv(const char* name) const -> GLuint;
-    auto AttribLocation_Prv(const char* name) const -> GLuint;
-    auto DumpUniforms()                   -> void ;
-    auto DumpAttribs()                    -> void ;
+    auto get_program_info(GLenum what) const -> GLint;
+    auto link() const -> void;
+    auto uniform_location_prv(const char* name) const -> GLuint;
+    auto attrib_location_prv(const char* name) const -> GLuint;
+    auto dump_uniforms()                   -> void ;
+    auto dump_attribs()                    -> void ;
 
 private:
     GLuint m_Id;
@@ -72,7 +72,7 @@ struct std::formatter<ShaderProgram::GlslType> {
     auto [loc, type, size] = obj;
     return std::format_to(context.out(),
     R"({{ "loc": {}, "type": {}, "size": {} }})",
-    loc, ShaderProgram::GlslType_to_string(type), size);
+    loc, ShaderProgram::glsl_type_to_string(type), size);
   }
 };
 

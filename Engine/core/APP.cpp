@@ -30,89 +30,89 @@ APP::APP()
     , m_LastFrameTime(std::chrono::steady_clock::now())
     , m_SmoothedFPS(60.0f)
 { 
-    Window.Show();
-    Window.SetVSync(true);
+    Window.show();
+    Window.set_vsync(true);
 }
 
 APP::~APP()
 {
-    ClearEvents();
+    clear_events();
 }
 
-auto APP::Frame(float deltaTime) -> void
+auto APP::frame(float deltaTime) -> void
 {
     gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    Update(deltaTime);
-    Window.SwapBuffers();
-    Keyboard.SavePrevState();
-    Mouse.SavePrevState();
+    update(deltaTime);
+    Window.swap_buffers();
+    Keyboard.save_prev_state();
+    Mouse.save_prev_state();
 }
 
-auto APP::Render(const Scene& scene, std::shared_ptr<ShaderProgram> program) -> void
+auto APP::render(const Scene& scene, std::shared_ptr<ShaderProgram> program) -> void
 {
-    m_Renderer.Render(scene, program);
+    m_Renderer.render(scene, program);
 }
 
-auto APP::LoopBody(void* ctx) -> void
+auto APP::loop_body(void* ctx) -> void
 {
     auto app = static_cast<APP*>(ctx);
     auto& window = app->Window;
 
-    CWindow::ProcessMessages(&window);
+    CWindow::process_messages(&window);
 
     Event event;
-    while (app->PollEvent(event)) {
+    while (app->pull_event(event)) {
         std::visit(overloaded {
             [&app](const CWindow::QuitEvent&) {
                 #if defined(WINDOWS_PLT)
-                int32_t ret = MessageBoxA(app->Window.Handle(), "Close.", "Exit", MB_YESNO | MB_ICONWARNING);
+                int32_t ret = MessageBoxA(app->Window.handle(), "Close.", "Exit", MB_YESNO | MB_ICONWARNING);
                 if (ret == IDYES)
                 #elif defined(LINUX_PLT)
                 #endif
                 {
-                    app->Window.Close();
+                    app->Window.close();
                     app->m_Running = false;
                 }
             },
             [&app](const CWindow::ResizeEvent& e) {
                 app->Window.m_Width = e.width;
                 app->Window.m_Height = e.height;
-                app->m_Renderer.SetViewPort(0, 0, e.width, e.height);
+                app->m_Renderer.set_viewport(0, 0, e.width, e.height);
             },
             [&app](const CWindow::LoseFocusEvent&) {
-		        app->Keyboard.ClearState();
-		        app->Mouse.ClearState();
+		        app->Keyboard.clear_state();
+		        app->Mouse.clear_state();
 		        app->ApplicationEventQueue.clear();
             },
             [&app](const Keyboard::KeyDownEvent& e) {
-				app->Keyboard.OnKeyDown(e.key);
+				app->Keyboard.on_key_down(e.key);
             },
             [&app](const Keyboard::KeyUpEvent& e) {
-				app->Keyboard.OnKeyUp(e.key);
+				app->Keyboard.on_key_up(e.key);
             },
             [&app](const Mouse::ButtonDownEvent& e) {
-                app->Mouse.OnButtonDown(e.btn);
+                app->Mouse.on_button_down(e.btn);
             },
             [&app](const Mouse::ButtonUpEvent& e) {
-                app->Mouse.OnButtonUp(e.btn);
+                app->Mouse.on_button_up(e.btn);
             },
             [&app](const Mouse::EnterEvent&) {
-                app->Mouse.OnMouseEnter();
+                app->Mouse.on_mouse_enter();
             },
             [&app](const Mouse::LeaveEvent&) {
-                app->Mouse.OnMouseLeave();
+                app->Mouse.on_mouse_leave();
             },
             [&app](const Mouse::MoveEvent& e) {
-                app->Mouse.OnMouseMove(e.x, e.y);
+                app->Mouse.on_mouse_move(e.x, e.y);
             },
             [&app](const Mouse::MovementEvent& e) {
-                app->Mouse.OnRawDelta(e.dx, e.dy);
-                auto [dx, dy] = app->Mouse.GetRawDelta();
-                app->ViewCamera.ProcessMouseMovement(dx, -dy);
+                app->Mouse.on_rawdelta(e.dx, e.dy);
+                auto [dx, dy] = app->Mouse.get_rawdelta();
+                app->ViewCamera.process_mouse_movement(dx, -dy);
             },
             [](const auto& e) {
                 if( ::type_name<decltype(e)>() == "const std::monostate&") throw CException(" nnnnnn ");
-                Debug::Print("Unhandeled Event: {}", ::type_name<decltype(e)>()); 
+                debug::print("Unhandeled Event: {}", ::type_name<decltype(e)>()); 
             },
         }, event);
     }
@@ -125,14 +125,14 @@ auto APP::LoopBody(void* ctx) -> void
     app->m_SmoothedFPS = 0.9f * app->m_SmoothedFPS + 0.1f * app->m_Fps;
 
     // Wireframe Mode
-    if (app->Keyboard.IsPressed(Key::H)) {
+    if (app->Keyboard.is_pressed(Key::H)) {
         static bool flip = false;
     
         #if defined(WEB_PLT)
         static bool webPolyModeChecked = false;
         static bool webPolyModeAvailable = false;
         if (!webPolyModeChecked) {
-            webPolyModeAvailable = app->m_Renderer.opengl().HasExtension("WEBGL_polygon_mode");
+            webPolyModeAvailable = app->m_Renderer.opengl().has_extension("WEBGL_polygon_mode");
             webPolyModeChecked = true;
         }
         #endif
@@ -173,7 +173,7 @@ auto APP::LoopBody(void* ctx) -> void
 
     #if !defined(WEB_PLT)
         // Points Mode
-        if (app->Keyboard.IsPressed(Key::P)){
+        if (app->Keyboard.is_pressed(Key::P)){
             static bool flip = false;
             if(flip == false){
                 flip = !flip;
@@ -194,54 +194,52 @@ auto APP::LoopBody(void* ctx) -> void
     #endif
 
     // Fullscreen 
-    if(app->Keyboard.IsPressed(Key::F11)){
-        app->Window.ToggleFullScreen();
+    if(app->Keyboard.is_pressed(Key::F11)){
+        app->Window.toggle_fullscreen();
     }
 
     // Lock Mouse
-    if(app->Keyboard.IsPressed(Key::L) ){
+    if(app->Keyboard.is_pressed(Key::L) ){
         static bool on = false;
         if(!on){
-            app->Mouse.Lock(app->Window);
+            app->Mouse.lock(app->Window);
             on = true;
         }else{
-            app->Mouse.UnLock();
+            app->Mouse.unlock();
             on = false;
         }
     }
 
-    app->Frame(deltaTime);
+    app->frame(deltaTime);
     //todo: Frame Pacing
 }
 
-auto APP::Run() -> void
+auto APP::run() -> void
 {
-    // m_Renderer.SetViewPort(0, 0, Window.Width(), Window.Height());
-
     #if defined(WINDOWS_PLT) || defined(LINUX_PLT)
     while (m_Running) {
-        LoopBody(this);
+        loop_body(this);
     }
     #elif defined(WEB_PLT)
-    emscripten_set_main_loop_arg(LoopBody, this, 0, 1);
+    emscripten_set_main_loop_arg(loop_body, this, 0, 1);
     #endif
 }
 
-auto APP::Fps() const -> float
+auto APP::fps() const -> float
 {
     return m_Fps;
 }
-auto APP::SmoothedFPS() const -> float
+auto APP::smooth_fps() const -> float
 {
     return m_SmoothedFPS;
 }
 
-auto APP::DeltaTime() const -> float
+auto APP::deltatime() const -> float
 {
     return 1.0f/m_Fps;
 }
 
-bool APP::PollEvent(Event& event) { return ApplicationEventQueue.poll(event); }
-void APP::WaitEvent(Event& event) { ApplicationEventQueue.wait_and_poll(event); }
-void APP::ClearEvents() { ApplicationEventQueue.clear(); }
-auto APP::PushEvent(const Event& event) -> void { ApplicationEventQueue.push(event); }
+auto APP::push_event(const Event& event) -> void { ApplicationEventQueue.push(event); }
+bool APP::pull_event(Event& event) { return ApplicationEventQueue.poll(event); }
+void APP::wait_event(Event& event) { ApplicationEventQueue.wait_and_poll(event); }
+void APP::clear_events() { ApplicationEventQueue.clear(); }

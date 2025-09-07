@@ -10,44 +10,44 @@
 #endif
 
 
-auto Keyboard::IsDown(Key key) const noexcept -> bool
+auto Keyboard::is_down(Key key) const noexcept -> bool
 {
     return m_CurrKeyState[std::to_underlying(key)];
 }
-auto Keyboard::IsUp(Key key) const noexcept -> bool
+auto Keyboard::is_up(Key key) const noexcept -> bool
 {
     return !m_CurrKeyState[std::to_underlying(key)];
 }
 
-auto Keyboard::IsPressed(Key key) const noexcept -> bool
+auto Keyboard::is_pressed(Key key) const noexcept -> bool
 {
     const auto index = std::to_underlying(key);
     return m_CurrKeyState[index] && !m_PrevKeyState[index];
 }
 
-auto Keyboard::IsReleased(Key key) const noexcept -> bool
+auto Keyboard::is_released(Key key) const noexcept -> bool
 {
     const auto index = std::to_underlying(key);
     return !m_CurrKeyState[index] && m_PrevKeyState[index];
 }
 
-auto Keyboard::OnKeyDown(Key key) noexcept -> void
+auto Keyboard::on_key_down(Key key) noexcept -> void
 {
     const auto index = std::to_underlying(key);
     m_CurrKeyState[index] = true;
 }
 
-auto Keyboard::OnKeyUp(Key key) noexcept -> void
+auto Keyboard::on_key_up(Key key) noexcept -> void
 {
     const auto index = std::to_underlying(key);
     m_CurrKeyState[index] = false;
 }
 
-auto Keyboard::SavePrevState() noexcept -> void { 
+auto Keyboard::save_prev_state() noexcept -> void { 
     m_PrevKeyState = m_CurrKeyState;
 }
 
-auto Keyboard::ClearState() noexcept -> void
+auto Keyboard::clear_state() noexcept -> void
 {
 	m_CurrKeyState.reset();
 	m_PrevKeyState.reset();
@@ -55,12 +55,12 @@ auto Keyboard::ClearState() noexcept -> void
 
 /////////////////////////////////////////////////////////
 
-auto Keyboard::FromNative(uint32_t key) -> Key
+auto Keyboard::from_native(uint32_t key) -> Key
 {
     return KeyMaps[key];
 }
 
-auto Keyboard::ToNative(Key key) -> uint32_t
+auto Keyboard::to_native(Key key) -> uint32_t
 {
     switch (key) {
 
