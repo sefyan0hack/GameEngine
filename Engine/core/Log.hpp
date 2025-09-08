@@ -50,13 +50,13 @@ namespace debug {
 
   template <size_t N>
   inline auto print(const char (&str)[N]) -> void {
-    print("{}", static_cast<const char*>(str));
+    debug::print("{}", static_cast<const char*>(str));
   }
 
   template <typename T>
   inline auto print(T&& x) -> void
   {
-    print("{}", std::forward<T>(x));
+    debug::print("{}", std::forward<T>(x));
   }
 
 } // namespace debug
