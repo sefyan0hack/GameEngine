@@ -512,7 +512,7 @@ auto CWindow::touch_callback(int32_t eventType, const EmscriptenTouchEvent* e, v
 	double canvaswidth = 0.0;
     double canvasheight = 0.0;
 
-    emscripten_get_element_css_size(window->Surface(), &canvaswidth, &canvasheight);
+    emscripten_get_element_css_size(window->surface(), &canvaswidth, &canvasheight);
 
     for (int32_t i = 0; i <  e->numTouches; ++i) {
 		const auto& t = e->touches[i];
@@ -571,20 +571,20 @@ auto CWindow::touch_callback(int32_t eventType, const EmscriptenTouchEvent* e, v
 
 auto CWindow::register_event_callbacks() -> void
 {
-	emscripten_set_keypress_callback(m_Surface, this, EM_FALSE, &CWindow::KeyboardCallback);
-	emscripten_set_keydown_callback(m_Surface, this, EM_FALSE, &CWindow::KeyboardCallback);
-	emscripten_set_keyup_callback(m_Surface, this, EM_FALSE, &CWindow::KeyboardCallback);
+	emscripten_set_keypress_callback(m_Surface, this, EM_FALSE, &CWindow::keyboard_callback);
+	emscripten_set_keydown_callback(m_Surface, this, EM_FALSE, &CWindow::keyboard_callback);
+	emscripten_set_keyup_callback(m_Surface, this, EM_FALSE, &CWindow::keyboard_callback);
 
-	emscripten_set_mousedown_callback(m_Surface , this, EM_FALSE, &CWindow::MouseCallback);
-	emscripten_set_mouseup_callback(m_Surface    , this, EM_FALSE, &CWindow::MouseCallback);
-	emscripten_set_mousemove_callback(m_Surface  , this, EM_FALSE, &CWindow::MouseCallback);
-	emscripten_set_mouseenter_callback(m_Surface , this, EM_FALSE, &CWindow::MouseCallback);
-	emscripten_set_mouseleave_callback(m_Surface , this, EM_FALSE, &CWindow::MouseCallback);
+	emscripten_set_mousedown_callback(m_Surface , this, EM_FALSE, &CWindow::mouse_callback);
+	emscripten_set_mouseup_callback(m_Surface    , this, EM_FALSE, &CWindow::mouse_callback);
+	emscripten_set_mousemove_callback(m_Surface  , this, EM_FALSE, &CWindow::mouse_callback);
+	emscripten_set_mouseenter_callback(m_Surface , this, EM_FALSE, &CWindow::mouse_callback);
+	emscripten_set_mouseleave_callback(m_Surface , this, EM_FALSE, &CWindow::mouse_callback);
 
-	emscripten_set_touchstart_callback(m_Surface, this, EM_FALSE, &CWindow::TouchCallback);
-	emscripten_set_touchmove_callback(m_Surface, this, EM_FALSE, &CWindow::TouchCallback);
-	emscripten_set_touchend_callback(m_Surface, this, EM_FALSE, &CWindow::TouchCallback);
-	emscripten_set_touchcancel_callback(m_Surface, this, EM_FALSE, &CWindow::TouchCallback);
+	emscripten_set_touchstart_callback(m_Surface, this, EM_FALSE, &CWindow::touch_callback);
+	emscripten_set_touchmove_callback(m_Surface, this, EM_FALSE, &CWindow::touch_callback);
+	emscripten_set_touchend_callback(m_Surface, this, EM_FALSE, &CWindow::touch_callback);
+	emscripten_set_touchcancel_callback(m_Surface, this, EM_FALSE, &CWindow::touch_callback);
 
 	emscripten_set_focus_callback(m_Surface, this, EM_FALSE,
 		[](int32_t, const EmscriptenFocusEvent *, void* userData) -> EM_BOOL {
