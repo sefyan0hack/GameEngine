@@ -210,7 +210,7 @@ inline static constexpr auto type_parent() noexcept -> std::string_view
         return "";
 }
 
-/// @typedef Typeinfo holdes a hash and a name
+/// @brief Typeinfo holdes a hash and a name
 using TypeInfo = std::pair<std::size_t, std::string_view>;
 
 /**
