@@ -153,7 +153,6 @@ auto CWindow::set_title(std::string  title) -> void
 
 auto CWindow::set_vsync(bool state) -> void
 {
-
 	if(!glXSwapIntervalEXT) glXSwapIntervalEXT = reinterpret_cast<PFNGLXSWAPINTERVALEXTPROC>(glXGetProcAddress((const GLubyte*)"glXSwapIntervalEXT"));
 	glXSwapIntervalEXT(m_Surface, m_Handle, state);
 }

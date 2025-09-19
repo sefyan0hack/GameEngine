@@ -332,6 +332,10 @@ auto CWindow::register_event_callbacks() -> void
 	});
 }
 
+auto CWindow::process_messages([[maybe_unused]] CWindow* self) -> void
+{
+}
+
 auto CWindow::show() -> void
 {
 	// show using js
