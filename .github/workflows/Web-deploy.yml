@@ -27,7 +27,7 @@ jobs:
             mkdir -p site
             
             # Copy only essential files (js, html, wasm, data)
-            find build-web/ -maxdepth 1 -type f \( \
+            find build-web/ -type f \( \
               -name "*.js" \
               -o -name "*.html" \
               -o -name "*.wasm" \
