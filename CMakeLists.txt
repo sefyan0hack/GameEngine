@@ -95,7 +95,7 @@ if(EMSCRIPTEN)
         -sUSE_WEBGL2=1
         -sMIN_WEBGL_VERSION=1
         -sMAX_WEBGL_VERSION=2
-        # -sALLOW_MEMORY_GROWTH=1 # -pthread + ALLOW_MEMORY_GROWTH may run non-wasm code slowly
+        -sALLOW_MEMORY_GROWTH=1 # -pthread + ALLOW_MEMORY_GROWTH may run non-wasm code slowly
         -sFULL_ES3=1
         -sDISABLE_EXCEPTION_THROWING=0
         -sDISABLE_EXCEPTION_CATCHING=0
