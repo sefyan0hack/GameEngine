@@ -62,6 +62,7 @@ public:
             }
         }
         MainScene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), ResManager["CubeMattSand"], ResManager["manMesh"]);
+        MainScene << GameObject(Transform({2, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), ResManager["CubeMattkimberley"], ResManager["manMesh"]);
 
         MainScene.set_skybox(ResManager["forest.jpg"]);
         debug::print("Window title: {}", Window.get_title());
