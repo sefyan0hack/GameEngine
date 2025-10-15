@@ -73,7 +73,7 @@ inline constexpr auto gl_err_to_string(GLenum glError) -> const char*
     }
 }
 
-#define GLFUNCS_COMMON(X)\
+#define GLFUNCS_COMMON\
     X(ClearColor);\
     X(Viewport);\
     X(GenVertexArrays);\
@@ -176,10 +176,10 @@ inline constexpr auto gl_err_to_string(GLenum glError) -> const char*
 
 #if defined(WEB_PLT)
   // web (or ES-only) build
-  #define GLFUNCS(X) GLFUNCS_COMMON(X)
+  #define GLFUNCS GLFUNCS_COMMON
 #else
   // desktop GL
-  #define GLFUNCS(X) GLFUNCS_COMMON(X)\
+  #define GLFUNCS GLFUNCS_COMMON\
     X(PolygonMode);\
     X(PointSize);\
     X(GetProgramResourceiv);\

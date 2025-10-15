@@ -11,8 +11,8 @@ namespace gl {
     inline static auto OPENGL_FUNCTIONS_NAME = [](){
         static std::vector<const char*> r;
 
-        #define APPEND_OPENGL_FUNCTIONS(name) r.push_back("gl"#name)
-        GLFUNCS(APPEND_OPENGL_FUNCTIONS)
+        #define X(name) r.push_back("gl"#name)
+        GLFUNCS
 
         return r;
     }();
@@ -85,31 +85,33 @@ class OpenGL
         inline static GLint m_MaxTextureCubeMapSize{};
 
     public:
-        #undef GLFUN
+        #undef X
         #ifdef ROBUST_GL_CHECK
-        #   define GLFUN(name)\
+        #   define X(name)\
             inline static Function<decltype(&gl##name)> name
         #else
-        #   define GLFUN(name)\
+        #   define X(name)\
             inline static decltype(&gl##name) name = Function<decltype(&gl##name)>::default_
         #endif
-        GLFUNCS(GLFUN)
+
+        GLFUNCS
 
         FOR_TEST
 };
 
-#undef GLFUN
+auto get_integer(GLenum name) -> GLint;
+auto get_boolean(GLenum name) -> GLboolean;
+
+
+#undef X
 #ifdef ROBUST_GL_CHECK
-#   define GLFUN(name)\
+#   define X(name)\
 inline Function<decltype(&gl##name)>& name = OpenGL::name
 #else
-#   define GLFUN(name)\
+#   define X(name)\
 inline decltype(&gl##name)& name = OpenGL::name
 #endif
 
-GLFUNCS(GLFUN)
-
-auto get_integer(GLenum name) -> GLint;
-auto get_boolean(GLenum name) -> GLboolean;
+GLFUNCS
 
 } //namespace g

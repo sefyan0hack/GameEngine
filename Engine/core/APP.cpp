@@ -62,7 +62,7 @@ auto APP::loop_body(void* ctx) -> void
 
     Event event;
     while (app->pull_event(event)) {
-        std::visit(overloaded {
+        utils::match(event,
             [&app](const CWindow::QuitEvent&) {
                 #if defined(WINDOWS_PLT)
                 int32_t ret = MessageBoxA(app->Window.handle(), "Close.", "Exit", MB_YESNO | MB_ICONWARNING);
@@ -113,8 +113,8 @@ auto APP::loop_body(void* ctx) -> void
             [](const auto& e) {
                 if( ::type_name<decltype(e)>() == "const std::monostate&") throw CException(" nnnnnn ");
                 debug::print("Unhandeled Event: {}", ::type_name<decltype(e)>()); 
-            },
-        }, event);
+            }
+        );
     }
 
     auto now = std::chrono::steady_clock::now();

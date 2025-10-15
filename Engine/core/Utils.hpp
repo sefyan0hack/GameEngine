@@ -578,4 +578,14 @@ inline auto get_proc_address([[maybe_unused]] const char* module, const char* na
     return address;
 }
 
+template<Variant TVarinat, class... TMatchers>
+    requires(sizeof...(TMatchers) >= 1 )
+auto match(TVarinat&& v, TMatchers&&... m) -> decltype(auto)
+{
+    return std::visit(
+        overloaded {std::forward<TMatchers>(m)...},
+        std::forward<TVarinat>(v)
+    );
+}
+
 }// namespaceutils

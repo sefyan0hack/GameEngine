@@ -343,8 +343,9 @@ auto CWindow::get_title() -> std::string
     title.resize(len + 1); // room for null
 
     // GetWindowText returns number of characters copied (excluding null)
-    if (GetWindowText(m_Handle, &title[0], static_cast<int>(title.size())) > 0)
+    if (GetWindowText(m_Handle, &title[0], static_cast<int>(title.size())) > 0){
         title.resize(len); // remove the extra null char
+	}
 
 	return title;
 }

@@ -189,18 +189,19 @@ OpenGL::OpenGL([[maybe_unused]] H_WIN window, H_SRF surface)
     }
     #endif
 
+    #undef X
     #ifdef ROBUST_GL_CHECK
-    #   define RESOLVEGL(name)\
+    #   define X(name)\
         OpenGL::name = Function<decltype(&gl##name)>{};\
         OpenGL::name.m_Func  = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name));\
         OpenGL::name.m_After = After_Func;\
         OpenGL::name.m_Name  = "gl"#name
     #else
-    #   define RESOLVEGL(name)\
+    #   define X(name)\
         OpenGL::name = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name))
     #endif
 
-	GLFUNCS(RESOLVEGL)
+	GLFUNCS
 
     m_Major = get_integer(GL_MAJOR_VERSION);
     m_Minor = get_integer(GL_MINOR_VERSION);
@@ -580,7 +581,7 @@ auto gl::OpenGL::dummy_ctx() -> GLCTX
         OpenGL::name = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name))
     #endif
 
-	GLFUNCS(RESOLVEGL)
+	GLFUNCS
 
     return dummy_context;
 }
