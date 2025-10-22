@@ -68,7 +68,7 @@ public:
         debug::print("Window title: {}", Window.get_title());
     }
 public:
-    /// @brief Run every frame at 1/delta fps
+    /// @brief Run every frame at 1/delta fps 
     /// @param delta  inverse of fps how mush time took a frame to Render
     auto update(float delta) -> void override {
         float speed = Keyboard.is_down(Key::LeftShift)? 10.0f : 5.0f;
