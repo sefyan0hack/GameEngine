@@ -3,6 +3,8 @@
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>
+#undef near
+#undef far
 #elif defined(LINUX_PLT)
 #include <X11/Xlib.h>
 #elif defined(WEB_PLT)
@@ -94,5 +96,5 @@ class CWindow
         bool m_Visible, m_FullScreen;
         EventQueue& m_EventQueue;
 
-        FOR_TEST
+        
 };

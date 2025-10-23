@@ -23,7 +23,7 @@ public:
     glm::vec3 rotation;
     glm::vec3 scale;
     
-    FOR_TEST
+    
 };
 
 // custom Transform Format

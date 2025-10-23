@@ -2,16 +2,7 @@
 #include <memory>
 #include <random>
 
-#include <core/Mesh.hpp>
-#include <core/ResourceManager.hpp>
-#include <core/APP.hpp>
-#include <core/GameObject.hpp>
-#include <core/Texture.hpp>
-#include <core/Shader.hpp>
-#include <core/ShaderProgram.hpp>
-#include <core/Material.hpp>
-#include <core/Scene.hpp>
-#include <core/Log.hpp>
+#include <core/core.hpp>
 
 #include <cmrc/cmrc.hpp>
 CMRC_DECLARE(res);
