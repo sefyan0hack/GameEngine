@@ -22,6 +22,11 @@ auto Scene::add(GameObject&& entity) -> void
     m_Entities.back().material()->set_texture("uSkyboxMap", m_SkyBox->texture());
 }
 
+auto Scene::add(Camera&& cam) -> void
+{
+    m_Cameras.push_back(std::move(cam));
+}
+
 auto Scene::entities() const -> std::span<const GameObject>
 {
     return m_Entities;
@@ -47,6 +52,12 @@ auto Scene::clear() -> void
 auto operator<<(Scene& scene, GameObject&& entity)-> Scene&
 {
     scene.add(std::move(entity));
+    return scene;
+}
+
+auto operator<<(Scene& scene, Camera&& cam)-> Scene&
+{
+    scene.add(std::move(cam));
     return scene;
 }
 

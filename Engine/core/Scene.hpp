@@ -17,6 +17,7 @@ public:
     Scene(class Camera& camera);
     ~Scene();
     auto add(GameObject&& entity) -> void;
+    auto add(Camera&& cam) -> void;
     auto entities() const -> std::span<const GameObject>;
     auto set_skybox(const std::string& BasePathName) -> void;
     auto set_skybox(std::shared_ptr<class TextureCubeMap> texture) -> void;
@@ -28,11 +29,13 @@ private:
     class Camera& m_Camera;
     std::unique_ptr<class SkyBox> m_SkyBox;
     std::vector<GameObject> m_Entities;
+    std::vector<Camera> m_Cameras;
 
-    
 };
 
 auto operator<<(Scene& scene, GameObject&& entity) -> Scene&;
+
+auto operator<<(Scene& scene, Camera&& entity) -> Scene&;
 
 // custom Mesh Format
 template<>
