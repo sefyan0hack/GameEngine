@@ -1,6 +1,7 @@
 #pragma once
 
 #include <format>
+#include <utility>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -32,8 +33,7 @@ public:
     auto orthographic() const               -> glm::mat4 ;
   
     auto fov() const          -> float ;
-    auto near() const         -> float ;
-    auto far() const          -> float ;
+    auto clipping() const     -> std::pair<float, float> ;
     auto aspect_ratio() const -> float ;
 
     auto position() const     -> glm::vec3 ;

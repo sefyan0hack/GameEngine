@@ -5,6 +5,8 @@
 using namespace std;
 using namespace glm;
 
+inline auto rnd = testing::internal::Random(static_cast<uint32_t>(std::time(nullptr)));
+
 TEST(move, MoveCameraByOffset) {
     auto cam = Camera();
     auto offset = vec3(2,2,2);
@@ -22,11 +24,31 @@ TEST(move, MoveCameraByOffset) {
 TEST(set_fov, SettingFovValue) {
     auto cam = Camera();
 
-    auto rnd = testing::internal::Random(std::time(nullptr));
     auto expeced_fov = rnd.Generate(100);
     cam.set_fov(expeced_fov);
 
     auto new_fov = cam.fov();
 
     EXPECT_EQ(new_fov, expeced_fov);
+}
+
+TEST(clipping, SettingClippingValue) {
+    auto cam = Camera();
+
+    auto expeced_clipping = std::make_pair<float, float>(rnd.Generate(2), rnd.Generate(1000));
+    cam.set_clipping(expeced_clipping.first, expeced_clipping.second);
+
+    auto new_clipping = cam.clipping();
+
+    EXPECT_EQ(new_clipping, expeced_clipping);
+}
+TEST(aspect_ratio, SettingAspectRatioValue) {
+    auto cam = Camera();
+
+    auto expeced_aspect_ratio = rnd.Generate(100);
+    cam.set_aspect_ratio(expeced_aspect_ratio);
+
+    auto new_aspect_ratio = cam.aspect_ratio();
+
+    EXPECT_EQ(new_aspect_ratio, expeced_aspect_ratio);
 }

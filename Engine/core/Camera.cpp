@@ -105,8 +105,7 @@ auto Camera::set_clipping(float nearValue, float farValue) -> void { m_Near = ne
 
 
 auto Camera::fov() const          -> float { return m_FOV; }
-auto Camera::near() const         -> float { return m_Near; }
-auto Camera::far() const          -> float { return m_Far; }
+auto Camera::clipping() const     -> std::pair<float, float> { return {m_Near, m_Far}; }
 auto Camera::aspect_ratio() const -> float { return m_AspectRatio; }
 
 auto Camera::position() const -> glm::vec3 { return m_Position; }
