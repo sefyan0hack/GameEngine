@@ -12,7 +12,7 @@
 
 Scene::~Scene() {}
 
-Scene::Scene(const Camera& camera)
+Scene::Scene(Camera& camera)
     : m_Camera(camera)
     , m_SkyBox(std::make_unique<SkyBox>()) {}
 
@@ -63,4 +63,9 @@ auto Scene::render_sky() const -> void{
     gl::DrawArrays(GL_TRIANGLES, 0, m_SkyBox->mesh()->vextex_size());
 
     gl::DepthFunc(GL_LESS);
+}
+
+auto Scene::main_camera() -> Camera&
+{
+    return m_Camera;
 }

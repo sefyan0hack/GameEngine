@@ -31,13 +31,18 @@ public:
     auto perspective() const                -> glm::mat4 ;
     auto orthographic() const               -> glm::mat4 ;
   
-    auto position() const                   -> glm::vec3 ;
-    auto projection() const                 -> glm::mat4 ;
-    auto view() const                       -> glm::mat4 ;
+    auto fov() const          -> float ;
+    auto near() const         -> float ;
+    auto far() const          -> float ;
+    auto aspect_ratio() const -> float ;
 
-    auto forward() const              -> glm::vec3 ;
-    auto up() const                 -> glm::vec3 ;
-    auto right() const              -> glm::vec3 ;
+    auto position() const     -> glm::vec3 ;
+    auto projection() const   -> glm::mat4 ;
+    auto view() const         -> glm::mat4 ;
+
+    auto forward() const      -> glm::vec3 ;
+    auto up() const           -> glm::vec3 ;
+    auto right() const        -> glm::vec3 ;
 
 private:
     auto update_vectors()                    -> void ;
@@ -62,7 +67,7 @@ private:
     glm::mat4 m_Projection;
     glm::mat4 m_View;
 
-    FOR_TEST
+    
 };
 
 // custom Camera Format

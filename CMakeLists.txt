@@ -31,7 +31,7 @@ string(REGEX MATCH "^[0-9]+" COMPILER_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSIO
 ####################################################################################################
 include(CMakeDependentOption)
 
-option(TESTS                "Tests"               OFF)
+option(TESTS                "Tests"               ON)
 option(DOCS                 "Docs"                OFF)
 option(ENABLE_COVERAGE      "Code coverage"       OFF)
 option(HARDEN               "Hardening"           OFF)

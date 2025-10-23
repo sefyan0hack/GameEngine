@@ -9,9 +9,13 @@
 #include <type_traits>
 #include <string_view>
 #include <utility>
+#include <cstdlib>
+#include <memory>
+#include <string>
 
-/// @brief Add sub class needed for testing to access non public members
-#define FOR_TEST public: template<uint16_t n> struct Test;
+#if defined(CLANG_CPL) && !defined(WINDOWS_PLT) || defined(GNU_CPL)
+#include <cxxabi.h>
+#endif
 
 /**
  * @brief  Concept that tests whether a non-type template parameter names a free/static object
@@ -34,49 +38,6 @@
  */
 template<auto var>
 concept is_static = std::is_object_v<std::remove_pointer_t<decltype(var)>> && !std::is_member_object_pointer_v<decltype(var)>;
-
-#ifndef MEMBER_VAR
-/*!
-  \def MEMBER_VAR(Var)
-  declare member variable \a Var in interface to test need it as a hack
-*/
-#define MEMBER_VAR(Var) \
-    const std::remove_reference_t<decltype(member.Var)>& Var = [&]() -> const std::remove_reference_t<decltype(member.Var)>& { \
-        using class_type = std::remove_cvref_t<decltype(member)>; \
-        if constexpr (is_static<&class_type::Var>) { \
-            static const auto& ref = member.Var; \
-            return ref; \
-        } else { \
-            return member.Var; \
-        } \
-    }()
-#endif
-
-#ifndef MEMBER_FUN
-/*!
-  \def MEMBER_FUN(Name)
-  declare member function \a Name in interface to test need it as a hack
-*/
-#   define MEMBER_FUN(Name) auto Name(auto&&... args) { return member.Name(std::forward<decltype(args)>(args)...); }
-#endif
-
-#ifndef MEMBER_OPCAST
-/*!
-  \def MEMBER_OPCAST(Type)
-  declare cast operator of Type \a Type in interface to test need it as a hack
-*/
-#   define MEMBER_OPCAST(Type) operator Type() const noexcept { return member.operator Type(); }
-#endif
-
-
-#if defined(CLANG_CPL) && !defined(WINDOWS_PLT) || defined(GNU_CPL)
-#include <cxxabi.h>
-#endif
-
-#include <cstdlib>
-#include <memory>
-#include <string>
-
 
 /** 
  * @brief demangle c++ symbole   only for clang/linux and gcc/(win32, linux)

@@ -56,7 +56,7 @@ private:
 
     std::unordered_map<std::string_view, std::shared_ptr<void>> m_Resources;
 
-    FOR_TEST
+    
 };
 
 inline static ResourceManager& ResManager = ResourceManager::get_instance();

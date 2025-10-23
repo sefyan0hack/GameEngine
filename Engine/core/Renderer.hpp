@@ -25,5 +25,5 @@ private:
     const gl::OpenGL m_OpenGl;
     const class Camera& m_Camera;
 
-    FOR_TEST
+    
 };

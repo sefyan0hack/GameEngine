@@ -35,7 +35,7 @@ private:
     std::string m_Name;
     inline static std::size_t Count = 1;
 
-    FOR_TEST
+    
 };
 
 // custom GameObject Format

@@ -96,7 +96,7 @@ class OpenGL
 
         GLFUNCS
 
-        FOR_TEST
+        
 };
 
 auto get_integer(GLenum name) -> GLint;

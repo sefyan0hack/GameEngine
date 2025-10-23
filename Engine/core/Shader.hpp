@@ -40,7 +40,7 @@ class Shader
     GLuint m_Id;
     GLenum m_Type;
 
-    FOR_TEST
+    
 };
 
 // custom Shader Format

@@ -58,7 +58,7 @@ auto Camera::orthographic() const -> glm::mat4
 
 auto Camera::move(const glm::vec3 &delta) noexcept -> void
 { 
-    m_Position 
+    m_Position
         += m_Right * delta.x
         + m_Up    * delta.y
         + m_Forward * delta.z;
@@ -102,6 +102,12 @@ auto Camera::process_mouse_movement(float xoffset, float yoffset) -> void
 auto Camera::set_fov(float fov) -> void { m_FOV = fov; }
 auto Camera::set_aspect_ratio(float aspect) -> void { m_AspectRatio = aspect; }
 auto Camera::set_clipping(float nearValue, float farValue) -> void { m_Near = nearValue; m_Far = farValue; }
+
+
+auto Camera::fov() const          -> float { return m_FOV; }
+auto Camera::near() const         -> float { return m_Near; }
+auto Camera::far() const          -> float { return m_Far; }
+auto Camera::aspect_ratio() const -> float { return m_AspectRatio; }
 
 auto Camera::position() const -> glm::vec3 { return m_Position; }
 auto Camera::forward() const -> glm::vec3 { return m_Forward; }

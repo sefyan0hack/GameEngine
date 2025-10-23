@@ -28,7 +28,7 @@ protected:
     GLenum m_Type;
     GLint m_TextureUnit;
     inline static GLint m_TextureUnitCount = 0;
-    FOR_TEST
+    
 };
 
 class Texture2D final : public Texture

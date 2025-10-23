@@ -64,7 +64,7 @@ private:
     std::size_t m_CallCount;
     inline static std::size_t m_Count = 0;
 
-    FOR_TEST
+    
 };
 
 // impl

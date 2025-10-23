@@ -4,7 +4,7 @@
 #define GL_GLEXT_PROTOTYPES
 
 #if defined(WINDOWS_PLT)
-#include <windows.h>
+
 #include <GL/gl.h>
 #include <glext.h>
 #include <wglext.h>

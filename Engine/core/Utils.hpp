@@ -18,6 +18,8 @@
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>
+#undef near
+#undef far
 #elif defined(LINUX_PLT)
 #include <dlfcn.h>
 #elif defined(WEB_PLT)

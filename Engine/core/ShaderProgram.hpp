@@ -58,7 +58,7 @@ private:
     std::map<std::string, GlslType> m_Attribs;
     std::map<std::string, GlslType> m_Uniforms;
 
-    FOR_TEST
+    
 
 };
 

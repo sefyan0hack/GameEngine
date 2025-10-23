@@ -2,6 +2,8 @@
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>
+#undef near
+#undef far
 #elif defined(WEB_PLT)
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>

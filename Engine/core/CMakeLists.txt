@@ -28,6 +28,7 @@ target_sources( core PUBLIC
     FILE_SET HEADERS
       TYPE HEADERS
       FILES
+        core.hpp
         Platform.hpp
         Log.hpp
         Utils.hpp

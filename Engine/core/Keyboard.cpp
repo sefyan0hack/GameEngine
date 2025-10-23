@@ -3,6 +3,8 @@
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>
+#undef near
+#undef far
 #elif defined(LINUX_PLT)
 #include <X11/keysym.h>
 #elif defined(WEB_PLT)

@@ -7,6 +7,8 @@
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>
+#undef near
+#undef far
 #elif defined(LINUX_PLT)
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>

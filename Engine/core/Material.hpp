@@ -34,5 +34,5 @@ public:
 private:
     std::map<std::string, std::shared_ptr<class Texture>> m_Textuers;
 
-    FOR_TEST
+    
 };

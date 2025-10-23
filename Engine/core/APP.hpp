@@ -50,5 +50,5 @@ private:
     EventQueue ApplicationEventQueue;
     std::chrono::steady_clock::time_point m_LastFrameTime;
     float m_Fps, m_SmoothedFPS;
-    FOR_TEST
+    
 };
