@@ -1,6 +1,6 @@
-#include <core/GameObject.hpp>
 #include <core/Log.hpp>
-#include <core/Camera.hpp>
+#include "Camera.hpp"
+#include "GameObject.hpp"
 #include "SkyBox.hpp"
 #include "Scene.hpp"
 #include "Texture.hpp"

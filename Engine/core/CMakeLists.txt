@@ -5,10 +5,7 @@ add_library(core)
 
 target_sources( core PRIVATE
     Window.cpp
-    Transform.cpp
-    Camera.cpp
     APP.cpp
-    GameObject.cpp
     ResourceManager.cpp
 )
 
@@ -26,10 +23,7 @@ target_sources( core PUBLIC
         Function.hpp
         ResourceManager.hpp
         Window.hpp
-        Transform.hpp
-        Camera.hpp
         APP.hpp
-        GameObject.hpp
         ResourceManager.hpp
 )
 

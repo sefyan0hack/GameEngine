@@ -14,6 +14,9 @@ target_sources( graphics PRIVATE
     Material.cpp
     SkyBox.cpp
     Image.cpp
+    Transform.cpp
+    Camera.cpp
+    GameObject.cpp
 )
 
 target_sources( graphics PUBLIC
@@ -31,6 +34,9 @@ target_sources( graphics PUBLIC
         Material.hpp
         Image.hpp
         SkyBox.hpp
+        Transform.hpp
+        Camera.hpp
+        GameObject.hpp
 
 )
 

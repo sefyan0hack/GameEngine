@@ -1,12 +1,12 @@
 #include <gtest/gtest.h>
 #include <core/fmts.hpp>
-#include <core/Transform.hpp>
+#include <graphics/Transform.hpp>
 #include <graphics/OpenGL.hpp>
 #include <graphics/Mesh.hpp>
 #include <graphics/Shader.hpp>
 #include <graphics/Material.hpp>
-#include <core/Camera.hpp>
-#include <core/GameObject.hpp>
+#include <graphics/GameObject.hpp>
+#include <graphics/Camera.hpp>
 #include <core/Log.hpp>
 #include <format>
 #include <iostream>

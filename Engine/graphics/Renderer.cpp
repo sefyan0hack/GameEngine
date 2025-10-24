@@ -1,8 +1,8 @@
 #include <core/Log.hpp>
-#include <core/Camera.hpp>
-#include <core/GameObject.hpp>
 #include <core/ResourceManager.hpp>
 #include <core/Window.hpp>
+#include "Camera.hpp"
+#include "GameObject.hpp"
 #include "SkyBox.hpp"
 #include "OpenGL.hpp"
 #include "Renderer.hpp"

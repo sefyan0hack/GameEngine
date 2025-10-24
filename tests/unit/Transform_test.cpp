@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <core/Transform.hpp>
+#include <graphics/Transform.hpp>
 
 using namespace std;
 using namespace glm;

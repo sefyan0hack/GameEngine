@@ -1,7 +1,7 @@
+#include <core/Log.hpp>
 #include "GameObject.hpp"
-#include <graphics/Material.hpp>
-#include <graphics/Mesh.hpp>
-#include "Log.hpp"
+#include "Material.hpp"
+#include "Mesh.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>

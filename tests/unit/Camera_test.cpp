@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <ctime>
-#include <core/Camera.hpp>
+#include <graphics/Camera.hpp>
 
 using namespace std;
 using namespace glm;

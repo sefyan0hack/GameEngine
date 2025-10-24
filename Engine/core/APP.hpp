@@ -4,7 +4,7 @@
 #include <chrono>
 
 #include "Window.hpp"
-#include "Camera.hpp"
+#include <graphics/Camera.hpp>
 #include <input/Keyboard.hpp>
 #include <input/Mouse.hpp>
 #include "EventQueue.hpp"
