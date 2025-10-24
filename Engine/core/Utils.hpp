@@ -285,7 +285,7 @@ constexpr std::array<char, sizeof(Str.value)> ToUpper<Str>::value;
  * @param filename Path to the file to read.
  * @return std::future<std::vector<char>> A future that will contain the file bytes.
  *
- * @throws CException if the file cannot be opened or is larger than vector capacity.
+ * @throws Exception if the file cannot be opened or is larger than vector capacity.
  *
  * @details
  * The file is opened in binary mode and read into a contiguous vector<char>.
@@ -296,13 +296,13 @@ inline std::future<std::vector<char>> load_file_async(const std::string& filenam
     return async(launch::async, [filename]() -> vector<char> {
         ifstream file(filename, ios::binary | ios::ate);
         if (!file)
-            throw CException("Cant open file {}", filename);
+            throw Exception("Cant open file {}", filename);
 
         streamsize size = static_cast<std::streamsize>(file.tellg());
         file.seekg(0, ios::beg);
  
         if (static_cast<std::size_t>(size) > vector<char>().max_size()){
-            throw CException("file too big {}", size);
+            throw Exception("file too big {}", size);
         }
 
         vector<char> buffer(static_cast<std::size_t>(size));
@@ -391,7 +391,7 @@ std::string to_string(const std::vector<T>& vec) {
  * @param path File system path to the file.
  * @return std::string The file contents.
  *
- * @throws CException If the file cannot be opened. The exception includes
+ * @throws Exception If the file cannot be opened. The exception includes
  *                    strerror(errno) for diagnostic purposes.
  */
 inline auto file_to_str(const char* path) -> std::string
@@ -399,7 +399,7 @@ inline auto file_to_str(const char* path) -> std::string
     std::ifstream file(path, std::ios::binary);
 
     if (!file){ 
-        throw CException("Couldnt open file [{}] : {}", path, std::strerror(errno) );
+        throw Exception("Couldnt open file [{}] : {}", path, std::strerror(errno) );
     }else{
         auto it = std::istreambuf_iterator<char>(file);
         auto end = std::istreambuf_iterator<char>();
@@ -539,7 +539,7 @@ auto pointer_to_string(Pointer auto ptr) -> std::string
  * @param name Name of the symbol/function to resolve.
  * @return void* Address of the resolved symbol.
  *
- * @throws CException if the module cannot be loaded or the symbol cannot be resolved.
+ * @throws Exception if the module cannot be loaded or the symbol cannot be resolved.
  *
  * @details
  * - On Windows, attempts GetModuleHandleA(module) then LoadLibraryA(module) if needed,
@@ -547,7 +547,7 @@ auto pointer_to_string(Pointer auto ptr) -> std::string
  * - On Linux, attempts dlopen(module, RTLD_LAZY | RTLD_NOLOAD) and resolves with dlsym.
  * - On Web (Emscripten), uses emscripten_webgl_get_proc_address.
  *
- * The function throws a CException describing the failure reason if the module
+ * The function throws a Exception describing the failure reason if the module
  * cannot be loaded or the symbol cannot be found.
  */
 inline auto get_proc_address([[maybe_unused]] const char* module, const char* name) -> void* {
@@ -574,7 +574,7 @@ inline auto get_proc_address([[maybe_unused]] const char* module, const char* na
     #endif
 
     if(lib == nullptr){
-        throw CException("Couldn't load lib {} reason: {}, fn name: {}", module, failreson, name);
+        throw Exception("Couldn't load lib {} reason: {}, fn name: {}", module, failreson, name);
     }
 
     return address;

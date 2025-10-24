@@ -20,7 +20,7 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
 	auto Surface = XOpenDisplay(nullptr);
 
     if (!Surface) {
-		throw CException("Failed to open X display connection.");
+		throw Exception("Failed to open X display connection.");
 	}
     int32_t screen = DefaultScreen(Surface);
 

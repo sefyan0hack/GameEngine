@@ -150,7 +150,7 @@ auto Image::cpu_format() const -> GLenum
         case 2: return GL_RG;
         case 3: return GL_RGB;
         case 4: return GL_RGBA;
-        default: throw CException("Unsupported channel count: {}", m_Channels);
+        default: throw Exception("Unsupported channel count: {}", m_Channels);
     }
 }
 
@@ -162,7 +162,7 @@ auto Image::gpu_format() const -> GLint
         case 2: return GL_RG8;
         case 3: return GL_RGB8;
         case 4: return GL_RGBA8;
-        default: throw CException("Unsupported channel count: {}", m_Channels);
+        default: throw Exception("Unsupported channel count: {}", m_Channels);
     }
 }
 
@@ -173,7 +173,7 @@ auto Image::cpu_to_gpu_format(GLenum cpuformat) -> GLint
         case GL_RG: return GL_RG8;
         case GL_RGB: return GL_RGB8;
         case GL_RGBA: return GL_RGBA8;
-        default: throw CException("Unsupported Fromat: {:X}", cpuformat);
+        default: throw Exception("Unsupported Fromat: {:X}", cpuformat);
     }
 }
 
@@ -184,7 +184,7 @@ auto Image::gpu_to_cpu_format(GLint gpuformt) -> GLenum
         case GL_RG8: return GL_RG;
         case GL_RGB8: return GL_RGB;
         case GL_RGBA8: return GL_RGBA;
-        default: throw CException("Unsupported Fromat: {:X}", gpuformt);
+        default: throw Exception("Unsupported Fromat: {:X}", gpuformt);
     }
 }
 
@@ -195,7 +195,7 @@ auto Image::channel_from_cpu_format(GLenum format) -> std::int32_t
         case GL_RG8: return 2;
         case GL_RGB8: return 3;
         case GL_RGBA8: return 4;
-        default: throw CException("Unsupported Fromat: {:X}", format);
+        default: throw Exception("Unsupported Fromat: {:X}", format);
     }
 }
 
@@ -206,6 +206,6 @@ auto Image::channel_from_gpu_format(GLint format) -> std::int32_t
         case GL_RG: return 2;
         case GL_RGB: return 3;
         case GL_RGBA: return 4;
-        default: throw CException("Unsupported Fromat: {:X}", format);
+        default: throw Exception("Unsupported Fromat: {:X}", format);
     }
 }

@@ -11,7 +11,7 @@ inline static auto After_Func = []([[maybe_unused]] std::string info) {
     GLenum err = glGetError();
     if(err != GL_NO_ERROR){
         if(!info.contains("glClear"))
-            throw CException("[{}] {}", gl_err_to_string(err), info);
+            throw Exception("[{}] {}", gl_err_to_string(err), info);
     }
 };
 #endif
@@ -36,32 +36,32 @@ auto OpenGL::init_opengl_win32() -> void
     };
     auto pixel_format = ChoosePixelFormat(m_Surface, &pfd);
     if (!pixel_format) {
-        throw CException("Failed to find a suitable pixel format. : {}", GetLastError());
+        throw Exception("Failed to find a suitable pixel format. : {}", GetLastError());
     }
     if (!SetPixelFormat(m_Surface, pixel_format, &pfd)) {
-        throw CException("Failed to set the pixel format. : {}", GetLastError());
+        throw Exception("Failed to set the pixel format. : {}", GetLastError());
     }
 
     GLCTX dummy_context = nullptr;
 
     dummy_context = wglCreateContext(m_Surface);
     if (!dummy_context) {
-        throw CException("Failed to create a dummy OpenGL rendering context. : {}", GetLastError());
+        throw Exception("Failed to create a dummy OpenGL rendering context. : {}", GetLastError());
     }
 
     if (!wglMakeCurrent(m_Surface, dummy_context)) {
-        throw CException("Failed to activate dummy OpenGL rendering context. : {}", GetLastError());
+        throw Exception("Failed to activate dummy OpenGL rendering context. : {}", GetLastError());
     }
 
     wglGetExtensionsStringARB  = reinterpret_cast<PFNWGLGETEXTENSIONSSTRINGARBPROC>(wglGetProcAddress("wglGetExtensionsStringARB"));
     wglCreateContextAttribsARB = reinterpret_cast<PFNWGLCREATECONTEXTATTRIBSARBPROC>(wglGetProcAddress("wglCreateContextAttribsARB"));
 
     if (!wglGetExtensionsStringARB){
-        throw CException("Failed to load wglGetExtensionsStringARB. : {}", GetLastError());
+        throw Exception("Failed to load wglGetExtensionsStringARB. : {}", GetLastError());
     }
 
     if(!wglCreateContextAttribsARB) {
-        throw CException("Failed to load wglCreateContextAttribsARB. : {}", GetLastError());
+        throw Exception("Failed to load wglCreateContextAttribsARB. : {}", GetLastError());
     }
 
     int32_t gl_attribs[] = { 
@@ -79,9 +79,9 @@ auto OpenGL::init_opengl_win32() -> void
         m_Context = nullptr;
 
         if (GetLastError() == ERROR_INVALID_VERSION_ARB){ // ?
-            throw CException("Unsupported GL Version {}.{}", GLMajorVersion, GLMinorVersion);
+            throw Exception("Unsupported GL Version {}.{}", GLMajorVersion, GLMinorVersion);
         }
-        throw CException("Failed to create the final rendering context!");
+        throw Exception("Failed to create the final rendering context!");
     }
 
     wglDeleteContext(dummy_context);
@@ -109,13 +109,13 @@ auto OpenGL::init_opengl_linux() -> void
     int32_t fbcount;
     GLXFBConfig* fbc = glXChooseFBConfig(m_Surface, DefaultScreen(m_Surface), visualAttribs, &fbcount);
     if (!fbc || fbcount == 0) {
-        throw CException("Failed to get framebuffer config.");
+        throw Exception("Failed to get framebuffer config.");
     }
 
     XVisualInfo* visInfo = glXGetVisualFromFBConfig(m_Surface, fbc[0]);
     if (!visInfo) {
         XFree(fbc);
-        throw CException("Failed to get visual info.");
+        throw Exception("Failed to get visual info.");
     }
 
     int32_t contextAttribs[] = {
@@ -134,7 +134,7 @@ auto OpenGL::init_opengl_linux() -> void
     XFree(visInfo);
 
     if (!m_Context) {
-        throw CException("Failed to create GLX context.");
+        throw Exception("Failed to create GLX context.");
     }
 }
 #elif defined(WEB_PLT)
@@ -159,7 +159,7 @@ auto OpenGL::init_opengl_web() -> void
     m_Context = emscripten_webgl_create_context(m_Surface, &attrs);
 
     if (m_Context <= 0) {
-        throw CException("Failed to create WebGL context: error {}", static_cast<int32_t>(m_Context));
+        throw Exception("Failed to create WebGL context: error {}", static_cast<int32_t>(m_Context));
     }
 }
 
@@ -175,17 +175,17 @@ OpenGL::OpenGL([[maybe_unused]] H_WIN window, H_SRF surface)
     #if defined(WINDOWS_PLT)
     init_opengl_win32();
     if (!wglMakeCurrent(m_Surface, m_Context)){
-		throw CException("Failed to make context current.");
+		throw Exception("Failed to make context current.");
 	}
     #elif defined(LINUX_PLT)
     init_opengl_linux();
     if (!glXMakeCurrent(m_Surface, window, m_Context)) {
-        throw CException("Failed to make context current.");
+        throw Exception("Failed to make context current.");
     }
     #elif defined(WEB_PLT)
     init_opengl_web();
     if (emscripten_webgl_make_context_current(m_Context) != EMSCRIPTEN_RESULT_SUCCESS) {
-        throw CException("Failed to make WebGL context current.");
+        throw Exception("Failed to make WebGL context current.");
     }
     #endif
 
@@ -263,7 +263,7 @@ OpenGL::OpenGL(const OpenGL &other)
 {
     #if defined(WINDOWS_PLT)
     auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
-    if(tst != TRUE) throw CException("couldn't Copy Opengl Context");
+    if(tst != TRUE) throw Exception("couldn't Copy Opengl Context");
     #elif defined(LINUX_PLT)
     glXCopyContext(this->m_Surface, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
     // no error check for now  ` X11 ` Shit
@@ -281,7 +281,7 @@ auto OpenGL::operator=(const OpenGL &other) -> OpenGL&
 
         #if defined(WINDOWS_PLT)
         auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
-        if(tst != TRUE) throw CException("couldn't Copy Opengl Context");
+        if(tst != TRUE) throw Exception("couldn't Copy Opengl Context");
         #elif defined(LINUX_PLT)
         glXCopyContext(this->m_Surface, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
         // no error check for now  ` X11 ` Shit
@@ -424,7 +424,7 @@ auto get_proc_address(const char* name) -> void* {
     if (address != nullptr) {
         debug::print("from LIB:`{}`: load function `{}` at : {}", OPENGL_MODULE_NAME, name, address);
     } else {
-        throw CException("Couldn't load {} function `{}`", OPENGL_MODULE_NAME, name);
+        throw Exception("Couldn't load {} function `{}`", OPENGL_MODULE_NAME, name);
     }
 
     return address;
@@ -449,7 +449,7 @@ auto gl::OpenGL::dummy_ctx() -> GLCTX
         if (!RegisterClass(&wc)) {
             DWORD error = GetLastError();
             if (error != ERROR_CLASS_ALREADY_EXISTS) {
-                throw CException("Can't register Window class: {}", error);
+                throw Exception("Can't register Window class: {}", error);
             }
         }
     }
@@ -461,7 +461,7 @@ auto gl::OpenGL::dummy_ctx() -> GLCTX
         nullptr, nullptr, hInstance, nullptr
     );
     if (!hwnd){
-        throw CException("Can't Create Window : {}", GetLastError());
+        throw Exception("Can't Create Window : {}", GetLastError());
     }
 
     HDC hdc = GetDC(hwnd);
@@ -479,19 +479,19 @@ auto gl::OpenGL::dummy_ctx() -> GLCTX
 
     auto pixel_format = ChoosePixelFormat(hdc, &pfd);
     if (!pixel_format) {
-        throw CException("Failed to find a suitable pixel format. : {}", GetLastError());
+        throw Exception("Failed to find a suitable pixel format. : {}", GetLastError());
     }
     if (!SetPixelFormat(hdc, pixel_format, &pfd)) {
-        throw CException("Failed to set the pixel format. : {}", GetLastError());
+        throw Exception("Failed to set the pixel format. : {}", GetLastError());
     }
 
     dummy_context = wglCreateContext(hdc);
     if (!dummy_context) {
-        throw CException("Failed to create a dummy OpenGL rendering context. : {}", GetLastError());
+        throw Exception("Failed to create a dummy OpenGL rendering context. : {}", GetLastError());
     }
 
     if (!wglMakeCurrent(hdc, dummy_context)) {
-        throw CException("Failed to activate dummy OpenGL rendering context. : {}", GetLastError());
+        throw Exception("Failed to activate dummy OpenGL rendering context. : {}", GetLastError());
     }
 
     #elif defined(LINUX_PLT)
@@ -515,13 +515,13 @@ auto gl::OpenGL::dummy_ctx() -> GLCTX
     int32_t fbcount;
     GLXFBConfig* fbc = glXChooseFBConfig(display, screen, visualAttribs, &fbcount);
     if (!fbc || fbcount == 0) {
-        throw CException("Failed to get framebuffer config.");
+        throw Exception("Failed to get framebuffer config.");
     }
 
     XVisualInfo* vis = glXGetVisualFromFBConfig(display, fbc[0]);
     if (!vis) {
         XFree(fbc);
-        throw CException("Failed to get visual info.");
+        throw Exception("Failed to get visual info.");
     }
 
     Colormap cmap = XCreateColormap(display, root, vis->visual, AllocNone);
@@ -547,14 +547,14 @@ auto gl::OpenGL::dummy_ctx() -> GLCTX
     XFree(vis);
 
     if (!dummy_context) {
-        throw CException("Failed to create GLX context.");
+        throw Exception("Failed to create GLX context.");
     }
 
     if (!glXMakeCurrent(display, win, dummy_context)) {
         glXDestroyContext(display, dummy_context);
         XDestroyWindow(display, win);
         XCloseDisplay(display);
-        throw CException("Can't glXMakeCurrent ctx");
+        throw Exception("Can't glXMakeCurrent ctx");
     }
 
     #elif defined(WEB_PLT)
@@ -566,7 +566,7 @@ auto gl::OpenGL::dummy_ctx() -> GLCTX
     
     if (dummy_context < 0 || 
         emscripten_webgl_make_context_current(dummy_context) != EMSCRIPTEN_RESULT_SUCCESS) {
-            throw CException("Can't Make Opengl Ctx Current. ");
+            throw Exception("Can't Make Opengl Ctx Current. ");
     }
     #endif
 
@@ -599,7 +599,7 @@ auto get_integer(GLenum name) -> GLint
     if (maxTexSize != INVALID)
         return maxTexSize;
     else
-        throw CException("GetIntegerv Failed");
+        throw Exception("GetIntegerv Failed");
 }
 
 auto get_boolean(GLenum name) -> GLboolean
@@ -613,7 +613,7 @@ auto get_boolean(GLenum name) -> GLboolean
     if (maxTexSize != INVALID)
         return maxTexSize;
     else
-        throw CException("GetBooleanv Failed");
+        throw Exception("GetBooleanv Failed");
 }
 
 } //namespace gl

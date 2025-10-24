@@ -38,7 +38,7 @@ CWindow::WinClass::WinClass(){
 	m_Windclass = RegisterClassEx(&m_WinclassEx);
 		
     if(m_Windclass == 0){
-        throw CException("faild to regester class {}", GetLastError());
+        throw Exception("faild to regester class {}", GetLastError());
     }
 }
 
@@ -239,7 +239,7 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
     );
 
     if(window_handle == nullptr){
-        throw CException("faild to creat CWindow code : {}", GetLastError());
+        throw Exception("faild to creat CWindow code : {}", GetLastError());
     }
 
 	return {window_handle, GetDC(window_handle)};

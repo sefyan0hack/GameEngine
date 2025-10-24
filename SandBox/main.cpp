@@ -91,7 +91,7 @@ int main() {
         Game my_game;
         my_game.run();
 
-    } catch(const CException& e) {
+    } catch(const Exception& e) {
         debug::print(e.all());
 
     } catch(const std::exception& e) {

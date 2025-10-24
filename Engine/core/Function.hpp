@@ -109,7 +109,7 @@ auto PLT_CALL Function<R(PLT_CALL*)(Args...)>::default_([[maybe_unused]] Args...
 template <typename R, typename... Args>
 auto Function<R(PLT_CALL*)(Args...)>::operator()(Args... args, std::source_location loc) -> R
 {
-    if(m_Func == nullptr) throw CException( "{} not loaded!", m_Name);
+    if(m_Func == nullptr) throw Exception( "{} not loaded!", m_Name);
     m_ArgsValues = std::make_tuple(args...);
     m_CallCount++;
 

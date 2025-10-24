@@ -106,7 +106,7 @@ auto Texture::img2d_to_gpu(auto *data, GLsizei width, GLsizei height, GLint intf
         >;
 
     if constexpr(!std::is_arithmetic_v<DataType>){
-        throw CException("`{}` not allowd only primitives Types", ::type_name<DataType>());
+        throw Exception("`{}` not allowd only primitives Types", ::type_name<DataType>());
     }
 
     auto gl_type = []() -> GLenum {
@@ -118,7 +118,7 @@ auto Texture::img2d_to_gpu(auto *data, GLsizei width, GLsizei height, GLint intf
         if constexpr(std::is_same_v<DataType, GLint>)    return GL_INT;
         if constexpr(std::is_same_v<DataType, GLhalf>)   return GL_HALF_FLOAT;
         if constexpr(std::is_same_v<DataType, GLfloat>)  return GL_FLOAT;
-        else throw CException("unreachable");
+        else throw Exception("unreachable");
     }();
 
     if constexpr (sizeof(DataType) >= 4) {

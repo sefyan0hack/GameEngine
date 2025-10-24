@@ -70,7 +70,7 @@ auto ShaderProgram::link() const -> void
         if(infologlength > 0){
             std::string infoLog(infologlength, '\0');
             gl::GetProgramInfoLog(m_Id, infologlength, nullptr, infoLog.data());
-            throw CException("{}", infoLog);
+            throw Exception("{}", infoLog);
         }
     }
 }
@@ -82,7 +82,7 @@ auto ShaderProgram::uniform_location(const char *name) const -> GLuint
         auto [loc, type, size] = it;
         return loc;
     } catch( const std::exception& e){
-        throw CException("[what : {} ] the Uniform `{}` not exist", e.what(), name);
+        throw Exception("[what : {} ] the Uniform `{}` not exist", e.what(), name);
     }
 }
 
@@ -92,7 +92,7 @@ auto ShaderProgram::attrib_location(const char *name) const -> GLuint
         auto [loc, type, size] = m_Attribs.at(name);
         return loc;
     } catch( const std::exception& e){
-        throw CException("[what : {} ] the Attrib `{}` not exist", e.what(), name);
+        throw Exception("[what : {} ] the Attrib `{}` not exist", e.what(), name);
     }
 }
 
@@ -100,7 +100,7 @@ auto ShaderProgram::uniform_location_prv(const char *name) const -> GLuint
 {
     GLint location = gl::GetUniformLocation(m_Id, name);
     if (location == -1) {
-        throw CException("uniform {} doesn't exist!", name);
+        throw Exception("uniform {} doesn't exist!", name);
     }
     return static_cast<GLuint>(location);
 }
@@ -109,7 +109,7 @@ auto ShaderProgram::attrib_location_prv(const char *name) const -> GLuint
 {
     GLint location = gl::GetAttribLocation(m_Id, name);
     if (location == -1) {
-        throw CException("Attrib {} doesn't exist!", name);
+        throw Exception("Attrib {} doesn't exist!", name);
     }
     return static_cast<GLuint>(location);
 }
@@ -168,7 +168,7 @@ auto ShaderProgram::attribs_count() const -> GLint
 //             if (!name.empty() && name.back() == '\0') name.pop_back();
 //         }
 
-//         if (location == -1) throw CException("loaction is -1 on uniform : {}", name);
+//         if (location == -1) throw Exception("loaction is -1 on uniform : {}", name);
 
 //         m_Uniforms[name] = std::make_tuple(
 //             static_cast<GLuint>(location),
@@ -215,7 +215,7 @@ auto ShaderProgram::attribs_count() const -> GLint
 
 //         if(name.starts_with("gl_")) continue;
 
-//         if (location == -1) throw CException("location is -1 for in attribute: {}", name);
+//         if (location == -1) throw Exception("location is -1 for in attribute: {}", name);
 
 //         m_Attribs[name] = std::make_tuple(
 //             static_cast<GLuint>(location),
@@ -231,7 +231,7 @@ auto ShaderProgram::dump_uniforms() -> void
     GLint max_len = get_program_info(GL_ACTIVE_UNIFORM_MAX_LENGTH);
         
     if(max_len == 0) {
-        throw CException("error id {}, get_program_info return {}", m_Id, max_len);
+        throw Exception("error id {}, get_program_info return {}", m_Id, max_len);
     }
 
     auto count = uniform_count();
@@ -259,7 +259,7 @@ auto ShaderProgram::dump_attribs() -> void
 {
     GLint max_len = get_program_info(GL_ACTIVE_ATTRIBUTE_MAX_LENGTH);
     if(max_len == 0) {
-        throw CException("max_len is not valid max_len: {}", max_len);
+        throw Exception("max_len is not valid max_len: {}", max_len);
     }
     
     auto count = attribs_count();
@@ -313,7 +313,7 @@ auto ShaderProgram::get_program_info(GLenum what) const -> GLint
     if(result != INVALID)
         return result;
     else
-        throw CException("{}", gl_err_to_string(glGetError()));
+        throw Exception("{}", gl_err_to_string(glGetError()));
 }
 
 ///////
@@ -325,7 +325,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const GLint &value) con
 
         gl::Uniform1i(static_cast<GLint>(loc), value);
     } catch(const std::exception& e) {
-        throw CException("[what: {}] the Uniform `{}` not exist", e.what(), name);
+        throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
 
@@ -337,7 +337,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const GLfloat &value) c
 
         gl::Uniform1f(static_cast<GLint>(loc), value);
     } catch(const std::exception& e) {
-        throw CException("[what: {}] the Uniform `{}` not exist", e.what(), name);
+        throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
 auto ShaderProgram::set_uniform(const std::string& name, const GLuint &value) const -> void
@@ -348,7 +348,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const GLuint &value) co
 
         gl::Uniform1ui(static_cast<GLint>(loc), value);
     } catch(const std::exception& e) {
-        throw CException("[what: {}] the Uniform `{}` not exist", e.what(), name);
+        throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
 
@@ -360,7 +360,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const glm::vec2 &value)
 
         gl::Uniform2fv(static_cast<GLint>(loc), 1, &value[0]);
     } catch(const std::exception& e) {
-        throw CException("[what: {}] the Uniform `{}` not exist", e.what(), name);
+        throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
 
@@ -372,7 +372,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const glm::vec3 &value)
 
         gl::Uniform3fv(static_cast<GLint>(loc), 1, &value[0]);
     } catch(const std::exception& e) {
-        throw CException("[what: {}] the Uniform `{}` not exist", e.what(), name);
+        throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
 
@@ -384,7 +384,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const glm::vec4 &value)
 
         gl::Uniform4fv(static_cast<GLint>(loc), 1, &value[0]);
     } catch(const std::exception& e) {
-        throw CException("[what: {}] the Uniform `{}` not exist", e.what(), name);
+        throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
 
@@ -396,7 +396,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const glm::mat2 &value)
 
         gl::UniformMatrix2fv(static_cast<GLint>(loc), 1, GL_FALSE, &value[0][0]);
     } catch(const std::exception& e) {
-        throw CException("[what: {}] the Uniform `{}` not exist", e.what(), name);
+        throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
 
@@ -408,7 +408,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const glm::mat3 &value)
 
         gl::UniformMatrix3fv(static_cast<GLint>(loc), 1, GL_FALSE, &value[0][0]);
     } catch(const std::exception& e) {
-        throw CException("[what: {}] the Uniform `{}` not exist", e.what(), name);
+        throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
 
@@ -420,7 +420,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const glm::mat4 &value)
 
         gl::UniformMatrix4fv(static_cast<GLint>(loc), 1, GL_FALSE, &value[0][0]);
     } catch(const std::exception& e) {
-        throw CException("[what: {}] the Uniform `{}` not exist", e.what(), name);
+        throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
 

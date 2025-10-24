@@ -113,7 +113,7 @@ auto APP::loop_body(void* ctx) -> void
                 app->ViewCamera.process_mouse_movement(dx, -dy);
             },
             [](const auto& e) {
-                if( ::type_name<decltype(e)>() == "const std::monostate&") throw CException(" nnnnnn ");
+                if( ::type_name<decltype(e)>() == "const std::monostate&") throw Exception(" nnnnnn ");
                 debug::print("Unhandeled Event: {}", ::type_name<decltype(e)>()); 
             }
         );

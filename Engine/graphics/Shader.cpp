@@ -32,7 +32,7 @@ Shader::Shader(const std::string& filename)
     } else if(filename.ends_with(".comp")){
         m_Type = GL_COMPUTE_SHADER;
     } else {
-        throw CException("filename `{}` must be one of [.vert, .frag, .comp]", filename);
+        throw Exception("filename `{}` must be one of [.vert, .frag, .comp]", filename);
     }
 
     m_Id = gl::CreateShader(m_Type);
@@ -147,7 +147,7 @@ auto Shader::check_compile_status() -> void
 
             gl::GetShaderInfoLog(m_Id, infologlength, nullptr, infoLog.data());
             gl::DeleteShader(m_Id);
-            throw CException("{}", infoLog);
+            throw Exception("{}", infoLog);
         }
     }
 }
@@ -178,5 +178,5 @@ auto Shader::get_shader_info(GLenum what) const -> GLint
     if(result != INVALID)
         return result;
     else
-        throw CException("GetShaderiv Failed");
+        throw Exception("GetShaderiv Failed");
 }

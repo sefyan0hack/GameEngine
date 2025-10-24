@@ -62,11 +62,11 @@ namespace debug {
 } // namespace debug
 
 
-class CException final : public std::runtime_error {
+class Exception final : public std::runtime_error {
 public:
 
   template <typename... Ts>
-  CException(
+  Exception(
     const std::format_string<Ts...>& fmt,
     Ts&&... args
   )
@@ -111,5 +111,5 @@ private:
 #endif
 
 #ifndef Expect
-#define Expect(cond, ...) if (!(cond)) throw CException("Expectation ["#cond"] Failed : " __VA_ARGS__);
+#define Expect(cond, ...) if (!(cond)) throw Exception("Expectation ["#cond"] Failed : " __VA_ARGS__);
 #endif

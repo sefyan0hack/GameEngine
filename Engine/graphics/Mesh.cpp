@@ -76,7 +76,7 @@ auto Mesh::operator==(const Mesh &other) const -> bool
 auto Mesh::clone_buffer(GLenum type, GLuint src) -> GLuint
 {
     GLuint clone = gen_buffer();
-    if(clone == 0) throw CException("VBO clone is 0");
+    if(clone == 0) throw Exception("VBO clone is 0");
 
     bind_buffer(type, src);
     
@@ -90,7 +90,7 @@ auto Mesh::clone_buffer(GLenum type, GLuint src) -> GLuint
         gl::CopyBufferSubData(type, GL_COPY_WRITE_BUFFER, 0, 0, bufferSize);
     } else {
         gl::DeleteBuffers(1, &clone);
-        throw CException("VBO bufferSize is 0");
+        throw Exception("VBO bufferSize is 0");
     }
 
     return clone;
@@ -216,7 +216,7 @@ auto obj_to_mesh(const char* filename) -> std::vector<Vertex>
 {
   std::ifstream file(filename);
 
-  if(!file) throw CException("Error: Unable to open {}", filename);
+  if(!file) throw Exception("Error: Unable to open {}", filename);
   std::vector<glm::vec3> positions;      // Store raw vertex positions
   std::vector<Vertex> vertices_output;    // Final vertex output
 
