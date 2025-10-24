@@ -2,8 +2,8 @@
 
 #include "Window.hpp"
 #include "Log.hpp"
-#include "OpenGL.hpp"
-#include "Keyboard.hpp"
+#include <graphics/OpenGL.hpp>
+#include <graphics/Keyboard.hpp>
 #include "Mouse.hpp"
 #include "EventQueue.hpp"
 

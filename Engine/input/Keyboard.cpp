@@ -1,5 +1,5 @@
-#include "Keyboard.hpp"
-#include "Log.hpp"
+#include <input/Keyboard.hpp>
+#include <core/Log.hpp>
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>

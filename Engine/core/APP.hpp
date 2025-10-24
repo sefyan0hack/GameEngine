@@ -5,10 +5,10 @@
 
 #include "Window.hpp"
 #include "Camera.hpp"
-#include "Keyboard.hpp"
-#include "Mouse.hpp"
+#include <input/Keyboard.hpp>
+#include <input/Mouse.hpp>
 #include "EventQueue.hpp"
-#include "Renderer.hpp"
+#include <graphics/Renderer.hpp>
 
 class APP
 {

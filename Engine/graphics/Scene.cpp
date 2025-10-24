@@ -1,12 +1,12 @@
+#include <core/GameObject.hpp>
+#include <core/Log.hpp>
+#include <core/Camera.hpp>
+#include "SkyBox.hpp"
 #include "Scene.hpp"
 #include "Texture.hpp"
 #include "Material.hpp"
-#include "GameObject.hpp"
 #include "ShaderProgram.hpp"
 #include "Mesh.hpp"
-#include "SkyBox.hpp"
-#include "Log.hpp"
-#include "Camera.hpp"
 #include "OpenGL.hpp"
 #include <glm/glm.hpp>
 

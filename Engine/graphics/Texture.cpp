@@ -1,6 +1,6 @@
+#include <core/Log.hpp>
+#include <core/Utils.hpp>
 #include "Texture.hpp"
-#include "Log.hpp"
-#include "Utils.hpp"
 #include "OpenGL.hpp"
 
 

@@ -5,6 +5,7 @@
 #include <map>
 
 #include "gl.h"
+#include "ShaderProgram.hpp"
 
 class Material
 {

@@ -9,8 +9,8 @@
 #include <emscripten/html5.h>
 #endif
 
-#include "Window.hpp"
-#include "Log.hpp"
+#include <core/Window.hpp>
+#include <core/Log.hpp>
 
 Mouse::Mouse() 
 	: Sensitivity(0.11f)

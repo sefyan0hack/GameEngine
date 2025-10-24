@@ -1,7 +1,7 @@
 #include "Camera.hpp"
 #include "Log.hpp"
-#include "OpenGL.hpp"
-#include "Mouse.hpp"
+#include <input/Mouse.hpp>
+#include <graphics/OpenGL.hpp>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/fast_trigonometry.hpp>

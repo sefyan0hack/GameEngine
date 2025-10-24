@@ -1,6 +1,6 @@
 #include "GameObject.hpp"
-#include "Material.hpp"
-#include "Mesh.hpp"
+#include <graphics/Material.hpp>
+#include <graphics/Mesh.hpp>
 #include "Log.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>

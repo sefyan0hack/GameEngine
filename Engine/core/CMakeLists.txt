@@ -4,24 +4,12 @@ include(helpers)
 add_library(core)
 
 target_sources( core PRIVATE
-    Keyboard.cpp
-    Mouse.cpp
     Window.cpp
-    Renderer.cpp
-    Shader.cpp
     Transform.cpp
     Camera.cpp
-    Mesh.cpp
-    OpenGL.cpp
     APP.cpp
     GameObject.cpp
-    Texture.cpp
-    Scene.cpp
-    Material.cpp
     ResourceManager.cpp
-    Image.cpp
-    ShaderProgram.cpp
-    SkyBox.cpp
 )
 
 target_sources( core PUBLIC
@@ -32,35 +20,24 @@ target_sources( core PUBLIC
         Platform.hpp
         Log.hpp
         Utils.hpp
-        gl.h
         fmts.hpp
         Event.hpp
         EventQueue.hpp
         Function.hpp
         ResourceManager.hpp
-        Keyboard.hpp
-        Mouse.hpp
         Window.hpp
-        Renderer.hpp
-        Shader.hpp
         Transform.hpp
         Camera.hpp
-        Mesh.hpp
-        OpenGL.hpp
         APP.hpp
         GameObject.hpp
-        Texture.hpp
-        Scene.hpp
-        Material.hpp
         ResourceManager.hpp
-        Image.hpp
-        ShaderProgram.hpp
-        SkyBox.hpp
 )
 
 target_include_directories(core PRIVATE
     $<$<PLATFORM_ID:Linux>:${X11_INCLUDE_DIR}>
 )
+
+target_include_directories(core PRIVATE ${CMAKE_SOURCE_DIR}/Engine)
 
 target_link_libraries(core PUBLIC res)
 target_link_libraries(core PRIVATE glm::glm)

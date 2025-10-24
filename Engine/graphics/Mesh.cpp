@@ -1,5 +1,5 @@
+#include <core/Log.hpp>
 #include "Mesh.hpp"
-#include "Log.hpp"
 #include "OpenGL.hpp"
 
 namespace {

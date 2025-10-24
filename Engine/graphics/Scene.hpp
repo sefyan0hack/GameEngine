@@ -6,8 +6,8 @@
 #include <vector>
 #include <format>
 
-#include "GameObject.hpp"
-#include "fmts.hpp"
+#include <core/GameObject.hpp>
+#include <core/fmts.hpp>
 
 /// @brief  Scene has all the Entities to Render + Sky box
 class Scene

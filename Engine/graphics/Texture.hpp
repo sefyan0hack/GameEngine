@@ -4,8 +4,8 @@
 #include <vector>
 #include <array>
 
-#include "gl.h"
 #include "Image.hpp"
+#include "gl.h"
 
 #include <cmrc/cmrc.hpp>
 

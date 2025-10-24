@@ -1,7 +1,8 @@
 #include "ShaderProgram.hpp"
 #include "Shader.hpp"
-#include "Log.hpp"
 #include "OpenGL.hpp"
+
+#include <core/Log.hpp>
 
 
 ShaderProgram::ShaderProgram(std::shared_ptr<Shader> vertex, std::shared_ptr<Shader> fragment)

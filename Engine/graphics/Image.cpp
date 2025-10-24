@@ -1,7 +1,7 @@
 #include <cstring>
 
 #include "Image.hpp"
-#include "Log.hpp"
+#include <core/Log.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>

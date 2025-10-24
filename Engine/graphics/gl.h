@@ -1,5 +1,5 @@
 #pragma once
-#include "Function.hpp"
+#include <core/Function.hpp>
 
 #define GL_GLEXT_PROTOTYPES
 

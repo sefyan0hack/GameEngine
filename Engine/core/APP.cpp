@@ -2,8 +2,8 @@
 #include "Window.hpp"
 #include "Event.hpp"
 #include "Utils.hpp"
-#include "OpenGL.hpp"
-#include "Scene.hpp"
+#include <graphics/OpenGL.hpp>
+#include <graphics/Scene.hpp>
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>

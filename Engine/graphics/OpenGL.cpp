@@ -1,8 +1,8 @@
 #include <algorithm>
 
 #include "OpenGL.hpp"
-#include "Log.hpp"
-#include "Utils.hpp"
+#include <core/Log.hpp>
+#include <core/Utils.hpp>
 
 namespace gl {
 

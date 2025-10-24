@@ -1,5 +1,4 @@
-#include "OpenGL.hpp"
-#include "Log.hpp"
+#include <core/Log.hpp>
 #include "OpenGL.hpp"
 #include "Shader.hpp"
 
