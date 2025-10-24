@@ -1,10 +1,10 @@
 #include <cstring>
 
+#include <graphics/OpenGL.hpp>
+#include <input/Keyboard.hpp>
+#include <input/Mouse.hpp>
 #include "Window.hpp"
 #include "Log.hpp"
-#include <graphics/OpenGL.hpp>
-#include <graphics/Keyboard.hpp>
-#include "Mouse.hpp"
 #include "EventQueue.hpp"
 
 CWindow::~CWindow()
