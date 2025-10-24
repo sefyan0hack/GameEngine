@@ -74,7 +74,7 @@ Image::Image(const cmrc::file& src, bool flip)
     stbi_set_flip_vertically_on_load(flip);
     auto size = std::distance(src.begin(), src.end());
 
-    auto data = stbi_load_from_memory(reinterpret_cast<const unsigned char*>(src.begin()), size, &m_Width, &m_Height, &m_Channels, 0);
+    auto data = stbi_load_from_memory(reinterpret_cast<const unsigned char*>(src.begin()), static_cast<int>(size), &m_Width, &m_Height, &m_Channels, 0);
 
     if(data)
         m_Data = reinterpret_cast<std::byte*>(data);

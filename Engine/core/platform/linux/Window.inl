@@ -49,7 +49,7 @@ auto CWindow::process_messages([[maybe_unused]] CWindow* self) -> void
 	[[maybe_unused]] auto winHandle = self->m_Handle;
 	[[maybe_unused]] auto surface = self->m_Surface;
 
-	int32_t screen = DefaultScreen(surface);
+	[[maybe_unused]] int32_t screen = DefaultScreen(surface);
 	Atom wmDeleteMessage = XInternAtom(surface, "WM_DELETE_WINDOW", false);
 	XSetWMProtocols(surface, winHandle, &wmDeleteMessage, 1);
 
@@ -69,19 +69,19 @@ auto CWindow::process_messages([[maybe_unused]] CWindow* self) -> void
 
 			case KeyPress:
 			case KeyRelease: {
-				const KeyCode keycode = event.xkey.keycode;
+				const auto keycode = static_cast<KeyCode>(event.xkey.keycode);
 				KeySym keysym = XkbKeycodeToKeysym(surface, keycode, 0, 0); // US layout
 				
 				uint32_t vk = 0;
 				
 				if (keysym >= XK_A && keysym <= XK_Z) {
-					vk = 'A' + (keysym - XK_A);
+					vk = static_cast<uint32_t>('A' + (keysym - XK_A));
 				}
 				else if (keysym >= XK_a && keysym <= XK_z) {
-					vk = 'A' + (keysym - XK_a);
+					vk = static_cast<uint32_t>('A' + (keysym - XK_a));
 				}
 				else if (keysym >= XK_0 && keysym <= XK_9) {
-					vk = '0' + (keysym - XK_0);
+					vk = static_cast<uint32_t>('0' + (keysym - XK_0));
 				}
 				else {
 					vk = static_cast<uint32_t>(keysym);
@@ -103,7 +103,7 @@ auto CWindow::process_messages([[maybe_unused]] CWindow* self) -> void
 				break;
 
 			case ClientMessage:
-				if (event.xclient.data.l[0] == wmDeleteMessage){
+				if (static_cast<decltype(wmDeleteMessage)>(event.xclient.data.l[0]) == wmDeleteMessage){
 					self->m_EventQueue.push(CWindow::QuitEvent{});
 				}
 				break;
