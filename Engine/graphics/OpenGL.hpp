@@ -4,6 +4,7 @@
 #include <ctime>
 
 #include "gl.h"
+#include <core/Function.hpp>
 
 namespace gl {
     constexpr auto OPENGL_MODULE_NAME = OPENGL_LIB;
@@ -61,13 +62,8 @@ class OpenGL
         
         static auto dummy_ctx() -> GLCTX;
     private:
-        #if defined(WINDOWS_PLT)
-        auto init_opengl_win32()  -> void ;
-        #elif defined(LINUX_PLT)
-        auto init_opengl_linux()  -> void ;
-        #elif defined(WEB_PLT)
-        auto init_opengl_web()    -> void ;
-        #endif
+        auto init_opengl()  -> void ;
+        auto make_current_opengl(GLCTX ctx, [[maybe_unused]] H_SRF srf, [[maybe_unused]] H_WIN win)  -> bool ;
 
     private:
         GLCTX m_Context;
@@ -96,7 +92,6 @@ class OpenGL
 
         GLFUNCS
 
-        
 };
 
 auto get_integer(GLenum name) -> GLint;

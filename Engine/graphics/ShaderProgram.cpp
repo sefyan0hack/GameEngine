@@ -313,7 +313,7 @@ auto ShaderProgram::get_program_info(GLenum what) const -> GLint
     if(result != INVALID)
         return result;
     else
-        throw Exception("{}", gl_err_to_string(glGetError()));
+        throw Exception("gl error id {}", glGetError());
 }
 
 ///////

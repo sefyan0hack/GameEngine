@@ -1,77 +1,4 @@
 #pragma once
-#include <core/Function.hpp>
-
-#define GL_GLEXT_PROTOTYPES
-
-#if defined(WINDOWS_PLT)
-
-#include <GL/gl.h>
-#include <glext.h>
-#include <wglext.h>
-
-using H_WIN     = HWND;
-using H_SRF     = HDC;
-using GLCTX     = HGLRC;
-
-#define XXXGetProcAddress(name) wglGetProcAddress(name)
-
-// Declare function pointers using typedefs
-[[maybe_unused]] inline static PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB = nullptr;
-[[maybe_unused]] inline static PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = nullptr;
-[[maybe_unused]] inline static PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = nullptr;
-
-#elif defined(LINUX_PLT)
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/XKBlib.h>
-#include <GL/gl.h>
-#include <GL/glx.h>
-#include <glext.h>
-#include <glxext.h>
-
-#define XXXGetProcAddress(name) glXGetProcAddress((const GLubyte*)name)
-
-struct __GLXcontextRec;
-using H_WIN     = Window;
-using H_SRF     = Display*;
-using GLCTX     = __GLXcontextRec*;
-
-[[maybe_unused]] inline static auto glXCreateContextAttribsARB = (GLCTX(*)(H_SRF dpy, GLXFBConfig config, GLCTX share_context, Bool direct, const int *attrib_list))(nullptr);
-[[maybe_unused]] inline static PFNGLXSWAPINTERVALEXTPROC glXSwapIntervalEXT = nullptr;
-
-#elif defined(WEB_PLT)
-#include <emscripten/emscripten.h>
-#include <emscripten/html5.h>
-#include <emscripten/html5_webgl.h>
-#include <emscripten/key_codes.h>
-#include <GL/gl.h> // im including gl.h for some defines :) so it may caus prbblloooom
-#define GL_GLES_PROTOTYPES 1
-#include <gl3.h>
-#include <gl2ext.h>
-
-#define XXXGetProcAddress(name) emscripten_webgl_get_proc_address(name)
-
-using H_WIN     = const char*;
-using H_SRF     = const char*;
-using GLCTX     = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
-
-#endif
-
-
-inline constexpr auto gl_err_to_string(GLenum glError) -> const char*
-{
-    switch (glError)
-    {
-        case GL_NO_ERROR: return "GL_NO_ERROR";
-        case GL_INVALID_ENUM: return "GL_INVALID_ENUM";
-        case GL_INVALID_VALUE: return "GL_INVALID_VALUE";
-        case GL_INVALID_OPERATION: return "GL_INVALID_OPERATION";
-        case GL_STACK_OVERFLOW: return "GL_STACK_OVERFLOW";
-        case GL_STACK_UNDERFLOW: return "GL_STACK_UNDERFLOW";
-        case GL_OUT_OF_MEMORY: return "GL_OUT_OF_MEMORY";
-        default: return "GL_UNKNOWN";
-    }
-}
 
 #define GLFUNCS_COMMON\
     X(ClearColor);\
@@ -174,17 +101,13 @@ inline constexpr auto gl_err_to_string(GLenum glError) -> const char*
     X(GetBooleanv);\
     X(Finish);
 
-#if defined(WEB_PLT)
-  // web (or ES-only) build
-  #define GLFUNCS GLFUNCS_COMMON
-#else
-  // desktop GL
-  #define GLFUNCS GLFUNCS_COMMON\
-    X(PolygonMode);\
-    X(PointSize);\
-    X(GetProgramResourceiv);\
-    X(GetProgramResourceName);\
-    X(GetProgramResourceLocation);\
-    X(GetProgramInterfaceiv);
 
+#define GL_GLEXT_PROTOTYPES
+
+#if defined(WINDOWS_PLT)
+#include "platform/win32/gl.inl"
+#elif defined(LINUX_PLT)
+#include "platform/linux/gl.inl"
+#elif defined(WEB_PLT)
+#include "platform/web/gl.inl"
 #endif

@@ -6,6 +6,7 @@
 
 #include "gl.h"
 #include <cmrc/cmrc.hpp>
+#include <core/Utils.hpp>
 
 class Image
 {
