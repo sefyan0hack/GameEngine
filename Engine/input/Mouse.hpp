@@ -12,7 +12,7 @@ class Mouse
 
 public:
 	enum class Button : uint8_t {
-		Left, Middle, Right,
+		Left, Middle, Right, WheelUp, WheelDown,
 		Unknown
 	};
 

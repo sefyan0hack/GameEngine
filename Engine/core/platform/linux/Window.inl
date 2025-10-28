@@ -27,8 +27,10 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
 
     /* Select input events */
     XSelectInput(Surface, window_handle,
-		 KeyPressMask | KeyReleaseMask | ExposureMask |
-		 ResizeRedirectMask | FocusChangeMask | StructureNotifyMask
+		KeyPressMask | KeyReleaseMask | ExposureMask |
+		ResizeRedirectMask | FocusChangeMask | StructureNotifyMask | ButtonPress |
+        ButtonReleaseMask | EnterWindowMask | LeaveWindowMask |
+		PointerMotionMask | Button1MotionMask | VisibilityChangeMask
 		);
 
 	return {window_handle, Surface};
@@ -98,6 +100,58 @@ auto CWindow::process_messages([[maybe_unused]] CWindow* self) -> void
 				if (static_cast<decltype(wmDeleteMessage)>(event.xclient.data.l[0]) == wmDeleteMessage){
 					self->m_EventQueue.push(CWindow::QuitEvent{});
 				}
+				break;
+			case MotionNotify:
+				self->m_EventQueue.push(Mouse::MoveEvent{event.xmotion.x, event.xmotion.y});
+				break;
+
+			case ButtonPress:
+				switch(event.xbutton.button) {
+					case Button1:
+						self->m_EventQueue.push(Mouse::ButtonDownEvent{Mouse::Button::Left});
+						break;
+					case Button2:
+						self->m_EventQueue.push(Mouse::ButtonDownEvent{Mouse::Button::Middle});
+						break;
+					case Button3:
+						self->m_EventQueue.push(Mouse::ButtonDownEvent{Mouse::Button::Right});
+						break;
+					case Button4:
+						self->m_EventQueue.push(Mouse::ButtonDownEvent{Mouse::Button::WheelUp});
+						break;
+					case Button5:
+						self->m_EventQueue.push(Mouse::ButtonDownEvent{Mouse::Button::WheelDown});
+						break;
+					default:
+						break;
+				}
+				break;
+			case ButtonRelease:
+				switch(event.xbutton.button) {
+					case Button1:
+						self->m_EventQueue.push(Mouse::ButtonUpEvent{Mouse::Button::Left});
+						break;
+					case Button2:
+						self->m_EventQueue.push(Mouse::ButtonUpEvent{Mouse::Button::Middle});
+						break;
+					case Button3:
+						self->m_EventQueue.push(Mouse::ButtonUpEvent{Mouse::Button::Right});
+						break;
+					case Button4:
+						self->m_EventQueue.push(Mouse::ButtonUpEvent{Mouse::Button::WheelUp});
+						break;
+					case Button5:
+						self->m_EventQueue.push(Mouse::ButtonUpEvent{Mouse::Button::WheelDown});
+						break;
+					default:
+						break;
+				}
+				break;
+            case EnterNotify:
+				self->m_EventQueue.push(Mouse::EnterEvent{});
+				break;
+			case LeaveNotify:
+				self->m_EventQueue.push(Mouse::LeaveEvent{});
 				break;
 		}
 	}
