@@ -103,7 +103,19 @@ auto CWindow::process_messages([[maybe_unused]] CWindow* self) -> void
 				break;
 			case MotionNotify:
 				self->m_EventQueue.push(Mouse::MoveEvent{event.xmotion.x, event.xmotion.y});
-				self->m_EventQueue.push(Mouse::MovementEvent{event.xmotion.x, event.xmotion.y});
+				static int prevX = event.xmotion.x;
+				static int prevY = event.xmotion.y;
+
+				int deltaX = event.xmotion.x - prevX;
+				int deltaY = event.xmotion.y - prevY;
+
+				self->m_EventQueue.push(Mouse::MovementEvent{
+					static_cast<float>(deltaX), 
+					static_cast<float>(deltaY)
+				});
+
+				prevX = event.xmotion.x;
+				prevY = event.xmotion.y;
 				break;
 
 			case ButtonPress:
