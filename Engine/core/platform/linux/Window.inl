@@ -103,6 +103,7 @@ auto CWindow::process_messages([[maybe_unused]] CWindow* self) -> void
 				break;
 			case MotionNotify:
 				self->m_EventQueue.push(Mouse::MoveEvent{event.xmotion.x, event.xmotion.y});
+				self->m_EventQueue.push(Mouse::MovementEvent{event.xmotion.x, event.xmotion.y});
 				break;
 
 			case ButtonPress:
