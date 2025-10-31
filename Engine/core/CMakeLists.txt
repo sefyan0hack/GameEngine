@@ -33,10 +33,6 @@ target_include_directories(core PRIVATE
 
 target_include_directories(core PRIVATE ${CMAKE_SOURCE_DIR}/Engine)
 
-target_link_libraries(core PUBLIC res)
-target_link_libraries(core PRIVATE glm::glm)
-target_link_libraries(core PRIVATE stb_image)
-
 apply_all_options(TARGETS core)
 apply_coverage_options(TARGETS core)
 apply_harden_options(TARGETS core)
@@ -51,10 +47,7 @@ if(NOT EMSCRIPTEN)
     target_link_libraries(core
         PRIVATE
             Threads::Threads
-            ${OPENGL_LIBRARIES}
-            $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
             $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
-            $<$<PLATFORM_ID:Linux>:dl>
             $<$<PLATFORM_ID:Linux>:${X11_LIBRARIES}>
     )
 endif()

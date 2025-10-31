@@ -19,13 +19,10 @@ public:
     auto disable_points() -> void;
     auto clear_screen(GLenum buffersmask)  -> void ;
 
-    // TODO: add it later
-    // auto ChangeScene(Camera &camera, std::shared_ptr<class ShaderProgram> program) -> void;
 private:
     auto draw(const class Mesh& mesh) const -> void;
 
 private:
     const class CWindow& m_Window;
     const gl::OpenGL m_OpenGl;
-    
 };

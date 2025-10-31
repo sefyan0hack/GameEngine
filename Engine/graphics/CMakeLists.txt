@@ -62,7 +62,6 @@ if(NOT EMSCRIPTEN)
         PRIVATE
             Threads::Threads
             ${OPENGL_LIBRARIES}
-            $<$<STREQUAL:$<PLATFORM_ID>,Windows>:dbghelp>
             $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
             $<$<PLATFORM_ID:Linux>:dl>
     )
