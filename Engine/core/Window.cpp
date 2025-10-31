@@ -62,3 +62,8 @@ auto CWindow::close() -> void
     hide();
     debug::print("Exit. ");
 }
+
+auto CWindow::is_fullscreen() -> bool 
+{
+	return m_FullScreen;
+}

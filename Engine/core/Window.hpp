@@ -71,6 +71,8 @@ class CWindow
         auto get_title() -> std::string;
         auto set_title(std::string title) -> void;
         auto set_vsync(bool state) -> void;
+        auto is_fullscreen() -> bool;
+
         static auto process_messages([[maybe_unused]] CWindow* self)   -> void ;
 
     private:
