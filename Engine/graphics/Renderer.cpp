@@ -13,23 +13,23 @@
 #include "Texture.hpp"
 
 
-Renderer::Renderer(const CWindow& window, const Camera& camera)
+Renderer::Renderer(const CWindow& window)
     : m_Window(window)
     , m_OpenGl(m_Window.handle(), m_Window.surface())
-    , m_Camera(camera)
 
 {}
 Renderer::~Renderer(){
 }
 
-auto Renderer::render(const Scene& scene, const std::shared_ptr<ShaderProgram> program) -> void
+auto Renderer::render(const Scene& scene, const std::shared_ptr<ShaderProgram> program) const -> void
 {
     scene.render_sky();
+    auto camera = scene.main_camera();
 
     program->use();
-    program->set_uniform("View", m_Camera.view());
-    program->set_uniform("Projection", m_Camera.projection());
-    program->set_uniform("Eye", m_Camera.position());
+    program->set_uniform("View", camera.view());
+    program->set_uniform("Projection", camera.projection());
+    program->set_uniform("Eye", camera.position());
 
     static std::shared_ptr<Material> currMatt = nullptr;
     //Drwaing
@@ -47,7 +47,7 @@ auto Renderer::render(const Scene& scene, const std::shared_ptr<ShaderProgram> p
 }
 
 
-auto Renderer::draw(const Mesh& mesh) -> void
+auto Renderer::draw(const Mesh& mesh) const -> void
 {
     static GLuint currVAO = mesh.VAO;
     if(currVAO != mesh.VAO){

@@ -2,6 +2,8 @@
 #include "Window.hpp"
 #include "Event.hpp"
 #include "Utils.hpp"
+#include <input/Keyboard.hpp>
+#include <input/Mouse.hpp>
 #include <graphics/OpenGL.hpp>
 #include <graphics/Scene.hpp>
 
@@ -27,7 +29,7 @@ APP::APP()
     , ViewCamera()
     , Keyboard()
     , Mouse()
-    , m_Renderer(Window, ViewCamera)
+    , m_Renderer(Window)
     , m_Running(true)
     , m_LastFrameTime(std::chrono::steady_clock::now())
     , m_SmoothedFPS(60.0f)

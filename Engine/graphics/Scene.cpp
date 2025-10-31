@@ -80,3 +80,7 @@ auto Scene::main_camera() -> Camera&
 {
     return m_Camera;
 }
+auto Scene::main_camera() const -> Camera&
+{
+    return m_Camera;
+}

@@ -24,6 +24,7 @@ public:
     auto render_sky() const -> void;
     auto clear() -> void;
     auto main_camera() -> Camera&;
+    auto main_camera() const -> Camera&;
 
 private:
     class Camera& m_Camera;
