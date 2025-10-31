@@ -14,6 +14,11 @@ public:
 
     auto opengl() const -> const gl::OpenGL&;
     auto set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void;
+    auto enable_wireframe() -> void;
+    auto disable_wireframe() -> void;
+    auto enable_points() -> void;
+    auto disable_points() -> void;
+    auto clear_screen(GLenum buffersmask)  -> void ;
 
     // TODO: add it later
     // auto ChangeScene(Camera &camera, std::shared_ptr<class ShaderProgram> program) -> void;
