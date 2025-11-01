@@ -75,7 +75,7 @@ auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GL
 
     glXCreateContextAttribsARB = (decltype(glXCreateContextAttribsARB))glXGetProcAddress((const GLubyte*)"glXCreateContextAttribsARB");
 
-    context = glXCreateContextAttribsARB(surface, fbc[0], nullptr, True, contextAttribs);
+    auto context = glXCreateContextAttribsARB(surface, fbc[0], nullptr, True, contextAttribs);
     XFree(fbc);
     XFree(visInfo);
 

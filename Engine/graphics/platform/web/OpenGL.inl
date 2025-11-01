@@ -54,7 +54,7 @@ auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GL
     attrs.minorVersion = 0;
     attrs.enableExtensionsByDefault = EM_TRUE;
 
-    context = emscripten_webgl_create_context(surface, &attrs);
+    auto context = emscripten_webgl_create_context(surface, &attrs);
 
     if (context <= 0) {
         throw Exception("Failed to create WebGL context: error {}", static_cast<int32_t>(context));
