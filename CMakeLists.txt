@@ -8,6 +8,15 @@ project(
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
+if(WIN32)
+    set(DIR_PLATFORM_NAME "win32" CACHE STRING "platform name")
+elseif(UNIX)
+    set(DIR_PLATFORM_NAME "linux" CACHE STRING "platform name")
+elseif(EMSCRIPTEN)
+    set(DIR_PLATFORM_NAME "web" CACHE STRING "platform name")
+endif()
+
+
 include(CTest)
 include(helpers)
 
