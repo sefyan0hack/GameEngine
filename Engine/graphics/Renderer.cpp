@@ -1,6 +1,6 @@
 #include <core/Log.hpp>
 #include <core/ResourceManager.hpp>
-#include <core/Window.hpp>
+#include "Window.hpp"
 #include "Camera.hpp"
 #include "GameObject.hpp"
 #include "SkyBox.hpp"
@@ -15,7 +15,7 @@
 
 Renderer::Renderer(const CWindow& window)
     : m_Window(window)
-    , m_OpenGl(m_Window.handle(), m_Window.surface())
+    , m_GraphicApi(window)
 
 {}
 Renderer::~Renderer(){
@@ -57,9 +57,9 @@ auto Renderer::draw(const Mesh& mesh) const -> void
     gl::DrawArrays(GL_TRIANGLES, 0, mesh.vextex_size());
 }
 
-auto Renderer::opengl() const -> const gl::OpenGL&
+auto Renderer::graphic_api() const -> const gl::OpenGL&
 {
-	return m_OpenGl;
+	return m_GraphicApi;
 }
 
 auto Renderer::set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void
@@ -71,7 +71,7 @@ auto Renderer::set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t hei
 auto Renderer::enable_wireframe() -> void
 {
     #if defined(WEB_PLT)
-    static bool webPolyModeAvailable = app->m_Renderer.opengl().has_extension("WEBGL_polygon_mode");
+    static bool webPolyModeAvailable = app->m_Renderer.has_extension("WEBGL_polygon_mode");
     if (webPolyModeAvailable) {
         EM_ASM({
             const gl = Module.ctx;
@@ -90,7 +90,7 @@ auto Renderer::enable_wireframe() -> void
 auto Renderer::disable_wireframe() -> void
 {
     #if defined(WEB_PLT)
-    static bool webPolyModeAvailable = app->m_Renderer.opengl().has_extension("WEBGL_polygon_mode");
+    static bool webPolyModeAvailable = app->m_Renderer.has_extension("WEBGL_polygon_mode");
     if (webPolyModeAvailable) {
         EM_ASM({
             const gl = Module.ctx;
@@ -131,4 +131,9 @@ auto Renderer::disable_points() -> void
 auto Renderer::clear_screen(GLenum buffersmask)  -> void
 {
     gl::Clear(buffersmask);
+}
+
+auto Renderer::has_extension(const std::string &ext) -> bool
+{
+    return m_GraphicApi.has_extension(ext);
 }

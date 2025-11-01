@@ -4,6 +4,7 @@ include(helpers)
 add_library(graphics)
 
 target_sources( graphics PRIVATE
+    Window.cpp    
     Renderer.cpp
     Shader.cpp
     ShaderProgram.cpp
@@ -24,6 +25,7 @@ target_sources( graphics PUBLIC
       TYPE HEADERS
       FILES
         gl.h
+        Window.hpp
         Renderer.hpp
         Shader.hpp
         ShaderProgram.hpp
@@ -40,6 +42,9 @@ target_sources( graphics PUBLIC
 
 )
 
+target_include_directories(core PRIVATE
+    $<$<PLATFORM_ID:Linux>:${X11_INCLUDE_DIR}>
+)
 
 target_include_directories(graphics PRIVATE ${CMAKE_SOURCE_DIR}/Engine)
 
@@ -64,5 +69,7 @@ if(NOT EMSCRIPTEN)
             ${OPENGL_LIBRARIES}
             $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
             $<$<PLATFORM_ID:Linux>:dl>
+            $<$<PLATFORM_ID:Linux>:${X11_LIBRARIES}>
+
     )
 endif()

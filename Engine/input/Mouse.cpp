@@ -8,7 +8,7 @@
 #include <emscripten/html5.h>
 #endif
 
-#include <core/Window.hpp>
+#include <graphics/Window.hpp>
 #include <core/Log.hpp>
 
 #if defined(WINDOWS_PLT)

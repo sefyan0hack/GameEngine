@@ -98,5 +98,4 @@ class CWindow
         bool m_Visible, m_FullScreen;
         EventQueue& m_EventQueue;
 
-        
 };

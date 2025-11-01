@@ -1,5 +1,6 @@
 #include <algorithm>
 
+#include "Window.hpp"
 #include "OpenGL.hpp"
 #include <core/Log.hpp>
 #include <core/Utils.hpp>
@@ -25,15 +26,15 @@ inline static auto After_Func = []([[maybe_unused]] std::string info) {
 #include "platform/web/OpenGL.inl"
 #endif
 
-OpenGL::OpenGL([[maybe_unused]] H_WIN window, H_SRF surface)
-    : m_Context(GLCTX{})
-    , m_Surface(surface)
+OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
+    : m_Context(create_opengl_context(window))
     , m_Major(0)
     , m_Minor(0)
     , m_CreationTime(std::time(nullptr))
 {
-    init_opengl();
-    if (!make_current_opengl(m_Context, m_Surface, window))
+    auto surface = window.surface();
+
+    if (!make_current_opengl(window))
         throw Exception("Failed to make context current.");
 
     #undef X
@@ -64,9 +65,9 @@ OpenGL::OpenGL([[maybe_unused]] H_WIN window, H_SRF surface)
     m_Renderer = renderer ? renderer : "unknown";
 
     #if defined(WINDOWS_PLT)
-    auto exts = reinterpret_cast<const char*>(wglGetExtensionsStringARB(m_Surface));
+    auto exts = reinterpret_cast<const char*>(wglGetExtensionsStringARB(surface));
     #elif defined(LINUX_PLT)
-    auto exts = reinterpret_cast<const char*>(glXQueryExtensionsString(m_Surface, DefaultScreen(m_Surface)));
+    auto exts = reinterpret_cast<const char*>(glXQueryExtensionsString(surface, DefaultScreen(surface)));
     #elif defined(WEB_PLT)
     auto exts = emscripten_webgl_get_supported_extensions();
     #endif
@@ -103,7 +104,6 @@ OpenGL::OpenGL([[maybe_unused]] H_WIN window, H_SRF surface)
 
 OpenGL::OpenGL(OpenGL &&other) noexcept
     : m_Context(std::exchange(other.m_Context, GLCTX{}))
-    , m_Surface(std::exchange(other.m_Surface, nullptr))
     , m_Major(std::exchange(other.m_Major, 0))
     , m_Minor(std::exchange(other.m_Minor, 0))
     , m_CreationTime(std::exchange(other.m_CreationTime, 0))
@@ -114,7 +114,6 @@ auto OpenGL::operator=(OpenGL &&other) noexcept -> OpenGL&
 {
     if(this != &other){
         this->m_Context = std::exchange(other.m_Context, GLCTX{});
-        this->m_Surface = std::exchange(other.m_Surface, nullptr);
         this->m_Major = std::exchange(other.m_Major, 0);
         this->m_Minor = std::exchange(other.m_Minor, 0);
         this->m_CreationTime = std::exchange(other.m_CreationTime, 0);
@@ -141,11 +140,6 @@ OpenGL::operator bool() const
 auto OpenGL::context() const -> GLCTX
 {
     return m_Context;
-}
-
-auto OpenGL::surface() const -> H_SRF
-{
-    return m_Surface;
 }
 
 auto OpenGL::major_v() const -> GLint

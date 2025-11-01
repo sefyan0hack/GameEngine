@@ -6,6 +6,8 @@
 #include "gl.h"
 #include <core/Function.hpp>
 
+class CWindow;
+
 namespace gl {
     constexpr auto OPENGL_MODULE_NAME = OPENGL_LIB;
 
@@ -33,19 +35,20 @@ namespace gl {
 class OpenGL
 {
     public:
-        explicit OpenGL(H_WIN window, H_SRF surface);
-        OpenGL(const OpenGL& other);
+        explicit OpenGL(const CWindow& window);
+        OpenGL(const OpenGL& other) = delete;
         OpenGL(OpenGL&& other) noexcept;
         ~OpenGL();
-        auto operator = (const OpenGL& other) -> OpenGL&;
+
+        auto operator = (const OpenGL& other) -> OpenGL& = delete;
         auto operator = (OpenGL&& other)  noexcept -> OpenGL&;
+
         auto operator == (const OpenGL& other) const -> bool;
         auto operator != (const OpenGL& other) const -> bool;
         operator bool () const;
 
     public:
         auto context() const -> GLCTX;
-        auto surface() const -> H_SRF;
         auto major_v() const -> GLint;
         auto minor_v() const -> GLint;
         auto is_valid() const -> bool;
@@ -60,14 +63,12 @@ class OpenGL
         static auto max_texture3d_size() -> GLint;
         static auto max_texturecubemap_size() -> GLint;
         
-        static auto dummy_ctx() -> GLCTX;
     private:
-        auto init_opengl()  -> void ;
-        auto make_current_opengl(GLCTX ctx, [[maybe_unused]] H_SRF srf, [[maybe_unused]] H_WIN win)  -> bool ;
+        auto create_opengl_context([[maybe_unused]] const CWindow& window) -> GLCTX;
+        auto make_current_opengl([[maybe_unused]] const CWindow& window)  -> bool ;
 
     private:
         GLCTX m_Context;
-        H_SRF m_Surface;
         GLint m_Major;
         GLint m_Minor;
         std::time_t m_CreationTime;

@@ -3,7 +3,7 @@
 #include <memory>
 #include <chrono>
 
-#include "Window.hpp"
+#include <graphics/Window.hpp>
 #include <graphics/Camera.hpp>
 #include <input/Keyboard.hpp>
 #include <input/Mouse.hpp>

@@ -1,4 +1,4 @@
 #include <gtest/gtest.h>
-#include <core/Window.hpp>
+#include <graphics/Window.hpp>
 
 using namespace std;

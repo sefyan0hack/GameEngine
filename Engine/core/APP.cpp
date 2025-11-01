@@ -1,9 +1,9 @@
 #include "APP.hpp"
-#include "Window.hpp"
 #include "Event.hpp"
 #include "Utils.hpp"
 #include <input/Keyboard.hpp>
 #include <input/Mouse.hpp>
+#include <graphics/Window.hpp>
 #include <graphics/OpenGL.hpp>
 #include <graphics/Scene.hpp>
 

@@ -3,46 +3,44 @@
 
 OpenGL::~OpenGL()
 {
-    glXMakeCurrent(m_Surface, Window{},  GLCTX{});
-    glXDestroyContext(m_Surface, m_Context);
-
+    // glXMakeCurrent(m_Surface, Window{},  GLCTX{});
+    // glXDestroyContext(m_Surface, m_Context);
 }
 
 
-OpenGL::OpenGL(const OpenGL &other)
-    : m_Context(GLCTX{})
-    , m_Surface(other.m_Surface)
-    , m_Major(other.m_Major)
-    , m_Minor(other.m_Minor)
-    , m_CreationTime(std::time(nullptr))
+// OpenGL::OpenGL(const OpenGL &other)
+//     : m_Context(GLCTX{})
+//     , m_Major(other.m_Major)
+//     , m_Minor(other.m_Minor)
+//     , m_CreationTime(std::time(nullptr))
+// {
+//     glXCopyContext(this->m_Surface, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
+//     // no error check for now  ` X11 ` Shit
+// }
+
+
+// auto OpenGL::operator=(const OpenGL &other) -> OpenGL&
+// {
+//     if(this != &other){
+//         this->m_Context = GLCTX{};
+//         this->m_Major = other.m_Major;
+//         this->m_Minor = other.m_Minor;
+//         this->m_CreationTime = std::time(nullptr);
+
+//         glXCopyContext(this->m_Surface, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
+//         // no error check for now  ` X11 ` Shit
+//     }
+//     return *this;
+// }
+
+auto OpenGL::make_current_opengl([[maybe_unused]] const CWindow& window)  -> bool
 {
-    glXCopyContext(this->m_Surface, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
-    // no error check for now  ` X11 ` Shit
+    return glXMakeCurrent(window.surface(), window.handle(), m_Context);
 }
 
-
-auto OpenGL::operator=(const OpenGL &other) -> OpenGL&
+auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GLCTX
 {
-    if(this != &other){
-        this->m_Context = GLCTX{};
-        this->m_Surface = other.m_Surface;    
-        this->m_Major = other.m_Major;
-        this->m_Minor = other.m_Minor;
-        this->m_CreationTime = std::time(nullptr);
-
-        glXCopyContext(this->m_Surface, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
-        // no error check for now  ` X11 ` Shit
-    }
-    return *this;
-}
-
-auto OpenGL::make_current_opengl(GLCTX ctx, [[maybe_unused]] H_SRF srf, [[maybe_unused]] H_WIN win)  -> bool {
-    return glXMakeCurrent(srf, win, ctx);
-}
-
-auto OpenGL::init_opengl() -> void
-{
-
+    auto surface = window.surface();
     static int32_t visualAttribs[] = {
         GLX_X_RENDERABLE,  true,
         GLX_DOUBLEBUFFER,  true,
@@ -55,12 +53,12 @@ auto OpenGL::init_opengl() -> void
     };
     
     int32_t fbcount;
-    GLXFBConfig* fbc = glXChooseFBConfig(m_Surface, DefaultScreen(m_Surface), visualAttribs, &fbcount);
+    GLXFBConfig* fbc = glXChooseFBConfig(surface, DefaultScreen(surface), visualAttribs, &fbcount);
     if (!fbc || fbcount == 0) {
         throw Exception("Failed to get framebuffer config.");
     }
 
-    XVisualInfo* visInfo = glXGetVisualFromFBConfig(m_Surface, fbc[0]);
+    XVisualInfo* visInfo = glXGetVisualFromFBConfig(surface, fbc[0]);
     if (!visInfo) {
         XFree(fbc);
         throw Exception("Failed to get visual info.");
@@ -77,11 +75,13 @@ auto OpenGL::init_opengl() -> void
 
     glXCreateContextAttribsARB = (decltype(glXCreateContextAttribsARB))glXGetProcAddress((const GLubyte*)"glXCreateContextAttribsARB");
 
-    m_Context = glXCreateContextAttribsARB(m_Surface, fbc[0], nullptr, True, contextAttribs);
+    context = glXCreateContextAttribsARB(surface, fbc[0], nullptr, True, contextAttribs);
     XFree(fbc);
     XFree(visInfo);
 
-    if (!m_Context) {
+    if (!context) {
         throw Exception("Failed to create GLX context.");
     }
+
+    return context;
 }

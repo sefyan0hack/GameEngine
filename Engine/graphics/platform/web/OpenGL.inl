@@ -9,36 +9,36 @@ OpenGL::~OpenGL()
 }
 
 
-OpenGL::OpenGL(const OpenGL &other)
-    : m_Context(GLCTX{})
-    , m_Surface(other.m_Surface)
-    , m_Major(other.m_Major)
-    , m_Minor(other.m_Minor)
-    , m_CreationTime(std::time(nullptr))
+// OpenGL::OpenGL(const OpenGL &other)
+//     : m_Context(GLCTX{})
+//     , m_Major(other.m_Major)
+//     , m_Minor(other.m_Minor)
+//     , m_CreationTime(std::time(nullptr))
+// {
+// }
+
+
+// auto OpenGL::operator=(const OpenGL &other) -> OpenGL&
+// {
+//     if(this != &other){
+//         this->m_Context = GLCTX{};
+//         this->m_Major = other.m_Major;
+//         this->m_Minor = other.m_Minor;
+//         this->m_CreationTime = std::time(nullptr);
+
+//     }
+//     return *this;
+// }
+
+
+auto OpenGL::make_current_opengl([[maybe_unused]] const CWindow& window)  -> bool
 {
+    return emscripten_webgl_make_context_current(m_Context) == EMSCRIPTEN_RESULT_SUCCESS;
 }
 
-
-auto OpenGL::operator=(const OpenGL &other) -> OpenGL&
+auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GLCTX
 {
-    if(this != &other){
-        this->m_Context = GLCTX{};
-        this->m_Surface = other.m_Surface;    
-        this->m_Major = other.m_Major;
-        this->m_Minor = other.m_Minor;
-        this->m_CreationTime = std::time(nullptr);
-
-    }
-    return *this;
-}
-
-auto OpenGL::make_current_opengl(GLCTX ctx, [[maybe_unused]] H_SRF srf, [[maybe_unused]] H_WIN win)  -> bool {
-    return emscripten_webgl_make_context_current(ctx) == EMSCRIPTEN_RESULT_SUCCESS;
-}
-
-auto OpenGL::init_opengl() -> void
-{
-
+    auto surface = window.surface();
     EmscriptenWebGLContextAttributes attrs;
     emscripten_webgl_init_context_attributes(&attrs);
 
@@ -54,9 +54,11 @@ auto OpenGL::init_opengl() -> void
     attrs.minorVersion = 0;
     attrs.enableExtensionsByDefault = EM_TRUE;
 
-    m_Context = emscripten_webgl_create_context(m_Surface, &attrs);
+    context = emscripten_webgl_create_context(surface, &attrs);
 
-    if (m_Context <= 0) {
-        throw Exception("Failed to create WebGL context: error {}", static_cast<int32_t>(m_Context));
+    if (context <= 0) {
+        throw Exception("Failed to create WebGL context: error {}", static_cast<int32_t>(context));
     }
+
+    return context;
 }

@@ -1,11 +1,10 @@
 #include <cstring>
 
 #include "Window.hpp"
-#include "Log.hpp"
-#include <graphics/OpenGL.hpp>
 #include <input/Keyboard.hpp>
 #include <input/Mouse.hpp>
-#include "EventQueue.hpp"
+#include <core/Log.hpp>
+#include <core/EventQueue.hpp>
 
 #if defined(WINDOWS_PLT)
 #	include "platform/win32/Window.inl"

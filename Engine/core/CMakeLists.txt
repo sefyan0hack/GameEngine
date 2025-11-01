@@ -4,7 +4,6 @@ include(helpers)
 add_library(core)
 
 target_sources( core PRIVATE
-    Window.cpp
     APP.cpp
     ResourceManager.cpp
 )
@@ -22,13 +21,8 @@ target_sources( core PUBLIC
         EventQueue.hpp
         Function.hpp
         ResourceManager.hpp
-        Window.hpp
         APP.hpp
         ResourceManager.hpp
-)
-
-target_include_directories(core PRIVATE
-    $<$<PLATFORM_ID:Linux>:${X11_INCLUDE_DIR}>
 )
 
 target_include_directories(core PRIVATE ${CMAKE_SOURCE_DIR}/Engine)
@@ -48,6 +42,5 @@ if(NOT EMSCRIPTEN)
         PRIVATE
             Threads::Threads
             $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
-            $<$<PLATFORM_ID:Linux>:${X11_LIBRARIES}>
     )
 endif()

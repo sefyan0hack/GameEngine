@@ -8,39 +8,40 @@ OpenGL::~OpenGL()
 }
 
 
-OpenGL::OpenGL(const OpenGL &other)
-    : m_Context(GLCTX{})
-    , m_Surface(other.m_Surface)
-    , m_Major(other.m_Major)
-    , m_Minor(other.m_Minor)
-    , m_CreationTime(std::time(nullptr))
+// OpenGL::OpenGL(const OpenGL &other)
+//     : m_Context(GLCTX{})
+//     , m_Major(other.m_Major)
+//     , m_Minor(other.m_Minor)
+//     , m_CreationTime(std::time(nullptr))
+// {
+//     auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
+//     if(tst != TRUE) throw Exception("couldn't Copy Opengl Context");
+// }
+
+
+// auto OpenGL::operator=(const OpenGL &other) -> OpenGL&
+// {
+//     if(this != &other){
+//         this->m_Context = GLCTX{};
+//         this->m_Major = other.m_Major;
+//         this->m_Minor = other.m_Minor;
+//         this->m_CreationTime = std::time(nullptr);
+
+//         auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
+//         if(tst != TRUE) throw Exception("couldn't Copy Opengl Context");
+//     }
+//     return *this;
+// }
+
+auto OpenGL::make_current_opengl([[maybe_unused]] const CWindow& window)  -> bool
 {
-    auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
-    if(tst != TRUE) throw Exception("couldn't Copy Opengl Context");
+    return wglMakeCurrent(window.surface(), m_Context);
 }
 
-
-auto OpenGL::operator=(const OpenGL &other) -> OpenGL&
+auto OpenGL::create_opengl_context(const CWindow& window) -> GLCTX
 {
-    if(this != &other){
-        this->m_Context = GLCTX{};
-        this->m_Surface = other.m_Surface;    
-        this->m_Major = other.m_Major;
-        this->m_Minor = other.m_Minor;
-        this->m_CreationTime = std::time(nullptr);
+    auto surface = window.surface();
 
-        auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
-        if(tst != TRUE) throw Exception("couldn't Copy Opengl Context");
-    }
-    return *this;
-}
-
-auto OpenGL::make_current_opengl(GLCTX ctx, [[maybe_unused]] H_SRF srf, [[maybe_unused]] H_WIN win)  -> bool {
-    return wglMakeCurrent(srf, ctx);
-}
-
-auto OpenGL::init_opengl() -> void
-{
     PIXELFORMATDESCRIPTOR pfd = {
         sizeof(PIXELFORMATDESCRIPTOR),
         1,
@@ -55,22 +56,22 @@ auto OpenGL::init_opengl() -> void
         PFD_MAIN_PLANE,
         0, 0, 0
     };
-    auto pixel_format = ChoosePixelFormat(m_Surface, &pfd);
+    auto pixel_format = ChoosePixelFormat(surface, &pfd);
     if (!pixel_format) {
         throw Exception("Failed to find a suitable pixel format. : {}", GetLastError());
     }
-    if (!SetPixelFormat(m_Surface, pixel_format, &pfd)) {
+    if (!SetPixelFormat(surface, pixel_format, &pfd)) {
         throw Exception("Failed to set the pixel format. : {}", GetLastError());
     }
 
     GLCTX dummy_context = nullptr;
 
-    dummy_context = wglCreateContext(m_Surface);
+    dummy_context = wglCreateContext(surface);
     if (!dummy_context) {
         throw Exception("Failed to create a dummy OpenGL rendering context. : {}", GetLastError());
     }
 
-    if (!wglMakeCurrent(m_Surface, dummy_context)) {
+    if (!wglMakeCurrent(surface, dummy_context)) {
         throw Exception("Failed to activate dummy OpenGL rendering context. : {}", GetLastError());
     }
 
@@ -96,7 +97,7 @@ auto OpenGL::init_opengl() -> void
 
 
     GLCTX opengl_context = nullptr;
-    if (nullptr == (opengl_context = wglCreateContextAttribsARB(m_Surface, nullptr, gl_attribs))) {
+    if (nullptr == (opengl_context = wglCreateContextAttribsARB(surface, nullptr, gl_attribs))) {
         m_Context = nullptr;
 
         if (GetLastError() == ERROR_INVALID_VERSION_ARB){ // ?
@@ -106,6 +107,6 @@ auto OpenGL::init_opengl() -> void
     }
 
     wglDeleteContext(dummy_context);
-
-    m_Context =  opengl_context;
+ 
+    return opengl_context;
 }
