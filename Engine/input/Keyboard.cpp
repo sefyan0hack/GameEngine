@@ -12,7 +12,7 @@
 #endif
 
 #if defined(WINDOWS_PLT)
-#	include "platform/win32/Keyboard.inl"
+#	include "platform/windows/Keyboard.inl"
 #elif defined(LINUX_PLT)
 #	include "platform/linux/Keyboard.inl"
 #elif defined(WEB_PLT)

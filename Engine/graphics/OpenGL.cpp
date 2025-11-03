@@ -19,7 +19,7 @@ inline static auto After_Func = []([[maybe_unused]] std::string info) {
 
 
 #if defined(WINDOWS_PLT)
-#include "platform/win32/OpenGL.inl"
+#include "platform/windows/OpenGL.inl"
 #elif defined(LINUX_PLT)
 #include "platform/linux/OpenGL.inl"
 #elif defined(WEB_PLT)

@@ -105,7 +105,7 @@
 #define GL_GLEXT_PROTOTYPES
 
 #if defined(WINDOWS_PLT)
-#include "platform/win32/gl.inl"
+#include "platform/windows/gl.inl"
 #elif defined(LINUX_PLT)
 #include "platform/linux/gl.inl"
 #elif defined(WEB_PLT)

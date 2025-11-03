@@ -7,7 +7,7 @@
 #include <core/EventQueue.hpp>
 
 #if defined(WINDOWS_PLT)
-#	include "platform/win32/Window.inl"
+#	include "platform/windows/Window.inl"
 #elif defined(LINUX_PLT)
 #	include "platform/linux/Window.inl"
 #elif defined(WEB_PLT)

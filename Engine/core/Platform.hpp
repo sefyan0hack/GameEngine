@@ -40,7 +40,7 @@ template<auto var>
 concept is_static = std::is_object_v<std::remove_pointer_t<decltype(var)>> && !std::is_member_object_pointer_v<decltype(var)>;
 
 /** 
- * @brief demangle c++ symbole   only for clang/linux and gcc/(win32, linux)
+ * @brief demangle c++ symbole   only for clang/linux and gcc/(windows, linux)
  * @param name mangled name
  * @return demangle name if name is vaid mangled c++ else get back name it self
  */
@@ -239,17 +239,17 @@ namespace sys {
 
     /*!< string form of the Curent Target Syateme */
     constexpr const char* TargetName = 
-    Target == Target::Windows ? "Windows" :
-    Target == Target::Linux   ? "Linux"   :
-    Target == Target::Web     ? "Web"     : "UNKNOWN";
+    Target == Target::Windows ? "windows" :
+    Target == Target::Linux   ? "linux"   :
+    Target == Target::Web     ? "web"     : "unknown";
     
     /*!< string form of the Curent Arch Syateme */
     constexpr const char* ArchName =
     Arch == Arch::x86_64 ? "x86_64" :
-    Arch == Arch::Arm64  ? "Arm64"  :
+    Arch == Arch::Arm64  ? "arm64"  :
     Arch == Arch::x86    ? "x86"    :
-    Arch == Arch::Arm    ? "Arm"    :
-    Arch == Arch::Wasm   ? "Wasm"   : "UNKNOWN";
+    Arch == Arch::Arm    ? "arm"    :
+    Arch == Arch::Wasm   ? "wasm"   : "unknown";
     
     /*!< Time stamp of the build */
     constexpr const char* TimeStamp = __TIMESTAMP__;

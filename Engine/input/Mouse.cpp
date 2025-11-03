@@ -12,7 +12,7 @@
 #include <core/Log.hpp>
 
 #if defined(WINDOWS_PLT)
-#	include "platform/win32/Mouse.inl"
+#	include "platform/windows/Mouse.inl"
 #elif defined(LINUX_PLT)
 #	include "platform/linux/Mouse.inl"
 #elif defined(WEB_PLT)
