@@ -7,6 +7,7 @@
 #include <format>
 
 #include "GameObject.hpp"
+#include "Camera.hpp"
 #include <core/fmts.hpp>
 
 /// @brief  Scene has all the Entities to Render + Sky box
@@ -14,10 +15,8 @@ class Scene
 {
 public:
     friend struct std::formatter<Scene>;
-    Scene(class Camera& camera);
+    Scene();
     ~Scene();
-    auto add(GameObject&& entity) -> void;
-    auto add(Camera&& cam) -> void;
     auto entities() const -> std::span<const GameObject>;
     auto set_skybox(const std::string& BasePathName) -> void;
     auto set_skybox(std::shared_ptr<class TextureCubeMap> texture) -> void;
@@ -26,17 +25,17 @@ public:
     auto main_camera() -> Camera&;
     auto main_camera() const -> Camera&;
 
+    auto operator<<(GameObject entity) -> Scene&;
+
+auto operator<<(Camera entity) -> Scene&;
+
 private:
-    class Camera& m_Camera;
+    std::vector<Camera> m_Cameras;
+    class Camera& m_MainCamera;
     std::unique_ptr<class SkyBox> m_SkyBox;
     std::vector<GameObject> m_Entities;
-    std::vector<Camera> m_Cameras;
 
 };
-
-auto operator<<(Scene& scene, GameObject&& entity) -> Scene&;
-
-auto operator<<(Scene& scene, Camera&& entity) -> Scene&;
 
 // custom Mesh Format
 template<>

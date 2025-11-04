@@ -12,6 +12,10 @@ public:
     Transform(glm::vec3 position, glm::vec3 rotaion = {0.0f, 0.0f, 0.0f}, glm::vec3 scale = {1.0f, 1.0f, 1.0f});
     ~Transform() = default;
 
+    
+  // Add copy assignment operator
+  auto operator=(const Transform& other) -> Transform&;
+
     auto operator=(const glm::mat4& M) -> Transform;
     operator glm::mat4 () const;
 

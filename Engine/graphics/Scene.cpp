@@ -12,20 +12,10 @@
 
 Scene::~Scene() {}
 
-Scene::Scene(Camera& camera)
-    : m_Camera(camera)
+Scene::Scene()
+    : m_Cameras({Camera()})
+    , m_MainCamera(m_Cameras[0])
     , m_SkyBox(std::make_unique<SkyBox>()) {}
-
-auto Scene::add(GameObject&& entity) -> void
-{
-    m_Entities.push_back(std::move(entity));
-    m_Entities.back().material()->set_texture("uSkyboxMap", m_SkyBox->texture());
-}
-
-auto Scene::add(Camera&& cam) -> void
-{
-    m_Cameras.push_back(std::move(cam));
-}
 
 auto Scene::entities() const -> std::span<const GameObject>
 {
@@ -49,16 +39,17 @@ auto Scene::clear() -> void
     m_Entities.clear();
 }
 
-auto operator<<(Scene& scene, GameObject&& entity)-> Scene&
+auto Scene::operator<<(GameObject entity)-> Scene&
 {
-    scene.add(std::move(entity));
-    return scene;
+    entity.material()->set_texture("uSkyboxMap", m_SkyBox->texture());
+    m_Entities.emplace_back(std::move(entity));
+    return *this;
 }
 
-auto operator<<(Scene& scene, Camera&& cam)-> Scene&
+auto Scene::operator<<(Camera cam)-> Scene&
 {
-    scene.add(std::move(cam));
-    return scene;
+    m_Cameras.emplace_back(std::move(cam));
+    return *this;
 }
 
 auto Scene::render_sky() const -> void{
@@ -66,8 +57,8 @@ auto Scene::render_sky() const -> void{
     gl::DepthFunc(GL_LEQUAL);
 
     m_SkyBox->program()->use();
-    m_SkyBox->program()->set_uniform("View", glm::mat4(glm::mat3(m_Camera.view())));
-    m_SkyBox->program()->set_uniform("Projection", m_Camera.perspective());
+    m_SkyBox->program()->set_uniform("View", glm::mat4(glm::mat3(m_MainCamera.view())));
+    m_SkyBox->program()->set_uniform("Projection", m_MainCamera.perspective());
     m_SkyBox->program()->set_uniform("uDiffuseMap", m_SkyBox->texture()->texture_unit());
 
     gl::BindVertexArray(m_SkyBox->mesh()->VAO);
@@ -78,9 +69,9 @@ auto Scene::render_sky() const -> void{
 
 auto Scene::main_camera() -> Camera&
 {
-    return m_Camera;
+    return m_MainCamera;
 }
 auto Scene::main_camera() const -> Camera&
 {
-    return m_Camera;
+    return m_MainCamera;
 }

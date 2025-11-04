@@ -6,7 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-GameObject::GameObject(glm::vec3 position, std::shared_ptr<Material> matt, std::shared_ptr<Mesh> mesh, std::string Name)
+GameObject::GameObject(glm::vec3 position, std::shared_ptr<Material> matt, std::shared_ptr<Mesh> mesh, std::string Name) noexcept
     : m_Transform(Transform(position))
     , m_Material(matt)
     , m_Mesh(mesh)
@@ -15,7 +15,7 @@ GameObject::GameObject(glm::vec3 position, std::shared_ptr<Material> matt, std::
     Count++;
 }
 
-GameObject::GameObject(Transform transform, std::shared_ptr<Material> matt, std::shared_ptr<Mesh> mesh, std::string Name)
+GameObject::GameObject(Transform transform, std::shared_ptr<Material> matt, std::shared_ptr<Mesh> mesh, std::string Name) noexcept
     : m_Transform(transform)
     , m_Material(matt)
     , m_Mesh(mesh)
@@ -26,14 +26,15 @@ GameObject::GameObject(Transform transform, std::shared_ptr<Material> matt, std:
 
 GameObject::~GameObject()
 {
+    Count--;
 }
 
 
 GameObject::GameObject(GameObject&& other) noexcept
-    : m_Transform(std::exchange(other.m_Transform, {}))
-    , m_Material(std::exchange(other.m_Material, nullptr))
-    , m_Mesh(std::exchange(other.m_Mesh, nullptr))
-    , m_Name(std::exchange(other.m_Name, {}))
+    : m_Transform(std::move(other.m_Transform))
+    , m_Material(std::move(other.m_Material))
+    , m_Mesh(std::move(other.m_Mesh))
+    , m_Name(std::move(other.m_Name))
 {
 }
 
@@ -42,10 +43,10 @@ auto GameObject::operator=(GameObject&& other) noexcept -> GameObject&
     debug::print("Move {}", Count);
 
     if(this != &other){
-        m_Transform = std::exchange(other.m_Transform, {});
-        m_Material = std::exchange(other.m_Material, nullptr);
-        m_Mesh = std::exchange(other.m_Mesh, nullptr);
-        m_Name = std::exchange(other.m_Name, {});
+        m_Transform = std::move(other.m_Transform);
+        m_Material = std::move(other.m_Material);
+        m_Mesh = std::move(other.m_Mesh);
+        m_Name = std::move(other.m_Name);
     }
     return *this;
 }
@@ -72,8 +73,7 @@ auto GameObject::set_scale(const glm::vec3 &Scale) -> void
 
 auto GameObject::rotate(float angle, glm::vec3 axis) -> void
 {
-    auto transformation = glm::mat4(1.0f); // wrong
-    m_Transform = glm::rotate((transformation * (glm::mat4)m_Transform), glm::radians(angle), axis);
+    m_Transform.rotation += axis * angle;
 }
 
 
