@@ -48,12 +48,25 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, std::string Name)
 }
 
 Mesh::Mesh(Mesh&& other) noexcept
-    : name(std::exchange(other.name, {}))
-    , vertices(std::exchange(other.vertices, {}))
-    , attribs(std::exchange(other.attribs, {}))
-    , VBO(std::exchange(other.VBO, 0))
-    , VAO(std::exchange(other.VAO, 0))
+    : name(std::move(other.name))
+    , vertices(std::move(other.vertices))
+    , attribs(std::move(other.attribs))
+    , VBO(other.VBO)
+    , VAO(other.VAO)
 {
+    other.VBO = 0;
+    other.VAO = 0;
+}
+
+Mesh::~Mesh()
+{
+    if (VBO != 0) {
+        gl::DeleteBuffers(1, &VBO);
+    }
+    if (VAO != 0) {
+        gl::DeleteVertexArrays(1, &VAO);
+    }
+    Count--;
 }
 
 auto Mesh::operator=(Mesh &&other) noexcept -> Mesh&

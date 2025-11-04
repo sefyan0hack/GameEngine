@@ -13,9 +13,6 @@ public:
     ~Transform() = default;
 
     
-  // Add copy assignment operator
-  auto operator=(const Transform& other) -> Transform&;
-
     auto operator=(const glm::mat4& M) -> Transform;
     operator glm::mat4 () const;
 
@@ -26,8 +23,6 @@ public:
     glm::vec3 position;
     glm::vec3 rotation;
     glm::vec3 scale;
-    
-    
 };
 
 // custom Transform Format

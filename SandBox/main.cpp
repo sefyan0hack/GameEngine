@@ -25,7 +25,7 @@ public:
         : vert(std::make_shared<Shader>(fs.open("res/Shaders/cube.vert"), GL_VERTEX_SHADER))
         , frag(std::make_shared<Shader>(fs.open("res/Shaders/cube.frag"), GL_FRAGMENT_SHADER))
         , CubeProgram(std::make_shared<ShaderProgram>(vert, frag))
-        , MainScene(ViewCamera)
+        , MainScene()
     {
 
         ResManager["brik.jpg"]          = Texture2D(fs.open("res/brik.jpg"));
@@ -41,7 +41,7 @@ public:
         ResManager["cubeMesh"]      = Mesh(Mesh::CUBE);
         ResManager["manMesh"]       = Mesh(obj_to_mesh(fs.open("res/FinalBaseMesh.obj")));
 
-        constexpr int32_t Grids = 4;
+        constexpr int32_t Grids = 40;
 
         static thread_local std::mt19937 rng(std::random_device{}());
         static thread_local std::bernoulli_distribution coin(0.5f);
@@ -49,7 +49,9 @@ public:
         for(int32_t i = -Grids; i < Grids; i ++){
             for(int32_t j = -Grids; j < Grids; j ++){
                 auto m = coin(rng) ? ResManager["CubeMattkimberley"] : ResManager["CubeMattSand"];
-                MainScene << GameObject(Transform({i, 0, j}, {0, 0, 0}, { 0.5f, 0.5f, 0.5f}), m, ResManager["cubeMesh"]);
+                auto t = Transform({i, 0, j}, {0, 0, 0}, { 0.5f, 0.5f, 0.5f});
+                MainScene << GameObject(t, m, ResManager["cubeMesh"]);
+                // MainScene << GameObject(Transform({i, 0, j}, {0, 0, 0}, { 0.5f, 0.5f, 0.5f}), m, ResManager["cubeMesh"]); // this a crash ??
             }
         }
         MainScene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), ResManager["CubeMattSand"], ResManager["manMesh"]);
@@ -70,7 +72,7 @@ public:
 
         auto by = speed * delta;
 
-        ViewCamera.move({ Vert * by, Up * by, Hori * by });
+        MainScene.main_camera().move({ Vert * by, Up * by, Hori * by });
 
         render(MainScene, CubeProgram);
 
@@ -78,6 +80,10 @@ public:
     }
 
 public:
+    auto on_deltamouse(float dx, float dy) -> void override
+    {
+        MainScene.main_camera().process_mouse_movement(dx, -dy);
+    }
 
     /// @brief Get called when the game quit
     ~Game(){

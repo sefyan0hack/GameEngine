@@ -4,6 +4,7 @@
 #include <ctime>
 
 #include "gl.h"
+#include "GraphicApi.hpp"
 #include <core/Function.hpp>
 
 class CWindow;
@@ -32,7 +33,7 @@ namespace gl {
     constexpr int32_t  GLMajorVersion   = 3;
     constexpr int32_t  GLMinorVersion   = 3;
 
-class OpenGL
+class OpenGL : public GApi
 {
     public:
         explicit OpenGL(const CWindow& window);
@@ -48,13 +49,13 @@ class OpenGL
         operator bool () const;
 
     public:
-        auto context() const -> GLCTX;
+        auto context() const -> GLCTX override ;
+        auto is_valid() const -> bool override ;
+        auto creation_time() const -> std::time_t override ;
+        auto has_extension(const std::string& ext) const -> bool override ;
         auto major_v() const -> GLint;
         auto minor_v() const -> GLint;
-        auto is_valid() const -> bool;
-        auto creation_time() const -> std::time_t;
-        auto has_extension(const std::string& ext) const -> bool;
-
+        
         static auto vendor() -> std::string;
         static auto renderer() -> std::string;
         static auto extensions() -> std::vector<std::string>;

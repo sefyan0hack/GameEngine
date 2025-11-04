@@ -13,6 +13,7 @@ public:
 
     auto graphic_api() const -> const gl::OpenGL&;
     auto set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void;
+    auto viewport() -> std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>;
     auto enable_wireframe() -> void;
     auto disable_wireframe() -> void;
     auto enable_points() -> void;
@@ -26,4 +27,5 @@ private:
 private:
     const class CWindow& m_Window;
     const gl::OpenGL m_GraphicApi;
+    uint32_t x, y, width, height;
 };

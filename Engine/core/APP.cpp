@@ -26,7 +26,6 @@ constexpr auto WINDOW_HIEGHT = 640;
 
 APP::APP()
     : Window(WINDOW_WIDTH, WINDOW_HIEGHT, Wname, ApplicationEventQueue)
-    , ViewCamera()
     , Keyboard()
     , Mouse()
     , m_Renderer(Window)
@@ -35,12 +34,16 @@ APP::APP()
     , m_SmoothedFPS(60.0f)
 { 
     Window.show();
-    Window.set_vsync(true);
+    Window.set_vsync(false);
 }
 
 APP::~APP()
 {
     clear_events();
+}
+
+auto APP::on_deltamouse(float, float) -> void
+{
 }
 
 auto APP::frame(float deltaTime) -> void
@@ -112,7 +115,7 @@ auto APP::loop_body(void* ctx) -> void
             [&app](const Mouse::MovementEvent& e) {
                 app->Mouse.on_rawdelta(e.dx, e.dy);
                 auto [dx, dy] = app->Mouse.get_rawdelta();
-                app->ViewCamera.process_mouse_movement(dx, -dy);
+                app->on_deltamouse(dx, dy);
             },
             [](const auto& e) {
                 if( ::type_name<decltype(e)>() == "const std::monostate&") throw Exception(" nnnnnn ");

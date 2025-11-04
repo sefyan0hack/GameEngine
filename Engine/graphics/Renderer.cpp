@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <execution>
 #include <core/Log.hpp>
 #include <core/ResourceManager.hpp>
 #include "Window.hpp"
@@ -16,8 +18,10 @@
 Renderer::Renderer(const CWindow& window)
     : m_Window(window)
     , m_GraphicApi(window)
-
+    , x(0), y(0)
+    , width(window.width()), height(window.height())
 {}
+
 Renderer::~Renderer(){
 }
 
@@ -33,17 +37,21 @@ auto Renderer::render(const Scene& scene, const std::shared_ptr<ShaderProgram> p
 
     static std::shared_ptr<Material> currMatt = nullptr;
     //Drwaing
-    for(auto &obj: scene.entities()){
-        program->set_uniform("Model", obj.model());
+    std::for_each( std::execution::seq,
+        scene.entities().cbegin(), scene.entities().cend(),
+        [&](const auto& obj){
+            program->set_uniform("Model", obj.model());
 
-        if(currMatt != obj.material()){
-            currMatt = obj.material();
-            obj.material()->bind(program);
+            if(currMatt != obj.material()){
+                currMatt = obj.material();
+                obj.material()->bind(program);
+            }
+
+            auto mesh = obj.mesh();
+            draw(*mesh);
         }
+    );
 
-        auto mesh = obj.mesh();
-        draw(*mesh);
-    }
 }
 
 
@@ -64,9 +72,17 @@ auto Renderer::graphic_api() const -> const gl::OpenGL&
 
 auto Renderer::set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void
 {
+    this->x= x;
+    this->y= y;
+    this->width= width;
+    this->height= height;
     gl::Viewport(x, y, width, height);
 }
 
+auto Renderer::viewport() -> std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
+{
+    return {x, y, width, height};
+}
 
 auto Renderer::enable_wireframe() -> void
 {

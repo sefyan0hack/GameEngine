@@ -34,7 +34,7 @@ public:
 public:
     friend struct std::formatter<Mesh>;
     Mesh(const std::vector<VetexData> &vertices, std::string Name = std::format("Mesh{}", Count));
-    ~Mesh() = default;
+    ~Mesh();
 
     Mesh(const Mesh& other) = delete;
     auto operator=(const Mesh& other) -> Mesh& = delete;

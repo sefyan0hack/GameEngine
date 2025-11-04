@@ -4,7 +4,6 @@
 #include <chrono>
 
 #include <graphics/Window.hpp>
-#include <graphics/Camera.hpp>
 #include <input/Keyboard.hpp>
 #include <input/Mouse.hpp>
 #include "EventQueue.hpp"
@@ -18,6 +17,8 @@ protected:
     ~APP();
 
     virtual auto update(float delta) -> void = 0 ;
+    virtual auto on_deltamouse(float dx, float dy) -> void;
+
 public:
     auto run() -> void ;
     auto fps() const -> float;
@@ -38,7 +39,6 @@ private:
 
 protected:
     CWindow Window;
-    Camera ViewCamera;
     Keyboard Keyboard;
     Mouse Mouse;
 

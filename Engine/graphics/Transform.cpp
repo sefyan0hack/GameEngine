@@ -16,17 +16,6 @@ Transform::Transform(glm::vec3 position, glm::vec3 rotaion, glm::vec3 scale)
     , scale(scale)
 {}
 
- 
-auto Transform::operator=(const Transform& other) -> Transform&
-{
-    if (this != &other) {
-        position = other.position;
-        rotation = other.rotation;
-        scale = other.scale;
-    }
-    return *this;
-}
-
 auto Transform::operator=(const glm::mat4 &M) -> Transform
 {
     return from_mat4(M);
