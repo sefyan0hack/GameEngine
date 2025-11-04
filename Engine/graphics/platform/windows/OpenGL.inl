@@ -9,7 +9,7 @@ OpenGL::~OpenGL()
 
 
 // OpenGL::OpenGL(const OpenGL &other)
-//     : m_Context(GLCTX{})
+//     : m_Context(GL_CTX{})
 //     , m_Major(other.m_Major)
 //     , m_Minor(other.m_Minor)
 //     , m_CreationTime(std::time(nullptr))
@@ -22,7 +22,7 @@ OpenGL::~OpenGL()
 // auto OpenGL::operator=(const OpenGL &other) -> OpenGL&
 // {
 //     if(this != &other){
-//         this->m_Context = GLCTX{};
+//         this->m_Context = GL_CTX{};
 //         this->m_Major = other.m_Major;
 //         this->m_Minor = other.m_Minor;
 //         this->m_CreationTime = std::time(nullptr);
@@ -38,7 +38,7 @@ auto OpenGL::make_current_opengl([[maybe_unused]] const CWindow& window)  -> boo
     return wglMakeCurrent(window.surface(), m_Context);
 }
 
-auto OpenGL::create_opengl_context(const CWindow& window) -> GLCTX
+auto OpenGL::create_opengl_context(const CWindow& window) -> GL_CTX
 {
     auto surface = window.surface();
 
@@ -64,7 +64,7 @@ auto OpenGL::create_opengl_context(const CWindow& window) -> GLCTX
         throw Exception("Failed to set the pixel format. : {}", GetLastError());
     }
 
-    GLCTX dummy_context = nullptr;
+    GL_CTX dummy_context = nullptr;
 
     dummy_context = wglCreateContext(surface);
     if (!dummy_context) {
@@ -96,7 +96,7 @@ auto OpenGL::create_opengl_context(const CWindow& window) -> GLCTX
     };
 
 
-    GLCTX opengl_context = nullptr;
+    GL_CTX opengl_context = nullptr;
     if (nullptr == (opengl_context = wglCreateContextAttribsARB(surface, nullptr, gl_attribs))) {
         m_Context = nullptr;
 

@@ -4,7 +4,7 @@
 #include <ctime>
 
 #include "gl.h"
-#include "GraphicApi.hpp"
+#include "GApi.hpp"
 #include <core/Function.hpp>
 
 class CWindow;
@@ -33,7 +33,7 @@ namespace gl {
     constexpr int32_t  GLMajorVersion   = 3;
     constexpr int32_t  GLMinorVersion   = 3;
 
-class OpenGL : public GApi
+class OpenGL final: public GApi
 {
     public:
         explicit OpenGL(const CWindow& window);
@@ -49,7 +49,7 @@ class OpenGL : public GApi
         operator bool () const;
 
     public:
-        auto context() const -> GLCTX override ;
+        auto context() const -> GCTX override ;
         auto is_valid() const -> bool override ;
         auto creation_time() const -> std::time_t override ;
         auto has_extension(const std::string& ext) const -> bool override ;
@@ -65,11 +65,11 @@ class OpenGL : public GApi
         static auto max_texturecubemap_size() -> GLint;
         
     private:
-        auto create_opengl_context([[maybe_unused]] const CWindow& window) -> GLCTX;
+        auto create_opengl_context([[maybe_unused]] const CWindow& window) -> GL_CTX;
         auto make_current_opengl([[maybe_unused]] const CWindow& window)  -> bool ;
 
     private:
-        GLCTX m_Context;
+        GL_CTX m_Context;
         GLint m_Major;
         GLint m_Minor;
         std::time_t m_CreationTime;

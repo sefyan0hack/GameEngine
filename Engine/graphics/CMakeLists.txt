@@ -5,7 +5,6 @@ add_library(graphics)
 
 target_sources( graphics PRIVATE
     Window.cpp    
-    Renderer.cpp
     Shader.cpp
     ShaderProgram.cpp
     Mesh.cpp
@@ -18,6 +17,7 @@ target_sources( graphics PRIVATE
     Transform.cpp
     Camera.cpp
     GameObject.cpp
+    OpenGLRenderer.cpp
 )
 
 target_sources( graphics PUBLIC
@@ -39,7 +39,8 @@ target_sources( graphics PUBLIC
         Transform.hpp
         Camera.hpp
         GameObject.hpp
-
+        GApi.hpp
+        OpenGLRenderer.hpp
 )
 
 target_include_directories(core PRIVATE

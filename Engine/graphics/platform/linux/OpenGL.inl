@@ -3,13 +3,13 @@
 
 OpenGL::~OpenGL()
 {
-    // glXMakeCurrent(m_Surface, Window{},  GLCTX{});
+    // glXMakeCurrent(m_Surface, Window{},  GL_CTX{});
     // glXDestroyContext(m_Surface, m_Context);
 }
 
 
 // OpenGL::OpenGL(const OpenGL &other)
-//     : m_Context(GLCTX{})
+//     : m_Context(GL_CTX{})
 //     , m_Major(other.m_Major)
 //     , m_Minor(other.m_Minor)
 //     , m_CreationTime(std::time(nullptr))
@@ -22,7 +22,7 @@ OpenGL::~OpenGL()
 // auto OpenGL::operator=(const OpenGL &other) -> OpenGL&
 // {
 //     if(this != &other){
-//         this->m_Context = GLCTX{};
+//         this->m_Context = GL_CTX{};
 //         this->m_Major = other.m_Major;
 //         this->m_Minor = other.m_Minor;
 //         this->m_CreationTime = std::time(nullptr);
@@ -38,7 +38,7 @@ auto OpenGL::make_current_opengl([[maybe_unused]] const CWindow& window)  -> boo
     return glXMakeCurrent(window.surface(), window.handle(), m_Context);
 }
 
-auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GLCTX
+auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GL_CTX
 {
     auto surface = window.surface();
     static int32_t visualAttribs[] = {

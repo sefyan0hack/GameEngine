@@ -43,7 +43,7 @@ protected:
     Mouse Mouse;
 
 private:
-    Renderer m_Renderer;
+    IRenderer* m_Renderer;
 
 private:
     bool m_Running;

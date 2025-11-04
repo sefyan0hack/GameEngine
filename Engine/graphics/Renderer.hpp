@@ -1,31 +1,26 @@
 #pragma once
 
 #include <memory>
-#include "OpenGL.hpp"
+#include "GApi.hpp"
 
-class Renderer
+class IRenderer
 {
 public:
-    Renderer(const class CWindow& window);
-    ~Renderer();
+    virtual ~IRenderer() = default;
     
-    auto render(const class Scene& scene, std::shared_ptr<class ShaderProgram> program) const -> void;
+    virtual auto render(const class Scene& scene, std::shared_ptr<class ShaderProgram> program) const -> void = 0;
 
-    auto graphic_api() const -> const gl::OpenGL&;
-    auto set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void;
-    auto viewport() -> std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>;
-    auto enable_wireframe() -> void;
-    auto disable_wireframe() -> void;
-    auto enable_points() -> void;
-    auto disable_points() -> void;
-    auto clear_screen(GLenum buffersmask)  -> void ;
-    auto has_extension(const std::string& ext) -> bool;
+    virtual auto graphic_api() const -> const GApi* = 0;
+    virtual auto viewport() const -> std::tuple<uint32_t, uint32_t, uint32_t, uint32_t> = 0;
+    virtual auto set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void = 0;
+    virtual auto enable_wireframe() -> void = 0;
+    virtual auto disable_wireframe() -> void = 0;
+    virtual auto enable_points() -> void = 0;
+    virtual auto disable_points() -> void = 0;
+    virtual auto clear_screen(GLenum buffersmask)  -> void  = 0;
+    virtual auto has_extension(const std::string& ext) -> bool = 0;
+    
 
-private:
-    auto draw(const class Mesh& mesh) const -> void;
-
-private:
-    const class CWindow& m_Window;
-    const gl::OpenGL m_GraphicApi;
-    uint32_t x, y, width, height;
+protected:
+    virtual auto draw(const class Mesh& mesh) const -> void = 0;
 };

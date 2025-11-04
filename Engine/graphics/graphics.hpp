@@ -14,3 +14,5 @@
 #include "Transform.hpp"
 #include "GameObject.hpp"
 #include "Camera.hpp"
+#include "GApi.hpp"
+#include "OpenGLRenderer.hpp"

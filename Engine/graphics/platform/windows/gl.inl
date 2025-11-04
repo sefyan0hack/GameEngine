@@ -4,7 +4,7 @@
 
 using H_WIN     = HWND;
 using H_SRF     = HDC;
-using GLCTX     = HGLRC;
+using GL_CTX     = HGLRC;
 
 #define XXXGetProcAddress(name) wglGetProcAddress(name)
 

@@ -6,6 +6,7 @@
 #include <graphics/Window.hpp>
 #include <graphics/OpenGL.hpp>
 #include <graphics/Scene.hpp>
+#include <graphics/OpenGLRenderer.hpp>
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>
@@ -28,18 +29,19 @@ APP::APP()
     : Window(WINDOW_WIDTH, WINDOW_HIEGHT, Wname, ApplicationEventQueue)
     , Keyboard()
     , Mouse()
-    , m_Renderer(Window)
+    , m_Renderer(new OpenGLRenderer(Window))
     , m_Running(true)
     , m_LastFrameTime(std::chrono::steady_clock::now())
     , m_SmoothedFPS(60.0f)
 { 
     Window.show();
-    Window.set_vsync(false);
+    Window.set_vsync(true);
 }
 
 APP::~APP()
 {
     clear_events();
+    if(m_Renderer) delete m_Renderer;
 }
 
 auto APP::on_deltamouse(float, float) -> void
@@ -48,7 +50,7 @@ auto APP::on_deltamouse(float, float) -> void
 
 auto APP::frame(float deltaTime) -> void
 {
-    m_Renderer.clear_screen(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    m_Renderer->clear_screen(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     update(deltaTime);
     Window.swap_buffers();
     Keyboard.save_prev_state();
@@ -57,7 +59,7 @@ auto APP::frame(float deltaTime) -> void
 
 auto APP::render(const Scene& scene, std::shared_ptr<ShaderProgram> program) -> void
 {
-    m_Renderer.render(scene, program);
+    m_Renderer->render(scene, program);
 }
 
 auto APP::loop_body(void* ctx) -> void
@@ -84,7 +86,7 @@ auto APP::loop_body(void* ctx) -> void
             [&app](const CWindow::ResizeEvent& e) {
                 app->Window.m_Width = e.width;
                 app->Window.m_Height = e.height;
-                app->m_Renderer.set_viewport(0, 0, e.width, e.height);
+                app->m_Renderer->set_viewport(0, 0, e.width, e.height);
             },
             [&app](const CWindow::LoseFocusEvent&) {
 		        app->Keyboard.clear_state();
@@ -140,9 +142,9 @@ auto APP::loop_body(void* ctx) -> void
             wireframe_enabled = !wireframe_enabled;
             
             if (wireframe_enabled) {
-                app->m_Renderer.enable_wireframe();
+                app->m_Renderer->enable_wireframe();
             } else {
-                app->m_Renderer.disable_wireframe();
+                app->m_Renderer->disable_wireframe();
             }
             
             h_key_was_pressed = true;
@@ -160,9 +162,9 @@ auto APP::loop_body(void* ctx) -> void
             points_enabled = !points_enabled;
             
             if (points_enabled) {
-                app->m_Renderer.enable_points();
+                app->m_Renderer->enable_points();
             } else {
-                app->m_Renderer.disable_points();
+                app->m_Renderer->disable_points();
             }
             
             p_key_was_pressed = true;

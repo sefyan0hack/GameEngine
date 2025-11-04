@@ -103,7 +103,7 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
 }
 
 OpenGL::OpenGL(OpenGL &&other) noexcept
-    : m_Context(std::exchange(other.m_Context, GLCTX{}))
+    : m_Context(std::exchange(other.m_Context, GL_CTX{}))
     , m_Major(std::exchange(other.m_Major, 0))
     , m_Minor(std::exchange(other.m_Minor, 0))
     , m_CreationTime(std::exchange(other.m_CreationTime, 0))
@@ -113,7 +113,7 @@ OpenGL::OpenGL(OpenGL &&other) noexcept
 auto OpenGL::operator=(OpenGL &&other) noexcept -> OpenGL&
 {
     if(this != &other){
-        this->m_Context = std::exchange(other.m_Context, GLCTX{});
+        this->m_Context = std::exchange(other.m_Context, GL_CTX{});
         this->m_Major = std::exchange(other.m_Major, 0);
         this->m_Minor = std::exchange(other.m_Minor, 0);
         this->m_CreationTime = std::exchange(other.m_CreationTime, 0);
@@ -137,7 +137,7 @@ OpenGL::operator bool() const
     return is_valid();
 }
 
-auto OpenGL::context() const -> GLCTX
+auto OpenGL::context() const -> GCTX
 {
     return m_Context;
 }
@@ -153,7 +153,7 @@ auto OpenGL::minor_v() const -> GLint
 
 auto OpenGL::is_valid() const -> bool
 {
-    return m_Context != GLCTX{};
+    return m_Context != GL_CTX{};
 }
 
 auto OpenGL::creation_time() const -> std::time_t

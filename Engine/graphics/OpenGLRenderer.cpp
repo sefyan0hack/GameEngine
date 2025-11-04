@@ -1,3 +1,5 @@
+#include "OpenGLRenderer.hpp"
+
 #include <algorithm>
 #include <execution>
 #include <core/Log.hpp>
@@ -15,17 +17,18 @@
 #include "Texture.hpp"
 
 
-Renderer::Renderer(const CWindow& window)
+OpenGLRenderer::OpenGLRenderer(const CWindow& window)
     : m_Window(window)
-    , m_GraphicApi(window)
+    , m_GApi(new gl::OpenGL(window))
     , x(0), y(0)
     , width(window.width()), height(window.height())
 {}
 
-Renderer::~Renderer(){
+OpenGLRenderer::~OpenGLRenderer(){
+    if (m_GApi) delete m_GApi;
 }
 
-auto Renderer::render(const Scene& scene, const std::shared_ptr<ShaderProgram> program) const -> void
+auto OpenGLRenderer::render(const Scene& scene, const std::shared_ptr<ShaderProgram> program) const -> void
 {
     scene.render_sky();
     auto camera = scene.main_camera();
@@ -55,7 +58,7 @@ auto Renderer::render(const Scene& scene, const std::shared_ptr<ShaderProgram> p
 }
 
 
-auto Renderer::draw(const Mesh& mesh) const -> void
+auto OpenGLRenderer::draw(const Mesh& mesh) const -> void
 {
     static GLuint currVAO = mesh.VAO;
     if(currVAO != mesh.VAO){
@@ -65,12 +68,12 @@ auto Renderer::draw(const Mesh& mesh) const -> void
     gl::DrawArrays(GL_TRIANGLES, 0, mesh.vextex_size());
 }
 
-auto Renderer::graphic_api() const -> const gl::OpenGL&
+auto OpenGLRenderer::graphic_api() const -> const GApi*
 {
-	return m_GraphicApi;
+	return m_GApi;
 }
 
-auto Renderer::set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void
+auto OpenGLRenderer::set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void
 {
     this->x= x;
     this->y= y;
@@ -79,12 +82,12 @@ auto Renderer::set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t hei
     gl::Viewport(x, y, width, height);
 }
 
-auto Renderer::viewport() -> std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
+auto OpenGLRenderer::viewport() const -> std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
 {
     return {x, y, width, height};
 }
 
-auto Renderer::enable_wireframe() -> void
+auto OpenGLRenderer::enable_wireframe() -> void
 {
     #if defined(WEB_PLT)
     static bool webPolyModeAvailable = app->m_Renderer.has_extension("WEBGL_polygon_mode");
@@ -103,7 +106,7 @@ auto Renderer::enable_wireframe() -> void
     #endif
 }
 
-auto Renderer::disable_wireframe() -> void
+auto OpenGLRenderer::disable_wireframe() -> void
 {
     #if defined(WEB_PLT)
     static bool webPolyModeAvailable = app->m_Renderer.has_extension("WEBGL_polygon_mode");
@@ -122,7 +125,7 @@ auto Renderer::disable_wireframe() -> void
 }
 
 
-auto Renderer::enable_points() -> void
+auto OpenGLRenderer::enable_points() -> void
 {
     #if !defined(WEB_PLT)
     gl::Enable(GL_PROGRAM_POINT_SIZE);
@@ -136,7 +139,7 @@ auto Renderer::enable_points() -> void
     #endif
 }
 
-auto Renderer::disable_points() -> void
+auto OpenGLRenderer::disable_points() -> void
 {
     #if !defined(WEB_PLT)
     gl::Disable(GL_PROGRAM_POINT_SIZE);
@@ -144,12 +147,12 @@ auto Renderer::disable_points() -> void
     #endif
 }
 
-auto Renderer::clear_screen(GLenum buffersmask)  -> void
+auto OpenGLRenderer::clear_screen(GLenum buffersmask)  -> void
 {
     gl::Clear(buffersmask);
 }
 
-auto Renderer::has_extension(const std::string &ext) -> bool
+auto OpenGLRenderer::has_extension(const std::string &ext) -> bool
 {
-    return m_GraphicApi.has_extension(ext);
+    return m_GApi->has_extension(ext);
 }

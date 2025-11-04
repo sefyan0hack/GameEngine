@@ -24,7 +24,7 @@ TEST(move, MoveCameraByOffset) {
 TEST(set_fov, SettingFovValue) {
     auto cam = Camera();
 
-    auto expeced_fov = rnd.Generate(100);
+    auto expeced_fov = (float)rnd.Generate(100);
     cam.set_fov(expeced_fov);
 
     auto new_fov = cam.fov();
@@ -35,7 +35,7 @@ TEST(set_fov, SettingFovValue) {
 TEST(clipping, SettingClippingValue) {
     auto cam = Camera();
 
-    auto expeced_clipping = std::make_pair<float, float>(rnd.Generate(2), rnd.Generate(1000));
+    auto expeced_clipping = std::make_pair<float, float>((float)rnd.Generate(2), (float)rnd.Generate(1000));
     cam.set_clipping(expeced_clipping.first, expeced_clipping.second);
 
     auto new_clipping = cam.clipping();
@@ -46,7 +46,7 @@ TEST(aspect_ratio, SettingAspectRatioValue) {
     auto cam = Camera();
 
     auto expeced_aspect_ratio = rnd.Generate(100);
-    cam.set_aspect_ratio(expeced_aspect_ratio);
+    cam.set_aspect_ratio((float)expeced_aspect_ratio);
 
     auto new_aspect_ratio = cam.aspect_ratio();
 

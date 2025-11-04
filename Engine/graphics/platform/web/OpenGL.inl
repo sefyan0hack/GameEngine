@@ -10,7 +10,7 @@ OpenGL::~OpenGL()
 
 
 // OpenGL::OpenGL(const OpenGL &other)
-//     : m_Context(GLCTX{})
+//     : m_Context(GL_CTX{})
 //     , m_Major(other.m_Major)
 //     , m_Minor(other.m_Minor)
 //     , m_CreationTime(std::time(nullptr))
@@ -21,7 +21,7 @@ OpenGL::~OpenGL()
 // auto OpenGL::operator=(const OpenGL &other) -> OpenGL&
 // {
 //     if(this != &other){
-//         this->m_Context = GLCTX{};
+//         this->m_Context = GL_CTX{};
 //         this->m_Major = other.m_Major;
 //         this->m_Minor = other.m_Minor;
 //         this->m_CreationTime = std::time(nullptr);
@@ -36,7 +36,7 @@ auto OpenGL::make_current_opengl([[maybe_unused]] const CWindow& window)  -> boo
     return emscripten_webgl_make_context_current(m_Context) == EMSCRIPTEN_RESULT_SUCCESS;
 }
 
-auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GLCTX
+auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GL_CTX
 {
     auto surface = window.surface();
     EmscriptenWebGLContextAttributes attrs;

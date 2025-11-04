@@ -2,10 +2,11 @@
 
 #include <vector>
 #include <string>
+#include <variant>
 #include <ctime>
 #include "gl.h"
 
-using GCTX = void*;
+using GCTX = std::variant<std::monostate, GL_CTX>;
 
 class GApi
 {
