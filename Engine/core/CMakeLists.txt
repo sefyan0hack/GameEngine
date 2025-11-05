@@ -5,7 +5,6 @@ add_library(core)
 
 target_sources( core PRIVATE
     APP.cpp
-    ResourceManager.cpp
 )
 
 target_sources( core PUBLIC
