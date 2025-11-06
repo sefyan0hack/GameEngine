@@ -2,12 +2,16 @@
 include(helpers)
 
 add_executable(SandBox)
+add_library(Game SHARED)
 
 target_sources( SandBox PRIVATE
     main.cpp 
 )
+target_sources( Game PRIVATE
+    Game.cpp 
+)
 
-target_link_libraries(SandBox PRIVATE Threads::Threads glm::glm Engine )
+target_link_libraries(Game PRIVATE glm::glm Engine )
 
 apply_all_options(TARGETS SandBox)
 apply_coverage_options(TARGETS SandBox)
