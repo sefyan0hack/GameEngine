@@ -14,7 +14,7 @@ int main() {
     auto create_and_run_game = game.get_function<void(*)()>("create_and_run_game");
     if (!create_and_run_game) Exception("Can't load symbol `{}`: {}", "create_and_run_game", game.error());
 
-    *create_and_run_game();
+    create_and_run_game();
 
     return 0;
 }
