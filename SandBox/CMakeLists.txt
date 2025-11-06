@@ -5,16 +5,14 @@ include(helpers)
 add_executable(SandBox)
 
 
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION OFF)
-
-# Ensure PIC
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-# Add these compiler/linker flags
-add_compile_options(-fPIC -fno-lto)
-add_link_options(-fno-lto)
 
 add_library(Game SHARED)
+
+set_target_properties(Game PROPERTIES
+    INTERPROCEDURAL_OPTIMIZATION OFF
+    CMAKE_POSITION_INDEPENDENT_CODE ON
+    # CMAKE_INTERPROCEDURAL_OPTIMIZATION OFF
+)
 
 target_sources( SandBox PRIVATE
     main.cpp 
