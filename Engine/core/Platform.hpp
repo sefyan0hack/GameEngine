@@ -17,6 +17,15 @@
 #include <cxxabi.h>
 #endif
 
+
+#if defined(WINDOWS_PLT)
+    #define EXPORT_API __declspec(dllexport)
+    #define IMPORT_API __declspec(dllimport)
+#else
+    #define MYLIB_API __attribute__((visibility("default")))
+    #define IMPORT_API
+#endif
+
 /**
  * @brief  Concept that tests whether a non-type template parameter names a free/static object
  *         (or pointer to one) and is **not** a pointer-to-member-object.
