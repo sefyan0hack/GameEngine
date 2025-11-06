@@ -7,7 +7,7 @@
 #include <core/DynLib.hpp>
 
 int main() {
-    auto lib = "./libGame.dll";
+    auto lib = "./libGame";
     auto game = DynLib(lib);
     game.load();
 

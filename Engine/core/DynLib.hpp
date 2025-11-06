@@ -14,6 +14,11 @@
 class DynLib {
 public:
     DynLib(const char* lib) : m_handle(nullptr), m_file_path(lib), m_last_mod(mod_time()) {
+        #if defined(WINDOWS_PLT)
+            m_file_path += ".dll"
+        #elif defined(LINUX_PLT) || defined(WEB_PLT)
+            m_file_path += ".so"
+        #endif
     }
 
     ~DynLib(){
