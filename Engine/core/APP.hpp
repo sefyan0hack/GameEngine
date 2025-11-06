@@ -11,15 +11,11 @@
 
 class APP
 {
-protected:
 
+public:
     APP();
     ~APP();
 
-    virtual auto update(float delta) -> void = 0 ;
-    virtual auto on_deltamouse(float dx, float dy) -> void;
-
-public:
     auto run() -> void ;
     auto fps() const -> float;
     auto smooth_fps() const -> float;
@@ -29,6 +25,9 @@ public:
 
     auto render(const class Scene& scene, std::shared_ptr<ShaderProgram> program) -> void;
 
+protected:
+    virtual auto update(float delta) -> void = 0 ;
+    virtual auto on_deltamouse(float dx, float dy) -> void;
 private:
     auto pull_event(Event& event) -> bool;
     auto wait_event(Event& event) -> void;
