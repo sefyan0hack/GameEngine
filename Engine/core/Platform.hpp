@@ -22,7 +22,7 @@
     #define EXPORT_API __declspec(dllexport)
     #define IMPORT_API __declspec(dllimport)
 #else
-    #define MYLIB_API __attribute__((visibility("default")))
+    #define EXPORT_API __attribute__((visibility("default")))
     #define IMPORT_API
 #endif
 
