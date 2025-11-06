@@ -49,14 +49,16 @@ public:
     template <typename R, typename... Args>
     auto get_function(const char* name) -> R(*)(Args...)
     {
-        R(*f)(Args...);
+        R(*f)(Args...) = nullptr;
         #if defined(WINDOWS_PLT)
             f = (R(*)(Args...)) GetProcAddress((HMODULE)m_handle, name);
         #elif defined(LINUX_PLT) || defined(WEB_PLT)
+            (void)dlerror();
             f = (R(*)(Args...)) dlsym(m_handle, name);
         #endif
 
         if (!f) Exception("Can't load symbol `{}`: {}", name, error());
+    
         return f;
     }
 
