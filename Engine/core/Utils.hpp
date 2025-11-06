@@ -396,15 +396,26 @@ std::string to_string(const std::vector<T>& vec) {
  */
 inline auto file_to_str(const char* path) -> std::string
 {
-    std::ifstream file(path, std::ios::binary);
-
-    if (!file){ 
-        throw Exception("Couldnt open file [{}] : {}", path, std::strerror(errno) );
-    }else{
-        auto it = std::istreambuf_iterator<char>(file);
-        auto end = std::istreambuf_iterator<char>();
-        return { it, end };
+    std::ifstream file(path, std::ios::binary | std::ios::ate);
+    
+    if (!file) { 
+        throw Exception("Couldn't open file [{}] : {}", path, std::strerror(errno));
     }
+    
+    std::streamsize size = file.tellg();
+    if (size <= 0) {
+        return "";
+    }
+    
+    file.seekg(0, std::ios::beg);
+    std::string content;
+    content.resize(static_cast<size_t>(size));
+    
+    if (!file.read(content.data(), size)) {
+        throw Exception("Failed to read file [{}]", path);
+    }
+    
+    return content;
 }
 
 /**

@@ -32,10 +32,12 @@ GameObject::~GameObject()
 
 GameObject::GameObject(GameObject&& other) noexcept
     : m_Transform(std::move(other.m_Transform))
-    , m_Material(std::move(other.m_Material))
-    , m_Mesh(std::move(other.m_Mesh))
+    , m_Material(other.m_Material)
+    , m_Mesh(other.m_Mesh)  
     , m_Name(std::move(other.m_Name))
 {
+    other.m_Material.reset();
+    other.m_Mesh.reset();
 }
 
 auto GameObject::operator=(GameObject&& other) noexcept -> GameObject&

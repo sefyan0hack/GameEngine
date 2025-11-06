@@ -7,7 +7,7 @@ target_sources( SandBox PRIVATE
     main.cpp 
 )
 
-target_link_libraries(SandBox PRIVATE glm::glm Engine)
+target_link_libraries(SandBox PRIVATE Threads::Threads glm::glm Engine )
 
 apply_all_options(TARGETS SandBox)
 apply_coverage_options(TARGETS SandBox)

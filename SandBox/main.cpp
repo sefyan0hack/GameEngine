@@ -49,8 +49,10 @@ public:
         for(int32_t i = -Grids; i < Grids; i ++){
             for(int32_t j = -Grids; j < Grids; j ++){
                 auto m = coin(rng) ? ResManager["CubeMattkimberley"] : ResManager["CubeMattSand"];
-
-                MainScene << GameObject(Transform({i, 0, j}, {0, 0, 0}, { 0.5f, 0.5f, 0.5f}), m, ResManager["cubeMesh"]);
+                auto meshRes = ResManager["cubeMesh"];
+                auto t = Transform({i, 0, j}, {0, 0, 0}, { 0.5f, 0.5f, 0.5f});
+            
+                MainScene << GameObject(t, m, meshRes);
             }
         }
         MainScene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), ResManager["CubeMattSand"], ResManager["manMesh"]);

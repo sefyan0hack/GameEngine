@@ -90,4 +90,6 @@ private:
 
 };
 
-inline static ResourceManager& ResManager = ResourceManager::get_instance();
+// inline static ResourceManager& ResManager = ResourceManager::get_instance();
+
+#define ResManager ResourceManager::get_instance()

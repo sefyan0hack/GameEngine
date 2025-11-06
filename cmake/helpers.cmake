@@ -35,7 +35,7 @@ function(apply_warning_options)
         set(CLANG_WARNING_FLAGS -Wno-language-extension-token)
 
         set(CLANG_AND_GNU_WARNING_FLAGS
-            -Wall -Wextra -Wpedantic -Wconversion -Wfloat-equal -Wwrite-strings -Wno-sign-conversion
+            -Wall -Wextra -Wpedantic -Wconversion -Wfloat-equal -Wwrite-strings -Wno-sign-conversion -Werror=null-dereference 
             -Wnull-dereference -Wswitch-enum
             -Wuninitialized -Wpointer-arith -Wreturn-type -Wredundant-decls
             -fno-operator-names -Wno-changes-meaning
