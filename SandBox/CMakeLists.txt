@@ -3,16 +3,7 @@ include(helpers)
 
 
 add_executable(SandBox)
-
-
-
 add_library(Game SHARED)
-
-set_target_properties(Game PROPERTIES
-    INTERPROCEDURAL_OPTIMIZATION OFF
-    CMAKE_INTERPROCEDURAL_OPTIMIZATION OFF
-    CMAKE_POSITION_INDEPENDENT_CODE ON
-)
 
 target_sources( SandBox PRIVATE
     main.cpp 
