@@ -16,7 +16,12 @@ target_sources( input PUBLIC
       Mouse.hpp
 )
 
-target_include_directories(input PRIVATE ${CMAKE_SOURCE_DIR}/Engine)
+target_include_directories(input 
+    INTERFACE 
+        ${CMAKE_CURRENT_SOURCE_DIR}
+    PRIVATE 
+        ${CMAKE_SOURCE_DIR}/Engine
+)
 
 apply_all_options(TARGETS input)
 apply_coverage_options(TARGETS input)

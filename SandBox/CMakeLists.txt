@@ -12,7 +12,7 @@ target_sources( Game PRIVATE
     Game.cpp 
 )
 
-target_link_libraries(SandBox PRIVATE Engine )
+target_link_libraries(SandBox PRIVATE core )
 target_link_libraries(Game PRIVATE glm::glm Engine )
 
 apply_all_options(TARGETS SandBox Game)

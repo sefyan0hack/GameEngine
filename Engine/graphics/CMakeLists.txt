@@ -43,11 +43,13 @@ target_sources( graphics PUBLIC
         OpenGLRenderer.hpp
 )
 
-target_include_directories(core PRIVATE
-    $<$<PLATFORM_ID:Linux>:${X11_INCLUDE_DIR}>
+target_include_directories(graphics 
+    INTERFACE 
+        ${CMAKE_CURRENT_SOURCE_DIR}
+    PRIVATE 
+        ${CMAKE_SOURCE_DIR}/Engine
+        $<$<PLATFORM_ID:Linux>:${X11_INCLUDE_DIR}>
 )
-
-target_include_directories(graphics PRIVATE ${CMAKE_SOURCE_DIR}/Engine)
 
 target_link_libraries(graphics PUBLIC res)
 target_link_libraries(graphics PRIVATE glm::glm)

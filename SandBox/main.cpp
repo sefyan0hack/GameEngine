@@ -1,10 +1,8 @@
 
 #include <memory>
 #include <random>
-#include <thread>
-#include <chrono>
 
-#include <core/DynLib.hpp>
+#include <DynLib.hpp>
 
 int main() {
     auto lib = "./libGame";

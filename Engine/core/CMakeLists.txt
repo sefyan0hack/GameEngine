@@ -22,9 +22,15 @@ target_sources( core PUBLIC
         ResourceManager.hpp
         APP.hpp
         ResourceManager.hpp
+        DynLib.hpp
 )
 
-target_include_directories(core PRIVATE ${CMAKE_SOURCE_DIR}/Engine)
+target_include_directories(core 
+    INTERFACE 
+        ${CMAKE_CURRENT_SOURCE_DIR}
+    PRIVATE 
+        ${CMAKE_SOURCE_DIR}/Engine
+)
 
 apply_all_options(TARGETS core)
 apply_coverage_options(TARGETS core)
@@ -41,5 +47,6 @@ if(NOT EMSCRIPTEN)
         PRIVATE
             Threads::Threads
             $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
+            $<$<PLATFORM_ID:Linux>:dl>
     )
 endif()
