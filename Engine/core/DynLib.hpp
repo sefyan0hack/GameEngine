@@ -13,12 +13,7 @@
 
 class DynLib {
 public:
-    DynLib(const char* lib) : m_handle(nullptr), m_file_path(lib), m_last_mod(mod_time()) {
-        #if defined(WINDOWS_PLT)
-            m_file_path += ".dll";
-        #elif defined(LINUX_PLT) || defined(WEB_PLT)
-            m_file_path += ".so";
-        #endif
+    DynLib(const char* lib) : m_handle(nullptr), m_file_path(std::string(lib) + EXT), m_last_mod(mod_time()) {
     }
 
     ~DynLib(){
@@ -86,6 +81,13 @@ public:
     {
         m_last_mod = t;
     }
+
+    static constexpr auto EXT = 
+    #if defined(WINDOWS_PLT)
+        ".dll";
+    #elif defined(LINUX_PLT) || defined(WEB_PLT)
+        ".so";
+    #endif
 
 private:
     void* m_handle;
