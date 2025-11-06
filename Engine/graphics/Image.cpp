@@ -4,7 +4,7 @@
 #include <core/Log.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_STATIC
+#define STBI_NO_THREAD_LOCALS
 #include <stb_image.h>
 
 
