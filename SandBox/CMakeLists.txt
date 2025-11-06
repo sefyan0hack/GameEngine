@@ -1,6 +1,8 @@
 
 include(helpers)
 
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION OFF)
+
 add_executable(SandBox)
 add_library(Game SHARED)
 
@@ -19,4 +21,5 @@ apply_coverage_options(TARGETS SandBox Game)
 apply_harden_options(TARGETS SandBox Game)
 apply_sanitizer_options(TARGETS SandBox Game)
 
-print_target_compile_options(SandBox Game)
+print_target_compile_options(SandBox)
+print_target_compile_options(Game)
