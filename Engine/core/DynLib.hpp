@@ -27,7 +27,7 @@ public:
             m_handle = (void*) dlopen(m_file_path.c_str(), RTLD_LAZY);
         #endif
 
-        if (!m_handle) Exception("Can't open lib `{}`: {}", m_file_path, error());
+        if (m_handle == nullptr) throw Exception("Can't open lib `{}`: {}", m_file_path, error());
     }
 
     auto unload() -> void
@@ -46,18 +46,18 @@ public:
     }
 
 
-    template <typename R, typename... Args>
-    auto get_function(const char* name) -> R(*)(Args...)
+    template <class FuncPtr>
+    auto get_function(const char* name) -> FuncPtr
     {
-        R(*f)(Args...) = nullptr;
+        FuncPtr f = nullptr;
         #if defined(WINDOWS_PLT)
-            f = reinterpret_cast<R(*)(Args...)>(GetProcAddress((HMODULE)m_handle, name));
+            f = reinterpret_cast<FuncPtr>(GetProcAddress((HMODULE)m_handle, name));
         #elif defined(LINUX_PLT) || defined(WEB_PLT)
             (void)dlerror();
-            f = reinterpret_cast<R(*)(Args...)> (dlsym(m_handle, name));
+            f = reinterpret_cast<FuncPtr>(dlsym(m_handle, name));
         #endif
 
-        if (!f) Exception("Can't load symbol `{}`: {}", name, error());
+        if (f == nullptr) throw Exception("Can't load symbol `{}`: {}", name, error());
     
         return f;
     }
@@ -75,7 +75,7 @@ public:
     static auto file_mod_time(const std::string& file) -> std::time_t 
     {
         auto ftime = std::filesystem::last_write_time(file);
-        return std::chrono::system_clock::to_time_t( std::chrono::file_clock::to_sys(ftime) );
+        return std::chrono::system_clock::to_time_t( std::chrono::clock_cast<std::chrono::system_clock>(ftime) );
     }
 
     auto mod_time() -> std::time_t 
