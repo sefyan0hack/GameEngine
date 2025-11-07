@@ -1,3 +1,4 @@
+#include <windows.h>
 #include <GL/gl.h>
 #include <glext.h>
 #include <wglext.h>
