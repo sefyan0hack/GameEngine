@@ -12,7 +12,7 @@ using namespace std;
 
 
 /// @brief Game class hire the client put the logic for the game all the variables and stastes
-class Game : public APP
+class Game : public IGame
 {
 private:
     std::shared_ptr<Shader> vert, frag;
@@ -21,8 +21,9 @@ private:
     Scene MainScene;
 public:
     /// @brief Get called at start of the game
-    Game()
-        : vert(std::make_shared<Shader>(fs.open("res/Shaders/cube.vert"), GL_VERTEX_SHADER))
+    Game(class APP& app)
+        : IGame::IGame(app)
+        , vert(std::make_shared<Shader>(fs.open("res/Shaders/cube.vert"), GL_VERTEX_SHADER))
         , frag(std::make_shared<Shader>(fs.open("res/Shaders/cube.frag"), GL_FRAGMENT_SHADER))
         , CubeProgram(std::make_shared<ShaderProgram>(vert, frag))
         , MainScene()
@@ -59,25 +60,25 @@ public:
         MainScene << GameObject(Transform({2, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), ResManager["CubeMattkimberley"], ResManager["manMesh"]);
 
         MainScene.set_skybox(ResManager["forest.jpg"]);
-        debug::print("Window title: {}", Window.get_title());
+        debug::print("Window title: {}", app.Window.get_title());
     }
 public:
     /// @brief Run every frame at 1/delta fps 
     /// @param delta  inverse of fps how mush time took a frame to Render
     auto update(float delta) -> void override {
-        float speed = Keyboard.is_down(Key::LeftShift)? 10.0f : 5.0f;
+        float speed = app.Keyboard.is_down(Key::LeftShift)? 10.0f : 5.0f;
 
-        auto Hori = Keyboard.is_down(Key::W) ? 1.0f : Keyboard.is_down(Key::S) ? -1.0f : 0.0f;
-        auto Vert = Keyboard.is_down(Key::D) ? 1.0f : Keyboard.is_down(Key::A) ? -1.0f : 0.0f;
-        auto Up   = Keyboard.is_down(Key::M) ? 1.0f : Keyboard.is_down(Key::N) ? -1.0f : 0.0f;
+        auto Hori = app.Keyboard.is_down(Key::W) ? 1.0f : app.Keyboard.is_down(Key::S) ? -1.0f : 0.0f;
+        auto Vert = app.Keyboard.is_down(Key::D) ? 1.0f : app.Keyboard.is_down(Key::A) ? -1.0f : 0.0f;
+        auto Up   = app.Keyboard.is_down(Key::M) ? 1.0f : app.Keyboard.is_down(Key::N) ? -1.0f : 0.0f;
 
         auto by = speed * delta;
 
         MainScene.main_camera().move({ Vert * by, Up * by, Hori * by });
 
-        render(MainScene, CubeProgram);
+        app.render(MainScene, CubeProgram);
 
-        Window.set_title(std::format("{}", smooth_fps()));
+        app.Window.set_title(std::format("{}", app.smooth_fps()));
     }
 
 public:
@@ -92,23 +93,7 @@ public:
     }
 };
 
-extern "C" EXPORT_API auto foo() -> void{
-    debug::print("foo");
-}
-
-extern "C" EXPORT_API auto create_and_run_game() -> void
+extern "C" EXPORT_API auto create_game(class APP& app) -> IGame*
 {
-    try {
-        APP* my_game = new Game();
-        my_game->run();
-
-    } catch(const Exception& e) {
-        debug::print(e.all());
-
-    } catch(const std::exception& e) {
-        debug::print(e.what());
-
-    } catch(...) {
-        debug::print("Unknown Exception");
-    }
+    return new Game(app);
 }

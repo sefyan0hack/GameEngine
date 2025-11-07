@@ -4,15 +4,19 @@
 #include <chrono>
 
 #include <graphics/Window.hpp>
+#include <graphics/Renderer.hpp>
 #include <input/Keyboard.hpp>
 #include <input/Mouse.hpp>
+#include "Game.hpp"
+#include "DynLib.hpp"
 #include "EventQueue.hpp"
-#include <graphics/Renderer.hpp>
 
 class APP
 {
 
 public:
+    friend class Game;
+
     APP();
     ~APP();
 
@@ -25,9 +29,6 @@ public:
 
     auto render(const class Scene& scene, std::shared_ptr<ShaderProgram> program) -> void;
 
-protected:
-    virtual auto update(float delta) -> void = 0 ;
-    virtual auto on_deltamouse(float dx, float dy) -> void;
 private:
     auto pull_event(Event& event) -> bool;
     auto wait_event(Event& event) -> void;
@@ -36,18 +37,18 @@ private:
     auto frame(float deltaTime) -> void;
     static auto loop_body(void* ctx) -> void;
 
-protected:
+private:
     CWindow Window;
     Keyboard Keyboard;
     Mouse Mouse;
 
-private:
-    IRenderer* m_Renderer;
-
-private:
+    
     bool m_Running;
     EventQueue ApplicationEventQueue;
     std::chrono::steady_clock::time_point m_LastFrameTime;
     float m_Fps, m_SmoothedFPS;
-    
+
+    IRenderer* Renderer;
+    DynLib lib;
+    IGame* Game;
 };

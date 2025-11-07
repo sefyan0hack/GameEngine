@@ -2,16 +2,22 @@
 #include <memory>
 #include <random>
 
-#include <DynLib.hpp>
+#include <Engine.hpp>
 
 int main() {
-    auto lib = "./libGame";
-    auto game = DynLib(lib);
-    game.load();
+    try {
+        APP app;
+        app.run();
 
-    auto create_and_run_game = game.get_function<void(*)()>("create_and_run_game");
+    } catch(const Exception& e) {
+        debug::print(e.all());
 
-    create_and_run_game();
+    } catch(const std::exception& e) {
+        debug::print(e.what());
+
+    } catch(...) {
+        debug::print("Unknown Exception");
+    };
 
     return 0;
 }

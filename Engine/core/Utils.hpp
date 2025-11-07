@@ -15,6 +15,7 @@
 #include <functional>
 
 #include "Log.hpp"
+#include "Platform.hpp"
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>

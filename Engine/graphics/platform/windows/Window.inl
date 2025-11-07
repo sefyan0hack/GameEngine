@@ -136,8 +136,7 @@ auto CALLBACK CWindow::win_proc_fun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
         ///////////// MOUSE MESSAGES /////////////////
 	    case WM_MOUSEMOVE:
 	    {
-	    	const POINTS pt = MAKEPOINTS( Lpr );
-			m_EventQueue.push(Mouse::MoveEvent{pt.x, pt.y});
+			m_EventQueue.push(Mouse::MoveEvent{static_cast<SHORT>(LOWORD(Lpr)), static_cast<SHORT>(HIWORD(Lpr))});
 			return 0;
 	    }
 		case WM_MOUSEHOVER :{

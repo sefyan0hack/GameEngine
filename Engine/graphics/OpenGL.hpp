@@ -102,13 +102,10 @@ auto get_boolean(GLenum name) -> GLboolean;
 
 #undef X
 #ifdef ROBUST_GL_CHECK
-#   define X(name)\
-inline Function<decltype(&gl##name)>& name = OpenGL::name
+#   define X(name) inline Function<decltype(&gl##name)>& name = OpenGL::name
 #else
-#   define X(name)\
-inline decltype(&gl##name)& name = OpenGL::name
+#   define X(name) inline decltype(&gl##name)& name = OpenGL::name
 #endif
 
 GLFUNCS
-
 } //namespace g

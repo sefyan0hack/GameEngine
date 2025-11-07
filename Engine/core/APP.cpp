@@ -1,6 +1,7 @@
 #include "APP.hpp"
 #include "Event.hpp"
 #include "Utils.hpp"
+#include "DynLib.hpp"
 #include <input/Keyboard.hpp>
 #include <input/Mouse.hpp>
 #include <graphics/Window.hpp>
@@ -25,33 +26,48 @@ constexpr auto Wname = "Game";
 constexpr auto WINDOW_WIDTH = 1180;
 constexpr auto WINDOW_HIEGHT = 640;
 
+
+extern auto create_game(class APP& app) -> IGame*;
+
 APP::APP()
     : Window(WINDOW_WIDTH, WINDOW_HIEGHT, Wname, ApplicationEventQueue)
     , Keyboard()
     , Mouse()
-    , m_Renderer(new OpenGLRenderer(Window))
     , m_Running(true)
     , m_LastFrameTime(std::chrono::steady_clock::now())
     , m_SmoothedFPS(60.0f)
-{ 
+    , Renderer(new OpenGLRenderer(Window))
+    , lib("C:/Users/sefyan/Documents/c_projects/GameEngine/build/SandBox/libGame")
+{
     Window.show();
     Window.set_vsync(true);
+
+    lib.load();
+
+    auto create_game = lib.get_function<IGame*(*)(APP&)>("create_game");
+    #if defined(WINDOWS_PLT)
+    HGLRC currentContext = wglGetCurrentContext();
+    if (!currentContext) {
+        debug::print("No OpenGL context current in Game constructor!");
+    } else {
+        debug::print("OpenGL context is current: {}", (void*)currentContext);
+    }
+    #endif
+    Game = create_game(*this);
 }
 
 APP::~APP()
 {
     clear_events();
-    if(m_Renderer) delete m_Renderer;
+    if(Renderer) delete Renderer;
+    if(Game) delete Game;
 }
 
-auto APP::on_deltamouse(float, float) -> void
-{
-}
 
 auto APP::frame(float deltaTime) -> void
 {
-    m_Renderer->clear_screen(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    update(deltaTime);
+    Renderer->clear_screen(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    Game->update(deltaTime);
     Window.swap_buffers();
     Keyboard.save_prev_state();
     Mouse.save_prev_state();
@@ -59,7 +75,7 @@ auto APP::frame(float deltaTime) -> void
 
 auto APP::render(const Scene& scene, std::shared_ptr<ShaderProgram> program) -> void
 {
-    m_Renderer->render(scene, program);
+    Renderer->render(scene, program);
 }
 
 auto APP::loop_body(void* ctx) -> void
@@ -86,7 +102,7 @@ auto APP::loop_body(void* ctx) -> void
             [&app](const CWindow::ResizeEvent& e) {
                 app->Window.m_Width = e.width;
                 app->Window.m_Height = e.height;
-                app->m_Renderer->set_viewport(0, 0, e.width, e.height);
+                app->Renderer->set_viewport(0, 0, e.width, e.height);
             },
             [&app](const CWindow::LoseFocusEvent&) {
 		        app->Keyboard.clear_state();
@@ -117,7 +133,7 @@ auto APP::loop_body(void* ctx) -> void
             [&app](const Mouse::MovementEvent& e) {
                 app->Mouse.on_rawdelta(e.dx, e.dy);
                 auto [dx, dy] = app->Mouse.get_rawdelta();
-                app->on_deltamouse(dx, dy);
+                app->Game->on_deltamouse(dx, dy);
             },
             [](const auto& e) {
                 if( ::type_name<decltype(e)>() == "const std::monostate&") throw Exception(" nnnnnn ");
@@ -142,9 +158,9 @@ auto APP::loop_body(void* ctx) -> void
             wireframe_enabled = !wireframe_enabled;
             
             if (wireframe_enabled) {
-                app->m_Renderer->enable_wireframe();
+                app->Renderer->enable_wireframe();
             } else {
-                app->m_Renderer->disable_wireframe();
+                app->Renderer->disable_wireframe();
             }
             
             h_key_was_pressed = true;
@@ -162,9 +178,9 @@ auto APP::loop_body(void* ctx) -> void
             points_enabled = !points_enabled;
             
             if (points_enabled) {
-                app->m_Renderer->enable_points();
+                app->Renderer->enable_points();
             } else {
-                app->m_Renderer->disable_points();
+                app->Renderer->disable_points();
             }
             
             p_key_was_pressed = true;
