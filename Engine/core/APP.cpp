@@ -37,7 +37,13 @@ APP::APP()
     , m_LastFrameTime(std::chrono::steady_clock::now())
     , m_SmoothedFPS(60.0f)
     , Renderer(new OpenGLRenderer(Window))
-    , lib("C:/Users/sefyan/Documents/c_projects/GameEngine/build/SandBox/libGame")
+    , lib(
+        #if defined(WINDOWS_PLT)
+        "C:/Users/sefyan/Documents/c_projects/GameEngine/build/SandBox/libGame"
+        #else
+        "/home/sefyan/c_dev/GameEngine/build/SandBox/libGame"
+        #endif
+    )
 {
     Window.show();
     Window.set_vsync(true);
