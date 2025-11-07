@@ -51,14 +51,7 @@ APP::APP()
     lib.load();
 
     auto create_game = lib.get_function<IGame*(*)(APP&)>("create_game");
-    #if defined(WINDOWS_PLT)
-    HGLRC currentContext = wglGetCurrentContext();
-    if (!currentContext) {
-        debug::print("No OpenGL context current in Game constructor!");
-    } else {
-        debug::print("OpenGL context is current: {}", (void*)currentContext);
-    }
-    #endif
+
     Game = create_game(*this);
 }
 
@@ -68,7 +61,6 @@ APP::~APP()
     if(Renderer) delete Renderer;
     if(Game) delete Game;
 }
-
 
 auto APP::frame(float deltaTime) -> void
 {
