@@ -91,7 +91,7 @@ public:
   }
 
 
-  auto all() const noexcept -> std::string
+  auto all() const -> std::string
   {
     return std::format(
       "(Exception) at [{}] in {}\n"

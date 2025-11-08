@@ -37,6 +37,7 @@ apply_coverage_options(TARGETS core)
 apply_harden_options(TARGETS core)
 apply_sanitizer_options(TARGETS core)
 
+
 # common (Not Web)
 if(NOT EMSCRIPTEN)
     if(NOT WIN32)

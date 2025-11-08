@@ -4,10 +4,13 @@
 
 #include <Engine.hpp>
 
+extern "C" EG_IMPORT_API auto create_game(class APP& app) -> IGame*;
+
 int main() {
     try {
         APP app;
-        app.run();
+        auto game = create_game(app);
+        app.run(game);
 
     } catch(const Exception& e) {
         debug::print(e.all());

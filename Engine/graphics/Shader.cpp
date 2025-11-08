@@ -121,8 +121,8 @@ auto Shader::pre_process() -> std::string
     auto result = std::string();
 
     GLint m_Major = gl::get_integer(GL_MAJOR_VERSION);
-    GLint m_Minor = gl::get_integer(GL_MINOR_VERSION);
 
+    GLint m_Minor = gl::get_integer(GL_MINOR_VERSION);
     auto glsl_verion = std::format("{}{}0", m_Major, m_Minor);
 
     result += std::format("#version {} {}\n", glsl_verion, sys::Target == sys::Target::Web ? "es" : "core");

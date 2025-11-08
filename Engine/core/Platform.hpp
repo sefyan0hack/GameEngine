@@ -19,11 +19,21 @@
 
 
 #if defined(WINDOWS_PLT)
-    #define EXPORT_API __declspec(dllexport)
-    #define IMPORT_API __declspec(dllimport)
+    #if defined(BUILD_SHARED_DLL)
+        #define EG_API __declspec(dllexport)
+    #else
+        #define EG_API __declspec(dllimport)
+    #endif
 #else
-    #define EXPORT_API __attribute__((visibility("default")))
-    #define IMPORT_API
+    #define EG_API __attribute__((visibility("default")))
+#endif
+
+#if defined(WINDOWS_PLT)
+    #define EG_EXPORT_API __declspec(dllexport)
+    #define EG_IMPORT_API __declspec(dllimport)
+#else
+    #define EG_EXPORT_API __attribute__((visibility("default")))
+    #define EG_IMPORT_API __attribute__((visibility("default")))
 #endif
 
 /**

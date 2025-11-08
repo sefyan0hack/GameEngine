@@ -27,7 +27,6 @@ constexpr auto WINDOW_WIDTH = 1180;
 constexpr auto WINDOW_HIEGHT = 640;
 
 
-extern auto create_game(class APP& app) -> IGame*;
 
 APP::APP()
     : Window(WINDOW_WIDTH, WINDOW_HIEGHT, Wname, ApplicationEventQueue)
@@ -37,22 +36,21 @@ APP::APP()
     , m_LastFrameTime(std::chrono::steady_clock::now())
     , m_SmoothedFPS(60.0f)
     , Renderer(new OpenGLRenderer(Window))
-    , lib(
-        #if defined(WINDOWS_PLT)
-        "C:/Users/sefyan/Documents/c_projects/GameEngine/build/SandBox/libGame"
-        #else
-        "/home/sefyan/c_dev/GameEngine/build/SandBox/libGame"
-        #endif
-    )
+    , lib("libGame")
+    , Game(nullptr)
 {
     Window.show();
     Window.set_vsync(true);
 
-    lib.load();
+    // debug::print("1");
+    // lib.load();
 
-    auto create_game = lib.get_function<IGame*(*)(APP&)>("create_game");
-
-    Game = create_game(*this);
+    // debug::print("2");
+    // auto create_game = lib.get_function<IGame*(*)(APP&)>("create_game");
+    
+    // debug::print("3");
+    // Game = create_game(*this);
+    // debug::print("4");
 }
 
 APP::~APP()
@@ -208,8 +206,9 @@ auto APP::loop_body(void* ctx) -> void
     //todo: Frame Pacing
 }
 
-auto APP::run() -> void
+auto APP::run(IGame* game) -> void
 {
+    Game = game;
     #if defined(WINDOWS_PLT) || defined(LINUX_PLT)
     while (m_Running) {
         loop_body(this);

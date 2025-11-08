@@ -93,7 +93,7 @@ public:
     }
 };
 
-extern "C" EXPORT_API auto create_game(class APP& app) -> IGame*
+extern "C" EG_EXPORT_API auto create_game(class APP& app) -> IGame*
 {
     return new Game(app);
 }

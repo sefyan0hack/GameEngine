@@ -81,19 +81,6 @@ class OpenGL final: public GApi
         inline static GLint m_MaxTextureSize{};
         inline static GLint m_MaxTexture3DSize{};
         inline static GLint m_MaxTextureCubeMapSize{};
-
-    public:
-        #undef X
-        #ifdef ROBUST_GL_CHECK
-        #   define X(name)\
-            inline static Function<decltype(&gl##name)> name
-        #else
-        #   define X(name)\
-            inline static decltype(&gl##name) name = Function<decltype(&gl##name)>::default_
-        #endif
-
-        GLFUNCS
-
 };
 
 auto get_integer(GLenum name) -> GLint;
@@ -102,10 +89,10 @@ auto get_boolean(GLenum name) -> GLboolean;
 
 #undef X
 #ifdef ROBUST_GL_CHECK
-#   define X(name) inline Function<decltype(&gl##name)>& name = OpenGL::name
+#   define X(name) extern EG_EXPORT_API Function<decltype(&gl##name)> name;
 #else
-#   define X(name) inline decltype(&gl##name)& name = OpenGL::name
+#   define X(name) extern EG_EXPORT_API decltype(&gl##name) name;
 #endif
-
 GLFUNCS
+
 } //namespace g

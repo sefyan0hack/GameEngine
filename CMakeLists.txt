@@ -29,6 +29,7 @@ if(WIN32)
         WIN32_LEAN_AND_MEAN
         NOMINMAX
     )
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)  # Alternative to declspec
 endif()
 
 string(REGEX MATCH "^[0-9]+" COMPILER_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSION}")
@@ -38,7 +39,7 @@ string(REGEX MATCH "^[0-9]+" COMPILER_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSIO
 ####################################################################################################
 include(CMakeDependentOption)
 
-option(TESTS                "Tests"               ON)
+option(TESTS                "Tests"               OFF)
 option(DOCS                 "Docs"                OFF)
 option(ENABLE_COVERAGE      "Code coverage"       OFF)
 option(HARDEN               "Hardening"           OFF)
@@ -60,6 +61,8 @@ check_ipo_supported(RESULT IPO_SUPPORTED OUTPUT OUTPUT)
 if(IPO_SUPPORTED AND NOT TESTS)
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
+
+set(CMAKE_POSITION_INDEPENDENT_CODE OFF)
 
 add_compile_options(
     "$<$<CXX_COMPILER_ID:GNU,Clang>:-ffunction-sections;-fdata-sections>"

@@ -20,11 +20,10 @@ public:
     APP();
     ~APP();
 
-    auto run() -> void ;
+    auto run(IGame* game) -> void ;
     auto fps() const -> float;
     auto smooth_fps() const -> float;
     auto deltatime() const -> float;
-
     auto push_event(const Event& event) -> void;
 
     auto render(const class Scene& scene, std::shared_ptr<ShaderProgram> program) -> void;

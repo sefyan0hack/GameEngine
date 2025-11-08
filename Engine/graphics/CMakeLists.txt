@@ -60,6 +60,7 @@ apply_coverage_options(TARGETS graphics)
 apply_harden_options(TARGETS graphics)
 apply_sanitizer_options(TARGETS graphics)
 
+
 # common (Not Web)
 if(NOT EMSCRIPTEN)
     if(NOT WIN32)
