@@ -29,7 +29,7 @@ function(apply_warning_options)
 
         set(GNU_WARNING_FLAGS
             -pedantic -Wno-cast-function-type -Winit-self -Wcast-qual
-            -Wsuggest-final-types -Wsuggest-final-methods
+            -Wsuggest-final-types -Wsuggest-final-methods -Wno-changes-meaning
         )
 
         set(CLANG_WARNING_FLAGS -Wno-language-extension-token)
@@ -38,7 +38,7 @@ function(apply_warning_options)
             -Wall -Wextra -Wpedantic -Wconversion -Wfloat-equal -Wwrite-strings -Wno-sign-conversion -Werror=null-dereference 
             -Wnull-dereference -Wswitch-enum
             -Wuninitialized -Wpointer-arith -Wreturn-type -Wredundant-decls
-            -fno-operator-names -Wno-changes-meaning
+            -fno-operator-names 
         )
 
         target_compile_options(${target} PRIVATE
