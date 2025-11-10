@@ -18,23 +18,40 @@
 #endif
 
 
-#if defined(WINDOWS_PLT)
-    #if defined(BUILD_SHARED_DLL)
-        #define EG_API __declspec(dllexport)
-    #else
-        #define EG_API __declspec(dllimport)
-    #endif
-#else
-    #define EG_API __attribute__((visibility("default")))
-#endif
 
-#if defined(WINDOWS_PLT)
-    #define EG_EXPORT_API __declspec(dllexport)
-    #define EG_IMPORT_API __declspec(dllimport)
-#else
-    #define EG_EXPORT_API __attribute__((visibility("default")))
-    #define EG_IMPORT_API __attribute__((visibility("default")))
-#endif
+// #if defined(WINDOWS_PLT)
+//     #if defined(MSVC_CPL)
+//         #define EG_EXPORT_API __declspec(dllexport)
+//         #define EG_IMPORT_API __declspec(dllimport)
+//     #elif defined(CLANG_CPL)  || defined(GNU_CPL)
+//         #define EG_EXPORT_API __attribute__((dllexport))
+//         #define EG_IMPORT_API __attribute__((dllimport))
+//     #else
+//         #define EG_EXPORT_API
+//         #define EG_IMPORT_API
+//     #endif
+// #elif defined(LINUX_PLT) || defined(WEB_PLT)
+//     #if defined(CLANG_CPL) || defined(GNU_CPL)
+//         #define EG_EXPORT_API __attribute__((visibility("default")))
+//         #define EG_IMPORT_API
+//     #else
+//         #define EG_EXPORT_API
+//         #define EG_IMPORT_API
+//     #endif
+// #else
+//     #define EG_EXPORT_API
+//     #define EG_IMPORT_API
+// #endif
+
+// #if defined(WINDOWS_PLT)
+//     #if defined(EG_BUILD_LIB)
+//         #define EG_EXPORT_API __declspec(dllexport)
+//     #else
+//         #define EG_EXPORT_API __declspec(dllimport)
+//     #endif
+// #else
+//     #define EG_EXPORT_API
+// #endif
 
 /**
  * @brief  Concept that tests whether a non-type template parameter names a free/static object

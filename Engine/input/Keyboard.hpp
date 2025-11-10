@@ -2,6 +2,7 @@
 #include <ranges>
 #include <bitset>
 #include <map>
+#include <engine_export.h>
 
 #if defined(WEB_PLT)
 // Browser control keys (DOM Level 3)
@@ -65,7 +66,7 @@ enum class Key : uint8_t {
     Unknown
 };
 
-class Keyboard
+class ENGINE_API Keyboard
 {
 	friend class APP;
 public:

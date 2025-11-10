@@ -15,19 +15,28 @@ class DynLib {
 public:
     DynLib(const char* lib) : m_handle(nullptr), m_file_path(std::string(lib) + EXT), m_last_mod(mod_time()) {
     }
+    DynLib() : m_handle(nullptr), m_file_path(""), m_last_mod(mod_time()) {
+    }
 
     ~DynLib(){
     }
 
-    auto load() -> void
+    auto load(const char* lib) -> void
     {
         #if defined(WINDOWS_PLT)
-            m_handle = (void*) LoadLibraryA(m_file_path.c_str());
+            m_handle = (void*) LoadLibraryA(lib);
         #elif defined(LINUX_PLT) || defined(WEB_PLT)
-            m_handle = (void*) dlopen(m_file_path.c_str(), RTLD_LAZY);
+            m_handle = (void*) dlopen(lib, RTLD_LAZY);
         #endif
 
-        if (m_handle == nullptr) throw Exception("Can't open lib `{}`: {}", m_file_path, error());
+        if (m_handle == nullptr) throw Exception("Can't open lib `{}`: {}", lib, error());
+    }
+
+    auto load() -> void
+    {
+        if(m_file_path.empty()) throw Exception("you should use load(string) instead .");
+
+        load(m_file_path.c_str());
     }
 
     auto unload() -> void
@@ -129,8 +138,12 @@ public:
     
     static auto file_mod_time(const std::string& file) -> std::time_t 
     {
-        auto ftime = std::filesystem::last_write_time(file);
-        return std::chrono::system_clock::to_time_t( std::chrono::clock_cast<std::chrono::system_clock>(ftime) );
+        try{
+            auto ftime = std::filesystem::last_write_time(file);
+            return std::chrono::system_clock::to_time_t( std::chrono::clock_cast<std::chrono::system_clock>(ftime) );
+        }catch(...){
+            return 0;
+        }
     }
 
     auto mod_time() -> std::time_t 

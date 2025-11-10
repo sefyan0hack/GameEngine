@@ -1,9 +1,8 @@
 
 #include <memory>
 #include <random>
-
 #include <Engine.hpp>
-
+#include <game_export.h>
 #include <cmrc/cmrc.hpp>
 CMRC_DECLARE(res);
 inline auto fs = cmrc::res::get_filesystem();
@@ -12,7 +11,7 @@ using namespace std;
 
 
 /// @brief Game class hire the client put the logic for the game all the variables and stastes
-class Game : public IGame
+class GAME_API Game : public IGame
 {
 private:
     std::shared_ptr<Shader> vert, frag;
@@ -93,7 +92,7 @@ public:
     }
 };
 
-extern "C" EG_EXPORT_API auto create_game(class APP& app) -> IGame*
+extern "C" GAME_API auto create_game(class APP& app) -> IGame*
 {
     return new Game(app);
 }

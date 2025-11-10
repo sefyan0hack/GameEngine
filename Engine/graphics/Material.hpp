@@ -6,8 +6,9 @@
 
 #include "gl.h"
 #include "ShaderProgram.hpp"
+#include <engine_export.h>
 
-class Material
+class ENGINE_API Material
 {
 public:
                               //loc    type    size

@@ -3,8 +3,9 @@
 
 #include <glm/glm.hpp>
 #include <core/fmts.hpp>
+#include <engine_export.h>
 
-class Transform
+class ENGINE_API Transform
 {
 public:
     friend struct std::formatter<Transform>;

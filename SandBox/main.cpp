@@ -4,7 +4,7 @@
 
 #include <Engine.hpp>
 
-extern "C" EG_IMPORT_API auto create_game(class APP& app) -> IGame*;
+extern "C" auto create_game(class APP& app) -> IGame*;
 
 int main() {
     try {

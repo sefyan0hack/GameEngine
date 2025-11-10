@@ -1,11 +1,12 @@
+# Engine/input/cmakelists.txt
 
 include(helpers)
 
-add_library(input)
+add_library(input INTERFACE)
 
 target_sources( input PRIVATE
-    Keyboard.cpp
-    Mouse.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Keyboard.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Mouse.cpp
 )
 
 target_sources( input PUBLIC
@@ -19,24 +20,5 @@ target_sources( input PUBLIC
 target_include_directories(input 
     INTERFACE 
         ${CMAKE_CURRENT_SOURCE_DIR}
-    PRIVATE 
         ${CMAKE_SOURCE_DIR}/Engine
 )
-
-apply_all_options(TARGETS input)
-apply_coverage_options(TARGETS input)
-apply_harden_options(TARGETS input)
-apply_sanitizer_options(TARGETS input)
-
-# common (Not Web)
-if(NOT EMSCRIPTEN)
-    if(NOT WIN32)
-    target_link_libraries(input PRIVATE $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
-    endif()
-
-    target_link_libraries(input
-        PRIVATE
-            Threads::Threads
-            $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
-    )
-endif()

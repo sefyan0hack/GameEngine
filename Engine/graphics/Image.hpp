@@ -7,8 +7,9 @@
 #include "gl.h"
 #include <cmrc/cmrc.hpp>
 #include <core/Utils.hpp>
+#include <engine_export.h>
 
-class Image
+class ENGINE_API Image
 {
 public:
     friend struct std::formatter<Image>;

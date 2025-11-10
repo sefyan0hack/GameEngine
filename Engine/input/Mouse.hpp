@@ -3,9 +3,10 @@
 #include <format>
 #include <utility>
 #include <bitset>
+#include <engine_export.h>
 
 class CWindow;
-class Mouse
+class ENGINE_API Mouse
 {
     friend class APP;
 	friend struct std::formatter<Mouse>;

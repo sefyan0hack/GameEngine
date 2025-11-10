@@ -1,20 +1,39 @@
+# sandbox/cmakelists.txt
 
 include(helpers)
+include(GenerateExportHeader)
 
-add_executable(SandBox)
 add_library(Game SHARED)
 
-target_sources( SandBox PRIVATE
-    main.cpp 
+generate_export_header(Game
+    BASE_NAME GAME
+    EXPORT_MACRO_NAME GAME_API
+    EXPORT_FILE_NAME game_export.h
+    STATIC_DEFINE GAME_STATIC
 )
 
 target_sources( Game PRIVATE
     Game.cpp 
 )
 
-target_link_libraries(SandBox PRIVATE Engine Game)
-target_link_libraries(Game PRIVATE glm::glm Engine resources)
+target_include_directories(Game PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(Game PRIVATE glm::glm Engine)
 
+add_executable(SandBox)
+
+target_sources( SandBox PRIVATE
+    main.cpp 
+)
+target_link_libraries(SandBox PRIVATE Game Engine)
+
+# common (Not Web)
+if(NOT EMSCRIPTEN)
+    if(NOT WIN32)
+    target_link_libraries(SandBox PRIVATE $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
+    endif()
+
+    target_link_libraries(SandBox PRIVATE $<$<CXX_COMPILER_ID:GNU>:stdc++exp>)
+endif()
 apply_all_options(TARGETS SandBox Game)
 apply_coverage_options(TARGETS SandBox Game)
 apply_harden_options(TARGETS SandBox Game)

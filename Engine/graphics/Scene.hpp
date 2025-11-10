@@ -9,9 +9,10 @@
 #include "GameObject.hpp"
 #include "Camera.hpp"
 #include <core/fmts.hpp>
+#include <engine_export.h>
 
 /// @brief  Scene has all the Entities to Render + Sky box
-class Scene
+class ENGINE_API Scene
 {
 public:
     friend struct std::formatter<Scene>;

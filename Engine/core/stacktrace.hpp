@@ -7,6 +7,7 @@
 #include <stacktrace>
 
 using stacktrace = std::stacktrace;
+using stacktrace_entry = std::stacktrace_entry;
 
 inline auto to_string([[maybe_unused]] const stacktrace& st ) -> std::string
 {

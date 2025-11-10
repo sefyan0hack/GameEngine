@@ -1,7 +1,8 @@
 #pragma once
 #include "Renderer.hpp"
+#include <engine_export.h>
 
-class OpenGLRenderer final: public IRenderer 
+class ENGINE_API OpenGLRenderer final: public IRenderer 
 {
 public:
     OpenGLRenderer(const class CWindow& window);

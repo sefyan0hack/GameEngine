@@ -6,6 +6,7 @@
 #include "gl.h"
 #include "GApi.hpp"
 #include <core/Function.hpp>
+#include <engine_export.h>
 
 class CWindow;
 
@@ -14,7 +15,7 @@ namespace gl {
 
     inline static auto OPENGL_FUNCTIONS_NAME = [](){
         static std::vector<const char*> r;
-
+        #undef X 
         #define X(name) r.push_back("gl"#name)
         GLFUNCS
 
@@ -33,7 +34,7 @@ namespace gl {
     constexpr int32_t  GLMajorVersion   = 3;
     constexpr int32_t  GLMinorVersion   = 3;
 
-class OpenGL final: public GApi
+class ENGINE_API OpenGL final: public GApi
 {
     public:
         explicit OpenGL(const CWindow& window);
@@ -56,6 +57,7 @@ class OpenGL final: public GApi
         auto major_v() const -> GLint;
         auto minor_v() const -> GLint;
         
+        static auto load_opengl_functions() -> void;
         static auto vendor() -> std::string;
         static auto renderer() -> std::string;
         static auto extensions() -> std::vector<std::string>;
@@ -85,14 +87,5 @@ class OpenGL final: public GApi
 
 auto get_integer(GLenum name) -> GLint;
 auto get_boolean(GLenum name) -> GLboolean;
-
-
-#undef X
-#ifdef ROBUST_GL_CHECK
-#   define X(name) extern EG_EXPORT_API Function<decltype(&gl##name)> name;
-#else
-#   define X(name) extern EG_EXPORT_API decltype(&gl##name) name;
-#endif
-GLFUNCS
 
 } //namespace g

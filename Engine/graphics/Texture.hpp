@@ -3,13 +3,14 @@
 #include <format>
 #include <vector>
 #include <array>
+#include <engine_export.h>
 
 #include "Image.hpp"
 #include "gl.h"
 
 #include <cmrc/cmrc.hpp>
 
-class Texture
+class ENGINE_API Texture
 {
 public:
     friend struct std::formatter<Texture>;
@@ -31,7 +32,7 @@ protected:
     
 };
 
-class Texture2D final : public Texture
+class ENGINE_API Texture2D final : public Texture
 {
   public:
     Texture2D();
@@ -47,7 +48,7 @@ class Texture2D final : public Texture
     bool m_Mipmapped;
 };
 
-class TextureCubeMap final : public Texture
+class ENGINE_API TextureCubeMap final : public Texture
 {
   public:
     TextureCubeMap();

@@ -10,8 +10,9 @@
 #include "Game.hpp"
 #include "DynLib.hpp"
 #include "EventQueue.hpp"
+#include <engine_export.h>
 
-class APP
+class ENGINE_API APP
 {
 
 public:

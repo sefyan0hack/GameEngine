@@ -1,10 +1,11 @@
+# Engine/core/cmakelists.txt
 
 include(helpers)
 
-add_library(core)
+add_library(core INTERFACE)
 
 target_sources( core PRIVATE
-    APP.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/APP.cpp
 )
 
 target_sources( core PUBLIC
@@ -28,26 +29,5 @@ target_sources( core PUBLIC
 target_include_directories(core 
     INTERFACE 
         ${CMAKE_CURRENT_SOURCE_DIR}
-    PRIVATE 
         ${CMAKE_SOURCE_DIR}/Engine
 )
-
-apply_all_options(TARGETS core)
-apply_coverage_options(TARGETS core)
-apply_harden_options(TARGETS core)
-apply_sanitizer_options(TARGETS core)
-
-
-# common (Not Web)
-if(NOT EMSCRIPTEN)
-    if(NOT WIN32)
-    target_link_libraries(core PRIVATE $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
-    endif()
-
-    target_link_libraries(core
-        PRIVATE
-            Threads::Threads
-            $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
-            $<$<PLATFORM_ID:Linux>:dl>
-    )
-endif()

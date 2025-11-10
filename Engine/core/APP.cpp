@@ -36,7 +36,7 @@ APP::APP()
     , m_LastFrameTime(std::chrono::steady_clock::now())
     , m_SmoothedFPS(60.0f)
     , Renderer(new OpenGLRenderer(Window))
-    , lib("libGame")
+    , lib()
     , Game(nullptr)
 {
     Window.show();

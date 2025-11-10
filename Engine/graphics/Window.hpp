@@ -1,5 +1,7 @@
 #pragma once
 #include <utility>
+#include <string>
+#include <engine_export.h>
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>
@@ -15,7 +17,7 @@
 
 class EventQueue;
 
-class CWindow
+class ENGINE_API CWindow
 {
     friend class APP;
 

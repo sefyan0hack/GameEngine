@@ -26,15 +26,6 @@ inline static auto After_Func = []([[maybe_unused]] std::string info) {
 #include "platform/web/OpenGL.inl"
 #endif
 
-
-#undef X
-#ifdef ROBUST_GL_CHECK
-#   define X(name) EG_EXPORT_API Function<decltype(&gl##name)> name ;
-#else
-#   define X(name) EG_EXPORT_API decltype(&gl##name) name = Function<decltype(&gl##name)>::default_ ;
-#endif
-GLFUNCS
-
 OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     : m_Context(create_opengl_context(window))
     , m_Major(0)
@@ -46,19 +37,7 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     if (!make_current_opengl(window))
         throw Exception("Failed to make context current.");
 
-    #undef X
-    #ifdef ROBUST_GL_CHECK
-    #   define X(name)\
-        name = Function<decltype(&gl##name)>{};\
-        name.m_Func  = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name));\
-        name.m_After = After_Func;\
-        name.m_Name  = "gl"#name
-    #else
-    #   define X(name)\
-        name = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name))
-    #endif
-
-	GLFUNCS
+    load_opengl_functions();
 
     m_Major = get_integer(GL_MAJOR_VERSION);
     m_Minor = get_integer(GL_MINOR_VERSION);
@@ -98,8 +77,6 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     gl::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     #endif
 
-    debug::print("ctor addr GetIntegerv {:p}", (const void*)gl::GetIntegerv );
-    debug::print("ctor addr Enable {:p}", (const void*)gl::Enable );
     debug::print("=================================================================================");
     debug::print("Platform : {}, Arch : {}", sys::TargetName, sys::ArchName);
     debug::print("GL Version : Wanted:({}.{}) -> Got:({}.{})", GLMajorVersion, GLMinorVersion, m_Major, m_Minor);
@@ -238,8 +215,6 @@ auto get_integer(GLenum name) -> GLint
     constexpr auto INVALID = std::numeric_limits<GLint>::max();
 
     GLint maxTexSize = INVALID;
-    debug::print("get_integer addr GetIntegerv {:p}", (const void*)gl::GetIntegerv );
-    debug::print("get_integer addr Enable {:p}", (const void*)gl::Enable );
 
     gl::GetIntegerv(name, &maxTexSize);
 
@@ -261,6 +236,23 @@ auto get_boolean(GLenum name) -> GLboolean
         return maxTexSize;
     else
         throw Exception("GetBooleanv Failed");
+}
+
+auto OpenGL::load_opengl_functions() -> void
+{
+    #undef X
+    #ifdef ROBUST_GL_CHECK
+    #   define X(name)\
+        name = Function<decltype(&gl##name)>{};\
+        name.m_Func  = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name));\
+        name.m_After = After_Func;\
+        name.m_Name  = "gl"#name
+    #else
+    #   define X(name)\
+        name = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name))
+    #endif
+
+	GLFUNCS
 }
 
 

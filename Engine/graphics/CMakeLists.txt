@@ -1,23 +1,24 @@
+# Engine/graphics/cmakelists.txt
 
 include(helpers)
 
-add_library(graphics)
+add_library(graphics INTERFACE)
 
 target_sources( graphics PRIVATE
-    Window.cpp    
-    Shader.cpp
-    ShaderProgram.cpp
-    Mesh.cpp
-    OpenGL.cpp
-    Texture.cpp
-    Scene.cpp
-    Material.cpp
-    SkyBox.cpp
-    Image.cpp
-    Transform.cpp
-    Camera.cpp
-    GameObject.cpp
-    OpenGLRenderer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Window.cpp    
+    ${CMAKE_CURRENT_SOURCE_DIR}/Shader.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ShaderProgram.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Mesh.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/OpenGL.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Texture.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Scene.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Material.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/SkyBox.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Image.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Transform.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Camera.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GameObject.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/OpenGLRenderer.cpp
 )
 
 target_sources( graphics PUBLIC
@@ -46,34 +47,10 @@ target_sources( graphics PUBLIC
 target_include_directories(graphics 
     INTERFACE 
         ${CMAKE_CURRENT_SOURCE_DIR}
-    PRIVATE 
         ${CMAKE_SOURCE_DIR}/Engine
         $<$<PLATFORM_ID:Linux>:${X11_INCLUDE_DIR}>
 )
 
-target_link_libraries(graphics PUBLIC res)
-target_link_libraries(graphics PRIVATE glm::glm)
-target_link_libraries(graphics PRIVATE stb_image)
-
-apply_all_options(TARGETS graphics)
-apply_coverage_options(TARGETS graphics)
-apply_harden_options(TARGETS graphics)
-apply_sanitizer_options(TARGETS graphics)
-
-
-# common (Not Web)
-if(NOT EMSCRIPTEN)
-    if(NOT WIN32)
-    target_link_libraries(graphics PRIVATE $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
-    endif()
-
-    target_link_libraries(graphics
-        PRIVATE
-            Threads::Threads
-            ${OPENGL_LIBRARIES}
-            $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
-            $<$<PLATFORM_ID:Linux>:dl>
-            $<$<PLATFORM_ID:Linux>:${X11_LIBRARIES}>
-
-    )
-endif()
+target_link_libraries(graphics INTERFACE res)
+target_link_libraries(graphics INTERFACE glm::glm)
+target_link_libraries(graphics INTERFACE stb_image)

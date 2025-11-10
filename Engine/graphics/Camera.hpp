@@ -7,8 +7,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <core/fmts.hpp>
+#include <engine_export.h>
 
-class Camera
+class ENGINE_API Camera
 {
 public:
     friend struct std::formatter<Camera>;

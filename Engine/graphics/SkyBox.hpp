@@ -2,8 +2,9 @@
 #include <format>
 #include <memory>
 #include <string>
+#include <engine_export.h>
 
-class SkyBox
+class ENGINE_API SkyBox
 {
 public:
   SkyBox();

@@ -7,15 +7,16 @@
 #include <glm/glm.hpp>
 
 #include <cmrc/cmrc.hpp>
+#include <engine_export.h>
 
-struct Vertex
+struct ENGINE_API Vertex
 {
   glm::vec3 Position;
   glm::vec3 Normal;
   glm::vec2 TexCoords;
 };
 
-struct AttributeInfo {
+struct ENGINE_API AttributeInfo {
   GLint size;
   GLenum type;
   GLboolean normalized;
@@ -26,7 +27,7 @@ struct AttributeInfo {
 
 class Material;
 
-class Mesh
+class ENGINE_API Mesh
 {
 public:
   using VetexData = Vertex;
@@ -140,5 +141,5 @@ struct std::formatter<Mesh> {
   }
 };
 
-auto obj_to_mesh(const char* filename) -> std::vector<Vertex>;
-auto obj_to_mesh(cmrc::file src) -> std::vector<Vertex>;
+auto ENGINE_API obj_to_mesh(const char* filename) -> std::vector<Vertex>;
+auto ENGINE_API obj_to_mesh(cmrc::file src) -> std::vector<Vertex>;

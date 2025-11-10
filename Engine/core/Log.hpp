@@ -62,6 +62,50 @@ namespace debug {
 } // namespace debug
 
 
+// class ENGINE_API Exception final : public std::runtime_error {
+// public:
+
+//   template <typename... Ts>
+//   Exception(
+//     const std::format_string<Ts...>& fmt,
+//     Ts&&... args
+//   )
+//     : std::runtime_error(std::format(fmt, std::forward<Ts>(args)...))
+//     // , m_Trace(stacktrace::current(1))
+//   {}
+
+//   auto what() const noexcept  -> const char* override {
+//     return std::runtime_error::what();
+//   }
+
+//   auto trace() const noexcept -> std::string {
+//     return "";//to_string(m_Trace);
+//   }
+
+//   auto where() const noexcept -> std::string {
+//     return "";//!m_Trace.empty() ? m_Trace.begin()->description() : "??";
+//   }
+
+//   auto location() const noexcept -> std::string {
+//     return "";//!m_Trace.empty() ? std::format("{}:{}", m_Trace.begin()->source_file(), m_Trace.begin()->source_line()) : "??:??";
+//   }
+
+
+//   auto all() const -> std::string
+//   {
+//     return std::format(
+//       "(Exception) at [{}] in {}\n"
+//       "\t-> what : `{}`\n"
+//       "{}",
+//       location(), where(), what(),
+//       trace()
+//     );
+//   }
+
+// private:
+//   // stacktrace m_Trace;
+// };
+
 class Exception final : public std::runtime_error {
 public:
 

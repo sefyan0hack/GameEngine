@@ -111,3 +111,14 @@
 #elif defined(WEB_PLT)
 #include "platform/web/gl.inl"
 #endif
+
+#include <core/Function.hpp>
+namespace gl {
+    #undef X
+    #ifdef ROBUST_GL_CHECK
+    #   define X(name) inline Function<decltype(&gl##name)> name;
+    #else
+    #   define X(name) inline decltype(&gl##name) name = Function<decltype(&gl##name)>::default_;
+    #endif
+    GLFUNCS
+} // namespace gl

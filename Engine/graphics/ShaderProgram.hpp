@@ -9,9 +9,10 @@
 #include "gl.h"
 #include <glm/glm.hpp>
 #include <core/fmts.hpp>
+#include <engine_export.h>
 
 
-class ShaderProgram {
+class ENGINE_API ShaderProgram {
 public:
     using GlslType = std::tuple<GLuint, GLenum, GLsizei>;
 

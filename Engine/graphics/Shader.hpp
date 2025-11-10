@@ -3,12 +3,13 @@
 #include <format>
 #include <string>
 #include <vector>
+#include <engine_export.h>
 
 #include "gl.h"
 
 #include <cmrc/cmrc.hpp>
 
-class Shader
+class ENGINE_API Shader
 {
   public:
     friend struct std::formatter<Shader>;

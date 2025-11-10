@@ -5,10 +5,11 @@
 #include <variant>
 #include <ctime>
 #include "gl.h"
+#include <engine_export.h>
 
 using GCTX = std::variant<std::monostate, GL_CTX>;
 
-class GApi
+class ENGINE_API GApi
 {
     public:
         virtual ~GApi() = default;

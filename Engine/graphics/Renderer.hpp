@@ -2,8 +2,9 @@
 
 #include <memory>
 #include "GApi.hpp"
+#include <engine_export.h>
 
-class IRenderer
+class ENGINE_API IRenderer
 {
 public:
     virtual ~IRenderer() = default;
