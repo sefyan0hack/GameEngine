@@ -13,51 +13,74 @@
 
 class DynLib {
 public:
-    DynLib(const char* lib) : m_handle(nullptr), m_file_path(std::string(lib) + EXT), m_last_mod(mod_time()) {
+    DynLib(const char* lib) : m_handle(nullptr), m_file_path(PREFIX + std::string(lib) + SUFFIX), m_last_mod(mod_time()) {
     }
-    DynLib() : m_handle(nullptr), m_file_path(""), m_last_mod(mod_time()) {
+    
+    DynLib() : m_handle(nullptr), m_file_path(""), m_last_mod(0) {
     }
 
     ~DynLib(){
+        unload();
     }
 
     auto load(const char* lib) -> void
     {
+        unload(); // Unload any existing library first
+        
+        m_file_path = PREFIX + std::string(lib) + SUFFIX;
+        m_last_mod = mod_time();
+    
         #if defined(WINDOWS_PLT)
-            m_handle = (void*) LoadLibraryA(lib);
+            m_handle = (void*) LoadLibraryA(m_file_path.c_str());
         #elif defined(LINUX_PLT) || defined(WEB_PLT)
-            m_handle = (void*) dlopen(lib, RTLD_LAZY);
+            m_handle = (void*) dlopen(m_file_path.c_str(), RTLD_LAZY);
         #endif
 
-        if (m_handle == nullptr) throw Exception("Can't open lib `{}`: {}", lib, error());
+        if (m_handle == nullptr) throw Exception("Can't open lib `{}`: {}", m_file_path.c_str(), error());
     }
 
     auto load() -> void
     {
         if(m_file_path.empty()) throw Exception("you should use load(string) instead .");
-
         load(m_file_path.c_str());
     }
 
     auto unload() -> void
     {
+        if (m_handle == nullptr) return;
+
         #if defined(WINDOWS_PLT)
             FreeLibrary((HMODULE)m_handle);
         #elif defined(LINUX_PLT) || defined(WEB_PLT)
             dlclose(m_handle);
         #endif
+        
+        m_handle = nullptr;
     }
 
-    auto reload() -> void
+    auto reload() -> bool
     {
-        unload();
-        load();
+        auto current_mod = mod_time();
+        if (current_mod != m_last_mod) {
+            unload();
+            try {
+                load();
+                m_last_mod = current_mod;
+                return true;
+            } catch (...) {
+                return false;
+            }
+        }
+        return false;
     }
-
 
     template <class FuncPtr>
-    auto get_function(const char* name) -> FuncPtr
+    auto function(const char* name) -> FuncPtr
     {
+        if (m_handle == nullptr) {
+            throw Exception("Library not loaded, cannot get function `{}`", name);
+        }
+
         FuncPtr f = nullptr;
         #if defined(WINDOWS_PLT)
             f = reinterpret_cast<FuncPtr>(GetProcAddress((HMODULE)m_handle, name));
@@ -95,40 +118,18 @@ public:
                 return "Failed to get error message";
             }
     
-            // Create std::string and clean up any trailing whitespace or non-printable chars
             std::string message(messageBuffer, size);
             
-            // Clean up the message - remove trailing CR/LF and other non-printable characters
+            // Clean up the message
             while (!message.empty() && 
                    (message.back() == '\r' || message.back() == '\n' || 
                     message.back() == ' ' || !std::isprint(static_cast<unsigned char>(message.back())))) {
                 message.pop_back();
             }
             
-            // Alternative: use a more robust cleaning approach
-            std::string clean_message;
-            for (char c : message) {
-                if (std::isprint(static_cast<unsigned char>(c)) || c == ' ') {
-                    clean_message += c;
-                } else if (c == '\r' || c == '\n' || c == '\t') {
-                    clean_message += ' '; // Replace control chars with space
-                }
-                // Skip other non-printable characters
-            }
-            
-            // Trim leading/trailing spaces from clean_message
-            size_t start = clean_message.find_first_not_of(" \t\r\n");
-            size_t end = clean_message.find_last_not_of(" \t\r\n");
-            
-            if (start != std::string::npos && end != std::string::npos) {
-                clean_message = clean_message.substr(start, end - start + 1);
-            } else {
-                clean_message.clear();
-            }
-            
             LocalFree(messageBuffer);
             
-            return clean_message.empty() ? "Unknown error (non-printable characters)" : clean_message;
+            return message.empty() ? "Unknown error" : message;
             
         #elif defined(LINUX_PLT) || defined(WEB_PLT)
             const char* error = dlerror();
@@ -138,10 +139,10 @@ public:
     
     static auto file_mod_time(const std::string& file) -> std::time_t 
     {
-        try{
+        try {
             auto ftime = std::filesystem::last_write_time(file);
-            return std::chrono::system_clock::to_time_t( std::chrono::clock_cast<std::chrono::system_clock>(ftime) );
-        }catch(...){
+            return std::chrono::system_clock::to_time_t(std::chrono::clock_cast<std::chrono::system_clock>(ftime));
+        } catch (...) {
             return 0;
         }
     }
@@ -151,12 +152,21 @@ public:
         return file_mod_time(m_file_path);
     }
 
-    auto upadte_mod_time(std::time_t t) -> void
+    auto update_mod_time(std::time_t t) -> void
     {
         m_last_mod = t;
     }
 
-    static constexpr auto EXT = 
+    auto name() -> std::string {
+        return m_file_path;
+    }
+
+    auto is_loaded() const -> bool {
+        return m_handle != nullptr;
+    }
+
+    static constexpr auto PREFIX  = "lib";
+    static constexpr auto SUFFIX = 
     #if defined(WINDOWS_PLT)
         ".dll";
     #elif defined(LINUX_PLT) || defined(WEB_PLT)

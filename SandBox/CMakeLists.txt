@@ -5,6 +5,8 @@ include(GenerateExportHeader)
 
 add_library(Game SHARED)
 
+set_target_properties(Game PROPERTIES PREFIX "lib")
+
 generate_export_header(Game
     BASE_NAME GAME
     EXPORT_MACRO_NAME GAME_API
@@ -24,7 +26,8 @@ add_executable(SandBox)
 target_sources( SandBox PRIVATE
     main.cpp 
 )
-target_link_libraries(SandBox PRIVATE Game Engine)
+
+target_link_libraries(SandBox PRIVATE Engine)
 
 # common (Not Web)
 if(NOT EMSCRIPTEN)
@@ -34,6 +37,12 @@ if(NOT EMSCRIPTEN)
 
     target_link_libraries(SandBox PRIVATE $<$<CXX_COMPILER_ID:GNU>:stdc++exp>)
 endif()
+
+add_custom_command(TARGET SandBox POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    $<TARGET_FILE:Engine>
+    ${CMAKE_CURRENT_BINARY_DIR} 
+)
 apply_all_options(TARGETS SandBox Game)
 apply_coverage_options(TARGETS SandBox Game)
 apply_harden_options(TARGETS SandBox Game)

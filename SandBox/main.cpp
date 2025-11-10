@@ -4,13 +4,10 @@
 
 #include <Engine.hpp>
 
-extern "C" auto create_game(class APP& app) -> IGame*;
-
 int main() {
     try {
         APP app;
-        auto game = create_game(app);
-        app.run(game);
+        app.run();
 
     } catch(const Exception& e) {
         debug::print(e.all());

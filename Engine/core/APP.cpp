@@ -26,8 +26,6 @@ constexpr auto Wname = "Game";
 constexpr auto WINDOW_WIDTH = 1180;
 constexpr auto WINDOW_HIEGHT = 640;
 
-
-
 APP::APP()
     : Window(WINDOW_WIDTH, WINDOW_HIEGHT, Wname, ApplicationEventQueue)
     , Keyboard()
@@ -39,31 +37,69 @@ APP::APP()
     , lib()
     , Game(nullptr)
 {
+
+    load_game_library();
+
     Window.show();
     Window.set_vsync(true);
-
-    // debug::print("1");
-    // lib.load();
-
-    // debug::print("2");
-    // auto create_game = lib.get_function<IGame*(*)(APP&)>("create_game");
-    
-    // debug::print("3");
-    // Game = create_game(*this);
-    // debug::print("4");
 }
 
 APP::~APP()
 {
     clear_events();
     if(Renderer) delete Renderer;
-    if(Game) delete Game;
+    unload_game_library();
+}
+auto APP::load_game_library() -> void
+{
+    try {
+        lib.load("Game");
+        auto create_game = lib.function<IGame*(*)(APP&)>("create_game");
+        Game = create_game(*this);
+    } catch (const Exception& e) {
+        debug::print("Failed to load game library: {}", e.what());
+        //  fallback/default  ?? may be
+    }
+}
+
+auto APP::unload_game_library() -> void
+{
+    if (Game) {
+        delete Game;
+        Game = nullptr;
+    }
+    lib.unload();
+}
+
+auto APP::hot_reload_game_library() -> bool
+{
+    try {
+        auto old_mod_time = lib.mod_time();
+        
+        if (!lib.reload()) {
+            return false;
+        }
+        
+        auto create_game = lib.function<IGame*(*)(APP&)>("create_game");
+        
+        if (Game) {
+            delete Game;
+        }
+        Game = create_game(*this);
+        
+        debug::print("Game library hot-reloaded successfully");
+        return true;
+        
+    } catch (const Exception& e) {
+        debug::print("Hot reload failed: {}", e.what());
+        return false;
+    }
 }
 
 auto APP::frame(float deltaTime) -> void
 {
     Renderer->clear_screen(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    Game->update(deltaTime);
+    if(Game) Game->update(deltaTime);
     Window.swap_buffers();
     Keyboard.save_prev_state();
     Mouse.save_prev_state();
@@ -202,13 +238,23 @@ auto APP::loop_body(void* ctx) -> void
         }
     }
 
+    static bool r_key_was_pressed = false;
+    if (app->Keyboard.is_pressed(Key::R)) {
+        if (!r_key_was_pressed) {
+            app->hot_reload_game_library();
+            r_key_was_pressed = true;
+        }
+    } else {
+        r_key_was_pressed = false;
+    }
+
+
     app->frame(deltaTime);
     //todo: Frame Pacing
 }
 
-auto APP::run(IGame* game) -> void
+auto APP::run() -> void
 {
-    Game = game;
     #if defined(WINDOWS_PLT) || defined(LINUX_PLT)
     while (m_Running) {
         loop_body(this);
