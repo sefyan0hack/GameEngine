@@ -340,6 +340,9 @@ cmrc_add_resource_library( resources
     ${RES_FILES}
 )
 
+set_target_properties(resources PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+
+
 ####################################################################################################
 # Find instaled packages 
 ####################################################################################################
