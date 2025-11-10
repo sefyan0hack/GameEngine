@@ -12,6 +12,7 @@ get_target_property(INPUT_SRCS input SOURCES)
 get_target_property(GRAPHICS_SRCS graphics SOURCES)
 
 add_library(Engine)
+set_target_properties(Engine PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
 generate_export_header(Engine
     BASE_NAME ENGINE
