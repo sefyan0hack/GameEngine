@@ -234,6 +234,13 @@ function(pre_include_file file)
     endif()
 endfunction(pre_include_file)
 
+function(target_pre_include_file target file)
+    if(MSVC)
+        target_compile_definitions(${target} PRIVATE /FI"${file}")
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_definitions(${target} PRIVATE -include "${file}")
+    endif()
+endfunction(target_pre_include_file)
 
 function(delete_files_by_extension DIR EXTENSION)
     file(GLOB_RECURSE FILES_TO_DELETE 
