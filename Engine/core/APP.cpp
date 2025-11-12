@@ -81,14 +81,23 @@ auto APP::unload_game_library() -> void
 auto APP::hot_reload_game_library() -> bool
 {
     try {
-
+        // Store function pointers BEFORE unloading
+        auto old_delete_game = delete_game;
         IGame* oldGame = Game;
+        
+        // Clear state first
         Game = nullptr;
-
-        if (oldGame) delete_game(oldGame);
-
+        new_game = nullptr;
+        delete_game = nullptr;
+        
+        // Delete old game using stored function pointer
+        if (oldGame && old_delete_game) {
+            old_delete_game(oldGame);
+        }
+        
+        // Now unload and reload
         lib.unload();
-
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
         load_game_library();
 
         debug::print("Game library hot-reloaded successfully");

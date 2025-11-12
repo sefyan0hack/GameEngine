@@ -48,13 +48,16 @@ public:
     auto unload() -> void
     {
         if (!is_loaded()) return;
-
+        bool r = true;
         #if defined(WINDOWS_PLT)
-            FreeLibrary((HMODULE)m_handle);
+            if(FreeLibrary((HMODULE)m_handle) == 0) r = false;
         #elif defined(LINUX_PLT) || defined(WEB_PLT)
-            dlclose(m_handle);
+            if(dlclose(m_handle) != 0) r = false;
         #endif
-        
+
+        if(r == false)
+            throw Exception("Cant unload lib `{}` : ", m_name, error());
+
         m_handle = nullptr;
     }
 
