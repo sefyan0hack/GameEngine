@@ -11,7 +11,7 @@ using namespace std;
 
 
 /// @brief Game class hire the client put the logic for the game all the variables and stastes
-class GAME_API Game : public IGame
+class GAME_API Game final : public IGame
 {
 private:
     std::shared_ptr<Shader> vert, frag;
