@@ -50,6 +50,7 @@ APP::~APP()
     if(Renderer) delete Renderer;
     unload_game_library();
 }
+
 auto APP::load_game_library() -> void
 {
     try {
@@ -74,22 +75,31 @@ auto APP::unload_game_library() -> void
 auto APP::hot_reload_game_library() -> bool
 {
     try {
-        auto old_mod_time = lib.mod_time();
-        
-        if (!lib.reload()) {
-            return false;
+
+        // Store the old game pointer
+        IGame* oldGame = Game;
+        Game = nullptr;
+
+        if (oldGame) {
+            delete oldGame;
+            oldGame = nullptr;
         }
         
+        lib.unload();
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::cout.flush();
+        std::clog.flush();
+        std::cerr.flush();
+
+        lib.load("Game");
         auto create_game = lib.function<IGame*(*)(APP&)>("create_game");
-        
-        if (Game) {
-            delete Game;
-        }
+
         Game = create_game(*this);
-        
+
         debug::print("Game library hot-reloaded successfully");
         return true;
-        
+
     } catch (const Exception& e) {
         debug::print("Hot reload failed: {}", e.what());
         return false;
@@ -165,7 +175,7 @@ auto APP::loop_body(void* ctx) -> void
             [&app](const Mouse::MovementEvent& e) {
                 app->Mouse.on_rawdelta(e.dx, e.dy);
                 auto [dx, dy] = app->Mouse.get_rawdelta();
-                app->Game->on_deltamouse(dx, dy);
+                if(app->Game) app->Game->on_deltamouse(dx, dy);
             },
             [](const auto& e) {
                 if( ::type_name<decltype(e)>() == "const std::monostate&") throw Exception(" nnnnnn ");

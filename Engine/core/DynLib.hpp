@@ -13,10 +13,10 @@
 
 class DynLib {
 public:
-    DynLib(const char* lib) : m_handle(nullptr), m_file_path(PREFIX + std::string(lib) + SUFFIX), m_last_mod(mod_time()) {
+    DynLib(const char* lib) : m_handle(nullptr), m_name(lib) {
     }
     
-    DynLib() : m_handle(nullptr), m_file_path(""), m_last_mod(0) {
+    DynLib() : m_handle(nullptr), m_name("") {
     }
 
     ~DynLib(){
@@ -25,29 +25,29 @@ public:
 
     auto load(const char* lib) -> void
     {
-        unload(); // Unload any existing library first
-        
-        m_file_path = PREFIX + std::string(lib) + SUFFIX;
-        m_last_mod = mod_time();
+        m_name = lib;
+
+        if(m_handle) throw Exception("Can't load lib `{}` befor unloding prev lib", lib);
     
         #if defined(WINDOWS_PLT)
-            m_handle = (void*) LoadLibraryA(m_file_path.c_str());
+            m_handle = (void*) LoadLibraryA(full_name().c_str());
         #elif defined(LINUX_PLT) || defined(WEB_PLT)
-            m_handle = (void*) dlopen(m_file_path.c_str(), RTLD_LAZY);
+            m_handle = (void*) dlopen(full_name().c_str(), RTLD_LAZY);
         #endif
 
-        if (m_handle == nullptr) throw Exception("Can't open lib `{}`: {}", m_file_path.c_str(), error());
+
+        if (!m_handle) throw Exception("Can't open lib `{}`: {}", full_name().c_str(), error());
     }
 
     auto load() -> void
     {
-        if(m_file_path.empty()) throw Exception("you should use load(string) instead .");
-        load(m_file_path.c_str());
+        if(m_name.empty()) throw Exception("you should use load(string) instead .");
+        load(m_name.c_str());
     }
 
     auto unload() -> void
     {
-        if (m_handle == nullptr) return;
+        if (!is_loaded()) return;
 
         #if defined(WINDOWS_PLT)
             FreeLibrary((HMODULE)m_handle);
@@ -58,40 +58,42 @@ public:
         m_handle = nullptr;
     }
 
-    auto reload() -> bool
+    auto reload(const char* lib) -> void
     {
-        auto current_mod = mod_time();
-        if (current_mod != m_last_mod) {
+        if(is_loaded()){
             unload();
-            try {
-                load();
-                m_last_mod = current_mod;
-                return true;
-            } catch (...) {
-                return false;
-            }
+            load(lib);
         }
-        return false;
     }
 
-    template <class FuncPtr>
-    auto function(const char* name) -> FuncPtr
+    auto reload() -> void
     {
-        if (m_handle == nullptr) {
+        reload(this->m_name.c_str());
+    }
+
+    auto function(const char* name) -> void*
+    {
+        if (!is_loaded()) {
             throw Exception("Library not loaded, cannot get function `{}`", name);
         }
 
-        FuncPtr f = nullptr;
+        void* f = nullptr;
         #if defined(WINDOWS_PLT)
-            f = reinterpret_cast<FuncPtr>(GetProcAddress((HMODULE)m_handle, name));
+            f = reinterpret_cast<void*>(GetProcAddress((HMODULE) m_handle, name));
         #elif defined(LINUX_PLT) || defined(WEB_PLT)
             (void)dlerror();
-            f = reinterpret_cast<FuncPtr>(dlsym(m_handle, name));
+            f = reinterpret_cast<void*>(dlsym(m_handle, name));
         #endif
 
         if (f == nullptr) throw Exception("Can't load symbol `{}`: {}", name, error());
     
         return f;
+    }
+
+    template <class FuncPtr>
+    auto function(const char* name) -> FuncPtr
+    {
+        return reinterpret_cast<FuncPtr>(function(name));
     }
 
     auto error() -> std::string {
@@ -136,45 +138,28 @@ public:
             return error ? error : "No error";
         #endif
     }
-    
-    static auto file_mod_time(const std::string& file) -> std::time_t 
-    {
-        try {
-            auto ftime = std::filesystem::last_write_time(file);
-            return std::chrono::system_clock::to_time_t(std::chrono::clock_cast<std::chrono::system_clock>(ftime));
-        } catch (...) {
-            return 0;
-        }
-    }
 
-    auto mod_time() -> std::time_t 
+    auto last_write_time() -> std::filesystem::file_time_type
     {
-        return file_mod_time(m_file_path);
-    }
-
-    auto update_mod_time(std::time_t t) -> void
-    {
-        m_last_mod = t;
+        return std::filesystem::last_write_time(m_name);
     }
 
     auto name() -> std::string {
-        return m_file_path;
+        return m_name;
+    }
+
+    auto full_name() -> std::string {
+        return PREFIX + m_name + SUFFIX;
     }
 
     auto is_loaded() const -> bool {
         return m_handle != nullptr;
     }
 
-    static constexpr auto PREFIX  = "lib";
-    static constexpr auto SUFFIX = 
-    #if defined(WINDOWS_PLT)
-        ".dll";
-    #elif defined(LINUX_PLT) || defined(WEB_PLT)
-        ".so";
-    #endif
+    static constexpr auto PREFIX  = DYN_LIB_PREFIX;
+    static constexpr auto SUFFIX  = sys::Target == sys::Target::Windows ? ".dll" : ".so";
 
 private:
     void* m_handle;
-    std::string m_file_path;
-    std::time_t m_last_mod;
+    std::string m_name;
 };

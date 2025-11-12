@@ -52,6 +52,12 @@ cmake_dependent_option(STATIC_LINK "Static link C++" ON "MINGW" OFF)
 cmake_dependent_option(RTTI "RunTime Type Info" ON "NOT MINGW" OFF) # disable RTTI becaus of bug in mingw redifinition when static link libstdc++
 
 ####################################################################################################
+# Position Independent Code
+####################################################################################################
+
+set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+
+####################################################################################################
 # Link Time OPT 
 ####################################################################################################
 include(CheckIPOSupported)
@@ -369,7 +375,8 @@ add_compile_definitions(
     PLATFORM_ARCH="${CMAKE_SYSTEM_PROCESSOR}"
 
     OPENGL_LIB="${CORE_OPENGL_LIB}"
-
+    DYN_LIB_PREFIX="${CMAKE_SHARED_LIBRARY_PREFIX}"
+    
     $<$<PLATFORM_ID:Windows>:WINDOWS_PLT>
     $<$<PLATFORM_ID:Linux>:LINUX_PLT>
     $<$<PLATFORM_ID:Emscripten>:WEB_PLT>
