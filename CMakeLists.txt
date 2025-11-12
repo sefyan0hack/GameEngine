@@ -67,24 +67,24 @@ set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 ####################################################################################################
 # Link Time OPT
 ####################################################################################################
-# include(CheckIPOSupported)
-# check_ipo_supported(RESULT IPO_SUPPORTED OUTPUT OUTPUT)
+include(CheckIPOSupported)
+check_ipo_supported(RESULT IPO_SUPPORTED OUTPUT OUTPUT)
 
-# if(IPO_SUPPORTED AND NOT TESTS)
-#     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-# endif()
+if(IPO_SUPPORTED AND NOT TESTS)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+endif()
 
-# add_compile_options(
-#     "$<$<CXX_COMPILER_ID:GNU,Clang>:-ffunction-sections;-fdata-sections>"
-#     "$<$<CXX_COMPILER_ID:GNU,Clang>:-funwind-tables>" # generate some exception data (usually disabled for C programs)
-#     "$<$<CXX_COMPILER_ID:GNU,Clang>:-fstack-protector-strong>"
-#     "$<$<CXX_COMPILER_ID:MSVC>:/Gy;/Gw>"
-# )
+add_compile_options(
+    "$<$<CXX_COMPILER_ID:GNU,Clang>:-ffunction-sections;-fdata-sections>"
+    "$<$<CXX_COMPILER_ID:GNU,Clang>:-funwind-tables>" # generate some exception data (usually disabled for C programs)
+    "$<$<CXX_COMPILER_ID:GNU,Clang>:-fstack-protector-strong>"
+    "$<$<CXX_COMPILER_ID:MSVC>:/Gy;/Gw>"
+)
 
-# add_link_options(
-#     "$<$<CXX_COMPILER_ID:GNU,Clang>:-Wl,--gc-sections>"
-#     "$<$<CXX_COMPILER_ID:MSVC>:/OPT:REF;/OPT:ICF>"
-# )
+add_link_options(
+    "$<$<CXX_COMPILER_ID:GNU,Clang>:-Wl,--gc-sections>"
+    "$<$<CXX_COMPILER_ID:MSVC>:/OPT:REF;/OPT:ICF>"
+)
 ####################################################################################################
 # Emscripten-specific setup 
 ####################################################################################################

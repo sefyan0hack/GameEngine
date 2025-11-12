@@ -57,15 +57,15 @@ class ENGINE_API OpenGL final: public GApi
         auto major_v() const -> GLint;
         auto minor_v() const -> GLint;
         
-        static auto load_opengl_functions() -> void;
-        static auto vendor() -> std::string;
-        static auto renderer() -> std::string;
-        static auto extensions() -> std::vector<std::string>;
-        static auto max_texture_units() -> GLint;
-        static auto max_texture_size() -> GLint;
-        static auto max_texture3d_size() -> GLint;
-        static auto max_texturecubemap_size() -> GLint;
+        auto vendor() -> std::string;
+        auto renderer() -> std::string;
+        auto extensions() -> std::vector<std::string>;
+        auto max_texture_units() -> GLint;
+        auto max_texture_size() -> GLint;
+        auto max_texture3d_size() -> GLint;
+        auto max_texturecubemap_size() -> GLint;
         
+        static auto load_opengl_functions() -> void;
     private:
         auto create_opengl_context([[maybe_unused]] const CWindow& window) -> GL_CTX;
         auto make_current_opengl([[maybe_unused]] const CWindow& window)  -> bool ;
@@ -76,13 +76,13 @@ class ENGINE_API OpenGL final: public GApi
         GLint m_Minor;
         std::time_t m_CreationTime;
 
-        inline static std::string m_Vendor{};
-        inline static std::string m_Renderer{};
-        inline static std::vector<std::string> m_Extensions{};
-        inline static GLint m_MaxTextureUnits{}; // how many textures a `fragment` shader can sample
-        inline static GLint m_MaxTextureSize{};
-        inline static GLint m_MaxTexture3DSize{};
-        inline static GLint m_MaxTextureCubeMapSize{};
+        std::string m_Vendor;
+        std::string m_Renderer;
+        std::vector<std::string> m_Extensions;
+        GLint m_MaxTextureUnits; // how many textures a `fragment` shader can sample
+        GLint m_MaxTextureSize;
+        GLint m_MaxTexture3DSize;
+        GLint m_MaxTextureCubeMapSize;
 };
 
 auto get_integer(GLenum name) -> GLint;

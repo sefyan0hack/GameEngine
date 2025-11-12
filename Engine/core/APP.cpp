@@ -34,8 +34,8 @@ APP::APP()
     , m_LastFrameTime(std::chrono::steady_clock::now())
     , m_SmoothedFPS(60.0f)
     , Renderer(new OpenGLRenderer(Window))
-    , lib()
-    , Game(nullptr)
+    , lib("Game")
+    , Game()
     , new_game(nullptr)
     , delete_game(nullptr)
 {
@@ -50,25 +50,35 @@ APP::~APP()
 {
     clear_events();
     if(Renderer) delete Renderer;
-    unload_game_library();
 }
 
 auto APP::load_game_library() -> void
 {
     try {
-        lib.load("Game");
+        lib.load();
         new_game = lib.function<IGame*(*)(APP&)>("new_game");
         delete_game = lib.function<void(*)(IGame*)>("delete_game");
+        
+        if (!new_game || !delete_game) {
+            throw Exception("Failed to get game library functions");
+        }
+
         Game = new_game(*this);
     } catch (const Exception& e) {
         debug::print("Failed to load game library: {}", e.what());
-        //  fallback/default  ?? may be
+        // Set to null to avoid crashes
+        new_game = nullptr;
+        delete_game = nullptr;
+        Game = nullptr;
     }
 }
 
 auto APP::unload_game_library() -> void
 {
     if (Game) {
+        if (!new_game || !delete_game) {
+            throw Exception("new_game() || delete_game() are null");
+        }
         delete_game(Game);
         Game = nullptr;
     }
@@ -81,28 +91,12 @@ auto APP::unload_game_library() -> void
 auto APP::hot_reload_game_library() -> bool
 {
     try {
-        // Store function pointers BEFORE unloading
-        auto old_delete_game = delete_game;
-        IGame* oldGame = Game;
-        
-        // Clear state first
-        Game = nullptr;
-        new_game = nullptr;
-        delete_game = nullptr;
-        
-        // Delete old game using stored function pointer
-        if (oldGame && old_delete_game) {
-            old_delete_game(oldGame);
-        }
-        
-        // Now unload and reload
-        lib.unload();
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        unload_game_library();
         load_game_library();
 
         debug::print("Game library hot-reloaded successfully");
         return true;
-
+        
     } catch (const Exception& e) {
         debug::print("Hot reload failed: {}", e.what());
         return false;

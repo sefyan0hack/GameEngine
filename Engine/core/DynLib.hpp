@@ -15,34 +15,53 @@ class DynLib {
 public:
     DynLib(const char* lib) : m_handle(nullptr), m_name(lib) {
     }
-    
-    DynLib() : m_handle(nullptr), m_name("") {
+
+    DynLib(const DynLib& other)
+        : m_handle(other.m_handle)
+        , m_name(other.m_name)
+    {}
+
+    DynLib(DynLib&& other)
+        : m_handle(std::move(other.m_handle))
+        , m_name(std::move(other.m_name))
+    {}
+
+    auto operator=(const DynLib& other) -> DynLib&
+    {
+        if(this != &other){
+            this->m_handle = other.m_handle;
+            this->m_name = other.m_name;
+        }
+        return *this;
+    }
+    auto operator=(DynLib&& other) -> DynLib&
+    {
+        if(this != &other){
+            this->m_handle = std::move(other.m_handle);
+            this->m_name = std::move(other.m_name);
+
+            other.m_handle = nullptr;
+            other.m_name = "" ;
+        }
+        return *this;
     }
 
     ~DynLib(){
         unload();
     }
 
-    auto load(const char* lib) -> void
+    auto load() -> void
     {
-        m_name = lib;
 
-        if(m_handle) throw Exception("Can't load lib `{}` befor unloding prev lib", lib);
-    
+        if(m_handle) throw Exception("Can't load lib `{}` befor unloding prev lib", m_name);
+
         #if defined(WINDOWS_PLT)
             m_handle = (void*) LoadLibraryA(full_name().c_str());
         #elif defined(LINUX_PLT) || defined(WEB_PLT)
-            m_handle = (void*) dlopen(full_name().c_str(), RTLD_LAZY);
+            m_handle = (void*) dlopen(full_name().c_str(), RTLD_NOW | RTLD_LOCA);
         #endif
 
-
         if (!m_handle) throw Exception("Can't open lib `{}`: {}", full_name().c_str(), error());
-    }
-
-    auto load() -> void
-    {
-        if(m_name.empty()) throw Exception("you should use load(string) instead .");
-        load(m_name.c_str());
     }
 
     auto unload() -> void
@@ -61,17 +80,12 @@ public:
         m_handle = nullptr;
     }
 
-    auto reload(const char* lib) -> void
+    auto reload() -> void
     {
         if(is_loaded()){
             unload();
-            load(lib);
+            load();
         }
-    }
-
-    auto reload() -> void
-    {
-        reload(this->m_name.c_str());
     }
 
     auto function(const char* name) -> void*
