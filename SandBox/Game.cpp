@@ -97,7 +97,7 @@ extern "C" GAME_API auto new_game(class APP& app) -> IGame*
     return new Game(app);
 }
 
-extern "C" GAME_API auto delet_game(IGame* game) -> void
+extern "C" GAME_API auto delete_game(IGame* game) -> void
 {
     delete game;
 }

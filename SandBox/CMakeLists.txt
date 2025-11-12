@@ -43,6 +43,7 @@ add_custom_command(TARGET SandBox POST_BUILD
     $<TARGET_FILE:Engine>
     ${CMAKE_CURRENT_BINARY_DIR} 
 )
+
 apply_all_options(TARGETS SandBox Game)
 apply_coverage_options(TARGETS SandBox Game)
 apply_harden_options(TARGETS SandBox Game)
