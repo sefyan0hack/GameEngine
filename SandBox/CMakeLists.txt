@@ -5,8 +5,6 @@ include(GenerateExportHeader)
 
 add_library(Game SHARED)
 
-set_target_properties(Game PROPERTIES PREFIX "lib")
-
 generate_export_header(Game
     BASE_NAME GAME
     EXPORT_MACRO_NAME GAME_API
@@ -39,9 +37,8 @@ if(NOT EMSCRIPTEN)
 endif()
 
 add_custom_command(TARGET SandBox POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-    $<TARGET_FILE:Engine>
-    ${CMAKE_CURRENT_BINARY_DIR} 
+  COMMAND ${CMAKE_COMMAND} -E copy -t $<TARGET_FILE_DIR:SandBox> $<TARGET_RUNTIME_DLLS:SandBox>
+  COMMAND_EXPAND_LISTS
 )
 
 apply_all_options(TARGETS SandBox Game)
