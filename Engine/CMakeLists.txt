@@ -49,7 +49,9 @@ apply_sanitizer_options(TARGETS Engine)
 # common (Not Web)
 if(NOT EMSCRIPTEN)
     if(NOT WIN32)
-    target_link_libraries(Engine PRIVATE $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
+    find_package(TBB REQUIRED)
+    target_link_libraries(Engine PRIVATE $<$<CXX_COMPILER_ID:Clang>:stdc++exp> TBB::tbb)
+
     endif()
 
     target_link_libraries(Engine
