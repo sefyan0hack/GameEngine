@@ -58,7 +58,7 @@ public:
         #if defined(WINDOWS_PLT)
             m_handle = (void*) LoadLibraryA(full_name().c_str());
         #elif defined(LINUX_PLT) || defined(WEB_PLT)
-            m_handle = (void*) dlopen(full_name().c_str(), RTLD_NOW | RTLD_LOCA);
+            m_handle = (void*) dlopen(full_name().c_str(), RTLD_NOW | RTLD_LOCAL);
         #endif
 
         if (!m_handle) throw Exception("Can't open lib `{}`: {}", full_name().c_str(), error());
