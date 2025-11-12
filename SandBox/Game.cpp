@@ -92,7 +92,12 @@ public:
     }
 };
 
-extern "C" GAME_API auto create_game(class APP& app) -> IGame*
+extern "C" GAME_API auto new_game(class APP& app) -> IGame*
 {
     return new Game(app);
+}
+
+extern "C" GAME_API auto delet_game(IGame* game) -> void
+{
+    delete game;
 }

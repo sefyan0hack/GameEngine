@@ -55,4 +55,6 @@ private:
     IRenderer* Renderer;
     DynLib lib;
     IGame* Game;
+    std::function<IGame*(APP&)> new_game;
+    std::function<void(IGame*)> delete_game;
 };

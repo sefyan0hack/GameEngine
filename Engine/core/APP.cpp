@@ -36,6 +36,8 @@ APP::APP()
     , Renderer(new OpenGLRenderer(Window))
     , lib()
     , Game(nullptr)
+    , new_game(nullptr)
+    , delete_game(nullptr)
 {
 
     load_game_library();
@@ -55,8 +57,9 @@ auto APP::load_game_library() -> void
 {
     try {
         lib.load("Game");
-        auto create_game = lib.function<IGame*(*)(APP&)>("create_game");
-        Game = create_game(*this);
+        new_game = lib.function<IGame*(*)(APP&)>("new_game");
+        delete_game = lib.function<void(*)(IGame*)>("delete_game");
+        Game = new_game(*this);
     } catch (const Exception& e) {
         debug::print("Failed to load game library: {}", e.what());
         //  fallback/default  ?? may be
@@ -66,9 +69,12 @@ auto APP::load_game_library() -> void
 auto APP::unload_game_library() -> void
 {
     if (Game) {
-        delete Game;
+        delete_game(Game);
         Game = nullptr;
     }
+
+    new_game = nullptr;
+    delete_game = nullptr;
     lib.unload();
 }
 
@@ -76,26 +82,14 @@ auto APP::hot_reload_game_library() -> bool
 {
     try {
 
-        // Store the old game pointer
         IGame* oldGame = Game;
         Game = nullptr;
 
-        if (oldGame) {
-            delete oldGame;
-            oldGame = nullptr;
-        }
-        
+        if (oldGame) delete_game(oldGame);
+
         lib.unload();
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        std::cout.flush();
-        std::clog.flush();
-        std::cerr.flush();
-
-        lib.load("Game");
-        auto create_game = lib.function<IGame*(*)(APP&)>("create_game");
-
-        Game = create_game(*this);
+        load_game_library();
 
         debug::print("Game library hot-reloaded successfully");
         return true;
