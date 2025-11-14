@@ -16,7 +16,7 @@ struct ENGINE_API Vertex
   glm::vec2 TexCoords;
 };
 
-struct ENGINE_API AttributeInfo {
+struct AttributeInfo {
   GLint size;
   GLenum type;
   GLboolean normalized;

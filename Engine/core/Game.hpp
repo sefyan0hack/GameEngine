@@ -1,5 +1,8 @@
 #pragma once
-class IGame {
+#include <memory>
+#include <engine_export.h>
+
+class ENGINE_API IGame {
 public:
     virtual ~IGame() = default;
     virtual auto update(float delta) -> void = 0;

@@ -6,7 +6,7 @@
 #include <cmrc/cmrc.hpp>
 
 CMRC_DECLARE(res);
-auto fs = cmrc::res::get_filesystem();
+inline auto fs = cmrc::res::get_filesystem();
 
 using namespace std;
 

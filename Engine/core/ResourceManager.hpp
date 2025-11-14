@@ -4,8 +4,9 @@
 #include <mutex>
 #include <string>
 #include <unordered_map>
+#include <engine_export.h>
 
-class ResourceManager
+class ENGINE_API ResourceManager
 {
 private:
     ResourceManager() = default;
@@ -45,36 +46,36 @@ public:
     template <class T>
     auto get(const std::string &key) -> std::shared_ptr<T>
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        // std::lock_guard<std::mutex> lock(m_mutex);
         return std::static_pointer_cast<T>(m_Resources.at(key));
     }
 
     template <class T>
     void store(const std::string& key, T&& resource)
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        // std::lock_guard<std::mutex> lock(m_mutex);
         m_Resources[key] = std::make_shared<std::remove_reference_t<T>>(std::forward<T>(resource));
     }
 
     template <class T>
     void store(const std::string& key, std::shared_ptr<T> resource)
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        // std::lock_guard<std::mutex> lock(m_mutex);
         m_Resources[key] = std::move(resource);
     }
 
     bool exists(const std::string& key) {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        // std::lock_guard<std::mutex> lock(m_mutex);
         return m_Resources.find(key) != m_Resources.end();
     }
 
     void remove(const std::string& key) {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        // std::lock_guard<std::mutex> lock(m_mutex);
         m_Resources.erase(key);
     }
 
     void clear() {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        // std::lock_guard<std::mutex> lock(m_mutex);
         m_Resources.clear();
     }
 
@@ -85,7 +86,7 @@ public:
     }
 
 private:
-    std::mutex m_mutex;
+    // std::mutex m_mutex;
     std::unordered_map<std::string, std::shared_ptr<void>> m_Resources;
 
 };

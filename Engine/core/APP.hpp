@@ -36,7 +36,6 @@ private:
 
     auto pull_event(Event& event) -> bool;
     auto wait_event(Event& event) -> void;
-    auto clear_events() -> void;
 
     auto frame(float deltaTime) -> void;
     static auto loop_body(void* ctx) -> void;

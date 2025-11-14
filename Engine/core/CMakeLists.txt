@@ -6,6 +6,7 @@ add_library(core INTERFACE)
 
 target_sources( core PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/APP.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Dynlib.cpp
 )
 
 target_sources( core PUBLIC

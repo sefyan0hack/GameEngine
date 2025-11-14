@@ -60,12 +60,12 @@ Mesh::Mesh(Mesh&& other) noexcept
 
 Mesh::~Mesh()
 {
-    if (VBO != 0) {
-        gl::DeleteBuffers(1, &VBO);
-    }
-    if (VAO != 0) {
-        gl::DeleteVertexArrays(1, &VAO);
-    }
+    // if (VBO != 0) {
+    //     gl::DeleteBuffers(1, &VBO);
+    // }
+    // if (VAO != 0) {
+    //     gl::DeleteVertexArrays(1, &VAO);
+    // }
     Count--;
 }
 

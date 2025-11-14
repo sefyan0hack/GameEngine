@@ -48,7 +48,6 @@ APP::APP()
 
 APP::~APP()
 {
-    clear_events();
     if(Renderer) delete Renderer;
 }
 
@@ -106,7 +105,7 @@ auto APP::hot_reload_game_library() -> bool
 auto APP::frame(float deltaTime) -> void
 {
     Renderer->clear_screen(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    if(Game) Game->update(deltaTime);
+    Game->update(deltaTime);
     Window.swap_buffers();
     Keyboard.save_prev_state();
     Mouse.save_prev_state();
@@ -172,7 +171,7 @@ auto APP::loop_body(void* ctx) -> void
             [&app](const Mouse::MovementEvent& e) {
                 app->Mouse.on_rawdelta(e.dx, e.dy);
                 auto [dx, dy] = app->Mouse.get_rawdelta();
-                if(app->Game) app->Game->on_deltamouse(dx, dy);
+                app->Game->on_deltamouse(dx, dy);
             },
             [](const auto& e) {
                 if( ::type_name<decltype(e)>() == "const std::monostate&") throw Exception(" nnnnnn ");
@@ -288,4 +287,3 @@ auto APP::deltatime() const -> float
 auto APP::push_event(const Event& event) -> void { ApplicationEventQueue.push(event); }
 bool APP::pull_event(Event& event) { return ApplicationEventQueue.poll(event); }
 void APP::wait_event(Event& event) { ApplicationEventQueue.wait_and_poll(event); }
-void APP::clear_events() { ApplicationEventQueue.clear(); }

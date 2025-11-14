@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <exception>
 #include "stacktrace.hpp"
+#include <engine_export.h>
 
 //"{:%Y-%m-%d %H:%M:%OS}"
 
@@ -42,8 +43,8 @@ namespace debug {
       }
     #else
       if(std::getenv("COUT_TO_FILE") != nullptr){
-        std::ofstream cout("Engine.log", std::ios::app);
-        cout << Log(fmt, std::forward<Ts>(ts)...);
+        std::ofstream out("Engine.log", std::ios::app);
+        out << Log(fmt, std::forward<Ts>(ts)...);
       }
     #endif
   }
@@ -61,7 +62,7 @@ namespace debug {
 
 } // namespace debug
 
-class Exception final : public std::runtime_error {
+class ENGINE_API Exception final : public std::runtime_error {
 public:
 
   template <typename... Ts>

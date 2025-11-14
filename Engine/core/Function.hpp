@@ -6,6 +6,7 @@
 #include <tuple>
 #include <utility>
 #include <type_traits>
+#include <engine_export.h>
 
 #include "Log.hpp"
 #include "Utils.hpp"
@@ -17,7 +18,7 @@
 #endif
 
 template <typename T>
-class Function;
+class ENGINE_API Function;
 
 template <typename R, typename... Args>
 class Function<R(PLT_CALL*)(Args...)> {
