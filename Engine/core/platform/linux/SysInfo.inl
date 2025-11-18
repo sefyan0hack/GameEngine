@@ -1,0 +1,53 @@
+
+
+auto sys::host::name() -> sys::Target
+{
+    return sys::Target::Linux;
+}
+    
+auto sys::host::name_str() -> std::string
+{
+    return "linux";
+}
+
+auto sys::host::arch() -> sys::Arch
+{
+    utsname system_info;
+    uname(&system_info);
+
+    std::string machine = sysinfo.machine;
+    
+    if (machine == "x86_64" || machine == "amd64") {
+        return Arch::x64;
+    } else if (machine == "i386" || machine == "i686" || machine == "x86") {
+        return Arch::x86;
+    } else if (machine.find("arm") != std::string::npos) {
+        if (machine.find("arm64") != std::string::npos || 
+            machine.find("aarch64") != std::string::npos) {
+            return Arch::arm64;
+        } else {
+            return Arch::arm;
+        }
+    } else if (machine == "aarch64") {
+        return Arch::arm64;
+    } else {
+        return Arch::unknown;
+    }
+}
+
+auto sys::host::arch_str() -> std::string
+{
+    switch (arch())
+    {
+        case Arch::x64:
+            return "x64";
+        case Arch::x86:
+            return "x86";
+        case Arch::arm :
+            return "arm";
+        case Arch::arm64:
+            return "arm64";
+        default:
+            return "unknown";
+    }
+}

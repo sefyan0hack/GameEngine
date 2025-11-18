@@ -16,42 +16,8 @@
 #if defined(CLANG_CPL) && !defined(WINDOWS_PLT) || defined(GNU_CPL)
 #include <cxxabi.h>
 #endif
+#include "SysInfo.hpp"
 
-
-
-// #if defined(WINDOWS_PLT)
-//     #if defined(MSVC_CPL)
-//         #define EG_EXPORT_API __declspec(dllexport)
-//         #define EG_IMPORT_API __declspec(dllimport)
-//     #elif defined(CLANG_CPL)  || defined(GNU_CPL)
-//         #define EG_EXPORT_API __attribute__((dllexport))
-//         #define EG_IMPORT_API __attribute__((dllimport))
-//     #else
-//         #define EG_EXPORT_API
-//         #define EG_IMPORT_API
-//     #endif
-// #elif defined(LINUX_PLT) || defined(WEB_PLT)
-//     #if defined(CLANG_CPL) || defined(GNU_CPL)
-//         #define EG_EXPORT_API __attribute__((visibility("default")))
-//         #define EG_IMPORT_API
-//     #else
-//         #define EG_EXPORT_API
-//         #define EG_IMPORT_API
-//     #endif
-// #else
-//     #define EG_EXPORT_API
-//     #define EG_IMPORT_API
-// #endif
-
-// #if defined(WINDOWS_PLT)
-//     #if defined(EG_BUILD_LIB)
-//         #define EG_EXPORT_API __declspec(dllexport)
-//     #else
-//         #define EG_EXPORT_API __declspec(dllimport)
-//     #endif
-// #else
-//     #define EG_EXPORT_API
-// #endif
 
 /**
  * @brief  Concept that tests whether a non-type template parameter names a free/static object
@@ -224,69 +190,3 @@ struct Type {
     constexpr static std::size_t      alignment = alignof(T);       /*!< type allingment name of T */
     constexpr static bool             empty = std::is_empty_v<T>;   /*!< is T empty type or not */
 };
-
-/// @namespace sys name space has some usefull info about the system host 
-namespace sys {
-    /// @brief enum of Target systems
-    enum class Target : uint8_t
-    {
-        Windows,
-        Linux,
-        Web,
-        Unknown
-    };
-
-    /// @brief enum of Arch systems
-    enum class Arch : uint8_t
-    {
-        x86_64,
-        Arm64,
-        x86,
-        Arm,
-        Wasm,
-        Unknown
-    };
-
-    /*!< Curent Target Syateme */
-    #if defined(WINDOWS_PLT)
-    constexpr auto Target = sys::Target::Windows;
-    #elif defined(LINUX_PLT)
-    constexpr auto Target = sys::Target::Linux;
-    #elif defined(WEB_PLT)
-    constexpr auto Target = sys::Target::Web;
-    #else
-    constexpr auto Target = sys::Target::Unknown;
-    #endif
-
-    /*!< Curent Arch Syateme */
-    #if   defined(__x86_64__)  || defined(_M_AMD64)
-        constexpr auto Arch = sys::Arch::x86_64;
-    #elif defined(__aarch64__) || defined(_M_ARM64)
-        constexpr auto Arch = sys::Arch::Arm64;
-    #elif defined(__i386__)    || defined(_M_IX86)
-        constexpr auto Arch = sys::Arch::x86;
-    #elif defined(__arm__)     || defined(_M_ARM)
-        constexpr auto Arch = sys::Arch::Arm;
-    #elif defined(__wasm32__)  || defined(__wasm__)
-        constexpr auto Arch = sys::Arch::Wasm;
-    #else
-        constexpr auto Arch = sys::Arch::Unknown;
-    #endif
-
-    /*!< string form of the Curent Target Syateme */
-    constexpr const char* TargetName = 
-    Target == Target::Windows ? "windows" :
-    Target == Target::Linux   ? "linux"   :
-    Target == Target::Web     ? "web"     : "unknown";
-    
-    /*!< string form of the Curent Arch Syateme */
-    constexpr const char* ArchName =
-    Arch == Arch::x86_64 ? "x86_64" :
-    Arch == Arch::Arm64  ? "arm64"  :
-    Arch == Arch::x86    ? "x86"    :
-    Arch == Arch::Arm    ? "arm"    :
-    Arch == Arch::Wasm   ? "wasm"   : "unknown";
-    
-    /*!< Time stamp of the build */
-    constexpr const char* TimeStamp = __TIMESTAMP__;
-} // namespace sys
