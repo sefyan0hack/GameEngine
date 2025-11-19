@@ -7,32 +7,68 @@
 
 namespace gl {
 
-#ifdef ROBUST_GL_CHECK
-inline static auto After_Func = []([[maybe_unused]] std::string info) {
-    GLenum err = glGetError();
-    if(err != GL_NO_ERROR){
-        if(!info.contains("glClear"))
-            throw Exception("gl error id {} {}", err, info);
+    auto get_proc_address(const char* name) -> void* {
+        void *address = reinterpret_cast<void*>(XXXGetProcAddress(name));
+
+        if(address == nullptr){
+            address = utils::get_proc_address(OPENGL_MODULE_NAME, name);
+        }
+
+        if (address != nullptr) {
+            debug::print("from LIB:`{}`: load function `{}` at : {}", OPENGL_MODULE_NAME, name, address);
+        } else {
+            throw Exception("Couldn't load {} function `{}`", OPENGL_MODULE_NAME, name);
+        }
+
+        return address;
     }
-};
-#endif
 
-auto load_opengl_functions() -> void
-{
-    #undef X
-    #ifdef ROBUST_GL_CHECK
-    #   define X(name)\
-        name = Function<decltype(&gl##name)>{};\
-        name.m_Func  = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name));\
-        name.m_After = After_Func;\
-        name.m_Name  = "gl"#name
-    #else
-    #   define X(name)\
-        name = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name))
-    #endif
+    auto get_integer(GLenum name) -> GLint
+    {
+        constexpr auto INVALID = std::numeric_limits<GLint>::max();
 
-	GLFUNCS
-}
+        GLint maxTexSize = INVALID;
+
+        gl::GetIntegerv(name, &maxTexSize);
+
+        if (maxTexSize != INVALID)
+            return maxTexSize;
+        else
+            throw Exception("GetIntegerv Failed");
+    }
+
+    auto get_boolean(GLenum name) -> GLboolean
+    {
+        constexpr auto INVALID = std::numeric_limits<GLboolean>::max();
+
+        GLboolean maxTexSize = INVALID;
+
+        gl::GetBooleanv(name, &maxTexSize);
+
+        if (maxTexSize != INVALID)
+            return maxTexSize;
+        else
+            throw Exception("GetBooleanv Failed");
+    }
+
+
+    auto load_opengl_functions() -> void
+    {
+        #undef X
+        #ifdef ROBUST_GL_CHECK
+        #   define X(name)\
+            name = Function<decltype(&gl##name)>{};\
+            name.m_Func  = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name));\
+            name.m_After = [](std::string info) { auto err = glGetError(); if(err != GL_NO_ERROR) if(!info.contains("glClear")) throw Exception("gl error id {} {}", err, info); };\
+            name.m_Name  = "gl"#name
+        #else
+        #   define X(name)\
+            name = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name))
+        #endif
+
+        GLFUNCS
+    }
+} //namespace gl
 
 #if defined(WINDOWS_PLT)
 #include "platform/windows/OpenGL.inl"
@@ -53,15 +89,15 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     if (!make_current_opengl(window))
         throw Exception("Failed to make context current.");
 
-    load_opengl_functions();
+    gl::load_opengl_functions();
 
-    m_Major = get_integer(GL_MAJOR_VERSION);
-    m_Minor = get_integer(GL_MINOR_VERSION);
+    m_Major = gl::get_integer(GL_MAJOR_VERSION);
+    m_Minor = gl::get_integer(GL_MINOR_VERSION);
 
-    m_MaxTextureUnits       = get_integer(GL_MAX_TEXTURE_IMAGE_UNITS);
-    m_MaxTextureSize        = get_integer(GL_MAX_TEXTURE_SIZE);
-    m_MaxTexture3DSize      = get_integer(GL_MAX_3D_TEXTURE_SIZE);
-    m_MaxTextureCubeMapSize = get_integer(GL_MAX_CUBE_MAP_TEXTURE_SIZE);
+    m_MaxTextureUnits       = gl::get_integer(GL_MAX_TEXTURE_IMAGE_UNITS);
+    m_MaxTextureSize        = gl::get_integer(GL_MAX_TEXTURE_SIZE);
+    m_MaxTexture3DSize      = gl::get_integer(GL_MAX_3D_TEXTURE_SIZE);
+    m_MaxTextureCubeMapSize = gl::get_integer(GL_MAX_CUBE_MAP_TEXTURE_SIZE);
 
     auto vendor = reinterpret_cast<const char*>(gl::GetString(GL_VENDOR));
     auto renderer = reinterpret_cast<const char*>(gl::GetString(GL_RENDERER));
@@ -95,7 +131,7 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
 
     debug::print("=================================================================================");
     debug::print("Platform : {}, Arch : {}", sys::host::name_str(), sys::host::arch_str());
-    debug::print("GL Version : Wanted:({}.{}) -> Got:({}.{})", GLMajorVersion, GLMinorVersion, m_Major, m_Minor);
+    debug::print("GL Version : Wanted:({}.{}) -> Got:({}.{})", gl::GLMajorVersion, gl::GLMinorVersion, m_Major, m_Minor);
     debug::print("GL Vendor : {}", m_Vendor);
     debug::print("GL Renderer : {}", m_Renderer);
     debug::print("GL Exts : {}", utils::to_string(m_Extensions));
@@ -142,7 +178,7 @@ OpenGL::operator bool() const
     return is_valid();
 }
 
-auto OpenGL::context() const -> GCTX
+auto OpenGL::context() const -> GL_CTX
 {
     return m_Context;
 }
@@ -206,53 +242,3 @@ auto OpenGL::max_texturecubemap_size() -> GLint
 {
     return m_MaxTextureCubeMapSize;
 }
-
-
-
-auto get_proc_address(const char* name) -> void* {
-    void *address = reinterpret_cast<void*>(XXXGetProcAddress(name));
-
-    if(address == nullptr){
-        address = utils::get_proc_address(OPENGL_MODULE_NAME, name);
-    }
-
-    if (address != nullptr) {
-        debug::print("from LIB:`{}`: load function `{}` at : {}", OPENGL_MODULE_NAME, name, address);
-    } else {
-        throw Exception("Couldn't load {} function `{}`", OPENGL_MODULE_NAME, name);
-    }
-
-    return address;
-}
-
-
-auto get_integer(GLenum name) -> GLint
-{
-    constexpr auto INVALID = std::numeric_limits<GLint>::max();
-
-    GLint maxTexSize = INVALID;
-
-    gl::GetIntegerv(name, &maxTexSize);
-
-    if (maxTexSize != INVALID)
-        return maxTexSize;
-    else
-        throw Exception("GetIntegerv Failed");
-}
-
-auto get_boolean(GLenum name) -> GLboolean
-{
-    constexpr auto INVALID = std::numeric_limits<GLboolean>::max();
-
-    GLboolean maxTexSize = INVALID;
-
-    gl::GetBooleanv(name, &maxTexSize);
-
-    if (maxTexSize != INVALID)
-        return maxTexSize;
-    else
-        throw Exception("GetBooleanv Failed");
-}
-
-
-} //namespace gl

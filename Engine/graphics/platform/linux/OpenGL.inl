@@ -44,11 +44,11 @@ auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GL
     static int32_t visualAttribs[] = {
         GLX_X_RENDERABLE,  true,
         GLX_DOUBLEBUFFER,  true,
-        GLX_RED_SIZE,       ChannelBits,
-        GLX_GREEN_SIZE,     ChannelBits,
-        GLX_BLUE_SIZE,      ChannelBits,
-        GLX_ALPHA_SIZE,     AlphaBits,
-        GLX_DEPTH_SIZE,     DepthBufferBits,
+        GLX_RED_SIZE,       gl::ChannelBits,
+        GLX_GREEN_SIZE,     gl::ChannelBits,
+        GLX_BLUE_SIZE,      gl::ChannelBits,
+        GLX_ALPHA_SIZE,     gl::AlphaBits,
+        GLX_DEPTH_SIZE,     gl::DepthBufferBits,
         0
     };
     
@@ -65,8 +65,8 @@ auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GL
     }
 
     int32_t contextAttribs[] = {
-        GLX_CONTEXT_MAJOR_VERSION_ARB, GLMajorVersion,
-        GLX_CONTEXT_MINOR_VERSION_ARB, GLMinorVersion,
+        GLX_CONTEXT_MAJOR_VERSION_ARB, gl::GLMajorVersion,
+        GLX_CONTEXT_MINOR_VERSION_ARB, gl::GLMinorVersion,
         #ifdef DEBUG
         GLX_CONTEXT_FLAGS_ARB, GLX_CONTEXT_DEBUG_BIT_ARB | GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
         #endif

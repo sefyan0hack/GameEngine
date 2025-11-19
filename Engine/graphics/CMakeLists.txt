@@ -40,7 +40,6 @@ target_sources( graphics PUBLIC
         Transform.hpp
         Camera.hpp
         GameObject.hpp
-        GApi.hpp
         OpenGLRenderer.hpp
 )
 

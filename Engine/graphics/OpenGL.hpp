@@ -4,7 +4,6 @@
 #include <ctime>
 
 #include "gl.h"
-#include "GApi.hpp"
 #include <core/Function.hpp>
 #include <engine_export.h>
 
@@ -25,6 +24,9 @@ namespace gl {
     inline static auto OPENGL_FUNCTIONS_COUNT = OPENGL_FUNCTIONS_NAME.size();
 
     auto get_proc_address(const char* name) -> void*;
+    auto get_integer(GLenum name) -> GLint;
+    auto get_boolean(GLenum name) -> GLboolean;
+    auto load_opengl_functions() -> void;
 
     constexpr int32_t DepthBufferBits   = 32;
     constexpr int32_t StencilBufferBits = 8;
@@ -34,7 +36,10 @@ namespace gl {
     constexpr int32_t  GLMajorVersion   = 3;
     constexpr int32_t  GLMinorVersion   = 3;
 
-class ENGINE_API OpenGL final: public GApi
+} //namespace g
+
+
+class ENGINE_API OpenGL
 {
     public:
         explicit OpenGL(const CWindow& window);
@@ -50,10 +55,10 @@ class ENGINE_API OpenGL final: public GApi
         operator bool () const;
 
     public:
-        auto context() const -> GCTX override ;
-        auto is_valid() const -> bool override ;
-        auto creation_time() const -> std::time_t override ;
-        auto has_extension(const std::string& ext) const -> bool override ;
+        auto context() const -> GL_CTX ;
+        auto is_valid() const -> bool ;
+        auto creation_time() const -> std::time_t ;
+        auto has_extension(const std::string& ext) const -> bool ;
         auto major_v() const -> GLint;
         auto minor_v() const -> GLint;
         
@@ -83,9 +88,3 @@ class ENGINE_API OpenGL final: public GApi
         GLint m_MaxTexture3DSize;
         GLint m_MaxTextureCubeMapSize;
 };
-
-auto load_opengl_functions() -> void;
-auto get_integer(GLenum name) -> GLint;
-auto get_boolean(GLenum name) -> GLboolean;
-
-} //namespace g

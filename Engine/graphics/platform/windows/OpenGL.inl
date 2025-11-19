@@ -47,11 +47,11 @@ auto OpenGL::create_opengl_context(const CWindow& window) -> GL_CTX
         1,
         PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
         PFD_TYPE_RGBA,
-        static_cast<BYTE>(ChannelBits * 3),  // RGB bits
-        static_cast<BYTE>(AlphaBits),         // Alpha bits
+        static_cast<BYTE>(gl::ChannelBits * 3),  // RGB bits
+        static_cast<BYTE>(gl::AlphaBits),         // Alpha bits
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        static_cast<BYTE>(DepthBufferBits),   // Depth buffer
-        static_cast<BYTE>(StencilBufferBits), // Stencil buffer
+        static_cast<BYTE>(gl::DepthBufferBits),   // Depth buffer
+        static_cast<BYTE>(gl::StencilBufferBits), // Stencil buffer
         0,
         PFD_MAIN_PLANE,
         0, 0, 0
@@ -87,8 +87,8 @@ auto OpenGL::create_opengl_context(const CWindow& window) -> GL_CTX
     }
 
     int32_t gl_attribs[] = { 
-        WGL_CONTEXT_MAJOR_VERSION_ARB, GLMajorVersion,
-        WGL_CONTEXT_MINOR_VERSION_ARB, GLMinorVersion,
+        WGL_CONTEXT_MAJOR_VERSION_ARB, gl::GLMajorVersion,
+        WGL_CONTEXT_MINOR_VERSION_ARB, gl::GLMinorVersion,
     #ifdef DEBUG
         WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB | WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
     #endif
@@ -101,7 +101,7 @@ auto OpenGL::create_opengl_context(const CWindow& window) -> GL_CTX
         m_Context = nullptr;
 
         if (GetLastError() == ERROR_INVALID_VERSION_ARB){ // ?
-            throw Exception("Unsupported GL Version {}.{}", GLMajorVersion, GLMinorVersion);
+            throw Exception("Unsupported GL Version {}.{}", gl::GLMajorVersion, gl::GLMinorVersion);
         }
         throw Exception("Failed to create the final rendering context!");
     }

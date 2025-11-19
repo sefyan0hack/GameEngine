@@ -19,7 +19,7 @@
 
 OpenGLRenderer::OpenGLRenderer(const CWindow& window)
     : m_Window(window)
-    , m_GApi(new gl::OpenGL(window))
+    , m_GApi(new OpenGL(window))
     , x(0), y(0)
     , width(window.width()), height(window.height())
 {}
@@ -68,9 +68,9 @@ auto OpenGLRenderer::draw(const Mesh& mesh) const -> void
     gl::DrawArrays(GL_TRIANGLES, 0, mesh.vextex_size());
 }
 
-auto OpenGLRenderer::graphic_api() const -> const GApi*
+auto OpenGLRenderer::graphic_api() const -> std::string_view
 {
-	return m_GApi;
+	return ::type_name<std::remove_const_t<std::remove_pointer_t<decltype(m_GApi)>>>();
 }
 
 auto OpenGLRenderer::set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void
@@ -147,9 +147,9 @@ auto OpenGLRenderer::disable_points() -> void
     #endif
 }
 
-auto OpenGLRenderer::clear_screen(GLenum buffersmask)  -> void
+auto OpenGLRenderer::clear_screen(uint32_t buffersmask)  -> void
 {
-    gl::Clear(buffersmask);
+    gl::Clear((GLenum)buffersmask);
 }
 
 auto OpenGLRenderer::has_extension(const std::string &ext) -> bool
