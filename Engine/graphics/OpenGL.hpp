@@ -65,7 +65,6 @@ class ENGINE_API OpenGL final: public GApi
         auto max_texture3d_size() -> GLint;
         auto max_texturecubemap_size() -> GLint;
         
-        static auto load_opengl_functions() -> void;
     private:
         auto create_opengl_context([[maybe_unused]] const CWindow& window) -> GL_CTX;
         auto make_current_opengl([[maybe_unused]] const CWindow& window)  -> bool ;
@@ -85,6 +84,7 @@ class ENGINE_API OpenGL final: public GApi
         GLint m_MaxTextureCubeMapSize;
 };
 
+auto load_opengl_functions() -> void;
 auto get_integer(GLenum name) -> GLint;
 auto get_boolean(GLenum name) -> GLboolean;
 

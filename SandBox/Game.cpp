@@ -90,6 +90,7 @@ public:
 
 extern "C" GAME_API auto new_game(class APP& app) -> IGame*
 {
+    gl::load_opengl_functions();
     return new Game(app);
 }
 

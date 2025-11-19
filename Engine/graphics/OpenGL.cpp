@@ -17,6 +17,22 @@ inline static auto After_Func = []([[maybe_unused]] std::string info) {
 };
 #endif
 
+auto load_opengl_functions() -> void
+{
+    #undef X
+    #ifdef ROBUST_GL_CHECK
+    #   define X(name)\
+        name = Function<decltype(&gl##name)>{};\
+        name.m_Func  = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name));\
+        name.m_After = After_Func;\
+        name.m_Name  = "gl"#name
+    #else
+    #   define X(name)\
+        name = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name))
+    #endif
+
+	GLFUNCS
+}
 
 #if defined(WINDOWS_PLT)
 #include "platform/windows/OpenGL.inl"
@@ -236,23 +252,6 @@ auto get_boolean(GLenum name) -> GLboolean
         return maxTexSize;
     else
         throw Exception("GetBooleanv Failed");
-}
-
-auto OpenGL::load_opengl_functions() -> void
-{
-    #undef X
-    #ifdef ROBUST_GL_CHECK
-    #   define X(name)\
-        name = Function<decltype(&gl##name)>{};\
-        name.m_Func  = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name));\
-        name.m_After = After_Func;\
-        name.m_Name  = "gl"#name
-    #else
-    #   define X(name)\
-        name = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name))
-    #endif
-
-	GLFUNCS
 }
 
 
