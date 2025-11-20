@@ -1,8 +1,22 @@
 #pragma once
 #include "Platform.hpp"
+#include "Utils.hpp"
 #include <format>
 #include <glm/glm.hpp>
 
+
+// custom glm::vec2 Format
+template<class... Ts>
+struct std::formatter<std::variant<Ts...>> {
+  constexpr auto parse(std::format_parse_context& context) {
+    return context.begin();
+  }
+  auto format(const std::variant<Ts...>& obj, std::format_context& context) const {
+    return utils::match(
+      obj , [&context](const auto& i){ return std::format_to(context.out(), "{}", i); }
+    );
+  }
+};
 
 // custom glm::vec2 Format
 template<>
