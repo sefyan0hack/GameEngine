@@ -1,4 +1,5 @@
 #include "DynLib.hpp"
+#include "Exception.hpp"
 #include <chrono>
 
 #if defined(WINDOWS_PLT)

@@ -8,6 +8,7 @@ target_sources( core PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/APP.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/SysInfo.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Dynlib.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Exception.cpp
 )
 
 target_sources( core PUBLIC
@@ -16,6 +17,7 @@ target_sources( core PUBLIC
       FILES
         core.hpp
         Platform.hpp
+        Exception.hpp
         Log.hpp
         Utils.hpp
         fmts.hpp

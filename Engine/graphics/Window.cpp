@@ -4,6 +4,7 @@
 #include <input/Keyboard.hpp>
 #include <input/Mouse.hpp>
 #include <core/Log.hpp>
+#include <core/Exception.hpp>
 #include <core/EventQueue.hpp>
 
 #if defined(WINDOWS_PLT)

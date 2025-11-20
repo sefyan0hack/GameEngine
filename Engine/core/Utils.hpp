@@ -15,6 +15,7 @@
 #include <functional>
 
 #include "Log.hpp"
+#include "Exception.hpp"
 #include "Platform.hpp"
 
 #if defined(WINDOWS_PLT)

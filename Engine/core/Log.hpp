@@ -1,6 +1,5 @@
 #pragma once
 
-#include <source_location>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -8,8 +7,6 @@
 #include <format>
 #include <ctime>
 #include <iomanip>
-#include <exception>
-#include "stacktrace.hpp"
 #include <engine_export.h>
 
 //"{:%Y-%m-%d %H:%M:%OS}"
@@ -61,55 +58,3 @@ namespace debug {
   }
 
 } // namespace debug
-
-class ENGINE_API Exception final : public std::runtime_error {
-public:
-
-  template <typename... Ts>
-  Exception(
-    const std::format_string<Ts...>& fmt,
-    Ts&&... args
-  )
-    : std::runtime_error(std::format(fmt, std::forward<Ts>(args)...))
-    , m_Trace(stacktrace::current(1))
-  {}
-
-  auto what() const noexcept  -> const char* override {
-    return std::runtime_error::what();
-  }
-
-  auto trace() const noexcept -> std::string {
-    return to_string(m_Trace);
-  }
-
-  auto where() const noexcept -> std::string {
-    return !m_Trace.empty() ? m_Trace.begin()->description() : "??";
-  }
-
-  auto location() const noexcept -> std::string {
-    return !m_Trace.empty() ? std::format("{}:{}", m_Trace.begin()->source_file(), m_Trace.begin()->source_line()) : "??:??";
-  }
-
-
-  auto all() const -> std::string
-  {
-    return std::format(
-      "(Exception) at [{}] in {}\n"
-      "\t-> what : `{}`\n"
-      "{}",
-      location(), where(), what(),
-      trace()
-    );
-  }
-
-private:
-  stacktrace m_Trace;
-};
-
-#ifndef Try
-#define Try(f) try {f;} catch(...){}
-#endif
-
-#ifndef Expect
-#define Expect(cond, ...) if (!(cond)) throw Exception("Expectation ["#cond"] Failed : " __VA_ARGS__);
-#endif

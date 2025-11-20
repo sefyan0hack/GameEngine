@@ -10,6 +10,7 @@
 
 #include <graphics/Window.hpp>
 #include <core/Log.hpp>
+#include <core/Exception.hpp>
 
 #if defined(WINDOWS_PLT)
 #	include "platform/windows/Mouse.inl"

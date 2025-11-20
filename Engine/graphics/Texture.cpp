@@ -67,7 +67,7 @@ Texture2D::Texture2D()
     
     if (m_Mipmapped) generate_mipmap();
 
-    debug::print("{}", static_cast<const Texture&>(*this));
+    debug::print(static_cast<const Texture&>(*this));
 }
 
 //////////
@@ -78,7 +78,7 @@ Texture2D::Texture2D(const std::string &name)
 
     if (m_Mipmapped) generate_mipmap();
 
-    debug::print("{}", static_cast<const Texture&>(*this));
+    debug::print(static_cast<const Texture&>(*this));
 }
 
 Texture2D::Texture2D(const cmrc::file &src)
@@ -88,7 +88,7 @@ Texture2D::Texture2D(const cmrc::file &src)
 
     if (m_Mipmapped) generate_mipmap();
 
-    debug::print("{}", static_cast<const Texture&>(*this));
+    debug::print(static_cast<const Texture&>(*this));
 }
 
 Texture2D::Texture2D(auto* data, GLint width, GLint height, GLenum format)
@@ -180,7 +180,7 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
 
     gl::GenerateMipmap(m_Type);
     gl::PixelStorei(GL_UNPACK_ALIGNMENT, 4);
-    debug::print("{}", static_cast<const Texture&>(*this));
+    debug::print(static_cast<const Texture&>(*this));
 }
 
 
@@ -206,7 +206,7 @@ TextureCubeMap::TextureCubeMap(const std::vector<cmrc::file>& faces)
 
     gl::GenerateMipmap(m_Type);
     gl::PixelStorei(GL_UNPACK_ALIGNMENT, 4);
-    debug::print("{}", static_cast<const Texture&>(*this));
+    debug::print(static_cast<const Texture&>(*this));
 }
 
 auto TextureCubeMap::base_to_6faces(const std::string& path) -> std::vector<std::string>

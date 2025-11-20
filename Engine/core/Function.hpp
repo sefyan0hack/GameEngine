@@ -9,6 +9,7 @@
 #include <engine_export.h>
 
 #include "Log.hpp"
+#include "Exception.hpp"
 #include "Utils.hpp"
 
 #if defined(WINDOWS_PLT)
