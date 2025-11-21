@@ -10,6 +10,10 @@ inline auto fs = cmrc::res::get_filesystem();
 
 using namespace std;
 
+
+auto camera_mouvment(const Scene& s, const Keyboard& k, float delta) -> void;
+
+
 class GAME_API Game final : public IGame
 {
 private:
@@ -59,23 +63,18 @@ public:
 
         MainScene.set_skybox(ResManager["forest.jpg"]);
         debug::print("Window title: {}", app.Window.get_title());
+
+        utils::async_repeat_every(1000,
+            [&app](){ app.Window.set_title(std::format("{}, {} : {}", sys::host::name_str(),sys::host::arch_str(), app.fps())); }
+        );
     }
 public:
 
     auto update(float delta) -> void override {
-        float speed = app.Keyboard.is_down(Key::LeftShift)? 10.0f : 5.0f;
+        camera_mouvment(MainScene, app.Keyboard, delta);
 
-        auto Hori = app.Keyboard.is_down(Key::W) ? 1.0f : app.Keyboard.is_down(Key::S) ? -1.0f : 0.0f;
-        auto Vert = app.Keyboard.is_down(Key::D) ? 1.0f : app.Keyboard.is_down(Key::A) ? -1.0f : 0.0f;
-        auto Up   = app.Keyboard.is_down(Key::M) ? 1.0f : app.Keyboard.is_down(Key::N) ? -1.0f : 0.0f;
-
-        auto by = speed * delta;
-
-        MainScene.main_camera().move({ Vert * by, Up * by, Hori * by });
 
         app.render(MainScene, CubeProgram);
-
-        app.Window.set_title(std::format("{}", app.smooth_fps()));
     }
 
 public:
@@ -88,6 +87,26 @@ public:
     }
 };
 
+
+auto camera_mouvment(const Scene& s, const Keyboard& k, float delta) -> void
+{
+    float speed = k.is_down(Key::LeftShift)? 10.0f : 5.0f;
+
+    auto Hori = k.is_down(Key::W) ? 1.0f : k.is_down(Key::S) ? -1.0f : 0.0f;
+    auto Vert = k.is_down(Key::D) ? 1.0f : k.is_down(Key::A) ? -1.0f : 0.0f;
+    auto Up   = k.is_down(Key::M) ? 1.0f : k.is_down(Key::N) ? -1.0f : 0.0f;
+
+    auto by = speed * delta;
+
+    s.main_camera().move({ Vert * by, Up * by, Hori * by });
+}
+
+
+
+
+
+
+// no toche code
 extern "C" GAME_API auto new_game(class APP& app) -> IGame*
 {
     gl::load_opengl_functions();

@@ -595,12 +595,39 @@ inline auto get_proc_address([[maybe_unused]] const char* module, const char* na
 
 template<Variant TVarinat, class... TMatchers>
     requires(sizeof...(TMatchers) >= 1 )
-auto match(TVarinat&& v, TMatchers&&... m) -> decltype(auto)
+inline auto match(TVarinat&& v, TMatchers&&... m) -> decltype(auto)
 {
     return std::visit(
         overloaded {std::forward<TMatchers>(m)...},
         std::forward<TVarinat>(v)
     );
+}
+
+inline auto async_repeat_every(int64_t ms, auto&& F, auto&&... args) -> void
+{
+    std::thread([ms, F, &args...](){
+        while(true){
+            F(std::forward<decltype(args)...>(args)...);
+            std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+        }
+    }).detach();
+}
+
+inline auto async_run_after(int64_t ms, auto&& F, auto&&... args) -> void
+{
+    std::thread([ms, F, &args...](){
+        std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+        F(std::forward<decltype(args)...>(args)...);
+    }).detach();
+}
+
+inline auto async_while(bool& cond, auto&& F, auto&&... args) -> void
+{
+    std::thread([&cond, F, &args...](){
+        while(cond){
+            F(std::forward<decltype(args)...>(args)...);
+        }
+    }).detach();
 }
 
 }// namespaceutils
