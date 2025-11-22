@@ -79,8 +79,6 @@ private:
 
 public:
 
-    ~Keyboard() = default;
-
 	Keyboard(const Keyboard&) = delete;
 	auto operator=(const Keyboard&) -> Keyboard& = delete;
 

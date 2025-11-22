@@ -15,7 +15,6 @@ public:
     friend struct std::formatter<Camera>;
     
     Camera() noexcept;
-    ~Camera() = default;
 
     Camera(const Camera& other) = default;
     auto operator=(const Camera& other) -> Camera& = default;

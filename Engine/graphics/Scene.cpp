@@ -10,7 +10,6 @@
 #include "OpenGL.hpp"
 #include <glm/glm.hpp>
 
-Scene::~Scene() {}
 
 Scene::Scene()
     : m_Cameras({Camera()})

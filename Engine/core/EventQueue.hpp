@@ -7,7 +7,6 @@
 class ENGINE_API EventQueue {
 public:
     EventQueue() = default;
-    ~EventQueue() = default;
 
     EventQueue(const EventQueue&) = delete;
     auto operator=(const EventQueue&) -> EventQueue& = delete;

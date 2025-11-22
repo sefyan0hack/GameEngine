@@ -9,8 +9,6 @@
 class ENGINE_API ResourceManager
 {
 private:
-    ResourceManager() = default;
-    ~ResourceManager() = default;
     class Proxy {
         public:
             Proxy(const std::string& key) : m_manager(ResourceManager::get_instance()), m_key(key){}
@@ -35,6 +33,7 @@ private:
             std::string m_key;
         };
 public:
+    ResourceManager() = default;
     ResourceManager(const ResourceManager&) = delete;
     ResourceManager& operator=(const ResourceManager&) = delete;
 

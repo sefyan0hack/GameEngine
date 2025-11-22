@@ -17,8 +17,8 @@ class ENGINE_API Shader
     Shader(const std::string& filename);
     Shader(const std::string& Src, GLenum type);
     Shader(const cmrc::file& Src, GLenum type);
-    ~Shader() = default;
 
+    
     Shader(const Shader&) = delete;
     auto operator=(const Shader&) -> Shader& = delete;
 

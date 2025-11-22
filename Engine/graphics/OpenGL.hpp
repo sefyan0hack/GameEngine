@@ -46,7 +46,7 @@ class ENGINE_API OpenGL
         OpenGL(const OpenGL& other) = delete;
         OpenGL(OpenGL&& other) noexcept;
         ~OpenGL();
-
+    
         auto operator = (const OpenGL& other) -> OpenGL& = delete;
         auto operator = (OpenGL&& other)  noexcept -> OpenGL&;
 

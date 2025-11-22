@@ -7,7 +7,6 @@ class ENGINE_API OpenGLRenderer final: public IRenderer
 {
 public:
     OpenGLRenderer(const class CWindow& window);
-    ~OpenGLRenderer() override;
     
     auto render(const class Scene& scene, std::shared_ptr<class ShaderProgram> program) const -> void override; 
 
@@ -26,6 +25,6 @@ protected:
 
 private:
     const class CWindow& m_Window;
-    const OpenGL* m_GApi;
+    const OpenGL m_GApi;
     uint32_t x = 0, y = 0, width = 0, height = 0;
 };

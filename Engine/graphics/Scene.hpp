@@ -17,7 +17,7 @@ class ENGINE_API Scene
 public:
     friend struct std::formatter<Scene>;
     Scene();
-    ~Scene();
+
     auto entities() const -> std::span<const GameObject>;
     auto set_skybox(const std::string& BasePathName) -> void;
     auto set_skybox(std::shared_ptr<class TextureCubeMap> texture) -> void;

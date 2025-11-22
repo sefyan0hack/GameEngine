@@ -19,14 +19,12 @@
 
 OpenGLRenderer::OpenGLRenderer(const CWindow& window)
     : m_Window(window)
-    , m_GApi(new OpenGL(window))
+    , m_GApi(window)
     , x(0), y(0)
     , width(window.width()), height(window.height())
 {}
 
-OpenGLRenderer::~OpenGLRenderer(){
-    if (m_GApi) delete m_GApi;
-}
+
 
 auto OpenGLRenderer::render(const Scene& scene, const std::shared_ptr<ShaderProgram> program) const -> void
 {
@@ -70,7 +68,7 @@ auto OpenGLRenderer::draw(const Mesh& mesh) const -> void
 
 auto OpenGLRenderer::graphic_api() const -> std::string_view
 {
-	return ::type_name<std::remove_const_t<std::remove_pointer_t<decltype(m_GApi)>>>();
+	return ::type_name<std::remove_const_t<decltype(m_GApi)>>();
 }
 
 auto OpenGLRenderer::set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void
@@ -154,5 +152,5 @@ auto OpenGLRenderer::clear_screen(uint32_t buffersmask)  -> void
 
 auto OpenGLRenderer::has_extension(const std::string &ext) -> bool
 {
-    return m_GApi->has_extension(ext);
+    return m_GApi.has_extension(ext);
 }

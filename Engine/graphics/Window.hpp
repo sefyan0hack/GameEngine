@@ -32,7 +32,6 @@ class ENGINE_API CWindow
             auto operator = (const WinClass&) -> WinClass& = delete ;
             auto operator = (WinClass&&)      -> WinClass& = delete ;
         public:
-            ~WinClass() = default;
             static auto instance()  -> WinClass& ;
             static auto name()      -> const TCHAR* ;
             inline static ATOM m_Windclass = {};

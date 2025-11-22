@@ -104,10 +104,7 @@ bool Shader::operator==(const Shader &other)
     return this->m_Id == other.m_Id;
 }
 
-// Shader::~Shader()
-// {
-//     gl::DeleteShader(m_Id);
-// }
+
 
 auto Shader::set_source(const std::string& src) const -> void
 {

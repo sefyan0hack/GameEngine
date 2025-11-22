@@ -28,7 +28,6 @@ private:
     Mouse();
 
 public:
-	~Mouse() = default;
 
 	Mouse( const Mouse& ) = delete;
 	auto operator=(const Mouse&) -> Mouse& = delete;

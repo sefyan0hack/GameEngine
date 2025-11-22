@@ -1,13 +1,6 @@
 
 
 
-OpenGL::~OpenGL()
-{
-    // glXMakeCurrent(m_Surface, Window{},  GL_CTX{});
-    // glXDestroyContext(m_Surface, m_Context);
-}
-
-
 // OpenGL::OpenGL(const OpenGL &other)
 //     : m_Context(GL_CTX{})
 //     , m_Major(other.m_Major)
