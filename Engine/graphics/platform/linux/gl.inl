@@ -13,14 +13,14 @@ using H_WIN     = Window;
 using H_SRF     = Display*;
 using GL_CTX     = __GLXcontextRec*;
 
-[[maybe_unused]] inline static auto glXCreateContextAttribsARB = (GL_CTX(*)(H_SRF dpy, GLXFBConfig config, GL_CTX share_context, Bool direct, const int *attrib_list))(nullptr);
+[[maybe_unused]] inline static auto glXCreateContextAttribsARB = (GL_CTX(*)(H_SRF dpy, GLXFBConfig config, GL_CTX share_context, Bool direct, const int *attrib_list))(nullptr)
 [[maybe_unused]] inline static PFNGLXSWAPINTERVALEXTPROC glXSwapIntervalEXT = nullptr;
 
 
 #define GLFUNCS GLFUNCS_COMMON\
-    X(PolygonMode);\
-    X(PointSize);\
-    X(GetProgramResourceiv);\
-    X(GetProgramResourceName);\
-    X(GetProgramResourceLocation);\
-    X(GetProgramInterfaceiv);
+    X(PolygonMode)\
+    X(PointSize)\
+    X(GetProgramResourceiv)\
+    X(GetProgramResourceName)\
+    X(GetProgramResourceLocation)\
+    X(GetProgramInterfaceiv)

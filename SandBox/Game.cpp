@@ -64,6 +64,8 @@ public:
         utils::async_repeat_every(1000,
             [&app](){ app.Window.set_title(std::format("{}, {} : {}", sys::host::name_str(),sys::host::arch_str(), app.fps())); }
         );
+
+        debug::print("{} || {}", VecWrapper{gl::OPENGL_FUNCTIONS_NAME}, Type<decltype(gl::OPENGL_FUNCTIONS_NAME)>());
     }
 
     auto update(float delta) -> void override {

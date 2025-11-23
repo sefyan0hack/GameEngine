@@ -87,8 +87,8 @@ auto OpenGL::create_opengl_context(const CWindow& window) -> GL_CTX
     }
 
     int32_t gl_attribs[] = { 
-        WGL_CONTEXT_MAJOR_VERSION_ARB, gl::GLMajorVersion,
-        WGL_CONTEXT_MINOR_VERSION_ARB, gl::GLMinorVersion,
+        WGL_CONTEXT_MAJOR_VERSION_ARB, gl::OPENGL_MAJOR_VERSION,
+        WGL_CONTEXT_MINOR_VERSION_ARB, gl::OPENGL_MINOR_VERSION,
     #ifdef DEBUG
         WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB | WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
     #endif
@@ -101,7 +101,7 @@ auto OpenGL::create_opengl_context(const CWindow& window) -> GL_CTX
         m_Context = nullptr;
 
         if (GetLastError() == ERROR_INVALID_VERSION_ARB){ // ?
-            throw Exception("Unsupported GL Version {}.{}", gl::GLMajorVersion, gl::GLMinorVersion);
+            throw Exception("Unsupported GL Version {}.{}", gl::OPENGL_MAJOR_VERSION, gl::OPENGL_MINOR_VERSION);
         }
         throw Exception("Failed to create the final rendering context!");
     }

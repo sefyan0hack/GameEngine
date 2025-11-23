@@ -60,10 +60,10 @@ namespace gl {
             name = Function<decltype(&gl##name)>{};\
             name.m_Func  = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name));\
             name.m_After = [](std::string info) { auto err = glGetError(); if(err != GL_NO_ERROR) if(!info.contains("glClear")) throw Exception("gl error id {} {}", err, info); };\
-            name.m_Name  = "gl"#name
+            name.m_Name  = "gl"#name;
         #else
         #   define X(name)\
-            name = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name))
+            name = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name));
         #endif
 
         GLFUNCS
@@ -131,7 +131,7 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
 
     debug::print("=================================================================================");
     debug::print("Platform : {}, Arch : {}", sys::host::name_str(), sys::host::arch_str());
-    debug::print("GL Version : Wanted:({}.{}) -> Got:({}.{})", gl::GLMajorVersion, gl::GLMinorVersion, m_Major, m_Minor);
+    debug::print("GL Version : Wanted:({}.{}) -> Got:({}.{})", gl::OPENGL_MAJOR_VERSION, gl::OPENGL_MINOR_VERSION, m_Major, m_Minor);
     debug::print("GL Vendor : {}", m_Vendor);
     debug::print("GL Renderer : {}", m_Renderer);
     debug::print("GL Exts : {}", utils::to_string(m_Extensions));

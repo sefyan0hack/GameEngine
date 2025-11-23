@@ -16,9 +16,9 @@ using GL_CTX     = HGLRC;
 
 
 #define GLFUNCS GLFUNCS_COMMON\
-    X(PolygonMode);\
-    X(PointSize);\
-    X(GetProgramResourceiv);\
-    X(GetProgramResourceName);\
-    X(GetProgramResourceLocation);\
-    X(GetProgramInterfaceiv);
+    X(PolygonMode)\
+    X(PointSize)\
+    X(GetProgramResourceiv)\
+    X(GetProgramResourceName)\
+    X(GetProgramResourceLocation)\
+    X(GetProgramInterfaceiv)

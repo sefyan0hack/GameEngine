@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <array>
 #include <string>
 #include <ctime>
 
@@ -10,34 +11,26 @@
 class CWindow;
 
 namespace gl {
+    #undef X 
+    #define X(name) "gl"#name, 
+
     constexpr auto OPENGL_MODULE_NAME = OPENGL_LIB;
-
-    inline static auto OPENGL_FUNCTIONS_NAME = [](){
-        static std::vector<const char*> r;
-        #undef X 
-        #define X(name) r.push_back("gl"#name)
-        GLFUNCS
-
-        return r;
-    }();
-
-    inline static auto OPENGL_FUNCTIONS_COUNT = OPENGL_FUNCTIONS_NAME.size();
-
-    auto get_proc_address(const char* name) -> void*;
-    auto get_integer(GLenum name) -> GLint;
-    auto get_boolean(GLenum name) -> GLboolean;
-    auto load_opengl_functions() -> void;
+    constexpr auto OPENGL_FUNCTIONS_NAME = { GLFUNCS };
+    constexpr auto OPENGL_FUNCTIONS_COUNT = OPENGL_FUNCTIONS_NAME.size();
+    constexpr int32_t OPENGL_MAJOR_VERSION = 3;
+    constexpr int32_t OPENGL_MINOR_VERSION = 3;
 
     constexpr int32_t DepthBufferBits   = 32;
     constexpr int32_t StencilBufferBits = 8;
     constexpr int32_t ChannelBits       = 8;
     constexpr int32_t AlphaBits         = 8;
+    
+    auto ENGINE_API get_proc_address(const char* name) -> void*;
+    auto ENGINE_API get_integer(GLenum name) -> GLint;
+    auto ENGINE_API get_boolean(GLenum name) -> GLboolean;
+    auto ENGINE_API load_opengl_functions() -> void;
 
-    constexpr int32_t  GLMajorVersion   = 3;
-    constexpr int32_t  GLMinorVersion   = 3;
-
-} //namespace g
-
+} //namespace gl
 
 class ENGINE_API OpenGL
 {

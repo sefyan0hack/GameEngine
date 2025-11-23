@@ -86,14 +86,14 @@ struct std::formatter<MapWrapper<Map>> {
 
     auto format(const MapWrapper<Map>& wrapper, std::format_context& ctx) const {
         auto out = ctx.out();
-        out = std::format_to(out, "{{");
+        out = std::format_to(out, "{{ ");
         bool first = true;
         for (const auto& [key, value] : wrapper.map) {
             if (first) first = false;
             else out = std::format_to(out, ", ");
             out = std::format_to(out, R"("{}": "{}")", key, value);
         }
-        out = std::format_to(out, "}}");
+        out = std::format_to(out, " }}");
         return out;
     }
 };
@@ -107,14 +107,14 @@ struct std::formatter<VecWrapper<Vec>> {
 
     auto format(const VecWrapper<Vec>& wrapper, std::format_context& ctx) const {
         auto out = ctx.out();
-        out = std::format_to(out, "[");
+        out = std::format_to(out, "[ ");
         bool first = true;
         for (const auto& elem : wrapper.vec) {
             if (first) first = false;
             else out = std::format_to(out, ", ");
             out = std::format_to(out, "{}", elem);
         }
-        out = std::format_to(out, "]");
+        out = std::format_to(out, " ]");
         return out;
     }
 };
@@ -128,7 +128,7 @@ struct std::formatter<QueWrapper<Que>> {
 
     auto format(const QueWrapper<Que>& wrapper, std::format_context& ctx) const {
         auto out = ctx.out();
-        out = std::format_to(out, "[");
+        out = std::format_to(out, "[ ");
         Que q = wrapper.que;
         bool first = true;
         while (!q.empty()) {
@@ -137,7 +137,7 @@ struct std::formatter<QueWrapper<Que>> {
           out = std::format_to(out, "{}", q.front());
           q.pop();
         }
-        out = std::format_to(out, "]");
+        out = std::format_to(out, " ]");
         return out;
     }
 };

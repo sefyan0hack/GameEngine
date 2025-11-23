@@ -58,8 +58,8 @@ auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GL
     }
 
     int32_t contextAttribs[] = {
-        GLX_CONTEXT_MAJOR_VERSION_ARB, gl::GLMajorVersion,
-        GLX_CONTEXT_MINOR_VERSION_ARB, gl::GLMinorVersion,
+        GLX_CONTEXT_MAJOR_VERSION_ARB, gl::OPENGL_MAJOR_VERSION,
+        GLX_CONTEXT_MINOR_VERSION_ARB, gl::OPENGL_MINOR_VERSION,
         #ifdef DEBUG
         GLX_CONTEXT_FLAGS_ARB, GLX_CONTEXT_DEBUG_BIT_ARB | GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
         #endif
