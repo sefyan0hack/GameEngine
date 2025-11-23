@@ -6,7 +6,7 @@
 #include <vector>
 #include <format>
 
-#include "gl.h"
+#include "gl.hpp"
 #include <glm/glm.hpp>
 #include <core/fmts.hpp>
 #include <engine_export.h>

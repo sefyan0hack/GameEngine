@@ -6,7 +6,7 @@
 #include <engine_export.h>
 
 #include "Image.hpp"
-#include "gl.h"
+#include "gl.hpp"
 
 #include <cmrc/cmrc.hpp>
 

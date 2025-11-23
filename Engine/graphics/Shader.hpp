@@ -5,7 +5,7 @@
 #include <vector>
 #include <engine_export.h>
 
-#include "gl.h"
+#include "gl.hpp"
 
 #include <cmrc/cmrc.hpp>
 

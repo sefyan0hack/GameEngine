@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "gl.h"
+#include "gl.hpp"
 #include <glm/glm.hpp>
 
 #include <cmrc/cmrc.hpp>

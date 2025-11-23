@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gl.h"
+#include "gl.hpp"
 #include "Window.hpp"
 #include "Renderer.hpp"
 #include "Shader.hpp"

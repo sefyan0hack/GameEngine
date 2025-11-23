@@ -4,7 +4,7 @@
 #include <string>
 #include <ctime>
 
-#include "gl.h"
+#include "gl.hpp"
 #include <core/Function.hpp>
 #include <engine_export.h>
 

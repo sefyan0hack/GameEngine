@@ -25,7 +25,7 @@ target_sources( graphics PUBLIC
     FILE_SET HEADERS
       TYPE HEADERS
       FILES
-        gl.h
+        gl.hpp
         Window.hpp
         Renderer.hpp
         Shader.hpp

@@ -4,7 +4,7 @@
 #include <string>
 #include <map>
 
-#include "gl.h"
+#include "gl.hpp"
 #include "ShaderProgram.hpp"
 #include <engine_export.h>
 

@@ -13,7 +13,7 @@
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
 #endif
-#include <graphics/gl.h>
+#include <graphics/gl.hpp>
 
 class EventQueue;
 
