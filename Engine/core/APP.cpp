@@ -39,6 +39,8 @@ APP::APP()
     , Game()
     , new_game(nullptr)
     , delete_game(nullptr)
+    , game_update(nullptr)
+    , game_on_deltamouse(nullptr)
 {
 
     load_game_library();
@@ -56,9 +58,11 @@ auto APP::load_game_library() -> void
 {
     try {
         lib.load();
-        new_game = lib.function<IGame*(*)(APP&)>("new_game");
-        delete_game = lib.function<void(*)(IGame*)>("delete_game");
-        
+        new_game = lib.function<void*(*)(APP&)>("new_game");
+        delete_game = lib.function<void(*)(void*)>("delete_game");
+        game_update = lib.function<void(*)(void*, float)>("game_update");
+        game_on_deltamouse = lib.function<void(*)(void*, float, float)>("game_on_deltamouse");
+
         if (!new_game || !delete_game) {
             throw Exception("Failed to get game library functions");
         }
@@ -69,6 +73,8 @@ auto APP::load_game_library() -> void
         // Set to null to avoid crashes
         new_game = nullptr;
         delete_game = nullptr;
+        game_update = nullptr;
+        game_on_deltamouse = nullptr;
         Game = nullptr;
     }
 }
@@ -85,6 +91,8 @@ auto APP::unload_game_library() -> void
 
     new_game = nullptr;
     delete_game = nullptr;
+    game_update = nullptr;
+    game_on_deltamouse = nullptr;
     lib.unload();
 }
 
@@ -106,7 +114,7 @@ auto APP::hot_reload_game_library() -> bool
 auto APP::frame(float deltaTime) -> void
 {
     Renderer->clear_screen(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    Game->update(deltaTime);
+    game_update(Game, deltaTime);
     Window.swap_buffers();
     Keyboard.save_prev_state();
     Mouse.save_prev_state();
@@ -172,7 +180,7 @@ auto APP::loop_body(void* ctx) -> void
             [&app](const Mouse::MovementEvent& e) {
                 app->Mouse.on_rawdelta(e.dx, e.dy);
                 auto [dx, dy] = app->Mouse.get_rawdelta();
-                app->Game->on_deltamouse(dx, dy);
+                app->game_on_deltamouse(app->Game, dx, dy);
             },
             [](const auto& e) {
                 if( ::type_name<decltype(e)>() == "const std::monostate&") throw Exception(" nnnnnn ");

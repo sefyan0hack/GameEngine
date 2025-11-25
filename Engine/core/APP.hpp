@@ -7,7 +7,6 @@
 #include <graphics/Renderer.hpp>
 #include <input/Keyboard.hpp>
 #include <input/Mouse.hpp>
-#include "Game.hpp"
 #include "DynLib.hpp"
 #include "EventQueue.hpp"
 #include <engine_export.h>
@@ -53,7 +52,9 @@ private:
 
     IRenderer* Renderer;
     DynLib lib;
-    IGame* Game;
-    std::function<IGame*(APP&)> new_game;
-    std::function<void(IGame*)> delete_game;
+    void* Game;
+    std::function<void*(APP&)> new_game;
+    std::function<void(void*)> delete_game;
+    std::function<void(void*,float)> game_update;
+    std::function<void(void*,float, float)> game_on_deltamouse;
 };

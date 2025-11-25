@@ -19,6 +19,7 @@ target_sources( graphics PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Camera.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GameObject.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/OpenGLRenderer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gl.cpp
 )
 
 target_sources( graphics PUBLIC

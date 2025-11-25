@@ -11,7 +11,7 @@ inline auto fs = cmrc::res::get_filesystem();
 using namespace std;
 
 
-class GAME_API Game final : public IGame
+class Game
 {
 private:
     class APP& app;
@@ -68,13 +68,14 @@ public:
         debug::print("{} || {}", VecWrapper{gl::OPENGL_FUNCTIONS_NAME}, Type<decltype(gl::OPENGL_FUNCTIONS_NAME)>());
     }
 
-    auto update(float delta) -> void override {
+    auto update(float delta) -> void
+    {
         camera_mouvment(delta);
 
         app.render(MainScene, CubeProgram);
     }
 
-    auto on_deltamouse(float dx, float dy) -> void override
+    auto on_deltamouse(float dx, float dy) -> void
     {
         MainScene.main_camera().process_mouse_movement(dx, -dy);
     }
@@ -96,15 +97,24 @@ public:
 
 
 
-
 // no toche code
-extern "C" GAME_API auto new_game(class APP& app) -> IGame*
+extern "C" GAME_API auto new_game(class APP& app) -> void*
 {
-    gl::load_opengl_functions();
+    // gl::load_opengl_functions();
     return new Game(app);
 }
 
-extern "C" GAME_API auto delete_game(IGame* game) -> void
+extern "C" GAME_API auto delete_game(void* game) -> void
 {
-    delete game;
+    delete static_cast<Game*>(game);
+}
+
+extern "C" GAME_API auto game_update(void* game, float delta) -> void
+{
+    static_cast<Game*>(game)->update(delta);
+}
+
+extern "C" GAME_API auto game_on_deltamouse(void* game, float dx, float dy) -> void
+{
+    static_cast<Game*>(game)->on_deltamouse(dx, dy);
 }
