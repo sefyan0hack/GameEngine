@@ -41,6 +41,7 @@ APP::APP()
     , delete_game(nullptr)
     , game_update(nullptr)
     , game_on_deltamouse(nullptr)
+    , game_link(nullptr)
 {
 
     load_game_library();
@@ -62,11 +63,16 @@ auto APP::load_game_library() -> void
         delete_game = lib.function<void(*)(void*)>("delete_game");
         game_update = lib.function<void(*)(void*, float)>("game_update");
         game_on_deltamouse = lib.function<void(*)(void*, float, float)>("game_on_deltamouse");
+        game_link = lib.function<void(*)(void**)>("game_link");
 
         if (!new_game || !delete_game) {
             throw Exception("Failed to get game library functions");
         }
 
+        std::vector<void*> gl_state(gl::OPENGL_FUNCTIONS_COUNT);
+        gl::export_opengl_state(gl_state.data());
+        game_link(gl_state.data());
+        
         Game = new_game(*this);
     } catch (const Exception& e) {
         debug::print("Failed to load game library: {}", e.what());
@@ -75,6 +81,7 @@ auto APP::load_game_library() -> void
         delete_game = nullptr;
         game_update = nullptr;
         game_on_deltamouse = nullptr;
+        game_link = nullptr;
         Game = nullptr;
     }
 }

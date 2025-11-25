@@ -100,7 +100,6 @@ public:
 // no toche code
 extern "C" GAME_API auto new_game(class APP& app) -> void*
 {
-    // gl::load_opengl_functions();
     return new Game(app);
 }
 
@@ -117,4 +116,9 @@ extern "C" GAME_API auto game_update(void* game, float delta) -> void
 extern "C" GAME_API auto game_on_deltamouse(void* game, float dx, float dy) -> void
 {
     static_cast<Game*>(game)->on_deltamouse(dx, dy);
+}
+
+extern "C" GAME_API auto game_link(void** gl_state) -> void
+{
+    gl::import_opengl_state(gl_state);
 }

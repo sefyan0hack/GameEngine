@@ -11,24 +11,11 @@
 class CWindow;
 
 namespace gl {
-    #undef X 
-    #define X(name) "gl"#name, 
-
-    constexpr auto OPENGL_MODULE_NAME = OPENGL_LIB;
-    constexpr auto OPENGL_FUNCTIONS_NAME = { GLFUNCS };
-    constexpr auto OPENGL_FUNCTIONS_COUNT = OPENGL_FUNCTIONS_NAME.size();
-    constexpr int32_t OPENGL_MAJOR_VERSION = 3;
-    constexpr int32_t OPENGL_MINOR_VERSION = 3;
 
     constexpr int32_t DepthBufferBits   = 32;
     constexpr int32_t StencilBufferBits = 8;
     constexpr int32_t ChannelBits       = 8;
     constexpr int32_t AlphaBits         = 8;
-    
-    auto ENGINE_API get_proc_address(const char* name) -> void*;
-    auto ENGINE_API get_integer(GLenum name) -> GLint;
-    auto ENGINE_API get_boolean(GLenum name) -> GLboolean;
-    auto ENGINE_API load_opengl_functions() -> void;
 
 } //namespace gl
 

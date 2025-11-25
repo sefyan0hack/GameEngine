@@ -113,12 +113,41 @@
 #endif
 
 #include <core/Function.hpp>
+#include <engine_export.h>
+
 namespace gl {
+    #undef X 
+    #define X(name) "gl"#name, 
+
+    constexpr auto OPENGL_MODULE_NAME = OPENGL_LIB;
+    constexpr auto OPENGL_FUNCTIONS_NAME = { GLFUNCS };
+    constexpr auto OPENGL_FUNCTIONS_COUNT = OPENGL_FUNCTIONS_NAME.size();
+    constexpr int32_t OPENGL_MAJOR_VERSION = 3;
+    constexpr int32_t OPENGL_MINOR_VERSION = 3;
+
+    extern "C" {
+        #undef X
+        #define X(name) using PFN_gl##name = decltype(&gl##name);
+        GLFUNCS
+    }
+
     #undef X
     #ifdef ROBUST_GL_CHECK
-    #   define X(name) inline Function<decltype(&gl##name)> name;
+    #   define X(name) ENGINE_API extern Function<PFN_gl##name> name;
     #else
-    #   define X(name) inline decltype(&gl##name) name = Function<decltype(&gl##name)>::default_;
+    #   define X(name) ENGINE_API extern PFN_gl##name name;
     #endif
-    GLFUNCS
+
+    extern "C" {
+        GLFUNCS
+    }
+
+    auto ENGINE_API get_proc_address(const char* name) -> void*;
+    auto ENGINE_API get_integer(GLenum name) -> GLint;
+    auto ENGINE_API get_boolean(GLenum name) -> GLboolean;
+    auto ENGINE_API load_opengl_functions() -> void;
+    auto ENGINE_API export_opengl_state(void** state) -> void;
+    auto ENGINE_API import_opengl_state(void** state) -> void;
 } // namespace gl
+
+#undef GL_GLEXT_PROTOTYPES

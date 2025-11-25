@@ -57,4 +57,5 @@ private:
     std::function<void(void*)> delete_game;
     std::function<void(void*,float)> game_update;
     std::function<void(void*,float, float)> game_on_deltamouse;
+    std::function<void(void**)> game_link;
 };
