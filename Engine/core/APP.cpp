@@ -69,9 +69,7 @@ auto APP::load_game_library() -> void
             throw Exception("Failed to get game library functions");
         }
 
-        std::vector<void*> gl_state(gl::OPENGL_FUNCTIONS_COUNT);
-        gl::export_opengl_state(gl_state.data());
-        game_link(gl_state.data());
+        game_link(gl::export_opengl_functions());
         
         Game = new_game(*this);
     } catch (const Exception& e) {

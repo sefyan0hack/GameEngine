@@ -98,27 +98,30 @@ public:
 
 
 // no toche code
-extern "C" GAME_API auto new_game(class APP& app) -> void*
-{
-    return new Game(app);
-}
+extern "C" {
 
-extern "C" GAME_API auto delete_game(void* game) -> void
-{
-    delete static_cast<Game*>(game);
-}
+    EXPORT_SYM auto new_game(class APP& app) -> void*
+    {
+        return new Game(app);
+    }
 
-extern "C" GAME_API auto game_update(void* game, float delta) -> void
-{
-    static_cast<Game*>(game)->update(delta);
-}
+    EXPORT_SYM auto delete_game(void* game) -> void
+    {
+        delete static_cast<Game*>(game);
+    }
 
-extern "C" GAME_API auto game_on_deltamouse(void* game, float dx, float dy) -> void
-{
-    static_cast<Game*>(game)->on_deltamouse(dx, dy);
-}
+    EXPORT_SYM auto game_update(void* game, float delta) -> void
+    {
+        static_cast<Game*>(game)->update(delta);
+    }
 
-extern "C" GAME_API auto game_link(void** gl_state) -> void
-{
-    gl::import_opengl_state(gl_state);
+    EXPORT_SYM auto game_on_deltamouse(void* game, float dx, float dy) -> void
+    {
+        static_cast<Game*>(game)->on_deltamouse(dx, dy);
+    }
+
+    EXPORT_SYM auto game_link(void** funcs) -> void
+    {
+        gl::import_opengl_functions(funcs);
+    }
 }

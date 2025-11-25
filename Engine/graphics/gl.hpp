@@ -146,8 +146,8 @@ namespace gl {
     auto ENGINE_API get_integer(GLenum name) -> GLint;
     auto ENGINE_API get_boolean(GLenum name) -> GLboolean;
     auto ENGINE_API load_opengl_functions() -> void;
-    auto ENGINE_API export_opengl_state(void** state) -> void;
-    auto ENGINE_API import_opengl_state(void** state) -> void;
+    auto ENGINE_API export_opengl_functions() -> void**;
+    auto ENGINE_API import_opengl_functions(void** state) -> void;
 } // namespace gl
 
 #undef GL_GLEXT_PROTOTYPES

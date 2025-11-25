@@ -74,16 +74,15 @@ namespace gl {
         GLFUNCS
     }
 
-    auto export_opengl_state(void **state) -> void
+    auto export_opengl_functions() -> void**
     {
-        int index = 0;
         #undef X
-        #define X(name) state[index++] = (void*)name;
-        
-        GLFUNCS
+        #define X(name) (void*)name, 
+
+        return std::vector<void*> { GLFUNCS }.data();
     }
 
-    auto import_opengl_state(void **state) -> void
+    auto import_opengl_functions(void **funcs) -> void
     {
         int index = 0;
         #undef X
@@ -93,7 +92,7 @@ namespace gl {
             name.m_After = [](std::string info) { auto err = glGetError(); if(err != GL_NO_ERROR) if(!info.contains("glClear")) throw Exception("gl error id {} {}", err, info); };\
             name.m_Name  = "gl"#name;
         #else
-        #   define X(name) name = reinterpret_cast<std::remove_reference_t<PFN_gl##name>>(state[index++]);
+        #   define X(name) name = reinterpret_cast<std::remove_reference_t<PFN_gl##name>>(funcs[index++]);
         #endif
 
         GLFUNCS
