@@ -26,6 +26,7 @@ class ENGINE_API CWindow
     {
         private:
             WinClass();
+            ~WinClass();
             WinClass(const WinClass&) = delete;
             WinClass(WinClass&&) = delete;
 

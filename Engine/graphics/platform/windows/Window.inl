@@ -34,6 +34,10 @@ CWindow::WinClass::WinClass(){
     }
 }
 
+CWindow::WinClass::~WinClass(){
+	UnregisterClass(m_Name, GetModuleHandle(nullptr));
+}
+
 ///////////////////////////////////////////////////////////////////
 
 auto CWindow::win_proc_thunk(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT
@@ -220,7 +224,7 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
     WinClass::instance();
 
     auto window_handle = CreateWindow(
-        MAKEINTATOM(WinClass::m_Windclass),
+        WinClass::instance().name(),
         Title,
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, Width, Height,
