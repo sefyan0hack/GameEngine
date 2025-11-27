@@ -7,7 +7,7 @@ add_library(core INTERFACE)
 target_sources( core PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/APP.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/SysInfo.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/Dynlib.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/DynLib.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Exception.cpp
 )
 
