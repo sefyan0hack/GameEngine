@@ -3,6 +3,7 @@
 #include "Window.hpp"
 #include "OpenGL.hpp"
 #include <core/Log.hpp>
+#include <core/SysInfo.hpp>
 #include <core/Utils.hpp>
 
 #if defined(WINDOWS_PLT)

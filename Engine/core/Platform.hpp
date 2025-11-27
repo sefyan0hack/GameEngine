@@ -16,7 +16,6 @@
 #if defined(CLANG_CPL) && !defined(WINDOWS_PLT) || defined(GNU_CPL)
 #include <cxxabi.h>
 #endif
-#include "SysInfo.hpp"
 
 #if defined(MSVC_CPL)
     #define EXPORT_SYM  __declspec(dllexport)

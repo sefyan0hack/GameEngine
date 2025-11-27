@@ -37,7 +37,7 @@ public:
     auto is_loaded() const -> bool;
 
     inline static auto PREFIX  = DYN_LIB_PREFIX;
-    inline static auto SUFFIX  = sys::host::name() == sys::Target::Windows ? ".dll" : ".so";
+    inline static auto SUFFIX  = DYN_LIB_SUFFIX;
 
 private:
     void* m_handle;

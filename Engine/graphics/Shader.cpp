@@ -1,4 +1,5 @@
 #include <core/Log.hpp>
+#include <core/SysInfo.hpp>
 #include "OpenGL.hpp"
 #include "Shader.hpp"
 
