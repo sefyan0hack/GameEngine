@@ -77,13 +77,13 @@ endif()
 add_compile_options(
     "$<$<CXX_COMPILER_ID:GNU,Clang>:-ffunction-sections;-fdata-sections>"
     "$<$<CXX_COMPILER_ID:GNU,Clang>:-funwind-tables>" # generate some exception data (usually disabled for C programs)
-    "$<$<CXX_COMPILER_ID:GNU,Clang>:-flto-partition=none>"
+    "$<$<CXX_COMPILER_ID:GNU>:-flto-partition=none>"
     "$<$<CXX_COMPILER_ID:MSVC>:/Gy;/Gw>"
     )
     
     add_link_options(
         "$<$<CXX_COMPILER_ID:GNU,Clang>:-Wl,--gc-sections>"
-        "$<$<CXX_COMPILER_ID:GNU,Clang>:-flto-partition=none>"
+        "$<$<CXX_COMPILER_ID:GNU>:-flto-partition=none>"
         "$<$<CXX_COMPILER_ID:GNU,Clang>:-fuse-linker-plugin>"
         "$<$<CXX_COMPILER_ID:MSVC>:/OPT:REF;/OPT:ICF>"
 )
