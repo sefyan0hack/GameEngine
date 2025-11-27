@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <execution>
+#include <span>
 #include <core/Log.hpp>
 #include <core/ResourceManager.hpp>
 #include "Window.hpp"
