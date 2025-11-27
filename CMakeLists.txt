@@ -334,9 +334,6 @@ if(ROBUST_GL_CHECK)
     add_compile_definitions( ROBUST_GL_CHECK )
 endif()
 
-if(NO_CONSOLE)
-    no_console()
-endif()
 
 ####################################################################################################
 # Compiler Check

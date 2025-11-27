@@ -295,14 +295,14 @@ macro(fetch_and_include_file name url)
     include_directories(${${name}_SOURCE_DIR})
 endmacro()
 
-function(no_console)
+function(no_console target)
     if(MSVC)
-    add_link_options(
+    target_link_options(${target} PRIVATE
         "$<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>"
         "$<$<CONFIG:Release>:/ENTRY:mainCRTStartup>"
     )
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    add_link_options(
+    target_link_options(${target} PRIVATE
         "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
     )
     endif()

@@ -71,6 +71,11 @@ target_sources( Luncher PRIVATE
     main.cpp 
 )
 
+
+if(NO_CONSOLE)
+    no_console(Luncher)
+endif()
+
 target_link_libraries(Luncher PRIVATE Engine)
 
 # common (Not Web)
