@@ -77,8 +77,11 @@ namespace gl {
     auto export_opengl_functions() -> void**
     {
         #undef X
-        #define X(name) (void*)name, 
-
+        #if ROBUST_GL_CHECK
+        #   define X(name) (void*)name.m_Func, 
+        #else
+        #   define X(name) (void*)name, 
+        #endif
         
 
         return new void*[OPENGL_FUNCTIONS_COUNT]{
@@ -92,7 +95,7 @@ namespace gl {
         #undef X
         #if ROBUST_GL_CHECK
         #   define X(name) \
-            name.m_Func  = reinterpret_cast<std::remove_reference_t<PFN_gl##name>>(state[index++]);\
+            name.m_Func  = reinterpret_cast<std::remove_reference_t<PFN_gl##name>>(funcs[index++]);\
             name.m_After = [](std::string info) { auto err = glGetError(); if(err != GL_NO_ERROR) if(!info.contains("glClear")) throw Exception("gl error id {} {}", err, info); };\
             name.m_Name  = "gl"#name;
         #else
