@@ -88,7 +88,7 @@ auto OpenGLRenderer::viewport() const -> std::tuple<uint32_t, uint32_t, uint32_t
 auto OpenGLRenderer::enable_wireframe() -> void
 {
     #if defined(WEB_PLT)
-    static bool webPolyModeAvailable = app->m_Renderer.has_extension("WEBGL_polygon_mode");
+    static bool webPolyModeAvailable = m_Renderer.has_extension("WEBGL_polygon_mode");
     if (webPolyModeAvailable) {
         EM_ASM({
             const gl = Module.ctx;
@@ -107,7 +107,7 @@ auto OpenGLRenderer::enable_wireframe() -> void
 auto OpenGLRenderer::disable_wireframe() -> void
 {
     #if defined(WEB_PLT)
-    static bool webPolyModeAvailable = app->m_Renderer.has_extension("WEBGL_polygon_mode");
+    static bool webPolyModeAvailable = m_Renderer.has_extension("WEBGL_polygon_mode");
     if (webPolyModeAvailable) {
         EM_ASM({
             const gl = Module.ctx;
