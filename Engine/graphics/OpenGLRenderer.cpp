@@ -40,7 +40,7 @@ auto OpenGLRenderer::render(const Scene& scene, const std::shared_ptr<ShaderProg
     static std::shared_ptr<Material> currMatt = nullptr;
     //Drwaing
     std::for_each( std::execution::seq,
-        scene.entities().cbegin(), scene.entities().cend(),
+        scene.entities().begin(), scene.entities().end(),
         [&](const auto& obj){
             program->set_uniform("Model", obj.model());
 
