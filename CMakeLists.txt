@@ -139,6 +139,7 @@ if(EMSCRIPTEN)
         -pthread
         -matomics
         -flto
+        -fexperimental-library
     )
 
     add_link_options(
@@ -157,6 +158,7 @@ if(EMSCRIPTEN)
         -sFILESYSTEM=0
         -sPTHREAD_POOL_SIZE=4
         -sEXIT_RUNTIME=1
+        -sUSE_PTHREADS=1
     )
 
     configure_file(
