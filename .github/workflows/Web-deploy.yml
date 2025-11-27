@@ -25,11 +25,10 @@ jobs:
         - name: Prepare Artifact
           run: |
             mkdir -p site
-            
-            # Copy only essential files (js, html, wasm, data)
+            cp build-web/index.html site/index.html
+            # Copy only essential files (js, wasm, data)
             find build-web/ -type f \( \
               -name "*.js" \
-              -o -name "*.html" \
               -o -name "*.wasm" \
               -o -name "*.data" \
             \) -exec cp {} site/ \;
