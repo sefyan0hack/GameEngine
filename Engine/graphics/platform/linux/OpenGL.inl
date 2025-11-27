@@ -26,6 +26,14 @@
 //     return *this;
 // }
 
+
+OpenGL::~OpenGL()
+{
+    // if (m_Context > 0) {
+        // glXDestroyContext(m_Context); needs surface
+    // }
+}
+
 auto OpenGL::make_current_opengl([[maybe_unused]] const CWindow& window)  -> bool
 {
     return glXMakeCurrent(window.surface(), window.handle(), m_Context);
