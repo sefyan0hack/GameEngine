@@ -15,7 +15,7 @@ auto sys::host::arch() -> sys::Arch
     utsname system_info;
     uname(&system_info);
 
-    std::string machine = sysinfo.machine;
+    std::string machine = system_info.machine;
     
     if (machine == "x86_64" || machine == "amd64") {
         return Arch::x64;
