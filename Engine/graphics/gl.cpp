@@ -79,7 +79,11 @@ namespace gl {
         #undef X
         #define X(name) (void*)name, 
 
-        return std::vector<void*> { GLFUNCS }.data();
+        
+
+        return new void*[OPENGL_FUNCTIONS_COUNT]{
+            GLFUNCS
+        };
     }
 
     auto import_opengl_functions(void **funcs) -> void

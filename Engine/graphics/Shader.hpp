@@ -15,7 +15,7 @@ class ENGINE_API Shader
     friend struct std::formatter<Shader>;
     Shader();
     Shader(const std::string& filename);
-    Shader(const std::string& Src, GLenum type);
+    Shader(std::string Src, GLenum type);
     Shader(const cmrc::file& Src, GLenum type);
 
     

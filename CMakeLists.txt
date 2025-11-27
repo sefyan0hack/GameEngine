@@ -77,7 +77,6 @@ endif()
 add_compile_options(
     "$<$<CXX_COMPILER_ID:GNU,Clang>:-ffunction-sections;-fdata-sections>"
     "$<$<CXX_COMPILER_ID:GNU,Clang>:-funwind-tables>" # generate some exception data (usually disabled for C programs)
-    "$<$<CXX_COMPILER_ID:GNU,Clang>:-fstack-protector-strong>"
     "$<$<CXX_COMPILER_ID:GNU,Clang>:-flto-partition=none>"
     "$<$<CXX_COMPILER_ID:MSVC>:/Gy;/Gw>"
     )
@@ -169,7 +168,7 @@ if(EMSCRIPTEN)
     add_custom_command(
         OUTPUT ${CMAKE_BINARY_DIR}/index.html
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/index_html.cmake ${CMAKE_BINARY_DIR}/index.html
-        DEPENDS ${CMAKE_BINARY_DIR}/index_html.cmake SandBox
+        DEPENDS ${CMAKE_BINARY_DIR}/index_html.cmake Luncher
         COMMENT "Generating index.html"
     )
     
@@ -436,7 +435,7 @@ add_compile_definitions(
 # ??
 ####################################################################################################
 add_subdirectory(Engine)
-add_subdirectory(SandBox)
+add_subdirectory(Game)
 
 ####################################################################################################
 # TEST

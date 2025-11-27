@@ -33,7 +33,6 @@ APP::APP()
     , m_Running(true)
     , m_LastFrameTime(std::chrono::steady_clock::now())
     , m_Fps(60.0f)
-    , m_SmoothedFPS(60.0f)
     , Renderer(new OpenGLRenderer(Window))
     , lib("Game")
     , Game()
@@ -199,7 +198,6 @@ auto APP::loop_body(void* ctx) -> void
     app->m_LastFrameTime = now;
 
     app->m_Fps = 1.0f / deltaTime;
-    app->m_SmoothedFPS = 0.9f * app->m_SmoothedFPS + 0.1f * app->m_Fps;
 
     // Wireframe Mode
     static bool wireframe_enabled = false;
@@ -287,10 +285,6 @@ auto APP::run() -> void
 auto APP::fps() const -> float
 {
     return m_Fps;
-}
-auto APP::smooth_fps() const -> float
-{
-    return m_SmoothedFPS;
 }
 
 auto APP::deltatime() const -> float

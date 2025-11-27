@@ -22,7 +22,6 @@ public:
 
     auto run() -> void ;
     auto fps() const -> float;
-    auto smooth_fps() const -> float;
     auto deltatime() const -> float;
     auto push_event(const Event& event) -> void;
 
@@ -43,12 +42,11 @@ private:
     CWindow Window;
     Keyboard Keyboard;
     Mouse Mouse;
-
     
     bool m_Running;
     EventQueue ApplicationEventQueue;
     std::chrono::steady_clock::time_point m_LastFrameTime;
-    float m_Fps, m_SmoothedFPS;
+    float m_Fps;
 
     IRenderer* Renderer;
     DynLib lib;

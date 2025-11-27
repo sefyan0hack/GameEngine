@@ -603,11 +603,11 @@ inline auto match(TVarinat&& v, TMatchers&&... m) -> decltype(auto)
     );
 }
 
-inline auto async_repeat_every(int64_t ms, auto&& F, auto&&... args) -> void
+inline auto async_repeat_every(int64_t ms, auto F, auto&&... args) -> void
 {
-    std::thread([ms, F, &args...](){
+    std::thread([=](){
         while(true){
-            F(std::forward<decltype(args)...>(args)...);
+            F(args...);
             std::this_thread::sleep_for(std::chrono::milliseconds(ms));
         }
     }).detach();
@@ -615,17 +615,17 @@ inline auto async_repeat_every(int64_t ms, auto&& F, auto&&... args) -> void
 
 inline auto async_run_after(int64_t ms, auto&& F, auto&&... args) -> void
 {
-    std::thread([ms, F, &args...](){
+    std::thread([ms, F = std::forward<decltype(F)>(F), ...args = std::forward<decltype(args)>(args)](){
         std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-        F(std::forward<decltype(args)...>(args)...);
+        F(args...);
     }).detach();
 }
 
 inline auto async_while(bool& cond, auto&& F, auto&&... args) -> void
 {
-    std::thread([&cond, F, &args...](){
+    std::thread([cond, F = std::forward<decltype(F)>(F), ...args = std::forward<decltype(args)>(args)](){
         while(cond){
-            F(std::forward<decltype(args)...>(args)...);
+            F(args...);
         }
     }).detach();
 }

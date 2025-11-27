@@ -161,12 +161,14 @@ function(apply_harden_options)
                 target_compile_options(${target} PRIVATE
                     "$<$<BOOL:${HARDEN}>:-fharden-compares>"
                     "$<$<BOOL:${HARDEN}>:-fharden-conditional-branches>"
+                    "$<$<BOOL:${HARDEN}>:-fstack-protector-strong>"
                 )
             endif()
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             
             target_compile_options(${target} PRIVATE
-                "$<$<BOOL:${HARDEN}>:-Wformat;-Wformat-security;-Werror=format-security;-fno-strict-aliasing;-fno-common;-fstack-protector-all>"
+                "$<$<BOOL:${HARDEN}>:-Wformat;-Wformat-security;-Werror=format-security;-fno-strict-aliasing;-fno-common>"
+                "$<$<BOOL:${HARDEN}>:-fstack-protector-strong>"
             )
 
             if(HARDEN)

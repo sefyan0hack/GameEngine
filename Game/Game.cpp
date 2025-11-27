@@ -5,8 +5,7 @@
 #include <game_export.h>
 #include <cmrc/cmrc.hpp>
 
-CMRC_DECLARE(res);
-inline auto fs = cmrc::res::get_filesystem();
+extern cmrc::embedded_filesystem fs;
 
 using namespace std;
 
@@ -22,29 +21,29 @@ private:
 public:
     Game(class APP& app)
         : app(app)
-        , vert(std::make_shared<Shader>(cmrc::res::get_filesystem().open("res/Shaders/cube.vert"), GL_VERTEX_SHADER))
-        , frag(std::make_shared<Shader>(cmrc::res::get_filesystem().open("res/Shaders/cube.frag"), GL_FRAGMENT_SHADER))
+        , vert(std::make_shared<Shader>(fs.open("res/Shaders/cube.vert"), GL_VERTEX_SHADER))
+        , frag(std::make_shared<Shader>(fs.open("res/Shaders/cube.frag"), GL_FRAGMENT_SHADER))
         , CubeProgram(std::make_shared<ShaderProgram>(vert, frag))
         , MainScene()
     {
 
-        ResManager["brik.jpg"]          = Texture2D(cmrc::res::get_filesystem().open("res/brik.jpg"));
-        ResManager["brik.png"]          = Texture2D(cmrc::res::get_filesystem().open("res/brik.png"));
-        ResManager["kimberley.jpg"]     = Texture2D(cmrc::res::get_filesystem().open("res/kimberley.jpg"));
-        ResManager["annie_spratt.jpg"]  = Texture2D(cmrc::res::get_filesystem().open("res/annie_spratt.jpg"));
-        ResManager["sand.png"]          = Texture2D(cmrc::res::get_filesystem().open("res/gravelly_sand_diff_4k.png"));
+        ResManager["brik.jpg"]          = Texture2D(fs.open("res/brik.jpg"));
+        ResManager["brik.png"]          = Texture2D(fs.open("res/brik.png"));
+        ResManager["kimberley.jpg"]     = Texture2D(fs.open("res/kimberley.jpg"));
+        ResManager["annie_spratt.jpg"]  = Texture2D(fs.open("res/annie_spratt.jpg"));
+        ResManager["sand.png"]          = Texture2D(fs.open("res/gravelly_sand_diff_4k.png"));
 
         ResManager["forest.jpg"]= TextureCubeMap(TextureCubeMap::base_to_6facesfiles("res/forest.jpg"));
 
         ResManager["CubeMattkimberley"]  = Material(ResManager["kimberley.jpg"]);
         ResManager["CubeMattSand"]  = Material(ResManager["sand.png"]);
         ResManager["cubeMesh"]      = Mesh(Mesh::CUBE);
-        ResManager["manMesh"]       = Mesh(obj_to_mesh(cmrc::res::get_filesystem().open("res/FinalBaseMesh.obj")));
+        ResManager["manMesh"]       = Mesh(obj_to_mesh(fs.open("res/FinalBaseMesh.obj")));
 
         constexpr int32_t Grids = 5;
 
-        static thread_local std::mt19937 rng(std::random_device{}());
-        static thread_local std::bernoulli_distribution coin(0.5f);
+        std::mt19937 rng(std::random_device{}());
+        std::bernoulli_distribution coin(0.5f);
 
         for(int32_t i = -Grids; i < Grids; i ++){
             for(int32_t j = -Grids; j < Grids; j ++){

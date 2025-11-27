@@ -44,10 +44,10 @@ Shader::Shader(const std::string& filename)
 
     debug::print(*this);
 }
-Shader::Shader(const std::string& Src, GLenum type)
-    : m_Id(gl::CreateShader(type))
-    , m_Type(type)
+Shader::Shader(std::string Src, GLenum type)
 {
+    m_Id = gl::CreateShader(type);
+    m_Type = type;
     auto src = pre_process() + Src;
 
     set_source(src);

@@ -63,5 +63,34 @@ if(NOT EMSCRIPTEN)
             $<$<PLATFORM_ID:Linux>:${X11_LIBRARIES}>
     )
 endif()
+### Luncher
 
+add_executable(Luncher)
+
+target_sources( Luncher PRIVATE
+    main.cpp 
+)
+
+target_link_libraries(Luncher PRIVATE Engine)
+
+# common (Not Web)
+if(NOT EMSCRIPTEN)
+    if(NOT WIN32)
+    target_link_libraries(Luncher PRIVATE $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
+    endif()
+
+    target_link_libraries(Luncher PRIVATE $<$<CXX_COMPILER_ID:GNU>:stdc++exp>)
+endif()
+
+add_custom_command(TARGET Luncher POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy -t $<TARGET_FILE_DIR:Luncher> $<TARGET_RUNTIME_DLLS:Luncher>
+  COMMAND_EXPAND_LISTS
+)
+
+apply_all_options(TARGETS Luncher)
+apply_coverage_options(TARGETS Luncher)
+apply_harden_options(TARGETS Luncher)
+apply_sanitizer_options(TARGETS Luncher)
+
+print_target_compile_options(Luncher)
 print_target_compile_options(Engine)
