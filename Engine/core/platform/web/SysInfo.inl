@@ -17,5 +17,5 @@ auto sys::host::arch() -> sys::Arch
 
 auto sys::host::arch_str() -> std::string
 {
-    return sys::build::arch_atr();
+    return sys::build::arch_str();
 }
