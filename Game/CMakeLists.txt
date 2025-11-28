@@ -23,6 +23,7 @@ if(EMSCRIPTEN)
     -sSIDE_MODULE=2
     -sWASM=1
     -sEXPORT_ALL=1
+    -STANDALONE_WASM
   )
   set_target_properties(Game PROPERTIES PREFIX "lib")
   set_target_properties(Game PROPERTIES SUFFIX ".so")
