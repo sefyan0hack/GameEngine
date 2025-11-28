@@ -26,9 +26,10 @@ jobs:
           run: |
             mkdir -p site
             cp build-web/index.html site/index.html
-            # Copy only essential files (js, wasm, data)
+            # Copy only essential files (js, so, wasm, data)
             find build-web/ -type f \( \
               -name "*.js" \
+              -o -name "*.so" \
               -o -name "*.wasm" \
               -o -name "*.data" \
             \) -exec cp {} site/ \;
