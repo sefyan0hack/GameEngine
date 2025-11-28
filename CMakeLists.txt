@@ -155,10 +155,11 @@ if(EMSCRIPTEN)
         -sFULL_ES3=1
         -sDISABLE_EXCEPTION_THROWING=0
         -sDISABLE_EXCEPTION_CATCHING=0
-        -sFILESYSTEM=0
+        -sFILESYSTEM=1 # needed for DynLib 
         -sPTHREAD_POOL_SIZE=4
         -sEXIT_RUNTIME=1
         -sUSE_PTHREADS=1
+        -sERROR_ON_UNDEFINED_SYMBOLS=0
     )
 
     configure_file(
