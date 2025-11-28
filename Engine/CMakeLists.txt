@@ -71,6 +71,7 @@ target_sources( Luncher PRIVATE
     main.cpp 
 )
 
+target_link_options(Luncher PRIVATE -sMAIN_MODULE=1 )
 
 if(NO_CONSOLE)
     no_console(Luncher)
