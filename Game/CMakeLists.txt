@@ -3,7 +3,11 @@
 include(helpers)
 include(GenerateExportHeader)
 
-add_library(Game SHARED)
+if(EMSCRIPTEN)
+  add_library(Game MODULE)
+else()
+  add_library(Game SHARED)
+endif()
 
 generate_export_header(Game
     BASE_NAME GAME
