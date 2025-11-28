@@ -159,6 +159,7 @@ if(EMSCRIPTEN)
         -sPTHREAD_POOL_SIZE=4
         -sEXIT_RUNTIME=1
         -sUSE_PTHREADS=1
+        -sERROR_ON_UNDEFINED_SYMBOLS=1
         -sASSERTIONS=2
     )
 
