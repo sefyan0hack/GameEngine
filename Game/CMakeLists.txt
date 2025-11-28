@@ -20,6 +20,11 @@ target_sources( Game PRIVATE
     Game.cpp 
 )
 if(EMSCRIPTEN)
+  target_compile_options(Game PRIVATE 
+    -sSIDE_MODULE=2
+    -sWASM=1
+    -sEXPORT_ALL=1
+  )
   target_link_options(Game PRIVATE 
     -sSIDE_MODULE=2
     -sWASM=1
