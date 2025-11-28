@@ -162,7 +162,10 @@ if(EMSCRIPTEN)
         -sERROR_ON_UNDEFINED_SYMBOLS=1
         -sASSERTIONS=1
     )
-
+    set_target_properties(Game PROPERTIES
+        SUFFIX ".wasm"
+        PREFIX ""
+    )
     configure_file(
         ${CMAKE_SOURCE_DIR}/cmake/index_template.cmake.in
         ${CMAKE_BINARY_DIR}/index_html.cmake

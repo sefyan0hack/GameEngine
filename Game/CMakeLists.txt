@@ -16,10 +16,6 @@ target_sources( Game PRIVATE
     Game.cpp 
 )
 if(EMSCRIPTEN)
-  set_target_properties(Game PROPERTIES
-    SUFFIX ".wasm"
-    PREFIX ""
-  )
   target_link_options(Game PRIVATE 
     -sSIDE_MODULE=1
     -sWASM=1
