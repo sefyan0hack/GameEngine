@@ -71,7 +71,7 @@ target_sources( Luncher PRIVATE
     main.cpp 
 )
 
-target_link_options(Luncher PRIVATE -sMAIN_MODULE=1 -s EXPORTED_FUNCTIONS=['_main', '$FS', '$SOCKFS', '$PIPEFS', '$FS_mkdirTree', ...] )
+target_link_options(Luncher PRIVATE -sMAIN_MODULE=1 -s "EXPORTED_FUNCTIONS=['_main']")
 
 if(NO_CONSOLE)
     no_console(Luncher)
