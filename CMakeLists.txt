@@ -128,7 +128,6 @@ if(EMSCRIPTEN)
     set(OPENGL_LIB_NAME "WebGL")
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
-    set(CMAKE_SHARED_LIBRARY_SUFFIX "wasm")
 
     set(STATIC_LINK OFF)
     set(NATIVE_OPT OFF)

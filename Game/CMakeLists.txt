@@ -24,6 +24,7 @@ if(EMSCRIPTEN)
     -sWASM=1
     -sEXPORT_ALL=1
   )
+  set_target_properties(Game PROPERTIES PREFIX "lib")
   set_target_properties(Game PROPERTIES SUFFIX ".so")
 endif()
 
