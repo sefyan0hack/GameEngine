@@ -4,7 +4,7 @@ include(helpers)
 include(GenerateExportHeader)
 
 if(EMSCRIPTEN)
-  add_library(Game MODULE)
+  add_executable(Game)
 else()
   add_library(Game SHARED)
 endif()
