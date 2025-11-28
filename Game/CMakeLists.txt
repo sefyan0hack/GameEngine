@@ -9,16 +9,10 @@ else()
   add_library(Game SHARED)
 endif()
 
-generate_export_header(Game
-    BASE_NAME GAME
-    EXPORT_MACRO_NAME GAME_API
-    EXPORT_FILE_NAME game_export.h
-    STATIC_DEFINE GAME_STATIC
-)
-
 target_sources( Game PRIVATE
     Game.cpp 
 )
+
 if(EMSCRIPTEN)
   target_compile_options(Game PRIVATE 
     -sSIDE_MODULE=2
@@ -31,6 +25,7 @@ if(EMSCRIPTEN)
     -sEXPORT_ALL=1
   )
 endif()
+
 target_include_directories(Game PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(Game PRIVATE glm::glm Engine)
 

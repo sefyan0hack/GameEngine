@@ -2,7 +2,6 @@
 #include <memory>
 #include <random>
 #include <Engine.hpp>
-#include <game_export.h>
 #include <cmrc/cmrc.hpp>
 
 extern cmrc::embedded_filesystem fs;
