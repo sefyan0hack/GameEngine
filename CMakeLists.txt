@@ -160,7 +160,7 @@ if(EMSCRIPTEN)
         -sEXIT_RUNTIME=1
         -sUSE_PTHREADS=1
         -sERROR_ON_UNDEFINED_SYMBOLS=1
-        -sASSERTIONS=2
+        -sASSERTIONS=1
     )
 
     configure_file(
