@@ -159,7 +159,7 @@ if(EMSCRIPTEN)
         -sPTHREAD_POOL_SIZE=4
         -sEXIT_RUNTIME=1
         -sUSE_PTHREADS=1
-        -sASSERTIONS=1
+        -sASSERTIONS=2
     )
 
     configure_file(
