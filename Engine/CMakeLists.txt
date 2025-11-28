@@ -20,9 +20,9 @@ generate_export_header(Engine
     EXPORT_FILE_NAME engine_export.h
     STATIC_DEFINE ENGINE_STATIC
 )
-
-target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-
+if(EMSCRIPTEN)
+    target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+endif()
 if(MSVC)
     target_compile_options(Engine PRIVATE /wd4251 /wd4275)
 endif()
