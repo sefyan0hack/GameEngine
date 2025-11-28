@@ -17,11 +17,15 @@
 #include <cxxabi.h>
 #endif
 
+#if !defined(WEB_PLT)
+    #define EMSCRIPTEN_KEEPALIVE
+#endif
+
 #if defined(MSVC_CPL)
     #define EXPORT_SYM  __declspec(dllexport)
     #define IMPORT_SYM  __declspec(dllimport)
 #elif defined(CLANG_CPL) || defined(GNU_CPL)
-    #define EXPORT_SYM __attribute__((dllexport))
+    #define EXPORT_SYM __attribute__((dllexport)) EMSCRIPTEN_KEEPALIVE
     #define IMPORT_SYM __attribute__((dllimport))
 #else
     #define EXPORT_SYM
