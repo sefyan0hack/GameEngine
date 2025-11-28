@@ -7,6 +7,7 @@
 #elif defined(LINUX_PLT)
     #include <dlfcn.h>
 #elif  defined(WEB_PLT)
+    #include <dlfcn.h>
     #include <emscripten.h>
 #endif
 
