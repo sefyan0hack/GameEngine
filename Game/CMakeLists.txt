@@ -17,8 +17,9 @@ target_sources( Game PRIVATE
 )
 if(EMSCRIPTEN)
   target_link_options(Game PRIVATE 
-    -sSIDE_MODULE=1
+    -sSIDE_MODULE=2
     -sWASM=1
+    -sEXPORT_ALL=1
   )
 endif()
 target_include_directories(Game PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
