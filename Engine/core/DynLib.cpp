@@ -4,8 +4,10 @@
 
 #if defined(WINDOWS_PLT)
     #include <windows.h>
-#elif defined(LINUX_PLT) || defined(WEB_PLT)
+#elif defined(LINUX_PLT)
     #include <dlfcn.h>
+#elif  defined(WEB_PLT)
+    #include <emscripten.h>
 #endif
 
 
@@ -53,8 +55,13 @@ auto DynLib::load() -> void
     
     #if defined(WINDOWS_PLT)
         m_handle = (void*) LoadLibraryA(full_name().c_str());
-    #elif defined(LINUX_PLT) || defined(WEB_PLT)
+    #elif defined(LINUX_PLT)
         m_handle = (void*) dlopen(full_name().c_str(), RTLD_NOW | RTLD_LOCAL);
+    #elif defined(WEB_PLT)
+        emscripten_dlopen(full_name().c_str(), RTLD_NOW | RTLD_LOCAL, m_handle,
+            [](void* ctx, void* handle) { ctx = handle; },
+            [](void* ctx) { throw Exception("emscripten_dlopen failed"); }
+        );
     #endif
     
     if (!m_handle) throw Exception("Can't open lib `{}`: {}", full_name().c_str(), error());
