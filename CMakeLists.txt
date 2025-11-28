@@ -128,6 +128,8 @@ if(EMSCRIPTEN)
     set(OPENGL_LIB_NAME "WebGL")
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
+    set(CMAKE_SHARED_LIBRARY_SUFFIX "wasm")
+
     set(STATIC_LINK OFF)
     set(NATIVE_OPT OFF)
 
@@ -162,10 +164,7 @@ if(EMSCRIPTEN)
         -sERROR_ON_UNDEFINED_SYMBOLS=1
         -sASSERTIONS=1
     )
-    set_target_properties(Game PROPERTIES
-        SUFFIX ".wasm"
-        PREFIX ""
-    )
+
     configure_file(
         ${CMAKE_SOURCE_DIR}/cmake/index_template.cmake.in
         ${CMAKE_BINARY_DIR}/index_html.cmake
