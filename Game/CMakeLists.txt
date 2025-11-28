@@ -16,7 +16,14 @@ target_sources( Game PRIVATE
     Game.cpp 
 )
 if(EMSCRIPTEN)
-  target_link_options(Game PRIVATE -sSIDE_MODULE=1)
+  set_target_properties(Game PROPERTIES
+    SUFFIX ".wasm"
+    PREFIX ""
+  )
+  target_link_options(Game PRIVATE 
+    -sSIDE_MODULE=1
+    -sWASM=1
+  )
 endif()
 target_include_directories(Game PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(Game PRIVATE glm::glm Engine)
