@@ -6,7 +6,7 @@
 #include "stacktrace.hpp"
 
 
-class ENGINE_API Exception final : public std::runtime_error {
+class ENGINE_EXPORT Exception final : public std::runtime_error {
 public:
 
   template <typename... Ts>

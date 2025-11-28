@@ -66,7 +66,7 @@ enum class Key : uint8_t {
     Unknown
 };
 
-class ENGINE_API Keyboard
+class ENGINE_EXPORT Keyboard
 {
 	friend class APP;
 public:

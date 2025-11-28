@@ -4,7 +4,7 @@
 
 #include "Event.hpp"
 
-class ENGINE_API EventQueue {
+class ENGINE_EXPORT EventQueue {
 public:
     EventQueue() = default;
 

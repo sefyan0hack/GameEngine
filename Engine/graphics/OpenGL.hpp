@@ -19,7 +19,7 @@ namespace gl {
 
 } //namespace gl
 
-class ENGINE_API OpenGL
+class ENGINE_EXPORT OpenGL
 {
     public:
         explicit OpenGL(const CWindow& window);

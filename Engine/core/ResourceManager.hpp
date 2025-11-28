@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <engine_export.h>
 
-class ENGINE_API ResourceManager
+class ENGINE_EXPORT ResourceManager
 {
 private:
     class Proxy {

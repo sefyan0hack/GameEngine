@@ -5,7 +5,7 @@
 #include <engine_export.h>
 
 
-class ENGINE_API DynLib {
+class ENGINE_EXPORT DynLib {
 public:
     DynLib(const char* lib);
     DynLib(const DynLib& other);

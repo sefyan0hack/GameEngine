@@ -9,7 +9,7 @@
 #include <core/Utils.hpp>
 #include <engine_export.h>
 
-class ENGINE_API Image
+class ENGINE_EXPORT Image
 {
 public:
     friend struct std::formatter<Image>;

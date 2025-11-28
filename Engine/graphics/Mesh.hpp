@@ -9,7 +9,7 @@
 #include <cmrc/cmrc.hpp>
 #include <engine_export.h>
 
-struct ENGINE_API Vertex
+struct ENGINE_EXPORT Vertex
 {
   glm::vec3 Position;
   glm::vec3 Normal;
@@ -27,7 +27,7 @@ struct AttributeInfo {
 
 class Material;
 
-class ENGINE_API Mesh
+class ENGINE_EXPORT Mesh
 {
 public:
   using VetexData = Vertex;
@@ -141,5 +141,5 @@ struct std::formatter<Mesh> {
   }
 };
 
-auto ENGINE_API obj_to_mesh(const char* filename) -> std::vector<Vertex>;
-auto ENGINE_API obj_to_mesh(cmrc::file src) -> std::vector<Vertex>;
+auto ENGINE_EXPORT obj_to_mesh(const char* filename) -> std::vector<Vertex>;
+auto ENGINE_EXPORT obj_to_mesh(cmrc::file src) -> std::vector<Vertex>;

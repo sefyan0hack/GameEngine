@@ -7,7 +7,7 @@
 #include "Transform.hpp"
 #include <engine_export.h>
 
-class ENGINE_API GameObject {
+class ENGINE_EXPORT GameObject {
 public:
     friend struct std::formatter<GameObject>;
     GameObject(glm::vec3 position, std::shared_ptr<class Material> matt, std::shared_ptr<class Mesh> mesh, std::string Name = std::format("Obj{}", Count)) noexcept;

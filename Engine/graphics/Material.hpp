@@ -8,7 +8,7 @@
 #include "ShaderProgram.hpp"
 #include <engine_export.h>
 
-class ENGINE_API Material
+class ENGINE_EXPORT Material
 {
 public:
                               //loc    type    size

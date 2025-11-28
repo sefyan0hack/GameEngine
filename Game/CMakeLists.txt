@@ -3,7 +3,13 @@
 include(helpers)
 include(GenerateExportHeader)
 
-add_library(Game SHARED)
+if(GAME_HOT_RELOADABLE)
+  add_library(Game SHARED)
+else()
+  add_library(Game)
+endif()
+
+generate_export_header(Game)
 
 target_sources( Game PRIVATE
   Game.cpp 
@@ -12,10 +18,13 @@ target_sources( Game PRIVATE
 target_include_directories(Game PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(Game PRIVATE glm::glm Engine)
 
-add_custom_command(TARGET Game POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Game> $<TARGET_FILE_DIR:Luncher>
-)
-
+if(NOT GAME_HOT_RELOADABLE)
+  target_link_libraries(Luncher PRIVATE Game)
+else()
+  add_custom_command(TARGET Game POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Game> $<TARGET_FILE_DIR:Luncher>
+  )
+endif()
 
 apply_all_options(TARGETS Game)
 apply_coverage_options(TARGETS Game)

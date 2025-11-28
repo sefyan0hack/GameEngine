@@ -17,7 +17,7 @@
 
 class EventQueue;
 
-class ENGINE_API CWindow
+class ENGINE_EXPORT CWindow
 {
     friend class APP;
 

@@ -12,7 +12,7 @@
 #include <engine_export.h>
 
 /// @brief  Scene has all the Entities to Render + Sky box
-class ENGINE_API Scene
+class ENGINE_EXPORT Scene
 {
 public:
     friend struct std::formatter<Scene>;

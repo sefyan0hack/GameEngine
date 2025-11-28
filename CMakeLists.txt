@@ -38,14 +38,15 @@ string(REGEX MATCH "^[0-9]+" COMPILER_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSIO
 ####################################################################################################
 include(CMakeDependentOption)
 
-option(TESTS                "Tests"               OFF)
-option(DOCS                 "Docs"                OFF)
-option(ENABLE_COVERAGE      "Code coverage"       OFF)
-option(HARDEN               "Hardening"           OFF)
-option(ASAN                 "Address Sanitizer"   OFF)
-option(USAN                 "Undefined Sanitizer" OFF)
-option(TSAN                 "Thread Sanitizer"    OFF)
-option(NATIVE_OPT           "Native opt build"    ON)
+option(TESTS                "Tests"                                   OFF)
+option(DOCS                 "Docs"                                    OFF)
+option(ENABLE_COVERAGE      "Code coverage"                           OFF)
+option(HARDEN               "Hardening"                               OFF)
+option(ASAN                 "Address Sanitizer"                       OFF)
+option(USAN                 "Undefined Sanitizer"                     OFF)
+option(TSAN                 "Thread Sanitizer"                        OFF)
+option(NATIVE_OPT           "Native opt build"                        ON)
+option(GAME_HOT_RELOADABLE  "Build Game as Shared and hot reload it"  OFF)
 cmake_dependent_option(ROBUST_GL_CHECK "Robust GL checks in Debug builds `slow` " ON [[ CMAKE_BUILD_TYPE STREQUAL "Debug" ]] OFF)
 cmake_dependent_option(NO_CONSOLE "No Console with Window" ON [[ CMAKE_BUILD_TYPE STREQUAL "Release" ]] OFF)
 cmake_dependent_option(STATIC_LINK "Static link C++" ON "MINGW" OFF)
@@ -419,7 +420,8 @@ add_compile_definitions(
     OPENGL_LIB="${CORE_OPENGL_LIB}"
     DYN_LIB_PREFIX="${CMAKE_SHARED_LIBRARY_PREFIX}"
     DYN_LIB_SUFFIX="${CMAKE_SHARED_LIBRARY_SUFFIX}"
-    
+
+    $<$<BOOL:${GAME_HOT_RELOADABLE}>:GAME_HOT_RELOADABLE>
     $<$<PLATFORM_ID:Windows>:WINDOWS_PLT>
     $<$<PLATFORM_ID:Linux>:LINUX_PLT>
     $<$<PLATFORM_ID:Emscripten>:WEB_PLT>
@@ -461,6 +463,7 @@ message(STATUS "ASAN : (${ASAN}) [ Address Sanitizer ]")
 message(STATUS "USAN : (${USAN}) [ Undefined Sanitizer ]")
 message(STATUS "TSAN : (${TSAN}) [ Thread Sanitizer ]")
 message(STATUS "NATIVE_OPT : (${NATIVE_OPT}) [ Native opt build ]")
+message(STATUS "GAME_HOT_RELOADABLE : (${GAME_HOT_RELOADABLE}) [ hot reload ]")
 message(STATUS "ROBUST_GL_CHECK : (${ROBUST_GL_CHECK}) [ Robust GL checks in Debug builds ]")
 message(STATUS "NO_CONSOLE : (${NO_CONSOLE}) [ No Console with Window ]")
 message(STATUS "RTTI : (${RTTI}) [ Rtti ]")

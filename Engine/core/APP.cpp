@@ -23,6 +23,14 @@
 #include <emscripten/html5.h>
 #endif
 
+extern "C" {
+    void* game_ctor(APP& app);
+    void game_dtor(void* game);
+    void game_link(void** funcs);
+    void game_update(void* game, float delta);
+    void game_on_deltamouse(void* game, float dx, float dy);
+}
+
 constexpr auto Wname = "Game";
 constexpr auto WINDOW_WIDTH = 1180;
 constexpr auto WINDOW_HIEGHT = 640;
@@ -37,14 +45,13 @@ APP::APP()
     , Renderer(new OpenGLRenderer(Window))
     , lib("Game")
     , Game()
-    , new_game(nullptr)
-    , delete_game(nullptr)
-    , game_update(nullptr)
-    , game_on_deltamouse(nullptr)
-    , game_link(nullptr)
-{
 
-    load_game_library();
+{
+    #if defined(GAME_HOT_RELOADABLE)
+        load_game_library();
+    #else
+        init_game_library();
+    #endif
 
     Window.show();
     Window.set_vsync(true);
@@ -55,47 +62,44 @@ APP::~APP()
     if(Renderer) delete Renderer;
 }
 
+auto APP::init_game_library() -> void
+{
+    game_ctor = reinterpret_cast<game_ctor_t>(::game_ctor);
+    game_dtor = reinterpret_cast<game_dtor_t>(::game_dtor);
+    game_link = reinterpret_cast<game_link_t>(::game_link);
+    game_update = reinterpret_cast<game_update_t>(::game_update);
+    game_on_deltamouse = reinterpret_cast<game_on_deltamouse_t>(::game_on_deltamouse);
+
+    game_link(gl::export_opengl_functions());
+    Game = game_ctor(*this);
+}
+
 auto APP::load_game_library() -> void
 {
-    try {
-        lib.load();
-        new_game = lib.function<void*(*)(APP&)>("new_game");
-        delete_game = lib.function<void(*)(void*)>("delete_game");
-        game_update = lib.function<void(*)(void*, float)>("game_update");
-        game_on_deltamouse = lib.function<void(*)(void*, float, float)>("game_on_deltamouse");
-        game_link = lib.function<void(*)(void**)>("game_link");
+    lib.load();
 
-        if (!new_game || !delete_game) {
-            throw Exception("Failed to get game library functions");
-        }
+    game_ctor = lib.function<game_ctor_t>("game_ctor");
+    game_dtor = lib.function<game_dtor_t>("game_dtor");
+    game_link = lib.function<game_link_t>("game_link");
+    game_update = lib.function<game_update_t>("game_update");
+    game_on_deltamouse = lib.function<game_on_deltamouse_t>("game_on_deltamouse");
 
-        game_link(gl::export_opengl_functions());
-        
-        Game = new_game(*this);
-    } catch (const Exception& e) {
-        debug::print("Failed to load game library: {}", e.what());
-        // Set to null to avoid crashes
-        new_game = nullptr;
-        delete_game = nullptr;
-        game_update = nullptr;
-        game_on_deltamouse = nullptr;
-        game_link = nullptr;
-        Game = nullptr;
-    }
+    game_link(gl::export_opengl_functions());
+    Game = game_ctor(*this);
 }
 
 auto APP::unload_game_library() -> void
 {
     if (Game) {
-        if (!new_game || !delete_game) {
-            throw Exception("new_game() || delete_game() are null");
+        if (!game_ctor || !game_dtor) {
+            throw Exception("game_ctor() || game_dtor() are null");
         }
-        delete_game(Game);
+        game_dtor(Game);
         Game = nullptr;
     }
 
-    new_game = nullptr;
-    delete_game = nullptr;
+    game_ctor = nullptr;
+    game_dtor = nullptr;
     game_update = nullptr;
     game_on_deltamouse = nullptr;
     lib.unload();
@@ -257,6 +261,7 @@ auto APP::loop_body(void* ctx) -> void
         }
     }
 
+    #if defined(GAME_HOT_RELOADABLE)
     static bool r_key_was_pressed = false;
     if (app->Keyboard.is_pressed(Key::R)) {
         if (!r_key_was_pressed) {
@@ -267,7 +272,7 @@ auto APP::loop_body(void* ctx) -> void
         r_key_was_pressed = false;
     }
 
-
+    #endif
     app->frame(deltaTime);
     //todo: Frame Pacing
 }

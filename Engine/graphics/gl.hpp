@@ -133,21 +133,21 @@ namespace gl {
 
     #undef X
     #ifdef ROBUST_GL_CHECK
-    #   define X(name) ENGINE_API extern Function<PFN_gl##name> name;
+    #   define X(name) ENGINE_EXPORT extern Function<PFN_gl##name> name;
     #else
-    #   define X(name) ENGINE_API extern PFN_gl##name name;
+    #   define X(name) ENGINE_EXPORT extern PFN_gl##name name;
     #endif
 
     extern "C" {
         GLFUNCS
     }
 
-    auto ENGINE_API get_proc_address(const char* name) -> void*;
-    auto ENGINE_API get_integer(GLenum name) -> GLint;
-    auto ENGINE_API get_boolean(GLenum name) -> GLboolean;
-    auto ENGINE_API load_opengl_functions() -> void;
-    auto ENGINE_API export_opengl_functions() -> void**;
-    auto ENGINE_API import_opengl_functions(void** state) -> void;
+    auto ENGINE_EXPORT get_proc_address(const char* name) -> void*;
+    auto ENGINE_EXPORT get_integer(GLenum name) -> GLint;
+    auto ENGINE_EXPORT get_boolean(GLenum name) -> GLboolean;
+    auto ENGINE_EXPORT load_opengl_functions() -> void;
+    auto ENGINE_EXPORT export_opengl_functions() -> void**;
+    auto ENGINE_EXPORT import_opengl_functions(void** state) -> void;
 } // namespace gl
 
 #undef GL_GLEXT_PROTOTYPES

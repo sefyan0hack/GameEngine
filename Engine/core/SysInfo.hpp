@@ -35,9 +35,9 @@ namespace sys
 
     namespace host
     {
-        ENGINE_API auto name() -> sys::Target;
-        ENGINE_API auto name_str() -> std::string;
-        ENGINE_API auto arch() -> sys::Arch;
-        ENGINE_API auto arch_str() -> std::string;
+        ENGINE_EXPORT auto name() -> sys::Target;
+        ENGINE_EXPORT auto name_str() -> std::string;
+        ENGINE_EXPORT auto arch() -> sys::Arch;
+        ENGINE_EXPORT auto arch_str() -> std::string;
     }
 }

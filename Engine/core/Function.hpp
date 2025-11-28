@@ -19,7 +19,7 @@
 #endif
 
 template <typename T>
-class ENGINE_API Function;
+class ENGINE_EXPORT Function;
 
 template <typename R, typename... Args>
 class Function<R(PLT_CALL*)(Args...)> {

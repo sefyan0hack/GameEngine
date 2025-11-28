@@ -3,7 +3,7 @@
 #include "OpenGL.hpp"
 #include <engine_export.h>
 
-class ENGINE_API OpenGLRenderer final: public IRenderer 
+class ENGINE_EXPORT OpenGLRenderer final: public IRenderer 
 {
 public:
     OpenGLRenderer(const class CWindow& window);

@@ -4,7 +4,7 @@
 #include <engine_export.h>
 
 
-class ENGINE_API IRenderer
+class ENGINE_EXPORT IRenderer
 {
 public:
     virtual ~IRenderer() = default;

@@ -11,8 +11,15 @@
 #include "EventQueue.hpp"
 #include <engine_export.h>
 
-class ENGINE_API APP
+class ENGINE_EXPORT APP
 {
+
+public:
+    using game_ctor_t = void*(*)(APP&);
+    using game_dtor_t = void(*)(void*);
+    using game_link_t = void(*)(void**);
+    using game_update_t = void(*)(void*,float);
+    using game_on_deltamouse_t = void(*)(void*,float, float);
 
 public:
     friend class Game;
@@ -28,6 +35,7 @@ public:
     auto render(const class Scene& scene, std::shared_ptr<ShaderProgram> program) -> void;
 
 private:
+    auto init_game_library() -> void;
     auto load_game_library() -> void;
     auto unload_game_library() -> void;
     auto hot_reload_game_library() -> bool;
@@ -49,11 +57,13 @@ private:
     float m_Fps;
 
     IRenderer* Renderer;
+
     DynLib lib;
     void* Game;
-    std::function<void*(APP&)> new_game;
-    std::function<void(void*)> delete_game;
-    std::function<void(void*,float)> game_update;
-    std::function<void(void*,float, float)> game_on_deltamouse;
-    std::function<void(void**)> game_link;
+
+    game_ctor_t game_ctor;
+    game_dtor_t game_dtor;
+    game_link_t game_link;
+    game_update_t game_update;
+    game_on_deltamouse_t game_on_deltamouse;
 };

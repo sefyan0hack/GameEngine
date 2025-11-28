@@ -9,7 +9,7 @@
 #include <core/fmts.hpp>
 #include <engine_export.h>
 
-class ENGINE_API Camera
+class ENGINE_EXPORT Camera
 {
 public:
     friend struct std::formatter<Camera>;

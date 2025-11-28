@@ -17,16 +17,6 @@
 #include <cxxabi.h>
 #endif
 
-#if defined(MSVC_CPL)
-    #define EXPORT_SYM  __declspec(dllexport)
-    #define IMPORT_SYM  __declspec(dllimport)
-#elif defined(CLANG_CPL) || defined(GNU_CPL)
-    #define EXPORT_SYM __attribute__((dllexport))
-    #define IMPORT_SYM __attribute__((dllimport))
-#else
-    #define EXPORT_SYM
-    #define IMPORT_SYM
-#endif
 
 /**
  * @brief  Concept that tests whether a non-type template parameter names a free/static object

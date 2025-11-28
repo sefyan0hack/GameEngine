@@ -5,7 +5,7 @@
 #include <core/fmts.hpp>
 #include <engine_export.h>
 
-class ENGINE_API Transform
+class ENGINE_EXPORT Transform
 {
 public:
     friend struct std::formatter<Transform>;

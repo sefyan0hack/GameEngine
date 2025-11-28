@@ -12,7 +12,7 @@
 #include <engine_export.h>
 
 
-class ENGINE_API ShaderProgram {
+class ENGINE_EXPORT ShaderProgram {
 public:
     using GlslType = std::tuple<GLuint, GLenum, GLsizei>;
 

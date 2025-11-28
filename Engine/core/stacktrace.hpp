@@ -22,13 +22,13 @@ inline auto to_string([[maybe_unused]] const stacktrace& st ) -> std::string
 }
 #else
 
-struct ENGINE_API stacktrace_entry {
+struct ENGINE_EXPORT stacktrace_entry {
   std::string description() const { return "??"; }
   std::string source_file() const { return "??"; }
   size_t source_line() const { return 0; }
 };
 
-struct ENGINE_API stacktrace {
+struct ENGINE_EXPORT stacktrace {
   using const_iterator = std::array<stacktrace_entry, 0>::const_iterator;
   
   static stacktrace current() noexcept { return {}; }

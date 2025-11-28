@@ -9,7 +9,7 @@
 
 #include <cmrc/cmrc.hpp>
 
-class ENGINE_API Shader
+class ENGINE_EXPORT Shader
 {
   public:
     friend struct std::formatter<Shader>;

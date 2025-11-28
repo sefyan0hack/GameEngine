@@ -6,7 +6,7 @@
 #include <engine_export.h>
 
 class CWindow;
-class ENGINE_API Mouse
+class ENGINE_EXPORT Mouse
 {
     friend class APP;
 	friend struct std::formatter<Mouse>;

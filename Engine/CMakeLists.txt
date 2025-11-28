@@ -14,12 +14,7 @@ get_target_property(GRAPHICS_SRCS graphics SOURCES)
 add_library(Engine)
 set_target_properties(Engine PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
-generate_export_header(Engine
-    BASE_NAME ENGINE
-    EXPORT_MACRO_NAME ENGINE_API
-    EXPORT_FILE_NAME engine_export.h
-    STATIC_DEFINE ENGINE_STATIC
-)
+generate_export_header(Engine)
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 

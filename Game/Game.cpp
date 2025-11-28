@@ -3,13 +3,14 @@
 #include <random>
 #include <Engine.hpp>
 #include <cmrc/cmrc.hpp>
+#include <game_export.h>
 
 extern cmrc::embedded_filesystem fs;
 
 using namespace std;
 
 
-class Game
+class GAME_EXPORT Game
 {
 private:
     class APP& app;
@@ -98,28 +99,29 @@ public:
 // no toche code
 extern "C" {
 
-    EXPORT_SYM auto new_game(class APP& app) -> void*
+    GAME_EXPORT auto game_ctor(class APP& app) -> void*
     {
         return new Game(app);
     }
 
-    EXPORT_SYM auto delete_game(void* game) -> void
+    GAME_EXPORT auto game_dtor(void* game) -> void
     {
         delete static_cast<Game*>(game);
     }
 
-    EXPORT_SYM auto game_update(void* game, float delta) -> void
+    GAME_EXPORT auto game_link(void** funcs) -> void
+    {
+        gl::import_opengl_functions(funcs);
+    }
+
+    GAME_EXPORT auto game_update(void* game, float delta) -> void
     {
         static_cast<Game*>(game)->update(delta);
     }
 
-    EXPORT_SYM auto game_on_deltamouse(void* game, float dx, float dy) -> void
+    GAME_EXPORT auto game_on_deltamouse(void* game, float dx, float dy) -> void
     {
         static_cast<Game*>(game)->on_deltamouse(dx, dy);
     }
 
-    EXPORT_SYM auto game_link(void** funcs) -> void
-    {
-        gl::import_opengl_functions(funcs);
-    }
 }

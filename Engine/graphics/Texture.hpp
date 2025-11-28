@@ -10,7 +10,7 @@
 
 #include <cmrc/cmrc.hpp>
 
-class ENGINE_API Texture
+class ENGINE_EXPORT Texture
 {
 public:
     friend struct std::formatter<Texture>;
@@ -32,7 +32,7 @@ protected:
     
 };
 
-class ENGINE_API Texture2D final : public Texture
+class ENGINE_EXPORT Texture2D final : public Texture
 {
   public:
     Texture2D();
@@ -48,7 +48,7 @@ class ENGINE_API Texture2D final : public Texture
     bool m_Mipmapped;
 };
 
-class ENGINE_API TextureCubeMap final : public Texture
+class ENGINE_EXPORT TextureCubeMap final : public Texture
 {
   public:
     TextureCubeMap();

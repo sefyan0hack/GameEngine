@@ -4,7 +4,7 @@
 #include <string>
 #include <engine_export.h>
 
-class ENGINE_API SkyBox
+class ENGINE_EXPORT SkyBox
 {
 public:
   SkyBox();
