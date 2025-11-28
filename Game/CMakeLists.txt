@@ -24,6 +24,7 @@ if(EMSCRIPTEN)
     -sWASM=1
     -sEXPORT_ALL=1
   )
+  set_target_properties(Game PROPERTIES SUFFIX ".so")
 endif()
 
 target_include_directories(Game PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
