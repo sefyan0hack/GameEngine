@@ -101,11 +101,14 @@ auto DynLib::function(const char* name) -> void*
     void* f = nullptr;
     #if defined(WINDOWS_PLT)
         f = reinterpret_cast<void*>(GetProcAddress((HMODULE) m_handle, name));
-    #elif defined(LINUX_PLT) || defined(WEB_PLT)
+    #elif defined(LINUX_PLT)
         (void)dlerror();
         f = reinterpret_cast<void*>(dlsym(m_handle, name));
+    #elif defined(WEB_PLT)
+        (void)dlerror();
+        f = reinterpret_cast<void*>(dlsym(m_handle, name));
+        while(dlerror() == nullptr && f == nullptr) { } // wait 
     #endif
-    
     if (f == nullptr) throw Exception("Can't load symbol `{}`: {}", name, error());
  
     return f;
