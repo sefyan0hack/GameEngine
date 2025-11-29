@@ -7,7 +7,7 @@
 
 class ENGINE_EXPORT DynLib {
 public:
-    DynLib(const char* lib);
+    DynLib(const char* lib, bool now = true);
     DynLib(const DynLib& other);
     DynLib(DynLib&& other);
 

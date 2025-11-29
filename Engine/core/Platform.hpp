@@ -189,3 +189,6 @@ struct Type {
     constexpr static std::size_t      alignment = alignof(T);       /*!< type allingment name of T */
     constexpr static bool             empty = std::is_empty_v<T>;   /*!< is T empty type or not */
 };
+
+
+#define DECLARE_FUNCTION(name, r, args) auto name args -> r

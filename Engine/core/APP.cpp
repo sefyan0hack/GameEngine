@@ -23,13 +23,18 @@
 #include <emscripten/html5.h>
 #endif
 
-extern "C" {
-    void* game_ctor(APP& app);
-    void game_dtor(void* game);
-    void game_link(void** funcs);
-    void game_update(void* game, float delta);
-    void game_on_deltamouse(void* game, float dx, float dy);
-}
+#undef X
+#define X(name, r, args) extern "C" DECLARE_FUNCTION(name, r, args);
+
+#if defined(GAME_HOT_RELOADABLE)
+    #define GET_GAME_FUNCTION(name) lib.function<name##_t>(#name);
+    #define GAME_LIB_NOW true
+#else
+    #define GET_GAME_FUNCTION(name) reinterpret_cast<name##_t>(::name);
+    #define GAME_LIB_NOW false
+    GAME_API
+#endif
+
 
 constexpr auto Wname = "Game";
 constexpr auto WINDOW_WIDTH = 1180;
@@ -43,15 +48,14 @@ APP::APP()
     , m_LastFrameTime(std::chrono::steady_clock::now())
     , m_Fps(60.0f)
     , Renderer(new OpenGLRenderer(Window))
-    , lib("Game")
+    , lib("Game", GAME_LIB_NOW)
     , Game()
 
 {
-    #if defined(GAME_HOT_RELOADABLE)
-        load_game_library();
-    #else
-        init_game_library();
-    #endif
+    init_game_functions();
+
+    game_link(gl::export_opengl_functions());
+    Game = game_ctor(*this);
 
     Window.show();
     Window.set_vsync(true);
@@ -62,59 +66,33 @@ APP::~APP()
     if(Renderer) delete Renderer;
 }
 
-auto APP::init_game_library() -> void
+auto APP::init_game_functions() -> void
 {
-    game_ctor = reinterpret_cast<game_ctor_t>(::game_ctor);
-    game_dtor = reinterpret_cast<game_dtor_t>(::game_dtor);
-    game_link = reinterpret_cast<game_link_t>(::game_link);
-    game_update = reinterpret_cast<game_update_t>(::game_update);
-    game_on_deltamouse = reinterpret_cast<game_on_deltamouse_t>(::game_on_deltamouse);
-
-    game_link(gl::export_opengl_functions());
-    Game = game_ctor(*this);
+    game_ctor = GET_GAME_FUNCTION(game_ctor);
+    game_dtor = GET_GAME_FUNCTION(game_dtor);
+    game_link = GET_GAME_FUNCTION(game_link);
+    game_update = GET_GAME_FUNCTION(game_update);
+    game_on_deltamouse = GET_GAME_FUNCTION(game_on_deltamouse);
 }
 
-auto APP::load_game_library() -> void
-{
-    lib.load();
-
-    game_ctor = lib.function<game_ctor_t>("game_ctor");
-    game_dtor = lib.function<game_dtor_t>("game_dtor");
-    game_link = lib.function<game_link_t>("game_link");
-    game_update = lib.function<game_update_t>("game_update");
-    game_on_deltamouse = lib.function<game_on_deltamouse_t>("game_on_deltamouse");
-
-    game_link(gl::export_opengl_functions());
-    Game = game_ctor(*this);
-}
-
-auto APP::unload_game_library() -> void
-{
-    if (Game) {
-        if (!game_ctor || !game_dtor) {
-            throw Exception("game_ctor() || game_dtor() are null");
-        }
-        game_dtor(Game);
-        Game = nullptr;
-    }
-
-    game_ctor = nullptr;
-    game_dtor = nullptr;
-    game_update = nullptr;
-    game_on_deltamouse = nullptr;
-    lib.unload();
-}
 
 auto APP::hot_reload_game_library() -> bool
 {
     try {
-        unload_game_library();
-        load_game_library();
+        game_dtor(Game);
+
+        lib.unload();
+        lib.load();
+
+        init_game_functions();
+
+        game_link(gl::export_opengl_functions());
+        Game = game_ctor(*this);
 
         debug::print("Game library hot-reloaded successfully");
         return true;
         
-    } catch (const Exception& e) {
+    } catch (const std::exception& e) {
         debug::print("Hot reload failed: {}", e.what());
         return false;
     }

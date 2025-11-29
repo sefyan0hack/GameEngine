@@ -9,7 +9,8 @@
 #endif
 
 
-DynLib::DynLib(const char* lib) : m_handle(nullptr), m_name(lib) {
+DynLib::DynLib(const char* lib, bool now) : m_handle(nullptr), m_name(lib) {
+    if(now) load();
 }
     
 DynLib::DynLib(const DynLib& other)
