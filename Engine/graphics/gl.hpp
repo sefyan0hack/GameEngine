@@ -142,12 +142,12 @@ namespace gl {
         GLFUNCS
     }
 
-    auto ENGINE_EXPORT get_proc_address(const char* name) -> void*;
-    auto ENGINE_EXPORT get_integer(GLenum name) -> GLint;
-    auto ENGINE_EXPORT get_boolean(GLenum name) -> GLboolean;
-    auto ENGINE_EXPORT load_opengl_functions() -> void;
-    auto ENGINE_EXPORT export_opengl_functions() -> void**;
-    auto ENGINE_EXPORT import_opengl_functions(void** state) -> void;
+    ENGINE_EXPORT auto get_proc_address(const char* name) -> void*;
+    ENGINE_EXPORT auto get_integer(GLenum name) -> GLint;
+    ENGINE_EXPORT auto get_boolean(GLenum name) -> GLboolean;
+    ENGINE_EXPORT auto load_opengl_functions() -> void;
+    ENGINE_EXPORT auto export_opengl_functions() -> void**;
+    ENGINE_EXPORT auto import_opengl_functions(void** funcs) -> void;
 } // namespace gl
 
 #undef GL_GLEXT_PROTOTYPES

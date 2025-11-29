@@ -54,7 +54,9 @@ APP::APP()
 {
     init_game_functions();
 
-    game_link(gl::export_opengl_functions());
+    auto funcs = gl::export_opengl_functions();
+    game_link(funcs);
+    delete[] funcs;
     Game = game_ctor(*this);
 
     Window.show();
@@ -68,11 +70,9 @@ APP::~APP()
 
 auto APP::init_game_functions() -> void
 {
-    game_ctor = GET_GAME_FUNCTION(game_ctor);
-    game_dtor = GET_GAME_FUNCTION(game_dtor);
-    game_link = GET_GAME_FUNCTION(game_link);
-    game_update = GET_GAME_FUNCTION(game_update);
-    game_on_deltamouse = GET_GAME_FUNCTION(game_on_deltamouse);
+    #undef X
+    #define X(name, r, args) name = GET_GAME_FUNCTION(name);
+    GAME_API
 }
 
 
@@ -86,7 +86,9 @@ auto APP::hot_reload_game_library() -> bool
 
         init_game_functions();
 
-        game_link(gl::export_opengl_functions());
+        auto funcs = gl::export_opengl_functions();
+        game_link(funcs);
+        delete[] funcs;
         Game = game_ctor(*this);
 
         debug::print("Game library hot-reloaded successfully");
@@ -252,7 +254,6 @@ auto APP::loop_body(void* ctx) -> void
 
     #endif
     app->frame(deltaTime);
-    //todo: Frame Pacing
 }
 
 auto APP::run() -> void
