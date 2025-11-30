@@ -12,9 +12,10 @@
 #include <engine_export.h>
 
 #define GAME_API \
-    X(game_ctor,            void*, (APP&))\
+    X(game_ctor,            void*, ())\
     X(game_dtor,            void, (void*))\
     X(game_link,            void, (void**))\
+    X(game_set_app,         void, (APP*))\
     X(game_update,          void, (void*,float))\
     X(game_on_deltamouse,   void, (void*,float, float))
 

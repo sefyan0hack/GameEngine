@@ -57,7 +57,8 @@ APP::APP()
     init_game_functions();
 
     game_link(gl::export_opengl_functions());
-    Game = game_ctor(*this);
+    game_set_app(this);
+    Game = game_ctor();
 
     Window.show();
     Window.set_vsync(true);
@@ -87,7 +88,8 @@ auto APP::hot_reload_game_library() -> bool
         init_game_functions();
 
         game_link(gl::export_opengl_functions());
-        Game = game_ctor(*this);
+        game_set_app(this);
+        Game = game_ctor();
 
         debug::print("Game library hot-reloaded successfully");
         return true;

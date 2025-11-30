@@ -5,6 +5,7 @@
 #include <cmrc/cmrc.hpp>
 #include <game_export.h>
 
+APP* app;
 extern cmrc::embedded_filesystem fs;
 
 using namespace std;
@@ -13,15 +14,13 @@ using namespace std;
 class GAME_EXPORT Game
 {
 private:
-    class APP& app;
     std::shared_ptr<Shader> vert, frag;
     std::shared_ptr<ShaderProgram> CubeProgram;
 
     Scene MainScene;
 public:
-    Game(class APP& app)
-        : app(app)
-        , vert(std::make_shared<Shader>(fs.open("res/Shaders/cube.vert"), GL_VERTEX_SHADER))
+    Game()
+        : vert(std::make_shared<Shader>(fs.open("res/Shaders/cube.vert"), GL_VERTEX_SHADER))
         , frag(std::make_shared<Shader>(fs.open("res/Shaders/cube.frag"), GL_FRAGMENT_SHADER))
         , CubeProgram(std::make_shared<ShaderProgram>(vert, frag))
         , MainScene()
@@ -58,10 +57,10 @@ public:
         MainScene << GameObject(Transform({2, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), ResManager["CubeMattkimberley"], ResManager["manMesh"]);
 
         MainScene.set_skybox(ResManager["forest.jpg"]);
-        debug::print("Window title: {}", app.Window.get_title());
+        debug::print("Window title: {}", app->Window.get_title());
 
         utils::async_repeat_every(1000,
-            [&app](){ app.Window.set_title(std::format("{}, {} : {}", sys::host::name_str(),sys::host::arch_str(), app.fps())); }
+            [](){ app->Window.set_title(std::format("{}, {} : {}", sys::host::name_str(),sys::host::arch_str(), app->fps())); }
         );
 
         debug::print("{} || {}", VecWrapper{gl::OPENGL_FUNCTIONS_NAME}, Type<decltype(gl::OPENGL_FUNCTIONS_NAME)>());
@@ -71,7 +70,7 @@ public:
     {
         camera_mouvment(delta);
 
-        app.render(MainScene, CubeProgram);
+        app->render(MainScene, CubeProgram);
     }
 
     auto on_deltamouse(float dx, float dy) -> void
@@ -81,11 +80,11 @@ public:
 
     auto camera_mouvment(float delta) -> void
     {
-        float speed = app.Keyboard.is_down(Key::LeftShift)? 10.0f : 5.0f;
+        float speed = app->Keyboard.is_down(Key::LeftShift)? 10.0f : 5.0f;
 
-        auto Hori = app.Keyboard.is_down(Key::W) ? 1.0f : app.Keyboard.is_down(Key::S) ? -1.0f : 0.0f;
-        auto Vert = app.Keyboard.is_down(Key::D) ? 1.0f : app.Keyboard.is_down(Key::A) ? -1.0f : 0.0f;
-        auto Up   = app.Keyboard.is_down(Key::M) ? 1.0f : app.Keyboard.is_down(Key::N) ? -1.0f : 0.0f;
+        auto Hori = app->Keyboard.is_down(Key::W) ? 1.0f : app->Keyboard.is_down(Key::S) ? -1.0f : 0.0f;
+        auto Vert = app->Keyboard.is_down(Key::D) ? 1.0f : app->Keyboard.is_down(Key::A) ? -1.0f : 0.0f;
+        auto Up   = app->Keyboard.is_down(Key::M) ? 1.0f : app->Keyboard.is_down(Key::N) ? -1.0f : 0.0f;
 
         auto by = speed * delta;
 
@@ -99,9 +98,9 @@ public:
 // no toche code
 extern "C" {
 
-    GAME_EXPORT auto game_ctor(class APP& app) -> void*
+    GAME_EXPORT auto game_ctor() -> void*
     {
-        return new Game(app);
+        return new Game();
     }
 
     GAME_EXPORT auto game_dtor(void* game) -> void
@@ -112,6 +111,11 @@ extern "C" {
     GAME_EXPORT auto game_link(void** funcs) -> void
     {
         gl::import_opengl_functions(funcs);
+    }
+
+    GAME_EXPORT auto game_set_app(APP* app) -> void
+    {
+        ::app = app;
     }
 
     GAME_EXPORT auto game_update(void* game, float delta) -> void
