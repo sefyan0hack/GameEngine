@@ -1,17 +1,6 @@
 #include "gl.hpp"
 namespace gl {
 
-    #undef X
-    #ifdef ROBUST_GL_CHECK
-    #   define X(name) Function<PFN_gl##name> name;
-    #else
-    #   define X(name) PFN_gl##name name = Function<PFN_gl##name>::default_;
-    #endif
-    
-    extern "C" {
-        GLFUNCS
-    }
-
     auto get_proc_address(const char* name) -> void* {
         void *address = reinterpret_cast<void*>(XXXGetProcAddress(name));
 
@@ -83,10 +72,9 @@ namespace gl {
         #   define X(name) (void*)name, 
         #endif
         
+        static void* funcs[OPENGL_FUNCTIONS_COUNT] = { GLFUNCS };
 
-        return new void*[OPENGL_FUNCTIONS_COUNT]{
-            GLFUNCS
-        };
+        return funcs;
     }
 
     auto import_opengl_functions(void **funcs) -> void

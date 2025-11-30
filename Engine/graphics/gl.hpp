@@ -131,14 +131,14 @@ namespace gl {
         GLFUNCS
     }
 
-    #undef X
-    #ifdef ROBUST_GL_CHECK
-    #   define X(name) ENGINE_EXPORT extern Function<PFN_gl##name> name;
-    #else
-    #   define X(name) ENGINE_EXPORT extern PFN_gl##name name;
-    #endif
-
     extern "C" {
+        #undef X
+        #ifdef ROBUST_GL_CHECK
+        #   define X(name) inline Function<PFN_gl##name> name;
+        #else
+        #   define X(name) inline PFN_gl##name name = Function<PFN_gl##name>::default_;
+        #endif
+
         GLFUNCS
     }
 

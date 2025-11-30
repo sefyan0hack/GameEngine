@@ -40,6 +40,9 @@ constexpr auto Wname = "Game";
 constexpr auto WINDOW_WIDTH = 1180;
 constexpr auto WINDOW_HIEGHT = 640;
 
+#undef X
+#define X(name, r, args) , name(+[] args -> r { throw Exception(" `{} {}` is null ", #r, #name #args ); })
+
 APP::APP()
     : Window(WINDOW_WIDTH, WINDOW_HIEGHT, Wname, ApplicationEventQueue)
     , Keyboard()
@@ -50,13 +53,11 @@ APP::APP()
     , Renderer(new OpenGLRenderer(Window))
     , lib("Game", GAME_LIB_NOW)
     , Game()
-
+    GAME_API
 {
     init_game_functions();
 
-    auto funcs = gl::export_opengl_functions();
-    game_link(funcs);
-    delete[] funcs;
+    game_link(gl::export_opengl_functions());
     Game = game_ctor(*this);
 
     Window.show();
@@ -86,14 +87,12 @@ auto APP::hot_reload_game_library() -> bool
 
         init_game_functions();
 
-        auto funcs = gl::export_opengl_functions();
-        game_link(funcs);
-        delete[] funcs;
+        game_link(gl::export_opengl_functions());
         Game = game_ctor(*this);
 
         debug::print("Game library hot-reloaded successfully");
         return true;
-        
+
     } catch (const std::exception& e) {
         debug::print("Hot reload failed: {}", e.what());
         return false;
