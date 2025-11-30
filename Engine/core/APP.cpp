@@ -17,7 +17,6 @@
 #elif defined(LINUX_PLT)
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include <sys/time.h>
 #elif defined(WEB_PLT)
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
