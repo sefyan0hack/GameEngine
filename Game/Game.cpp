@@ -2,11 +2,10 @@
 #include <memory>
 #include <random>
 #include <Engine.hpp>
-#include <cmrc/cmrc.hpp>
 #include <game_export.h>
 
 APP* app;
-extern cmrc::embedded_filesystem fs;
+extern cmrc::embedded_filesystem embed_filesystem;
 
 using namespace std;
 
@@ -20,24 +19,24 @@ private:
     Scene MainScene;
 public:
     Game()
-        : vert(std::make_shared<Shader>(fs.open("res/Shaders/cube.vert"), GL_VERTEX_SHADER))
-        , frag(std::make_shared<Shader>(fs.open("res/Shaders/cube.frag"), GL_FRAGMENT_SHADER))
+        : vert(std::make_shared<Shader>(embed_filesystem.open("res/Shaders/cube.vert"), GL_VERTEX_SHADER))
+        , frag(std::make_shared<Shader>(embed_filesystem.open("res/Shaders/cube.frag"), GL_FRAGMENT_SHADER))
         , CubeProgram(std::make_shared<ShaderProgram>(vert, frag))
         , MainScene()
     {
 
-        ResManager["brik.jpg"]          = Texture2D(fs.open("res/brik.jpg"));
-        ResManager["brik.png"]          = Texture2D(fs.open("res/brik.png"));
-        ResManager["kimberley.jpg"]     = Texture2D(fs.open("res/kimberley.jpg"));
-        ResManager["annie_spratt.jpg"]  = Texture2D(fs.open("res/annie_spratt.jpg"));
-        ResManager["sand.png"]          = Texture2D(fs.open("res/gravelly_sand_diff_4k.png"));
+        ResManager["brik.jpg"]          = Texture2D(embed_filesystem.open("res/brik.jpg"));
+        ResManager["brik.png"]          = Texture2D(embed_filesystem.open("res/brik.png"));
+        ResManager["kimberley.jpg"]     = Texture2D(embed_filesystem.open("res/kimberley.jpg"));
+        ResManager["annie_spratt.jpg"]  = Texture2D(embed_filesystem.open("res/annie_spratt.jpg"));
+        ResManager["sand.png"]          = Texture2D(embed_filesystem.open("res/gravelly_sand_diff_4k.png"));
 
         ResManager["forest.jpg"]= TextureCubeMap(TextureCubeMap::base_to_6facesfiles("res/forest.jpg"));
 
         ResManager["CubeMattkimberley"]  = Material(ResManager["kimberley.jpg"]);
         ResManager["CubeMattSand"]  = Material(ResManager["sand.png"]);
         ResManager["cubeMesh"]      = Mesh(Mesh::CUBE);
-        ResManager["manMesh"]       = Mesh(obj_to_mesh(fs.open("res/FinalBaseMesh.obj")));
+        ResManager["manMesh"]       = Mesh(obj_to_mesh(embed_filesystem.open("res/FinalBaseMesh.obj")));
 
         constexpr int32_t Grids = 5;
 

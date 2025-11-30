@@ -9,6 +9,7 @@ target_sources( core PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/SysInfo.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/DynLib.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Exception.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/res.cpp
 )
 
 target_sources( core PUBLIC
@@ -29,6 +30,7 @@ target_sources( core PUBLIC
         ResourceManager.hpp
         DynLib.hpp
         SysInfo.hpp
+        res.hpp
 )
 
 target_include_directories(core 

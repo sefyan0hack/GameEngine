@@ -1,11 +1,10 @@
 #include <core/Log.hpp>
 #include <core/Utils.hpp>
+#include <core/res.hpp>
 #include "Texture.hpp"
 #include "OpenGL.hpp"
 
-
-CMRC_DECLARE(res);
-inline auto fs = cmrc::res::get_filesystem();
+extern cmrc::embedded_filesystem embed_filesystem;
 
 namespace {
 constexpr auto to_string(GLenum type) -> const char*
@@ -236,7 +235,7 @@ auto TextureCubeMap::base_to_6facesfiles(const std::string& path) -> std::vector
     for (const auto &dir : directions) {
         auto newPath = path.substr(0, dot);
         newPath += "_" + dir + ext;
-        files.push_back(fs.open(newPath));
+        files.push_back(embed_filesystem.open(newPath));
     }
 
     return files;

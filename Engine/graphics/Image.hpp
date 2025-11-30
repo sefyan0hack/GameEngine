@@ -5,7 +5,7 @@
 #include <span>
 
 #include "gl.hpp"
-#include <cmrc/cmrc.hpp>
+#include <core/res.hpp>
 #include <core/Utils.hpp>
 #include <engine_export.h>
 

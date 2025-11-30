@@ -4,14 +4,13 @@
 #include "ShaderProgram.hpp"
 #include "Mesh.hpp"
 #include "Texture.hpp"
-#include <cmrc/cmrc.hpp>
+#include <core/res.hpp>
 
-CMRC_DECLARE(res);
-inline auto fs = cmrc::res::get_filesystem();
+extern cmrc::embedded_filesystem embed_filesystem;
 
 SkyBox::SkyBox()
-  : m_VertShader(std::make_shared<Shader>(fs.open("res/Shaders/skybox.vert"), GL_VERTEX_SHADER))
-  , m_FragShader(std::make_shared<Shader>(fs.open("res/Shaders/skybox.frag"), GL_FRAGMENT_SHADER))
+  : m_VertShader(std::make_shared<Shader>(embed_filesystem.open("res/Shaders/skybox.vert"), GL_VERTEX_SHADER))
+  , m_FragShader(std::make_shared<Shader>(embed_filesystem.open("res/Shaders/skybox.frag"), GL_FRAGMENT_SHADER))
   , m_Program(std::make_shared<ShaderProgram>(m_VertShader, m_FragShader))
   , m_Mesh(std::make_shared<Mesh>(Mesh::flip_faces(Mesh::CUBE)))
   , m_Texture(std::make_shared<TextureCubeMap>())

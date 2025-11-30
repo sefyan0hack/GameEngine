@@ -12,3 +12,4 @@
 #include "Event.hpp"
 #include "EventQueue.hpp"
 #include "SysInfo.hpp"
+#include "res.hpp"
