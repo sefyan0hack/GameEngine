@@ -45,45 +45,16 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, std::string Name)
     updata();
     enable_attribs();
     prepare_attribs();
-}
-
-Mesh::Mesh(Mesh&& other) noexcept
-    : name(std::move(other.name))
-    , vertices(std::move(other.vertices))
-    , attribs(std::move(other.attribs))
-    , VBO(other.VBO)
-    , VAO(other.VAO)
-{
-    other.VBO = 0;
-    other.VAO = 0;
+    debug::print("({:p}) ~ctor {}", (const void*)this, *this);
 }
 
 Mesh::~Mesh()
 {
-    // if (VBO != 0) {
-    //     gl::DeleteBuffers(1, &VBO);
-    // }
-    // if (VAO != 0) {
-    //     gl::DeleteVertexArrays(1, &VAO);
-    // }
+    gl::DeleteBuffers(1, &VBO);
+    gl::DeleteVertexArrays(1, &VAO);
     Count--;
-}
+    debug::print("({:p}) ~Dtor {}", (const void*)this, *this);
 
-auto Mesh::operator=(Mesh &&other) noexcept -> Mesh&
-{
-    if(this != &other){
-        this->name = std::exchange(other.name, {});
-        this->vertices = std::exchange(other.vertices, {});
-        this->attribs = std::exchange(other.attribs, {});
-        this->VBO = std::exchange(other.VBO, 0);
-        this->VAO = std::exchange(other.VAO, 0);
-    }
-    return *this;
-}
-
-auto Mesh::operator==(const Mesh &other) const -> bool
-{
-    return this->VAO == other.VAO; // for now every vao is unique
 }
 
 auto Mesh::clone_buffer(GLenum type, GLuint src) -> GLuint

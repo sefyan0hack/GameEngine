@@ -13,11 +13,6 @@ Material::Material(std::shared_ptr<Texture> diffuse)
 {
 }
 
-Material::Material(const Material& other)
-    : m_Textuers(other.m_Textuers)
-{
-}
-
 
 auto Material::bind(std::shared_ptr<ShaderProgram> program) const -> void
 {

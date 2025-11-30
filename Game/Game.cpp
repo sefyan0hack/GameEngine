@@ -25,18 +25,18 @@ public:
         , MainScene()
     {
 
-        ResManager["brik.jpg"]          = Texture2D(embed_filesystem.open("res/brik.jpg"));
-        ResManager["brik.png"]          = Texture2D(embed_filesystem.open("res/brik.png"));
-        ResManager["kimberley.jpg"]     = Texture2D(embed_filesystem.open("res/kimberley.jpg"));
-        ResManager["annie_spratt.jpg"]  = Texture2D(embed_filesystem.open("res/annie_spratt.jpg"));
-        ResManager["sand.png"]          = Texture2D(embed_filesystem.open("res/gravelly_sand_diff_4k.png"));
+        ResManager["brik.jpg"]          = std::make_shared<Texture2D>(embed_filesystem.open("res/brik.jpg"));
+        ResManager["brik.png"]          = std::make_shared<Texture2D>(embed_filesystem.open("res/brik.png"));
+        ResManager["kimberley.jpg"]     = std::make_shared<Texture2D>(embed_filesystem.open("res/kimberley.jpg"));
+        ResManager["annie_spratt.jpg"]  = std::make_shared<Texture2D>(embed_filesystem.open("res/annie_spratt.jpg"));
+        ResManager["sand.png"]          = std::make_shared<Texture2D>(embed_filesystem.open("res/gravelly_sand_diff_4k.png"));
 
-        ResManager["forest.jpg"]= TextureCubeMap(TextureCubeMap::base_to_6facesfiles("res/forest.jpg"));
+        ResManager["forest.jpg"]= std::make_shared<TextureCubeMap>(TextureCubeMap::base_to_6facesfiles("res/forest.jpg"));
 
-        ResManager["CubeMattkimberley"]  = Material(ResManager["kimberley.jpg"]);
-        ResManager["CubeMattSand"]  = Material(ResManager["sand.png"]);
-        ResManager["cubeMesh"]      = Mesh(Mesh::CUBE);
-        ResManager["manMesh"]       = Mesh(obj_to_mesh(embed_filesystem.open("res/FinalBaseMesh.obj")));
+        ResManager["CubeMattkimberley"]  = std::make_shared<Material>(ResManager["kimberley.jpg"]);
+        ResManager["CubeMattSand"]  = std::make_shared<Material>(ResManager["sand.png"]);
+        ResManager["cubeMesh"]      = std::make_shared<Mesh>(Mesh::CUBE);
+        ResManager["manMesh"]       = std::make_shared<Mesh>(obj_to_mesh(embed_filesystem.open("res/FinalBaseMesh.obj")));
 
         constexpr int32_t Grids = 5;
 
@@ -88,6 +88,10 @@ public:
         auto by = speed * delta;
 
         MainScene.main_camera().move({ Vert * by, Up * by, Hori * by });
+    }
+
+    ~Game(){
+        ResManager.clear();
     }
 };
 

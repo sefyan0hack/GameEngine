@@ -17,15 +17,8 @@ class ENGINE_EXPORT Shader
     Shader(const std::string& filename);
     Shader(std::string Src, GLenum type);
     Shader(const cmrc::file& Src, GLenum type);
+    ~Shader();
 
-    
-    Shader(const Shader&) = delete;
-    auto operator=(const Shader&) -> Shader& = delete;
-
-    Shader(Shader&& other) noexcept;
-    auto operator=(Shader&& other) noexcept -> Shader&;
-
-    bool operator==(const Shader& other);
   public:
     auto id() const                -> GLuint ;
     auto type() const              -> GLenum ;

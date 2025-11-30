@@ -19,10 +19,15 @@ constexpr auto to_string(GLenum type) -> const char*
 }
 
 Shader::Shader()
-: m_Id(0), m_Type(0)
+    : m_Id(0), m_Type(0)
 {
-    debug::print(*this);
+    debug::print("({:p}) ~ctor {}", (const void*)this, *this);
 }
+Shader::~Shader(){
+    gl::DeleteShader(m_Id);
+    debug::print("({:p}) ~dtor {}", (const void*)this, *this);
+}
+
 
 Shader::Shader(const std::string& filename)
 {
@@ -43,8 +48,9 @@ Shader::Shader(const std::string& filename)
     compile();
     check_compile_status();
 
-    debug::print(*this);
+    debug::print("({:p}) ~ctor {}", (const void*)this, *this);
 }
+
 Shader::Shader(std::string Src, GLenum type)
 {
     m_Id = gl::CreateShader(type);
@@ -55,55 +61,12 @@ Shader::Shader(std::string Src, GLenum type)
     compile();
     check_compile_status();
 
-    debug::print(*this);
+    debug::print("({:p}) ~ctor {}", (const void*)this, *this);
 }
 
 Shader::Shader(const cmrc::file& Src, GLenum type)
     : Shader(std::string(Src.begin(), Src.end()), type)
 {}
-
-// Shader::Shader(const Shader& other)
-//     : m_Id(gl::CreateShader(other.m_Type))
-//     , m_Type(other.m_Type)
-// {
-//     SetSource();
-//     Compile(m_Id);
-//     checkShaderCompileStatus(*this);
-// }
-
-// Shader &Shader::operator=(const Shader& other)
-// {
-//     if(this != &other){
-//         this->m_Id = gl::CreateShader(other.m_Type);
-//         this->m_Type = other.m_Type;
-        
-//         SetSource();
-//         Compile(m_Id);
-//         checkShaderCompileStatus(*this);
-//     }
-    
-//     return *this;
-// }
-
-Shader::Shader(Shader&& other) noexcept
-    : m_Id(std::exchange(other.m_Id, 0))
-    , m_Type(std::exchange(other.m_Type, 0))
-{
-}
-
-auto Shader::operator=(Shader&& other) noexcept -> Shader&
-{
-    if (this != &other) {
-        m_Id = std::exchange(other.m_Id, 0);
-        m_Type = std::exchange(other.m_Type, 0);
-    }
-    return *this;
-}
-
-bool Shader::operator==(const Shader &other)
-{
-    return this->m_Id == other.m_Id;
-}
 
 
 
