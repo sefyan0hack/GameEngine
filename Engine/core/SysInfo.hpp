@@ -27,17 +27,17 @@ namespace sys
     namespace build
     {
         constexpr const char* TimeStamp = __TIMESTAMP__;
-        constexpr auto name() -> sys::Target;
-        constexpr auto name_str() -> std::string;
-        constexpr auto arch() -> sys::Arch;
-        constexpr auto arch_str() -> std::string;
+        constexpr auto name_tag() -> sys::Target;
+        constexpr auto name() -> std::string;
+        constexpr auto arch_tag() -> sys::Arch;
+        constexpr auto arch() -> std::string;
     }
 
     namespace host
     {
-        ENGINE_EXPORT auto name() -> sys::Target;
-        ENGINE_EXPORT auto name_str() -> std::string;
-        ENGINE_EXPORT auto arch() -> sys::Arch;
-        ENGINE_EXPORT auto arch_str() -> std::string;
+        ENGINE_EXPORT auto name_tag() -> sys::Target;
+        ENGINE_EXPORT auto name() -> std::string;
+        ENGINE_EXPORT auto arch_tag() -> sys::Arch;
+        ENGINE_EXPORT auto arch() -> std::string;
     }
 }

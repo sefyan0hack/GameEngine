@@ -1,16 +1,16 @@
 
 
-auto sys::host::name() -> sys::Target
+auto sys::host::name_tag() -> sys::Target
 {
     return sys::Target::Linux;
 }
     
-auto sys::host::name_str() -> std::string
+auto sys::host::name() -> std::string
 {
     return "linux";
 }
 
-auto sys::host::arch() -> sys::Arch
+auto sys::host::arch_tag() -> sys::Arch
 {
     utsname system_info;
     uname(&system_info);
@@ -35,9 +35,9 @@ auto sys::host::arch() -> sys::Arch
     }
 }
 
-auto sys::host::arch_str() -> std::string
+auto sys::host::arch() -> std::string
 {
-    switch (arch())
+    switch (arch_tag())
     {
         case Arch::x64:
             return "x64";

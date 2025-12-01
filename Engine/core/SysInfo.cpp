@@ -14,7 +14,7 @@
 #	include "platform/web/SysInfo.inl"
 #endif
 
-constexpr auto sys::build::name() -> sys::Target
+constexpr auto sys::build::name_tag() -> sys::Target
 {
     #if defined(WINDOWS_PLT)
         return sys::Target::Windows;
@@ -26,15 +26,15 @@ constexpr auto sys::build::name() -> sys::Target
         return sys::Target::unknown;
     #endif
 }
-constexpr auto sys::build::name_str() -> std::string
+constexpr auto sys::build::name() -> std::string
 {
     return 
-    name() == sys::Target::Windows ? "windows" :
-    name() == sys::Target::Linux   ? "linux"   :
-    name() == sys::Target::Web     ? "web"     : "unknown";
+    name_tag() == sys::Target::Windows ? "windows" :
+    name_tag() == sys::Target::Linux   ? "linux"   :
+    name_tag() == sys::Target::Web     ? "web"     : "unknown";
 }
  
-constexpr auto sys::build::arch() -> sys::Arch
+constexpr auto sys::build::arch_tag() -> sys::Arch
 {
     #if   defined(__x86_64__)  || defined(_M_AMD64)
         return sys::Arch::x64;
@@ -53,13 +53,13 @@ constexpr auto sys::build::arch() -> sys::Arch
     #endif
 }
     
-constexpr auto sys::build::arch_str() -> std::string
+constexpr auto sys::build::arch() -> std::string
 {
     return
-    arch() == sys::Arch::x64    ? "x64"    :
-    arch() == sys::Arch::x86    ? "x86"    :
-    arch() == sys::Arch::arm    ? "arm"    :
-    arch() == sys::Arch::arm64  ? "arm64"  :
-    arch() == sys::Arch::wasm   ? "wasm"   :
-    arch() == sys::Arch::wasm64 ? "wasm64" : "unknown";
+    arch_tag() == sys::Arch::x64    ? "x64"    :
+    arch_tag() == sys::Arch::x86    ? "x86"    :
+    arch_tag() == sys::Arch::arm    ? "arm"    :
+    arch_tag() == sys::Arch::arm64  ? "arm64"  :
+    arch_tag() == sys::Arch::wasm   ? "wasm"   :
+    arch_tag() == sys::Arch::wasm64 ? "wasm64" : "unknown";
 }
