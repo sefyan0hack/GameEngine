@@ -86,8 +86,8 @@ auto Shader::pre_process() -> std::string
     GLint m_Minor = gl::get_integer(GL_MINOR_VERSION);
     auto glsl_verion = std::format("{}{}0", m_Major, m_Minor);
 
-    result += std::format("#version {} {}\n", glsl_verion, sys::host::name_tag() == sys::Target::Web ? "es" : "core");
-    result += std::format("precision {} float;\n", sys::host::name_tag() == sys::Target::Web ? "mediump" : "highp");
+    result += std::format("#version {} {}\n", glsl_verion, os::host::name_tag() == os::Target::Web ? "es" : "core");
+    result += std::format("precision {} float;\n", os::host::name_tag() == os::Target::Web ? "mediump" : "highp");
     return result;
 }
 

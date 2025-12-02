@@ -1,16 +1,16 @@
 // platform/windows/Sysinfo.inl
 
-auto sys::host::name_tag() -> sys::Target
+auto os::host::name_tag() -> os::Target
 {
-    return sys::Target::Windows;
+    return os::Target::Windows;
 }
 
-auto sys::host::name() -> std::string
+auto os::host::name() -> std::string
 {
     return "windows";
 }
 
-auto sys::host::arch_tag() -> sys::Arch
+auto os::host::arch_tag() -> os::Arch
 {
     SYSTEM_INFO SYS_INFO{};
     GetSystemInfo(&SYS_INFO);
@@ -30,7 +30,7 @@ auto sys::host::arch_tag() -> sys::Arch
     }
 }
 
-auto sys::host::arch() -> std::string
+auto os::host::arch() -> std::string
 {
     switch (arch_tag())
     {

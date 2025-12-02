@@ -1,21 +1,21 @@
 
 
-auto sys::host::name_tag() -> sys::Target
+auto os::host::name_tag() -> os::Target
 {
-    return sys::Target::Web;
+    return os::Target::Web;
 }
     
-auto sys::host::name() -> std::string
+auto os::host::name() -> std::string
 {
     return "web";
 }
 
-auto sys::host::arch_tag() -> sys::Arch
+auto os::host::arch_tag() -> os::Arch
 {
-    return sys::build::arch_tag();
+    return os::build::arch_tag();
 }
 
-auto sys::host::arch() -> std::string
+auto os::host::arch() -> std::string
 {
-    return sys::build::arch();
+    return os::build::arch();
 }

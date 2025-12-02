@@ -59,7 +59,7 @@ public:
         debug::print("Window title: {}", app->Window.get_title());
 
         utils::async_repeat_every(1000,
-            [](){ app->Window.set_title(std::format("{}, {} : {}", sys::host::name(),sys::host::arch(), app->fps())); }
+            [](){ app->Window.set_title(std::format("{}, {} : {}", os::host::name(),os::host::arch(), app->fps())); }
         );
 
         debug::print("{} || {}", VecWrapper{gl::OPENGL_FUNCTIONS_NAME}, Type<decltype(gl::OPENGL_FUNCTIONS_NAME)>());
