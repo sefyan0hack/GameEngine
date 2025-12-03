@@ -124,64 +124,6 @@ constexpr auto variant_to_array() -> std::array<TypeInfo, std::variant_size_v<T>
 }
 
 /**
- * @brief Schedule a callable to run once after a delay (milliseconds).
- *
- * @tparam Function Callable type.
- * @tparam Args Types of arguments forwarded to the callable.
- * @param delay Delay in milliseconds before invocation.
- * @param func Callable to invoke.
- * @param args Arguments to forward to func.
- *
- * @details
- * This will launch a detached std::thread which sleeps for `delay`
- * milliseconds and then invokes the callable with the provided arguments.
- * The thread is detached; errors thrown inside the callable are not propagated.
- *
- * Example:
- * @code
- * utils::set_timeOut(500, [](){ puts("hello after 500ms"); });
- * @endcode
- */
-template<typename Function, typename... Args>
-auto set_timeOut(unsigned long delay, Function&& func, Args&&... args) -> void
-{
-    std::thread([delay, func = std::forward<Function>(func), ...args = std::forward<Args>(args)]() mutable {
-        std::this_thread::sleep_for(std::chrono::milliseconds(delay));
-        std::invoke(func, std::forward<Args>(args)...);
-    }).detach();
-}
-
-/**
- * @brief Repeatedly call a function at a fixed interval.
- *
- * @tparam Function Callable type.
- * @tparam Args Types of arguments forwarded to the callable.
- * @param interval Interval in milliseconds between invocations.
- * @param func Callable to invoke repeatedly.
- * @param args Arguments to forward to func.
- *
- * @details
- * Launches a detached thread that calls the provided callable in an
- * infinite loop, sleeping for `interval` milliseconds between calls.
- * Use with caution — the loop is infinite and will run until the program exits.
- *
- * Example:
- * @code
- * utils::repeat(1000, [](){ puts("every second"); });
- * @endcode
- */
-template<typename Function, typename... Args>
-auto repeat( unsigned long interval, Function&& func, Args&&... args) -> void
-{
-    std::thread([interval, func = std::forward<Function>(func), ...args = std::forward<Args>(args)]() mutable {
-        while(true){
-            std::invoke(func, std::forward<Args>(args)...);
-            std::this_thread::sleep_for(std::chrono::milliseconds(interval));   
-        }
-    }).detach();
-}
-
-/**
  * @brief Extracts the directory portion of a file path at compile-time.
  *
  * @param file_path File path string. Defaults to the call-site __FILE__.
@@ -603,7 +545,28 @@ inline auto match(TVarinat&& v, TMatchers&&... m) -> decltype(auto)
     );
 }
 
-inline auto async_repeat_every(int64_t ms, auto F, auto&&... args) -> void
+
+/**
+ * @brief Repeatedly call a function at a fixed interval.
+ *
+ * @tparam Function Callable type.
+ * @tparam Args Types of arguments forwarded to the callable.
+ * @param interval Interval in milliseconds between invocations.
+ * @param func Callable to invoke repeatedly.
+ * @param args Arguments to forward to func.
+ *
+ * @details
+ * Launches a detached thread that calls the provided callable in an
+ * infinite loop, sleeping for `interval` milliseconds between calls.
+ * Use with caution — the loop is infinite and will run until the program exits.
+ *
+ * Example:
+ * @code
+ * utils::async_repeat_every(1000, [](){ puts("every second"); });
+ * @endcode
+ */
+
+inline auto async_repeat_every(int64_t ms, std::invocable auto F, auto&&... args) -> void
 {
     std::thread([=](){
         while(true){
@@ -613,7 +576,28 @@ inline auto async_repeat_every(int64_t ms, auto F, auto&&... args) -> void
     }).detach();
 }
 
-inline auto async_run_after(int64_t ms, auto&& F, auto&&... args) -> void
+
+/**
+ * @brief Schedule a callable to run once after a delay (milliseconds).
+ *
+ * @tparam Function Callable type.
+ * @tparam Args Types of arguments forwarded to the callable.
+ * @param delay Delay in milliseconds before invocation.
+ * @param func Callable to invoke.
+ * @param args Arguments to forward to func.
+ *
+ * @details
+ * This will launch a detached std::thread which sleeps for `delay`
+ * milliseconds and then invokes the callable with the provided arguments.
+ * The thread is detached; errors thrown inside the callable are not propagated.
+ *
+ * Example:
+ * @code
+ * utils::async_run_after(500, [](){ puts("hello after 500ms"); });
+ * @endcode
+ */
+
+inline auto async_run_after(int64_t ms, std::invocable auto F, auto&&... args) -> void
 {
     std::thread([ms, F = std::forward<decltype(F)>(F), ...args = std::forward<decltype(args)>(args)](){
         std::this_thread::sleep_for(std::chrono::milliseconds(ms));
@@ -621,7 +605,7 @@ inline auto async_run_after(int64_t ms, auto&& F, auto&&... args) -> void
     }).detach();
 }
 
-inline auto async_while(bool& cond, auto&& F, auto&&... args) -> void
+inline auto async_while(bool& cond, std::invocable auto F, auto&&... args) -> void
 {
     std::thread([cond, F = std::forward<decltype(F)>(F), ...args = std::forward<decltype(args)>(args)](){
         while(cond){
