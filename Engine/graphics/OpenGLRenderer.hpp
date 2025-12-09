@@ -24,7 +24,6 @@ protected:
     auto draw(const class Mesh& mesh) const -> void override;
 
 private:
-    const class CWindow& m_Window;
     const OpenGL m_GApi;
-    uint32_t x = 0, y = 0, width = 0, height = 0;
+    uint32_t x, y, width, height;
 };

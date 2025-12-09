@@ -19,8 +19,7 @@
 
 
 OpenGLRenderer::OpenGLRenderer(const CWindow& window)
-    : m_Window(window)
-    , m_GApi(window)
+    : m_GApi(window)
     , x(0), y(0)
     , width(window.width()), height(window.height())
 {}
