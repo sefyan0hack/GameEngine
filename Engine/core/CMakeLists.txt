@@ -23,7 +23,6 @@ target_sources( core PUBLIC
         Utils.hpp
         fmts.hpp
         Event.hpp
-        EventQueue.hpp
         Function.hpp
         ResourceManager.hpp
         APP.hpp

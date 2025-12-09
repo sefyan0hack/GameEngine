@@ -8,7 +8,7 @@
 #include <input/Keyboard.hpp>
 #include <input/Mouse.hpp>
 #include "DynLib.hpp"
-#include "EventQueue.hpp"
+#include "Event.hpp"
 #include <engine_export.h>
 
 #define GAME_API \
@@ -38,16 +38,13 @@ public:
     auto run() -> void ;
     auto fps() const -> float;
     auto deltatime() const -> float;
-    auto push_event(const Event& event) -> void;
+    auto push_event(Event&& event) -> void;
 
     auto render(const class Scene& scene, std::shared_ptr<ShaderProgram> program) -> void;
 
 private:
     auto init_game_functions() -> void;
     auto hot_reload_game_library() -> bool;
-
-    auto pull_event(Event& event) -> bool;
-    auto wait_event(Event& event) -> void;
 
     auto frame(float deltaTime) -> void;
     static auto loop_body(void* ctx) -> void;
@@ -58,7 +55,7 @@ private:
     Mouse Mouse;
     
     bool m_Running;
-    EventQueue ApplicationEventQueue;
+    EventQ ApplicationEventQueue;
     std::chrono::steady_clock::time_point m_LastFrameTime;
     float m_Fps;
 

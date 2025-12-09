@@ -22,14 +22,11 @@
 #include <emscripten/html5.h>
 #endif
 
-#undef X
-#define X(name, r, args) extern "C" DECLARE_FUNCTION(name, r, args);
-
 #if defined(GAME_HOT_RELOADABLE)
-    #define GET_GAME_FUNCTION(name) lib.function<name##_t>(#name);
+    #define GET_GAME_FUNCTION(name) lib.function<name##_t>(#name)
     #define GAME_LIB_NOW true
 #else
-    #define GET_GAME_FUNCTION(name) reinterpret_cast<name##_t>(::name);
+    #define GET_GAME_FUNCTION(name) reinterpret_cast<name##_t>(::name)
     #define GAME_LIB_NOW false
     GAME_API
 #endif
@@ -122,7 +119,7 @@ auto APP::loop_body(void* ctx) -> void
     CWindow::process_messages(&window);
 
     Event event;
-    while (app->pull_event(event)) {
+    while (app->ApplicationEventQueue.pull(event)) {
         utils::match(event,
             [&app](const CWindow::QuitEvent&) {
                 #if defined(WINDOWS_PLT)
@@ -277,6 +274,5 @@ auto APP::deltatime() const -> float
     return 1.0f/m_Fps;
 }
 
-auto APP::push_event(const Event& event) -> void { ApplicationEventQueue.push(event); }
-bool APP::pull_event(Event& event) { return ApplicationEventQueue.poll(event); }
-void APP::wait_event(Event& event) { ApplicationEventQueue.wait_and_poll(event); }
+auto APP::push_event(Event&& event) -> void { ApplicationEventQueue.push(event); }
+

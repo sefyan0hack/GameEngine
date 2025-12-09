@@ -5,7 +5,7 @@
 #include <input/Mouse.hpp>
 #include <core/Log.hpp>
 #include <core/Exception.hpp>
-#include <core/EventQueue.hpp>
+#include <core/Event.hpp>
 
 #if defined(WINDOWS_PLT)
 #	include "platform/windows/Window.inl"
@@ -18,7 +18,7 @@
 CWindow::CWindow(
 	[[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height, 
 	[[maybe_unused]] const char* Title,
-	[[maybe_unused]] EventQueue& Queue) noexcept
+	[[maybe_unused]] EventQ& Queue) noexcept
 	: m_Width(Width)
 	, m_Height(Height)
 	, m_Visible(false)

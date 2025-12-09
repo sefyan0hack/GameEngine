@@ -2,6 +2,8 @@
 #include <utility>
 #include <string>
 #include <engine_export.h>
+#include "gl.hpp"
+
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>
@@ -13,7 +15,6 @@
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
 #endif
-#include <graphics/gl.hpp>
 
 class EventQueue;
 
@@ -48,7 +49,7 @@ class ENGINE_EXPORT CWindow
         struct QuitEvent {};
 
     private:
-        CWindow(int32_t Width, int32_t Height, const char* Title, EventQueue& Queue) noexcept;
+        CWindow(int32_t Width, int32_t Height, const char* Title, class EventQ& Queue) noexcept;
 
     public:
         ~CWindow();
@@ -98,6 +99,6 @@ class ENGINE_EXPORT CWindow
         H_SRF m_Surface;
         int32_t m_Width, m_Height;
         bool m_Visible, m_FullScreen;
-        EventQueue& m_EventQueue;
+        class EventQ& m_EventQueue;
 
 };

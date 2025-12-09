@@ -2,7 +2,7 @@
 #include <variant>
 #include <type_traits>
 #include <utility>
-
+#include <queue>
 #include "Utils.hpp"
 
 using Event = std::variant<
@@ -33,3 +33,26 @@ concept ISEvent = Variant<T> && [](){
         return (EventType<std::variant_alternative_t<I, V>> && ...);
     }(std::make_index_sequence<std::variant_size_v<V>>{});
 }();
+
+class EventQ : public std::queue<Event> {
+public:
+
+    auto pull(Event& event) -> bool
+    {
+        if (this->empty()) return false;
+        event = std::move(this->front());
+        this->pop();
+        return true;
+    }
+    
+    auto wait_and_pull(Event& event) -> bool {
+        while (this->empty()) {
+            std::this_thread::yield();
+        }
+        event = std::move(this->front());
+        this->pop();
+        return true;
+    }
+    
+    auto clear() { while(!this->empty()) this->pop(); }
+};
