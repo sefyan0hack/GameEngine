@@ -47,6 +47,11 @@ auto os::host::arch() -> std::string
             return "arm";
         case Arch::arm64:
             return "arm64";
+        case Arch::wasm:
+            assert(false && "wasm not valind in this context");
+        case Arch::wasm64:
+            assert(false && "wasm64 not valind in this context");
+        case Arch::unknown:
         default:
             return "unknown";
     }
