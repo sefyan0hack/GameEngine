@@ -67,5 +67,5 @@ private:
     #undef X
     #define X(name, r, args) name##_t name;
 
-    GAME_API;
+    GAME_API
 };
