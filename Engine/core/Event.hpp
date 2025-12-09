@@ -39,20 +39,20 @@ public:
 
     auto pull(Event& event) -> bool
     {
-        if (this->empty()) return false;
-        event = std::move(this->front());
-        this->pop();
+        if (empty()) return false;
+        event = std::move(front());
+        pop();
         return true;
     }
     
     auto wait_and_pull(Event& event) -> bool {
-        while (this->empty()) {
+        while (empty()) {
             std::this_thread::yield();
         }
-        event = std::move(this->front());
-        this->pop();
+        event = std::move(front());
+        pop();
         return true;
     }
     
-    auto clear() { while(!this->empty()) this->pop(); }
+    auto clear() { while(!empty()) pop(); }
 };
