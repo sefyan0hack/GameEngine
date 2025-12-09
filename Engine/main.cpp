@@ -4,10 +4,10 @@
 
 #include <Engine.hpp>
 
-APP app;
 
 int main() {
     try {
+        APP app;
         app.run();
 
     } catch(const Exception& e) {
