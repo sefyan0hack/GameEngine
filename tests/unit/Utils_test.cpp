@@ -10,9 +10,10 @@ using namespace filesystem;
 
 #if !defined(WEB_PLT)
 TEST(load_file_async, exist) {
-    auto tmpDir  = temp_directory_path();
-    auto tmpFile = tmpDir / tmpnam(nullptr);
-    auto _ = ofstream { tmpFile };
+    path tmpDir = temp_directory_path();
+    auto tmpFile = tmpDir / std::format("{}_{}_{}_{}", std::chrono::system_clock::now().time_since_epoch(), rand(), rand(), rand());
+
+    std::ofstream ofs(tmpFile);
 
     EXPECT_NO_THROW({
         load_file_async(tmpFile.string()).get();
