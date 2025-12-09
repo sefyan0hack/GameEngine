@@ -5,13 +5,14 @@
 #include <string>
 #include <unordered_map>
 #include <engine_export.h>
+#include <utility>
 
-class ENGINE_EXPORT ResourceManager
+class ENGINE_EXPORT ResMan
 {
 private:
     class Proxy {
         public:
-            Proxy(const std::string& key) : m_manager(ResourceManager::get_instance()), m_key(key){}
+            Proxy(const std::string& key) : m_manager(ResMan::self()), m_key(key){}
         
             template <class T>
             void operator=(T&& obj) {
@@ -29,15 +30,15 @@ private:
             }
         
         private:
-            ResourceManager& m_manager;
+            ResMan& m_manager;
             std::string m_key;
-        };
+    };
 public:
-    ResourceManager() = default;
-    ResourceManager(const ResourceManager&) = delete;
-    ResourceManager& operator=(const ResourceManager&) = delete;
+    ResMan() = default;
+    ResMan(const ResMan&) = delete;
+    ResMan& operator=(const ResMan&) = delete;
 
-    auto operator[](const std::string& key) -> Proxy
+    static auto RES(const std::string& key) -> Proxy
     {
         return Proxy(key);
     }
@@ -45,49 +46,40 @@ public:
     template <class T>
     auto get(const std::string &key) -> std::shared_ptr<T>
     {
-        // std::lock_guard<std::mutex> lock(m_mutex);
         return std::static_pointer_cast<T>(m_Resources.at(key));
     }
 
     template <class T>
     void store(const std::string& key, T&& resource)
     {
-        // std::lock_guard<std::mutex> lock(m_mutex);
         m_Resources[key] = std::make_shared<std::remove_reference_t<T>>(std::forward<T>(resource));
     }
 
     template <class T>
     void store(const std::string& key, std::shared_ptr<T> resource)
     {
-        // std::lock_guard<std::mutex> lock(m_mutex);
         m_Resources[key] = std::move(resource);
     }
 
     bool exists(const std::string& key) {
-        // std::lock_guard<std::mutex> lock(m_mutex);
         return m_Resources.find(key) != m_Resources.end();
     }
 
     void remove(const std::string& key) {
-        // std::lock_guard<std::mutex> lock(m_mutex);
         m_Resources.erase(key);
     }
 
     void clear() {
-        // std::lock_guard<std::mutex> lock(m_mutex);
         m_Resources.clear();
     }
 
-    static auto get_instance() -> ResourceManager&
+    static auto self() -> ResMan&
     {
-        static ResourceManager S_instance;
-        return S_instance;
+        static ResMan ins;
+        return ins;
     }
 
 private:
-    // std::mutex m_mutex;
     std::unordered_map<std::string, std::shared_ptr<void>> m_Resources;
 
 };
-
-inline static ResourceManager& ResManager = ResourceManager::get_instance();

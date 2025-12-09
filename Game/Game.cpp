@@ -25,18 +25,18 @@ public:
         , MainScene()
     {
 
-        ResManager["brik.jpg"]          = std::make_shared<Texture2D>(embed_filesystem.open("res/brik.jpg"));
-        ResManager["brik.png"]          = std::make_shared<Texture2D>(embed_filesystem.open("res/brik.png"));
-        ResManager["kimberley.jpg"]     = std::make_shared<Texture2D>(embed_filesystem.open("res/kimberley.jpg"));
-        ResManager["annie_spratt.jpg"]  = std::make_shared<Texture2D>(embed_filesystem.open("res/annie_spratt.jpg"));
-        ResManager["sand.png"]          = std::make_shared<Texture2D>(embed_filesystem.open("res/gravelly_sand_diff_4k.png"));
+        ResMan::RES("brik.jpg")          = std::make_shared<Texture2D>(embed_filesystem.open("res/brik.jpg"));
+        ResMan::RES("brik.png")          = std::make_shared<Texture2D>(embed_filesystem.open("res/brik.png"));
+        ResMan::RES("kimberley.jpg")     = std::make_shared<Texture2D>(embed_filesystem.open("res/kimberley.jpg"));
+        ResMan::RES("annie_spratt.jpg")  = std::make_shared<Texture2D>(embed_filesystem.open("res/annie_spratt.jpg"));
+        ResMan::RES("sand.png")          = std::make_shared<Texture2D>(embed_filesystem.open("res/gravelly_sand_diff_4k.png"));
 
-        ResManager["forest.jpg"]= std::make_shared<TextureCubeMap>(TextureCubeMap::base_to_6facesfiles("res/forest.jpg"));
+        ResMan::RES("forest.jpg")= std::make_shared<TextureCubeMap>(TextureCubeMap::base_to_6facesfiles("res/forest.jpg"));
 
-        ResManager["CubeMattkimberley"]  = std::make_shared<Material>(ResManager["kimberley.jpg"]);
-        ResManager["CubeMattSand"]  = std::make_shared<Material>(ResManager["sand.png"]);
-        ResManager["cubeMesh"]      = std::make_shared<Mesh>(Mesh::CUBE);
-        ResManager["manMesh"]       = std::make_shared<Mesh>(obj_to_mesh(embed_filesystem.open("res/FinalBaseMesh.obj")));
+        ResMan::RES("CubeMattkimberley")  = std::make_shared<Material>(ResMan::RES("kimberley.jpg"));
+        ResMan::RES("CubeMattSand")  = std::make_shared<Material>(ResMan::RES("sand.png"));
+        ResMan::RES("cubeMesh")      = std::make_shared<Mesh>(Mesh::CUBE);
+        ResMan::RES("manMesh")       = std::make_shared<Mesh>(obj_to_mesh(embed_filesystem.open("res/FinalBaseMesh.obj")));
 
         constexpr int32_t Grids = 5;
 
@@ -45,17 +45,17 @@ public:
 
         for(int32_t i = -Grids; i < Grids; i ++){
             for(int32_t j = -Grids; j < Grids; j ++){
-                auto m = coin(rng) ? ResManager["CubeMattkimberley"] : ResManager["CubeMattSand"];
-                auto meshRes = ResManager["cubeMesh"];
+                auto m = coin(rng) ? ResMan::RES("CubeMattkimberley") : ResMan::RES("CubeMattSand");
+                auto meshRes = ResMan::RES("cubeMesh");
                 auto t = Transform({i, 0, j}, {0, 0, 0}, { 0.5f, 0.5f, 0.5f});
             
                 MainScene << GameObject(t, m, meshRes);
             }
         }
-        MainScene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), ResManager["CubeMattSand"], ResManager["manMesh"]);
-        MainScene << GameObject(Transform({2, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), ResManager["CubeMattkimberley"], ResManager["manMesh"]);
+        MainScene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), ResMan::RES("CubeMattSand"), ResMan::RES("manMesh"));
+        MainScene << GameObject(Transform({2, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), ResMan::RES("CubeMattkimberley"), ResMan::RES("manMesh"));
 
-        MainScene.set_skybox(ResManager["forest.jpg"]);
+        MainScene.set_skybox(ResMan::RES("forest.jpg"));
         debug::print("Window title: {}", app->Window.get_title());
 
         utils::async_repeat_every(1000,
@@ -88,10 +88,6 @@ public:
         auto by = speed * delta;
 
         MainScene.main_camera().move({ Vert * by, Up * by, Hori * by });
-    }
-
-    ~Game(){
-        ResManager.clear();
     }
 };
 

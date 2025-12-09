@@ -24,9 +24,8 @@ target_sources( core PUBLIC
         fmts.hpp
         Event.hpp
         Function.hpp
-        ResourceManager.hpp
         APP.hpp
-        ResourceManager.hpp
+        ResMan.hpp
         DynLib.hpp
         SysInfo.hpp
         res.hpp
