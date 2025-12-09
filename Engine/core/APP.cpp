@@ -22,11 +22,14 @@
 #include <emscripten/html5.h>
 #endif
 
+#undef X
+#define X(name, r, args) extern "C" DECLARE_FUNCTION(name, r, args);
+
 #if defined(GAME_HOT_RELOADABLE)
-    #define GET_GAME_FUNCTION(name) lib.function<name##_t>(#name)
+    #define GET_GAME_FUNCTION(name) lib.function<APP::name##_t>(#name)
     #define GAME_LIB_NOW true
 #else
-    #define GET_GAME_FUNCTION(name) reinterpret_cast<name##_t>(::name)
+    #define GET_GAME_FUNCTION(name) reinterpret_cast<APP::name##_t>(::name)
     #define GAME_LIB_NOW false
     GAME_API
 #endif
