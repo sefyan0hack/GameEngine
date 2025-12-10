@@ -57,4 +57,6 @@ namespace debug {
     debug::print("{}", std::forward<T>(x));
   }
 
+  #define THIS_STR std::format("{}", *this)
+
 } // namespace debug
