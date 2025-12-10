@@ -160,12 +160,10 @@ TextureCubeMap::TextureCubeMap()
 TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
     : TextureCubeMap()
 {
-    m_Imgs = std::move(
-        std::array<Image, 6>{
+    m_Imgs = std::array<Image, 6>{
             Image(faces[0], false), Image(faces[1], false), Image(faces[2], false),
             Image(faces[3], false), Image(faces[4], false), Image(faces[5], false)
-        }
-    );
+        };
 
     for (std::size_t i = 0; i < m_Imgs.size(); ++i) {
         auto& img = m_Imgs[i];
@@ -187,13 +185,10 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
 TextureCubeMap::TextureCubeMap(const std::vector<cmrc::file>& faces)
     : TextureCubeMap()
 {
-    m_Imgs = std::move(
-        std::array<Image, 6>{
+    m_Imgs = std::array<Image, 6>{
             Image(faces[0], false), Image(faces[1], false), Image(faces[2], false),
             Image(faces[3], false), Image(faces[4], false), Image(faces[5], false)
-        }
-    );
-
+        };
     for (std::size_t i = 0; i < m_Imgs.size(); ++i) {
         auto& img = m_Imgs[i];
 
