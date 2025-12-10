@@ -472,7 +472,7 @@ inline auto to_hex(T* data) -> std::string
 auto pointer_to_string(Pointer auto ptr) -> std::string
 {
     using Pointee = std::remove_cv_t<std::remove_pointer_t<decltype(ptr)>>;
-    constexpr const char* r = "<{:p}>:{} ({}) bytes = {}";
+    constexpr const char* r = "<{:p}>: {} ({}) bytes = {}";
 
     constexpr auto type = ::type_name<Pointee>();
     auto addr = static_cast<const void*>(ptr);
