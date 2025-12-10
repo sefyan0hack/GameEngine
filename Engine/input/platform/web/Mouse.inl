@@ -1,13 +1,13 @@
 
 Mouse::Mouse() 
 	: Sensitivity(0.11f)
-	, x(0), y(0)
-	, dx(0), dy(0)
+	, m_X(0), m_Y(0)
+	, m_Dx(0), m_Dy(0)
 	, isMouseIn(false)
 	, isLocked(false)
 {}
 
-auto Mouse::set_pos([[maybe_unused]] int32_t x_, [[maybe_unused]] int32_t y_) -> void
+auto Mouse::set_pos([[maybe_unused]] int32_t x, [[maybe_unused]] int32_t y) -> void
 {}
 
 

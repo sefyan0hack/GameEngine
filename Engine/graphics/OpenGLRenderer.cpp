@@ -20,8 +20,8 @@
 
 OpenGLRenderer::OpenGLRenderer(const CWindow& window)
     : m_GApi(window)
-    , x(0), y(0)
-    , width(window.width()), height(window.height())
+    , m_X(0), m_Y(0)
+    , m_Width(window.width()), m_Height(window.height())
 {}
 
 
@@ -73,16 +73,17 @@ auto OpenGLRenderer::graphic_api() const -> std::string_view
 
 auto OpenGLRenderer::set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void
 {
-    this->x= x;
-    this->y= y;
-    this->width= width;
-    this->height= height;
-    gl::Viewport(x, y, width, height);
+    // m_X= x;
+    // m_Y= y;
+    // m_Width= width;
+    // m_Height= height;
+    std::tie(m_X, m_Y, m_Width, m_Height) = {x, y, width, height};
+    gl::Viewport(m_X, m_Y, m_Width, m_Height);
 }
 
 auto OpenGLRenderer::viewport() const -> std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
 {
-    return {x, y, width, height};
+    return {m_X, m_Y, m_Width, m_Height};
 }
 
 auto OpenGLRenderer::enable_wireframe() -> void

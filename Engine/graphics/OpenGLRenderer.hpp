@@ -25,5 +25,5 @@ protected:
 
 private:
     const OpenGL m_GApi;
-    uint32_t x, y, width, height;
+    uint32_t m_X, m_Y, m_Width, m_Height;
 };

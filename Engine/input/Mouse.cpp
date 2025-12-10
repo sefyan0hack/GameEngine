@@ -22,22 +22,22 @@
 
 auto Mouse::get_pos() const noexcept -> std::pair<int32_t, int32_t>
 {
-	return {x, y};
+	return {m_X, m_X};
 }
 
 auto Mouse::get_rawdelta() const noexcept -> std::pair<float, float>
 {
-    return {Sensitivity * dx, Sensitivity * dy};
+    return {Sensitivity * m_Dx, Sensitivity * m_Dy};
 }
 
 auto Mouse::on_mouse_move( int32_t x, int32_t y ) noexcept -> void
 {
-	std::tie(this->x, this->y) = { x, y };
+	std::tie(m_X, m_Y) = { x, y };
 }
 
 auto Mouse::on_rawdelta( float dx, float dy ) noexcept -> void
 {
-	std::tie(this->dx, this->dy) = { dx, dy };
+	std::tie(m_Dx, m_Dy) = { dx, dy };
 }
 
 auto Mouse::on_mouse_leave() noexcept -> void

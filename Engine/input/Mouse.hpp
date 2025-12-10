@@ -37,7 +37,7 @@ public:
 
 public:
 	auto get_pos() const noexcept			-> std::pair<int32_t, int32_t> ;
-	auto set_pos(int32_t x_, int32_t y_)		-> void ;
+	auto set_pos(int32_t x, int32_t y)		-> void ;
 	auto get_rawdelta() const noexcept		-> std::pair<float, float> ;
 	auto locked() const						-> bool ;
 	auto lock([[maybe_unused]] const CWindow& window) noexcept -> void ;
@@ -68,8 +68,8 @@ private:
 	std::bitset<ButtonCoun> m_PrevButtonState;
 
 	// int32_t delta;
-	int32_t x, y;
-	float dx, dy;
+	int32_t m_X, m_Y;
+	float m_Dx, m_Dy;
 
 	bool isMouseIn = false;
 	bool isLocked = false;
@@ -86,7 +86,7 @@ struct std::formatter<Mouse> {
   auto format(const Mouse& obj, std::format_context& context) const {
     return std::format_to(context.out(),
     R"({{ "x": {}, "y": {}, "dx": {}, "dy": {}, "isMouseIn": {}, "isLocked": {} }})"
-    , obj.x, obj.y, obj.dx, obj.dy, obj.isMouseIn, obj.isLocked
+    , obj.m_X, obj.m_Y, obj.m_Dx, obj.m_Dy, obj.isMouseIn, obj.isLocked
   	);
   }
 };
