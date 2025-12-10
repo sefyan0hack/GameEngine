@@ -11,7 +11,7 @@ using namespace filesystem;
 #if !defined(WEB_PLT)
 TEST(load_file_async, exist) {
     path tmpDir = temp_directory_path();
-    auto tmpFile = tmpDir / std::format("{}_{}_{}_{}", std::chrono::system_clock::now().time_since_epoch(), rand(), rand(), rand());
+    auto tmpFile = tmpDir / std::format("{}_{}_{}_{}", std::chrono::system_clock::now().time_since_epoch().count(), rand(), rand(), rand());
 
     std::ofstream ofs(tmpFile);
 
