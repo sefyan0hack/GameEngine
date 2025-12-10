@@ -14,7 +14,6 @@
 #include <future>
 #include <functional>
 
-#include "Log.hpp"
 #include "Exception.hpp"
 #include "Platform.hpp"
 
@@ -472,7 +471,7 @@ inline auto to_hex(T* data) -> std::string
 auto pointer_to_string(Pointer auto ptr) -> std::string
 {
     using Pointee = std::remove_cv_t<std::remove_pointer_t<decltype(ptr)>>;
-    constexpr const char* r = "<{:p}>: {} ({}) bytes = {}";
+    constexpr const char* r = "({:p}) {} ({})bytes = {}";
 
     constexpr auto type = ::type_name<Pointee>();
     auto addr = static_cast<const void*>(ptr);
@@ -480,7 +479,7 @@ auto pointer_to_string(Pointer auto ptr) -> std::string
     if (ptr == nullptr) return "null";
     else if constexpr (std::is_pointer_v<Pointee>) return pointer_to_string(*ptr);
     else if constexpr (std::is_same_v<Pointee, void>) return std::format(r, addr, type, "??", "void*");
-    else if constexpr (std::formattable<Pointee, char> || std::is_constructible_v<std::string, Pointee>) return std::format(r, addr, type, sizeof(Pointee), *ptr);
+    else if constexpr (std::formattable<Pointee, char>) return std::format(r, addr, type, sizeof(Pointee), *ptr);
     else if constexpr (std::is_function_v<Pointee>) return std::format(r, addr, type, sizeof(Pointee), "");
     else return std::format(r, addr, type, sizeof(Pointee), to_hex(ptr));
 }
