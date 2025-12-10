@@ -18,7 +18,7 @@ fetch_and_include_file(khrplatform https://raw.githubusercontent.com/KhronosGrou
 
 if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/KHR/khrplatform.h)
     file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/KHR)
-    include_directories(${CMAKE_CURRENT_BINARY_DIR})
+    include_directories( SYSTEM ${CMAKE_CURRENT_BINARY_DIR})
 
     file(RENAME
         ${khrplatform_SOURCE_DIR}/khrplatform.h
