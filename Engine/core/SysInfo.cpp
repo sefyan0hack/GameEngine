@@ -1,4 +1,5 @@
 #include "SysInfo.hpp"
+#include <cassert>
 
 #if defined(WINDOWS_PLT)
     #include <windows.h>
