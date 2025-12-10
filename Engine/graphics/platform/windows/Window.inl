@@ -352,7 +352,7 @@ auto CWindow::set_title(std::string  title) -> void
 
 auto CWindow::set_vsync(bool state) -> void
 {
-	BEGIN_IGNORE_WARN_CALNG("-Wno-cast-function-type-mismatch")
+	BEGIN_IGNORE_WARN_CALNG("-Wcast-function-type-mismatch")
 	if(!wglSwapIntervalEXT) wglSwapIntervalEXT = reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC>(wglGetProcAddress("wglSwapIntervalEXT"));
 	END_IGNORE_WARN_CALNG()
 	wglSwapIntervalEXT(state);
