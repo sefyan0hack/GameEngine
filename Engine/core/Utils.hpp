@@ -396,18 +396,6 @@ inline auto to_hex(const T& data) -> std::string
     return to_hex(data, 1);
 }
 
-/**
- * @brief Format a pointer to a single object as a hex string.
- *
- * @tparam T Pointee type.
- * @param data Pointer to the object.
- * @return std::string Hex dump of the object bytes (size determined by sizeof(T)).
- */
-template <class T>
-inline auto to_hex(T* data) -> std::string
-{
-    return to_hex(data, 1);
-}
 
 /**
  * @brief Format a C-style array as a hex string.
@@ -453,6 +441,19 @@ inline auto to_hex(const T* data, std::size_t n) -> std::string
 }
 
 /**
+ * @brief Format a pointer to a single object as a hex string.
+ *
+ * @tparam T Pointee type.
+ * @param data Pointer to the object.
+ * @return std::string Hex dump of the object bytes (size determined by sizeof(T)).
+ */
+template <class T>
+inline auto to_hex(T* data) -> std::string
+{
+    return to_hex(data, 1);
+}
+
+/**
  * @brief Produce a human-friendly string description of a pointer.
  *
  * @tparam P A pointer type that satisfies the Pointer concept.
@@ -471,20 +472,17 @@ inline auto to_hex(const T* data, std::size_t n) -> std::string
 auto pointer_to_string(Pointer auto ptr) -> std::string
 {
     using Pointee = std::remove_cv_t<std::remove_pointer_t<decltype(ptr)>>;
+    constexpr const char* r = "<{:p}>:{} ({}) bytes = {}";
+
+    constexpr auto type = ::type_name<Pointee>();
+    auto addr = static_cast<const void*>(ptr);
 
     if (ptr == nullptr) return "null";
-    if constexpr (std::is_constructible_v<std::string, decltype(ptr)>) return std::string(ptr);
-
-    if constexpr (std::is_function_v<Pointee>) {
-        return ::type_name<Pointee>();
-    } else if constexpr (std::formattable<Pointee, char>) {
-        return std::format("{}", *ptr);
-    } else if constexpr (std::is_same_v<Pointee, void>) {
-        return std::format("<{:p}> : void*", static_cast<const void*>(ptr));
-    } else {
-        if constexpr (std::is_pointer_v<Pointee>) return pointer_to_string(*ptr);
-        return std::format("<{:p}> ({}) : [ {} ]", static_cast<const void*>(ptr), sizeof(Pointee), to_hex(ptr));
-    }
+    else if constexpr (std::is_pointer_v<Pointee>) return pointer_to_string(*ptr);
+    else if constexpr (std::is_same_v<Pointee, void>) return std::format(r, addr, type, "??", "void*");
+    else if constexpr (std::formattable<Pointee, char> || std::is_constructible_v<std::string, Pointee>) return std::format(r, addr, type, sizeof(Pointee), *ptr);
+    else if constexpr (std::is_function_v<Pointee>) return std::format(r, addr, type, sizeof(Pointee), "");
+    else return std::format(r, addr, type, sizeof(Pointee), to_hex(ptr));
 }
 
 /**
