@@ -105,7 +105,7 @@ auto Mesh::set_attribute(GLuint index, AttributeInfo att) -> void
         att.type,
         att.normalized,
         att.stride,
-        (GLvoid*)((char *)nullptr + att.offset)
+        reinterpret_cast<void*>(static_cast<uintptr_t>(att.offset))
     );
 
     gl::VertexAttribDivisor(index, static_cast<GLuint>(att.divisor));
