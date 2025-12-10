@@ -112,9 +112,9 @@ extern "C" {
         gl::import_opengl_functions(funcs);
     }
 
-    GAME_EXPORT auto game_set_app(APP* app) -> void
+    GAME_EXPORT auto game_set_app(APP* app_) -> void
     {
-        ::app = app;
+        ::app = app_;
     }
 
     GAME_EXPORT auto game_update(void* game, float delta) -> void
