@@ -17,17 +17,17 @@ public:
     Texture(GLenum texType);
     Texture(const Texture&) = delete;
     auto operator=(const Texture&) -> Texture& = delete;
-    virtual ~Texture();
+    ~Texture();
 public:
-    virtual auto id() const -> GLuint final;
-    virtual auto bind() const -> void  final;
-    virtual auto type() const -> GLenum final;
-    virtual auto type_name() const -> std::string final;
-    virtual auto texture_unit() const -> GLint final;
+    auto id() const -> GLuint;
+    auto bind() const -> void;
+    auto type() const -> GLenum;
+    auto type_name() const -> std::string;
+    auto texture_unit() const -> GLint;
 
     auto img2d_to_gpu(auto* data, GLsizei width, GLsizei height, GLint intformat = GL_RGBA8, GLenum format = GL_RGBA) const -> void;
 protected:
-    std::shared_ptr<GLuint> m_Id;
+    GLuint m_Id;
     GLenum m_Type;
     GLint m_TextureUnit;
     inline static GLint m_TextureUnitCount = 0;
@@ -77,6 +77,6 @@ struct std::formatter<Texture> {
   auto format(const Texture& obj, std::format_context& context) const {
     return std::format_to(context.out(),
     R"({{ "id": {}, "type": "{}", "uint": {}, "number": {} }})"
-    , *obj.m_Id, obj.type_name(), obj.m_TextureUnit, Texture::m_TextureUnitCount);
+    , obj.m_Id, obj.type_name(), obj.m_TextureUnit, Texture::m_TextureUnitCount);
   }
 };

@@ -29,11 +29,11 @@ constexpr auto to_string(GLenum type) -> const char*
 }
 
 Texture::Texture(GLenum texType)
-    : m_Id(std::make_shared<GLuint>(0))
+    : m_Id(0)
     , m_Type(texType)
     , m_TextureUnit(m_TextureUnitCount++)
 {
-    gl::GenTextures(1, m_Id.get());
+    gl::GenTextures(1, &m_Id);
     bind();
     debug::print("({:p}) ~ctor {}", (const void*)this, *this);
 
@@ -42,19 +42,19 @@ Texture::Texture(GLenum texType)
 Texture::~Texture() {
     debug::print("({:p}) ~dtor {}", (const void*)this, *this);
 
-    gl::DeleteTextures(1, m_Id.get());
+    gl::DeleteTextures(1, &m_Id);
     m_TextureUnitCount--;
 }
 
 auto Texture::id() const -> GLuint
 {
-    return *m_Id;
+    return m_Id;
 }
 
 auto Texture::bind() const -> void
 {
     gl::ActiveTexture(static_cast<GLenum>(GL_TEXTURE0 + m_TextureUnit));
-    gl::BindTexture(m_Type, *m_Id);
+    gl::BindTexture(m_Type, m_Id);
 }
 
 auto Texture::type() const -> GLenum
