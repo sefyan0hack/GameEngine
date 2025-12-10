@@ -192,3 +192,65 @@ struct Type {
 
 
 #define DECLARE_FUNCTION(name, r, args) auto name args -> r
+
+
+#define PRAGMA_TO_STR(x)        #x
+#define PRAGMA_STR(x)           PRAGMA_TO_STR(GCC diagnostic ignored x)
+
+
+#if defined(MSVC_CPL)
+    /**
+     * @brief Pushes the current warning state, disables the specified MSVC warning,
+     * and makes subsequent code portable by nullifying GCC/Clang macros.
+     * @param w The numeric warning code (e.g., 4996).
+     */
+    #define BEING_IGNORE_WARN_MSVC(w)     __pragma(warning(push)) __pragma(warning(disable: w))
+    #define END_IGNORE_WARN_MSVC()     __pragma(warning(pop))
+
+    #define BEING_IGNORE_WARN_GCC(w)
+    #define END_IGNORE_WARN_GCC()
+    #define BEGIN_IGNORE_WARN_CALNG(w)
+    #define END_IGNORE_WARN_CALNG()
+#endif
+
+
+#if defined(GCC_CPL) && !defined(CLANG_CPL)
+    /**
+     * @brief Pushes the current diagnostic state, disables the specified GCC warning,
+     * and makes subsequent code portable by nullifying MSVC/Clang macros.
+     * @param w The string warning flag (e.g., "-Wdeprecated-declarations").
+     */
+    #define BEING_IGNORE_WARN_GCC(w)      _Pragma("GCC diagnostic push") _Pragma(PRAGMA_STR(w))
+    #define END_IGNORE_WARN_GCC()      _Pragma("GCC diagnostic pop")
+
+    #define BEING_IGNORE_WARN_MSVC(w)
+    #define END_IGNORE_WARN_MSVC()
+    #define BEGIN_IGNORE_WARN_CALNG(w)
+    #define END_IGNORE_WARN_CALNG()
+#endif
+
+
+#if defined(CLANG_CPL)
+    /**
+     * @brief Pushes the current diagnostic state, disables the specified Clang warning,
+     * and makes subsequent code portable by nullifying MSVC/GCC macros.
+     * @param w The string warning flag (e.g., "-Wdeprecated-declarations").
+     */
+    #define BEGIN_IGNORE_WARN_CALNG(w)    _Pragma("GCC diagnostic push") _Pragma(PRAGMA_STR(w))
+    #define END_IGNORE_WARN_CALNG()    _Pragma("GCC diagnostic pop")
+
+    #define BEING_IGNORE_WARN_MSVC(w)
+    #define END_IGNORE_WARN_MSVC()
+    #define BEING_IGNORE_WARN_GCC(w)
+    #define END_IGNORE_WARN_GCC()
+#endif
+
+
+#if !defined(MSVC_CPL) && !defined(GCC_CPL) && !defined(CLANG_CPL)
+    #define BEING_IGNORE_WARN_MSVC(w)
+    #define END_IGNORE_WARN_MSVC()
+    #define BEING_IGNORE_WARN_GCC(w)
+    #define END_IGNORE_WARN_GCC()
+    #define BEGIN_IGNORE_WARN_CALNG(w)
+    #define END_IGNORE_WARN_CALNG()
+#endif
