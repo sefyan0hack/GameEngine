@@ -53,7 +53,7 @@ Mesh::~Mesh()
     gl::DeleteBuffers(1, &VBO);
     gl::DeleteVertexArrays(1, &VAO);
     Count--;
-    debug::print("({:p}) ~Dtor {}", (const void*)this, *this);
+    debug::print("({:p}) ~dtor {}", (const void*)this, *this);
 
 }
 
