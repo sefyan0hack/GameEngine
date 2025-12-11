@@ -7,6 +7,8 @@
 #pragma once
 #include <version>
 #include <type_traits>
+#include <variant>
+#include <format>
 #include <string_view>
 #include <utility>
 #include <cstdlib>
@@ -328,4 +330,4 @@ concept either = (std::same_as<T, U> || ...);
  * static_assert(formattable<char>); // OK:
  * @endcode
  */
-template<class T> concept formattable = std::formattable<std::decay_t<T>, char>;
+template<class T> concept formattable = std::formattable<T, char>;
