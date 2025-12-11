@@ -30,7 +30,6 @@ constexpr auto to_string(GLenum type) -> const char*
 Texture::Texture(GLenum texType)
     : m_Id(0)
     , m_Type(texType)
-    , m_TextureUnit(m_TextureUnitCount++)
 {
     gl::GenTextures(1, &m_Id);
     bind();
@@ -40,7 +39,6 @@ Texture::Texture(GLenum texType)
 
 Texture::~Texture() {
     gl::DeleteTextures(1, &m_Id);
-    m_TextureUnitCount--;
 
     DTOR_LOG
 }
@@ -52,7 +50,7 @@ auto Texture::id() const -> GLuint
 
 auto Texture::bind() const -> void
 {
-    gl::ActiveTexture(static_cast<GLenum>(GL_TEXTURE0 + m_TextureUnit));
+    gl::ActiveTexture(static_cast<GLenum>(GL_TEXTURE0 + texture_unit()));
     gl::BindTexture(m_Type, m_Id);
 }
 
@@ -66,33 +64,34 @@ auto Texture::type_name() const -> std::string
 }
 auto Texture::texture_unit() const -> GLint
 {
-    return m_TextureUnit;
+    return m_Id - 1;
 }
 
+
 Texture2D::Texture2D()
-    : Texture(GL_TEXTURE_2D), m_Img(), m_Mipmapped(true)
+    : Texture(GL_TEXTURE_2D), m_Img()
 {
     img2d_to_gpu(reinterpret_cast<GLubyte*>(m_Img.data().data()), m_Img.width(), m_Img.height(), m_Img.gpu_format(), m_Img.cpu_format());
-    if (m_Mipmapped) generate_mipmap();
+    gl::GenerateMipmap(m_Type);
 }
 
 //////////
 Texture2D::Texture2D(const std::string &name)
-    : Texture(GL_TEXTURE_2D), m_Img(name), m_Mipmapped(true)
+    : Texture(GL_TEXTURE_2D), m_Img(name)
 {
     img2d_to_gpu(reinterpret_cast<GLubyte*>(m_Img.data().data()), m_Img.width(), m_Img.height(), m_Img.gpu_format(), m_Img.cpu_format());
-    if (m_Mipmapped) generate_mipmap();
+    gl::GenerateMipmap(m_Type);
 }
 
 Texture2D::Texture2D(const cmrc::file &src)
-    : Texture(GL_TEXTURE_2D), m_Img(src), m_Mipmapped(true)
+    : Texture(GL_TEXTURE_2D), m_Img(src)
 {
     img2d_to_gpu(reinterpret_cast<GLubyte*>(m_Img.data().data()), m_Img.width(), m_Img.height(), m_Img.gpu_format(), m_Img.cpu_format());
-    if (m_Mipmapped) generate_mipmap();
+    gl::GenerateMipmap(m_Type);
 }
 
 Texture2D::Texture2D(auto* data, GLint width, GLint height, GLenum format)
-    : Texture(GL_TEXTURE_2D), m_Img(data, width, height, Image::channel_from_cpu_format(format)), m_Mipmapped(true)
+    : Texture(GL_TEXTURE_2D), m_Img(data, width, height, Image::channel_from_cpu_format(format))
 {
     img2d_to_gpu(data, width, height, m_Img.gpu_format(), m_Img.cpu_format());
 }
@@ -136,15 +135,6 @@ auto Texture::img2d_to_gpu(auto *data, GLsizei width, GLsizei height, GLint intf
     gl::TexImage2D(m_Type, 0, intformat, width, height, 0, format, gl_type, data);
 }
 
-auto Texture2D::generate_mipmap() -> void
-{
-    gl::GenerateMipmap(m_Type);
-}
-
-auto Texture2D::is_mipmapped() const -> bool
-{
-    return m_Mipmapped;
-}
 
 //////
 TextureCubeMap::TextureCubeMap()

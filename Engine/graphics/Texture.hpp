@@ -14,10 +14,12 @@ class ENGINE_EXPORT Texture
 {
 public:
     friend struct std::formatter<Texture>;
+protected:
     Texture(GLenum texType);
+    ~Texture();
     Texture(const Texture&) = delete;
     auto operator=(const Texture&) -> Texture& = delete;
-    ~Texture();
+
 public:
     auto id() const -> GLuint;
     auto bind() const -> void;
@@ -26,12 +28,10 @@ public:
     auto texture_unit() const -> GLint;
 
     auto img2d_to_gpu(auto* data, GLsizei width, GLsizei height, GLint intformat = GL_RGBA8, GLenum format = GL_RGBA) const -> void;
+
 protected:
     GLuint m_Id;
     GLenum m_Type;
-    GLint m_TextureUnit;
-    inline static GLint m_TextureUnitCount = 0;
-    
 };
 
 class ENGINE_EXPORT Texture2D final : public Texture
@@ -43,13 +43,9 @@ class ENGINE_EXPORT Texture2D final : public Texture
     Texture2D(const std::string &name);
     Texture2D(const cmrc::file &src);
     Texture2D(auto* data, GLint width, GLint height, GLenum format = GL_RGBA);
-    auto is_mipmapped() const -> bool;
 
   private:
-    auto generate_mipmap() -> void ;
-
     Image m_Img;
-    bool m_Mipmapped;
 };
 
 class ENGINE_EXPORT TextureCubeMap final : public Texture
@@ -76,7 +72,7 @@ struct std::formatter<Texture> {
   }
   auto format(const Texture& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    R"({{ "id": {}, "type": "{}", "uint": {}, "number": {} }})"
-    , obj.m_Id, obj.type_name(), obj.m_TextureUnit, Texture::m_TextureUnitCount);
+    R"({{ "id": {}, "type": "{}", "uint": {} }})"
+    , obj.m_Id, obj.type_name(), obj.texture_unit());
   }
 };
