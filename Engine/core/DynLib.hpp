@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Log.hpp"
 #include <filesystem>
 #include <engine_export.h>
 

@@ -17,7 +17,7 @@ Camera::Camera() noexcept
     , m_Position(0.0f, 1.0f, 4.0f)
     , m_Projection(PERS ? perspective() : orthographic())
     , m_View(glm::lookAt(m_Position, m_Position + m_Forward, m_Up))
-{}
+{ CTOR_LOG }
 
 
 auto Camera::view() const -> glm::mat4

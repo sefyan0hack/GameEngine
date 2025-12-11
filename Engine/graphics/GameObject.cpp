@@ -13,6 +13,7 @@ GameObject::GameObject(glm::vec3 position, std::shared_ptr<Material> matt, std::
     , m_Name(Name)
 {    
     Count++;
+    CTOR_LOG
 }
 
 GameObject::GameObject(Transform transform, std::shared_ptr<Material> matt, std::shared_ptr<Mesh> mesh, std::string Name) noexcept
@@ -27,6 +28,7 @@ GameObject::GameObject(Transform transform, std::shared_ptr<Material> matt, std:
 GameObject::~GameObject()
 {
     Count--;
+    DTOR_LOG
 }
 
 

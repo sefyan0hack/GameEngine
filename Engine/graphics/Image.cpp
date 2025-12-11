@@ -42,6 +42,7 @@ Image::Image()
 {
     // magenta/black checkerboard 50x50
     std::memcpy(m_Data, generate_checkerboard<50>(0xFFFF00FF, 0x00000000).data(), size());
+    CTOR_LOG
 }
 
 Image::Image(Pointer auto Data, uint32_t Width, uint32_t Height, uint32_t Channels)
@@ -53,7 +54,7 @@ Image::Image(Pointer auto Data, uint32_t Width, uint32_t Height, uint32_t Channe
         m_Channels = Channels;
         m_Data = reinterpret_cast<std::byte*>(Data);
     }else{
-        debug::print(" Image not Valid  {}", *this);
+        debug::print(" Image not Valid  {}", THIS_STR);
     }
 }
 
@@ -81,12 +82,15 @@ Image::Image(const cmrc::file& src, bool flip)
         m_Data = reinterpret_cast<std::byte*>(data);
     else
         debug::print("Can't read file . reason : {}", stbi_failure_reason());
+
+    CTOR_LOG
 }
 
 
 Image::~Image()
 {
     if(m_Data) stbi_image_free(m_Data);
+    DTOR_LOG
 }
 
 
@@ -139,7 +143,7 @@ auto Image::valid() const ->bool
 
 auto Image::data() const -> std::span<std::byte>
 {
-    Expect(valid(), " Image not Valid  {}", *this);
+    Expect(valid(), " Image not Valid  {}", THIS_STR);
 
     return { m_Data, size() };
 }

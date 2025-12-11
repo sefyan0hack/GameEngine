@@ -62,7 +62,8 @@ public:
             [](){ app->Window.set_title(std::format("{}, {} : {}", os::host::name(),os::host::arch(), app->fps())); }
         );
 
-        debug::print("{} || {}", VecWrapper{gl::OPENGL_FUNCTIONS_NAME}, Type<decltype(gl::OPENGL_FUNCTIONS_NAME)>());
+        // debug::print("{} || {}", VecWrapper{gl::OPENGL_FUNCTIONS_NAME}, Type<decltype(gl::OPENGL_FUNCTIONS_NAME)>());
+        debug::print("{}", VecWrapper{gl::OPENGL_FUNCTIONS_NAME});
     }
 
     auto update(float delta) -> void

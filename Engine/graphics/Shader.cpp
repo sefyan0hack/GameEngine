@@ -21,11 +21,12 @@ constexpr auto to_string(GLenum type) -> const char*
 Shader::Shader()
     : m_Id(0), m_Type(0)
 {
-    debug::print("({:p}) ~ctor {}", (const void*)this, *this);
+    CTOR_LOG
 }
 Shader::~Shader(){
     gl::DeleteShader(m_Id);
-    debug::print("({:p}) ~dtor {}", (const void*)this, *this);
+
+    DTOR_LOG
 }
 
 
@@ -48,7 +49,7 @@ Shader::Shader(const std::string& filename)
     compile();
     check_compile_status();
 
-    debug::print("({:p}) ~ctor {}", (const void*)this, *this);
+    CTOR_LOG
 }
 
 Shader::Shader(std::string Src, GLenum type)
@@ -61,7 +62,7 @@ Shader::Shader(std::string Src, GLenum type)
     compile();
     check_compile_status();
 
-    debug::print("({:p}) ~ctor {}", (const void*)this, *this);
+    CTOR_LOG
 }
 
 Shader::Shader(const cmrc::file& Src, GLenum type)

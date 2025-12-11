@@ -3,6 +3,7 @@
 #include "Utils.hpp"
 #include "DynLib.hpp"
 #include "SysInfo.hpp"
+#include "Log.hpp"
 #include <input/Keyboard.hpp>
 #include <input/Mouse.hpp>
 #include <graphics/Window.hpp>

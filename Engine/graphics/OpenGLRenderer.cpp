@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <execution>
 #include <span>
-#include <core/Log.hpp>
 #include <core/ResMan.hpp>
 #include "Window.hpp"
 #include "Camera.hpp"

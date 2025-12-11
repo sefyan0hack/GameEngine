@@ -17,6 +17,8 @@ Mouse::Mouse()
 	if(RegisterRawInputDevices(&_rid, 1, sizeof(_rid)) == false){
 		throw Exception("Mouse row data not regesterd");
 	}
+
+	CTOR_LOG
 }
 
 auto Mouse::set_pos([[maybe_unused]] int32_t x, [[maybe_unused]] int32_t y) -> void

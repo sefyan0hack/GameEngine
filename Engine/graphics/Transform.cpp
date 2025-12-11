@@ -1,4 +1,5 @@
 #include "Transform.hpp"
+#include <core/Log.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -9,12 +10,12 @@ Transform::Transform()
     : position(0.0f)
     , rotation(0.0f)
     , scale(1.0f)
-{}
+{ CTOR_LOG }
 Transform::Transform(glm::vec3 position, glm::vec3 rotaion, glm::vec3 scale)
     : position(position)
     , rotation(rotaion)
     , scale(scale)
-{}
+{ CTOR_LOG }
 
 auto Transform::operator=(const glm::mat4 &M) -> Transform
 {

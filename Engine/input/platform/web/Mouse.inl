@@ -5,7 +5,7 @@ Mouse::Mouse()
 	, m_Dx(0), m_Dy(0)
 	, isMouseIn(false)
 	, isLocked(false)
-{}
+{ CTOR_LOG }
 
 auto Mouse::set_pos([[maybe_unused]] int32_t x, [[maybe_unused]] int32_t y) -> void
 {}

@@ -1,4 +1,5 @@
 #include "gl.hpp"
+#include <core/Log.hpp>
 namespace gl {
 
     auto get_proc_address(const char* name) -> void* {

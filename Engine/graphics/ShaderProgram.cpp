@@ -1,7 +1,6 @@
 #include "ShaderProgram.hpp"
 #include "Shader.hpp"
 #include "OpenGL.hpp"
-
 #include <core/Log.hpp>
 
 
@@ -18,7 +17,7 @@ ShaderProgram::ShaderProgram(std::shared_ptr<Shader> vertex, std::shared_ptr<Sha
     dump_attribs();
     dump_uniforms();
 
-    debug::print(*this);
+    CTOR_LOG
 }
 
 
@@ -47,6 +46,7 @@ ShaderProgram::ShaderProgram(ShaderProgram&& other) noexcept
 ShaderProgram::~ShaderProgram()
 {
     gl::DeleteProgram(m_Id);
+    DTOR_LOG
 }
 
 auto ShaderProgram::id() const noexcept -> GLuint

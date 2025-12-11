@@ -14,7 +14,7 @@
 Scene::Scene()
     : m_Cameras({Camera()})
     , m_MainCamera(m_Cameras[0])
-    , m_SkyBox(std::make_unique<SkyBox>()) {}
+    , m_SkyBox(std::make_unique<SkyBox>()) { CTOR_LOG }
 
 auto Scene::entities() const -> std::span<const GameObject>
 {

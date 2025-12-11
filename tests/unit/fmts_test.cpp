@@ -7,7 +7,6 @@
 #include <graphics/Material.hpp>
 #include <graphics/GameObject.hpp>
 #include <graphics/Camera.hpp>
-#include <core/Log.hpp>
 #include <format>
 #include <iostream>
 #include <map>

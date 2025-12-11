@@ -1,5 +1,4 @@
 #include "Keyboard.hpp"
-#include <core/Log.hpp>
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>

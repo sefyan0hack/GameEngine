@@ -1,5 +1,4 @@
 #include <core/Log.hpp>
-#include <core/Utils.hpp>
 #include <core/res.hpp>
 #include "Texture.hpp"
 #include "OpenGL.hpp"
@@ -35,15 +34,15 @@ Texture::Texture(GLenum texType)
 {
     gl::GenTextures(1, &m_Id);
     bind();
-    debug::print("({:p}) ~ctor {}", (const void*)this, *this);
 
+    CTOR_LOG
 }
 
 Texture::~Texture() {
-    debug::print("({:p}) ~dtor {}", (const void*)this, *this);
-
     gl::DeleteTextures(1, &m_Id);
     m_TextureUnitCount--;
+
+    DTOR_LOG
 }
 
 auto Texture::id() const -> GLuint

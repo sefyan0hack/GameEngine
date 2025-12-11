@@ -8,7 +8,6 @@
 #include <type_traits>
 #include <engine_export.h>
 
-#include "Log.hpp"
 #include "Exception.hpp"
 #include "Utils.hpp"
 
@@ -103,8 +102,6 @@ auto Function<R(PLT_CALL *)(Args...)>::operator=(Function &&other) -> Function &
 template <typename R, typename... Args>
 auto PLT_CALL Function<R(PLT_CALL*)(Args...)>::default_([[maybe_unused]] Args... args) -> R
 {
-    debug::print("if you see this the function not inialized ");
-
     if constexpr (!std::is_void_v<R>) {
         return R{};
     }

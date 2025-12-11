@@ -15,7 +15,6 @@
 #include <functional>
 
 #include "Exception.hpp"
-#include "Platform.hpp"
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>
@@ -28,68 +27,6 @@
 #include <emscripten/html5.h>
 #endif
 
-/**
- * @brief Concept that tests whether T is a Pointer
- *
- * @details
- * Example usage:
- * @code
- *
- * static_assert(Pointer<int*>);     // OK:
- * static_assert(Pointer<float*>); // OK:
- * @endcode
- */
-template <typename T>
-concept Pointer = std::is_pointer_v<T>;
-
-/**
- * @brief Concept that tests whether T is a Function Pointer
- *
- * @details
- * Example usage:
- * @code
- *
- * static_assert(Pointer<void(f*)(int)>); // OK:
- * @endcode
- */
-template<typename T>
-concept FunctionPointer =
-    std::is_pointer_v<std::remove_cv_t<T>> &&
-    std::is_function_v<std::remove_pointer_t<std::remove_cv_t<T>>>;
-
-/**
- * @brief Concept that tests whether T is a Variant
- *
- * @details
- * Example usage:
- * @code
- *
- * static_assert(std::variant<int,char>); // OK:
- * @endcode
- */
-template <typename T>
-concept Variant = requires {
-    typename std::variant_size<std::remove_cvref_t<T>>::type;
-};
-
-
-template<class... Ts>
-struct overloaded : Ts... { using Ts::operator()...; };
-
-/**
- * @brief Concept that checks if T is equal to any of the listed types U...
- *
- * @tparam T The type to test
- * @tparam U Parameter pack of types to compare with T
- *
- * @returns true if T is the same as any type in U...
- *
- * @details
- * Useful in constrained templates or SFINAE situations where you want to
- * accept a set of specific types.
- */
-template<typename T, typename ... U>
-concept either = (std::same_as<T, U> || ...);
 
 namespace utils {
 
@@ -479,7 +416,7 @@ auto pointer_to_string(Pointer auto ptr) -> std::string
     if (ptr == nullptr) return "null";
     else if constexpr (std::is_pointer_v<Pointee>) return pointer_to_string(*ptr);
     else if constexpr (std::is_same_v<Pointee, void>) return std::format(r, addr, type, "??", "void*");
-    else if constexpr (std::formattable<Pointee, char>) return std::format(r, addr, type, sizeof(Pointee), *ptr);
+    else if constexpr (formattable<Pointee>) return std::format(r, addr, type, sizeof(Pointee), *ptr);
     else if constexpr (std::is_function_v<Pointee>) return std::format(r, addr, type, sizeof(Pointee), "");
     else return std::format(r, addr, type, sizeof(Pointee), to_hex(ptr));
 }

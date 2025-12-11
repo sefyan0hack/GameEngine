@@ -6,7 +6,6 @@
 
 #include "gl.hpp"
 #include <core/res.hpp>
-#include <core/Utils.hpp>
 #include <engine_export.h>
 
 class ENGINE_EXPORT Image
