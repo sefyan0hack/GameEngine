@@ -21,7 +21,7 @@ namespace debug {
     return oss.str();
   }
 
-  template <typename ...Ts>
+  template <class ...Ts>
   auto Log(
     [[maybe_unused]] const std::format_string<Ts...>& fmt,
     [[maybe_unused]] Ts&& ... ts) -> std::string
@@ -31,7 +31,7 @@ namespace debug {
   }
   
 
-  template <typename... Ts>
+  template <class... Ts>
   inline auto print([[maybe_unused]] const std::format_string<Ts...>& fmt, [[maybe_unused]] Ts&&... ts) -> void
   {
     #if defined(DEBUG) && !defined(NDEBUG)
@@ -51,12 +51,19 @@ namespace debug {
     debug::print("{}", static_cast<const char*>(str));
   }
 
-  template <typename T>
+  template <class T>
   inline auto print(T&& x) -> void
   {
     debug::print("{}", std::forward<T>(x));
   }
 
   #define THIS_STR std::format("{}", *this)
+  #define THIS_PRINT debug::print("{}", *this)
+  #define THIS_ADDR (const void*)this
+
+  // #define CTOR_LOG 
+  // #define DTOR_LOG 
+  #define CTOR_LOG debug::print("({:p})  {} {}", (const void*)this, ::type_name<std::remove_pointer_t<decltype(this)>>(), *this);
+  #define DTOR_LOG debug::print("({:p}) ~{} {}", (const void*)this, ::type_name<std::remove_pointer_t<decltype(this)>>(), *this);
 
 } // namespace debug
