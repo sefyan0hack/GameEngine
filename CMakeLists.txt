@@ -17,6 +17,7 @@ set(DIR_PLATFORM_NAME
 
 include(CTest)
 include(helpers)
+include(FeatureSummary)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -47,6 +48,7 @@ option(USAN                 "Undefined Sanitizer"                     OFF)
 option(TSAN                 "Thread Sanitizer"                        OFF)
 option(NATIVE_OPT           "Native opt build"                        ON)
 option(GAME_HOT_RELOADABLE  "Build Game as Shared and hot reload it"  OFF)
+option(LOG                  "LOG to teminal or file"                  ON)
 cmake_dependent_option(ROBUST_GL_CHECK "Robust GL checks in Debug builds `slow` " ON [[ CMAKE_BUILD_TYPE STREQUAL "Debug" ]] OFF)
 cmake_dependent_option(NO_CONSOLE "No Console with Window" ON [[ CMAKE_BUILD_TYPE STREQUAL "Release" ]] OFF)
 cmake_dependent_option(STATIC_LINK "Static link C++" ON "MINGW" OFF)
@@ -454,16 +456,28 @@ endif()
 ####################################################################################################
 # Print Option Status
 ####################################################################################################
-message(STATUS "TESTS : (${TESTS}) [ Testing ]")
-message(STATUS "DOCS : (${DOCS}) [ Docs ]")
-message(STATUS "ENABLE_COVERAGE : (${ENABLE_COVERAGE}) [ Coverage ]")
-message(STATUS "HARDEN : (${HARDEN}) [ Hardening ]")
-message(STATUS "STATIC_LINK : (${STATIC_LINK}) [ Static Link ]")
-message(STATUS "ASAN : (${ASAN}) [ Address Sanitizer ]")
-message(STATUS "USAN : (${USAN}) [ Undefined Sanitizer ]")
-message(STATUS "TSAN : (${TSAN}) [ Thread Sanitizer ]")
-message(STATUS "NATIVE_OPT : (${NATIVE_OPT}) [ Native opt build ]")
-message(STATUS "GAME_HOT_RELOADABLE : (${GAME_HOT_RELOADABLE}) [ hot reload ]")
-message(STATUS "ROBUST_GL_CHECK : (${ROBUST_GL_CHECK}) [ Robust GL checks in Debug builds ]")
-message(STATUS "NO_CONSOLE : (${NO_CONSOLE}) [ No Console with Window ]")
-message(STATUS "RTTI : (${RTTI}) [ Rtti ]")
+
+add_feature_info(Testing             TESTS                "[Build the testing suite]")
+add_feature_info(Documentation       DOCS                 "[Build documentation]")
+add_feature_info("Code Coverage"     ENABLE_COVERAGE      "[Generate coverage reports]")
+add_feature_info(Hardening           HARDEN               "[Security hardening flags]")
+add_feature_info("Static Link"       STATIC_LINK          "[Link libraries statically]")
+add_feature_info(ASAN                ASAN                 "[Address Sanitizer]")
+add_feature_info(USAN                USAN                 "[Undefined Sanitizer]")
+add_feature_info("Native Opt"        NATIVE_OPT           "[Native optimization build]")
+add_feature_info("Hot Reloading"     GAME_HOT_RELOADABLE  "[Game hot reload support]")
+add_feature_info(Logging             LOG                  "[Enable logging system]")
+add_feature_info("Robust GL"         ROBUST_GL_CHECK      "[Robust GL checks in Debug]")
+add_feature_info("No Console"        NO_CONSOLE           "[No Console with Window]")
+add_feature_info(RTTI                RTTI                 "[Run-time type information]")
+
+# feature_summary(WHAT ALL VAR enabled_features_text)
+# message(STATUS "Feature Summary:\n${enabled_features_text}")
+
+feature_summary(WHAT ALL 
+                INCLUDE_QUIET_PACKAGES 
+                FATAL_ON_MISSING_REQUIRED_PACKAGES
+                DESCRIPTION "--- Build Configuration Summary ---"
+                VAR featureSummaryOutput)
+
+message(STATUS "${featureSummaryOutput}")
