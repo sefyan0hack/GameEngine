@@ -45,10 +45,10 @@ class ENGINE_EXPORT OpenGL
         auto vendor() -> std::string;
         auto renderer() -> std::string;
         auto extensions() -> std::vector<std::string>;
-        auto max_texture_units() -> GLint;
-        auto max_texture_size() -> GLint;
-        auto max_texture3d_size() -> GLint;
-        auto max_texturecubemap_size() -> GLint;
+        static auto max_texture_units() -> GLint;
+        static auto max_texture_size() -> GLint;
+        static auto max_texture3d_size() -> GLint;
+        static auto max_texturecubemap_size() -> GLint;
         
     private:
         auto create_opengl_context([[maybe_unused]] const CWindow& window) -> GL_CTX;
@@ -63,8 +63,8 @@ class ENGINE_EXPORT OpenGL
         std::string m_Vendor;
         std::string m_Renderer;
         std::vector<std::string> m_Extensions;
-        GLint m_MaxTextureUnits; // how many textures a `fragment` shader can sample
-        GLint m_MaxTextureSize;
-        GLint m_MaxTexture3DSize;
-        GLint m_MaxTextureCubeMapSize;
+        inline static GLint m_MaxTextureUnits; // how many textures a `fragment` shader can sample
+        inline static GLint m_MaxTextureSize;
+        inline static GLint m_MaxTexture3DSize;
+        inline static GLint m_MaxTextureCubeMapSize;
 };
