@@ -312,7 +312,11 @@ rtti(${RTTI})
 
 
 if(DOCS)
-    find_package(Doxygen REQUIRED)
+    find_package(Doxygen QUIET)
+    set_package_properties(Doxygen PROPERTIES
+        TYPE OPTIONAL
+        PURPOSE "Used to generate developer documentation."
+    )
 
     set(DOXY_IN    "${CMAKE_SOURCE_DIR}/Doxyfile.in")
     set(DOXY_OUT   "${CMAKE_BINARY_DIR}/Doxyfile")
@@ -400,14 +404,30 @@ set_target_properties(resources PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
 if(NOT EMSCRIPTEN)
     # Find OpenGL package
-    find_package(OpenGL REQUIRED)
+    find_package(OpenGL QUIET)
+    set_package_properties(OpenGL PROPERTIES
+        URL "https://www.opengl.org"
+        DESCRIPTION "A cross-language, cross-platform application programming interface for rendering 2D and 3D vector graphics."
+        TYPE REQUIRED
+        PURPOSE "Crucial for the rendering engine to work."
+    )
 
     # Find Threads package
-    find_package(Threads REQUIRED)
-
+    find_package(Threads QUIET)
+    set_package_properties(OpenGL PROPERTIES
+        DESCRIPTION "Threading support lib  ` posix or any `"
+        TYPE REQUIRED
+        PURPOSE "support parallel work"
+    )
     # Find X11 package
     if(UNIX)
-        find_package(X11 REQUIRED)
+        find_package(X11 QUIET)
+        set_package_properties(XCB PROPERTIES
+            DESCRIPTION "X11 Linux windowing lib"
+            URL "https://x.org"
+            TYPE REQUIRED
+            PURPOSE "Required to  to open windows in linux"
+        )
     endif()
     # Extract the core OpenGL library (first entry in the list)
     list(GET OPENGL_LIBRARIES 0 CORE_OPENGL_LIB)
@@ -471,13 +491,5 @@ add_feature_info("Robust GL"         ROBUST_GL_CHECK      "[Robust GL checks in 
 add_feature_info("No Console"        NO_CONSOLE           "[No Console with Window]")
 add_feature_info(RTTI                RTTI                 "[Run-time type information]")
 
-# feature_summary(WHAT ALL VAR enabled_features_text)
-# message(STATUS "Feature Summary:\n${enabled_features_text}")
 
-feature_summary(WHAT ALL 
-                INCLUDE_QUIET_PACKAGES 
-                FATAL_ON_MISSING_REQUIRED_PACKAGES
-                DESCRIPTION "--- Build Configuration Summary ---"
-                VAR featureSummaryOutput)
-
-message(STATUS "${featureSummaryOutput}")
+feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
