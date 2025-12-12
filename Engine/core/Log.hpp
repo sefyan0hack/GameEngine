@@ -29,41 +29,43 @@ namespace debug {
     auto formatted_msg = std::format(fmt, std::forward<Ts>(ts)...);
     return std::format("{} : {}\n", current_time(), formatted_msg);
   }
-  
+
 
   template <class... Ts>
-  inline auto print([[maybe_unused]] const std::format_string<Ts...>& fmt, [[maybe_unused]] Ts&&... ts) -> void
+  inline auto log([[maybe_unused]] const std::format_string<Ts...>& fmt, [[maybe_unused]] Ts&&... ts) -> void
   {
-    #if defined(DEBUG) && !defined(NDEBUG)
+    #if defined(LOG)
+    # if defined(DEBUG) && !defined(NDEBUG)
       if(std::getenv("TESTING_ENABLED") == nullptr) {
         std::cout << Log(fmt, std::forward<Ts>(ts)...);
       }
-    #else
+    # else
       if(std::getenv("COUT_TO_FILE") != nullptr){
         std::ofstream out("Engine.log", std::ios::app);
         out << Log(fmt, std::forward<Ts>(ts)...);
       }
+    # endif
     #endif
   }
 
   template <size_t N>
-  inline auto print(const char (&str)[N]) -> void {
-    debug::print("{}", static_cast<const char*>(str));
+  inline auto log(const char (&str)[N]) -> void {
+    debug::log("{}", static_cast<const char*>(str));
   }
 
   template <class T>
-  inline auto print(T&& x) -> void
+  inline auto log(T&& x) -> void
   {
-    debug::print("{}", std::forward<T>(x));
+    debug::log("{}", std::forward<T>(x));
   }
 
   #define THIS_STR std::format("{}", *this)
-  #define THIS_PRINT debug::print("{}", *this)
+  #define THIS_LOG debug::log("{}", *this)
   #define THIS_ADDR (const void*)this
 
   // #define CTOR_LOG 
   // #define DTOR_LOG 
-  #define CTOR_LOG debug::print("({:p})  {} {}", (const void*)this, ::type_name<std::remove_pointer_t<decltype(this)>>(), *this);
-  #define DTOR_LOG debug::print("({:p}) ~{} {}", (const void*)this, ::type_name<std::remove_pointer_t<decltype(this)>>(), *this);
+  #define CTOR_LOG debug::log("({:p})  {} {}", (const void*)this, ::type_name<std::remove_pointer_t<decltype(this)>>(), *this);
+  #define DTOR_LOG debug::log("({:p}) ~{} {}", (const void*)this, ::type_name<std::remove_pointer_t<decltype(this)>>(), *this);
 
 } // namespace debug

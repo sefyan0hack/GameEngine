@@ -183,7 +183,7 @@ auto ShaderProgram::attribs_count() const -> GLint
 //     GLint activeInputs = 0;
 //     gl::GetProgramInterfaceiv(m_Id, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &activeInputs);
 //     if (activeInputs <= 0) {
-//         debug::print("no active attributes for program {}\n", m_Id);
+//         debug::log("no active attributes for program {}\n", m_Id);
 //         return;
 //     }
 

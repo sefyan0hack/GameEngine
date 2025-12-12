@@ -63,7 +63,7 @@ auto CALLBACK CWindow::win_proc_fun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
     switch (msg)
     {
         case WM_CREATE:{
-			debug::print("Creat Main CWindow");
+			debug::log("Creat Main CWindow");
             return 0;
         }
         case WM_CLOSE:{

@@ -65,17 +65,17 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     gl::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     #endif
 
-    debug::print("=================================================================================");
-    debug::print("Platform : {}, Arch : {}", os::host::name(), os::host::arch());
-    debug::print("GL Version : Wanted:({}.{}) -> Got:({}.{})", gl::OPENGL_MAJOR_VERSION, gl::OPENGL_MINOR_VERSION, m_Major, m_Minor);
-    debug::print("GL Vendor : {}", m_Vendor);
-    debug::print("GL Renderer : {}", m_Renderer);
-    debug::print("GL Exts : {}", utils::to_string(m_Extensions));
-    debug::print("Max Texture Units : {}", m_MaxTextureUnits);
-    debug::print("Max Texture Size : {0} x {0}", m_MaxTextureSize);
-    debug::print("Max Texture3D Size : {0} x {0} x {0}", m_MaxTexture3DSize);
-    debug::print("Max TextureCubeMap Size : {0} x {0}", m_MaxTextureCubeMapSize);
-    debug::print("=================================================================================");
+    debug::log("=================================================================================");
+    debug::log("Platform : {}, Arch : {}", os::host::name(), os::host::arch());
+    debug::log("GL Version : Wanted:({}.{}) -> Got:({}.{})", gl::OPENGL_MAJOR_VERSION, gl::OPENGL_MINOR_VERSION, m_Major, m_Minor);
+    debug::log("GL Vendor : {}", m_Vendor);
+    debug::log("GL Renderer : {}", m_Renderer);
+    debug::log("GL Exts : {}", utils::to_string(m_Extensions));
+    debug::log("Max Texture Units : {}", m_MaxTextureUnits);
+    debug::log("Max Texture Size : {0} x {0}", m_MaxTextureSize);
+    debug::log("Max Texture3D Size : {0} x {0} x {0}", m_MaxTexture3DSize);
+    debug::log("Max TextureCubeMap Size : {0} x {0}", m_MaxTextureCubeMapSize);
+    debug::log("=================================================================================");
 
 }
 

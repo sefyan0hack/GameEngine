@@ -44,7 +44,7 @@ GameObject::GameObject(GameObject&& other) noexcept
 
 auto GameObject::operator=(GameObject&& other) noexcept -> GameObject&
 {
-    debug::print("Move {}", Count);
+    debug::log("Move {}", Count);
 
     if(this != &other){
         m_Transform = std::move(other.m_Transform);

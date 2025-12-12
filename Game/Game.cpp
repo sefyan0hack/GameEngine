@@ -56,14 +56,14 @@ public:
         MainScene << GameObject(Transform({2, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), ResMan::RES("CubeMattkimberley"), ResMan::RES("manMesh"));
 
         MainScene.set_skybox(ResMan::RES("forest.jpg"));
-        debug::print("Window title: {}", app->Window.get_title());
+        debug::log("Window title: {}", app->Window.get_title());
 
         utils::async_repeat_every(1000,
             [](){ app->Window.set_title(std::format("{}, {} : {}", os::host::name(),os::host::arch(), app->fps())); }
         );
 
-        // debug::print("{} || {}", VecWrapper{gl::OPENGL_FUNCTIONS_NAME}, Type<decltype(gl::OPENGL_FUNCTIONS_NAME)>());
-        debug::print("{}", VecWrapper{gl::OPENGL_FUNCTIONS_NAME});
+        // debug::log("{} || {}", VecWrapper{gl::OPENGL_FUNCTIONS_NAME}, Type<decltype(gl::OPENGL_FUNCTIONS_NAME)>());
+        debug::log("{}", VecWrapper{gl::OPENGL_FUNCTIONS_NAME});
     }
 
     auto update(float delta) -> void

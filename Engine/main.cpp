@@ -11,13 +11,13 @@ int main() {
         app.run();
 
     } catch(const Exception& e) {
-        debug::print(e.all());
+        debug::log(e.all());
 
     } catch(const std::exception& e) {
-        debug::print(e.what());
+        debug::log(e.what());
 
     } catch(...) {
-        debug::print("Unknown Exception");
+        debug::log("Unknown Exception");
     };
 
     return 0;

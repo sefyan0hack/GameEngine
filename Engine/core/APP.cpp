@@ -92,11 +92,11 @@ auto APP::hot_reload_game_library() -> bool
         game_set_app(this);
         Game = game_ctor();
 
-        debug::print("Game library hot-reloaded successfully");
+        debug::log("Game library hot-reloaded successfully");
         return true;
 
     } catch (const std::exception& e) {
-        debug::print("Hot reload failed: {}", e.what());
+        debug::log("Hot reload failed: {}", e.what());
         return false;
     }
 }
@@ -174,7 +174,7 @@ auto APP::loop_body(void* ctx) -> void
             },
             [](const auto& e) {
                 if( ::type_name<decltype(e)>() == "const std::monostate&") throw Exception(" nnnnnn ");
-                debug::print("Unhandeled Event: {}", ::type_name<decltype(e)>()); 
+                debug::log("Unhandeled Event: {}", ::type_name<decltype(e)>()); 
             }
         );
     }

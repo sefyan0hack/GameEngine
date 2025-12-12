@@ -318,7 +318,7 @@ auto CWindow::register_event_callbacks() -> void
 		) -> EM_BOOL {
 			auto* window = static_cast<CWindow*>(userData);
 
-			if (e->isFullscreen) debug::print("Enable FullScreen");
+			if (e->isFullscreen) debug::log("Enable FullScreen");
 			window->m_EventQueue.push(CWindow::ResizeEvent{ e->elementWidth, e->elementHeight});
 			return EM_TRUE;
 	});
@@ -369,5 +369,5 @@ auto CWindow::set_title(std::string  title) -> void
 auto CWindow::set_vsync(bool state) -> void
 {
 	(void)state;
-	debug::print("vSync is always enabled in web and no vSync off ");
+	debug::log("vSync is always enabled in web and no vSync off ");
 }

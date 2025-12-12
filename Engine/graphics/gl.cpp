@@ -10,7 +10,7 @@ namespace gl {
         }
 
         if (address != nullptr) {
-            debug::print("from LIB:`{}`: load function `{}` at : {}", OPENGL_MODULE_NAME, name, address);
+            debug::log("from LIB:`{}`: load function `{}` at : {}", OPENGL_MODULE_NAME, name, address);
         } else {
             throw Exception("Couldn't load {} function `{}`", OPENGL_MODULE_NAME, name);
         }
