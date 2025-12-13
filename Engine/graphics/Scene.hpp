@@ -17,6 +17,7 @@ class ENGINE_EXPORT Scene
 public:
     friend struct std::formatter<Scene>;
     Scene();
+    ~Scene();
 
     auto entities() const -> std::span<const GameObject>;
     auto set_skybox(const std::string& BasePathName) -> void;

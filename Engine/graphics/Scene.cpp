@@ -1,13 +1,13 @@
-#include <core/Log.hpp>
+#include "Scene.hpp"
 #include "Camera.hpp"
 #include "GameObject.hpp"
 #include "SkyBox.hpp"
-#include "Scene.hpp"
 #include "Texture.hpp"
 #include "Material.hpp"
 #include "ShaderProgram.hpp"
 #include "Mesh.hpp"
 #include "OpenGL.hpp"
+#include <core/Log.hpp>
 #include <glm/glm.hpp>
 
 
@@ -16,6 +16,7 @@ Scene::Scene()
     , m_MainCamera(m_Cameras[0])
     , m_SkyBox(std::make_unique<SkyBox>()) { CTOR_LOG }
 
+Scene::~Scene() = default;
 auto Scene::entities() const -> std::span<const GameObject>
 {
     return m_Entities;
