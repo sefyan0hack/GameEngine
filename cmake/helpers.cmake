@@ -29,7 +29,7 @@ function(apply_warning_options)
 
         set(GNU_WARNING_FLAGS
             -pedantic -Wno-cast-function-type -Winit-self -Wcast-qual
-            -Wsuggest-final-types -Wsuggest-final-methods -Wno-changes-meaning
+            -Wsuggest-final-types -Wsuggest-final-methods -Wno-changes-meaning -fdiagnostics-all-candidates
         )
 
         set(CLANG_WARNING_FLAGS -Wno-language-extension-token)
