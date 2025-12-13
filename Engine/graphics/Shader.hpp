@@ -30,6 +30,8 @@ class ENGINE_EXPORT Shader
     auto get_shader_info(GLenum what) const-> GLint; //what : GL_SHADER_TYPE, GL_DELETE_STATUS, GL_COMPILE_STATUS, GL_INFO_LOG_LENGTH, GL_SHADER_SOURCE_LENGTH.
     static auto pre_process() -> std::string;
     
+    static auto default_vert() -> std::shared_ptr<Shader>;
+    static auto default_frag() -> std::shared_ptr<Shader>;
   private:
     GLuint m_Id;
     GLenum m_Type;

@@ -33,7 +33,7 @@ public:
     auto attribs() const noexcept -> const std::map<std::string, GlslType>&;
     static auto current_program() -> GLuint;
     static auto glsl_type_to_string(GLenum type) -> const char*;
-
+    static auto default_program() -> std::shared_ptr<ShaderProgram>;
     
     auto set_uniform(const std::string &name, const GLuint &value) const -> void;
     auto set_uniform(const std::string &name, const GLfloat &value) const -> void;
