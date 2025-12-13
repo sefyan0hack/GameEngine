@@ -9,6 +9,7 @@
 #include <graphics/Window.hpp>
 #include <graphics/OpenGL.hpp>
 #include <graphics/Scene.hpp>
+#include <graphics/ShaderProgram.hpp>
 #include <graphics/OpenGLRenderer.hpp>
 
 #if defined(WINDOWS_PLT)
@@ -51,6 +52,7 @@ APP::APP()
     , m_LastFrameTime(std::chrono::steady_clock::now())
     , m_Fps(60.0f)
     , Renderer(new OpenGLRenderer(Window))
+    , MainScene()
     , lib("Game", GAME_LIB_NOW)
     , Game()
     GAME_API
@@ -105,14 +107,10 @@ auto APP::frame(float deltaTime) -> void
 {
     Renderer->clear_screen(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     game_update(Game, deltaTime);
+    Renderer->render(MainScene, ShaderProgram::default_program());
     Window.swap_buffers();
     Keyboard.save_prev_state();
     Mouse.save_prev_state();
-}
-
-auto APP::render(const Scene& scene, std::shared_ptr<ShaderProgram> program) -> void
-{
-    Renderer->render(scene, program);
 }
 
 auto APP::loop_body(void* ctx) -> void

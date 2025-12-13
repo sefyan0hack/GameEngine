@@ -9,6 +9,7 @@
 #include <input/Mouse.hpp>
 #include "DynLib.hpp"
 #include "Event.hpp"
+#include "Scene.hpp"
 #include <engine_export.h>
 
 #define GAME_API \
@@ -40,8 +41,6 @@ public:
     auto deltatime() const -> float;
     auto push_event(Event&& event) -> void;
 
-    auto render(const class Scene& scene, std::shared_ptr<ShaderProgram> program) -> void;
-
 private:
     auto init_game_functions() -> void;
     auto hot_reload_game_library() -> bool;
@@ -60,6 +59,7 @@ private:
     float m_Fps;
 
     IRenderer* Renderer;
+    Scene MainScene;
 
     DynLib lib;
     void* Game;
