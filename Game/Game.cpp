@@ -12,17 +12,9 @@ using namespace std;
 
 class GAME_EXPORT Game
 {
-private:
-    std::shared_ptr<Shader> vert, frag;
-    std::shared_ptr<ShaderProgram> CubeProgram;
 
-    Scene MainScene;
 public:
     Game()
-        : vert(std::make_shared<Shader>(embed_filesystem.open("res/Shaders/cube.vert"), GL_VERTEX_SHADER))
-        , frag(std::make_shared<Shader>(embed_filesystem.open("res/Shaders/cube.frag"), GL_FRAGMENT_SHADER))
-        , CubeProgram(std::make_shared<ShaderProgram>(vert, frag))
-        , MainScene()
     {
 
         ResMan::RES("brik.jpg")          = std::make_shared<Texture2D>(embed_filesystem.open("res/brik.jpg"));
@@ -49,33 +41,30 @@ public:
                 auto meshRes = ResMan::RES("cubeMesh");
                 auto t = Transform({i, 0, j}, {0, 0, 0}, { 0.5f, 0.5f, 0.5f});
             
-                MainScene << GameObject(t, m, meshRes);
+                app->MainScene << GameObject(t, m, meshRes);
             }
         }
-        MainScene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), ResMan::RES("CubeMattSand"), ResMan::RES("manMesh"));
-        MainScene << GameObject(Transform({2, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), ResMan::RES("CubeMattkimberley"), ResMan::RES("manMesh"));
+        app->MainScene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), ResMan::RES("CubeMattSand"), ResMan::RES("manMesh"));
+        app->MainScene << GameObject(Transform({2, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), ResMan::RES("CubeMattkimberley"), ResMan::RES("manMesh"));
 
-        MainScene.set_skybox(ResMan::RES("forest.jpg"));
+        app->MainScene.set_skybox(ResMan::RES("forest.jpg"));
         debug::log("Window title: {}", app->Window.get_title());
 
         utils::async_repeat_every(1000,
-            [](){ app->Window.set_title(std::format("{}, {} : {}", os::host::name(),os::host::arch(), app->fps())); }
+            [](){ app->Window.set_title(std::format("[os: {} | arch: {} | fps: {:.2f} | usage: {} Mb | peak: {} Mb]", os::host::name(), os::host::arch(), app->fps(), os::host::memory_usage(), os::host::memory_peak())); }
         );
 
-        // debug::log("{} || {}", VecWrapper{gl::OPENGL_FUNCTIONS_NAME}, Type<decltype(gl::OPENGL_FUNCTIONS_NAME)>());
         debug::log("{}", VecWrapper{gl::OPENGL_FUNCTIONS_NAME});
     }
 
     auto update(float delta) -> void
     {
         camera_mouvment(delta);
-
-        app->render(MainScene, CubeProgram);
     }
 
     auto on_deltamouse(float dx, float dy) -> void
     {
-        MainScene.main_camera().process_mouse_movement(dx, -dy);
+        app->MainScene.main_camera().process_mouse_movement(dx, -dy);
     }
 
     auto camera_mouvment(float delta) -> void
@@ -88,7 +77,7 @@ public:
 
         auto by = speed * delta;
 
-        MainScene.main_camera().move({ Vert * by, Up * by, Hori * by });
+        app->MainScene.main_camera().move({ Vert * by, Up * by, Hori * by });
     }
 };
 
