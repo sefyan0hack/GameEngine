@@ -34,7 +34,6 @@ namespace debug {
   template <class... Ts>
   inline auto log([[maybe_unused]] const std::format_string<Ts...>& fmt, [[maybe_unused]] Ts&&... ts) -> void
   {
-    #if defined(LOG)
     # if defined(DEBUG) && !defined(NDEBUG)
       if(std::getenv("TESTING_ENABLED") == nullptr) {
         std::cout << Log(fmt, std::forward<Ts>(ts)...);
@@ -45,7 +44,6 @@ namespace debug {
         out << Log(fmt, std::forward<Ts>(ts)...);
       }
     # endif
-    #endif
   }
 
   template <size_t N>
