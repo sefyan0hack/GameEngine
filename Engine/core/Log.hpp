@@ -64,6 +64,6 @@ namespace debug {
   // #define CTOR_LOG 
   // #define DTOR_LOG 
   #define CTOR_LOG debug::log("({:p})  {} {}", (const void*)this, ::type_name<std::remove_pointer_t<decltype(this)>>(), *this);
-  #define DTOR_LOG debug::log("({:p}) ~{} {}", (const void*)this, ::type_name<std::remove_pointer_t<decltype(this)>>(), *this);
+  #define DTOR_LOG debug::log("({:p}) ~{}", (const void*)this, ::type_name<std::remove_pointer_t<decltype(this)>>());
 
 } // namespace debug
