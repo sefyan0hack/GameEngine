@@ -408,17 +408,16 @@ inline auto to_hex(T* data) -> std::string
 auto pointer_to_string(Pointer auto ptr) -> std::string
 {
     using Pointee = std::remove_cv_t<std::remove_pointer_t<decltype(ptr)>>;
-    constexpr const char* r = "({:p}) {} ({})bytes = {}";
+    constexpr const char* r = "*({}){}";
 
     constexpr auto type = ::type_name<Pointee>();
-    auto addr = static_cast<const void*>(ptr);
 
     if (ptr == nullptr) return "null";
     else if constexpr (std::is_pointer_v<Pointee>) return pointer_to_string(*ptr);
-    else if constexpr (std::is_same_v<Pointee, void>) return std::format(r, addr, type, "??", "void*");
-    else if constexpr (formattable<Pointee>) return std::format(r, addr, type, sizeof(Pointee), *ptr);
-    else if constexpr (std::is_function_v<Pointee>) return std::format(r, addr, type, sizeof(Pointee), "");
-    else return std::format(r, addr, type, sizeof(Pointee), to_hex(ptr));
+    else if constexpr (std::is_same_v<Pointee, void>) return std::format(r, type, "??");
+    else if constexpr (formattable<Pointee>) return std::format(r, type, *ptr);
+    else if constexpr (std::is_function_v<Pointee>) return std::format(r, type, "");
+    else return std::format(r, type, to_hex(ptr));
 }
 
 /**
