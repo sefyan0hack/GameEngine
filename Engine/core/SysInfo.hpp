@@ -39,5 +39,10 @@ namespace os
         ENGINE_EXPORT auto name() -> std::string;
         ENGINE_EXPORT auto arch_tag() -> os::Arch;
         ENGINE_EXPORT auto arch() -> std::string;
+        ENGINE_EXPORT auto proc_id() -> std::size_t;
+        ENGINE_EXPORT auto memory_usage() -> std::size_t;
+        ENGINE_EXPORT auto memory_peak() -> std::size_t;
+        ENGINE_EXPORT auto thread_count() -> std::size_t; 
+        ENGINE_EXPORT auto module() -> std::string;
     }
 }

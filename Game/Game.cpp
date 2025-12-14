@@ -50,8 +50,12 @@ public:
         app->MainScene.set_skybox(ResMan::RES("forest.jpg"));
         debug::log("Window title: {}", app->Window.get_title());
 
-        utils::async_repeat_every(1000,
-            [](){ app->Window.set_title(std::format("[os: {} | arch: {} | fps: {:.2f} | usage: {} Mb | peak: {} Mb]", os::host::name(), os::host::arch(), app->fps(), os::host::memory_usage(), os::host::memory_peak())); }
+        using namespace os::host;
+        utils::async_repeat_every(100,
+            [](){ app->Window.set_title(
+                std::format("[ module: {} | id: {} | os: {} | arch: {} | fps: {:.2f} | usage: {} Mb | peak: {} Mb | thread_count: {} ]", 
+                    module(), proc_id(), name(), arch(), app->fps(), memory_usage(), memory_peak(), thread_count()
+                )); }
         );
 
         debug::log("{}", VecWrapper{gl::OPENGL_FUNCTIONS_NAME});

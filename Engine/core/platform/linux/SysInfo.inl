@@ -1,4 +1,11 @@
 
+#include <fstream>
+#include <string>
+#include <sstream>
+#include <unistd.h>
+#include <limits.h>
+#include <libgen.h>
+
 
 auto os::host::name_tag() -> os::Target
 {
@@ -54,5 +61,66 @@ auto os::host::arch() -> std::string
         case Arch::unknown:
         default:
             return "unknown";
+    }
+}
+
+auto os::host::proc_id() -> std::size_t
+{
+    // getpid() returns a pid_t (typically an int or long), which we cast to std::size_t.
+    return static_cast<std::size_t>(getpid());
+}
+
+// Helper to parse /proc/self/status for specific keys
+static std::size_t get_proc_value(const std::string& key)
+{
+    std::ifstream statusFile("/proc/self/status");
+    std::string line;
+    while (std::getline(statusFile, line))
+    {
+        if (line.compare(0, key.length(), key) == 0)
+        {
+            std::istringstream iss(line);
+            std::string k;
+            std::size_t value;
+            std::string unit; // "kB"
+            iss >> k >> value >> unit;
+            return value;
+        }
+    }
+    return 0;
+}
+
+auto os::host::memory_usage() -> std::size_t
+{
+    // VmRSS (Resident Set Size) is the closest match to "Private Usage" 
+    std::size_t rss_kb = get_proc_value("VmRSS:");
+    return rss_kb / 1024; //  kB -> MB
+}
+
+auto os::host::memory_peak() -> std::size_t
+{
+    // VmHWM (High Water Mark) is the peak resident set size.
+    std::size_t hwm_kb = get_proc_value("VmHWM:");
+    return hwm_kb / 1024; // kB -> MB
+}
+
+auto os::host::thread_count() -> std::size_t
+{
+    return get_proc_value("Threads:");
+}
+
+auto os::host::module() -> std::string
+{
+    char path[PATH_MAX];
+    ssize_t len = readlink("/proc/self/exe", path, sizeof(path) - 1);
+
+    if (len != -1)
+    {
+        path[len] = '\0';
+        return std::string(basename(path));
+    }
+    else
+    {
+        return "";
     }
 }
