@@ -51,7 +51,7 @@ if(DOCS)
 endif()
 
 if(NATIVE_OPT AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-    if(NOT MSVC)
+    if(NOT MSVC AND NOT EMSCRIPTEN)
         add_compile_options(-march=native)
     else()
         add_compile_options($<IF:$<BOOL:${CMAKE_SYSTEM_PROCESSOR}>,/arch:AVX2,>)
