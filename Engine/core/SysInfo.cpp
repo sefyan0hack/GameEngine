@@ -1,11 +1,4 @@
 #include "SysInfo.hpp"
-#include <cassert>
-
-#if defined(WINDOWS_PLT)
-    #include <windows.h>
-#elif defined(LINUX_PLT)
-    #include <sys/utsname.h>
-#endif
 
 
 constexpr auto os::build::name_tag() -> os::Target

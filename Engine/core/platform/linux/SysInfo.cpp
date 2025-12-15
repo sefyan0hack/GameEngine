@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include <limits.h>
 #include <libgen.h>
+#include <sys/utsname.h>
+#include <cassert>
 
 auto os::host::name_tag() -> os::Target
 {
