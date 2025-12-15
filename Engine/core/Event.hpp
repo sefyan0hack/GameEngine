@@ -35,6 +35,7 @@ concept ISEvent = Variant<T> && [](){
 }();
 
 class EventQ : public std::queue<Event> {
+private: EventQ() = default;
 public:
 
     auto pull(Event& event) -> bool
@@ -55,4 +56,10 @@ public:
     }
     
     auto clear() { while(!empty()) pop(); }
+
+    static auto self() -> EventQ&
+    {
+        static EventQ eQ;
+        return eQ;
+    }
 };
