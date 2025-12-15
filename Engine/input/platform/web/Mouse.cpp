@@ -1,4 +1,5 @@
 #include "Mouse.hpp"
+#include <core/Log.hpp>
 #include <graphics/Window.hpp>
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>

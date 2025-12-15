@@ -1,4 +1,5 @@
 #include "Mouse.hpp"
+#include <core/Log.hpp>
 #include <graphics/Window.hpp>
 
 Mouse::Mouse() 

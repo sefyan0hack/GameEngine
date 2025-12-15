@@ -1,5 +1,5 @@
 #include "OpenGL.hpp"
-
+#include "Window.hpp"
 
 OpenGL::~OpenGL()
 {
