@@ -171,46 +171,43 @@ static auto mouse_callback( int32_t eventType, const EmscriptenMouseEvent* e, vo
 
 static auto touch_callback(int32_t eventType, const EmscriptenTouchEvent* e, void*) -> EM_BOOL
 {
-
     static std::unordered_map<int32_t, std::pair<int16_t, int16_t>> lastPos;
-	// Check if in mobile mode using media query
-	bool isMobile = (bool) EM_ASM_INT({
+
+    EM_ASM({
+        Module._windowwidth = window.innerWidth;
+        Module._windowheight = window.innerHeight;
+    });
+
+    double windowwidth = EM_ASM_DOUBLE(return Module._windowwidth;);
+    double windowheight = EM_ASM_DOUBLE(return Module._windowheight;);
+
+    bool isMobile = (bool) EM_ASM_INT({
         return window.matchMedia('(max-width: 767px)').matches ? 1 : 0;
     });
 
-	auto screenwidth = EM_ASM_DOUBLE({return window.screen.width;});
-	auto screenheight = EM_ASM_DOUBLE({return window.screen.height;});
+    for (int32_t i = 0; i < e->numTouches; ++i) {
+        const auto& t = e->touches[i];
+        if (!t.isChanged) 
+            continue;
 
-	double canvaswidth = 0.0;
-    double canvasheight = 0.0;
+        int32_t id = t.identifier;
 
-	emscripten_get_element_css_size(e->target, &canvaswidth, &canvasheight);
-
-    for (int32_t i = 0; i <  e->numTouches; ++i) {
-		const auto& t = e->touches[i];
-		if (!t.isChanged) 
-			continue;
-
-		int32_t id = t.identifier;
-
-		double x = static_cast<double>(t.targetX);
+        double x = static_cast<double>(t.targetX);
         double y = static_cast<double>(t.targetY);
 
-        // 1. Normalize coordinates to screen dimensions
-        x *= (screenwidth / canvaswidth);
-        y *= (screenheight / canvasheight);
+        if (isMobile) {
 
-		if (isMobile) {
-            // Rotate coordinates 90 degrees counter-clockwise
-            double newX = screenheight - y;  // Inverted y becomes x
-            double newY = x;                 // x becomes y
-            x = newX;
-            y = newY;
+            double normX = x / windowwidth;
+            double normY = y / windowheight;
+ 
+            double logical_x = normY * windowwidth;    
+            double logical_y = (1.0 - normX) * windowheight; 
+
+            x = logical_x;
+            y = logical_y;
             
-            // Swap width/height references for mobile
-            std::swap(screenwidth, screenheight);
         }
-
+        
         switch (eventType) {
             case EMSCRIPTEN_EVENT_TOUCHSTART:
 				lastPos[id] = { static_cast<int16_t>(x), static_cast<int16_t>(y) };
@@ -222,16 +219,13 @@ static auto touch_callback(int32_t eventType, const EmscriptenTouchEvent* e, voi
 				EventQ::self().push(Mouse::LeaveEvent{});
                 break;
 				case EMSCRIPTEN_EVENT_TOUCHMOVE:{
-			 	// lookup previous
 				auto old = lastPos.find(id);
 				if (old != lastPos.end()) {
 					int32_t dx = static_cast<int32_t>(x) - old->second.first;
 					int32_t dy = static_cast<int32_t>(y) - old->second.second;
-					// push a raw‐delta event
 					EventQ::self().push(Mouse::MovementEvent{ static_cast<float>(dx), static_cast<float>(dy) });
 				}
-				// also update stored pos
-				lastPos[id] = { x, y };
+				lastPos[id] = { static_cast<int16_t>(x), static_cast<int16_t>(y) };
 				EventQ::self().push(Mouse::MoveEvent{static_cast<int32_t>(x), static_cast<int32_t>(y)});
 			}
             break;
