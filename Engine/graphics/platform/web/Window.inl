@@ -7,10 +7,8 @@ CWindow::~CWindow()
 }
 
 
-static auto resize_callback(int32_t eventType, const EmscriptenUiEvent* e, void* userData) -> EM_BOOL
+static auto resize_callback(int32_t eventType, const EmscriptenUiEvent* e, void*) -> EM_BOOL
 {
-    CWindow* window = static_cast<CWindow*>(userData);
-    if (!window) return EM_FALSE;
 	if(eventType == EMSCRIPTEN_EVENT_RESIZE){
 		EventQ::self().push(CWindow::ResizeEvent{e->windowInnerWidth, e->windowInnerHeight});
 	}
@@ -18,10 +16,8 @@ static auto resize_callback(int32_t eventType, const EmscriptenUiEvent* e, void*
 	return EM_TRUE;
 }
 
-static auto keyboard_callback(int32_t eventType, const EmscriptenKeyboardEvent* e, void* userData) -> EM_BOOL
+static auto keyboard_callback(int32_t eventType, const EmscriptenKeyboardEvent* e, void*) -> EM_BOOL
 {
-    CWindow* window = static_cast<CWindow*>(userData);
-    if (!window) return EM_FALSE;
     constexpr auto INVALID = std::numeric_limits<uint32_t>::max();
 
     uint32_t vk = INVALID;
@@ -142,11 +138,8 @@ static auto keyboard_callback(int32_t eventType, const EmscriptenKeyboardEvent* 
 	return EM_TRUE;
 }
 
-static auto mouse_callback( int32_t eventType, const EmscriptenMouseEvent* e, void* userData) -> EM_BOOL
+static auto mouse_callback( int32_t eventType, const EmscriptenMouseEvent* e, void*) -> EM_BOOL
 {
-    CWindow* window = static_cast<CWindow*>(userData);
-    if (!window) return EM_FALSE;
-
 	auto btn = 
 		e->button == 0 ? Mouse::Button::Left:
 		e->button == 1 ? Mouse::Button::Middle: Mouse::Button::Right;
@@ -176,10 +169,8 @@ static auto mouse_callback( int32_t eventType, const EmscriptenMouseEvent* e, vo
     return EM_TRUE;
 }
 
-static auto touch_callback(int32_t eventType, const EmscriptenTouchEvent* e, void* userData) -> EM_BOOL
+static auto touch_callback(int32_t eventType, const EmscriptenTouchEvent* e, void*) -> EM_BOOL
 {
-    CWindow* window = static_cast<CWindow*>(userData);
-    if (!window) return EM_FALSE;
 
     static std::unordered_map<int32_t, std::pair<int16_t, int16_t>> lastPos;
 	// Check if in mobile mode using media query
@@ -193,7 +184,7 @@ static auto touch_callback(int32_t eventType, const EmscriptenTouchEvent* e, voi
 	double canvaswidth = 0.0;
     double canvasheight = 0.0;
 
-    emscripten_get_element_css_size(window->surface(), &canvaswidth, &canvasheight);
+	emscripten_get_element_css_size(e->target, &canvaswidth, &canvasheight);
 
     for (int32_t i = 0; i <  e->numTouches; ++i) {
 		const auto& t = e->touches[i];
@@ -252,49 +243,44 @@ static auto touch_callback(int32_t eventType, const EmscriptenTouchEvent* e, voi
 
 static auto register_event_callbacks(H_SRF surface) -> void
 {
-	emscripten_set_keypress_callback(surface, this, EM_FALSE, &keyboard_callback);
-	emscripten_set_keydown_callback(surface, this, EM_FALSE, &keyboard_callback);
-	emscripten_set_keyup_callback(surface, this, EM_FALSE, &keyboard_callback);
+	emscripten_set_keypress_callback(surface, nullptr, EM_FALSE, &keyboard_callback);
+	emscripten_set_keydown_callback(surface, nullptr, EM_FALSE, &keyboard_callback);
+	emscripten_set_keyup_callback(surface, nullptr, EM_FALSE, &keyboard_callback);
 
-	emscripten_set_mousedown_callback(surface , this, EM_FALSE, &mouse_callback);
-	emscripten_set_mouseup_callback(surface    , this, EM_FALSE, &mouse_callback);
-	emscripten_set_mousemove_callback(surface  , this, EM_FALSE, &mouse_callback);
-	emscripten_set_mouseenter_callback(surface , this, EM_FALSE, &mouse_callback);
-	emscripten_set_mouseleave_callback(surface , this, EM_FALSE, &mouse_callback);
+	emscripten_set_mousedown_callback(surface , nullptr, EM_FALSE, &mouse_callback);
+	emscripten_set_mouseup_callback(surface    , nullptr, EM_FALSE, &mouse_callback);
+	emscripten_set_mousemove_callback(surface  , nullptr, EM_FALSE, &mouse_callback);
+	emscripten_set_mouseenter_callback(surface , nullptr, EM_FALSE, &mouse_callback);
+	emscripten_set_mouseleave_callback(surface , nullptr, EM_FALSE, &mouse_callback);
 
-	emscripten_set_touchstart_callback(surface, this, EM_FALSE, &touch_callback);
-	emscripten_set_touchmove_callback(surface, this, EM_FALSE, &touch_callback);
-	emscripten_set_touchend_callback(surface, this, EM_FALSE, &touch_callback);
-	emscripten_set_touchcancel_callback(surface, this, EM_FALSE, &touch_callback);
+	emscripten_set_touchstart_callback(surface, nullptr, EM_FALSE, &touch_callback);
+	emscripten_set_touchmove_callback(surface, nullptr, EM_FALSE, &touch_callback);
+	emscripten_set_touchend_callback(surface, nullptr, EM_FALSE, &touch_callback);
+	emscripten_set_touchcancel_callback(surface, nullptr, EM_FALSE, &touch_callback);
 
-	emscripten_set_focus_callback(surface, this, EM_FALSE,
-		[](int32_t, const EmscriptenFocusEvent *, void* userData) -> EM_BOOL {
-			CWindow* window = static_cast<CWindow*>(userData);
-    		if (!window) return EM_FALSE;
+	// TODO: how to handle focus events?
+	// emscripten_set_focus_callback(surface, nullptr, EM_FALSE,
+	// 	[](int32_t, const EmscriptenFocusEvent *, void* userData) -> EM_BOOL {
+	// 		CWindow* window = static_cast<CWindow*>(userData);
+    // 		if (!window) return EM_FALSE;
 
-			EventQ::self().push(CWindow::SetFocusEvent{window});
-			return EM_TRUE;
-		}
-	);
+	// 		EventQ::self().push(CWindow::SetFocusEvent{window});
+	// 		return EM_TRUE;
+	// 	}
+	// );
 
-	emscripten_set_blur_callback(surface, this, EM_FALSE,
-		[](int32_t, const EmscriptenFocusEvent *, void* userData) -> EM_BOOL {
-			CWindow* window = static_cast<CWindow*>(userData);
-    		if (!window) return EM_FALSE;
+	// emscripten_set_blur_callback(surface, nullptr, EM_FALSE,
+	// 	[](int32_t, const EmscriptenFocusEvent *, void* userData) -> EM_BOOL {
+	// 		CWindow* window = static_cast<CWindow*>(userData);
+    // 		if (!window) return EM_FALSE;
 
-			EventQ::self().push(CWindow::LoseFocusEvent{window});
-			return EM_TRUE;
-		}
-	);
+	// 		EventQ::self().push(CWindow::LoseFocusEvent{window});
+	// 		return EM_TRUE;
+	// 	}
+	// );
 
-	emscripten_set_fullscreenchange_callback(surface, this, EM_FALSE, 
-		[](
-			int32_t eventType, 
-			const EmscriptenFullscreenChangeEvent* e,
-			void* userData
-		) -> EM_BOOL {
-			auto* window = static_cast<CWindow*>(userData);
-
+	emscripten_set_fullscreenchange_callback(surface, nullptr, EM_FALSE, 
+		[](int32_t eventType, const EmscriptenFullscreenChangeEvent* e, void*) -> EM_BOOL {
 			if (e->isFullscreen) debug::log("Enable FullScreen");
 			EventQ::self().push(CWindow::ResizeEvent{ e->elementWidth, e->elementHeight});
 			return EM_TRUE;
