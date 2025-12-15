@@ -1,5 +1,5 @@
 #pragma once
 
-#include "core/core.hpp"
-#include "graphics/graphics.hpp"
 #include "input/input.hpp"
+#include "graphics/graphics.hpp"
+#include "core/core.hpp"
