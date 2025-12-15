@@ -41,6 +41,7 @@ class ENGINE_EXPORT CWindow
         auto resize(int32_t width, int32_t height) -> void;
 
         auto process_messages()   -> void ;
+        auto message_box(const char* title, const char* body) -> bool;
 
     private:
         auto new_window(int32_t Width, int32_t Height, const char* Title)       -> std::pair<H_WIN, H_SRF> ;

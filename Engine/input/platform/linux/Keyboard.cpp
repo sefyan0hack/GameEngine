@@ -1,3 +1,5 @@
+#include "Keyboard.hpp"
+#include <X11/keysym.h>
 
 auto Keyboard::to_native(Key key) -> uint32_t
 {

@@ -1,4 +1,7 @@
-
+#include "Mouse.hpp"
+#include <graphics/Window.hpp>
+#include <core/Log.hpp>
+#include <windows.h>
 Mouse::Mouse() 
 	: Sensitivity(0.11f)
 	, m_X(0), m_Y(0)

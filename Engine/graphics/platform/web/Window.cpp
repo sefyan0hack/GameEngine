@@ -1,3 +1,9 @@
+#include "Window.hpp"
+#include <input/Keyboard.hpp>
+#include <input/Mouse.hpp>
+#include <core/Log.hpp>
+#include <core/Event.hpp>
+#include <core/Exception.hpp>
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
 
@@ -358,4 +364,10 @@ auto CWindow::set_vsync(bool state) -> void
 {
 	(void)state;
 	debug::log("vSync is always enabled in web and no vSync off ");
+}
+
+
+auto CWindow::message_box(const char* title, const char* body) -> bool
+{
+	return false; // not implimented yet
 }

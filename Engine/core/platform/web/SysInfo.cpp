@@ -1,3 +1,4 @@
+#include "SysInfo.hpp"
 #include <emscripten.h>
 #include <emscripten/heap.h>
 #include <unistd.h>

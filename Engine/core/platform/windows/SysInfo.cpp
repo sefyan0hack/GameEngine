@@ -1,7 +1,8 @@
-// platform/windows/Sysinfo.inl
+#include "SysInfo.hpp"
+#include "Log.hpp"
+#include <windows.h>
 #include <psapi.h>
 #include <tlhelp32.h>
-#include "Log.hpp"
 
 auto os::host::name_tag() -> os::Target
 {

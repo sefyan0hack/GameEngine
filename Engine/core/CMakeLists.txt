@@ -3,8 +3,11 @@
 include(helpers)
 
 add_library(core INTERFACE)
+aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/platform/${DIR_PLT_NAME}" PLT_SOURCE)
 
 target_sources( core PRIVATE
+
+  ${PLT_SOURCE}
   ${CMAKE_CURRENT_SOURCE_DIR}/APP.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/SysInfo.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/DynLib.cpp

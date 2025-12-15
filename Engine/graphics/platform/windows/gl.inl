@@ -5,14 +5,14 @@
 
 using H_WIN     = HWND;
 using H_SRF     = HDC;
-using GL_CTX     = HGLRC;
+using GL_CTX    = HGLRC;
 
 #define XXXGetProcAddress(name) wglGetProcAddress(name)
 
 // Declare function pointers using typedefs
-[[maybe_unused]] inline static PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB = nullptr;
-[[maybe_unused]] inline static PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = nullptr;
-[[maybe_unused]] inline static PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = nullptr;
+[[maybe_unused]] inline PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB = nullptr;
+[[maybe_unused]] inline PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = nullptr;
+[[maybe_unused]] inline PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = nullptr;
 
 
 #define GLFUNCS GLFUNCS_COMMON\

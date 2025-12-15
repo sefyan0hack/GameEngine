@@ -5,7 +5,6 @@
 #include <ctime>
 
 #include "gl.hpp"
-#include <core/Function.hpp>
 #include <engine_export.h>
 
 class CWindow;

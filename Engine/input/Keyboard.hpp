@@ -4,23 +4,6 @@
 #include <map>
 #include <engine_export.h>
 
-#if defined(WEB_PLT)
-// Browser control keys (DOM Level 3)
-constexpr uint32_t DOM_VK_BROWSER_BACK = 166;
-constexpr uint32_t DOM_VK_BROWSER_FORWARD = 167;
-constexpr uint32_t DOM_VK_BROWSER_REFRESH = 168;
-constexpr uint32_t DOM_VK_BROWSER_STOP = 169;
-constexpr uint32_t DOM_VK_BROWSER_SEARCH = 170;
-constexpr uint32_t DOM_VK_BROWSER_FAVORITES = 171;
-constexpr uint32_t DOM_VK_BROWSER_HOME = 172;
-
-// Media control keys (DOM Level 3)
-constexpr uint32_t DOM_VK_MEDIA_TRACK_NEXT = 176;
-constexpr uint32_t DOM_VK_MEDIA_TRACK_PREVIOUS = 177;
-constexpr uint32_t DOM_VK_MEDIA_STOP = 178;
-constexpr uint32_t DOM_VK_MEDIA_PLAY_PAUSE = 179;
-#endif
-
 enum class Key : uint8_t {
 
     // Alphanumeric keys (A-Z, 0-9)

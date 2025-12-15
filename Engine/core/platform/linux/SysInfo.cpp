@@ -1,3 +1,4 @@
+#include "SysInfo.hpp"
 
 #include <fstream>
 #include <string>
@@ -5,7 +6,6 @@
 #include <unistd.h>
 #include <limits.h>
 #include <libgen.h>
-
 
 auto os::host::name_tag() -> os::Target
 {

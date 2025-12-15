@@ -1,19 +1,5 @@
 #include <cstring>
-
 #include "Window.hpp"
-#include <input/Keyboard.hpp>
-#include <input/Mouse.hpp>
-#include <core/Log.hpp>
-#include <core/Exception.hpp>
-#include <core/Event.hpp>
-
-#if defined(WINDOWS_PLT)
-#	include "platform/windows/Window.inl"
-#elif defined(LINUX_PLT)
-#	include "platform/linux/Window.inl"
-#elif defined(WEB_PLT)
-#	include "platform/web/Window.inl"
-#endif
 
 CWindow::CWindow(
 	[[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height, 

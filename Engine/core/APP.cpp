@@ -13,18 +13,6 @@
 #include "Log.hpp"
 #include "Event.hpp"
 
-#if defined(WINDOWS_PLT)
-#include <windows.h>
-#undef near
-#undef far
-#elif defined(LINUX_PLT)
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#elif defined(WEB_PLT)
-#include <emscripten/emscripten.h>
-#include <emscripten/html5.h>
-#endif
-
 #undef X
 #define X(name, r, args) extern "C" DECLARE_FUNCTION(name, r, args);
 
@@ -122,12 +110,9 @@ auto APP::loop_body(void* ctx) -> void
     while (EventQ::self().pull(event)) {
         utils::match(event,
             [&app](const CWindow::QuitEvent&) {
-                #if defined(WINDOWS_PLT)
-                int32_t ret = MessageBoxA(app->Window.handle(), "Close.", "Exit", MB_YESNO | MB_ICONWARNING);
-                if (ret == IDYES)
-                #elif defined(LINUX_PLT)
-                #endif
-                {
+
+                auto ret = app->Window.message_box("Exit", "Are You Sure !");
+                if(ret) {
                     app->Window.close();
                     app->m_Running = false;
                 }
@@ -250,17 +235,6 @@ auto APP::loop_body(void* ctx) -> void
 
     #endif
     app->frame(deltaTime);
-}
-
-auto APP::run() -> void
-{
-    #if defined(WINDOWS_PLT) || defined(LINUX_PLT)
-    while (m_Running) {
-        loop_body(this);
-    }
-    #elif defined(WEB_PLT)
-    emscripten_set_main_loop_arg(loop_body, this, 0, 1);
-    #endif
 }
 
 auto APP::fps() const -> float

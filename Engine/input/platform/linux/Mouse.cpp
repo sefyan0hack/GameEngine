@@ -1,3 +1,5 @@
+#include "Mouse.hpp"
+#include <graphics/Window.hpp>
 
 Mouse::Mouse() 
 	: Sensitivity(0.11f)
@@ -14,7 +16,6 @@ auto Mouse::set_pos([[maybe_unused]] int32_t x, [[maybe_unused]] int32_t y) -> v
 auto Mouse::lock([[maybe_unused]] const CWindow& window) noexcept -> void
 {
 	if(!isLocked){
-        emscripten_request_pointerlock(window.surface(), EM_TRUE);
 
 		isLocked = true;
     }
@@ -24,7 +25,6 @@ auto Mouse::lock([[maybe_unused]] const CWindow& window) noexcept -> void
 auto Mouse::unlock() noexcept -> void
 {
 	if(isLocked){
-        emscripten_exit_pointerlock();
 		isLocked = false;
     }
 }

@@ -4,7 +4,10 @@ include(helpers)
 
 add_library(input INTERFACE)
 
+aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/platform/${DIR_PLT_NAME}" PLT_SOURCE)
+
 target_sources( input PRIVATE
+    ${PLT_SOURCE}
     ${CMAKE_CURRENT_SOURCE_DIR}/Keyboard.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Mouse.cpp
 )

@@ -1,18 +1,9 @@
-#include <algorithm>
-
-#include "Window.hpp"
 #include "OpenGL.hpp"
+#include "Window.hpp"
 #include <core/Log.hpp>
 #include <core/SysInfo.hpp>
 #include <core/Utils.hpp>
-
-#if defined(WINDOWS_PLT)
-#include "platform/windows/OpenGL.inl"
-#elif defined(LINUX_PLT)
-#include "platform/linux/OpenGL.inl"
-#elif defined(WEB_PLT)
-#include "platform/web/OpenGL.inl"
-#endif
+#include <algorithm>
 
 OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     : m_Context(create_opengl_context(window))

@@ -1,5 +1,5 @@
-
-
+#include "OpenGL.hpp"
+#include "Window.hpp"
 
 OpenGL::~OpenGL()
 {
@@ -7,31 +7,6 @@ OpenGL::~OpenGL()
     wglDeleteContext(m_Context);
 }
 
-
-// OpenGL::OpenGL(const OpenGL &other)
-//     : m_Context(GL_CTX{})
-//     , m_Major(other.m_Major)
-//     , m_Minor(other.m_Minor)
-//     , m_CreationTime(std::time(nullptr))
-// {
-//     auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
-//     if(tst != TRUE) throw Exception("couldn't Copy Opengl Context");
-// }
-
-
-// auto OpenGL::operator=(const OpenGL &other) -> OpenGL&
-// {
-//     if(this != &other){
-//         this->m_Context = GL_CTX{};
-//         this->m_Major = other.m_Major;
-//         this->m_Minor = other.m_Minor;
-//         this->m_CreationTime = std::time(nullptr);
-
-//         auto tst = wglCopyContext(other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
-//         if(tst != TRUE) throw Exception("couldn't Copy Opengl Context");
-//     }
-//     return *this;
-// }
 
 auto OpenGL::make_current_opengl([[maybe_unused]] const CWindow& window)  -> bool
 {

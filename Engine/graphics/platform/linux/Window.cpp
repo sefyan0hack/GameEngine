@@ -1,3 +1,11 @@
+#include "Window.hpp"
+#include <input/Keyboard.hpp>
+#include <input/Mouse.hpp>
+#include <core/Log.hpp>
+#include <core/Event.hpp>
+#include <core/Exception.hpp>
+
+#include <core/Event.hpp>
 #include <X11/Xlib.h>
 
 
@@ -215,3 +223,7 @@ auto CWindow::set_vsync(bool state) -> void
 	glXSwapIntervalEXT(m_Surface, m_Handle, state);
 }
 
+auto CWindow::message_box(const char* title, const char* body) -> bool
+{
+	return false; // not implimented yet
+}

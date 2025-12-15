@@ -1,24 +1,6 @@
 #include "Mouse.hpp"
-
-#if defined(WINDOWS_PLT)
-#undef near
-#undef far
-#elif defined(WEB_PLT)
-#include <emscripten/emscripten.h>
-#include <emscripten/html5.h>
-#endif
-
-#include <graphics/Window.hpp>
 #include <core/Log.hpp>
 #include <core/Exception.hpp>
-
-#if defined(WINDOWS_PLT)
-#	include "platform/windows/Mouse.inl"
-#elif defined(LINUX_PLT)
-#	include "platform/linux/Mouse.inl"
-#elif defined(WEB_PLT)
-#	include "platform/web/Mouse.inl"
-#endif
 
 auto Mouse::get_pos() const noexcept -> std::pair<int32_t, int32_t>
 {

@@ -11,7 +11,7 @@
 
 using H_WIN     = const char*;
 using H_SRF     = const char*;
-using GL_CTX     = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
+using GL_CTX    = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
 
 
 #define GLFUNCS GLFUNCS_COMMON

@@ -17,6 +17,13 @@ if(WIN32)
         WIN32_LEAN_AND_MEAN
         NOMINMAX
     )
+    set(DIR_PLT_NAME "windows")
+elseif(UNIX)
+    set(DIR_PLT_NAME "linux")
+
+elseif(EMSCRIPTEN)
+    set(DIR_PLT_NAME "web")
+
 endif()
     
 string(REGEX MATCH "^[0-9]+" COMPILER_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSION}")

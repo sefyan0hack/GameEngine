@@ -1,23 +1,5 @@
 #include "Keyboard.hpp"
 
-#if defined(WINDOWS_PLT)
-#include <windows.h>
-#undef near
-#undef far
-#elif defined(LINUX_PLT)
-#include <X11/keysym.h>
-#elif defined(WEB_PLT)
-#include <emscripten/key_codes.h>
-#endif
-
-#if defined(WINDOWS_PLT)
-#	include "platform/windows/Keyboard.inl"
-#elif defined(LINUX_PLT)
-#	include "platform/linux/Keyboard.inl"
-#elif defined(WEB_PLT)
-#	include "platform/web/Keyboard.inl"
-#endif
-
 auto Keyboard::is_down(Key key) const noexcept -> bool
 {
     return m_CurrKeyState[std::to_underlying(key)];

@@ -1,3 +1,10 @@
+#include "Window.hpp"
+#include <input/Keyboard.hpp>
+#include <input/Mouse.hpp>
+#include <core/Log.hpp>
+#include <core/Event.hpp>
+#include <core/Exception.hpp>
+
 #include <windows.h>
 #undef near
 #undef far
@@ -330,4 +337,9 @@ auto CWindow::set_vsync(bool state) -> void
 	if(!wglSwapIntervalEXT) wglSwapIntervalEXT = reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC>(wglGetProcAddress("wglSwapIntervalEXT"));
 	END_IGNORE_WARN_CALNG()
 	wglSwapIntervalEXT(state);
+}
+
+auto CWindow::message_box(const char* title, const char* body) -> bool
+{
+	return MessageBox(m_Handle, body, title, MB_YESNO) == IDYES;
 }

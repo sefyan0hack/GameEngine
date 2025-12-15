@@ -1,31 +1,4 @@
-
-
-
-// OpenGL::OpenGL(const OpenGL &other)
-//     : m_Context(GL_CTX{})
-//     , m_Major(other.m_Major)
-//     , m_Minor(other.m_Minor)
-//     , m_CreationTime(std::time(nullptr))
-// {
-//     glXCopyContext(this->m_Surface, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
-//     // no error check for now  ` X11 ` Shit
-// }
-
-
-// auto OpenGL::operator=(const OpenGL &other) -> OpenGL&
-// {
-//     if(this != &other){
-//         this->m_Context = GL_CTX{};
-//         this->m_Major = other.m_Major;
-//         this->m_Minor = other.m_Minor;
-//         this->m_CreationTime = std::time(nullptr);
-
-//         glXCopyContext(this->m_Surface, other.m_Context, this->m_Context, GL_ALL_ATTRIB_BITS);
-//         // no error check for now  ` X11 ` Shit
-//     }
-//     return *this;
-// }
-
+#include "OpenGL.hpp"
 
 OpenGL::~OpenGL()
 {

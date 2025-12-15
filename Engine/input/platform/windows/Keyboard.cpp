@@ -1,3 +1,5 @@
+#include "Keyboard.hpp"
+#include <windows.h>
 
 auto Keyboard::to_native(Key key) -> uint32_t
 {

@@ -7,13 +7,6 @@
     #include <sys/utsname.h>
 #endif
 
-#if defined(WINDOWS_PLT)
-#	include "platform/windows/SysInfo.inl"
-#elif defined(LINUX_PLT)
-#	include "platform/linux/SysInfo.inl"
-#elif defined(WEB_PLT)
-#	include "platform/web/SysInfo.inl"
-#endif
 
 constexpr auto os::build::name_tag() -> os::Target
 {
@@ -34,7 +27,7 @@ constexpr auto os::build::name() -> std::string
     name_tag() == os::Target::Linux   ? "linux"   :
     name_tag() == os::Target::Web     ? "web"     : "unknown";
 }
- 
+
 constexpr auto os::build::arch_tag() -> os::Arch
 {
     #if   defined(__x86_64__)  || defined(_M_AMD64)
