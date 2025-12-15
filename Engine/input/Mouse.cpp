@@ -1,5 +1,4 @@
 #include "Mouse.hpp"
-#include <core/Log.hpp>
 #include <core/Exception.hpp>
 
 auto Mouse::get_pos() const noexcept -> std::pair<int32_t, int32_t>

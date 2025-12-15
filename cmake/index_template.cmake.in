@@ -17,11 +17,9 @@
 
     #canvas {
       display: block;
-      box-sizing: border-box;
-      height: 95vh;
-      touch-action: none;
-      -ms-touch-action: none;
-      margin: auto;
+      width: 100vmax;
+      height: 100vmax;
+      position: fixed;
     }
 
     @media only screen and (max-width: 767px) {
