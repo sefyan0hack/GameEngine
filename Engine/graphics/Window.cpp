@@ -17,19 +17,13 @@
 
 CWindow::CWindow(
 	[[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height, 
-	[[maybe_unused]] const char* Title,
-	[[maybe_unused]] EventQ& Queue) noexcept
+	[[maybe_unused]] const char* Title) noexcept
 	: m_Width(Width)
 	, m_Height(Height)
 	, m_Visible(false)
 	, m_FullScreen(false)
-	, m_EventQueue(Queue)
 {
 	std::tie(m_Handle, m_Surface) = new_window(m_Width, m_Height, Title);
-
-	#if defined(WEB_PLT)
-	register_event_callbacks();
-    #endif
 }
 
 auto CWindow::handle() const -> H_WIN
@@ -65,4 +59,9 @@ auto CWindow::close() -> void
 auto CWindow::is_fullscreen() -> bool 
 {
 	return m_FullScreen;
+}
+
+auto CWindow::resize(int32_t width, int32_t height) -> void
+{
+	std::tie(m_Width, m_Height) = { width, height };
 }

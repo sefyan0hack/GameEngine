@@ -1,3 +1,5 @@
+#include <X11/Xlib.h>
+
 
 CWindow::~CWindow()
 {
@@ -36,20 +38,15 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
 	return {window_handle, Surface};
 }
 
-auto CWindow::process_messages([[maybe_unused]] CWindow* self) -> void
+auto CWindow::process_messages() -> void
 {
-	Expect(self != nullptr, "Cwindow* self Can't be null");
-	
-	[[maybe_unused]] auto winHandle = self->m_Handle;
-	[[maybe_unused]] auto surface = self->m_Surface;
-
-	[[maybe_unused]] int32_t screen = DefaultScreen(surface);
-	Atom wmDeleteMessage = XInternAtom(surface, "WM_DELETE_WINDOW", false);
-	XSetWMProtocols(surface, winHandle, &wmDeleteMessage, 1);
+	[[maybe_unused]] int32_t screen = DefaultScreen(m_Surface);
+	Atom wmDeleteMessage = XInternAtom(m_Surface, "WM_DELETE_WINDOW", false);
+	XSetWMProtocols(m_Surface, m_Handle, &wmDeleteMessage, 1);
 
 	XEvent event{};
-	while (XPending(surface)) {
-		XNextEvent(surface, &event);
+	while (XPending(m_Surface)) {
+		XNextEvent(m_Surface, &event);
 		
 		switch (event.type) {
 			case Expose:
@@ -58,13 +55,13 @@ auto CWindow::process_messages([[maybe_unused]] CWindow* self) -> void
 
 			case ConfigureNotify:
 				// Handle window resize
-				self->m_EventQueue.push(CWindow::ResizeEvent{event.xconfigure.width, event.xconfigure.height});
+				EventQ::self().push(CWindow::ResizeEvent{event.xconfigure.width, event.xconfigure.height});
 				break;
 
 			case KeyPress:
 			case KeyRelease: {
 				const auto keycode = static_cast<KeyCode>(event.xkey.keycode);
-				KeySym keysym = XkbKeycodeToKeysym(surface, keycode, 0, 0); // US layout
+				KeySym keysym = XkbKeycodeToKeysym(m_Surface, keycode, 0, 0); // US layout
 				
 				uint32_t vk = 0;
 				
@@ -84,26 +81,26 @@ auto CWindow::process_messages([[maybe_unused]] CWindow* self) -> void
 				Key key = Keyboard::from_native(vk);
 
 				if (event.type == KeyPress) {
-					self->m_EventQueue.push(Keyboard::KeyDownEvent{key});
+					EventQ::self().push(Keyboard::KeyDownEvent{key});
 				} else {
-					self->m_EventQueue.push(Keyboard::KeyUpEvent{key});
+					EventQ::self().push(Keyboard::KeyUpEvent{key});
 				}
 				break;
 			}
 
 			case FocusOut:
 				// Clear keyboard state when window loses focus
-				self->m_EventQueue.push(CWindow::LoseFocusEvent{self});
+				EventQ::self().push(CWindow::LoseFocusEvent{self});
 				break;
 
 			case ClientMessage:
 				if (static_cast<decltype(wmDeleteMessage)>(event.xclient.data.l[0]) == wmDeleteMessage){
-					self->m_EventQueue.push(CWindow::QuitEvent{});
+					EventQ::self().push(CWindow::QuitEvent{});
 				}
 				break;
 			case MotionNotify:
 				{
-				self->m_EventQueue.push(Mouse::MoveEvent{event.xmotion.x, event.xmotion.y});
+				EventQ::self().push(Mouse::MoveEvent{event.xmotion.x, event.xmotion.y});
 				// in fut  `static variables like this will cause issues with multiple windows`
 				static int prevX = event.xmotion.x;
 				static int prevY = event.xmotion.y;
@@ -111,7 +108,7 @@ auto CWindow::process_messages([[maybe_unused]] CWindow* self) -> void
 				int deltaX = event.xmotion.x - prevX;
 				int deltaY = event.xmotion.y - prevY;
 				
-				self->m_EventQueue.push(Mouse::MovementEvent{
+				EventQ::self().push(Mouse::MovementEvent{
 					static_cast<float>(deltaX), 
 					static_cast<float>(deltaY)
 				});
@@ -123,19 +120,19 @@ auto CWindow::process_messages([[maybe_unused]] CWindow* self) -> void
 			case ButtonPress:
 				switch(event.xbutton.button) {
 					case Button1:
-						self->m_EventQueue.push(Mouse::ButtonDownEvent{Mouse::Button::Left});
+						EventQ::self().push(Mouse::ButtonDownEvent{Mouse::Button::Left});
 						break;
 					case Button2:
-						self->m_EventQueue.push(Mouse::ButtonDownEvent{Mouse::Button::Middle});
+						EventQ::self().push(Mouse::ButtonDownEvent{Mouse::Button::Middle});
 						break;
 					case Button3:
-						self->m_EventQueue.push(Mouse::ButtonDownEvent{Mouse::Button::Right});
+						EventQ::self().push(Mouse::ButtonDownEvent{Mouse::Button::Right});
 						break;
 					case Button4:
-						self->m_EventQueue.push(Mouse::ButtonDownEvent{Mouse::Button::WheelUp});
+						EventQ::self().push(Mouse::ButtonDownEvent{Mouse::Button::WheelUp});
 						break;
 					case Button5:
-						self->m_EventQueue.push(Mouse::ButtonDownEvent{Mouse::Button::WheelDown});
+						EventQ::self().push(Mouse::ButtonDownEvent{Mouse::Button::WheelDown});
 						break;
 					default:
 						break;
@@ -144,29 +141,29 @@ auto CWindow::process_messages([[maybe_unused]] CWindow* self) -> void
 			case ButtonRelease:
 				switch(event.xbutton.button) {
 					case Button1:
-						self->m_EventQueue.push(Mouse::ButtonUpEvent{Mouse::Button::Left});
+						EventQ::self().push(Mouse::ButtonUpEvent{Mouse::Button::Left});
 						break;
 					case Button2:
-						self->m_EventQueue.push(Mouse::ButtonUpEvent{Mouse::Button::Middle});
+						EventQ::self().push(Mouse::ButtonUpEvent{Mouse::Button::Middle});
 						break;
 					case Button3:
-						self->m_EventQueue.push(Mouse::ButtonUpEvent{Mouse::Button::Right});
+						EventQ::self().push(Mouse::ButtonUpEvent{Mouse::Button::Right});
 						break;
 					case Button4:
-						self->m_EventQueue.push(Mouse::ButtonUpEvent{Mouse::Button::WheelUp});
+						EventQ::self().push(Mouse::ButtonUpEvent{Mouse::Button::WheelUp});
 						break;
 					case Button5:
-						self->m_EventQueue.push(Mouse::ButtonUpEvent{Mouse::Button::WheelDown});
+						EventQ::self().push(Mouse::ButtonUpEvent{Mouse::Button::WheelDown});
 						break;
 					default:
 						break;
 				}
 				break;
             case EnterNotify:
-				self->m_EventQueue.push(Mouse::EnterEvent{});
+				EventQ::self().push(Mouse::EnterEvent{});
 				break;
 			case LeaveNotify:
-				self->m_EventQueue.push(Mouse::LeaveEvent{});
+				EventQ::self().push(Mouse::LeaveEvent{});
 				break;
 		}
 	}
@@ -217,3 +214,4 @@ auto CWindow::set_vsync(bool state) -> void
 	if(!glXSwapIntervalEXT) glXSwapIntervalEXT = reinterpret_cast<PFNGLXSWAPINTERVALEXTPROC>(glXGetProcAddress((const GLubyte*)"glXSwapIntervalEXT"));
 	glXSwapIntervalEXT(m_Surface, m_Handle, state);
 }
+

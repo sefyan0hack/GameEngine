@@ -1,64 +1,13 @@
-
+#include <windows.h>
+#undef near
+#undef far
 
 CWindow::~CWindow()
 {
 	DestroyWindow(m_Handle);
 }
 
-// CWindow class things///////////////////////////////////
-CWindow::WinClass &CWindow::WinClass::instance()
-{
-	static CWindow::WinClass ClassIns; 
-    return ClassIns;
-}
-
-auto CWindow::WinClass::name() -> const TCHAR*
-{
-	return m_Name;
-}
-
-CWindow::WinClass::WinClass(){
-	
-	m_WinclassEx.cbSize = sizeof(WNDCLASSEX);
-    m_WinclassEx.style =  CS_HREDRAW | CS_VREDRAW;
-    m_WinclassEx.lpfnWndProc = CWindow::win_proc_thunk;
-    m_WinclassEx.hInstance =  GetModuleHandle(nullptr);
-    m_WinclassEx.hCursor = LoadCursor(nullptr, IDC_ARROW);
-    m_WinclassEx.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
-    m_WinclassEx.lpszClassName = m_Name;
-		
-	m_Windclass = RegisterClassEx(&m_WinclassEx);
-		
-    if(m_Windclass == 0){
-        throw Exception("faild to regester class {}", GetLastError());
-    }
-}
-
-CWindow::WinClass::~WinClass(){
-	UnregisterClass(m_Name, GetModuleHandle(nullptr));
-}
-
-///////////////////////////////////////////////////////////////////
-
-auto CWindow::win_proc_thunk(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT
-{
-    if (msg == WM_NCCREATE){
-        const auto WinptrStruct = reinterpret_cast<CREATESTRUCTW*>(Lpr);
-        auto const pWindow  = reinterpret_cast<CWindow*>(WinptrStruct->lpCreateParams);
-        SetWindowLongPtrA(Winhandle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWindow));
-
-		return DefWindowProcA(Winhandle, msg, Wpr, Lpr);
-    }
-
-	// Route messages to instance handler
-    if (auto pWindow = reinterpret_cast<CWindow*>(GetWindowLongPtrA(Winhandle, GWLP_USERDATA))) {
-        return pWindow->win_proc_fun(Winhandle, msg, Wpr, Lpr);
-    }
-
-    return DefWindowProcA(Winhandle, msg, Wpr, Lpr);
-}
-
-auto CALLBACK CWindow::win_proc_fun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT
+static auto CALLBACK win_proc_thunk(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM Lpr) -> LRESULT
 {
     switch (msg)
     {
@@ -67,11 +16,11 @@ auto CALLBACK CWindow::win_proc_fun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
             return 0;
         }
         case WM_CLOSE:{
-			m_EventQueue.push(CWindow::QuitEvent{});
+			EventQ::self().push(CWindow::QuitEvent{});
 			return 0;
         }
         case WM_SIZE:{
-			m_EventQueue.push(CWindow::ResizeEvent{LOWORD(Lpr), HIWORD(Lpr)});
+			EventQ::self().push(CWindow::ResizeEvent{LOWORD(Lpr), HIWORD(Lpr)});
             return 0;
         }
         /*********** KEYBOARD MESSAGES ***********/
@@ -100,7 +49,7 @@ auto CALLBACK CWindow::win_proc_fun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
 			}
 				
 			if (key != Key::Unknown) {
-				m_EventQueue.push(Keyboard::KeyDownEvent{key});
+				EventQ::self().push(Keyboard::KeyDownEvent{key});
 			}
 		}
 		break;
@@ -129,7 +78,7 @@ auto CALLBACK CWindow::win_proc_fun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
 			}
 			
 			if (key != Key::Unknown) {
-				m_EventQueue.push(Keyboard::KeyUpEvent{key});
+				EventQ::self().push(Keyboard::KeyUpEvent{key});
             	break;
 			}
 			break;
@@ -140,34 +89,34 @@ auto CALLBACK CWindow::win_proc_fun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
         ///////////// MOUSE MESSAGES /////////////////
 	    case WM_MOUSEMOVE:
 	    {
-			m_EventQueue.push(Mouse::MoveEvent{static_cast<SHORT>(LOWORD(Lpr)), static_cast<SHORT>(HIWORD(Lpr))});
+			EventQ::self().push(Mouse::MoveEvent{static_cast<SHORT>(LOWORD(Lpr)), static_cast<SHORT>(HIWORD(Lpr))});
 			return 0;
 	    }
 		case WM_MOUSEHOVER :{
-			m_EventQueue.push(Mouse::EnterEvent{});
+			EventQ::self().push(Mouse::EnterEvent{});
 			return 0;
 		}
 		case WM_MOUSELEAVE :{
-			m_EventQueue.push(Mouse::LeaveEvent{});
+			EventQ::self().push(Mouse::LeaveEvent{});
 			return 0;
 		}
 	    case WM_LBUTTONDOWN:
-			m_EventQueue.push(Mouse::ButtonDownEvent{Mouse::Button::Left});
+			EventQ::self().push(Mouse::ButtonDownEvent{Mouse::Button::Left});
 			break;
 		case WM_MBUTTONDOWN:
-			m_EventQueue.push(Mouse::ButtonDownEvent{Mouse::Button::Middle});
+			EventQ::self().push(Mouse::ButtonDownEvent{Mouse::Button::Middle});
 			break;
 	    case WM_RBUTTONDOWN:
-			m_EventQueue.push(Mouse::ButtonDownEvent{Mouse::Button::Right});
+			EventQ::self().push(Mouse::ButtonDownEvent{Mouse::Button::Right});
 			break;
 		case WM_LBUTTONUP:
-			m_EventQueue.push(Mouse::ButtonUpEvent{Mouse::Button::Left});
+			EventQ::self().push(Mouse::ButtonUpEvent{Mouse::Button::Left});
 			break;
 		case WM_MBUTTONUP:
-			m_EventQueue.push(Mouse::ButtonUpEvent{Mouse::Button::Middle});
+			EventQ::self().push(Mouse::ButtonUpEvent{Mouse::Button::Middle});
 			break;
 	    case WM_RBUTTONUP:
-	    	m_EventQueue.push(Mouse::ButtonUpEvent{Mouse::Button::Right});
+	    	EventQ::self().push(Mouse::ButtonUpEvent{Mouse::Button::Right});
 			break;
 	    ///////////////// END MOUSE MESSAGES /////////////////
 
@@ -199,7 +148,7 @@ auto CALLBACK CWindow::win_proc_fun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
 	    	if( ri.header.dwType == RIM_TYPEMOUSE &&
 	    		(ri.data.mouse.lLastX != 0 || ri.data.mouse.lLastY != 0) )
 				{
-				m_EventQueue.push(Mouse::MovementEvent{
+				EventQ::self().push(Mouse::MovementEvent{
 					static_cast<float>(ri.data.mouse.lLastX),
 					static_cast<float>(ri.data.mouse.lLastY)
 				});
@@ -207,24 +156,49 @@ auto CALLBACK CWindow::win_proc_fun(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
 	    	break;
 	    }
 	    ///////////////// END RAW MOUSE MESSAGES /////////////////
-		case WM_SETFOCUS:
-			m_EventQueue.push(CWindow::SetFocusEvent{this});
-			break;
-        case WM_KILLFOCUS:
-			m_EventQueue.push(CWindow::LoseFocusEvent{this});
-			ClipCursor(nullptr); //release cursor confinement
-			break;
+		// TODO: Handle focus events  now this function is static
+		// case WM_SETFOCUS:
+		// 	EventQ::self().push(CWindow::SetFocusEvent{this});
+		// 	break;
+        // case WM_KILLFOCUS:
+		// 	EventQ::self().push(CWindow::LoseFocusEvent{this});
+		// 	ClipCursor(nullptr); //release cursor confinement
+		// 	break;
 
     }
     return DefWindowProcA(Winhandle, msg, Wpr, Lpr);
 }
 
+
+const TCHAR* window_class_name()
+{
+	static constexpr const TCHAR* WINDOW_CLASS_NAME = TEXT("MyEngineMainWindowClass");
+
+    WNDCLASSEX wc = {};
+
+    wc.cbSize = sizeof(WNDCLASSEX);
+    wc.style = CS_HREDRAW | CS_VREDRAW;
+    wc.lpfnWndProc = win_proc_thunk;
+    wc.hInstance = GetModuleHandle(nullptr);
+    wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+    wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
+    wc.lpszClassName = WINDOW_CLASS_NAME;
+
+    if (RegisterClassEx(&wc) == 0) {
+        DWORD error = GetLastError();
+
+		if(error != ERROR_CLASS_ALREADY_EXISTS)
+			throw Exception("Failed to register window class: {}", error);
+    }
+    
+    return WINDOW_CLASS_NAME;
+}
+
 auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::pair<H_WIN, H_SRF>
 {
-    WinClass::instance();
 
     auto window_handle = CreateWindow(
-        WinClass::instance().name(),
+        window_class_name(),
         Title,
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, Width, Height,
@@ -240,7 +214,7 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
 	return {window_handle, GetDC(window_handle)};
 }
 
-auto CWindow::process_messages([[maybe_unused]] CWindow* self) -> void
+auto CWindow::process_messages() -> void
 {
     MSG Msg = {};
     while (PeekMessageA(&Msg, nullptr, 0u, 0u, PM_REMOVE))

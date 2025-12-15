@@ -1,47 +1,24 @@
+#include <emscripten/emscripten.h>
+#include <emscripten/html5.h>
+
 
 CWindow::~CWindow()
 {
 }
 
-auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::pair<H_WIN, H_SRF>
-{
-	auto window_handle = EMSCRIPTEN_EVENT_TARGET_WINDOW;
-	auto Surface = "#canvas";
 
-	emscripten_set_window_title(Title);
-	emscripten_set_canvas_element_size(Surface, Width, Height);
-	EM_ASM({
-        var canvas = document.getElementById('canvas');
-        if (!canvas) canvas = document.querySelector('#canvas');
-        
-        canvas.tabIndex = 0;
-        
-        canvas.addEventListener('click', function() {
-            canvas.focus();
-        });
-        
-        canvas.addEventListener('touchstart', function() {
-            canvas.focus();
-        });
-        
-        canvas.focus();
-	});
-
-	return {window_handle, Surface};
-}
-
-auto CWindow::resize_callback(int32_t eventType, const EmscriptenUiEvent* e, void* userData) -> EM_BOOL
+static auto resize_callback(int32_t eventType, const EmscriptenUiEvent* e, void* userData) -> EM_BOOL
 {
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_FALSE;
 	if(eventType == EMSCRIPTEN_EVENT_RESIZE){
-		window->m_EventQueue.push(CWindow::ResizeEvent{e->windowInnerWidth, e->windowInnerHeight});
+		EventQ::self().push(CWindow::ResizeEvent{e->windowInnerWidth, e->windowInnerHeight});
 	}
 
 	return EM_TRUE;
 }
 
-auto CWindow::keyboard_callback(int32_t eventType, const EmscriptenKeyboardEvent* e, void* userData) -> EM_BOOL
+static auto keyboard_callback(int32_t eventType, const EmscriptenKeyboardEvent* e, void* userData) -> EM_BOOL
 {
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_FALSE;
@@ -154,10 +131,10 @@ auto CWindow::keyboard_callback(int32_t eventType, const EmscriptenKeyboardEvent
 		switch (eventType)
 		{
 			case EMSCRIPTEN_EVENT_KEYDOWN:
-				window->m_EventQueue.push(Keyboard::KeyDownEvent{key});
+				EventQ::self().push(Keyboard::KeyDownEvent{key});
 				break;
 			case EMSCRIPTEN_EVENT_KEYUP:
-				window->m_EventQueue.push(Keyboard::KeyUpEvent{key});
+				EventQ::self().push(Keyboard::KeyUpEvent{key});
 				break;
 		}
     }
@@ -165,7 +142,7 @@ auto CWindow::keyboard_callback(int32_t eventType, const EmscriptenKeyboardEvent
 	return EM_TRUE;
 }
 
-auto CWindow::mouse_callback( int32_t eventType, const EmscriptenMouseEvent* e, void* userData) -> EM_BOOL
+static auto mouse_callback( int32_t eventType, const EmscriptenMouseEvent* e, void* userData) -> EM_BOOL
 {
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_FALSE;
@@ -177,29 +154,29 @@ auto CWindow::mouse_callback( int32_t eventType, const EmscriptenMouseEvent* e, 
 	switch (eventType) {
 
         case EMSCRIPTEN_EVENT_MOUSEDOWN:
-			window->m_EventQueue.push(Mouse::ButtonDownEvent{btn});
+			EventQ::self().push(Mouse::ButtonDownEvent{btn});
 			break;
         case EMSCRIPTEN_EVENT_MOUSEUP:
-			window->m_EventQueue.push(Mouse::ButtonUpEvent{btn});
+			EventQ::self().push(Mouse::ButtonUpEvent{btn});
             break;
         case EMSCRIPTEN_EVENT_MOUSEMOVE:
-			window->m_EventQueue.push(Mouse::MoveEvent{e->targetX, e->targetY});
-			window->m_EventQueue.push(Mouse::MovementEvent{static_cast<float>(e->movementX), static_cast<float>(e->movementY)});
+			EventQ::self().push(Mouse::MoveEvent{e->targetX, e->targetY});
+			EventQ::self().push(Mouse::MovementEvent{static_cast<float>(e->movementX), static_cast<float>(e->movementY)});
             break;
 
         case EMSCRIPTEN_EVENT_MOUSEENTER:
-            window->m_EventQueue.push(Mouse::EnterEvent{});
+            EventQ::self().push(Mouse::EnterEvent{});
             break;
 
         case EMSCRIPTEN_EVENT_MOUSELEAVE:
-			window->m_EventQueue.push(Mouse::LeaveEvent{});
+			EventQ::self().push(Mouse::LeaveEvent{});
             break;
     }
 
     return EM_TRUE;
 }
 
-auto CWindow::touch_callback(int32_t eventType, const EmscriptenTouchEvent* e, void* userData) -> EM_BOOL
+static auto touch_callback(int32_t eventType, const EmscriptenTouchEvent* e, void* userData) -> EM_BOOL
 {
     CWindow* window = static_cast<CWindow*>(userData);
     if (!window) return EM_FALSE;
@@ -246,12 +223,12 @@ auto CWindow::touch_callback(int32_t eventType, const EmscriptenTouchEvent* e, v
         switch (eventType) {
             case EMSCRIPTEN_EVENT_TOUCHSTART:
 				lastPos[id] = { static_cast<int16_t>(x), static_cast<int16_t>(y) };
-				window->m_EventQueue.push(Mouse::EnterEvent{});
+				EventQ::self().push(Mouse::EnterEvent{});
                 break;
 				case EMSCRIPTEN_EVENT_TOUCHEND:
 				case EMSCRIPTEN_EVENT_TOUCHCANCEL:
 				lastPos.erase(id);
-				window->m_EventQueue.push(Mouse::LeaveEvent{});
+				EventQ::self().push(Mouse::LeaveEvent{});
                 break;
 				case EMSCRIPTEN_EVENT_TOUCHMOVE:{
 			 	// lookup previous
@@ -260,11 +237,11 @@ auto CWindow::touch_callback(int32_t eventType, const EmscriptenTouchEvent* e, v
 					int32_t dx = static_cast<int32_t>(x) - old->second.first;
 					int32_t dy = static_cast<int32_t>(y) - old->second.second;
 					// push a raw‐delta event
-					window->m_EventQueue.push(Mouse::MovementEvent{ static_cast<float>(dx), static_cast<float>(dy) });
+					EventQ::self().push(Mouse::MovementEvent{ static_cast<float>(dx), static_cast<float>(dy) });
 				}
 				// also update stored pos
 				lastPos[id] = { x, y };
-				window->m_EventQueue.push(Mouse::MoveEvent{static_cast<int32_t>(x), static_cast<int32_t>(y)});
+				EventQ::self().push(Mouse::MoveEvent{static_cast<int32_t>(x), static_cast<int32_t>(y)});
 			}
             break;
         }
@@ -273,44 +250,44 @@ auto CWindow::touch_callback(int32_t eventType, const EmscriptenTouchEvent* e, v
     return EM_TRUE;
 }
 
-auto CWindow::register_event_callbacks() -> void
+static auto register_event_callbacks(H_SRF surface) -> void
 {
-	emscripten_set_keypress_callback(m_Surface, this, EM_FALSE, &CWindow::keyboard_callback);
-	emscripten_set_keydown_callback(m_Surface, this, EM_FALSE, &CWindow::keyboard_callback);
-	emscripten_set_keyup_callback(m_Surface, this, EM_FALSE, &CWindow::keyboard_callback);
+	emscripten_set_keypress_callback(surface, this, EM_FALSE, &keyboard_callback);
+	emscripten_set_keydown_callback(surface, this, EM_FALSE, &keyboard_callback);
+	emscripten_set_keyup_callback(surface, this, EM_FALSE, &keyboard_callback);
 
-	emscripten_set_mousedown_callback(m_Surface , this, EM_FALSE, &CWindow::mouse_callback);
-	emscripten_set_mouseup_callback(m_Surface    , this, EM_FALSE, &CWindow::mouse_callback);
-	emscripten_set_mousemove_callback(m_Surface  , this, EM_FALSE, &CWindow::mouse_callback);
-	emscripten_set_mouseenter_callback(m_Surface , this, EM_FALSE, &CWindow::mouse_callback);
-	emscripten_set_mouseleave_callback(m_Surface , this, EM_FALSE, &CWindow::mouse_callback);
+	emscripten_set_mousedown_callback(surface , this, EM_FALSE, &mouse_callback);
+	emscripten_set_mouseup_callback(surface    , this, EM_FALSE, &mouse_callback);
+	emscripten_set_mousemove_callback(surface  , this, EM_FALSE, &mouse_callback);
+	emscripten_set_mouseenter_callback(surface , this, EM_FALSE, &mouse_callback);
+	emscripten_set_mouseleave_callback(surface , this, EM_FALSE, &mouse_callback);
 
-	emscripten_set_touchstart_callback(m_Surface, this, EM_FALSE, &CWindow::touch_callback);
-	emscripten_set_touchmove_callback(m_Surface, this, EM_FALSE, &CWindow::touch_callback);
-	emscripten_set_touchend_callback(m_Surface, this, EM_FALSE, &CWindow::touch_callback);
-	emscripten_set_touchcancel_callback(m_Surface, this, EM_FALSE, &CWindow::touch_callback);
+	emscripten_set_touchstart_callback(surface, this, EM_FALSE, &touch_callback);
+	emscripten_set_touchmove_callback(surface, this, EM_FALSE, &touch_callback);
+	emscripten_set_touchend_callback(surface, this, EM_FALSE, &touch_callback);
+	emscripten_set_touchcancel_callback(surface, this, EM_FALSE, &touch_callback);
 
-	emscripten_set_focus_callback(m_Surface, this, EM_FALSE,
+	emscripten_set_focus_callback(surface, this, EM_FALSE,
 		[](int32_t, const EmscriptenFocusEvent *, void* userData) -> EM_BOOL {
 			CWindow* window = static_cast<CWindow*>(userData);
     		if (!window) return EM_FALSE;
 
-			window->m_EventQueue.push(CWindow::SetFocusEvent{window});
+			EventQ::self().push(CWindow::SetFocusEvent{window});
 			return EM_TRUE;
 		}
 	);
 
-	emscripten_set_blur_callback(m_Surface, this, EM_FALSE,
+	emscripten_set_blur_callback(surface, this, EM_FALSE,
 		[](int32_t, const EmscriptenFocusEvent *, void* userData) -> EM_BOOL {
 			CWindow* window = static_cast<CWindow*>(userData);
     		if (!window) return EM_FALSE;
 
-			window->m_EventQueue.push(CWindow::LoseFocusEvent{window});
+			EventQ::self().push(CWindow::LoseFocusEvent{window});
 			return EM_TRUE;
 		}
 	);
 
-	emscripten_set_fullscreenchange_callback(m_Surface, this, EM_FALSE, 
+	emscripten_set_fullscreenchange_callback(surface, this, EM_FALSE, 
 		[](
 			int32_t eventType, 
 			const EmscriptenFullscreenChangeEvent* e,
@@ -319,12 +296,40 @@ auto CWindow::register_event_callbacks() -> void
 			auto* window = static_cast<CWindow*>(userData);
 
 			if (e->isFullscreen) debug::log("Enable FullScreen");
-			window->m_EventQueue.push(CWindow::ResizeEvent{ e->elementWidth, e->elementHeight});
+			EventQ::self().push(CWindow::ResizeEvent{ e->elementWidth, e->elementHeight});
 			return EM_TRUE;
 	});
 }
 
-auto CWindow::process_messages([[maybe_unused]] CWindow* self) -> void
+auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::pair<H_WIN, H_SRF>
+{
+	auto window_handle = EMSCRIPTEN_EVENT_TARGET_WINDOW;
+	auto Surface = "#canvas";
+
+	emscripten_set_window_title(Title);
+	emscripten_set_canvas_element_size(Surface, Width, Height);
+	EM_ASM({
+        var canvas = document.getElementById('canvas');
+        if (!canvas) canvas = document.querySelector('#canvas');
+        
+        canvas.tabIndex = 0;
+        
+        canvas.addEventListener('click', function() {
+            canvas.focus();
+        });
+        
+        canvas.addEventListener('touchstart', function() {
+            canvas.focus();
+        });
+        
+        canvas.focus();
+	});
+
+	register_event_callbacks(Surface);
+	return {window_handle, Surface};
+}
+
+auto CWindow::process_messages() -> void
 {
 }
 
