@@ -9,6 +9,10 @@
     html, body {
       overflow: hidden; 
       background: #1a1a1a;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
     }
 
     #canvas {
@@ -22,8 +26,8 @@
 
     @media only screen and (max-width: 767px) {
       #canvas {
-        width: 100vmin;
-        height: 100vmax;
+        width: 100vmax;  
+        height: 100vmax; 
         position: fixed;
         top: 50%;
         left: 50%;
