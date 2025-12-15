@@ -6,6 +6,12 @@ CWindow::~CWindow()
 {
 }
 
+static auto is_mobile() -> bool
+{
+	return (bool) EM_ASM_INT({
+		return window.matchMedia('(max-width: 767px)').matches ? 1 : 0;
+	});
+}
 
 static auto resize_callback(int32_t eventType, const EmscriptenUiEvent* e, void*) -> EM_BOOL
 {
@@ -181,10 +187,6 @@ static auto touch_callback(int32_t eventType, const EmscriptenTouchEvent* e, voi
     double windowwidth = EM_ASM_DOUBLE(return Module._windowwidth;);
     double windowheight = EM_ASM_DOUBLE(return Module._windowheight;);
 
-    bool isMobile = (bool) EM_ASM_INT({
-        return window.matchMedia('(max-width: 767px)').matches ? 1 : 0;
-    });
-
     for (int32_t i = 0; i < e->numTouches; ++i) {
         const auto& t = e->touches[i];
         if (!t.isChanged) 
@@ -195,7 +197,7 @@ static auto touch_callback(int32_t eventType, const EmscriptenTouchEvent* e, voi
         double x = static_cast<double>(t.targetX);
         double y = static_cast<double>(t.targetY);
 
-        if (isMobile) {
+        if (is_mobile()) {
 
             double normX = x / windowwidth;
             double normY = y / windowheight;
@@ -287,7 +289,8 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
 	auto Surface = "#canvas";
 
 	emscripten_set_window_title(Title);
-	emscripten_set_canvas_element_size(Surface, Width, Height);
+	if(!is_mobile())
+		emscripten_set_canvas_element_size(Surface, Width, Height);
 	EM_ASM({
         var canvas = document.getElementById('canvas');
         if (!canvas) canvas = document.querySelector('#canvas');
