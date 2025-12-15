@@ -1,9 +1,3 @@
-#include "APP.hpp"
-#include "Event.hpp"
-#include "Utils.hpp"
-#include "DynLib.hpp"
-#include "SysInfo.hpp"
-#include "Log.hpp"
 #include <input/Keyboard.hpp>
 #include <input/Mouse.hpp>
 #include <graphics/Window.hpp>
@@ -11,6 +5,13 @@
 #include <graphics/Scene.hpp>
 #include <graphics/ShaderProgram.hpp>
 #include <graphics/OpenGLRenderer.hpp>
+
+#include "APP.hpp"
+#include "Utils.hpp"
+#include "DynLib.hpp"
+#include "SysInfo.hpp"
+#include "Log.hpp"
+#include "Event.hpp"
 
 #if defined(WINDOWS_PLT)
 #include <windows.h>
@@ -37,7 +38,6 @@
 #endif
 
 
-constexpr auto Wname = "Game";
 constexpr auto WINDOW_WIDTH = 1180;
 constexpr auto WINDOW_HIEGHT = 640;
 
@@ -45,7 +45,7 @@ constexpr auto WINDOW_HIEGHT = 640;
 #define X(name, r, args) , name(+[] args -> r { throw Exception(" `{} {}` is null ", #r, #name #args ); })
 
 APP::APP()
-    : Window(WINDOW_WIDTH, WINDOW_HIEGHT, Wname, ApplicationEventQueue)
+    : Window(WINDOW_WIDTH, WINDOW_HIEGHT, "")
     , Keyboard()
     , Mouse()
     , m_Running(true)
@@ -116,12 +116,10 @@ auto APP::frame(float deltaTime) -> void
 auto APP::loop_body(void* ctx) -> void
 {
     auto app = static_cast<APP*>(ctx);
-    auto& window = app->Window;
-
-    CWindow::process_messages(&window);
+    app->Window.process_messages();
 
     Event event;
-    while (app->ApplicationEventQueue.pull(event)) {
+    while (EventQ::self().pull(event)) {
         utils::match(event,
             [&app](const CWindow::QuitEvent&) {
                 #if defined(WINDOWS_PLT)
@@ -135,14 +133,13 @@ auto APP::loop_body(void* ctx) -> void
                 }
             },
             [&app](const CWindow::ResizeEvent& e) {
-                app->Window.m_Width = e.width;
-                app->Window.m_Height = e.height;
+                app->Window.resize(e.width, e.height);
                 app->Renderer->set_viewport(0, 0, e.width, e.height);
             },
             [&app](const CWindow::LoseFocusEvent&) {
 		        app->Keyboard.clear_state();
 		        app->Mouse.clear_state();
-		        app->ApplicationEventQueue.clear();
+		        EventQ::self().clear();
             },
             [&app](const Keyboard::KeyDownEvent& e) {
 				app->Keyboard.on_key_down(e.key);
@@ -275,6 +272,3 @@ auto APP::deltatime() const -> float
 {
     return 1.0f/m_Fps;
 }
-
-auto APP::push_event(Event&& event) -> void { ApplicationEventQueue.push(event); }
-

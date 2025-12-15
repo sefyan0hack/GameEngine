@@ -8,7 +8,6 @@
 #include <input/Keyboard.hpp>
 #include <input/Mouse.hpp>
 #include "DynLib.hpp"
-#include "Event.hpp"
 #include "Scene.hpp"
 #include <engine_export.h>
 
@@ -39,7 +38,6 @@ public:
     auto run() -> void ;
     auto fps() const -> float;
     auto deltatime() const -> float;
-    auto push_event(Event&& event) -> void;
 
 private:
     auto init_game_functions() -> void;
@@ -52,9 +50,8 @@ private:
     CWindow Window;
     Keyboard Keyboard;
     Mouse Mouse;
-    
+
     bool m_Running;
-    EventQ ApplicationEventQueue;
     std::chrono::steady_clock::time_point m_LastFrameTime;
     float m_Fps;
 
