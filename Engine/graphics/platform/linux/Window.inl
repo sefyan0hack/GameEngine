@@ -90,7 +90,7 @@ auto CWindow::process_messages() -> void
 
 			case FocusOut:
 				// Clear keyboard state when window loses focus
-				EventQ::self().push(CWindow::LoseFocusEvent{self});
+				// EventQ::self().push(CWindow::LoseFocusEvent{self}); // TODO: how to get window ref here?
 				break;
 
 			case ClientMessage:
