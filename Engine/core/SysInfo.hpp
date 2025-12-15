@@ -27,10 +27,10 @@ namespace os
     namespace build
     {
         constexpr const char* TimeStamp = __TIMESTAMP__;
-        constexpr auto name_tag() -> os::Target;
-        constexpr auto name() -> std::string;
-        constexpr auto arch_tag() -> os::Arch;
-        constexpr auto arch() -> std::string;
+        consteval auto name_tag() -> os::Target;
+        consteval auto name() -> std::string;
+        consteval auto arch_tag() -> os::Arch;
+        consteval auto arch() -> std::string;
     }
 
     namespace host

@@ -1,7 +1,7 @@
 #include "SysInfo.hpp"
 
 
-constexpr auto os::build::name_tag() -> os::Target
+consteval auto os::build::name_tag() -> os::Target
 {
     #if defined(WINDOWS_PLT)
         return os::Target::Windows;
@@ -13,7 +13,7 @@ constexpr auto os::build::name_tag() -> os::Target
         return os::Target::unknown;
     #endif
 }
-constexpr auto os::build::name() -> std::string
+consteval auto os::build::name() -> std::string
 {
     return 
     name_tag() == os::Target::Windows ? "windows" :
@@ -21,7 +21,7 @@ constexpr auto os::build::name() -> std::string
     name_tag() == os::Target::Web     ? "web"     : "unknown";
 }
 
-constexpr auto os::build::arch_tag() -> os::Arch
+consteval auto os::build::arch_tag() -> os::Arch
 {
     #if   defined(__x86_64__)  || defined(_M_AMD64)
         return os::Arch::x64;
@@ -40,7 +40,7 @@ constexpr auto os::build::arch_tag() -> os::Arch
     #endif
 }
     
-constexpr auto os::build::arch() -> std::string
+consteval auto os::build::arch() -> std::string
 {
     return
     arch_tag() == os::Arch::x64    ? "x64"    :
