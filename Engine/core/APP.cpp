@@ -133,22 +133,22 @@ auto APP::loop_body(void* ctx) -> void
 				app->Keyboard.on_key_up(e.key);
             },
             [&app](const Mouse::ButtonDownEvent& e) {
-                app->Mouse.on_button_down(e.btn);
+                app->Mouse.button_down(e.btn);
             },
             [&app](const Mouse::ButtonUpEvent& e) {
-                app->Mouse.on_button_up(e.btn);
+                app->Mouse.button_up(e.btn);
             },
             [&app](const Mouse::EnterEvent&) {
-                app->Mouse.on_mouse_enter();
+                app->Mouse.mouse_entered();
             },
             [&app](const Mouse::LeaveEvent&) {
-                app->Mouse.on_mouse_leave();
+                app->Mouse.mouse_leaved();
             },
             [&app](const Mouse::MoveEvent& e) {
-                app->Mouse.on_mouse_move(e.x, e.y);
+                app->Mouse.mouse_moved(e.x, e.y);
             },
             [&app](const Mouse::MovementEvent& e) {
-                app->Mouse.on_rawdelta(e.dx, e.dy);
+                app->Mouse.rawdelta(e.dx, e.dy);
                 auto [dx, dy] = app->Mouse.get_rawdelta();
                 app->game_on_deltamouse(app->Game, dx, dy);
             },

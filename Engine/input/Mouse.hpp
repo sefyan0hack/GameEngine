@@ -51,12 +51,12 @@ public:
 	auto is_released(Button btn) const -> bool;
 
 private:
-	auto on_button_down(Button btn) noexcept			-> void ;
-	auto on_button_up(Button btn) noexcept			-> void ;
-	auto on_rawdelta(float dx, float dy) noexcept	-> void ;
-	auto on_mouse_move(int32_t x, int32_t y) noexcept		-> void ;
-	auto on_mouse_enter() noexcept						-> void ;
-	auto on_mouse_leave() noexcept						-> void ;
+	auto button_down(Button btn) noexcept			-> void ;
+	auto button_up(Button btn) noexcept			-> void ;
+	auto rawdelta(float dx, float dy) noexcept	-> void ;
+	auto mouse_moved(int32_t x, int32_t y) noexcept		-> void ;
+	auto mouse_entered() noexcept						-> void ;
+	auto mouse_leaved() noexcept						-> void ;
 
 public:
 	float Sensitivity;

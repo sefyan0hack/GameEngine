@@ -11,33 +11,33 @@ auto Mouse::get_rawdelta() const noexcept -> std::pair<float, float>
     return {Sensitivity * m_Dx, Sensitivity * m_Dy};
 }
 
-auto Mouse::on_mouse_move( int32_t x, int32_t y ) noexcept -> void
+auto Mouse::mouse_moved( int32_t x, int32_t y ) noexcept -> void
 {
 	std::tie(m_X, m_Y) = { x, y };
 }
 
-auto Mouse::on_rawdelta( float dx, float dy ) noexcept -> void
+auto Mouse::rawdelta( float dx, float dy ) noexcept -> void
 {
 	std::tie(m_Dx, m_Dy) = { dx, dy };
 }
 
-auto Mouse::on_mouse_leave() noexcept -> void
+auto Mouse::mouse_leaved() noexcept -> void
 {
 	isMouseIn = false;
 }
 
-auto Mouse::on_mouse_enter() noexcept -> void
+auto Mouse::mouse_entered() noexcept -> void
 {
 	isMouseIn = true;
 }
 
-auto Mouse::on_button_down(Button btn) noexcept	-> void
+auto Mouse::button_down(Button btn) noexcept	-> void
 {
 	const auto index = std::to_underlying(btn);
 	m_CurrButtonState[index] = true;
 }
 
-auto Mouse::on_button_up(Button btn) noexcept		-> void
+auto Mouse::button_up(Button btn) noexcept		-> void
 {
 	const auto index = std::to_underlying(btn);
 	m_CurrButtonState[index] = false;
