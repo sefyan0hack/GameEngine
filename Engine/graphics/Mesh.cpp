@@ -31,15 +31,12 @@ namespace {
     };
 }
 
-Mesh::Mesh(const std::vector<Vertex> &vertices, std::string Name)
-    : name(Name)
-    , vertices(vertices)
+Mesh::Mesh(const std::vector<Vertex> &vertices)
+    : vertices(vertices)
     , attribs({position, normals, texCoords})
     , VBO(gen_buffer())
     , VAO(gen_vertexarray())
 {
-    Count++;
-
     bind_vao();
     bind_vbo();
     updata();
@@ -49,11 +46,41 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, std::string Name)
     CTOR_LOG
 }
 
+Mesh::Mesh(Mesh &&other) noexcept
+    : vertices(other.vertices)
+    , attribs(other.attribs)
+    , VBO(other.VBO)
+    , VAO(other.VAO)
+{
+    other.vertices.clear();
+    other.attribs.clear();
+    other.VBO = 0;
+    other.VAO = 0;
+}
+
+auto Mesh::operator=(Mesh &&other) noexcept -> Mesh &
+{
+    if(this != &other){
+        vertices = other.vertices;
+        attribs = other.attribs;
+        VBO = other.VBO;
+        VAO = other.VAO;
+
+        other.vertices.clear();
+        other.attribs.clear();
+        other.VBO = 0;
+        other.VAO = 0;
+    }
+    return *this;
+}
+
 Mesh::~Mesh()
 {
-    gl::DeleteBuffers(1, &VBO);
-    gl::DeleteVertexArrays(1, &VAO);
-    Count--;
+    if(VBO != 0 || VAO != 0){
+        gl::DeleteBuffers(1, &VBO);
+        gl::DeleteVertexArrays(1, &VAO);
+    }
+
     DTOR_LOG
 }
 

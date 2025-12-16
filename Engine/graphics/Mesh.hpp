@@ -16,7 +16,7 @@ struct ENGINE_EXPORT Vertex
   glm::vec2 TexCoords;
 };
 
-struct AttributeInfo {
+struct ENGINE_EXPORT AttributeInfo {
   GLint size;
   GLenum type;
   GLboolean normalized;
@@ -34,7 +34,7 @@ public:
 
 public:
     friend struct std::formatter<Mesh>;
-    Mesh(const std::vector<VetexData> &vertices, std::string Name = std::format("Mesh{}", Count));
+    Mesh(const std::vector<VetexData> &vertices);
     ~Mesh();
 
     Mesh(const Mesh& other) = delete;
@@ -43,7 +43,7 @@ public:
     Mesh(Mesh&& other) noexcept;
     auto operator=(Mesh&& other) noexcept -> Mesh&;
 
-    auto operator==(const Mesh& other) const -> bool;
+    // auto operator==(const Mesh& other) const -> bool;
 
     auto set_attribute(GLuint index, AttributeInfo att) -> void;
     auto enable_attribs() const -> void;
@@ -64,11 +64,9 @@ public:
         auto bind_vbo() -> void;
         // auto bind_ibo() -> void;
   public:
-    std::string name;
     std::vector<VetexData> vertices;
     std::vector<AttributeInfo> attribs;
     GLuint VBO, VAO;
-    inline static std::size_t Count = 1;
     inline static std::vector<Vertex> CUBE {
       // Front
       {{-0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, {0.0f, 0.0f}},
@@ -136,8 +134,8 @@ struct std::formatter<Mesh> {
   }
   auto format(const Mesh& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    R"({{ "name": "{}", "VAO": {}, "VBO": {}, "verticesSize": {} }})"
-    , obj.name, obj.VAO, obj.VBO, obj.vextex_size());
+    R"({{ "VAO": {}, "VBO": {}, "verticesSize": {} }})"
+    , obj.VAO, obj.VBO, obj.vextex_size());
   }
 };
 
