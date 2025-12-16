@@ -3,7 +3,7 @@ on: [push, pull_request, workflow_dispatch]
 
 jobs:
   Build:
-    name: "Build : ${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}"
+    name: "${{ matrix.os }} > ${{ matrix.compiler }} > ${{ matrix.build_type }}"
     if: "!contains(github.event.head_commit.message, '[skip CI]')"
     runs-on: ${{ matrix.os }}
     permissions:
