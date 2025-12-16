@@ -1,0 +1,249 @@
+name: CI
+on: [workflow_dispatch]
+
+jobs:
+
+  Build-windows-latest:
+    name: "windows-latest > ${{ matrix.compiler }} > ${{ matrix.build_type }}"
+    if: "!contains(github.event.head_commit.message, '[skip CI]')"
+    runs-on: windows-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [llvm, gcc, msvc]
+        build_type: [Debug, Release]
+
+    env:
+      TEST_TIMEOUT: 60
+      BUILD_DIR: build/windows-latest-${{ matrix.compiler }}-${{ matrix.build_type }} 
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Cpp
+        uses: aminya/setup-cpp@v1.6.0
+        with:
+          compiler: ${{ matrix.compiler }}
+          vcvarsall: true
+          cmake: true
+          ninja: true
+          vcpkg: false
+
+      - name: Configure CMake
+        shell: bash
+        run: cmake -S . -B "$BUILD_DIR" -G "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DTESTS=ON -DHARDEN=ON
+
+      - name: Build
+        shell: bash
+        run: cmake --build "${{ env.BUILD_DIR }}" --config ${{ matrix.build_type }} --parallel
+
+      - name: Upload Test Executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit_tests-windows-latest-${{ matrix.compiler }}-${{ matrix.build_type }}
+          path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests.exe 
+          retention-days: 1
+          overwrite: true
+
+      - name: Test
+        shell: bash
+        run: ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
+
+  Build-windows-arm:
+    name: "windows-11-arm > ${{ matrix.compiler }} > ${{ matrix.build_type }}"
+    if: "!contains(github.event.head_commit.message, '[skip CI]')"
+    runs-on: windows-11-arm
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [llvm, gcc, msvc]
+        build_type: [Debug, Release]
+        exclude:
+          - compiler: gcc
+    
+    env:
+      TEST_TIMEOUT: 60
+      BUILD_DIR: build/windows-11-arm-${{ matrix.compiler }}-${{ matrix.build_type }} 
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Cpp
+        uses: aminya/setup-cpp@v1.6.0
+        with:
+          compiler: ${{ matrix.compiler }}
+          vcvarsall: true
+          cmake: true
+          ninja: true
+          vcpkg: false
+
+      - name: Configure CMake
+        shell: bash
+        run: cmake -S . -B "$BUILD_DIR" -G "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DTESTS=ON -DHARDEN=ON
+
+      - name: Build
+        shell: bash
+        run: cmake --build "${{ env.BUILD_DIR }}" --config ${{ matrix.build_type }} --parallel
+
+      - name: Upload Test Executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit_tests-windows-11-arm-${{ matrix.compiler }}-${{ matrix.build_type }}
+          path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests.exe 
+          retention-days: 1
+          overwrite: true
+
+      - name: Test
+        shell: bash
+        run: ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
+
+  Build-ubuntu-latest:
+    name: "ubuntu-latest > ${{ matrix.compiler }} > ${{ matrix.build_type }}"
+    if: "!contains(github.event.head_commit.message, '[skip CI]')"
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [llvm, gcc, msvc]
+        build_type: [Debug, Release]
+        exclude:
+          - compiler: msvc
+    
+    env:
+      TEST_TIMEOUT: 60
+      BUILD_DIR: build/ubuntu-latest-${{ matrix.compiler }}-${{ matrix.build_type }} 
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Cpp
+        uses: aminya/setup-cpp@v1.6.0
+        with:
+          compiler: ${{ matrix.compiler }}
+          vcvarsall: false
+          cmake: true
+          ninja: true
+          vcpkg: false
+
+      - name: Install Dependencies
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev libxi-dev mesa-common-dev xvfb
+          sudo apt-get install -y libtbb-dev
+
+      - name: Configure CMake
+        shell: bash
+        run: cmake -S . -B "$BUILD_DIR" -G "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DTESTS=ON -DHARDEN=ON
+
+      - name: Build
+        shell: bash
+        run: cmake --build "${{ env.BUILD_DIR }}" --config ${{ matrix.build_type }} --parallel
+
+      - name: Upload Test Executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit_tests-ubuntu-latest-${{ matrix.compiler }}-${{ matrix.build_type }}
+          path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests 
+          retention-days: 1
+          overwrite: true
+
+      - name: Test
+        shell: bash
+        run: xvfb-run --auto-servernum ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
+
+
+  Build-ubuntu-arm:
+    name: "ubuntu-22.04-arm > ${{ matrix.compiler }} > ${{ matrix.build_type }}"
+    if: "!contains(github.event.head_commit.message, '[skip CI]')"
+    runs-on: ubuntu-22.04-arm
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [llvm, gcc, msvc]
+        build_type: [Debug, Release]
+        exclude:
+          - compiler: msvc
+    
+    env:
+      TEST_TIMEOUT: 60
+      BUILD_DIR: build/ubuntu-22.04-arm-${{ matrix.compiler }}-${{ matrix.build_type }} 
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Cpp
+        uses: aminya/setup-cpp@v1.6.0
+        with:
+          compiler: ${{ matrix.compiler }}
+          vcvarsall: false
+          cmake: true
+          ninja: true
+          vcpkg: false
+
+      - name: Install Dependencies
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev libxi-dev mesa-common-dev xvfb
+          sudo apt-get install -y libtbb-dev
+
+      - name: Configure CMake
+        shell: bash
+        run: cmake -S . -B "$BUILD_DIR" -G "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DTESTS=ON -DHARDEN=ON
+
+      - name: Build
+        shell: bash
+        run: cmake --build "${{ env.BUILD_DIR }}" --config ${{ matrix.build_type }} --parallel
+
+      - name: Upload Test Executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit_tests-ubuntu-22.04-arm-${{ matrix.compiler }}-${{ matrix.build_type }}
+          path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests 
+          retention-days: 1
+          overwrite: true
+
+      - name: Test
+        shell: bash
+        run: xvfb-run --auto-servernum ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
+
+  Build-Web:
+    if: "!contains(github.event.head_commit.message, '[skip CI]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build
+        uses: ./.github/actions/emscripten-build
+        with:
+          cmake_configure_flags: "-DTESTS=ON"
+          system_dependencies: "libgl1-mesa-dev mesa-common-dev libxi-dev xvfb libx11-dev"
+
+      - name: Upload Test Executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit_tests-web
+          path: |
+            build-web/tests/**/*.js
+            build-web/tests/**/*.html
+            build-web/tests/**/*.wasm
+            build-web/tests/**/*.data
+          retention-days: 1
+          overwrite: true
