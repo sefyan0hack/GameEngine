@@ -3,25 +3,27 @@
 #include <memory>
 #include <string>
 #include <engine_export.h>
+#include "Shader.hpp"
+#include "ShaderProgram.hpp"
+#include "Mesh.hpp"
+
+class TextureCubeMap;
 
 class ENGINE_EXPORT SkyBox
 {
-public:
+  friend class Scene;
+
   SkyBox();
-  SkyBox(std::shared_ptr<class TextureCubeMap> texture);
+  SkyBox(std::shared_ptr<TextureCubeMap> texture);
   SkyBox(const std::string& BasePathName);
 
-  SkyBox(const SkyBox&) = delete;
-  auto operator=(const SkyBox&) -> SkyBox& = delete;
-
-  auto texture() const -> std::shared_ptr<class TextureCubeMap>;
-  auto mesh() const -> std::shared_ptr<class Mesh>;
-  auto program() const -> std::shared_ptr<class ShaderProgram>;
+  auto set_texture(std::shared_ptr<TextureCubeMap> texture) -> void;
+  auto set_texture(const std::string& BasePathName) -> void;
 
 private:
-  const std::shared_ptr<class Shader> m_VertShader;
-  const std::shared_ptr<class Shader> m_FragShader;
-  const std::shared_ptr<class ShaderProgram> m_Program;
-  const std::shared_ptr<class Mesh> m_Mesh;
-  std::shared_ptr<class TextureCubeMap> m_Texture;
+  Shader m_VertShader;
+  Shader m_FragShader;
+  ShaderProgram m_Program;
+  Mesh m_Mesh;
+  std::shared_ptr<TextureCubeMap> m_Texture;
 };

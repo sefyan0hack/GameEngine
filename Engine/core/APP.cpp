@@ -57,6 +57,7 @@ APP::APP()
 
 APP::~APP()
 {
+    if(Game) game_dtor(Game);
     if(Renderer) delete Renderer;
 }
 

@@ -7,6 +7,7 @@
 #include <format>
 
 #include "GameObject.hpp"
+#include "SkyBox.hpp"
 #include "Camera.hpp"
 #include <core/fmts.hpp>
 #include <engine_export.h>
@@ -17,7 +18,6 @@ class ENGINE_EXPORT Scene
 public:
     friend struct std::formatter<Scene>;
     Scene();
-    ~Scene();
 
     auto entities() const -> std::span<const GameObject>;
     auto set_skybox(const std::string& BasePathName) -> void;
@@ -34,7 +34,7 @@ auto operator<<(Camera entity) -> Scene&;
 private:
     std::vector<Camera> m_Cameras;
     class Camera& m_MainCamera;
-    std::unique_ptr<class SkyBox> m_SkyBox;
+    SkyBox m_SkyBox;
     std::vector<GameObject> m_Entities;
 
 };
