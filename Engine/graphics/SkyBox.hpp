@@ -3,7 +3,6 @@
 #include <memory>
 #include <string>
 #include <engine_export.h>
-#include "Shader.hpp"
 #include "ShaderProgram.hpp"
 #include "Mesh.hpp"
 
@@ -21,8 +20,6 @@ class ENGINE_EXPORT SkyBox
   auto set_texture(const std::string& BasePathName) -> void;
 
 private:
-  Shader m_VertShader;
-  Shader m_FragShader;
   ShaderProgram m_Program;
   Mesh m_Mesh;
   std::shared_ptr<TextureCubeMap> m_Texture;

@@ -34,9 +34,7 @@ constexpr auto frag = R"GLSL(
 
 
 SkyBox::SkyBox()
-  : m_VertShader(vert, GL_VERTEX_SHADER)
-  , m_FragShader(frag, GL_FRAGMENT_SHADER)
-  , m_Program(std::make_shared<Shader>(m_VertShader), std::make_shared<Shader>(m_FragShader))
+  : m_Program(Shader::new_vertex(vert), Shader::new_fragment(frag))
   , m_Mesh(Mesh::flip_faces(Mesh::CUBE))
   , m_Texture(std::make_shared<TextureCubeMap>())
 {}
