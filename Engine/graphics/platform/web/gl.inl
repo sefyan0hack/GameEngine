@@ -8,6 +8,7 @@
 #include <gl2ext.h>
 
 #define XXXGetProcAddress(name) emscripten_webgl_get_proc_address(name)
+#define XXXGetCurrentContext() emscripten_webgl_get_current_context()
 
 using H_WIN     = const char*;
 using H_SRF     = const char*;

@@ -35,15 +35,14 @@ public:
 public:
     friend struct std::formatter<Mesh>;
     Mesh(const std::vector<VetexData> &vertices);
-    ~Mesh();
-
+    
     Mesh(const Mesh& other) = delete;
     auto operator=(const Mesh& other) -> Mesh& = delete;
-
+    
     Mesh(Mesh&& other) noexcept;
     auto operator=(Mesh&& other) noexcept -> Mesh&;
-
-    // auto operator==(const Mesh& other) const -> bool;
+    
+    ~Mesh();
 
     auto set_attribute(GLuint index, AttributeInfo att) -> void;
     auto enable_attribs() const -> void;

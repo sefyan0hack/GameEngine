@@ -18,12 +18,13 @@ public:
 
     friend struct std::formatter<ShaderProgram>;
     ShaderProgram(std::shared_ptr<class Shader> vertex, std::shared_ptr<class Shader> fragment);
-    ~ShaderProgram();
-
+    
     // ShaderProgram(const ShaderProgram& other);
     ShaderProgram(ShaderProgram&& other) noexcept;
     auto operator=(ShaderProgram&& other) noexcept -> ShaderProgram& ;
     
+    ~ShaderProgram();
+
     auto id() const noexcept -> GLuint ;
     auto use() const -> void ;
     auto uniform_count() const                  -> GLint ;

@@ -8,6 +8,7 @@ using H_SRF     = HDC;
 using GL_CTX    = HGLRC;
 
 #define XXXGetProcAddress(name) wglGetProcAddress(name)
+#define XXXGetCurrentContext() wglGetCurrentContext()
 
 // Declare function pointers using typedefs
 [[maybe_unused]] inline PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB = nullptr;

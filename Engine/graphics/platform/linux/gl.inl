@@ -7,6 +7,7 @@
 #include <glxext.h>
 
 #define XXXGetProcAddress(name) glXGetProcAddress((const GLubyte*)name)
+#define XXXGetCurrentContext() glXGetCurrentContext()
 
 struct __GLXcontextRec;
 using H_WIN     = Window;
