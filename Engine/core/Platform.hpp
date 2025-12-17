@@ -317,8 +317,8 @@ struct overloaded : Ts... { using Ts::operator()...; };
  * Useful in constrained templates or SFINAE situations where you want to
  * accept a set of specific types.
  */
-template<typename T, typename ... U>
-concept either = (std::same_as<T, U> || ...);
+template <typename T, typename... Allowed>
+concept either = (std::convertible_to<std::remove_cvref_t<T>, Allowed> || ...);
 
 /**
  * @brief Concept that tests whether T is Formattable
