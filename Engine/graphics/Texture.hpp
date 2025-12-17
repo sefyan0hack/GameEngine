@@ -16,9 +16,12 @@ public:
     friend struct std::formatter<Texture>;
 protected:
     Texture(GLenum texType);
-    ~Texture();
     Texture(const Texture&) = delete;
     auto operator=(const Texture&) -> Texture& = delete;
+    
+    Texture(Texture&&) noexcept;
+    auto operator=(Texture&&) noexcept-> Texture&;
+    ~Texture();
 
 public:
     auto id() const -> GLuint;

@@ -17,6 +17,13 @@ class ENGINE_EXPORT Shader
     Shader(const std::string& filename);
     Shader(std::string Src, GLenum type);
     Shader(const cmrc::file& Src, GLenum type);
+
+    Shader(const Shader&) = delete;
+    Shader& operator=(const Shader&) = delete;
+
+    Shader(Shader&& other) noexcept;
+    Shader& operator=(Shader&& other) noexcept;
+  
     ~Shader();
 
   public:
@@ -29,6 +36,15 @@ class ENGINE_EXPORT Shader
     auto check_compile_status() -> void;
     auto get_shader_info(GLenum what) const-> GLint; //what : GL_SHADER_TYPE, GL_DELETE_STATUS, GL_COMPILE_STATUS, GL_INFO_LOG_LENGTH, GL_SHADER_SOURCE_LENGTH.
     static auto pre_process() -> std::string;
+    static auto new_vertex(either<std::string, cmrc::file> auto const & vert) -> std::shared_ptr<Shader>
+    {
+      return std::make_shared<Shader>(vert, GL_VERTEX_SHADER);
+    }
+
+    static auto new_fragment(either<std::string, cmrc::file> auto const & frag) -> std::shared_ptr<Shader>
+    {
+      return std::make_shared<Shader>(frag, GL_FRAGMENT_SHADER);
+    }
     
     static auto default_vert() -> std::shared_ptr<Shader>;
     static auto default_frag() -> std::shared_ptr<Shader>;

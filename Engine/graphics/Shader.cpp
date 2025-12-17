@@ -24,6 +24,21 @@ Shader::Shader()
 {
     CTOR_LOG
 }
+
+Shader::Shader(Shader&& other) noexcept : m_Id(other.m_Id), m_Type(other.m_Type) {
+    other.m_Id = 0;
+}
+
+Shader& Shader::operator=(Shader&& other) noexcept {
+    if (this != &other) {
+        gl::DeleteShader(m_Id);
+        m_Id = other.m_Id;
+        m_Type = other.m_Type;
+        other.m_Id = 0;
+    }
+    return *this;
+}
+
 Shader::~Shader(){
     gl::DeleteShader(m_Id);
 
@@ -155,3 +170,4 @@ auto Shader::default_frag() -> std::shared_ptr<Shader>
     static auto f = std::make_shared<Shader>(embed_filesystem.open("res/Shaders/main.frag"), GL_FRAGMENT_SHADER);
     return f;
 }
+

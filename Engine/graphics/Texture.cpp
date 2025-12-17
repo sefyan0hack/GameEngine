@@ -37,6 +37,21 @@ Texture::Texture(GLenum texType)
     CTOR_LOG
 }
 
+Texture::Texture(Texture&& other) noexcept : m_Id(other.m_Id), m_Type(other.m_Type) {
+    other.m_Id = 0;
+}
+
+Texture& Texture::operator=(Texture&& other) noexcept {
+    if (this != &other) {
+        gl::DeleteTextures(1, &m_Id);
+        m_Id = other.m_Id;
+        m_Type = other.m_Type;
+        other.m_Id = 0;
+    }
+    return *this;
+}
+
+
 Texture::~Texture() {
     gl::DeleteTextures(1, &m_Id);
 

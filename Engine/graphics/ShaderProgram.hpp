@@ -22,6 +22,7 @@ public:
 
     // ShaderProgram(const ShaderProgram& other);
     ShaderProgram(ShaderProgram&& other) noexcept;
+    auto operator=(ShaderProgram&& other) noexcept -> ShaderProgram& ;
     
     auto id() const noexcept -> GLuint ;
     auto use() const -> void ;
@@ -29,8 +30,8 @@ public:
     auto attribs_count() const                  -> GLint ;
     auto uniform_location(const char*) const -> GLuint;
     auto attrib_location(const char*) const -> GLuint;
-    auto uniforms() const noexcept -> const std::map<std::string, GlslType>&;
-    auto attribs() const noexcept -> const std::map<std::string, GlslType>&;
+    auto uniforms() const noexcept -> const std::unordered_map<std::string, GlslType>&;
+    auto attribs() const noexcept -> const std::unordered_map<std::string, GlslType>&;
     static auto current_program() -> GLuint;
     static auto glsl_type_to_string(GLenum type) -> const char*;
     static auto default_program() -> std::shared_ptr<ShaderProgram>;
@@ -56,8 +57,8 @@ private:
 private:
     GLuint m_Id;
     std::vector<std::shared_ptr<class Shader>> m_Shaders;
-    std::map<std::string, GlslType> m_Attribs;
-    std::map<std::string, GlslType> m_Uniforms;
+    std::unordered_map<std::string, GlslType> m_Attribs;
+    std::unordered_map<std::string, GlslType> m_Uniforms;
 
     
 

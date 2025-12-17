@@ -47,13 +47,11 @@ Mesh::Mesh(const std::vector<Vertex> &vertices)
 }
 
 Mesh::Mesh(Mesh &&other) noexcept
-    : vertices(other.vertices)
-    , attribs(other.attribs)
+    : vertices(std::move(other.vertices))
+    , attribs(std::move(other.attribs))
     , VBO(other.VBO)
     , VAO(other.VAO)
 {
-    other.vertices.clear();
-    other.attribs.clear();
     other.VBO = 0;
     other.VAO = 0;
 }
@@ -61,13 +59,15 @@ Mesh::Mesh(Mesh &&other) noexcept
 auto Mesh::operator=(Mesh &&other) noexcept -> Mesh &
 {
     if(this != &other){
-        vertices = other.vertices;
-        attribs = other.attribs;
+        gl::DeleteBuffers(1, &VBO);
+        gl::DeleteVertexArrays(1, &VAO);
+
+        vertices = std::move(other.vertices);
+        attribs = std::move(other.attribs);
+
         VBO = other.VBO;
         VAO = other.VAO;
 
-        other.vertices.clear();
-        other.attribs.clear();
         other.VBO = 0;
         other.VAO = 0;
     }
@@ -76,10 +76,8 @@ auto Mesh::operator=(Mesh &&other) noexcept -> Mesh &
 
 Mesh::~Mesh()
 {
-    if(VBO != 0 || VAO != 0){
-        gl::DeleteBuffers(1, &VBO);
-        gl::DeleteVertexArrays(1, &VAO);
-    }
+    gl::DeleteBuffers(1, &VBO);
+    gl::DeleteVertexArrays(1, &VAO);
 
     DTOR_LOG
 }

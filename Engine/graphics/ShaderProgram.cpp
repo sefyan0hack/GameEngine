@@ -6,13 +6,21 @@
 
 ShaderProgram::ShaderProgram(std::shared_ptr<Shader> vertex, std::shared_ptr<Shader> fragment)
     : m_Id(gl::CreateProgram())
-    , m_Shaders({vertex, fragment})
+    // , m_Shaders({vertex, fragment})
 {
+    m_Shaders.reserve(2);
+    m_Shaders.push_back(std::move(vertex));
+    m_Shaders.push_back(std::move(fragment));
+    
     for(const auto &shader : m_Shaders ){
         gl::AttachShader(m_Id, shader->id());
     }
 
     link();
+
+    for(const auto &shader : m_Shaders ){
+        gl::DetachShader(m_Id, shader->id());
+    }
 
     dump_attribs();
     dump_uniforms();
@@ -21,26 +29,26 @@ ShaderProgram::ShaderProgram(std::shared_ptr<Shader> vertex, std::shared_ptr<Sha
 }
 
 
-// ShaderProgram::ShaderProgram(const ShaderProgram& other)
-//     : m_Id(gl::CreateProgram())
-//     , m_Shaders(other.m_Shaders)
-// {
-//     for(const auto& shader : m_Shaders ){
-//         gl::AttachShader(m_Id, shader->id());
-//     }
-
-//     Link();
-
-//     DumpAttribs();
-//     DumpUniforms();
-// }
 
 ShaderProgram::ShaderProgram(ShaderProgram&& other) noexcept
     : m_Id(std::exchange(other.m_Id, 0))
-    , m_Shaders(std::exchange(other.m_Shaders, {}))
-    , m_Attribs(std::exchange(other.m_Attribs, {}))
-    , m_Uniforms(std::exchange(other.m_Uniforms, {})) // dnt forget  to check if the id are the same in the new Programe
+    , m_Shaders(std::move(other.m_Shaders))
+    , m_Attribs(std::move(other.m_Attribs))
+    , m_Uniforms(std::move(other.m_Uniforms)) // dnt forget  to check if the id are the same in the new Programe
 {
+}
+
+auto ShaderProgram::operator=(ShaderProgram&& other) noexcept -> ShaderProgram& 
+{
+    if (this != &other) {
+        gl::DeleteProgram(m_Id);
+
+        m_Id = std::exchange(other.m_Id, 0);
+        m_Shaders = std::move(other.m_Shaders);
+        m_Attribs = std::move(other.m_Attribs);
+        m_Uniforms = std::move(other.m_Uniforms);
+    }
+    return *this;
 }
 
 ShaderProgram::~ShaderProgram()
@@ -292,12 +300,12 @@ auto ShaderProgram::current_program() -> GLuint
     return static_cast<GLuint>(prog);
 }
 
-auto ShaderProgram::uniforms() const noexcept -> const std::map<std::string, GlslType>&
+auto ShaderProgram::uniforms() const noexcept -> const std::unordered_map<std::string, GlslType>&
 {
     return m_Uniforms;
 }
 
-auto ShaderProgram::attribs() const noexcept -> const std::map<std::string, GlslType>&
+auto ShaderProgram::attribs() const noexcept -> const std::unordered_map<std::string, GlslType>&
 {
     return m_Attribs;
 }
