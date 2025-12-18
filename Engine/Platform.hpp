@@ -5,19 +5,61 @@
 */
 
 #pragma once
-#include <version>
-#include <type_traits>
-#include <variant>
-#include <format>
-#include <string_view>
-#include <utility>
-#include <cstdlib>
-#include <memory>
-#include <string>
+// #include <version>
+// #include <type_traits>
+// #include <variant>
+// #include <format>
+// #include <string_view>
+// #include <utility>
+// #include <cstdlib>
+// #include <memory>
+// #include <string>
 
-#if defined(CLANG_CPL) && !defined(WINDOWS_PLT) || defined(GNU_CPL)
-#include <cxxabi.h>
+#ifdef __has_include
+  #if __has_include(<version>)
+    #include <version>
+  #endif
+
+  #if __has_include(<type_traits>)
+    #include <type_traits>
+  #endif
+
+  #if __has_include(<variant>)
+    #include <variant>
+  #endif
+
+  #if __has_include(<format>)
+    #include <format>
+  #endif
+
+  #if __has_include(<string_view>)
+    #include <string_view>
+  #endif
+
+  #if __has_include(<utility>)
+    #include <utility>
+  #endif
+
+  #if __has_include(<cstdlib>)
+    #include <cstdlib>
+  #endif
+
+  #if __has_include(<memory>)
+    #include <memory>
+  #endif
+
+  #if __has_include(<string>)
+    #include <string>
+  #endif
+
+  #if __has_include(<cxxabi.h>)
+    #include <cxxabi.h>
+  #endif
+  
 #endif
+// #if defined(CLANG_CPL) && !defined(WINDOWS_PLT) || defined(GNU_CPL)
+// #include <cxxabi.h>
+// #endif
 
 
 /**

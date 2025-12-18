@@ -20,7 +20,6 @@ target_sources( core PUBLIC
       TYPE HEADERS
       FILES
         core.hpp
-        Platform.hpp
         Exception.hpp
         Log.hpp
         Utils.hpp

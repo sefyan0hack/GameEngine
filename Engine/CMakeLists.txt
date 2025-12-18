@@ -18,6 +18,8 @@ generate_export_header(Engine)
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
+target_precompile_headers(Engine PUBLIC "${CMAKE_SOURCE_DIR}/Engine/Platform.hpp")
+
 if(MSVC)
     target_compile_options(Engine PRIVATE /wd4251 /wd4275)
 endif()
