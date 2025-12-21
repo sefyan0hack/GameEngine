@@ -11,8 +11,6 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     , m_Minor(0)
     , m_CreationTime(std::time(nullptr))
 {
-    auto surface = window.surface();
-
     if (!make_current_opengl(window))
         throw Exception("Failed to make context current.");
 
@@ -32,9 +30,9 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     m_Renderer = renderer ? renderer : "unknown";
 
     #if defined(WINDOWS_PLT)
-    auto exts = reinterpret_cast<const char*>(wglGetExtensionsStringARB(surface));
+    auto exts = reinterpret_cast<const char*>(wglGetExtensionsStringARB(window.surface()));
     #elif defined(LINUX_PLT)
-    auto exts = reinterpret_cast<const char*>(glXQueryExtensionsString(surface, DefaultScreen(surface)));
+    auto exts = reinterpret_cast<const char*>(glXQueryExtensionsString(window.display(), DefaultScreen(window.display())));
     #elif defined(WEB_PLT)
     auto exts = emscripten_webgl_get_supported_extensions();
     #endif
