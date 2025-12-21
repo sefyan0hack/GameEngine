@@ -16,7 +16,7 @@ using GL_CTX    = __GLXcontextRec*;
 #define XXXGetProcAddress(name) glXGetProcAddress((const GLubyte*)name)
 #define XXXGetCurrentContext() glXGetCurrentContext()
 
-[[maybe_unused]] inline auto glXCreateContextAttribsARB = (GL_CTX(*)(H_SRF dpy, GLXFBConfig config, GL_CTX share_context, Bool direct, const int *attrib_list))(nullptr);
+[[maybe_unused]] inline auto glXCreateContextAttribsARB = (GL_CTX(*)(H_DSP dpy, GLXFBConfig config, GL_CTX share_context, Bool direct, const int *attrib_list))(nullptr);
 [[maybe_unused]] inline PFNGLXSWAPINTERVALEXTPROC glXSwapIntervalEXT = nullptr;
 
 
