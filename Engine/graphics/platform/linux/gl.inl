@@ -7,16 +7,15 @@
 #include <glxext.h>
 
 
-struct __GLXcontextRec;
 using H_WIN     = Window;
 using H_SRF     = Window;
 using H_DSP     = Display*;
-using GL_CTX    = __GLXcontextRec*;
+using GL_CTX    = GLXContext;
 
 #define XXXGetProcAddress(name) glXGetProcAddress((const GLubyte*)name)
 #define XXXGetCurrentContext() glXGetCurrentContext()
 
-[[maybe_unused]] inline auto glXCreateContextAttribsARB = (GL_CTX(*)(H_DSP dpy, GLXFBConfig config, GL_CTX share_context, Bool direct, const int *attrib_list))(nullptr);
+[[maybe_unused]] inline PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB = nullptr;
 [[maybe_unused]] inline PFNGLXSWAPINTERVALEXTPROC glXSwapIntervalEXT = nullptr;
 
 
