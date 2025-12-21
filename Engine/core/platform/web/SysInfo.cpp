@@ -15,12 +15,14 @@ auto os::host::name() -> std::string
 
 auto os::host::arch_tag() -> os::Arch
 {
-    return os::build::arch_tag();
+    if constexpr(sizeof(void*) == 8) return os::Arch::wasm64;
+    else return os::Arch::wasm;
 }
 
 auto os::host::arch() -> std::string
 {
-    return os::build::arch();
+    if(arch_tag() == os::Arch::wasm64) return "wasm64";
+    else return "wasm";
 }
 
 auto os::host::proc_id() -> std::size_t
