@@ -1,6 +1,8 @@
 #pragma once
 #include <utility>
 #include <string>
+#include <tuple>
+
 #include <engine_export.h>
 #include "gl.hpp"
 
@@ -24,6 +26,7 @@ class ENGINE_EXPORT CWindow
         auto operator = (CWindow &&) noexcept -> CWindow& = delete ;
 
     public:
+        auto display() const        -> H_DSP ;
         auto handle() const         -> H_WIN ;
         auto surface() const        -> H_SRF ;
         auto width() const          -> int32_t ;
@@ -44,9 +47,10 @@ class ENGINE_EXPORT CWindow
         auto message_box(const char* title, const char* body) -> bool;
 
     private:
-        auto new_window(int32_t Width, int32_t Height, const char* Title)       -> std::pair<H_WIN, H_SRF> ;
+        auto new_window(int32_t Width, int32_t Height, const char* Title)       -> std::tuple<H_DSP, H_WIN, H_SRF> ;
 
     private:
+        H_DSP m_Display;
         H_WIN m_Handle;
         H_SRF m_Surface;
         int32_t m_Width, m_Height;

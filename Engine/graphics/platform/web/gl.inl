@@ -7,12 +7,14 @@
 #include <gl3.h>
 #include <gl2ext.h>
 
-#define XXXGetProcAddress(name) emscripten_webgl_get_proc_address(name)
-#define XXXGetCurrentContext() emscripten_webgl_get_current_context()
 
 using H_WIN     = const char*;
 using H_SRF     = const char*;
+using H_DSP     = uint32_t;
 using GL_CTX    = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
+
+#define XXXGetProcAddress(name) emscripten_webgl_get_proc_address(name)
+#define XXXGetCurrentContext() emscripten_webgl_get_current_context()
 
 
 #define GLFUNCS GLFUNCS_COMMON

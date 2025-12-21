@@ -8,53 +8,52 @@
 #include <core/Event.hpp>
 #include <X11/Xlib.h>
 
-
 CWindow::~CWindow()
 {
-	XDestroyWindow(m_Surface, m_Handle);
-	if (m_Surface) {
-		XCloseDisplay(m_Surface);
+	XDestroyWindow(m_Display, m_Handle);
+	if (m_Display) {
+		XCloseDisplay(m_Display);
 	}
 }
 
-auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::pair<H_WIN, H_SRF>
+auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::tuple<H_DSP, H_WIN, H_SRF>
 {
-	auto Surface = XOpenDisplay(nullptr);
+	auto Display = XOpenDisplay(nullptr);
 
-    if (!Surface) {
+    if (!Display) {
 		throw Exception("Failed to open X display connection.");
 	}
-    int32_t screen = DefaultScreen(Surface);
+    int32_t screen = DefaultScreen(Display);
 
     /* Create a window */
-    auto window_handle = XCreateSimpleWindow(Surface, RootWindow(Surface, screen), 
+    auto window_handle = XCreateSimpleWindow(Display, RootWindow(Display, screen), 
                                  10, 10, static_cast<uint32_t>(Width), static_cast<uint32_t>(Height), 1, 
-                                 BlackPixel(Surface, screen), WhitePixel(Surface, screen));
+                                 BlackPixel(Display, screen), WhitePixel(Display, screen));
     Expect(window_handle != 0, "window_handle are null ???");
-    XStoreName(Surface, window_handle, Title);
+    XStoreName(Display, window_handle, Title);
 
-	// XkbSetDetectableAutoRepeat(Surface, true, NULL);
+	// XkbSetDetectableAutoRepeat(Display, true, NULL);
 
     /* Select input events */
-    XSelectInput(Surface, window_handle,
+    XSelectInput(Display, window_handle,
 		KeyPressMask | KeyReleaseMask | ExposureMask |
 		ResizeRedirectMask | FocusChangeMask | StructureNotifyMask | ButtonPress |
         ButtonReleaseMask | EnterWindowMask | LeaveWindowMask |
 		PointerMotionMask | Button1MotionMask | VisibilityChangeMask
 		);
 
-	return {window_handle, Surface};
+	return {Display, window_handle, window_handle};
 }
 
 auto CWindow::process_messages() -> void
 {
-	[[maybe_unused]] int32_t screen = DefaultScreen(m_Surface);
-	Atom wmDeleteMessage = XInternAtom(m_Surface, "WM_DELETE_WINDOW", false);
-	XSetWMProtocols(m_Surface, m_Handle, &wmDeleteMessage, 1);
+	[[maybe_unused]] int32_t screen = DefaultScreen(m_Display);
+	Atom wmDeleteMessage = XInternAtom(m_Display, "WM_DELETE_WINDOW", false);
+	XSetWMProtocols(m_Display, m_Handle, &wmDeleteMessage, 1);
 
 	XEvent event{};
-	while (XPending(m_Surface)) {
-		XNextEvent(m_Surface, &event);
+	while (XPending(m_Display)) {
+		XNextEvent(m_Display, &event);
 		
 		switch (event.type) {
 			case Expose:
@@ -69,7 +68,7 @@ auto CWindow::process_messages() -> void
 			case KeyPress:
 			case KeyRelease: {
 				const auto keycode = static_cast<KeyCode>(event.xkey.keycode);
-				KeySym keysym = XkbKeycodeToKeysym(m_Surface, keycode, 0, 0); // US layout
+				KeySym keysym = XkbKeycodeToKeysym(m_Display, keycode, 0, 0); // US layout
 				
 				uint32_t vk = 0;
 				
@@ -179,12 +178,12 @@ auto CWindow::process_messages() -> void
 
 auto CWindow::show() -> void
 {
-	XMapWindow(m_Surface, m_Handle);
+	XMapWindow(m_Display, m_Handle);
 	m_Visible = true;
 }
 auto CWindow::hide() -> void
 {
-	XUnmapWindow(m_Surface, m_Handle);
+	XUnmapWindow(m_Display, m_Handle);
 	m_Visible = false;
 }
 
@@ -195,7 +194,7 @@ auto CWindow::toggle_fullscreen() -> void
 
 auto CWindow::swap_buffers() const -> void
 {
-    ::glXSwapBuffers(m_Surface, m_Handle);
+    ::glXSwapBuffers(m_Display, m_Handle);
 }
 
 auto CWindow::get_title() -> std::string 
@@ -204,7 +203,7 @@ auto CWindow::get_title() -> std::string
 
 	// brocken
 	char* name = nullptr;
-    if (XFetchName(m_Surface, m_Handle, &name) && name) {
+    if (XFetchName(m_Display, m_Handle, &name) && name) {
 		title.resize(std::strlen(name) + 1);
         XFree(name);
 	}
@@ -214,13 +213,13 @@ auto CWindow::get_title() -> std::string
 
 auto CWindow::set_title(std::string  title) -> void
 {
-    XStoreName(m_Surface, m_Handle, title.c_str());
+    XStoreName(m_Display, m_Handle, title.c_str());
 }
 
 auto CWindow::set_vsync(bool state) -> void
 {
 	if(!glXSwapIntervalEXT) glXSwapIntervalEXT = reinterpret_cast<PFNGLXSWAPINTERVALEXTPROC>(glXGetProcAddress((const GLubyte*)"glXSwapIntervalEXT"));
-	glXSwapIntervalEXT(m_Surface, m_Handle, state);
+	glXSwapIntervalEXT(m_Display, m_Handle, state);
 }
 
 auto CWindow::message_box(const char* title, const char* body) -> bool

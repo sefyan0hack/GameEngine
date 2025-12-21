@@ -202,7 +202,7 @@ const TCHAR* window_class_name()
     return WINDOW_CLASS_NAME;
 }
 
-auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::pair<H_WIN, H_SRF>
+auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::tuple<H_DSP, H_WIN, H_SRF>
 {
 
     auto window_handle = CreateWindow(
@@ -219,7 +219,7 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
         throw Exception("faild to creat CWindow code : {}", GetLastError());
     }
 
-	return {window_handle, GetDC(window_handle)};
+	return {0 /*display*/, window_handle, GetDC(window_handle)};
 }
 
 auto CWindow::process_messages() -> void

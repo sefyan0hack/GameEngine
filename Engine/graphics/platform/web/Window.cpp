@@ -289,7 +289,7 @@ static auto register_event_callbacks(H_SRF surface) -> void
 	});
 }
 
-auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::pair<H_WIN, H_SRF>
+auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::tuple<H_DSP, H_WIN, H_SRF>
 {
 	auto window_handle = EMSCRIPTEN_EVENT_TARGET_WINDOW;
 	auto Surface = "#canvas";
@@ -315,7 +315,7 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
 	});
 
 	register_event_callbacks(Surface);
-	return {window_handle, Surface};
+	return {0 /* display */, window_handle, Surface};
 }
 
 auto CWindow::process_messages() -> void

@@ -4,18 +4,18 @@
 OpenGL::~OpenGL()
 {
     // if (m_Context > 0) {
-        // glXDestroyContext(m_Context); needs surface
+        // glXDestroyContext(m_Context); needs display
     // }
 }
 
 auto OpenGL::make_current_opengl([[maybe_unused]] const CWindow& window)  -> bool
 {
-    return glXMakeCurrent(window.surface(), window.handle(), m_Context);
+    return glXMakeCurrent(window.display(), window.handle(), m_Context);
 }
 
 auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GL_CTX
 {
-    auto surface = window.surface();
+    auto display = window.display();
     static int32_t visualAttribs[] = {
         GLX_X_RENDERABLE,  true,
         GLX_DOUBLEBUFFER,  true,
@@ -28,12 +28,12 @@ auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GL
     };
     
     int32_t fbcount;
-    GLXFBConfig* fbc = glXChooseFBConfig(surface, DefaultScreen(surface), visualAttribs, &fbcount);
+    GLXFBConfig* fbc = glXChooseFBConfig(display, DefaultScreen(display), visualAttribs, &fbcount);
     if (!fbc || fbcount == 0) {
         throw Exception("Failed to get framebuffer config.");
     }
 
-    XVisualInfo* visInfo = glXGetVisualFromFBConfig(surface, fbc[0]);
+    XVisualInfo* visInfo = glXGetVisualFromFBConfig(display, fbc[0]);
     if (!visInfo) {
         XFree(fbc);
         throw Exception("Failed to get visual info.");
@@ -50,7 +50,7 @@ auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GL
 
     glXCreateContextAttribsARB = (decltype(glXCreateContextAttribsARB))glXGetProcAddress((const GLubyte*)"glXCreateContextAttribsARB");
 
-    auto context = glXCreateContextAttribsARB(surface, fbc[0], nullptr, True, contextAttribs);
+    auto context = glXCreateContextAttribsARB(display, fbc[0], nullptr, True, contextAttribs);
     XFree(fbc);
     XFree(visInfo);
 

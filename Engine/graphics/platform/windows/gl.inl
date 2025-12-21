@@ -5,6 +5,7 @@
 
 using H_WIN     = HWND;
 using H_SRF     = HDC;
+using H_DSP     = uint32_t;
 using GL_CTX    = HGLRC;
 
 #define XXXGetProcAddress(name) wglGetProcAddress(name)

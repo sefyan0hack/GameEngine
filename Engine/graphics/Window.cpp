@@ -9,8 +9,14 @@ CWindow::CWindow(
 	, m_Visible(false)
 	, m_FullScreen(false)
 {
-	std::tie(m_Handle, m_Surface) = new_window(m_Width, m_Height, Title);
+	std::tie(m_Display, m_Handle, m_Surface) = new_window(m_Width, m_Height, Title);
 }
+
+auto CWindow::display() const        -> H_DSP
+{
+	return m_Display;
+}
+
 
 auto CWindow::handle() const -> H_WIN
 {
