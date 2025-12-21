@@ -11,6 +11,7 @@
 
 CWindow::~CWindow()
 {
+	ReleaseDC(m_Handle, m_Surface);
 	DestroyWindow(m_Handle);
 }
 
