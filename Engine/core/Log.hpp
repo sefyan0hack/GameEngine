@@ -7,6 +7,7 @@
 #include <format>
 #include <ctime>
 #include <iomanip>
+#include <exception>
 #include <engine_export.h>
 
 //"{:%Y-%m-%d %H:%M:%OS}"
