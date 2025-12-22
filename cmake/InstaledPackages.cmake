@@ -17,7 +17,7 @@ if(NOT EMSCRIPTEN)
         PURPOSE "support parallel work"
     )
     # Find X11 package
-    if(UNIX)
+    if(LINUX)
         find_package(X11 QUIET)
         set_package_properties(XCB PROPERTIES
             DESCRIPTION "X11 Linux windowing lib"

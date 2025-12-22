@@ -34,7 +34,7 @@ if(WIN32)
     fetch_and_include_file(wglext https://registry.khronos.org/OpenGL/api/GL/wglext.h)
 endif()
 
-if(UNIX)
+if(LINUX)
     fetch_and_include_file(glxext https://registry.khronos.org/OpenGL/api/GL/glxext.h)
 endif()
 

@@ -45,7 +45,7 @@ apply_sanitizer_options(TARGETS Engine)
 
 # common (Not Web)
 if(NOT EMSCRIPTEN)
-    if(NOT WIN32)
+    if(LINUX)
     find_package(TBB QUIET)
     set_package_properties(TBB PROPERTIES
         DESCRIPTION "Intel's Threading Building Blocks"

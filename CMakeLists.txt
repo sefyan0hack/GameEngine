@@ -23,7 +23,7 @@ elseif(EMSCRIPTEN)
     set(DIR_PLT_NAME "web")
 elseif(ANDROID)
     set(DIR_PLT_NAME "android")
-elseif(UNIX)
+elseif(LINUX)
     set(DIR_PLT_NAME "linux")
 endif()
     
