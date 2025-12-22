@@ -83,7 +83,7 @@ auto OpenGLRenderer::viewport() const -> std::tuple<uint32_t, uint32_t, uint32_t
 
 auto OpenGLRenderer::enable_wireframe() -> void
 {
-    #if defined(WEB_PLT)
+    #if defined(WEB_PLT) && !defined(ANDROID_PLT)
     static bool webPolyModeAvailable = m_GApi.has_extension("WEBGL_polygon_mode");
     if (webPolyModeAvailable) {
         EM_ASM({
@@ -102,7 +102,7 @@ auto OpenGLRenderer::enable_wireframe() -> void
 
 auto OpenGLRenderer::disable_wireframe() -> void
 {
-    #if defined(WEB_PLT)
+    #if defined(WEB_PLT) && !defined(ANDROID_PLT)
     static bool webPolyModeAvailable = m_GApi.has_extension("WEBGL_polygon_mode");
     if (webPolyModeAvailable) {
         EM_ASM({

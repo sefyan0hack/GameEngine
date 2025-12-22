@@ -50,7 +50,7 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     gl::Enable(GL_CULL_FACE);
     gl::CullFace(GL_BACK);
 
-    #if !defined(WEB_PLT)
+    #if !defined(WEB_PLT) && !defined(ANDROID_PLT)
     gl::Enable(GL_LINE_SMOOTH);
     gl::Enable(GL_MULTISAMPLE);
     gl::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
