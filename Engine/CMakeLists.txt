@@ -31,6 +31,11 @@ target_sources( Engine
         ${GRAPHICS_SRCS}
 )
 
+if(ANDROID)
+    add_library(native_app_glue STATIC ${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c)
+    target_include_directories(native_app_glue PUBLIC ${ANDROID_NDK}/sources/android/native_app_glue)
+endif()
+
 target_link_libraries(Engine
     PUBLIC
         core
@@ -40,13 +45,8 @@ target_link_libraries(Engine
         $<$<PLATFORM_ID:Android>:EGL>
         $<$<PLATFORM_ID:Android>:GLESv2>
         $<$<PLATFORM_ID:Android>:log>
+        $<$<PLATFORM_ID:Android>:native_app_glue>
 )
-
-if(ANDROID)
-    add_library(native_app_glue STATIC ${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c)
-    target_include_directories(native_app_glue PUBLIC ${ANDROID_NDK}/sources/android/native_app_glue)
-    target_link_libraries(Engine native_app_glue)
-endif()
 
 apply_all_options(TARGETS Engine)
 apply_coverage_options(TARGETS Engine)
