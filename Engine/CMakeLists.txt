@@ -36,6 +36,10 @@ target_link_libraries(Engine
         core
         graphics
         input
+        $<$<PLATFORM_ID:Android>:android>
+        $<$<PLATFORM_ID:Android>:EGL>
+        $<$<PLATFORM_ID:Android>:GLESv2>
+        $<$<PLATFORM_ID:Android>:log>
 )
 
 apply_all_options(TARGETS Engine)
@@ -62,6 +66,7 @@ if(NOT EMSCRIPTEN)
             Threads::Threads
             $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
             $<$<PLATFORM_ID:Linux>:dl>
+            $<$<PLATFORM_ID:Android>:dl>
             ${OPENGL_LIBRARIES}
             $<$<PLATFORM_ID:Linux>:${X11_LIBRARIES}>
     )
