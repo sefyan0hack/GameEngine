@@ -20,13 +20,11 @@
 #include <windows.h>
 #undef near
 #undef far
-#elif defined(LINUX_PLT)
+#elif defined(LINUX_PLT) || defined(ANDROID_PLT)
 #include <dlfcn.h>
 #elif defined(WEB_PLT)
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
-#elif defined(ANDROID_PLT)
-//
 #endif
 
 

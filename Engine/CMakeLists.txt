@@ -43,7 +43,7 @@ target_link_libraries(Engine
         input
         $<$<PLATFORM_ID:Android>:android>
         $<$<PLATFORM_ID:Android>:EGL>
-        $<$<PLATFORM_ID:Android>:GLESv2>
+        $<$<PLATFORM_ID:Android>:GLESv3>
         $<$<PLATFORM_ID:Android>:log>
         $<$<PLATFORM_ID:Android>:native_app_glue>
 )
