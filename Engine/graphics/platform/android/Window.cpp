@@ -48,7 +48,7 @@ auto CWindow::android_window(void* native_window)	-> std::tuple<H_DSP, H_WIN, H_
 
     auto surface = eglCreateWindowSurface(display, config, window, nullptr);
 
-    return {display, *window, surface};
+    return {display, window, surface};
 }
 
 
