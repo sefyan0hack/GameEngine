@@ -35,6 +35,8 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     auto exts = reinterpret_cast<const char*>(glXQueryExtensionsString(window.display(), DefaultScreen(window.display())));
     #elif defined(WEB_PLT)
     auto exts = emscripten_webgl_get_supported_extensions();
+    #elif defined(ANDROID_PLT)
+    auto exts = eglQueryString(window.display(), EGL_EXTENSIONS);
     #endif
 
     m_Extensions = exts ? utils::split(exts, " ") : decltype(m_Extensions){} ;

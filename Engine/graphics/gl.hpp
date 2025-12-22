@@ -110,6 +110,8 @@
 #include "platform/linux/gl.inl"
 #elif defined(WEB_PLT)
 #include "platform/web/gl.inl"
+#elif defined(ANDROID_PLT)
+#include "platform/android/gl.inl"
 #endif
 
 #include <core/Function.hpp>

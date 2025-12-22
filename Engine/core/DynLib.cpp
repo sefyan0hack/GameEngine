@@ -4,7 +4,7 @@
 
 #if defined(WINDOWS_PLT)
     #include <windows.h>
-#elif defined(LINUX_PLT) || defined(WEB_PLT)
+#elif defined(LINUX_PLT) || defined(WEB_PLT) || defined(ANDROID_PLT)
     #include <dlfcn.h>
 #endif
 
@@ -54,7 +54,7 @@ auto DynLib::load() -> void
     
     #if defined(WINDOWS_PLT)
         m_handle = (void*) LoadLibraryA(full_name().c_str());
-    #elif defined(LINUX_PLT) || defined(WEB_PLT)
+    #elif defined(LINUX_PLT) || defined(WEB_PLT) || defined(ANDROID_PLT)
         m_handle = (void*) dlopen(full_name().c_str(), RTLD_NOW | RTLD_LOCAL);
     #endif
     
@@ -67,7 +67,7 @@ auto DynLib::unload() -> void
     bool r = true;
     #if defined(WINDOWS_PLT)
         if(FreeLibrary((HMODULE)m_handle) == 0) r = false;
-    #elif defined(LINUX_PLT) || defined(WEB_PLT)
+    #elif defined(LINUX_PLT) || defined(WEB_PLT) || defined(ANDROID_PLT)
         if(dlclose(m_handle) != 0) r = false;
     #endif
     
@@ -94,7 +94,7 @@ auto DynLib::function(const char* name) -> void*
     void* f = nullptr;
     #if defined(WINDOWS_PLT)
         f = reinterpret_cast<void*>(GetProcAddress((HMODULE) m_handle, name));
-    #elif defined(LINUX_PLT) || defined(WEB_PLT)
+    #elif defined(LINUX_PLT) || defined(WEB_PLT) || defined(ANDROID_PLT)
         (void)dlerror();
         f = reinterpret_cast<void*>(dlsym(m_handle, name));
     #endif
@@ -142,7 +142,7 @@ auto DynLib::error() -> std::string {
         
         return message.empty() ? "Unknown error" : message;
         
-    #elif defined(LINUX_PLT) || defined(WEB_PLT)
+    #elif defined(LINUX_PLT) || defined(WEB_PLT) || defined(ANDROID_PLT)
         const char* error = dlerror();
         return error ? error : "No error";
     #endif

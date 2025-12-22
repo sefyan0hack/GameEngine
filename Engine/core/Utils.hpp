@@ -25,6 +25,8 @@
 #elif defined(WEB_PLT)
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
+#elif defined(ANDROID_PLT)
+//
 #endif
 
 
@@ -452,7 +454,7 @@ inline auto get_proc_address([[maybe_unused]] const char* module, const char* na
     
     failreson = lib ? "" : std::to_string(GetLastError());
     address = (void *) ::GetProcAddress(reinterpret_cast<HMODULE>(lib), name);
-    #elif defined(LINUX_PLT)
+    #elif defined(LINUX_PLT) || defined(ANDROID_PLT)
     lib = dlopen(module, RTLD_LAZY | RTLD_NOLOAD);
     failreson = lib ? "" : std::string(dlerror());
     address = (void *)dlsym(lib, name);
