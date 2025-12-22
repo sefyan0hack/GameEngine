@@ -11,5 +11,8 @@ using H_SRF     = EGLSurface;
 using H_DSP     = EGLDisplay;
 using GL_CTX    = EGLContext;
 
+#define XXXGetProcAddress(name) eglGetProcAddress(name)
+#define XXXGetCurrentContext() eglGetCurrentContext()
+
 
 #define GLFUNCS GLFUNCS_COMMON
