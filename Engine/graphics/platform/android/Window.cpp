@@ -20,13 +20,16 @@ void android_main(struct android_app *app)
 
 auto CWindow::android_window(void* native_window)	-> std::tuple<H_DSP, H_WIN, H_SRF>
 {
-	auto  window = reinterpret_cast<ANativeWindow*>(native_window)
+	auto  window = reinterpret_cast<ANativeWindow*>(native_window);
 
 	auto display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-	if(display == EGL_NOT_INITIALIZED) throw Exception("EGL_NOT_INITIALIZED");
+	if(display == EGL_NO_DISPLAY) throw Exception("EGL_NOT_INITIALIZED");
 
-	uint32_t egl_major = 0, egl_minor = 0;
-	eglInitialize(display, &egl_major, &egl_minor);
+	EGLint egl_major = 0, egl_minor = 0;
+    if (!eglInitialize(display, &egl_major, &egl_minor)) {
+        throw Exception("eglInitialize failed");
+    }
+
 	debug::log("egl v{}.{}", egl_major, egl_minor);
 
 	eglBindAPI(EGL_OPENGL_ES_API);
@@ -41,14 +44,11 @@ auto CWindow::android_window(void* native_window)	-> std::tuple<H_DSP, H_WIN, H_
 
     EGLConfig config;
     EGLint numConfigs;
-    eglChooseConfig(m_Display, attribs, &config, 1, &numConfigs);
+    eglChooseConfig(display, attribs, &config, 1, &numConfigs);
 
-    m_Surface = eglCreateWindowSurface(m_Display, config, window, nullptr);
+    auto surface = eglCreateWindowSurface(display, config, window, nullptr);
 
-	m_Width = ANativeWindow_getWidth(window);
-	m_Height = ANativeWindow_getHeight(window);
-
-    return {m_Display, *window, m_Surface};
+    return {display, *window, surface};
 }
 
 

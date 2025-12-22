@@ -10,7 +10,7 @@ OpenGL::~OpenGL()
 
 auto OpenGL::make_current_opengl([[maybe_unused]] const CWindow& window)  -> bool
 {
-    return glXMakeCurrent(window.display(), window.handle(), m_Context);
+    return eglMakeCurrent(window.display(), window.surface(), EGL_NO_SURFACE, m_Context);
 }
 
 auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GL_CTX
