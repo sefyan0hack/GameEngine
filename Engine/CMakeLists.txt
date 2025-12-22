@@ -86,7 +86,7 @@ target_link_libraries(Luncher PRIVATE Engine)
 
 # common (Not Web)
 if(NOT EMSCRIPTEN)
-    if(NOT WIN32)
+    if(NOT WIN32 AND NOT ANDROID)
     target_link_libraries(Luncher PRIVATE $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
     endif()
 
