@@ -77,7 +77,7 @@ auto CWindow::toggle_fullscreen() -> void
 
 auto CWindow::swap_buffers() const -> void
 {
-    ::glXSwapBuffers(m_Display, m_Handle);
+    eglSwapBuffers(m_Display, m_Surface);
 }
 
 auto CWindow::get_title() -> std::string 

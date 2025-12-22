@@ -17,14 +17,13 @@ auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GL
 {
     auto display = window.display();
     static int32_t visualAttribs[] = {
-        GLX_X_RENDERABLE,  true,
-        GLX_DOUBLEBUFFER,  true,
-        GLX_RED_SIZE,       gl::ChannelBits,
-        GLX_GREEN_SIZE,     gl::ChannelBits,
-        GLX_BLUE_SIZE,      gl::ChannelBits,
-        GLX_ALPHA_SIZE,     gl::AlphaBits,
-        GLX_DEPTH_SIZE,     gl::DepthBufferBits,
-        0
+        EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+        EGL_BLUE_SIZE, gl::ChannelBits,
+        EGL_GREEN_SIZE, gl::ChannelBits,
+        EGL_RED_SIZE, gl::ChannelBits,
+        EGL_ALPHA_SIZE, gl::AlphaBits,
+        EGL_DEPTH_SIZE, gl::DepthBufferBits,
+        EGL_NONE
     };
     
     int32_t fbcount;
