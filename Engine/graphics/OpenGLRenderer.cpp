@@ -83,7 +83,7 @@ auto OpenGLRenderer::viewport() const -> std::tuple<uint32_t, uint32_t, uint32_t
 
 auto OpenGLRenderer::enable_wireframe() -> void
 {
-    #if defined(WEB_PLT) && !defined(ANDROID_PLT)
+    #if defined(WEB_PLT)
     static bool webPolyModeAvailable = m_GApi.has_extension("WEBGL_polygon_mode");
     if (webPolyModeAvailable) {
         EM_ASM({
@@ -92,7 +92,7 @@ auto OpenGLRenderer::enable_wireframe() -> void
             ext.polygonModeWEBGL(gl.FRONT_AND_BACK, ext.LINE_WEBGL);
         });
     }
-    #else
+    #elif defined(WINDOWS_PLT) || defined(LINUX_PLT)
     gl::Enable(GL_LINE_SMOOTH);
     gl::Enable(GL_POLYGON_OFFSET_LINE);
     gl::PolygonOffset(-1.0f, -1.0f);
@@ -102,7 +102,7 @@ auto OpenGLRenderer::enable_wireframe() -> void
 
 auto OpenGLRenderer::disable_wireframe() -> void
 {
-    #if defined(WEB_PLT) && !defined(ANDROID_PLT)
+    #if defined(WEB_PLT)
     static bool webPolyModeAvailable = m_GApi.has_extension("WEBGL_polygon_mode");
     if (webPolyModeAvailable) {
         EM_ASM({
@@ -111,7 +111,7 @@ auto OpenGLRenderer::disable_wireframe() -> void
             ext.polygonModeWEBGL(gl.FRONT_AND_BACK, ext.FILL_WEBGL);
         });
     }
-    #else
+    #elif defined(WINDOWS_PLT) || defined(LINUX_PLT)
     gl::Disable(GL_POLYGON_OFFSET_LINE);
     gl::Disable(GL_LINE_SMOOTH);
     gl::PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
