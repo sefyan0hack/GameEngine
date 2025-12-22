@@ -121,7 +121,7 @@ auto OpenGLRenderer::disable_wireframe() -> void
 
 auto OpenGLRenderer::enable_points() -> void
 {
-    #if !defined(WEB_PLT)
+    #if !defined(WEB_PLT) && !defined(ANDROID_PLT)
     gl::Enable(GL_PROGRAM_POINT_SIZE);
     GLfloat widths[2];
     auto& min = widths[0];
@@ -135,7 +135,7 @@ auto OpenGLRenderer::enable_points() -> void
 
 auto OpenGLRenderer::disable_points() -> void
 {
-    #if !defined(WEB_PLT)
+    #if !defined(WEB_PLT) && !defined(ANDROID_PLT)
     gl::Disable(GL_PROGRAM_POINT_SIZE);
     gl::PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     #endif
