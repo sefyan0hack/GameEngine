@@ -226,3 +226,28 @@ auto CWindow::message_box(const char* title, const char* body) -> bool
 {
 	return false; // not implimented yet
 }
+
+auto CWindow::dims() const	-> std::pair<int32_t, int32_t>
+{
+	XWindowAttributes attrb;
+	XGetWindowAttributes(m_Display, m_Handle, &attrb);
+	return { attrb.width, attrb.height };
+}
+
+
+auto CWindow::resize(int32_t width, int32_t height)	-> void
+{
+	XResizeWindow(
+		m_Display,
+		m_Handle,
+		width,
+		height
+	);
+
+	XFlush(display);
+}
+
+auto CWindow::android_window(void*) -> std::tuple<H_DSP, H_WIN, H_SRF>
+{
+	throw Exception("Not for {}", os::host::name());
+}

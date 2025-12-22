@@ -120,6 +120,7 @@ add_compile_definitions(
     $<$<PLATFORM_ID:Windows>:WINDOWS_PLT>
     $<$<PLATFORM_ID:Linux>:LINUX_PLT>
     $<$<PLATFORM_ID:Emscripten>:WEB_PLT>
+    $<$<PLATFORM_ID:Android>:ANDROID_PLT>
 
     $<$<CXX_COMPILER_ID:GNU>:GNU_CPL>
     $<$<CXX_COMPILER_ID:Clang>:CLANG_CPL>

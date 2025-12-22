@@ -344,3 +344,32 @@ auto CWindow::message_box(const char* title, const char* body) -> bool
 {
 	return MessageBox(m_Handle, body, title, MB_YESNO) == IDYES;
 }
+
+auto CWindow::dims() const	-> std::pair<int32_t, int32_t>
+{
+	RECT rect{};
+	if(GetWindowRect(m_Handle, &rect))
+		return { rect.right - rect.left, rect.bottom - rect.top };
+	else
+		throw Exception("GetWindowRect failed with: {}", GetLastError());
+}
+
+auto CWindow::resize(int32_t width, int32_t height)	-> void
+{
+	RECT rc = { 0, 0, width, height };
+	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
+
+	SetWindowPos(
+		m_Handle,
+		nullptr,
+		0, 0,
+		rc.right - rc.left, 
+		rc.bottom - rc.top, 
+    	SWP_NOMOVE | SWP_NOZORDER
+	);
+}
+
+auto CWindow::android_window(void*) -> std::tuple<H_DSP, H_WIN, H_SRF>
+{
+	throw Exception("Not for {}", os::host::name());
+}

@@ -34,7 +34,7 @@ concept ISEvent = Variant<T> && [](){
     }(std::make_index_sequence<std::variant_size_v<V>>{});
 }();
 
-class EventQ : public std::queue<Event> {
+class EventQ : public std::queue<Event> { //TODO: on push make sur that the pusher it holds the event type ??  some metaprograming time
 private: EventQ() = default;
 public:
 

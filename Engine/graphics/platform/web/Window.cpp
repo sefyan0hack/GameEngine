@@ -21,11 +21,18 @@ static auto is_mobile() -> bool
 
 static auto resize_callback(int32_t eventType, const EmscriptenUiEvent* e, void*) -> EM_BOOL
 {
-	if(eventType == EMSCRIPTEN_EVENT_RESIZE){
-		EventQ::self().push(CWindow::ResizeEvent{e->windowInnerWidth, e->windowInnerHeight});
-	}
 
-	return EM_TRUE;
+	double css_w, css_h;
+    emscripten_get_element_css_size("#canvas", &css_w, &css_h); // for now
+    
+    double dpr = emscripten_get_device_pixel_ratio();
+    
+    int32_t pixel_w = static_cast<int32_t>(css_w * dpr);
+    int32_t pixel_h = static_cast<int32_t>(css_h * dpr);
+    emscripten_set_canvas_element_size("#canvas", pixel_w, pixel_h);
+
+    EventQ::self().push(CWindow::ResizeEvent{pixel_w, pixel_h});
+    return EM_TRUE;
 }
 
 static auto keyboard_callback(int32_t eventType, const EmscriptenKeyboardEvent* e, void*) -> EM_BOOL
@@ -370,4 +377,41 @@ auto CWindow::set_vsync(bool state) -> void
 auto CWindow::message_box(const char* title, const char* body) -> bool
 {
 	return false; // not implimented yet
+}
+
+auto CWindow::dims() const	-> std::pair<int32_t, int32_t>
+{
+	int32_t w, h;
+    emscripten_get_canvas_element_size(m_Surface, &w, &h);
+    return { w, h };
+}
+
+auto CWindow::resize(int32_t width, int32_t height) -> void
+{
+    EM_ASM({
+		var selector = UTF8ToString($0);
+        var canvas = document.querySelector(selector)
+        if (canvas) {
+            canvas.style.width = $1 + 'px';
+            canvas.style.height = $2 + 'px';
+        } else {
+            console.error("Could not find canvas with selector: " + selector);
+        }
+    }, m_Surface, width, height);
+
+    double dpr = emscripten_get_device_pixel_ratio();
+    
+    int32_t internal_w = static_cast<int32_t>(width * dpr);
+    int32_t internal_h = static_cast<int32_t>(height * dpr);
+
+    emscripten_set_canvas_element_size(m_Surface, internal_w, internal_h);
+
+    EventQ::self().push(CWindow::ResizeEvent{internal_w, internal_h});
+
+    debug::log("Resized: CSS(%dx%d) Internal(%dx%d)", width, height, internal_w, internal_h);
+}
+
+auto CWindow::android_window(void*) -> std::tuple<H_DSP, H_WIN, H_SRF>
+{
+	throw Exception("Not for {}", os::host::name());
 }

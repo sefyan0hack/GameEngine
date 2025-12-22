@@ -119,7 +119,6 @@ auto APP::loop_body(void* ctx) -> void
                 }
             },
             [&app](const CWindow::ResizeEvent& e) {
-                app->Window.resize(e.width, e.height);
                 app->Renderer->set_viewport(0, 0, e.width, e.height);
             },
             [&app](const CWindow::LoseFocusEvent&) {

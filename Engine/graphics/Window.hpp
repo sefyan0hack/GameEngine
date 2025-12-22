@@ -5,6 +5,7 @@
 
 #include <engine_export.h>
 #include "gl.hpp"
+#include <core/SysInfo.hpp>
 
 class ENGINE_EXPORT CWindow
 {
@@ -15,7 +16,7 @@ class ENGINE_EXPORT CWindow
         struct QuitEvent {};
 
         CWindow(int32_t Width, int32_t Height, const char* Title) noexcept;
-
+        CWindow(void* android_native_window) noexcept;
     public:
         ~CWindow();
 
@@ -29,8 +30,7 @@ class ENGINE_EXPORT CWindow
         auto display() const        -> H_DSP ;
         auto handle() const         -> H_WIN ;
         auto surface() const        -> H_SRF ;
-        auto width() const          -> int32_t ;
-        auto height() const         -> int32_t ;
+        auto dims() const           -> std::pair<int32_t, int32_t>; // {width, height}
         auto visible() const        -> bool;
         auto show()                 -> void;
         auto hide()                 -> void;
@@ -48,11 +48,11 @@ class ENGINE_EXPORT CWindow
 
     private:
         auto new_window(int32_t Width, int32_t Height, const char* Title)       -> std::tuple<H_DSP, H_WIN, H_SRF> ;
+        auto android_window(void* native_window)                                -> std::tuple<H_DSP, H_WIN, H_SRF> ;
 
     private:
         H_DSP m_Display;
         H_WIN m_Handle;
         H_SRF m_Surface;
-        int32_t m_Width, m_Height;
         bool m_Visible, m_FullScreen;
 };

@@ -9,7 +9,8 @@ namespace os
     {
         Windows,
         Linux,
-        Web
+        Web,
+        Android
     };
 
     /// @brief enum of Arch systems
@@ -24,14 +25,6 @@ namespace os
         unknown
     };
 
-    namespace build
-    {
-        constexpr const char* TimeStamp = __TIMESTAMP__;
-        constexpr auto name_tag() -> os::Target;
-        constexpr auto name() -> std::string;
-        constexpr auto arch_tag() -> os::Arch;
-        constexpr auto arch() -> std::string;
-    }
 
     namespace host
     {

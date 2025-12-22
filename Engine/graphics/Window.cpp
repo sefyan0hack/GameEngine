@@ -4,12 +4,19 @@
 CWindow::CWindow(
 	[[maybe_unused]] int32_t Width, [[maybe_unused]] int32_t Height, 
 	[[maybe_unused]] const char* Title) noexcept
-	: m_Width(Width)
-	, m_Height(Height)
-	, m_Visible(false)
+	: m_Visible(false)
 	, m_FullScreen(false)
 {
-	std::tie(m_Display, m_Handle, m_Surface) = new_window(m_Width, m_Height, Title);
+	std::tie(m_Display, m_Handle, m_Surface) = new_window(Width, Height, Title);
+}
+
+CWindow::CWindow(void* android_native_window) noexcept
+{
+	if (os::host::name_tag() == os::Target::Android){
+		std::tie(m_Display, m_Handle, m_Surface) = android_window(android_native_window);
+	} else {
+		throw Exception("this Ctor Expected to run only on android for now");
+	}
 }
 
 auto CWindow::display() const        -> H_DSP
@@ -28,16 +35,6 @@ auto CWindow::surface() const -> H_SRF
     return m_Surface;
 }
 
-auto CWindow::width() const -> int32_t
-{
-    return m_Width;
-}
-
-auto CWindow::height() const -> int32_t
-{
-    return m_Height;
-}
-
 auto CWindow::visible() const -> bool
 {
 	return m_Visible;
@@ -51,9 +48,4 @@ auto CWindow::close() -> void
 auto CWindow::is_fullscreen() -> bool 
 {
 	return m_FullScreen;
-}
-
-auto CWindow::resize(int32_t width, int32_t height) -> void
-{
-	std::tie(m_Width, m_Height) = { width, height };
 }
