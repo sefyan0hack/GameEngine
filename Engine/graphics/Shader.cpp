@@ -12,7 +12,6 @@ constexpr auto to_string(GLenum type) -> const char*
   switch(type){
     case GL_VERTEX_SHADER: return "GL_VERTEX_SHADER";
     case GL_FRAGMENT_SHADER: return "GL_FRAGMENT_SHADER";
-    case GL_COMPUTE_SHADER: return "GL_COMPUTE_SHADER";
     default: return "UNKNOWN";
   }
 }
@@ -52,10 +51,8 @@ Shader::Shader(const std::string& filename)
         m_Type = GL_VERTEX_SHADER;
     } else if(filename.ends_with(".frag")){
         m_Type = GL_FRAGMENT_SHADER;
-    } else if(filename.ends_with(".comp")){
-        m_Type = GL_COMPUTE_SHADER;
     } else {
-        throw Exception("filename `{}` must be one of [.vert, .frag, .comp]", filename);
+        throw Exception("filename `{}` must be one of [.vert, .frag]", filename);
     }
 
     m_Id = gl::CreateShader(m_Type);
