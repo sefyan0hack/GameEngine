@@ -16,45 +16,34 @@ auto OpenGL::make_current_opengl([[maybe_unused]] const CWindow& window)  -> boo
 auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GL_CTX
 {
     auto display = window.display();
-    static int32_t visualAttribs[] = {
+
+    EGLConfig config;
+    EGLint numConfigs;
+
+    static const EGLint visualAttribs[] = {
+        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,
         EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
         EGL_BLUE_SIZE, gl::ChannelBits,
         EGL_GREEN_SIZE, gl::ChannelBits,
         EGL_RED_SIZE, gl::ChannelBits,
         EGL_ALPHA_SIZE, gl::AlphaBits,
-        EGL_DEPTH_SIZE, gl::DepthBufferBits,
+        EGL_DEPTH_SIZE, gl::DepthBufferBits, // maybe 16 ??
         EGL_NONE
     };
-    
-    int32_t fbcount;
-    GLXFBConfig* fbc = glXChooseFBConfig(display, DefaultScreen(display), visualAttribs, &fbcount);
-    if (!fbc || fbcount == 0) {
-        throw Exception("Failed to get framebuffer config.");
+
+    if (!eglChooseConfig(display, visualAttribs, &config, 1, &numConfigs) || numConfigs <= 0) {
+        throw Exception("Failed to choose EGL config for Android");
     }
 
-    XVisualInfo* visInfo = glXGetVisualFromFBConfig(display, fbc[0]);
-    if (!visInfo) {
-        XFree(fbc);
-        throw Exception("Failed to get visual info.");
-    }
-
-    int32_t contextAttribs[] = {
-        GLX_CONTEXT_MAJOR_VERSION_ARB, gl::OPENGL_MAJOR_VERSION,
-        GLX_CONTEXT_MINOR_VERSION_ARB, gl::OPENGL_MINOR_VERSION,
-        #ifdef DEBUG
-        GLX_CONTEXT_FLAGS_ARB, GLX_CONTEXT_DEBUG_BIT_ARB | GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
-        #endif
-        0
+    static const EGLint contextAttribs[] = {
+        EGL_CONTEXT_CLIENT_VERSION, 3, 
+        EGL_NONE
     };
 
-    glXCreateContextAttribsARB = (decltype(glXCreateContextAttribsARB))glXGetProcAddress((const GLubyte*)"glXCreateContextAttribsARB");
+    auto context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttribs);
 
-    auto context = glXCreateContextAttribsARB(display, fbc[0], nullptr, True, contextAttribs);
-    XFree(fbc);
-    XFree(visInfo);
-
-    if (!context) {
-        throw Exception("Failed to create GLX context.");
+    if (context == EGL_NO_CONTEXT) {
+        throw Exception("Failed to create EGL context (Error: {})", eglGetError());
     }
 
     return context;
