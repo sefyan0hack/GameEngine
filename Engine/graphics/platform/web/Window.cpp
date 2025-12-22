@@ -376,7 +376,7 @@ auto CWindow::set_vsync(bool state) -> void
 
 auto CWindow::message_box(const char* title, const char* body) -> bool
 {
-	return false; // not implimented yet
+	debug::unimpl();
 }
 
 auto CWindow::dims() const	-> std::pair<int32_t, int32_t>

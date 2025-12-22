@@ -66,4 +66,9 @@ namespace debug {
   #define CTOR_LOG debug::log("({:p})  {} {}", (const void*)this, ::type_name<std::remove_pointer_t<decltype(this)>>(), *this);
   #define DTOR_LOG debug::log("({:p}) ~{}", (const void*)this, ::type_name<std::remove_pointer_t<decltype(this)>>());
 
+  [[noreturn]] inline auto unimpl(const char* msg = "") noexcept 
+  {
+    log("unimplimented ({})", msg );
+    std::terminate();
+  }
 } // namespace debug
