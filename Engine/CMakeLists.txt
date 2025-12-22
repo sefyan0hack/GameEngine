@@ -56,15 +56,7 @@ apply_sanitizer_options(TARGETS Engine)
 # common (Not Web)
 if(NOT EMSCRIPTEN)
     if(LINUX)
-    find_package(TBB QUIET)
-    set_package_properties(TBB PROPERTIES
-        DESCRIPTION "Intel's Threading Building Blocks"
-        TYPE REQUIRED
-        URL "https://github.com/oneapi-src/oneTBB"
-    )
-
-    target_link_libraries(Engine PRIVATE $<$<CXX_COMPILER_ID:Clang>:stdc++exp> TBB::tbb)
-
+        target_link_libraries(Engine PRIVATE $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
     endif()
 
     target_link_libraries(Engine

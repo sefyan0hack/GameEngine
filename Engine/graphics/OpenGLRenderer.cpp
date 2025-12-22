@@ -1,7 +1,6 @@
 #include "OpenGLRenderer.hpp"
 
 #include <algorithm>
-#include <execution>
 #include <span>
 #include <core/ResMan.hpp>
 #include "Window.hpp"
@@ -37,7 +36,7 @@ auto OpenGLRenderer::render(const Scene& scene, const std::shared_ptr<ShaderProg
 
     static std::shared_ptr<Material> currMatt = nullptr;
     //Drwaing
-    std::for_each( std::execution::seq,
+    std::for_each(
         scene.entities().begin(), scene.entities().end(),
         [&](const auto& obj){
             program->set_uniform("Model", obj.model());

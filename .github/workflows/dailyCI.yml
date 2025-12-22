@@ -41,7 +41,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgl1-mesa-dev  mesa-common-dev libxi-dev
           sudo apt-get install -y xvfb libx11-dev xauth
-          sudo apt-get install -y libtbb-dev
           pip install gcovr
 
       - name: Start Xvfb (virtual display)
