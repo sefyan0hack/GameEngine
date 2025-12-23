@@ -3,16 +3,15 @@ plugins {
 }
 
 android {
-    namespace "com.yourname.engine"
-    compileSdk 33
+    namespace "com.Engine.engine"
+    compileSdk 34
 
     defaultConfig {
-        applicationId "com.yourname.engine"
+        applicationId "com.Engine.engine"
         minSdk 21
-        targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        targetSdk 34
     }
+    ndkVersion "27.0.12077973"
 
     externalNativeBuild {
         cmake {
