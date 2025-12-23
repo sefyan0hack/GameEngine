@@ -71,7 +71,11 @@ if(NOT EMSCRIPTEN)
 endif()
 ### Luncher
 
-add_executable(Luncher)
+if(ANDROID)
+    add_library(Luncher SHARED)
+else()
+    add_executable(Luncher)
+endif()
 
 target_sources( Luncher PRIVATE
     main.cpp 
