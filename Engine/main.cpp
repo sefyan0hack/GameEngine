@@ -17,12 +17,12 @@ MAIN_FUNC {
             int ident;
             int events;
             struct android_poll_source* source;
-            if ((ident = ALooper_pollAll(-1, nullptr, &events, (void**)&source)) >= 0) {
+            if ((ident = ALooper_pollOnce(-1, nullptr, &events, (void**)&source)) >= 0) {
                 if (source != nullptr) source->process(arg1, source);
             }
             if (arg1->destroyRequested != 0) return; 
         }
-        
+
         CWindow window(arg1->window);
         #else
         CWindow window(WINDOW_WIDTH, WINDOW_HIEGHT, "");
