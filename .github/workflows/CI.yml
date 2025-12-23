@@ -119,7 +119,10 @@ jobs:
 
       - name: Build APK with Gradle
         working-directory: ./android
-        run: gradle assembleRelease
+        run: |
+          CMAKE_PATH=$(which cmake | xargs dirname | xargs dirname)
+          # Run gradle and pass the cmake.dir property directly
+          gradle assembleRelease -Pandroid.externalNativeBuild.cmake.dir=$CMAKE_PATH
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

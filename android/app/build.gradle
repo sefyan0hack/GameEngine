@@ -18,7 +18,6 @@ android {
         cmake {
             // This path points back to ROOT CMakeLists.txt
             path "../../CMakeLists.txt"
-            version "3.28.1"
         }
     }
 
