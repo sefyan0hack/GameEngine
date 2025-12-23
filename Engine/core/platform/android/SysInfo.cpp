@@ -101,5 +101,5 @@ auto os::host::module() -> std::string
         buffer[len] = '\0';
         return std::string(buffer);
     }
-    return ""
+    return "";
 }
