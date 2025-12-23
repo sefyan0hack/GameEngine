@@ -8,6 +8,7 @@
 #include <ctime>
 #include <iomanip>
 #include <exception>
+#include <source_location>
 #include <engine_export.h>
 
 #if defined(ANDROID_PLT)
@@ -76,9 +77,9 @@ namespace debug {
   #define CTOR_LOG debug::log("({:p})  {} {}", (const void*)this, ::type_name<std::remove_pointer_t<decltype(this)>>(), *this);
   #define DTOR_LOG debug::log("({:p}) ~{}", (const void*)this, ::type_name<std::remove_pointer_t<decltype(this)>>());
 
-  [[noreturn]] inline auto unimpl(const char* msg = "") noexcept 
+  [[noreturn]] inline auto unimpl(std::source_location loc = std::source_location::current()) noexcept 
   {
-    log("unimplimented ({})", msg );
+    log("unimplimented -> {}:{}", loc.file_name(), loc.line());
     std::terminate();
   }
 } // namespace debug
