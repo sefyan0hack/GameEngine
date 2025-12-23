@@ -112,6 +112,10 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Install Android CMake 3.28
+        run: |
+          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "cmake;3.28.1"
+
       - name: Setup Gradle 8.7
         uses: gradle/actions/setup-gradle@v4
         with:
