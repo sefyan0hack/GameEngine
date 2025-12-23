@@ -7,6 +7,8 @@
 
 #include <core/Event.hpp>
 
+extern android_app *Andoid_app;
+
 CWindow::~CWindow()
 {
 	eglTerminate(m_Display);
@@ -53,6 +55,62 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
 
 auto CWindow::process_messages() -> void
 {
+    int ident;
+    int events;
+    android_poll_source* source;
+
+    // Poll all waiting system events
+    while ((ident = ALooper_pollAll(0, nullptr, &events, (void**)&source)) >= 0) {
+        if (source != nullptr) {
+            source->process(Android_app, source);
+        }
+    }
+
+    // 2. Handle Input Events (Touch, Keys) manually
+    // This is where we replace the static handle_input callback
+    if (Android_app->inputQueue != nullptr) {
+        AInputEvent* event = nullptr;
+        while (AInputQueue_getEvent(Android_app->inputQueue, &event) >= 0) {
+            // Pre-dispatch gives the system a chance to handle it (like IME)
+            if (AInputQueue_preDispatchEvent(Android_app->inputQueue, event)) {
+                continue;
+            }
+
+            int32_t handled = 0;
+            auto type = AInputEvent_getType(event);
+
+            if (type == AINPUT_EVENT_TYPE_MOTION) {
+                handled = 1;
+                float x = AMotionEvent_getX(event, 0);
+                float y = AMotionEvent_getY(event, 0);
+                int32_t action = AMotionEvent_getAction(event) & AMOTION_EVENT_ACTION_MASK;
+
+                if (action == AMOTION_EVENT_ACTION_DOWN) {
+                    EventQ::self().push(Mouse::ButtonDownEvent{Mouse::Button::Left});
+                } else if (action == AMOTION_EVENT_ACTION_UP) {
+                    EventQ::self().push(Mouse::ButtonUpEvent{Mouse::Button::Left});
+                }
+                
+                EventQ::self().push(Mouse::MoveEvent{static_cast<short>(x), static_cast<short>(y)});
+            } 
+            else if (type == AINPUT_EVENT_TYPE_KEY) {
+                handled = 1;
+                int32_t keyCode = AKeyEvent_getKeyCode(event);
+                int32_t action = AKeyEvent_getAction(event);
+                
+                // Map Android KeyCode to your Key enum
+                Key k = Android_MapKey(keyCode); 
+                if (action == AKEY_EVENT_ACTION_DOWN) {
+                    EventQ::self().push(Keyboard::KeyDownEvent{k});
+                } else {
+                    EventQ::self().push(Keyboard::KeyUpEvent{k});
+                }
+            }
+
+            // Finish the event to stop the ANR timer!
+            AInputQueue_finishEvent(Android_app->inputQueue, event, handled);
+        }
+    }
 }
 
 auto CWindow::show() -> void
