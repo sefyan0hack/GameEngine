@@ -12,7 +12,6 @@
 MAIN_FUNC {
     try {
         #if defined(ANDROID_PLT)
-        app_dummy(); // Suppress link-time optimization that removes unreferenced code to make sure glue isn't stripped.
         // Wait for the window handle to be valid
         while (arg1->window == nullptr) {
             int ident;
