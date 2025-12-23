@@ -47,6 +47,9 @@ target_link_libraries(Engine
         $<$<PLATFORM_ID:Android>:log>
         $<$<PLATFORM_ID:Android>:native_app_glue>
 )
+if(ANDROID)
+    target_link_options(Engine INTERFACE "-Wl,-u,ANativeActivity_onCreate")
+endif()
 
 apply_all_options(TARGETS Engine)
 apply_coverage_options(TARGETS Engine)
@@ -73,6 +76,7 @@ endif()
 
 if(ANDROID)
     add_library(Launcher SHARED)
+    target_link_options(Launcher PRIVATE "-Wl,-u,ANativeActivity_onCreate")
 else()
     add_executable(Launcher)
 endif()
