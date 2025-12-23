@@ -1,0 +1,30 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace "com.yourname.engine"
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.yourname.engine"
+        minSdk 21
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+    }
+
+    externalNativeBuild {
+        cmake {
+            // This path points back to ROOT CMakeLists.txt
+            path "../../CMakeLists.txt"
+            abiFilters "arm64-v8a", "armeabi-v7a"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+}
