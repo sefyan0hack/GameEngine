@@ -7,7 +7,7 @@
 
 #include <core/Event.hpp>
 
-extern android_app *Andoid_app;
+extern android_app *Android_app;
 
 CWindow::~CWindow()
 {
@@ -50,7 +50,7 @@ auto CWindow::android_window(void* native_window)	-> std::tuple<H_DSP, H_WIN, H_
 
 auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::tuple<H_DSP, H_WIN, H_SRF>
 {
-	throw Exception("cant create window in andoid with this :)");
+	throw Exception("cant create window in android with this :)");
 }
 
 auto CWindow::process_messages() -> void
