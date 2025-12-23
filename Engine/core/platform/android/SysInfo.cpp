@@ -59,7 +59,7 @@ auto os::host::arch() -> std::string
 
 auto os::host::proc_id() -> std::size_t
 {
-    return static_cast<std::size_t>(getpid())
+    return static_cast<std::size_t>(getpid());
 }
 
 static std::size_t get_proc_value(const std::string& key)
