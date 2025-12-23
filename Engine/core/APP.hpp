@@ -3,7 +3,6 @@
 #include <memory>
 #include <chrono>
 
-#include <graphics/Window.hpp>
 #include <graphics/Renderer.hpp>
 #include <input/Keyboard.hpp>
 #include <input/Mouse.hpp>
@@ -32,7 +31,7 @@ public:
 public:
     friend class Game;
 
-    APP();
+    APP(class CWindow& window);
     ~APP();
 
     auto run() -> void ;
@@ -47,7 +46,7 @@ private:
     static auto loop_body(void* ctx) -> void;
 
 private:
-    CWindow Window;
+    class CWindow& Window;
     Keyboard Keyboard;
     Mouse Mouse;
 

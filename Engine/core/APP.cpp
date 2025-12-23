@@ -5,7 +5,7 @@
 #include <graphics/Scene.hpp>
 #include <graphics/ShaderProgram.hpp>
 #include <graphics/OpenGLRenderer.hpp>
-
+#include <graphics/Window.hpp>
 #include "APP.hpp"
 #include "Utils.hpp"
 #include "DynLib.hpp"
@@ -25,15 +25,11 @@
     GAME_API
 #endif
 
-
-constexpr auto WINDOW_WIDTH = 1180;
-constexpr auto WINDOW_HIEGHT = 640;
-
 #undef X
 #define X(name, r, args) , name(+[] args -> r { throw Exception(" `{} {}` is null ", #r, #name #args ); })
 
-APP::APP()
-    : Window(WINDOW_WIDTH, WINDOW_HIEGHT, "")
+APP::APP(CWindow& window)
+    : Window(window)
     , Keyboard()
     , Mouse()
     , m_Running(true)
