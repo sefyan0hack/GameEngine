@@ -18,7 +18,7 @@ auto os::host::name() -> std::string
 
 auto os::host::arch_tag() -> os::Arch
 {
-    debug::unimp();
+    debug::unimpl();
 }
 
 auto os::host::arch() -> std::string
@@ -52,30 +52,30 @@ auto os::host::arch() -> std::string
 
 auto os::host::proc_id() -> std::size_t
 {
-    debug::unimp();
+    debug::unimpl();
 }
 
 static std::size_t get_proc_value(const std::string& key)
 {
-    debug::unimp();
+    debug::unimpl();
 }
 
 auto os::host::memory_usage() -> std::size_t
 {
-    debug::unimp();
+    debug::unimpl();
 }
 
 auto os::host::memory_peak() -> std::size_t
 {
-    debug::unimp();
+    debug::unimpl();
 }
 
 auto os::host::thread_count() -> std::size_t
 {
-    debug::unimp();
+    debug::unimpl();
 }
 
 auto os::host::module() -> std::string
 {
-    debug::unimp();
+    debug::unimpl();
 }
