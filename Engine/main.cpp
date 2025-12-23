@@ -5,13 +5,14 @@
 #include <Engine.hpp>
 
 
-constexpr auto WINDOW_WIDTH = 1180;
-constexpr auto WINDOW_HIEGHT = 640;
+[[maybe_unused]] constexpr auto WINDOW_WIDTH = 1180;
+[[maybe_unused]] constexpr auto WINDOW_HIEGHT = 640;
 
 
 MAIN_FUNC {
     try {
         #if defined(ANDROID_PLT)
+        app_dummy(); // Suppress link-time optimization that removes unreferenced code to make sure glue isn't stripped.
         // Wait for the window handle to be valid
         while (arg1->window == nullptr) {
             int ident;
