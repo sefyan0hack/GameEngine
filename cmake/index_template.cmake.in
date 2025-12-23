@@ -37,6 +37,6 @@
 </head>
 <body>
   <canvas  id="canvas" oncontextmenu="event.preventDefault()" tabindex="0" ></canvas>
-  <script async="" type="text/javascript" src="Luncher.js"></script>
+  <script async="" type="text/javascript" src="Launcher.js"></script>
 </body>
 </html>

@@ -19,10 +19,10 @@ target_include_directories(Game PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(Game PRIVATE glm::glm Engine)
 
 if(NOT GAME_HOT_RELOADABLE)
-  target_link_libraries(Luncher PRIVATE Game)
+  target_link_libraries(Launcher PRIVATE Game)
 else()
   add_custom_command(TARGET Game POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Game> $<TARGET_FILE_DIR:Luncher>
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Game> $<TARGET_FILE_DIR:Launcher>
   )
 endif()
 

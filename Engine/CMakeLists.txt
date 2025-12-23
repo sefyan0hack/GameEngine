@@ -69,43 +69,43 @@ if(NOT EMSCRIPTEN)
             $<$<PLATFORM_ID:Linux>:${X11_LIBRARIES}>
     )
 endif()
-### Luncher
+### Launcher
 
 if(ANDROID)
-    add_library(Luncher SHARED)
+    add_library(Launcher SHARED)
 else()
-    add_executable(Luncher)
+    add_executable(Launcher)
 endif()
 
-target_sources( Luncher PRIVATE
+target_sources( Launcher PRIVATE
     main.cpp 
 )
 
 
 if(NO_CONSOLE)
-    no_console(Luncher)
+    no_console(Launcher)
 endif()
 
-target_link_libraries(Luncher PRIVATE Engine)
+target_link_libraries(Launcher PRIVATE Engine)
 
 # common (Not Web)
 if(NOT EMSCRIPTEN)
     if(NOT WIN32 AND NOT ANDROID)
-    target_link_libraries(Luncher PRIVATE $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
+    target_link_libraries(Launcher PRIVATE $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
     endif()
 
-    target_link_libraries(Luncher PRIVATE $<$<CXX_COMPILER_ID:GNU>:stdc++exp>)
+    target_link_libraries(Launcher PRIVATE $<$<CXX_COMPILER_ID:GNU>:stdc++exp>)
 endif()
 
-add_custom_command(TARGET Luncher POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy -t $<TARGET_FILE_DIR:Luncher> $<TARGET_RUNTIME_DLLS:Luncher>
+add_custom_command(TARGET Launcher POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy -t $<TARGET_FILE_DIR:Launcher> $<TARGET_RUNTIME_DLLS:Launcher>
   COMMAND_EXPAND_LISTS
 )
 
-apply_all_options(TARGETS Luncher)
-apply_coverage_options(TARGETS Luncher)
-apply_harden_options(TARGETS Luncher)
-apply_sanitizer_options(TARGETS Luncher)
+apply_all_options(TARGETS Launcher)
+apply_coverage_options(TARGETS Launcher)
+apply_harden_options(TARGETS Launcher)
+apply_sanitizer_options(TARGETS Launcher)
 
-print_target_compile_options(Luncher)
+print_target_compile_options(Launcher)
 print_target_compile_options(Engine)

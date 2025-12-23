@@ -8,7 +8,7 @@
         <activity android:name="android.app.NativeActivity"
                   android:configChanges="orientation|keyboardHidden|screenSize"
                   android:exported="true">
-            <meta-data android:name="android.app.lib_name" android:value="Luncher" />
+            <meta-data android:name="android.app.lib_name" android:value="Launcher" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
