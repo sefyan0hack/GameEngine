@@ -296,6 +296,13 @@ struct Type {
     #define END_IGNORE_WARN_CALNG()
 #endif
 
+
+#if defined(ANDROID_PLT)
+    #define MAIN_FUNC void android_main(struct android_app *arg1)
+#else
+    #define MAIN_FUNC int main(int arg1, char** arg2)
+#endif
+
 /**
  * @brief Concept that tests whether T is a Pointer
  *

@@ -12,12 +12,6 @@ CWindow::~CWindow()
 	eglTerminate(m_Display);
 }
 
-
-void android_main(struct android_app *app)
-{
-	//?? how to get window to CWindow::new_window
-}
-
 auto CWindow::android_window(void* native_window)	-> std::tuple<H_DSP, H_WIN, H_SRF>
 {
 	auto  window = reinterpret_cast<ANativeWindow*>(native_window);

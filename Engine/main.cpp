@@ -9,9 +9,14 @@ constexpr auto WINDOW_WIDTH = 1180;
 constexpr auto WINDOW_HIEGHT = 640;
 
 
-int main() {
+MAIN_FUNC {
     try {
+        #if defined(ANDROID_PLT)
+        CWindow window(arg1->window);
+        #else
         CWindow window(WINDOW_WIDTH, WINDOW_HIEGHT, "");
+        #endif
+
         APP app(window);
         app.run();
 
