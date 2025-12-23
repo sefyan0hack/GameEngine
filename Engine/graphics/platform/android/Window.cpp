@@ -90,3 +90,15 @@ auto CWindow::message_box(const char* title, const char* body) -> bool
 {
 	// needs java/koltlin code  `ya333`
 }
+
+
+auto CWindow::dims() const	-> std::pair<int32_t, int32_t>
+{
+	return { ANativeWindow_getWidth(m_Handle), ANativeWindow_getHeight(m_Handle) };
+}
+
+
+auto CWindow::resize(int32_t width, int32_t height)	-> void
+{
+	// for android ?? releay
+}
