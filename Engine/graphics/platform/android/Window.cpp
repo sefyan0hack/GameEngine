@@ -59,7 +59,7 @@ auto CWindow::process_messages() -> void
     int events;
     android_poll_source* source;
 
-    while ((ident = ALooper_pollAll(0, nullptr, &events, (void**)&source)) >= 0) {
+    while ((ident = ALooper_pollOnce(0, nullptr, &events, (void**)&source)) >= 0) {
         if (source != nullptr) {
             source->process(Android_app, source);
         }
