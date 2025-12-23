@@ -18,7 +18,6 @@ android {
         cmake {
             // This path points back to ROOT CMakeLists.txt
             path "../../CMakeLists.txt"
-            abiFilters "arm64-v8a", "armeabi-v7a"
         }
     }
 
