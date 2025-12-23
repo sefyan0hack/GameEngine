@@ -117,12 +117,16 @@ jobs:
         with:
           gradle-version: 8.7
 
+      - name: Configure Environment
+        run: |
+          # root directory of CMake, not the /bin folder.
+          SYS_CMAKE=$(which cmake | xargs dirname | xargs dirname)
+          echo "cmake.dir=$SYS_CMAKE" > android/local.properties
+          echo "ndk.dir=$ANDROID_NDK_LATEST_HOME" >> android/local.properties
+
       - name: Build APK with Gradle
         working-directory: ./android
-        run: |
-          CMAKE_PATH=$(which cmake | xargs dirname | xargs dirname)
-          # Run gradle and pass the cmake.dir property directly
-          gradle assembleRelease -Pandroid.externalNativeBuild.cmake.dir=$CMAKE_PATH
+        run: gradle assembleRelease
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
