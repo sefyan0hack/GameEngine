@@ -100,7 +100,7 @@ auto CWindow::process_messages() -> void
                 int32_t action = AKeyEvent_getAction(event);
                 
                 // Map Android KeyCode to Key enum
-                Key k = Android_MapKey(keyCode); 
+                Key k = Keyboard::from_native(keyCode);
                 if (action == AKEY_EVENT_ACTION_DOWN) {
                     EventQ::self().push(Keyboard::KeyDownEvent{k});
                 } else {
