@@ -114,7 +114,7 @@ jobs:
 
       - name: Build APK with Gradle
         working-directory: ./android
-        run: ./gradle assembleRelease
+        run: gradle assembleRelease
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
