@@ -10,6 +10,9 @@
 #include <exception>
 #include <engine_export.h>
 
+#if defined(ANDROID_PLT)
+#include <android/log.h>
+#endif
 //"{:%Y-%m-%d %H:%M:%OS}"
 
 namespace debug {
@@ -35,9 +38,15 @@ namespace debug {
   template <class... Ts>
   inline auto log([[maybe_unused]] const std::format_string<Ts...>& fmt, [[maybe_unused]] Ts&&... ts) -> void
   {
+    #if defined(ANDROID_PLT)
+      #define LOG_LOGIC __android_log_write(ANDROID_LOG_INFO, "Engine", Log(fmt, std::forward<Ts>(ts)...).c_str())
+    #else
+      #define LOG_LOGIC  std::cout << Log(fmt, std::forward<Ts>(ts)...)
+    #endif
+
     # if defined(DEBUG) && !defined(NDEBUG)
       if(std::getenv("TESTING_ENABLED") == nullptr) {
-        std::cout << Log(fmt, std::forward<Ts>(ts)...);
+        LOG_LOGIC;
       }
     # else
       if(std::getenv("COUT_TO_FILE") != nullptr){
