@@ -189,7 +189,7 @@ auto CWindow::hide() -> void
 
 auto CWindow::toggle_fullscreen() -> void
 {
-	debug::unimpl();
+	// x11 ??
 }
 
 auto CWindow::swap_buffers() const -> void
@@ -224,7 +224,8 @@ auto CWindow::set_vsync(bool state) -> void
 
 auto CWindow::message_box(const char* title, const char* body) -> bool
 {
-	debug::unimpl();
+	return true;
+	// TODO: use x11
 }
 
 auto CWindow::dims() const	-> std::pair<int32_t, int32_t>

@@ -66,7 +66,7 @@ auto CWindow::hide() -> void
 
 auto CWindow::toggle_fullscreen() -> void
 {
-	debug::unimpl();
+	// no meaning in android
 }
 
 auto CWindow::swap_buffers() const -> void
@@ -88,5 +88,5 @@ auto CWindow::set_vsync(bool state) -> void
 
 auto CWindow::message_box(const char* title, const char* body) -> bool
 {
-	debug::unimpl();
+	// needs java/koltlin code  `ya333`
 }

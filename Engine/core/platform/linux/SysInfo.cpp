@@ -95,15 +95,13 @@ static std::size_t get_proc_value(const std::string& key)
 auto os::host::memory_usage() -> std::size_t
 {
     // VmRSS (Resident Set Size) is the closest match to "Private Usage" 
-    std::size_t rss_kb = get_proc_value("VmRSS:");
-    return rss_kb / 1024; //  kB -> MB
+    return get_proc_value("VmRSS:") / 1024; //  kB -> MB
 }
 
 auto os::host::memory_peak() -> std::size_t
 {
     // VmHWM (High Water Mark) is the peak resident set size.
-    std::size_t hwm_kb = get_proc_value("VmHWM:");
-    return hwm_kb / 1024; // kB -> MB
+    return get_proc_value("VmHWM:") / 1024; // kB -> MB
 }
 
 auto os::host::thread_count() -> std::size_t

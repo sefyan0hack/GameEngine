@@ -5,6 +5,9 @@
 #include <string>
 #include <sstream>
 #include <cassert>
+#include <unistd.h>
+#include <dirent.h>
+#include <sys/system_properties.h>
 
 auto os::host::name_tag() -> os::Target
 {
@@ -18,18 +21,22 @@ auto os::host::name() -> std::string
 
 auto os::host::arch_tag() -> os::Arch
 {
-    debug::unimpl();
+    char value[PROP_VALUE_MAX];
+    int len = __system_property_get("ro.product.cpu.abi", value);
+    
+    if (len <= 0) return os::Arch::unknown;
+
+    std::string abi(value);
+    if (abi == "arm64-v8a") return os::Arch::arm64;
+    if (abi == "armeabi-v7a" || abi == "armeabi") return os::Arch::arm;
+    if (abi == "x86_64") return os::Arch::x64;
+    if (abi == "x86") return os::Arch::x86;
+
+    return os::Arch::unknown;
 }
 
 auto os::host::arch() -> std::string
 {
-    // arm64-v8a
-    // armeabi
-    // armeabi-v7a
-    // mips64
-    // mips
-    // x86_64
-    // x86
     switch (arch_tag())
     {
         case Arch::x64:
@@ -52,30 +59,47 @@ auto os::host::arch() -> std::string
 
 auto os::host::proc_id() -> std::size_t
 {
-    debug::unimpl();
+    return static_cast<std::size_t>(getpid())
 }
 
 static std::size_t get_proc_value(const std::string& key)
 {
-    debug::unimpl();
+    std::ifstream stream("/proc/self/status");
+    std::string line;
+    while (std::getline(stream, line)) {
+        if (line.find(key) == 0) {
+            std::stringstream ss(line);
+            std::string label;
+            std::size_t value;
+            ss >> label >> value;
+            return value;
+        }
+    }
+    return 0;
 }
 
 auto os::host::memory_usage() -> std::size_t
 {
-    debug::unimpl();
+    return get_proc_value("VmRSS:") / 1024;
 }
 
 auto os::host::memory_peak() -> std::size_t
 {
-    debug::unimpl();
+    return get_proc_value("VmHWM:") / 1024;
 }
 
 auto os::host::thread_count() -> std::size_t
 {
-    debug::unimpl();
+    return get_proc_value("Threads:");
 }
 
 auto os::host::module() -> std::string
 {
-    debug::unimpl();
+    char buffer[PATH_MAX];
+    ssize_t len = readlink("/proc/self/exe", buffer, sizeof(buffer) - 1);
+    if (len != -1) {
+        buffer[len] = '\0';
+        return std::string(buffer);
+    }
+    return ""
 }
