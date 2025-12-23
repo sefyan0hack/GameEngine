@@ -29,6 +29,4 @@ MAIN_FUNC {
     } catch(...) {
         debug::log("Unknown Exception");
     };
-
-    return 0;
 }
