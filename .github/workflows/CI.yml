@@ -124,12 +124,12 @@ jobs:
           echo "cmake.dir=$SYS_CMAKE" > android/local.properties
           echo "ndk.dir=$ANDROID_NDK_LATEST_HOME" >> android/local.properties
 
-      - name: Build APK with Gradle
+      - name: Build Debug APK
         working-directory: ./android
-        run: gradle assembleRelease
+        run: gradle assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Launcher-APK
-          path: android/app/build/outputs/apk/release/*.apk
+          name: Launcher-Debug-APK
+          path: android/app/build/outputs/apk/debug/*.apk
