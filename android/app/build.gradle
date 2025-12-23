@@ -12,6 +12,12 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
+
+        externalNativeBuild {
+            cmake {
+                abiFilters "arm64-v8a"
+            }
+        }
     }
 
     externalNativeBuild {

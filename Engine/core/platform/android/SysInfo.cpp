@@ -1,4 +1,5 @@
 #include "SysInfo.hpp"
+#include "Log.hpp"
 #include "Exception.hpp"
 #include <fstream>
 #include <string>
@@ -17,7 +18,7 @@ auto os::host::name() -> std::string
 
 auto os::host::arch_tag() -> os::Arch
 {
-    throw Exception("Not impl");
+    unimpl();
 }
 
 auto os::host::arch() -> std::string
@@ -51,30 +52,30 @@ auto os::host::arch() -> std::string
 
 auto os::host::proc_id() -> std::size_t
 {
-    throw Exception("Not impl");
+    unimpl();
 }
 
 static std::size_t get_proc_value(const std::string& key)
 {
-    throw Exception("Not impl");
+    unimpl();
 }
 
 auto os::host::memory_usage() -> std::size_t
 {
-    throw Exception("Not impl");
+    unimpl();
 }
 
 auto os::host::memory_peak() -> std::size_t
 {
-    throw Exception("Not impl");
+    unimpl();
 }
 
 auto os::host::thread_count() -> std::size_t
 {
-    throw Exception("Not impl");
+    unimpl();
 }
 
 auto os::host::module() -> std::string
 {
-    throw Exception("Not impl");
+    unimpl();
 }
