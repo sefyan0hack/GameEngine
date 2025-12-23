@@ -59,15 +59,16 @@ auto CWindow::process_messages() -> void
     int events;
     android_poll_source* source;
 
-    // Poll all waiting system events
     while ((ident = ALooper_pollAll(0, nullptr, &events, (void**)&source)) >= 0) {
         if (source != nullptr) {
             source->process(Android_app, source);
         }
+
+        if (Android_app->destroyRequested != 0) {
+            EventQ::self().push(CWindow::QuitEvent{});
+        }
     }
 
-    // 2. Handle Input Events (Touch, Keys) manually
-    // This is where we replace the static handle_input callback
     if (Android_app->inputQueue != nullptr) {
         AInputEvent* event = nullptr;
         while (AInputQueue_getEvent(Android_app->inputQueue, &event) >= 0) {
@@ -98,7 +99,7 @@ auto CWindow::process_messages() -> void
                 int32_t keyCode = AKeyEvent_getKeyCode(event);
                 int32_t action = AKeyEvent_getAction(event);
                 
-                // Map Android KeyCode to your Key enum
+                // Map Android KeyCode to Key enum
                 Key k = Android_MapKey(keyCode); 
                 if (action == AKEY_EVENT_ACTION_DOWN) {
                     EventQ::self().push(Keyboard::KeyDownEvent{k});
@@ -107,7 +108,6 @@ auto CWindow::process_messages() -> void
                 }
             }
 
-            // Finish the event to stop the ANR timer!
             AInputQueue_finishEvent(Android_app->inputQueue, event, handled);
         }
     }

@@ -18,19 +18,9 @@ MAIN_FUNC {
         #if defined(ANDROID_PLT)
         Android_app = arg1;
         if(Android_app == nullptr) throw Exception("android_app is null");
+        if(Android_app->window == nullptr) throw Exception("android_app::window is null");
 
-        // Wait for the window handle to be valid
-        while (arg1->window == nullptr) {
-            int ident;
-            int events;
-            struct android_poll_source* source;
-            if ((ident = ALooper_pollOnce(-1, nullptr, &events, (void**)&source)) >= 0) {
-                if (source != nullptr) source->process(Android_app, source);
-            }
-            if (arg1->destroyRequested != 0) return; 
-        }
-
-        CWindow window(arg1->window);
+        CWindow window(Android_app->window);
         #else
         CWindow window(WINDOW_WIDTH, WINDOW_HIEGHT, "");
         #endif
