@@ -110,7 +110,9 @@ auto OpenGLRenderer::disable_wireframe() -> void
             ext.polygonModeWEBGL(gl.FRONT_AND_BACK, ext.FILL_WEBGL);
         });
     }
-    #elif defined(CORE_GL)
+    #endif
+
+    #if defined(CORE_GL)
     gl::Disable(GL_POLYGON_OFFSET_LINE);
     gl::Disable(GL_LINE_SMOOTH);
     gl::PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -134,7 +136,7 @@ auto OpenGLRenderer::enable_points() -> void
 
 auto OpenGLRenderer::disable_points() -> void
 {
-    #if !defined(CORE_GL)
+    #if defined(CORE_GL)
     gl::Disable(GL_PROGRAM_POINT_SIZE);
     gl::PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     #endif
