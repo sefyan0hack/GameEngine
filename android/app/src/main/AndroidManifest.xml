@@ -6,6 +6,7 @@
         android:hasCode="false">
         
         <activity android:name="android.app.NativeActivity"
+                  android:screenOrientation="sensorLandscape"
                   android:configChanges="orientation|keyboardHidden|screenSize"
                   android:exported="true">
             <meta-data android:name="android.app.lib_name" android:value="Launcher" />
