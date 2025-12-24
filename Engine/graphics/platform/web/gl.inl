@@ -16,5 +16,6 @@ using GL_CTX    = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
 #define XXXGetProcAddress(name) emscripten_webgl_get_proc_address(name)
 #define XXXGetCurrentContext() emscripten_webgl_get_current_context()
 
-
-#define GLFUNCS GLFUNCS_COMMON
+namespace gl {
+    constexpr int32_t DepthBufferBits = 32;
+}

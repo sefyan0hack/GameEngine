@@ -16,11 +16,6 @@ using GL_CTX    = HGLRC;
 [[maybe_unused]] inline PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = nullptr;
 [[maybe_unused]] inline PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = nullptr;
 
-
-#define GLFUNCS GLFUNCS_COMMON\
-    X(PolygonMode)\
-    X(PointSize)\
-    X(GetProgramResourceiv)\
-    X(GetProgramResourceName)\
-    X(GetProgramResourceLocation)\
-    X(GetProgramInterfaceiv)
+namespace gl {
+    constexpr int32_t DepthBufferBits = 32;
+}

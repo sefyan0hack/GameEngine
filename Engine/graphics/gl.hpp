@@ -104,19 +104,27 @@
 
 #define GL_GLEXT_PROTOTYPES
 
-#include "gl.inl"
 #include <core/Function.hpp>
 #include <engine_export.h>
+#include "gl.inl"
+
+#if defined(DESK_GL)
+    #define GLFUNCS GLFUNCS_COMMON\
+        X(PolygonMode)\
+        X(PointSize)\
+        X(GetProgramResourceiv)\
+        X(GetProgramResourceName)\
+        X(GetProgramResourceLocation)\
+        X(GetProgramInterfaceiv)
+#elif defined(ES_GL)
+    #define GLFUNCS GLFUNCS_COMMON
+#else
+    #error "unreachable"
+#endif
 
 namespace gl {
     #undef X 
     #define X(name) "gl"#name, 
-
-    // #if defined(DESK_GL)
-    // constexpr int32_t StencilBufferBits = 8;
-    // #elif defined(ES_GL)
-    // constexpr int32_t StencilBufferBits = 8;
-    // #endif
 
     constexpr auto OPENGL_MODULE_NAME = OPENGL_LIB;
     constexpr auto OPENGL_FUNCTIONS_NAME = { GLFUNCS };
@@ -124,7 +132,6 @@ namespace gl {
     constexpr int32_t OPENGL_MAJOR_VERSION = 3;
     constexpr int32_t OPENGL_MINOR_VERSION = 3;
 
-    constexpr int32_t DepthBufferBits   = 16;
     constexpr int32_t StencilBufferBits = 8;
     constexpr int32_t ChannelBits       = 8;
     constexpr int32_t AlphaBits         = 8;

@@ -14,5 +14,6 @@ using GL_CTX    = EGLContext;
 #define XXXGetProcAddress(name) eglGetProcAddress(name)
 #define XXXGetCurrentContext() eglGetCurrentContext()
 
-
-#define GLFUNCS GLFUNCS_COMMON
+namespace gl {
+    constexpr int32_t DepthBufferBits = 16;
+}

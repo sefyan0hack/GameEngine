@@ -18,11 +18,6 @@ using GL_CTX    = GLXContext;
 [[maybe_unused]] inline PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB = nullptr;
 [[maybe_unused]] inline PFNGLXSWAPINTERVALEXTPROC glXSwapIntervalEXT = nullptr;
 
-
-#define GLFUNCS GLFUNCS_COMMON\
-    X(PolygonMode)\
-    X(PointSize)\
-    X(GetProgramResourceiv)\
-    X(GetProgramResourceName)\
-    X(GetProgramResourceLocation)\
-    X(GetProgramInterfaceiv)
+namespace gl {
+    constexpr int32_t DepthBufferBits = 32;
+}
