@@ -31,15 +31,15 @@ android {
         debug {
             // This prevents the IDE/Gradle from stripping debug symbols 
             // from the library during the build process
-            packaging {
-                jniLibs {
-                    keepDebugSymbols += "**/libLauncher.so"
-                }
-            }
+            // packaging {
+            //     jniLibs {
+            //         keepDebugSymbols += "**/libLauncher.so"
+            //     }
+            // }
             // ensure the build doesn't strip during the native build phase
-            ndk {
-                debugSymbolLevel 'FULL'
-            }
+            // ndk {
+            //     debugSymbolLevel 'FULL'
+            // }
         }
     }
 }
