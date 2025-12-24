@@ -13,8 +13,11 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
 {
     if (!make_current_opengl(window))
         throw Exception("Failed to make context current.");
-
+    auto [w, h] = window.dims();
+    
     gl::load_opengl_functions();
+    
+    set_viewport(0, 0, w, h);
 
     m_Major = gl::get_integer(GL_MAJOR_VERSION);
     m_Minor = gl::get_integer(GL_MINOR_VERSION);
@@ -122,6 +125,12 @@ auto OpenGL::minor_v() const -> GLint
 auto OpenGL::is_valid() const -> bool
 {
     return m_Context != GL_CTX{};
+}
+
+
+auto OpenGL::set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void
+{
+    gl::Viewport(x, y, width, height);
 }
 
 auto OpenGL::creation_time() const -> std::time_t

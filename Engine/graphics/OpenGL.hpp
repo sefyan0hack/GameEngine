@@ -31,6 +31,7 @@ class ENGINE_EXPORT OpenGL
         auto has_extension(const std::string& ext) const -> bool ;
         auto major_v() const -> GLint;
         auto minor_v() const -> GLint;
+        auto set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void;
         
         auto vendor() -> std::string;
         auto renderer() -> std::string;
