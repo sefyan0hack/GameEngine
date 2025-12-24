@@ -39,12 +39,13 @@ public:
     auto fps() const -> float;
     auto deltatime() const -> float;
 
+    static auto loop_body(void* ctx) -> void;
+
 private:
     auto init_game_functions() -> void;
     auto hot_reload_game_library() -> bool;
 
     auto frame(float deltaTime) -> void;
-    static auto loop_body(void* ctx) -> void;
 
 private:
     void* m_State;
