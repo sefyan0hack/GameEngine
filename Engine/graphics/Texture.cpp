@@ -43,7 +43,6 @@ Texture& Texture::operator=(Texture&& other) noexcept {
     return *this;
 }
 
-
 Texture::~Texture() {
     debug::log("begin destroing ");
     gl::DeleteTextures(1, &m_Id);
