@@ -27,7 +27,7 @@ elseif(LINUX)
     set(DIR_PLT_NAME "linux")
 endif()
 
-set(PLT_DIR_PATH_SUFFIX "/platform/${DIR_PLT_NAME}")
+set(PLT_DIR_PATH_SUFFIX "platform/${DIR_PLT_NAME}")
 
 string(REGEX MATCH "^[0-9]+" COMPILER_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSION}")
 
