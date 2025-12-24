@@ -7,13 +7,13 @@
 
 MAIN_FUNC {
     try {
-        APP* app = nullptr;
+        APP* Main_App = nullptr;
 
         #if defined(ANDROID_PLT)
         if(arg1 == nullptr) throw Exception("android_app is null");
 
         auto state = arg1;
-        state->userData = app;
+        state->userData = Main_App;
 
         state->onAppCmd = [](struct android_app* state, int32_t cmd) -> void {
             auto app = reinterpret_cast<APP*>(state->userData);
@@ -22,12 +22,13 @@ MAIN_FUNC {
                 case APP_CMD_INIT_WINDOW:
                     {
                         if(!app) app = new APP(state);
+                        state->userData = app;
                     }
                     break;
                 case APP_CMD_TERM_WINDOW:
                     {
                         if(app) delete app;
-                        app = nullptr;
+                        state->userData = nullptr;
                     }
                     break;
             }
@@ -38,16 +39,17 @@ MAIN_FUNC {
             struct android_poll_source* source;
 
             // Poll for events
-            while (ALooper_pollOnce(app ? 0 : -1, nullptr, &events, (void**)&source) >= 0) {
+            while (ALooper_pollOnce(state->userData ? 0 : -1, nullptr, &events, (void**)&source) >= 0) {
                 if (source != nullptr) source->process(state, source);
                 if (state->destroyRequested != 0) return;
             }
-            if (app) APP::loop_body(app);
+            if (state->userData) APP::loop_body(state->userData);
         }
+
         #else
-        app = new APP();
-        app->run();
-        delete app;
+        Main_App = new APP();
+        Main_App->run();
+        delete Main_App;
         #endif
 
     } catch(const Exception& e) {
