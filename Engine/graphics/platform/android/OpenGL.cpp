@@ -47,6 +47,5 @@ auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GL
         throw Exception("Failed to create EGL context (Error: {})", eglGetError());
     }
 
-    debug::log("GLES3 Context created and bound successfully");
     return context;
 }

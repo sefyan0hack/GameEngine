@@ -1,12 +1,12 @@
 #include "Window.hpp"
+#include "gl.hpp"
+
 #include <input/Keyboard.hpp>
 #include <input/Mouse.hpp>
 #include <core/Log.hpp>
 #include <core/Event.hpp>
 #include <core/Exception.hpp>
-
 #include <core/Event.hpp>
-
 
 
 auto input_callback(struct android_app* state, AInputEvent* event) -> int32_t
