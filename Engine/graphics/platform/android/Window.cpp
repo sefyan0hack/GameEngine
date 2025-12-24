@@ -78,7 +78,7 @@ auto CWindow::android_window(void* state)	-> std::tuple<H_DSP, H_WIN, H_SRF>
         EGL_GREEN_SIZE, gl::ChannelBits,
         EGL_RED_SIZE, gl::ChannelBits,
         EGL_ALPHA_SIZE, gl::AlphaBits,
-        EGL_DEPTH_SIZE, 16, // maybe 16 ??
+        EGL_DEPTH_SIZE, gl::DepthBufferBits, // maybe 16 ??
         EGL_NONE
     };
 

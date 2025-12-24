@@ -25,7 +25,7 @@ auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GL
         EGL_GREEN_SIZE, gl::ChannelBits,
         EGL_RED_SIZE, gl::ChannelBits,
         EGL_ALPHA_SIZE, gl::AlphaBits,
-        EGL_DEPTH_SIZE, gl::DepthBufferBits, // maybe 16 ??
+        EGL_DEPTH_SIZE, gl::DepthBufferBits,
         EGL_NONE
     };
 

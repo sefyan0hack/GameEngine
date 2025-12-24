@@ -127,7 +127,7 @@ namespace gl {
     constexpr int32_t OPENGL_MAJOR_VERSION = 3;
     constexpr int32_t OPENGL_MINOR_VERSION = 3;
 
-    constexpr int32_t DepthBufferBits   = 32;
+    constexpr int32_t DepthBufferBits   = 16;
     constexpr int32_t StencilBufferBits = 8;
     constexpr int32_t ChannelBits       = 8;
     constexpr int32_t AlphaBits         = 8;
