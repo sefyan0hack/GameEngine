@@ -127,6 +127,11 @@ namespace gl {
     constexpr int32_t OPENGL_MAJOR_VERSION = 3;
     constexpr int32_t OPENGL_MINOR_VERSION = 3;
 
+    constexpr int32_t DepthBufferBits   = 32;
+    constexpr int32_t StencilBufferBits = 8;
+    constexpr int32_t ChannelBits       = 8;
+    constexpr int32_t AlphaBits         = 8;
+
     extern "C" {
         #undef X
         #define X(name) using PFN_gl##name = decltype(&gl##name);

@@ -9,15 +9,6 @@
 
 class CWindow;
 
-namespace gl {
-
-    constexpr int32_t DepthBufferBits   = 32;
-    constexpr int32_t StencilBufferBits = 8;
-    constexpr int32_t ChannelBits       = 8;
-    constexpr int32_t AlphaBits         = 8;
-
-} //namespace gl
-
 class ENGINE_EXPORT OpenGL
 {
     public:
