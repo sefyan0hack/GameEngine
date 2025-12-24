@@ -298,7 +298,7 @@ struct Type {
 
 
 #if defined(ANDROID_PLT)
-    #define MAIN_FUNC void android_main(struct android_app *arg1)
+    #define MAIN_FUNC extern "C" void android_main(struct android_app *arg1)
 #else
     #define MAIN_FUNC int main(int arg1, char** arg2)
 #endif
