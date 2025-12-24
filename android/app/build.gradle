@@ -28,8 +28,12 @@ android {
     }
 
     buildTypes {
-        release {
-            minifyEnabled false
+        debug {
+            // This prevents the IDE/Gradle from stripping debug symbols 
+            // from the library during the build process
+            packagingOptions {
+                doNotStrip "*/arm64-v8a/libLauncher.so"
+            }
         }
     }
 }
