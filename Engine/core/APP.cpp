@@ -1,5 +1,5 @@
-#include <input/Keyboard.hpp>
-#include <input/Mouse.hpp>
+#include <inputs/Keyboard.hpp>
+#include <inputs/Mouse.hpp>
 #include <graphics/Window.hpp>
 #include <graphics/OpenGL.hpp>
 #include <graphics/Scene.hpp>

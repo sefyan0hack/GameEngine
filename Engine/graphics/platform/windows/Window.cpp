@@ -1,6 +1,6 @@
 #include "Window.hpp"
-#include <input/Keyboard.hpp>
-#include <input/Mouse.hpp>
+#include <inputs/Keyboard.hpp>
+#include <inputs/Mouse.hpp>
 #include <core/Log.hpp>
 #include <core/Event.hpp>
 #include <core/Exception.hpp>

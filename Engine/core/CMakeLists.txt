@@ -3,7 +3,9 @@
 include(helpers)
 
 add_library(core INTERFACE)
-aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/platform/${DIR_PLT_NAME}" PLT_SOURCE)
+
+target_include_directories(core INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/${PLT_DIR_PATH_SUFFIX}") # platform folder
+aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/${PLT_DIR_PATH_SUFFIX}" PLT_SOURCE) # files in the platform folder
 
 target_sources( core PRIVATE
 

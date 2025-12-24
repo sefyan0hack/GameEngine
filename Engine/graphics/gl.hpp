@@ -104,22 +104,19 @@
 
 #define GL_GLEXT_PROTOTYPES
 
-#if defined(WINDOWS_PLT)
-#include "platform/windows/gl.inl"
-#elif defined(LINUX_PLT)
-#include "platform/linux/gl.inl"
-#elif defined(WEB_PLT)
-#include "platform/web/gl.inl"
-#elif defined(ANDROID_PLT)
-#include "platform/android/gl.inl"
-#endif
-
+#include "gl.inl"
 #include <core/Function.hpp>
 #include <engine_export.h>
 
 namespace gl {
     #undef X 
     #define X(name) "gl"#name, 
+
+    // #if defined(DESK_GL)
+    // constexpr int32_t StencilBufferBits = 8;
+    // #elif defined(ES_GL)
+    // constexpr int32_t StencilBufferBits = 8;
+    // #endif
 
     constexpr auto OPENGL_MODULE_NAME = OPENGL_LIB;
     constexpr auto OPENGL_FUNCTIONS_NAME = { GLFUNCS };

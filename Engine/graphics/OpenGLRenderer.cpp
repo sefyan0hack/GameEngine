@@ -91,7 +91,7 @@ auto OpenGLRenderer::enable_wireframe() -> void
             ext.polygonModeWEBGL(gl.FRONT_AND_BACK, ext.LINE_WEBGL);
         });
     }
-    #elif defined(WINDOWS_PLT) || defined(LINUX_PLT)
+    #elif defined(DESK_GL)
     gl::Enable(GL_LINE_SMOOTH);
     gl::Enable(GL_POLYGON_OFFSET_LINE);
     gl::PolygonOffset(-1.0f, -1.0f);
@@ -110,7 +110,7 @@ auto OpenGLRenderer::disable_wireframe() -> void
             ext.polygonModeWEBGL(gl.FRONT_AND_BACK, ext.FILL_WEBGL);
         });
     }
-    #elif defined(WINDOWS_PLT) || defined(LINUX_PLT)
+    #elif defined(DESK_GL)
     gl::Disable(GL_POLYGON_OFFSET_LINE);
     gl::Disable(GL_LINE_SMOOTH);
     gl::PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -120,7 +120,7 @@ auto OpenGLRenderer::disable_wireframe() -> void
 
 auto OpenGLRenderer::enable_points() -> void
 {
-    #if !defined(WEB_PLT) && !defined(ANDROID_PLT)
+    #if defined(DESK_GL)
     gl::Enable(GL_PROGRAM_POINT_SIZE);
     GLfloat widths[2];
     auto& min = widths[0];
@@ -134,7 +134,7 @@ auto OpenGLRenderer::enable_points() -> void
 
 auto OpenGLRenderer::disable_points() -> void
 {
-    #if !defined(WEB_PLT) && !defined(ANDROID_PLT)
+    #if !defined(DESK_GL)
     gl::Disable(GL_PROGRAM_POINT_SIZE);
     gl::PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     #endif

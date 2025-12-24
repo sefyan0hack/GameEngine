@@ -5,8 +5,8 @@
 
 #include <graphics/Renderer.hpp>
 #include <graphics/Window.hpp>
-#include <input/Keyboard.hpp>
-#include <input/Mouse.hpp>
+#include <inputs/Keyboard.hpp>
+#include <inputs/Mouse.hpp>
 #include "DynLib.hpp"
 #include "Scene.hpp"
 #include <engine_export.h>

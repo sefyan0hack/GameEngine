@@ -5,10 +5,10 @@ include(GenerateExportHeader)
 
 add_subdirectory(core)
 add_subdirectory(graphics)
-add_subdirectory(input)
+add_subdirectory(inputs)
 
 get_target_property(CORE_SRCS core SOURCES)
-get_target_property(INPUT_SRCS input SOURCES)
+get_target_property(INPUT_SRCS inputs SOURCES)
 get_target_property(GRAPHICS_SRCS graphics SOURCES)
 
 add_library(Engine)
@@ -40,7 +40,7 @@ target_link_libraries(Engine
     PUBLIC
         core
         graphics
-        input
+        inputs
         $<$<PLATFORM_ID:Android>:android>
         $<$<PLATFORM_ID:Android>:EGL>
         $<$<PLATFORM_ID:Android>:GLESv3>

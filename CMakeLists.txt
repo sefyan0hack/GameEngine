@@ -26,7 +26,9 @@ elseif(ANDROID)
 elseif(LINUX)
     set(DIR_PLT_NAME "linux")
 endif()
-    
+
+set(PLT_DIR_PATH_SUFFIX "/platform/${DIR_PLT_NAME}")
+
 string(REGEX MATCH "^[0-9]+" COMPILER_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSION}")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
@@ -120,9 +122,13 @@ add_compile_definitions(
 
     $<$<BOOL:${GAME_HOT_RELOADABLE}>:GAME_HOT_RELOADABLE>
     $<$<PLATFORM_ID:Windows>:WINDOWS_PLT>
+    $<$<PLATFORM_ID:Unix>:UNIX_PLT>
     $<$<PLATFORM_ID:Linux>:LINUX_PLT>
     $<$<PLATFORM_ID:Emscripten>:WEB_PLT>
     $<$<PLATFORM_ID:Android>:ANDROID_PLT>
+
+    $<$<OR:$<PLATFORM_ID:Windows>,$<PLATFORM_ID:Linux>>:DESK_GL>
+    $<$<OR:$<PLATFORM_ID:Android>,$<PLATFORM_ID:Emscripten>>:ES_GL>
 
     $<$<CXX_COMPILER_ID:GNU>:GNU_CPL>
     $<$<CXX_COMPILER_ID:Clang>:CLANG_CPL>
