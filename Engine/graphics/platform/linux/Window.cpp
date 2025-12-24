@@ -8,6 +8,11 @@
 #include <core/Event.hpp>
 #include <X11/Xlib.h>
 
+CWindow::CWindow(void* state) noexcept
+{
+	throw Exception("this Ctor Expected to run only on android for now");
+}
+
 CWindow::~CWindow()
 {
 	XDestroyWindow(m_Display, m_Handle);

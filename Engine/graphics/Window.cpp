@@ -10,11 +10,6 @@ CWindow::CWindow(
 	std::tie(m_Display, m_Handle, m_Surface) = new_window(Width, Height, Title);
 }
 
-CWindow::CWindow(void* state) noexcept
-{
-	throw Exception("this Ctor Expected to run only on android for now");
-}
-
 auto CWindow::display() const        -> H_DSP
 {
 	return m_Display;

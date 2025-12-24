@@ -9,6 +9,11 @@
 #undef near
 #undef far
 
+CWindow::CWindow(void* state) noexcept
+{
+	throw Exception("this Ctor Expected to run only on android for now");
+}
+
 CWindow::~CWindow()
 {
 	ReleaseDC(m_Handle, m_Surface);
