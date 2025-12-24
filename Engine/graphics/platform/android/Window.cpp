@@ -56,6 +56,10 @@ auto CWindow::android_window(void* state)	-> std::tuple<H_DSP, H_WIN, H_SRF>
     auto app = reinterpret_cast<android_app*>(state);
 	auto window = app->window;
 
+    if (window == nullptr) {
+        throw Exception("Cannot create surface: ANativeWindow is null");
+    }
+
 	auto display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 	if(display == EGL_NO_DISPLAY) throw Exception("EGL_NOT_INITIALIZED");
 
