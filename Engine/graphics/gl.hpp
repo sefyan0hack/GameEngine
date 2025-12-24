@@ -108,7 +108,7 @@
 #include <engine_export.h>
 #include "gl.inl"
 
-#if defined(DESK_GL)
+#if defined(CORE_GL)
     #define GLFUNCS GLFUNCS_COMMON\
         X(PolygonMode)\
         X(PointSize)\
@@ -123,6 +123,15 @@
 #endif
 
 namespace gl {
+    enum class API { CORE, ES };
+
+    constexpr API api = 
+    #if defined(CORE_GL)
+        API::CORE;
+    #elif defined(ES_GL)
+        API::ES;
+    #endif
+
     #undef X 
     #define X(name) "gl"#name, 
 

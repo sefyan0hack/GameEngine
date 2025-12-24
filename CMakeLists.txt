@@ -127,7 +127,7 @@ add_compile_definitions(
     $<$<PLATFORM_ID:Emscripten>:WEB_PLT>
     $<$<PLATFORM_ID:Android>:ANDROID_PLT>
 
-    $<$<OR:$<PLATFORM_ID:Windows>,$<PLATFORM_ID:Linux>>:DESK_GL>
+    $<$<OR:$<PLATFORM_ID:Windows>,$<PLATFORM_ID:Linux>>:CORE_GL>
     $<$<OR:$<PLATFORM_ID:Android>,$<PLATFORM_ID:Emscripten>>:ES_GL>
 
     $<$<CXX_COMPILER_ID:GNU>:GNU_CPL>

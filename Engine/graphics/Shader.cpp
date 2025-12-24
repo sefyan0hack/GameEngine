@@ -100,9 +100,8 @@ auto Shader::pre_process() -> std::string
     GLint m_Minor = gl::get_integer(GL_MINOR_VERSION);
     auto glsl_verion = std::format("{}{}0", m_Major, m_Minor);
 
-    auto os = os::host::name_tag();
-    result += std::format("#version {} {}\n", glsl_verion, os == os::Target::Web || os == os::Target::Android ? "es" : "core");
-    result += std::format("precision {} float;\n", os == os::Target::Web || os == os::Target::Android ? "mediump" : "highp");
+    result += std::format("#version {} {}\n", glsl_verion, gl::api == gl::API::ES ? "es" : "core");
+    result += std::format("precision {} float;\n", gl::api == gl::API::ES ? "mediump" : "highp");
     return result;
 }
 
