@@ -27,7 +27,7 @@ auto input_callback(struct android_app* state, AInputEvent* event) -> int32_t
     else if (type == AINPUT_EVENT_TYPE_KEY) {
         int32_t keyCode = AKeyEvent_getKeyCode(event);
         int32_t action = AKeyEvent_getAction(event);
-        
+
         Key k = Keyboard::from_native(keyCode);
         if (action == AKEY_EVENT_ACTION_DOWN) {
             EventQ::self().push(Keyboard::KeyDownEvent{k});
@@ -132,10 +132,12 @@ auto CWindow::swap_buffers() const -> void
 
 auto CWindow::get_title() -> std::string 
 {
+    return "";
 }
 
-auto CWindow::set_title(std::string  title) -> void
+auto CWindow::set_title(std::string title) -> void
 {
+
 }
 
 auto CWindow::set_vsync(bool state) -> void
@@ -147,12 +149,10 @@ auto CWindow::message_box(const char* title, const char* body) -> bool
 	// needs java/koltlin code  `ya333`
 }
 
-
 auto CWindow::dims() const	-> std::pair<int32_t, int32_t>
 {
 	return { ANativeWindow_getWidth(m_Handle), ANativeWindow_getHeight(m_Handle) };
 }
-
 
 auto CWindow::resize(int32_t width, int32_t height)	-> void
 {
