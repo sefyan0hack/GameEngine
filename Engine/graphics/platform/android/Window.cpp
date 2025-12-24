@@ -78,13 +78,15 @@ auto CWindow::android_window(void* state)	-> std::tuple<H_DSP, H_WIN, H_SRF>
         EGL_GREEN_SIZE, gl::ChannelBits,
         EGL_RED_SIZE, gl::ChannelBits,
         EGL_ALPHA_SIZE, gl::AlphaBits,
-        EGL_DEPTH_SIZE, gl::DepthBufferBits, // maybe 16 ??
+        EGL_DEPTH_SIZE, 16, // maybe 16 ??
         EGL_NONE
     };
 
     EGLConfig config;
     EGLint numConfigs;
-    eglChooseConfig(display, visualAttribs, &config, 1, &numConfigs);
+    if (!eglChooseConfig(display, visualAttribs, &config, 1, &numConfigs) || numConfigs < 1) {
+        throw Exception("No EGL config found. Check gl::ChannelBits settings.");
+    }
 
     EGLint format;
     eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
