@@ -16,7 +16,7 @@ class ENGINE_EXPORT CWindow
         struct QuitEvent {};
 
         CWindow(int32_t Width, int32_t Height, const char* Title) noexcept;
-        CWindow(void* android_native_window) noexcept;
+        CWindow(void* state) noexcept;
     public:
         ~CWindow();
 
@@ -47,8 +47,8 @@ class ENGINE_EXPORT CWindow
         auto message_box(const char* title, const char* body) -> bool;
 
     private:
-        auto new_window(int32_t Width, int32_t Height, const char* Title)       -> std::tuple<H_DSP, H_WIN, H_SRF> ;
-        auto android_window(void* native_window)                                -> std::tuple<H_DSP, H_WIN, H_SRF> ;
+        auto new_window(int32_t Width, int32_t Height, const char* Title)   -> std::tuple<H_DSP, H_WIN, H_SRF> ;
+        auto android_window(void* state)                                    -> std::tuple<H_DSP, H_WIN, H_SRF> ;
 
     private:
         H_DSP m_Display;

@@ -4,6 +4,7 @@
 #include <chrono>
 
 #include <graphics/Renderer.hpp>
+#include <graphics/Window.hpp>
 #include <input/Keyboard.hpp>
 #include <input/Mouse.hpp>
 #include "DynLib.hpp"
@@ -31,7 +32,7 @@ public:
 public:
     friend class Game;
 
-    APP(class CWindow& window);
+    APP(void* state = nullptr);
     ~APP();
 
     auto run() -> void ;
@@ -46,7 +47,8 @@ private:
     static auto loop_body(void* ctx) -> void;
 
 private:
-    class CWindow& Window;
+    void* m_State;
+    CWindow Window;
     Keyboard Keyboard;
     Mouse Mouse;
 

@@ -10,13 +10,9 @@ CWindow::CWindow(
 	std::tie(m_Display, m_Handle, m_Surface) = new_window(Width, Height, Title);
 }
 
-CWindow::CWindow(void* android_native_window) noexcept
+CWindow::CWindow(void* state) noexcept
 {
-	if (os::host::name_tag() == os::Target::Android){
-		std::tie(m_Display, m_Handle, m_Surface) = android_window(android_native_window);
-	} else {
-		throw Exception("this Ctor Expected to run only on android for now");
-	}
+	throw Exception("this Ctor Expected to run only on android for now");
 }
 
 auto CWindow::display() const        -> H_DSP

@@ -5,28 +5,50 @@
 #include <Engine.hpp>
 
 
-[[maybe_unused]] constexpr auto WINDOW_WIDTH = 1180;
-[[maybe_unused]] constexpr auto WINDOW_HIEGHT = 640;
-
-
-#if defined(ANDROID_PLT)
-struct android_app *Android_app = nullptr;
-#endif
-
 MAIN_FUNC {
     try {
+        APP* app = nullptr;
+
         #if defined(ANDROID_PLT)
-        Android_app = arg1;
-        if(Android_app == nullptr) throw Exception("android_app is null");
-        if(Android_app->window == nullptr) throw Exception("android_app::window is null");
+        if(arg1 == nullptr) throw Exception("android_app is null");
 
-        CWindow window(Android_app->window);
+        auto state = arg1;
+        state->userData = app;
+
+        state->onAppCmd = [](struct android_app* state, int32_t cmd) -> void {
+            auto app = reinterpret_cast<APP*>(state->userData);
+
+            switch(cmd){
+                case APP_CMD_INIT_WINDOW:
+                    {
+                        if(!app) app = new APP(state);
+                    }
+                    break;
+                case APP_CMD_TERM_WINDOW:
+                    {
+                        if(app) delete app;
+                        app = nullptr;
+                    }
+                    break;
+            }
+        };
+
+        while (true) {
+            int events;
+            struct android_poll_source* source;
+
+            // Poll for events
+            while (ALooper_pollOnce(app ? 0 : -1, nullptr, &events, (void**)&source) >= 0) {
+                if (source != nullptr) source->process(state, source);
+                if (state->destroyRequested != 0) return;
+            }
+            if (app) APP::loop_body(app);
+        }
         #else
-        CWindow window(WINDOW_WIDTH, WINDOW_HIEGHT, "");
+        app = new APP();
+        app->run();
+        delete app;
         #endif
-
-        APP app(window);
-        app.run();
 
     } catch(const Exception& e) {
         debug::log(e.all());

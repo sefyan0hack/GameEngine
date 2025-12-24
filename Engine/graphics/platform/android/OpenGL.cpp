@@ -10,15 +10,13 @@ OpenGL::~OpenGL()
 
 auto OpenGL::make_current_opengl([[maybe_unused]] const CWindow& window)  -> bool
 {
-    return eglMakeCurrent(window.display(), window.surface(), EGL_NO_SURFACE, m_Context);
+    return eglMakeCurrent(window.display(), window.surface(), window.surface(), m_Context);
 }
 
 auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GL_CTX
 {
     auto display = window.display();
-
-    EGLConfig config;
-    EGLint numConfigs;
+    auto surface = window.surface();
 
     static const EGLint visualAttribs[] = {
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,
@@ -30,6 +28,9 @@ auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GL
         EGL_DEPTH_SIZE, gl::DepthBufferBits, // maybe 16 ??
         EGL_NONE
     };
+
+    EGLConfig config;
+    EGLint numConfigs;
 
     if (!eglChooseConfig(display, visualAttribs, &config, 1, &numConfigs) || numConfigs <= 0) {
         throw Exception("Failed to choose EGL config for Android");
@@ -46,5 +47,6 @@ auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GL
         throw Exception("Failed to create EGL context (Error: {})", eglGetError());
     }
 
+    debug::log("GLES3 Context created and bound successfully");
     return context;
 }

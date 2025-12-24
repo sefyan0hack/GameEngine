@@ -5,7 +5,6 @@
 #include <graphics/Scene.hpp>
 #include <graphics/ShaderProgram.hpp>
 #include <graphics/OpenGLRenderer.hpp>
-#include <graphics/Window.hpp>
 #include "APP.hpp"
 #include "Utils.hpp"
 #include "DynLib.hpp"
@@ -28,8 +27,18 @@
 #undef X
 #define X(name, r, args) , name(+[] args -> r { throw Exception(" `{} {}` is null ", #r, #name #args ); })
 
-APP::APP(CWindow& window)
-    : Window(window)
+
+[[maybe_unused]] constexpr auto WINDOW_WIDTH = 1180;
+[[maybe_unused]] constexpr auto WINDOW_HIEGHT = 640;
+
+
+APP::APP(void* state)
+    : m_State(state)
+    #if defined(ANDROID_PLT)
+    , Window(state)
+    #else
+    , Window(WINDOW_WIDTH, WINDOW_HIEGHT, "")
+    #endif
     , Keyboard()
     , Mouse()
     , m_Running(true)

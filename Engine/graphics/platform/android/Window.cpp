@@ -7,16 +7,54 @@
 
 #include <core/Event.hpp>
 
-extern android_app *Android_app;
+
+
+auto input_callback(struct android_app* state, AInputEvent* event) -> int32_t
+{
+    auto type = AInputEvent_getType(event);
+    if (type == AINPUT_EVENT_TYPE_MOTION) {
+        float x = AMotionEvent_getX(event, 0);
+        float y = AMotionEvent_getY(event, 0);
+        int32_t action = AMotionEvent_getAction(event);
+
+        if (action == AMOTION_EVENT_ACTION_DOWN) {
+            EventQ::self().push(Mouse::ButtonDownEvent{Mouse::Button::Left});
+        } else if (action == AMOTION_EVENT_ACTION_MOVE) {
+            EventQ::self().push(Mouse::MoveEvent{ (int)x, (int)y });
+        }
+        return 1;
+    }
+    else if (type == AINPUT_EVENT_TYPE_KEY) {
+        int32_t keyCode = AKeyEvent_getKeyCode(event);
+        int32_t action = AKeyEvent_getAction(event);
+        
+        Key k = Keyboard::from_native(keyCode);
+        if (action == AKEY_EVENT_ACTION_DOWN) {
+            EventQ::self().push(Keyboard::KeyDownEvent{k});
+        } else {
+            EventQ::self().push(Keyboard::KeyUpEvent{k});
+        }
+    }
+    return 0;
+}
+
+CWindow::CWindow(void* state) noexcept
+{
+    auto app = reinterpret_cast<android_app*>(state);
+    app->onInputEvent = input_callback;
+	std::tie(m_Display, m_Handle, m_Surface) = android_window(app);
+}
 
 CWindow::~CWindow()
 {
+    eglDestroySurface(m_Display, m_Surface);
 	eglTerminate(m_Display);
 }
 
-auto CWindow::android_window(void* native_window)	-> std::tuple<H_DSP, H_WIN, H_SRF>
+auto CWindow::android_window(void* state)	-> std::tuple<H_DSP, H_WIN, H_SRF>
 {
-	auto  window = reinterpret_cast<ANativeWindow*>(native_window);
+    auto app = reinterpret_cast<android_app*>(state);
+	auto window = app->window;
 
 	auto display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 	if(display == EGL_NO_DISPLAY) throw Exception("EGL_NOT_INITIALIZED");
@@ -26,23 +64,33 @@ auto CWindow::android_window(void* native_window)	-> std::tuple<H_DSP, H_WIN, H_
         throw Exception("eglInitialize failed");
     }
 
+    eglBindAPI(EGL_OPENGL_ES_API);
 	debug::log("egl v{}.{}", egl_major, egl_minor);
 
-	eglBindAPI(EGL_OPENGL_ES_API);
-
-    const EGLint attribs[] = {
+    static const EGLint visualAttribs[] = {
+        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,
         EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-        EGL_BLUE_SIZE, 8,
-        EGL_GREEN_SIZE, 8,
-        EGL_RED_SIZE, 8,
+        EGL_BLUE_SIZE, gl::ChannelBits,
+        EGL_GREEN_SIZE, gl::ChannelBits,
+        EGL_RED_SIZE, gl::ChannelBits,
+        EGL_ALPHA_SIZE, gl::AlphaBits,
+        EGL_DEPTH_SIZE, gl::DepthBufferBits, // maybe 16 ??
         EGL_NONE
     };
 
     EGLConfig config;
     EGLint numConfigs;
-    eglChooseConfig(display, attribs, &config, 1, &numConfigs);
+    eglChooseConfig(display, visualAttribs, &config, 1, &numConfigs);
+
+    EGLint format;
+    eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
+    ANativeWindow_setBuffersGeometry(window, 0, 0, format);
 
     auto surface = eglCreateWindowSurface(display, config, window, nullptr);
+
+    if (surface == EGL_NO_SURFACE) {
+        throw Exception("Failed to create surface (Error: {})", eglGetError());
+    }
 
     return {display, window, surface};
 }
@@ -55,62 +103,6 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
 
 auto CWindow::process_messages() -> void
 {
-    int ident;
-    int events;
-    android_poll_source* source;
-
-    while ((ident = ALooper_pollOnce(0, nullptr, &events, (void**)&source)) >= 0) {
-        if (source != nullptr) {
-            source->process(Android_app, source);
-        }
-
-        if (Android_app->destroyRequested != 0) {
-            EventQ::self().push(CWindow::QuitEvent{});
-        }
-    }
-
-    if (Android_app->inputQueue != nullptr) {
-        AInputEvent* event = nullptr;
-        while (AInputQueue_getEvent(Android_app->inputQueue, &event) >= 0) {
-            // Pre-dispatch gives the system a chance to handle it (like IME)
-            if (AInputQueue_preDispatchEvent(Android_app->inputQueue, event)) {
-                continue;
-            }
-
-            int32_t handled = 0;
-            auto type = AInputEvent_getType(event);
-
-            if (type == AINPUT_EVENT_TYPE_MOTION) {
-                handled = 1;
-                float x = AMotionEvent_getX(event, 0);
-                float y = AMotionEvent_getY(event, 0);
-                int32_t action = AMotionEvent_getAction(event) & AMOTION_EVENT_ACTION_MASK;
-
-                if (action == AMOTION_EVENT_ACTION_DOWN) {
-                    EventQ::self().push(Mouse::ButtonDownEvent{Mouse::Button::Left});
-                } else if (action == AMOTION_EVENT_ACTION_UP) {
-                    EventQ::self().push(Mouse::ButtonUpEvent{Mouse::Button::Left});
-                }
-                
-                EventQ::self().push(Mouse::MoveEvent{static_cast<short>(x), static_cast<short>(y)});
-            } 
-            else if (type == AINPUT_EVENT_TYPE_KEY) {
-                handled = 1;
-                int32_t keyCode = AKeyEvent_getKeyCode(event);
-                int32_t action = AKeyEvent_getAction(event);
-                
-                // Map Android KeyCode to Key enum
-                Key k = Keyboard::from_native(keyCode);
-                if (action == AKEY_EVENT_ACTION_DOWN) {
-                    EventQ::self().push(Keyboard::KeyDownEvent{k});
-                } else {
-                    EventQ::self().push(Keyboard::KeyUpEvent{k});
-                }
-            }
-
-            AInputQueue_finishEvent(Android_app->inputQueue, event, handled);
-        }
-    }
 }
 
 auto CWindow::show() -> void
