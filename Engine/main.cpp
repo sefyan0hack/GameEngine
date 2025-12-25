@@ -25,7 +25,7 @@ MAIN_FUNC {
                         state->userData = app;
                     }
                     break;
-                case APP_CMD_TERM_WINDOW:
+                case APP_CMD_DESTROY:
                     {
                         if(app) delete app;
                         state->userData = nullptr;
