@@ -14,7 +14,7 @@
 Welcome to the **GameEngine** repository! This engine is designed to provide a solid foundation for building games and interactive applications. It leverages modern C++ standards, powerful libraries, and intuitive tools to help you create amazing experiences.
 
 
-- **platform compatibility** (Windows/Linux/Web)
+- **platform compatibility** (Windows/Linux/Web/Android)
 
 ## Getting Started
 
