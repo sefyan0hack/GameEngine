@@ -36,7 +36,7 @@ MAIN_FUNC {
         platform_state = state;
         #endif
 
-        APP app(state);
+        APP app(platform_state);
         app.run();
 
     } catch(const Exception& e) {
