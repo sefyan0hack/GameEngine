@@ -44,11 +44,9 @@ Texture& Texture::operator=(Texture&& other) noexcept {
 }
 
 Texture::~Texture() {
-    debug::log("begin destroing ");
     gl::DeleteTextures(1, &m_Id);
     
     DTOR_LOG
-    debug::log("end destroing ");
 }
 
 auto Texture::id() const -> GLuint
