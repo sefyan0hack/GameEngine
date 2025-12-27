@@ -24,7 +24,7 @@ Texture::Texture(GLenum texType)
     , m_Type(texType)
 {
     gl::GenTextures(1, &m_Id);
-    bind();
+    gl::BindTexture(m_Type, m_Id);
 
     CTOR_LOG
 }
@@ -54,9 +54,9 @@ auto Texture::id() const -> GLuint
     return m_Id;
 }
 
-auto Texture::bind() const -> void
+auto Texture::bind(uint8_t slot) const -> void
 {
-    gl::ActiveTexture(static_cast<GLenum>(GL_TEXTURE0 + texture_unit()));
+    gl::ActiveTexture(static_cast<GLenum>(GL_TEXTURE0 + slot));
     gl::BindTexture(m_Type, m_Id);
 }
 
@@ -68,10 +68,7 @@ auto Texture::type_name() const -> std::string
 {
     return to_string(m_Type);
 }
-auto Texture::texture_unit() const -> GLint
-{
-    return m_Id - 1;
-}
+
 
 
 Texture2D::Texture2D()

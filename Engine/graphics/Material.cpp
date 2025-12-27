@@ -16,10 +16,11 @@ Material::Material(std::shared_ptr<Texture> diffuse)
 
 auto Material::bind(std::shared_ptr<ShaderProgram> program) const -> void
 {
-
+    uint8_t slot = 0;
     for(const auto& [name, texture]: m_Textuers){
-        texture->bind();
-        program->set_uniform(name, texture->texture_unit());
+        texture->bind(slot);
+        program->set_uniform(name, slot);
+        slot++;
     }
 }
 

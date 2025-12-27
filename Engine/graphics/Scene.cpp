@@ -54,11 +54,13 @@ auto Scene::operator<<(Camera cam)-> Scene&
 auto Scene::render_sky() const -> void{
 
     gl::DepthFunc(GL_LEQUAL);
+    auto slot = OpenGL::max_texture_units() - 1;
 
     m_SkyBox.m_Program.use();
+    m_SkyBox.m_Texture->bind(slot);
     m_SkyBox.m_Program.set_uniform("View", glm::mat4(glm::mat3(m_MainCamera.view())));
     m_SkyBox.m_Program.set_uniform("Projection", m_MainCamera.perspective());
-    m_SkyBox.m_Program.set_uniform("uDiffuseMap", m_SkyBox.m_Texture->texture_unit());
+    m_SkyBox.m_Program.set_uniform("uDiffuseMap", slot);
 
     gl::BindVertexArray(m_SkyBox.m_DummyVAO);
     gl::DrawArrays(GL_TRIANGLES, 0, 36);

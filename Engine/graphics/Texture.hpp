@@ -25,10 +25,9 @@ protected:
 
 public:
     auto id() const -> GLuint;
-    auto bind() const -> void;
+    auto bind(uint8_t slot) const -> void;
     auto type() const -> GLenum;
     auto type_name() const -> std::string;
-    auto texture_unit() const -> GLint;
 
     auto img2d_to_gpu(auto* data, GLsizei width, GLsizei height, GLint intformat = GL_RGBA8, GLenum format = GL_RGBA) const -> void;
 
@@ -75,7 +74,7 @@ struct std::formatter<Texture> {
   }
   auto format(const Texture& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    R"({{ "id": {}, "type": "{}", "uint": {} }})"
-    , obj.m_Id, obj.type_name(), obj.texture_unit());
+    R"({{ "id": {}, "type": "{}" }})"
+    , obj.m_Id, obj.type_name());
   }
 };
