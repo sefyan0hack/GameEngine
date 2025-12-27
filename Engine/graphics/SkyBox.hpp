@@ -4,7 +4,6 @@
 #include <string>
 #include <engine_export.h>
 #include "ShaderProgram.hpp"
-#include "Mesh.hpp"
 
 class TextureCubeMap;
 
@@ -21,6 +20,6 @@ class ENGINE_EXPORT SkyBox
 
 private:
   ShaderProgram m_Program;
-  Mesh m_Mesh;
   std::shared_ptr<TextureCubeMap> m_Texture;
+  GLuint m_DummyVAO;
 };

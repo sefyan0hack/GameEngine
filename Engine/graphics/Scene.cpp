@@ -60,8 +60,8 @@ auto Scene::render_sky() const -> void{
     m_SkyBox.m_Program.set_uniform("Projection", m_MainCamera.perspective());
     m_SkyBox.m_Program.set_uniform("uDiffuseMap", m_SkyBox.m_Texture->texture_unit());
 
-    gl::BindVertexArray(m_SkyBox.m_Mesh.VAO);
-    gl::DrawArrays(GL_TRIANGLES, 0, m_SkyBox.m_Mesh.vextex_size());
+    gl::BindVertexArray(m_SkyBox.m_DummyVAO);
+    gl::DrawArrays(GL_TRIANGLES, 0, 36);
 
     gl::DepthFunc(GL_LESS);
 }
