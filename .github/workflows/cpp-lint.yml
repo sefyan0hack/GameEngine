@@ -14,6 +14,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tidy-checks: ''
+          file-annotations: true
+          step-summary: true
+          thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
           style: ''
 
       - name: Fail fast?!
