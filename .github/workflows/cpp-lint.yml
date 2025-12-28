@@ -17,6 +17,7 @@ jobs:
           file-annotations: true
           step-summary: true
           thread-comments: true
+          files-changed-only: false
           style: ''
 
       - name: Fail fast?!
