@@ -14,7 +14,6 @@
 #if defined(ANDROID_PLT)
 #include <android/log.h>
 #endif
-//"{:%Y-%m-%d %H:%M:%OS}"
 
 namespace debug {
   inline auto current_time() -> std::string
@@ -22,7 +21,7 @@ namespace debug {
     std::time_t t = std::time(nullptr);
     std::tm* tm = std::localtime(&t);
     std::ostringstream oss;
-    oss << std::put_time(tm, "%Y-%m-%d %H:%M:%S %Z");
+    oss << std::put_time(tm, "%Y-%m-%d %H:%M:%S");
     return oss.str();
   }
 
