@@ -1,6 +1,9 @@
 name: cpp-linter
 
-on: [workflow_dispatch]
+on: 
+  workflow_dispatch:
+    branches: [main]
+    paths: ['**.c', '**.cpp', '**.h', '**.hpp', '**.inl', '**CMakeLists.txt', '**.cmake']
 
 jobs:
   cpp-linter:
