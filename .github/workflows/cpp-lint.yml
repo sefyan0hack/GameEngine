@@ -17,11 +17,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tidy-checks: ''
-          database: build
-          file-annotations: true
-          step-summary: true
-          thread-comments: true
-          files-changed-only: false
           style: ''
 
       - name: Fail fast?!
