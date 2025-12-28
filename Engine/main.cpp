@@ -22,24 +22,13 @@ bool wait_android_native_window(android_app* state) { // wait for native window 
 #endif
 
 MAIN_FUNC {
-    try {
-        void* platform_state = nullptr;
+    void* platform_state = nullptr;
 
-        #if defined(ANDROID_PLT)
+    #if defined(ANDROID_PLT)
         platform_state = arg1;
         if (!wait_android_native_window(arg1)) return;
-        #endif
+    #endif
 
-        APP app(platform_state);
-        app.run();
-
-    } catch(const Exception& e) {
-        debug::log(e.all());
-
-    } catch(const std::exception& e) {
-        debug::log(e.what());
-
-    } catch(...) {
-        debug::log("Unknown Exception");
-    };
+    APP app(platform_state);
+    app.run();
 }
