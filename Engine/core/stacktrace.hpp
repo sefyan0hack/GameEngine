@@ -17,7 +17,7 @@ inline auto to_string([[maybe_unused]] const stacktrace& st ) -> std::string
   for(const auto& frame : st){
      res += std::format("\t{}# {} at {}:{}\n", idx++, frame.description(), frame.source_file(), frame.source_line());
   }
-  res += "}}\n";
+  res += "}\n";
   return res;
 }
 #else

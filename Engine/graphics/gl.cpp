@@ -54,7 +54,7 @@ namespace gl {
         #   define X(name)\
             name = Function<PFN_gl##name>{};\
             name.m_Func  = reinterpret_cast<PFN_gl##name>(gl::get_proc_address("gl"#name));\
-            name.m_After = [](std::string info) { auto err = glGetError(); if(err != GL_NO_ERROR) if(!info.contains("glClear")) throw Exception("gl error id {} {}", err, info); };\
+            name.m_After = [](std::string info) { Expect(XXXGetCurrentContext()); auto err = glGetError(); if(err != GL_NO_ERROR) if(!info.contains("glClear")) throw Exception("gl error id {} {}", err, info); };\
             name.m_Name  = "gl"#name;
         #else
         #   define X(name)\
@@ -85,7 +85,7 @@ namespace gl {
         #if ROBUST_GL_CHECK
         #   define X(name) \
             name.m_Func  = reinterpret_cast<std::remove_reference_t<PFN_gl##name>>(funcs[index++]);\
-            name.m_After = [](std::string info) { auto err = glGetError(); if(err != GL_NO_ERROR) if(!info.contains("glClear")) throw Exception("gl error id {} {}", err, info); };\
+            name.m_After = [](std::string info) { Expect(XXXGetCurrentContext()); auto err = glGetError(); if(err != GL_NO_ERROR) if(!info.contains("glClear")) throw Exception("gl error id {} {}", err, info); };\
             name.m_Name  = "gl"#name;
         #else
         #   define X(name) name = reinterpret_cast<std::remove_reference_t<PFN_gl##name>>(funcs[index++]);
