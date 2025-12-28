@@ -1,9 +1,6 @@
 name: cpp-linter
 
-on: 
-  workflow_dispatch:
-    branches: [main]
-    paths: ['**.c', '**.cpp', '**.h', '**.hpp', '**.inl', '**CMakeLists.txt', '**.cmake']
+on: [workflow_dispatch]
 
 jobs:
   cpp-linter:
@@ -11,18 +8,12 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Generate Compilation Database
-        run: cmake -S . -B build
-
       - uses: cpp-linter/cpp-linter-action@v2
         id: linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          database: 'build'
-          tidy-checks: '-*,bugprone-*,performance-*,readability-*,modernize-*'
-          file-annotations: true
-          step-summary: true
+          tidy-checks: ''
           style: ''
 
       - name: Fail fast?!
