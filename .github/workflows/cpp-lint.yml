@@ -8,15 +8,19 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Generate Compilation Database
+        run: cmake -S . -B build
+
       - uses: cpp-linter/cpp-linter-action@v2
         id: linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          style: ''
+          database: 'build'
           tidy-checks: '-*,bugprone-*,performance-*,readability-*,modernize-*'
           file-annotations: true
           step-summary: true
+          style: ''
 
       - name: Fail fast?!
         if: steps.linter.outputs.clang-tidy-checks-failed > 0
