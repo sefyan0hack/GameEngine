@@ -14,18 +14,13 @@ class ENGINE_EXPORT OpenGL
     public:
         explicit OpenGL(const CWindow& window);
         OpenGL(const OpenGL& other) = delete;
-        OpenGL(OpenGL&& other) noexcept;
-        ~OpenGL();
-    
         auto operator = (const OpenGL& other) -> OpenGL& = delete;
-        auto operator = (OpenGL&& other)  noexcept -> OpenGL&;
-
-        auto operator == (const OpenGL& other) const -> bool;
-        auto operator != (const OpenGL& other) const -> bool;
-        operator bool () const;
-
+        ~OpenGL();
+        auto operator <=> (const OpenGL&) const -> bool = default;
+;
     public:
         auto context() const -> GL_CTX ;
+        auto window() const -> const CWindow&;
         auto is_valid() const -> bool ;
         auto creation_time() const -> std::time_t ;
         auto has_extension(const std::string& ext) const -> bool ;
@@ -42,10 +37,11 @@ class ENGINE_EXPORT OpenGL
         static auto max_texturecubemap_size() -> GLint;
         
     private:
-        auto create_opengl_context([[maybe_unused]] const CWindow& window) -> GL_CTX;
-        auto make_current_opengl([[maybe_unused]] const CWindow& window)  -> bool ;
+        auto create_opengl_context() -> GL_CTX;
+        auto make_current_opengl()  -> bool ;
 
     private:
+        const CWindow& m_Window;
         GL_CTX m_Context;
         GLint m_Major;
         GLint m_Minor;

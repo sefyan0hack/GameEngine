@@ -8,14 +8,14 @@ OpenGL::~OpenGL()
     // }
 }
 
-auto OpenGL::make_current_opengl([[maybe_unused]] const CWindow& window)  -> bool
+auto OpenGL::make_current_opengl()  -> bool
 {
-    return glXMakeCurrent(window.display(), window.handle(), m_Context);
+    return glXMakeCurrent(m_Window.display(), m_Window.handle(), m_Context);
 }
 
-auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GL_CTX
+auto OpenGL::create_opengl_context() -> GL_CTX
 {
-    auto display = window.display();
+    auto display = m_Window.display();
     static int32_t visualAttribs[] = {
         GLX_X_RENDERABLE,  true,
         GLX_DOUBLEBUFFER,  true,

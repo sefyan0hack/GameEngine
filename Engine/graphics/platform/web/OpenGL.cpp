@@ -8,14 +8,14 @@ OpenGL::~OpenGL()
     }
 }
 
-auto OpenGL::make_current_opengl([[maybe_unused]] const CWindow& window)  -> bool
+auto OpenGL::make_current_opengl()  -> bool
 {
     return emscripten_webgl_make_context_current(m_Context) == EMSCRIPTEN_RESULT_SUCCESS;
 }
 
-auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GL_CTX
+auto OpenGL::create_opengl_context() -> GL_CTX
 {
-    auto surface = window.surface();
+    auto surface = m_Window.surface();
     EmscriptenWebGLContextAttributes attrs;
     emscripten_webgl_init_context_attributes(&attrs);
 

@@ -3,8 +3,9 @@
 #include <memory>
 #include <chrono>
 
-#include <graphics/Renderer.hpp>
 #include <graphics/Window.hpp>
+#include <graphics/OpenGL.hpp>
+#include <graphics/Renderer.hpp>
 #include <inputs/Keyboard.hpp>
 #include <inputs/Mouse.hpp>
 #include "DynLib.hpp"
@@ -57,6 +58,7 @@ private:
     std::chrono::steady_clock::time_point m_LastFrameTime;
     float m_Fps;
 
+    OpenGL m_GApi;
     IRenderer* Renderer;
     Scene MainScene;
 

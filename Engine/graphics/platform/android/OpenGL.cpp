@@ -8,15 +8,15 @@ OpenGL::~OpenGL()
     // }
 }
 
-auto OpenGL::make_current_opengl([[maybe_unused]] const CWindow& window)  -> bool
+auto OpenGL::make_current_opengl()  -> bool
 {
-    return eglMakeCurrent(window.display(), window.surface(), window.surface(), m_Context);
+    return eglMakeCurrent(m_Window.display(), m_Window.surface(), m_Window.surface(), m_Context);
 }
 
-auto OpenGL::create_opengl_context([[maybe_unused]] const CWindow& window) -> GL_CTX
+auto OpenGL::create_opengl_context() -> GL_CTX
 {
-    auto display = window.display();
-    auto surface = window.surface();
+    auto display = m_Window.display();
+    auto surface = m_Window.surface();
 
     static const EGLint visualAttribs[] = {
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,

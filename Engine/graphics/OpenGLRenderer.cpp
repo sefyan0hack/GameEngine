@@ -16,18 +16,16 @@
 #include "Texture.hpp"
 
 
-OpenGLRenderer::OpenGLRenderer(const CWindow& window)
-    : m_GApi(window)
+OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx)
+    : m_GApi(ctx)
     , m_X(0), m_Y(0)
-    , m_Width(window.dims().first), m_Height(window.dims().second)
+    , m_Width(ctx.window().dims().first), m_Height(ctx.window().dims().second)
 {}
-
-
 
 auto OpenGLRenderer::render(const Scene& scene, const std::shared_ptr<ShaderProgram> program) const -> void
 {
-    scene.render_sky();
     auto camera = scene.main_camera();
+    Material::render_sky(camera);
 
     program->use();
     program->set_uniform("View", camera.view());
@@ -83,7 +81,7 @@ auto OpenGLRenderer::viewport() const -> std::tuple<uint32_t, uint32_t, uint32_t
 auto OpenGLRenderer::enable_wireframe() -> void
 {
     #if defined(WEB_PLT)
-    static bool webPolyModeAvailable = m_GApi.has_extension("WEBGL_polygon_mode");
+    static bool webPolyModeAvailable = has_extension("WEBGL_polygon_mode");
     if (webPolyModeAvailable) {
         EM_ASM({
             const gl = Module.ctx;
@@ -102,7 +100,7 @@ auto OpenGLRenderer::enable_wireframe() -> void
 auto OpenGLRenderer::disable_wireframe() -> void
 {
     #if defined(WEB_PLT)
-    static bool webPolyModeAvailable = m_GApi.has_extension("WEBGL_polygon_mode");
+    static bool webPolyModeAvailable = has_extension("WEBGL_polygon_mode");
     if (webPolyModeAvailable) {
         EM_ASM({
             const gl = Module.ctx;

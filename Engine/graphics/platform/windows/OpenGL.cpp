@@ -8,14 +8,14 @@ OpenGL::~OpenGL()
 }
 
 
-auto OpenGL::make_current_opengl([[maybe_unused]] const CWindow& window)  -> bool
+auto OpenGL::make_current_opengl()  -> bool
 {
-    return wglMakeCurrent(window.surface(), m_Context);
+    return wglMakeCurrent(m_Window.surface(), m_Context);
 }
 
-auto OpenGL::create_opengl_context(const CWindow& window) -> GL_CTX
+auto OpenGL::create_opengl_context() -> GL_CTX
 {
-    auto surface = window.surface();
+    auto surface = m_Window.surface();
 
     PIXELFORMATDESCRIPTOR pfd = {
         sizeof(PIXELFORMATDESCRIPTOR),

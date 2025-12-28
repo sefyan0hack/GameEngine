@@ -6,12 +6,13 @@
 #include <algorithm>
 
 OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
-    : m_Context(create_opengl_context(window))
+    : m_Window(window)
+    , m_Context(create_opengl_context())
     , m_Major(0)
     , m_Minor(0)
     , m_CreationTime(std::time(nullptr))
 {
-    if (!make_current_opengl(window))
+    if (!make_current_opengl())
         throw Exception("Failed to make context current.");
     auto [w, h] = window.dims();
     
@@ -73,39 +74,10 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
 
 }
 
-OpenGL::OpenGL(OpenGL &&other) noexcept
-    : m_Context(std::exchange(other.m_Context, GL_CTX{}))
-    , m_Major(std::exchange(other.m_Major, 0))
-    , m_Minor(std::exchange(other.m_Minor, 0))
-    , m_CreationTime(std::exchange(other.m_CreationTime, 0))
-{
-}
 
-auto OpenGL::operator=(OpenGL &&other) noexcept -> OpenGL&
+auto OpenGL::window() const -> const CWindow&
 {
-    if(this != &other){
-        this->m_Context = std::exchange(other.m_Context, GL_CTX{});
-        this->m_Major = std::exchange(other.m_Major, 0);
-        this->m_Minor = std::exchange(other.m_Minor, 0);
-        this->m_CreationTime = std::exchange(other.m_CreationTime, 0);
-    }
-
-    return *this;
-}
-
-auto OpenGL::operator == (const OpenGL& other) const -> bool
-{
-    return this->m_Context == other.m_Context;
-}
-
-auto OpenGL::operator != (const OpenGL& other) const ->bool
-{
-    return !(*this == other);
-}
-
-OpenGL::operator bool() const
-{
-    return is_valid();
+    return m_Window;
 }
 
 auto OpenGL::context() const -> GL_CTX
