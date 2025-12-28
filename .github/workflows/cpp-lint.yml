@@ -16,7 +16,7 @@ jobs:
           tidy-checks: ''
           file-annotations: true
           step-summary: true
-          thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
+          thread-comments: true
           style: ''
 
       - name: Fail fast?!
