@@ -18,12 +18,15 @@ public:
     Material();
     Material(std::shared_ptr<class Texture> diffuse);
 
-    auto bind(std::shared_ptr<class ShaderProgram> program) const -> void;
-    auto texture(const std::string& name) const noexcept -> std::shared_ptr<class Texture>;
-    auto set_texture(const std::string &name, std::shared_ptr<class Texture> texture) -> void;
+    auto bind(std::shared_ptr<class ShaderProgram> program) -> void;
+    auto diffuse() const noexcept -> std::shared_ptr<class Texture>;
     auto set_diffuse(std::shared_ptr<class Texture> texture) -> void;
-    auto remove_texture(const std::string &name) -> bool;
 
+    static auto set_skybox(const std::string& BasePathName) -> void;
+    static auto set_skybox(std::shared_ptr<class Texture> texture) -> void;
+    static auto render_sky(const class Camera& cam) -> void;
+
+    static auto skybox() -> class SkyBox&;
 private:
-    std::map<std::string, std::shared_ptr<class Texture>> m_Textuers;
+    std::shared_ptr<class Texture> m_Diffuse;
 };

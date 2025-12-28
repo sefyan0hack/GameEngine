@@ -7,22 +7,18 @@
 #include <format>
 
 #include "GameObject.hpp"
-#include "SkyBox.hpp"
 #include "Camera.hpp"
 #include <core/fmts.hpp>
 #include <engine_export.h>
 
-/// @brief  Scene has all the Entities to Render + Sky box
+/// @brief  Scene has all the Entities to Render
 class ENGINE_EXPORT Scene
 {
 public:
     friend struct std::formatter<Scene>;
-    Scene();
+    Scene();    
 
     auto entities() const -> std::span<const GameObject>;
-    auto set_skybox(const std::string& BasePathName) -> void;
-    auto set_skybox(std::shared_ptr<class TextureCubeMap> texture) -> void;
-    auto render_sky() const -> void;
     auto clear() -> void;
     auto main_camera() -> Camera&;
     auto main_camera() const -> Camera&;
@@ -34,7 +30,6 @@ auto operator<<(Camera entity) -> Scene&;
 private:
     std::vector<Camera> m_Cameras;
     class Camera& m_MainCamera;
-    SkyBox m_SkyBox;
     std::vector<GameObject> m_Entities;
 
 };

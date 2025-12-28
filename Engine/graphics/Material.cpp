@@ -1,46 +1,72 @@
 #include "Material.hpp"
 #include "Texture.hpp"
 #include "ShaderProgram.hpp"
+#include "OpenGL.hpp"
+#include "Camera.hpp"
+#include "SkyBox.hpp"
+
 #include <glm/glm.hpp>
 
+#define LAST_SLOT OpenGL::max_texture_units() - 1
+
 Material::Material()
-    : m_Textuers{ {"uDiffuseMap", std::make_shared<Texture2D>()} }
+    : m_Diffuse(std::make_shared<Texture2D>())
 {
 }
 
 Material::Material(std::shared_ptr<Texture> diffuse)
-    : m_Textuers{ {"uDiffuseMap", diffuse} }
+    : m_Diffuse(diffuse)
 {
 }
 
 
-auto Material::bind(std::shared_ptr<ShaderProgram> program) const -> void
+auto Material::bind(std::shared_ptr<ShaderProgram> program) -> void
 {
-    uint8_t slot = 0;
-    for(const auto& [name, texture]: m_Textuers){
-        texture->bind(slot);
-        program->set_uniform(name, slot);
-        slot++;
-    }
+    m_Diffuse->bind(0); // diffuse takes 0 slot
+    program->set_uniform("uDiffuseMap", 0);
+
+    // skybox().m_Texture->bind(LAST_SLOT); // skybox takes last slot && not needed to to bind more then ones
+    program->set_uniform("uSkyboxMap", LAST_SLOT);
 }
 
 
-auto Material::texture(const std::string& name) const noexcept-> std::shared_ptr<Texture>
+auto Material::diffuse() const noexcept-> std::shared_ptr<Texture>
 {
-    return m_Textuers.at(name);
-}
-
-auto Material::set_texture(const std::string &name, std::shared_ptr<Texture> texture) -> void
-{
-    m_Textuers[name] = texture;
+    return m_Diffuse;
 }
 
 auto Material::set_diffuse(std::shared_ptr<Texture> texture) -> void
 {
-    m_Textuers["uDiffuseMap"] = texture;
+    m_Diffuse = texture;
 }
 
-auto Material::remove_texture(const std::string &name) -> bool
+
+
+auto Material::set_skybox(std::shared_ptr<Texture> texture) -> void
 {
-    return m_Textuers.erase(name);
+    skybox().set_texture(texture);
+}
+
+// in future this needed to be in renderer
+auto Material::render_sky(const Camera& cam) -> void{
+
+    auto& sk = skybox();
+    gl::DepthFunc(GL_LEQUAL);
+
+    sk.m_Program.use();
+    sk.m_Program.set_uniform("View", glm::mat4(glm::mat3(cam.view())));
+    sk.m_Program.set_uniform("Projection", cam.perspective());
+    sk.m_Texture->bind(LAST_SLOT);
+    sk.m_Program.set_uniform("uDiffuseMap", LAST_SLOT);
+
+    gl::BindVertexArray(sk.m_DummyVAO);
+    gl::DrawArrays(GL_TRIANGLES, 0, 36);
+
+    gl::DepthFunc(GL_LESS);
+}
+
+auto Material::skybox() -> SkyBox&
+{
+    static SkyBox skb;
+    return skb;
 }

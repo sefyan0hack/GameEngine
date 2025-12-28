@@ -16,14 +16,13 @@ class GAME_EXPORT Game
 public:
     Game()
     {
+        Material::set_skybox(std::make_shared<TextureCubeMap>(TextureCubeMap::base_to_6facesfiles("res/forest.jpg")));
 
         ResMan::RES("brik.jpg")          = std::make_shared<Texture2D>(embed_filesystem.open("res/brik.jpg"));
         ResMan::RES("brik.png")          = std::make_shared<Texture2D>(embed_filesystem.open("res/brik.png"));
         ResMan::RES("kimberley.jpg")     = std::make_shared<Texture2D>(embed_filesystem.open("res/kimberley.jpg"));
         ResMan::RES("annie_spratt.jpg")  = std::make_shared<Texture2D>(embed_filesystem.open("res/annie_spratt.jpg"));
         ResMan::RES("sand.png")          = std::make_shared<Texture2D>(embed_filesystem.open("res/gravelly_sand_diff_4k.png"));
-
-        ResMan::RES("forest.jpg")= std::make_shared<TextureCubeMap>(TextureCubeMap::base_to_6facesfiles("res/forest.jpg"));
 
         ResMan::RES("CubeMattkimberley")  = std::make_shared<Material>(ResMan::RES("kimberley.jpg"));
         ResMan::RES("CubeMattSand")  = std::make_shared<Material>(ResMan::RES("sand.png"));
@@ -46,9 +45,6 @@ public:
         }
         app->MainScene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), ResMan::RES("CubeMattSand"), ResMan::RES("manMesh"));
         app->MainScene << GameObject(Transform({2, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), ResMan::RES("CubeMattkimberley"), ResMan::RES("manMesh"));
-
-        app->MainScene.set_skybox(ResMan::RES("forest.jpg"));
-        debug::log("Window title: {}", app->Window.get_title());
 
         using namespace os::host;
         utils::async_repeat_every(100,

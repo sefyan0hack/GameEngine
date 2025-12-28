@@ -54,6 +54,14 @@ auto ShaderProgram::operator=(ShaderProgram&& other) noexcept -> ShaderProgram&
 ShaderProgram::~ShaderProgram()
 {
     gl::DeleteProgram(m_Id);
+    
+    // try {
+
+    //     gl::DeleteProgram(m_Id);
+    // }catch(const Exception& e) {
+    //     debug::log(stacktrace::current(1));
+    // }
+
     DTOR_LOG
 }
 

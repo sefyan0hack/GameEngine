@@ -5,21 +5,17 @@
 #include <engine_export.h>
 #include "ShaderProgram.hpp"
 
-class TextureCubeMap;
-
 class ENGINE_EXPORT SkyBox
 {
-  friend class Scene;
+  friend class Material;
 
   SkyBox();
-  SkyBox(std::shared_ptr<TextureCubeMap> texture);
-  SkyBox(const std::string& BasePathName);
+  SkyBox(std::shared_ptr<class Texture> texture);
 
-  auto set_texture(std::shared_ptr<TextureCubeMap> texture) -> void;
-  auto set_texture(const std::string& BasePathName) -> void;
+  auto set_texture(std::shared_ptr<class Texture> texture) -> void;
 
 private:
   ShaderProgram m_Program;
-  std::shared_ptr<TextureCubeMap> m_Texture;
+  std::shared_ptr<class Texture> m_Texture;
   GLuint m_DummyVAO;
 };
