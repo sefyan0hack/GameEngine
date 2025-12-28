@@ -3,7 +3,7 @@ name: Static Analyzer
 on: [workflow_dispatch]
 
 jobs:
-  analyze:
+  cppcheck-analyze:
     name: Cppcheck
     runs-on: ubuntu-latest
     steps:
@@ -29,7 +29,7 @@ jobs:
           name: CodeChecker Bug Reports
           path: ${{ steps.codechecker.outputs.result-html-dir }}
 
-  analyze:
+  clang-tidy-analyze:
     name: Clang-Tidy
     runs-on: ubuntu-latest
     permissions:
