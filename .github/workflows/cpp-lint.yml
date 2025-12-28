@@ -18,7 +18,10 @@ jobs:
         with:
           tidy-checks: ''
           database: 'build'
-          extensions: 'cpp,hpp,c,h,inl'
+          ignore: 'build'
+          file-annotations: true
+          step-summary: true
+          thread-comments: true
           files-changed-only: false
           style: ''
 
