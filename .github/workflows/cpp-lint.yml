@@ -8,12 +8,16 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Generate compilation database
+        run: cmake -S . -B build -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang
+
       - uses: cpp-linter/cpp-linter-action@v2
         id: linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tidy-checks: ''
+          database: build
           file-annotations: true
           step-summary: true
           thread-comments: true
