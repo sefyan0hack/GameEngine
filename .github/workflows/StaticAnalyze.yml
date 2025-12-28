@@ -28,35 +28,3 @@ jobs:
         with:
           name: CodeChecker Bug Reports
           path: ${{ steps.codechecker.outputs.result-html-dir }}
-
-  clang-tidy-analyze:
-    name: Clang-Tidy
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-dev  mesa-common-dev libxi-dev
-          sudo apt-get install -y xvfb libx11-dev xauth
-          sudo apt-get install -y clang-tidy
-
-      - name: Configure CMake
-        run: cmake -S . -B build -DCMAKE_CXX_CLANG_TIDY="clang-tidy"
-
-      - name: Build and Capture Output
-        run: |
-          cmake --build build 2>&1 | tee clang-tidy-output.txt
-
-      - name: Convert Clang-Tidy to SARIF
-        run: npx @microsoft/sarif-multitool convert clang-tidy-output.txt --tool ClangTidy --output results.sarif
-
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: results.sarif
-          category: clang-tidy
