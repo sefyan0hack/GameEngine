@@ -18,6 +18,7 @@ jobs:
         with:
           tidy-checks: ''
           database: 'build'
+          repo-root: '.'
           ignore: 'build'
           file-annotations: true
           step-summary: true
