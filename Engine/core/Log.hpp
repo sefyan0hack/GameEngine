@@ -2,12 +2,9 @@
 
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <cstdlib>
 #include <format>
-#include <ctime>
-#include <iomanip>
-#include <exception>
+#include <chrono>
 #include <source_location>
 #include <engine_export.h>
 
@@ -16,22 +13,13 @@
 #endif
 
 namespace debug {
-  inline auto current_time() -> std::string
-  {
-    std::time_t t = std::time(nullptr);
-    std::tm* tm = std::localtime(&t);
-    std::ostringstream oss;
-    oss << std::put_time(tm, "%Y-%m-%d %H:%M:%S");
-    return oss.str();
-  }
-
   template <class ...Ts>
   auto Log(
     [[maybe_unused]] const std::format_string<Ts...>& fmt,
     [[maybe_unused]] Ts&& ... ts) -> std::string
   {
     auto formatted_msg = std::format(fmt, std::forward<Ts>(ts)...);
-    return std::format("{} : {}\n", current_time(), formatted_msg);
+    return std::format("{} : {}\n", std::chrono::utc_clock::now(), formatted_msg);
   }
 
 
