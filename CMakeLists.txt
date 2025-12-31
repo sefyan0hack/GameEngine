@@ -40,7 +40,6 @@ include(Options)
 include(Sanitizers)
 include(LinkTimeOpt)
 include(Emscripten)
-include(ASLR)
 include(InstaledPackages)
 
 ####################################################################################################

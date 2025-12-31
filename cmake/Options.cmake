@@ -9,7 +9,6 @@ option(USAN                 "Undefined Sanitizer"                     OFF)
 option(TSAN                 "Thread Sanitizer"                        OFF)
 option(NATIVE_OPT           "Native opt build"                        ON)
 option(GAME_HOT_RELOADABLE  "Build Game as Shared and hot reload it"  OFF)
-option(ASLR                 "Address Space Layout Randomization"      OFF)
 
 cmake_dependent_option(ROBUST_GL_CHECK "Robust GL checks in Debug builds `slow` " ON [[ CMAKE_BUILD_TYPE STREQUAL "Debug" ]] OFF)
 cmake_dependent_option(NO_CONSOLE "No Console with Window" ON [[ CMAKE_BUILD_TYPE STREQUAL "Release" ]] OFF)
@@ -84,6 +83,5 @@ add_feature_info("Hot Reloading"     GAME_HOT_RELOADABLE  "[Game hot reload supp
 add_feature_info("Robust GL"         ROBUST_GL_CHECK      "[Robust GL checks in Debug]")
 add_feature_info("No Console"        NO_CONSOLE           "[No Console with Window]")
 add_feature_info(RTTI                RTTI                 "[Run-time type information]")
-add_feature_info(ASLR                ASLR                 "[Address Space Layout Randomization]")
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
