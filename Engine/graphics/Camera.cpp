@@ -8,7 +8,7 @@
 
 Camera::Camera() noexcept
     : m_Yaw(-90.0f), m_Pitch(0.0f)
-    , m_FOV(45.0f)
+    , m_FOV(glm::radians(45.0f))
     , m_Near(0.1f), m_Far(1000.0f)
     , m_AspectRatio(16.0f / 9.0f)
     , m_Forward(0.0f, 0.0f, -1.0f)
@@ -33,7 +33,7 @@ auto Camera::projection() const -> glm::mat4 {
 auto Camera::perspective() const -> glm::mat4
 {
     return glm::perspective(
-        glm::radians(m_FOV),
+        m_FOV,
         m_AspectRatio,
         m_Near,
         m_Far
