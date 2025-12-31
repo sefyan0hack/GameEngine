@@ -16,13 +16,13 @@ jobs:
         os: [windows-latest, windows-11-arm, ubuntu-latest,  ubuntu-22.04-arm]
         compiler: [llvm, gcc, msvc]
         build_type: [Debug, Release]
-        # exclude:
-          # - os: ubuntu-latest
-          #   compiler: msvc
-          # - os: ubuntu-22.04-arm
-          #   compiler: msvc
-          # - os: windows-11-arm
-          #   compiler: gcc
+        exclude:
+          - os: ubuntu-latest
+            compiler: msvc
+          - os: ubuntu-22.04-arm
+            compiler: msvc
+          - os: windows-11-arm
+            compiler: gcc
 
     env:
       TEST_TIMEOUT: 60
