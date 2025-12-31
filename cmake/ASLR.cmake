@@ -28,7 +28,5 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang
         # Disable ASLR
         add_link_options("/DYNAMICBASE:NO")
         add_link_options("/HIGHENTROPYVA:NO")
-        # Disable Fixed Base Address randomization
-        add_link_options("/FIXED") 
     endif()
 endif()
