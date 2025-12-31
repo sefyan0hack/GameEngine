@@ -10,18 +10,7 @@
 using stacktrace = std::stacktrace;
 using stacktrace_entry = std::stacktrace_entry;
 
-inline auto to_string(const stacktrace& st ) -> std::string
-{
-  std::string res = std::format("Stack Trace ({} Frames): {{\n", st.size());
-  res += std::format("\t{:<3} {:<18} {:<40} {}\n", "ID", "Address", "Function", "Location");
-  res += "\t--------------------------------------------------------------------------------\n";
-  size_t idx = 1;
-  for(const auto& frame : st){
-    res += std::format("\t{:<3} {:<18p} {:<40} at {}:{}\n", idx++, (void*)frame.native_handle(), frame.description(), frame.source_file(), frame.source_line());
-  }
-  res += "}\n";
-  return res;
-}
+auto ENGINE_EXPORT to_string(const stacktrace& st ) -> std::string;
 #else
 
 struct ENGINE_EXPORT stacktrace_entry {
