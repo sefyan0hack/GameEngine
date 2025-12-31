@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <format>
 #include <chrono>
+#include <exception>
 #include <source_location>
 #include <engine_export.h>
 
