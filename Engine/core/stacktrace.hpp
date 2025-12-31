@@ -5,13 +5,14 @@
 #include <engine_export.h>
 
 
-auto ENGINE_EXPORT to_string(const class stacktrace& st ) -> std::string;
-
 #if __cpp_lib_stacktrace
 #include <stacktrace>
 
-using stacktrace = std::stacktrace;
 using stacktrace_entry = std::stacktrace_entry;
+using stacktrace = std::stacktrace;
+
+auto ENGINE_EXPORT to_string(const stacktrace_entry& ste ) -> std::string;
+auto ENGINE_EXPORT to_string(const stacktrace& st ) -> std::string;
 
 #else
 
@@ -40,13 +41,14 @@ private:
   std::array<stacktrace_entry, 0> m_entries;
 };
 
-template<>
-struct std::formatter<stacktrace> {
-  constexpr auto parse(std::format_parse_context& context) {
-    return context.begin();
-  }
-  auto format(const stacktrace& obj, std::format_context& context) const {
-    return std::format_to(context.out(),"{}", to_string(obj));
+auto ENGINE_EXPORT to_string(const stacktrace_entry& ste ) -> std::string;
+auto ENGINE_EXPORT to_string(const stacktrace& st ) -> std::string;
+
+template<either<stacktrace_entry, stacktrace> T>
+struct std::formatter<T> {
+  constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
+  auto format(const T& obj, std::format_context& ctx) const {
+    return std::format_to(ctx.out(), "{}", to_string(obj));
   }
 };
 
