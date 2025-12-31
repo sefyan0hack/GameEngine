@@ -5,13 +5,11 @@
 #include <engine_export.h>
 
 #if __cpp_lib_stacktrace
-
 #include <stacktrace>
 
 using stacktrace = std::stacktrace;
 using stacktrace_entry = std::stacktrace_entry;
 
-auto ENGINE_EXPORT to_string(const stacktrace& st ) -> std::string;
 #else
 
 struct ENGINE_EXPORT stacktrace_entry {
@@ -39,11 +37,6 @@ private:
   std::array<stacktrace_entry, 0> m_entries;
 };
 
-inline auto to_string([[maybe_unused]] const stacktrace& st ) -> std::string
-{
-  return std::format("Stack Trace ({} Frame): {{ }}", st.size());
-}
-
 template<>
 struct std::formatter<stacktrace> {
   constexpr auto parse(std::format_parse_context& context) {
@@ -55,3 +48,5 @@ struct std::formatter<stacktrace> {
 };
 
 #endif
+
+auto ENGINE_EXPORT to_string(const stacktrace& st ) -> std::string;
