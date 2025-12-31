@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <array>
+#include <cstdint>
 #include <engine_export.h>
 
 #if __cpp_lib_stacktrace
@@ -14,9 +15,10 @@ auto ENGINE_EXPORT to_string(const stacktrace& st ) -> std::string;
 #else
 
 struct ENGINE_EXPORT stacktrace_entry {
-  std::string description() const { return "??"; }
-  std::string source_file() const { return "??"; }
-  size_t source_line() const { return 0; }
+  [[nodiscard]] constexpr std::uintptr_t native_handle() const noexcept { return {}; }
+  [[nodiscard]] constexpr std::string description() const { return "??"; }
+  [[nodiscard]] constexpr std::string source_file() const { return "??"; }
+  [[nodiscard]] constexpr uint32_t source_line() const { return {}; }
 };
 
 struct ENGINE_EXPORT stacktrace {
