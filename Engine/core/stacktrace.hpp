@@ -4,6 +4,9 @@
 #include <cstdint>
 #include <engine_export.h>
 
+
+auto ENGINE_EXPORT to_string(const class stacktrace& st ) -> std::string;
+
 #if __cpp_lib_stacktrace
 #include <stacktrace>
 
@@ -48,5 +51,3 @@ struct std::formatter<stacktrace> {
 };
 
 #endif
-
-auto ENGINE_EXPORT to_string(const stacktrace& st ) -> std::string;
