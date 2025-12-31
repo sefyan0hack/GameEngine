@@ -19,7 +19,7 @@ namespace debug {
     [[maybe_unused]] Ts&& ... ts) -> std::string
   {
     auto formatted_msg = std::format(fmt, std::forward<Ts>(ts)...);
-    return std::format("{} : {}\n", std::chrono::utc_clock::now(), formatted_msg);
+    return std::format("{} : {}\n", std::chrono::system_clock::now(), formatted_msg);
   }
 
 
