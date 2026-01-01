@@ -13,7 +13,7 @@ jobs:
         run: cmake -S . -B build
 
       - name: Run Include What You Use
-        uses: EmilGedda/include-what-you-use-action@latest
+        uses: EmilGedda/include-what-you-use-action@main
         with:
           compilation-database-path: 'build'
           output-format: 'iwyu'
