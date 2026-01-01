@@ -13,7 +13,7 @@ jobs:
         run: sudo apt-get install -y iwyu
 
       - name: Generate compilation database
-        run: cmake -S . -B build
+        run: cmake -S . -B build -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang
 
       - name: Run Include What You Use
         run: |
