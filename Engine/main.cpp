@@ -5,7 +5,7 @@ MAIN_FUNC {
 
     #if defined(ANDROID_PLT)
         platform_state = arg1;
-        auto wait_android_native_window(void*) -> bool;
+        extern "C" auto wait_android_native_window(void*) -> bool;
         if (!wait_android_native_window(arg1)) return;
     #endif
 

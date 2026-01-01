@@ -10,7 +10,7 @@
 #include <engine_export.h>
 
 
-ENGINE_EXPORT auto wait_android_native_window(void* state) -> bool
+ENGINE_EXPORT extern "C" auto wait_android_native_window(void* state) -> bool
 { // wait for native window and if destroyRequested return false
     auto ap = reinterpret_cast<android_app*>(state);
     if (!ap) return false;
