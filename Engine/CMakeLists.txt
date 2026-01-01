@@ -85,10 +85,6 @@ target_sources( Launcher PRIVATE
     main.cpp 
 )
 
-if(NO_CONSOLE)
-    no_console(Launcher)
-endif()
-
 target_link_libraries(Launcher PRIVATE Engine)
 
 add_custom_command(TARGET Launcher POST_BUILD

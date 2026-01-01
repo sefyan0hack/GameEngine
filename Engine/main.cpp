@@ -14,4 +14,6 @@ MAIN_FUNC {
 
     APP app(platform_state);
     app.run();
+
+    return {};
 }

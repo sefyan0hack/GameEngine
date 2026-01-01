@@ -18,6 +18,12 @@ if(WIN32)
         WIN32_LEAN_AND_MEAN
         NOMINMAX
     )
+    if(NO_CONSOLE)
+        set(CMAKE_WIN32_EXECUTABLE ON)
+    else()
+        set(CMAKE_WIN32_EXECUTABLE OFF)
+    endif()
+
     set(DIR_PLT_NAME "windows")
 elseif(EMSCRIPTEN)
     set(DIR_PLT_NAME "web")
@@ -136,6 +142,8 @@ add_compile_definitions(
 
     $<$<CONFIG:Debug>:DEBUG>
     $<$<CONFIG:Release>:NDEBUG>
+
+    $<$<BOOL:${NO_CONSOLE}>:NO_CONSOLE>
 )
 
 ####################################################################################################

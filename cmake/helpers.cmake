@@ -294,20 +294,6 @@ macro(fetch_and_include_file name url)
     include_directories(${${name}_SOURCE_DIR})
 endmacro()
 
-function(no_console target)
-    if(MSVC)
-    target_link_options(${target} PRIVATE
-        "$<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>"
-        "$<$<CONFIG:Release>:/ENTRY:mainCRTStartup>"
-    )
-    elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    target_link_options(${target} PRIVATE
-        "$<$<AND:$<CONFIG:Release>,$<STREQUAL:$<PLATFORM_ID>,Windows>>:-Wl,--subsystem,windows>"
-    )
-    endif()
-endfunction()
-
-
 function(embed_resource resource_file source_file variable_name)
     # Check if source is up-to-date
     if(EXISTS "${source_file}" AND

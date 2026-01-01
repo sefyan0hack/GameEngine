@@ -8,7 +8,6 @@
 #include <graphics/GameObject.hpp>
 #include <graphics/Camera.hpp>
 #include <format>
-#include <iostream>
 #include <map>
 #include <vector>
 
