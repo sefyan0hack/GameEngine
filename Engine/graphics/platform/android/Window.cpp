@@ -13,17 +13,17 @@
 ENGINE_EXPORT auto wait_android_native_window(void* state) -> bool
 { // wait for native window and if destroyRequested return false
     auto ap = reinterpret_cast<android_app*>(state);
-    if (!state) return false;
+    if (!ap) return false;
 
-    while (state->window == nullptr && !state->destroyRequested) {
+    while (ap->window == nullptr && !ap->destroyRequested) {
         int events;
         struct android_poll_source* source;
         if (ALooper_pollOnce(-1, nullptr, &events, (void**)&source) >= 0) {
-            if (source) source->process(state, source);
+            if (source) source->process(ap, source);
         }
     }
 
-    return (state->window != nullptr && !state->destroyRequested);
+    return (ap->window != nullptr && !ap->destroyRequested);
 }
 
 auto input_callback(struct android_app* state, AInputEvent* event) -> int32_t
