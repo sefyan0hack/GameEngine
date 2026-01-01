@@ -51,7 +51,7 @@ jobs:
 
       - name: Configure CMake
         shell: bash
-        run: cmake -S . -B "$BUILD_DIR" -G  "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DTESTS=ON -DHARDEN=ON
+        run: cmake -S . -B "$BUILD_DIR" -G  "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}  -DCMAKE_TLS_VERIFY=0 -DTESTS=ON -DHARDEN=ON
 
       - name: Build
         shell: bash
