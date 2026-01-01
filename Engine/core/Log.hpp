@@ -11,7 +11,7 @@ namespace debug {
     [[noreturn]] auto unimpl(std::source_location loc = std::source_location::current()) noexcept -> void;
 
     template <class... Ts>
-    inline auto log([[maybe_unused]] const std::format_string<Ts...>& fmt, [[maybe_unused]] Ts&&... ts) -> void
+    inline auto log(const std::format_string<Ts...>& fmt, Ts&&... ts) -> void
     {
         log(std::format(fmt, std::forward<Ts>(ts)...));
     }
