@@ -14,6 +14,7 @@ target_sources( core PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/SysInfo.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/DynLib.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Exception.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Log.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/stacktrace.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/res.cpp
 )
