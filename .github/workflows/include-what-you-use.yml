@@ -1,7 +1,7 @@
 name: Include What You Use
 on:
   workflow_dispatch: 
- 
+
 jobs:
   analyze:
     runs-on: ubuntu-latest
@@ -9,12 +9,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install IWYU
+        run: sudo apt-get install -y iwyu
+
       - name: Generate compilation database
         run: cmake -S . -B build
 
       - name: Run Include What You Use
-        uses: EmilGedda/include-what-you-use-action@main
-        with:
-          compilation-database-path: 'build'
-          output-format: 'iwyu'
-          no-error: 'false'
+        run: |
+          iwyu_tool -p build > iwyu_report.txt || true
+          cat iwyu_report.txt
+
+          # Make the build fail if there are suggestions
+          if grep -q "should add these lines" iwyu_report.txt; then
+            echo "IWYU found issues!"
+            exit 1
+          fi
