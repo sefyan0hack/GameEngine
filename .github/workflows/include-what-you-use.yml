@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Run Include What You Use
         uses: EmilGedda/include-what-you-use-action@v1
         with:
