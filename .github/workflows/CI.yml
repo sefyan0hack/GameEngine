@@ -36,7 +36,7 @@ jobs:
         uses: aminya/setup-cpp@v1.7.2
         with:
           compiler: ${{ matrix.compiler }}
-          vcvarsall: ${{ contains(matrix.os, 'windows' )}}
+          vcvarsall: ${{ contains(matrix.os, 'windows' ) && !contains(matrix.os, 'arm' )}}
           cmake: true
           ninja: true
           vcpkg: false
