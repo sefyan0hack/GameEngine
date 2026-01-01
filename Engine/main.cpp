@@ -1,31 +1,11 @@
-
-#include <memory>
-#include <random>
-
-#include <Engine.hpp>
-
-
-#if defined(ANDROID_PLT)
-bool wait_android_native_window(android_app* state) { // wait for native window and if destroyRequested return false
-    if (!state) return false;
-
-    while (state->window == nullptr && !state->destroyRequested) {
-        int events;
-        struct android_poll_source* source;
-        if (ALooper_pollOnce(-1, nullptr, &events, (void**)&source) >= 0) {
-            if (source) source->process(state, source);
-        }
-    }
-
-    return (state->window != nullptr && !state->destroyRequested);
-}
-#endif
+#include <APP.hpp>
 
 MAIN_FUNC {
     void* platform_state = nullptr;
 
     #if defined(ANDROID_PLT)
         platform_state = arg1;
+        auto wait_android_native_window(void*) -> bool;
         if (!wait_android_native_window(arg1)) return;
     #endif
 

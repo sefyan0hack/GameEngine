@@ -85,21 +85,11 @@ target_sources( Launcher PRIVATE
     main.cpp 
 )
 
-
 if(NO_CONSOLE)
     no_console(Launcher)
 endif()
 
 target_link_libraries(Launcher PRIVATE Engine)
-
-# common (Not Web)
-if(NOT EMSCRIPTEN)
-    if(NOT WIN32 AND NOT ANDROID)
-    target_link_libraries(Launcher PRIVATE $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
-    endif()
-
-    target_link_libraries(Launcher PRIVATE $<$<CXX_COMPILER_ID:GNU>:stdc++exp>)
-endif()
 
 add_custom_command(TARGET Launcher POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy -t $<TARGET_FILE_DIR:Launcher> $<TARGET_RUNTIME_DLLS:Launcher>

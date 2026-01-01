@@ -7,7 +7,24 @@
 #include <core/Event.hpp>
 #include <core/Exception.hpp>
 #include <core/Event.hpp>
+#include <engine_export.h>
 
+
+ENGINE_EXPORT auto wait_android_native_window(void* state) -> bool
+{ // wait for native window and if destroyRequested return false
+    auto ap = reinterpret_cast<android_app*>(state);
+    if (!state) return false;
+
+    while (state->window == nullptr && !state->destroyRequested) {
+        int events;
+        struct android_poll_source* source;
+        if (ALooper_pollOnce(-1, nullptr, &events, (void**)&source) >= 0) {
+            if (source) source->process(state, source);
+        }
+    }
+
+    return (state->window != nullptr && !state->destroyRequested);
+}
 
 auto input_callback(struct android_app* state, AInputEvent* event) -> int32_t
 {
@@ -38,7 +55,7 @@ auto input_callback(struct android_app* state, AInputEvent* event) -> int32_t
     return 0;
 }
 
-CWindow::CWindow(void* state) noexcept
+CWindow::CWindow([[maybe_unused]] void* state) noexcept
 {
     auto app = reinterpret_cast<android_app*>(state);
     app->onInputEvent = input_callback;

@@ -1,3 +1,12 @@
+#include <chrono>
+
+#include "APP.hpp"
+#include "Utils.hpp"
+#include "DynLib.hpp"
+#include "SysInfo.hpp"
+#include "Log.hpp"
+#include "Event.hpp"
+
 #include <inputs/Keyboard.hpp>
 #include <inputs/Mouse.hpp>
 #include <graphics/Window.hpp>
@@ -5,12 +14,6 @@
 #include <graphics/Scene.hpp>
 #include <graphics/ShaderProgram.hpp>
 #include <graphics/OpenGLRenderer.hpp>
-#include "APP.hpp"
-#include "Utils.hpp"
-#include "DynLib.hpp"
-#include "SysInfo.hpp"
-#include "Log.hpp"
-#include "Event.hpp"
 
 #undef X
 #define X(name, r, args) extern "C" DECLARE_FUNCTION(name, r, args);
@@ -159,7 +162,6 @@ auto APP::loop_body(void* ctx) -> void
                 app->game_on_deltamouse(app->Game, dx, dy);
             },
             [](const auto& e) {
-                if( ::type_name<decltype(e)>() == "const std::monostate&") throw Exception(" nnnnnn ");
                 debug::log("Unhandeled Event: {}", ::type_name<decltype(e)>()); 
             }
         );

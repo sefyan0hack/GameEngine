@@ -16,7 +16,7 @@ class ENGINE_EXPORT CWindow
         struct QuitEvent {};
 
         CWindow(int32_t Width, int32_t Height, const char* Title) noexcept;
-        CWindow(void* state) noexcept;
+        CWindow([[maybe_unused]] void* state) noexcept;
     public:
         ~CWindow();
 

@@ -6,7 +6,6 @@
 #include "Utils.hpp"
 
 using Event = std::variant<
-    std::monostate,
     struct Keyboard::KeyDownEvent,
     struct Keyboard::KeyUpEvent,
     struct Mouse::ButtonDownEvent,
@@ -41,15 +40,6 @@ public:
     auto pull(Event& event) -> bool
     {
         if (empty()) return false;
-        event = std::move(front());
-        pop();
-        return true;
-    }
-    
-    auto wait_and_pull(Event& event) -> bool {
-        while (empty()) {
-            std::this_thread::yield();
-        }
         event = std::move(front());
         pop();
         return true;

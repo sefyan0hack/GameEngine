@@ -9,7 +9,7 @@
 #undef near
 #undef far
 
-CWindow::CWindow(void* state) noexcept
+CWindow::CWindow([[maybe_unused]] void* state) noexcept
 {
 	throw Exception("this Ctor Expected to run only on android for now");
 }

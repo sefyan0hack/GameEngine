@@ -1,8 +1,5 @@
 #pragma once
 
-#include <memory>
-#include <chrono>
-
 #include <graphics/Window.hpp>
 #include <graphics/OpenGL.hpp>
 #include <graphics/Renderer.hpp>
