@@ -29,8 +29,8 @@ jobs:
     - name: Run ClangBuildAnalyzer
       shell: pwsh
       run: |
-        ClangBuildAnalyzer.exe --all compile_traces result
-        ClangBuildAnalyzer.exe --analyze result | Out-File -FilePath build_result.txt
+        .\ClangBuildAnalyzer.exe --all compile_traces result
+        .\ClangBuildAnalyzer.exe --analyze result | Out-File -FilePath build_result.txt
         Copy-Item build_result.txt -Destination compile_traces/
 
     - name: Upload Per-File Compilation Traces
