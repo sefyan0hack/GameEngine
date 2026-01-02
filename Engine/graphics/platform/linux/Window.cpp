@@ -247,8 +247,3 @@ auto CWindow::resize(int32_t width, int32_t height)	-> void
 
 	XFlush(m_Display);
 }
-
-auto CWindow::android_window(void*) -> std::tuple<H_DSP, H_WIN, H_SRF>
-{
-	throw Exception("Not for {}", os::host::name());
-}

@@ -3,9 +3,9 @@
 
 OpenGL::~OpenGL()
 {
-    // if (m_Context > 0) {
-        // glXDestroyContext(m_Context); needs display
-    // }
+    if (m_Context > 0) {
+        glXDestroyContext(m_Window.display(), m_Context); needs display
+    }
 }
 
 auto OpenGL::make_current_opengl()  -> bool

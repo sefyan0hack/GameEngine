@@ -410,8 +410,3 @@ auto CWindow::resize(int32_t width, int32_t height) -> void
 
     debug::log("Resized: CSS(%dx%d) Internal(%dx%d)", width, height, internal_w, internal_h);
 }
-
-auto CWindow::android_window(void*) -> std::tuple<H_DSP, H_WIN, H_SRF>
-{
-	throw Exception("Not for {}", os::host::name());
-}
