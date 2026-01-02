@@ -12,7 +12,9 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get install -y ninja-build python3 libgl1-mesa-dev libxi-dev mesa-common-dev xvfb
-        pip install ninjatracing
+        curl -L https://raw.githubusercontent.com/nico/ninjatracing/refs/heads/main/ninjatracing -o ninjatracing
+        chmod +x ninjatracing
+        sudo mv ninjatracing /usr/local/bin/
 
     - name: Configure CMake
       run: cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS="-ftime-trace"
