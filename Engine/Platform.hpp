@@ -297,14 +297,6 @@ struct Type {
 #endif
 
 
-#if defined(ANDROID_PLT)
-    #define MAIN_FUNC extern "C" void android_main(struct android_app *arg1)
-#elif defined(NO_CONSOLE) && defined(WINDOWS_PLT)
-    #define MAIN_FUNC int WINAPI WinMain(HINSTANCE arg1, HINSTANCE arg2, LPSTR arg3, int arg4)
-#else
-    #define MAIN_FUNC int main(int arg1, char** arg2)
-#endif
-
 /**
  * @brief Concept that tests whether T is a Pointer
  *

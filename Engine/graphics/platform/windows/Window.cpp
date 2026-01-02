@@ -9,11 +9,6 @@
 #undef near
 #undef far
 
-CWindow::CWindow([[maybe_unused]] void* state) noexcept
-{
-	throw Exception("this Ctor Expected to run only on android for now");
-}
-
 CWindow::~CWindow()
 {
 	ReleaseDC(m_Handle, m_Surface);
@@ -372,9 +367,4 @@ auto CWindow::resize(int32_t width, int32_t height)	-> void
 		rc.bottom - rc.top, 
     	SWP_NOMOVE | SWP_NOZORDER
 	);
-}
-
-auto CWindow::android_window(void*) -> std::tuple<H_DSP, H_WIN, H_SRF>
-{
-	throw Exception("Not for {}", os::host::name());
 }

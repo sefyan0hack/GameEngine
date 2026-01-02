@@ -35,13 +35,8 @@
 [[maybe_unused]] constexpr auto WINDOW_HIEGHT = 640;
 
 
-APP::APP(void* state)
-    : m_State(state)
-    #if defined(ANDROID_PLT)
-    , Window(state)
-    #else
-    , Window(WINDOW_WIDTH, WINDOW_HIEGHT, "")
-    #endif
+APP::APP()
+    : Window(WINDOW_WIDTH, WINDOW_HIEGHT, "")
     , Keyboard()
     , Mouse()
     , m_Running(true)

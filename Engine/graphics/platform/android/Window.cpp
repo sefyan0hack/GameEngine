@@ -9,69 +9,98 @@
 #include <core/Event.hpp>
 #include <engine_export.h>
 
+android_app* g_android_app = nullptr;
 
-ENGINE_EXPORT extern "C" auto wait_android_native_window(void* state) -> bool
+ENGINE_EXPORT extern "C" auto wait_android_native_window() -> bool
 { // wait for native window and if destroyRequested return false
-    auto ap = reinterpret_cast<android_app*>(state);
-    if (!ap) return false;
+    if (!g_android_app) return false;
 
-    while (ap->window == nullptr && !ap->destroyRequested) {
+    while (g_android_app->window == nullptr && !g_android_app->destroyRequested) {
         int events;
         struct android_poll_source* source;
         if (ALooper_pollOnce(-1, nullptr, &events, (void**)&source) >= 0) {
-            if (source) source->process(ap, source);
+            if (source) source->process(g_android_app, source);
         }
     }
 
-    return (ap->window != nullptr && !ap->destroyRequested);
+    return (g_android_app->window != nullptr && !g_android_app->destroyRequested);
 }
 
-auto input_callback(struct android_app* state, AInputEvent* event) -> int32_t
+
+auto input_callback(android_app* state, AInputEvent* event) -> int32_t
 {
     auto type = AInputEvent_getType(event);
+
     if (type == AINPUT_EVENT_TYPE_MOTION) {
+        int32_t actionWithIndex = AMotionEvent_getAction(event);
+        int32_t action = actionWithIndex & AMOTION_EVENT_ACTION_MASK;
+        
         float x = AMotionEvent_getX(event, 0);
         float y = AMotionEvent_getY(event, 0);
-        int32_t action = AMotionEvent_getAction(event);
 
-        if (action == AMOTION_EVENT_ACTION_DOWN) {
-            EventQ::self().push(Mouse::ButtonDownEvent{Mouse::Button::Left});
-        } else if (action == AMOTION_EVENT_ACTION_MOVE) {
-            EventQ::self().push(Mouse::MoveEvent{ (int)x, (int)y });
+        switch (action) {
+            case AMOTION_EVENT_ACTION_DOWN:
+                // Update position and click
+                EventQ::self().push(Mouse::MoveEvent{ (int)x, (int)y });
+                EventQ::self().push(Mouse::ButtonDownEvent{ Mouse::Button::Left });
+                return 1;
+
+            case AMOTION_EVENT_ACTION_UP:
+                EventQ::self().push(Mouse::ButtonUpEvent{ Mouse::Button::Left });
+                return 1;
+
+            case AMOTION_EVENT_ACTION_MOVE:
+                EventQ::self().push(Mouse::MoveEvent{ (int)x, (int)y });
+                return 1;
+                
+            case AMOTION_EVENT_ACTION_CANCEL:
+                // prevent "stuck" buttons if a gesture is interrupted
+                EventQ::self().push(Mouse::ButtonUpEvent{ Mouse::Button::Left });
+                return 1;
         }
-        return 1;
     }
     else if (type == AINPUT_EVENT_TYPE_KEY) {
         int32_t keyCode = AKeyEvent_getKeyCode(event);
         int32_t action = AKeyEvent_getAction(event);
+        
+        // Skip repeat events  EventQ doesn't need them
+        if (AKeyEvent_getRepeatCount(event) > 0) return 1;
 
         Key k = Keyboard::from_native(keyCode);
+        
         if (action == AKEY_EVENT_ACTION_DOWN) {
             EventQ::self().push(Keyboard::KeyDownEvent{k});
-        } else {
+        } else if (action == AKEY_EVENT_ACTION_UP) {
             EventQ::self().push(Keyboard::KeyUpEvent{k});
         }
+        
+        // Return 1 consume the key (preventing system 'Back' etc.)
+        // Return 0 the OS handle it (standard for Vol Up/Down)
+        return (keyCode == AKEYCODE_BACK) ? 1 : 0;
     }
+
     return 0;
 }
 
-CWindow::CWindow([[maybe_unused]] void* state) noexcept
+extern int main(int argc, char** argv);
+void android_main(android_app* app)
 {
-    auto app = reinterpret_cast<android_app*>(state);
+    g_android_app = app;
+    static char* args[2] = {"android", "\0"};
+
     app->onInputEvent = input_callback;
-	std::tie(m_Display, m_Handle, m_Surface) = android_window(app);
+    if (!wait_android_native_window(app)) return;
+    
+    main(1, args);
 }
 
-CWindow::~CWindow()
-{
-    eglDestroySurface(m_Display, m_Surface);
-	eglTerminate(m_Display);
-}
 
-auto CWindow::android_window(void* state)	-> std::tuple<H_DSP, H_WIN, H_SRF>
+auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::tuple<H_DSP, H_WIN, H_SRF>
 {
-    auto app = reinterpret_cast<android_app*>(state);
-	auto window = app->window;
+    (void)Width;
+    (void)Height;
+    (void)Title;
+	auto window = g_android_app->window;
 
     if (window == nullptr) {
         throw Exception("Cannot create surface: ANativeWindow is null");
@@ -118,11 +147,12 @@ auto CWindow::android_window(void* state)	-> std::tuple<H_DSP, H_WIN, H_SRF>
     return {display, window, surface};
 }
 
-
-auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::tuple<H_DSP, H_WIN, H_SRF>
+CWindow::~CWindow()
 {
-	throw Exception("cant create window in android with this :)");
+    eglDestroySurface(m_Display, m_Surface);
+	eglTerminate(m_Display);
 }
+
 
 auto CWindow::process_messages() -> void
 {

@@ -16,7 +16,6 @@ class ENGINE_EXPORT CWindow
         struct QuitEvent {};
 
         CWindow(int32_t Width, int32_t Height, const char* Title) noexcept;
-        CWindow([[maybe_unused]] void* state) noexcept;
     public:
         ~CWindow();
 
@@ -48,7 +47,6 @@ class ENGINE_EXPORT CWindow
 
     private:
         auto new_window(int32_t Width, int32_t Height, const char* Title)   -> std::tuple<H_DSP, H_WIN, H_SRF> ;
-        auto android_window(void* state)                                    -> std::tuple<H_DSP, H_WIN, H_SRF> ;
 
     private:
         H_DSP m_Display;

@@ -30,7 +30,7 @@ public:
 public:
     friend class Game;
 
-    APP(void* state = nullptr);
+    APP();
     ~APP();
 
     auto run() -> void ;
@@ -46,7 +46,6 @@ private:
     auto frame(float deltaTime) -> void;
 
 private:
-    void* m_State;
     CWindow Window;
     Keyboard Keyboard;
     Mouse Mouse;
