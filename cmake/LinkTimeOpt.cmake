@@ -13,7 +13,6 @@ add_compile_options(
     )
     
     add_link_options(
-        "$<$<CXX_COMPILER_ID:GNU,Clang>:-Wl,--gc-sections>"
         "$<$<CXX_COMPILER_ID:GNU>:-flto-partition=none>"
         "$<$<CXX_COMPILER_ID:GNU,Clang>:-fuse-linker-plugin>"
         "$<$<CXX_COMPILER_ID:MSVC>:/OPT:REF;/OPT:ICF>"
