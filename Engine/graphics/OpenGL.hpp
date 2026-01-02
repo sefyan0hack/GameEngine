@@ -1,8 +1,6 @@
 #pragma once
 #include <vector>
-#include <array>
 #include <string>
-#include <ctime>
 
 #include "gl.hpp"
 #include <engine_export.h>
@@ -21,7 +19,6 @@ class ENGINE_EXPORT OpenGL
         auto context() const -> GL_CTX ;
         auto window() const -> const CWindow&;
         auto is_valid() const -> bool ;
-        auto creation_time() const -> std::time_t ;
         auto has_extension(const std::string& ext) const -> bool ;
         auto major_v() const -> GLint;
         auto minor_v() const -> GLint;
@@ -44,7 +41,6 @@ class ENGINE_EXPORT OpenGL
         GL_CTX m_Context;
         GLint m_Major;
         GLint m_Minor;
-        std::time_t m_CreationTime;
 
         std::string m_Vendor;
         std::string m_Renderer;

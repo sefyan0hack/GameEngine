@@ -10,7 +10,6 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     , m_Context(create_opengl_context())
     , m_Major(0)
     , m_Minor(0)
-    , m_CreationTime(std::time(nullptr))
 {
     if (!make_current_opengl())
         throw Exception("Failed to make context current.");
@@ -103,11 +102,6 @@ auto OpenGL::is_valid() const -> bool
 auto OpenGL::set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void
 {
     gl::Viewport(x, y, width, height);
-}
-
-auto OpenGL::creation_time() const -> std::time_t
-{
-    return m_CreationTime;
 }
 
 auto OpenGL::has_extension(const std::string &ext) const -> bool
