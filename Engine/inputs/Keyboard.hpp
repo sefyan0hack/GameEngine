@@ -22,6 +22,7 @@ constexpr uint32_t DOM_VK_MEDIA_PLAY_PAUSE = 179;
 #endif
 
 enum class Key : uint8_t {
+    Unknown,
 
     // Alphanumeric keys (A-Z, 0-9)
     A, B, C, D, E, F, G, H, I, J, K, L, M,
@@ -56,14 +57,19 @@ enum class Key : uint8_t {
     Comma, Period, Semicolon, Apostrophe, BracketLeft, BracketRight,
     Backslash, Slash, GraveAccent, Minus, Equal,
 
-    #if defined(WEB_PLT)
-    // Web-specific keys
+    #if defined(WEB_PLT) // Web-specific keys
     BrowserBack, BrowserForward, BrowserRefresh, BrowserStop, 
-    BrowserSearch, BrowserFavorites, BrowserHome, VolumeMute, VolumeDown,
-    VolumeUp, MediaNext, MediaPrevious, MediaStop, MediaPlayPause,
+    BrowserSearch, BrowserFavorites, BrowserHome,
     #endif
 
-    Unknown
+    #if defined(ANDROID_PLT) // Android-specific keys
+    Back, Menu, Search,
+    #endif
+    
+    #if defined(WEB_PLT) || defined(ANDROID_PLT)  // (Android/web)-specific keys
+    VolumeMute, VolumeDown, VolumeUp, MediaNext, MediaPrevious, MediaStop, MediaPlayPause
+    #endif
+
 };
 
 class ENGINE_EXPORT Keyboard

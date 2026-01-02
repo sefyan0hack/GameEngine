@@ -59,6 +59,18 @@ auto Keyboard::to_native(Key key) -> uint32_t
         case Key::F10:  return AKEYCODE_F10;
         case Key::F11:  return AKEYCODE_F11;
         case Key::F12:  return AKEYCODE_F12;
+        case Key::F13:  return AKEYCODE_F13;
+        case Key::F14:  return AKEYCODE_F14;
+        case Key::F15:  return AKEYCODE_F15;
+        case Key::F16:  return AKEYCODE_F16;
+        case Key::F17:  return AKEYCODE_F17;
+        case Key::F18:  return AKEYCODE_F18;
+        case Key::F19:  return AKEYCODE_F19;
+        case Key::F20:  return AKEYCODE_F20;
+        case Key::F21:  return AKEYCODE_F21;
+        case Key::F22:  return AKEYCODE_F22;
+        case Key::F23:  return AKEYCODE_F23;
+        case Key::F24:  return AKEYCODE_F24;
 
         // Specials
         case Key::Escape:       return AKEYCODE_ESCAPE;
@@ -98,9 +110,24 @@ auto Keyboard::to_native(Key key) -> uint32_t
         // Numpad
         case Key::NumPad0:      return AKEYCODE_NUMPAD_0;
         case Key::NumPad1:      return AKEYCODE_NUMPAD_1;
+        case Key::NumPad2:      return AKEYCODE_NUMPAD_2;
+        case Key::NumPad3:      return AKEYCODE_NUMPAD_3;
+        case Key::NumPad4:      return AKEYCODE_NUMPAD_4;
+        case Key::NumPad5:      return AKEYCODE_NUMPAD_5;
+        case Key::NumPad6:      return AKEYCODE_NUMPAD_6;
+        case Key::NumPad7:      return AKEYCODE_NUMPAD_7;
+        case Key::NumPad8:      return AKEYCODE_NUMPAD_8;
+        case Key::NumPad9:      return AKEYCODE_NUMPAD_9;
         case Key::NumPadEnter:  return AKEYCODE_NUMPAD_ENTER;
         case Key::NumPadAdd:    return AKEYCODE_NUMPAD_ADD;
-        // ... (etc for other NumPad keys)
+        case Key::NumPadDivide:      return AKEYCODE_NUMPAD_DIVIDE;
+        case Key::NumPadMultiply:      return AKEYCODE_NUMPAD_MULTIPLY;
+        case Key::NumPadSubtract:      return AKEYCODE_NUMPAD_SUBTRACT;
+        case Key::NumPadDecimal:      return AKEYCODE_NUMPAD_DOT;
+        // case Key::Num:      return AKEYCODE_NUMPAD_COMMA;
+        case Key::NumPadEqual:      return AKEYCODE_NUMPAD_EQUALS;
+        case Key::Left:      return AKEYCODE_NUMPAD_LEFT_PAREN;
+        case Key::Right:      return AKEYCODE_NUMPAD_RIGHT_PAREN;
 
         // Punctuation
         case Key::Comma:        return AKEYCODE_COMMA;
@@ -115,6 +142,17 @@ auto Keyboard::to_native(Key key) -> uint32_t
         case Key::Minus:        return AKEYCODE_MINUS;
         case Key::Equal:        return AKEYCODE_EQUALS;
 
+        case Key::Back:         return AKEYCODE_BACK;
+        case Key::Menu:         return AKEYCODE_MENU;
+        case Key::Search:       return AKEYCODE_SEARCH;
+
+        case Key::VolumeMute:    return AKEYCODE_VOLUME_MUTE;
+        case Key::VolumeDown:    return AKEYCODE_VOLUME_DOWN;
+        case Key::VolumeUp:      return AKEYCODE_VOLUME_UP;
+        case Key::MediaNext:     return AKEYCODE_MEDIA_NEXT;
+        case Key::MediaPrevious: return AKEYCODE_MEDIA_PREVIOUS;
+        case Key::MediaStop:     return AKEYCODE_MEDIA_STOP;
+        case Key::MediaPlayPause:return AKEYCODE_MEDIA_PLAY_PAUSE;
         case Key::Unknown: return 0;
         default: return 0;
     }
