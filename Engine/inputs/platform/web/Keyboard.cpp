@@ -1,4 +1,5 @@
 #include "Keyboard.hpp"
+#include <core/Log.hpp>
 #include <emscripten/key_codes.h>
 
 
@@ -148,7 +149,7 @@ auto Keyboard::to_native(Key key) -> uint32_t
         case Key::MediaPrevious:       return DOM_VK_MEDIA_TRACK_PREVIOUS;
         case Key::MediaStop:           return DOM_VK_MEDIA_STOP;
         case Key::MediaPlayPause:      return DOM_VK_MEDIA_PLAY_PAUSE;
-        case Key::Unknown: return 0;
-        default: return static_cast<uint32_t>(-1);
+        case Key::Unknown:
+        default: debug::unrechable();
     }
 }

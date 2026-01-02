@@ -21,8 +21,7 @@ constexpr uint32_t DOM_VK_MEDIA_STOP = 178;
 constexpr uint32_t DOM_VK_MEDIA_PLAY_PAUSE = 179;
 #endif
 
-enum class Key : uint8_t {
-    Unknown,
+enum class Key : uint32_t {
 
     // Alphanumeric keys (A-Z, 0-9)
     A, B, C, D, E, F, G, H, I, J, K, L, M,
@@ -67,9 +66,10 @@ enum class Key : uint8_t {
     #endif
     
     #if defined(WEB_PLT) || defined(ANDROID_PLT)  // (Android/web)-specific keys
-    VolumeMute, VolumeDown, VolumeUp, MediaNext, MediaPrevious, MediaStop, MediaPlayPause
+    VolumeMute, VolumeDown, VolumeUp, MediaNext, MediaPrevious, MediaStop, MediaPlayPause,
     #endif
 
+    Unknown
 };
 
 class ENGINE_EXPORT Keyboard

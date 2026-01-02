@@ -139,7 +139,7 @@ auto Keyboard::to_native(Key key) -> uint32_t
         case Key::MediaPrevious: return AKEYCODE_MEDIA_PREVIOUS;
         case Key::MediaStop:     return AKEYCODE_MEDIA_STOP;
         case Key::MediaPlayPause:return AKEYCODE_MEDIA_PLAY_PAUSE;
-        case Key::Unknown: return 0;
-        default: return 0;
+        case Key::Unknown:
+        default: debug::unrechable();
     }
 }

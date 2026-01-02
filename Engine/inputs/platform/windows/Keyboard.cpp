@@ -1,4 +1,5 @@
 #include "Keyboard.hpp"
+#include <core/Log.hpp>
 #include <windows.h>
 
 auto Keyboard::to_native(Key key) -> uint32_t
@@ -128,7 +129,7 @@ auto Keyboard::to_native(Key key) -> uint32_t
         case Key::GraveAccent:	return VK_OEM_3;
         case Key::Minus:	    return VK_OEM_MINUS;
         case Key::Equal:	    return VK_OEM_PLUS;
-        case Key::Unknown: return 0;
-        default: return static_cast<uint32_t>(-1);
+        case Key::Unknown:
+        default: debug::unrechable();
     }
 }

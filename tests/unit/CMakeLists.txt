@@ -21,5 +21,5 @@ endif()
 target_link_libraries(unit_tests PRIVATE Engine glm::glm GTest::gtest GTest::gtest_main )
 
 if(NOT EMSCRIPTEN)
-gtest_discover_tests(unit_tests PROPERTIES RUN_SERIAL TRUE DISCOVERY_MODE PRE_TEST)
+gtest_discover_tests(unit_tests)
 endif()

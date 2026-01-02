@@ -1,4 +1,5 @@
 #include "Keyboard.hpp"
+#include <core/Log.hpp>
 #include <X11/keysym.h>
 
 auto Keyboard::to_native(Key key) -> uint32_t
@@ -128,7 +129,7 @@ auto Keyboard::to_native(Key key) -> uint32_t
         case Key::GraveAccent:	return XK_grave;
         case Key::Minus:		return XK_minus;
         case Key::Equal:		return XK_equal;
-        case Key::Unknown: return 0;
-        default: return static_cast<uint32_t>(-1);
+        case Key::Unknown:
+        default: debug::unrechable();
     }
 }
