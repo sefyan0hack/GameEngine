@@ -6,7 +6,6 @@
 
 ShaderProgram::ShaderProgram(std::shared_ptr<Shader> vertex, std::shared_ptr<Shader> fragment)
     : m_Id(gl::CreateProgram())
-    // , m_Shaders({vertex, fragment})
 {
     m_Shaders.reserve(2);
     m_Shaders.push_back(std::move(vertex));
@@ -54,13 +53,6 @@ auto ShaderProgram::operator=(ShaderProgram&& other) noexcept -> ShaderProgram&
 ShaderProgram::~ShaderProgram()
 {
     gl::DeleteProgram(m_Id);
-    
-    // try {
-
-    //     gl::DeleteProgram(m_Id);
-    // }catch(const Exception& e) {
-    //     debug::log(stacktrace::current(1));
-    // }
 
     DTOR_LOG
 }
@@ -148,98 +140,6 @@ auto ShaderProgram::attribs_count() const -> GLint
 
     return count;
 }
-
-// auto ShaderProgram::DumpUniforms() -> void
-// {
-//     auto count = UniformCount();
-
-//     // properties we want: name length, type, array size, block index, location
-//     constexpr GLenum props[] = {
-//         GL_NAME_LENGTH,
-//         GL_TYPE,
-//         GL_ARRAY_SIZE,
-//         GL_BLOCK_INDEX,
-//         GL_LOCATION
-//     };
-
-//     constexpr GLint propCount = (GLint)(sizeof(props)/sizeof(props[0]));
-
-//     for (GLint idx = 0; idx < count; ++idx) {
-//         GLint results[propCount];
-//         gl::GetProgramResourceiv(m_Id, GL_UNIFORM, static_cast<GLuint>(idx), propCount, props, propCount, nullptr, results);
-
-//         GLint nameLen    = results[0]; // includes NULL
-//         GLenum type      = static_cast<GLenum>(results[1]);
-//         GLint arraySize  = results[2];
-//         GLint blockIndex = results[3];
-//         GLint location   = results[4];
-
-//         // skip uniforms that are inside uniform blocks (optional)
-//         if (blockIndex != -1) continue;
-
-//         std::string name(static_cast<std::size_t>(std::max(1, nameLen)), '\0');
-//         if (nameLen > 0) {
-//             gl::GetProgramResourceName(m_Id, GL_UNIFORM, static_cast<GLuint>(idx), nameLen, nullptr, &name[0]);
-//             // remove terminating null
-//             if (!name.empty() && name.back() == '\0') name.pop_back();
-//         }
-
-//         if (location == -1) throw Exception("loaction is -1 on uniform : {}", name);
-
-//         m_Uniforms[name] = std::make_tuple(
-//             static_cast<GLuint>(location),
-//             static_cast<GLenum>(type),
-//             static_cast<GLsizei>(arraySize)
-//         );
-//     }
-// }
-
-// auto ShaderProgram::DumpAttribs() -> void
-// {
-//     GLint activeInputs = 0;
-//     gl::GetProgramInterfaceiv(m_Id, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &activeInputs);
-//     if (activeInputs <= 0) {
-//         debug::log("no active attributes for program {}\n", m_Id);
-//         return;
-//     }
-
-//     constexpr GLenum props[] = {
-//         GL_NAME_LENGTH,
-//         GL_TYPE,
-//         GL_ARRAY_SIZE,
-//         GL_LOCATION
-//     };
-//     constexpr int propCount = sizeof(props)/sizeof(props[0]);
-
-//     for (GLint idx = 0; idx < activeInputs; ++idx) {
-//         GLint results[propCount];
-//         gl::GetProgramResourceiv(m_Id, GL_PROGRAM_INPUT, static_cast<GLuint>(idx),
-//                                  propCount, props, propCount, nullptr, results);
-
-//         GLint nameLen   = results[0]; // includes NULL
-//         GLenum type     = static_cast<GLenum>(results[1]);
-//         GLint arraySize = results[2];
-//         GLint location  = results[3];
-
-//         // get the attribute name
-//         std::string name(std::max(1, nameLen), '\0');
-//         if (nameLen > 0) {
-//             gl::GetProgramResourceName(m_Id, GL_PROGRAM_INPUT, static_cast<GLuint>(idx),
-//                                        nameLen, nullptr, &name[0]);
-//             if (!name.empty() && name.back() == '\0') name.pop_back();
-//         }
-
-//         if(name.starts_with("gl_")) continue;
-
-//         if (location == -1) throw Exception("location is -1 for in attribute: {}", name);
-
-//         m_Attribs[name] = std::make_tuple(
-//             static_cast<GLuint>(location),
-//             static_cast<GLenum>(type),
-//             static_cast<GLsizei>(arraySize)
-//         );
-//     }
-// }
 
 
 auto ShaderProgram::dump_uniforms() -> void
