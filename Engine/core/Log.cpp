@@ -3,8 +3,7 @@
 #include <ostream>
 #include <fstream>
 #include <chrono>
-#include <exception>
-
+#include <cstdlib>
 
 constexpr auto LOG_FILE = "Engine.log";
 
@@ -26,7 +25,13 @@ namespace debug {
     
     [[noreturn]] auto unimpl(std::source_location loc) noexcept -> void
     {
-        log("unimplemented -> {}:{}", loc.file_name(), loc.line());
-        std::terminate();
+        log("this | {} | unimplemented -> {}:{}:{}", loc.function_name(), loc.file_name(), loc.line(), loc.column());
+        std::abort();
+    }
+
+    [[noreturn]] auto unrechable(const char* msg, std::source_location loc) noexcept -> void
+    {
+        log("this branch unrechable in `{}` {} -> {}:{}:{}", loc.function_name(), msg, loc.file_name(), loc.line(), loc.column());
+        std::abort();
     }
 }

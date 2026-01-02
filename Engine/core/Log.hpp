@@ -9,6 +9,7 @@ namespace debug {
     auto log(std::string msg) -> void;
 
     [[noreturn]] auto unimpl(std::source_location loc = std::source_location::current()) noexcept -> void;
+    [[noreturn]] auto unrechable(const char* msg = "", std::source_location loc = std::source_location::current()) noexcept -> void;
 
     template <class... Ts>
     inline auto log(const std::format_string<Ts...>& fmt, Ts&&... ts) -> void
