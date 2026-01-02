@@ -1,0 +1,32 @@
+name: Profile Build
+
+on: [workflow_dispatch]
+
+jobs:
+  profile:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get install -y ninja-build python3 libgl1-mesa-dev libxi-dev mesa-common-dev xvfb
+        pip install ninjatracing
+
+    - name: Configure CMake
+      run: cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS="-ftime-trace"
+
+    - name: Build Project
+      run: cmake --build build
+
+    - name: Generate Trace JSON
+      run: ninjatracing build/.ninja_log > trace.json
+
+    - name: Upload Build Trace
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-profile-trace
+        path: trace.json
+        retention-days: 1
+        overwrite: true
