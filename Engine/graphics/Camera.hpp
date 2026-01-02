@@ -3,9 +3,7 @@
 #include <format>
 #include <utility>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <glm/fwd.hpp>
 #include <core/fmts.hpp>
 #include <engine_export.h>
 

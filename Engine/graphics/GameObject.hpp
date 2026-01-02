@@ -3,7 +3,7 @@
 #include <string>
 #include <format>
 
-#include <glm/glm.hpp>
+#include <glm/fwd.hpp>
 #include "Transform.hpp"
 #include <engine_export.h>
 

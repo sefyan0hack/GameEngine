@@ -5,6 +5,8 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/fast_trigonometry.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 Camera::Camera() noexcept
     : m_Yaw(-90.0f), m_Pitch(0.0f)

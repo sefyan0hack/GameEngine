@@ -5,7 +5,7 @@
 #include "Camera.hpp"
 #include "SkyBox.hpp"
 
-#include <glm/glm.hpp>
+#include <glm/matrix.hpp>
 
 #define LAST_SLOT OpenGL::max_texture_units() - 1
 

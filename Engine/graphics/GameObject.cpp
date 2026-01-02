@@ -3,8 +3,8 @@
 #include "Material.hpp"
 #include "Mesh.hpp"
 
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <glm/vec3.hpp>
+#include <glm/matrix.hpp>
 
 GameObject::GameObject(glm::vec3 position, std::shared_ptr<Material> matt, std::shared_ptr<Mesh> mesh, std::string Name) noexcept
     : m_Transform(Transform(position))

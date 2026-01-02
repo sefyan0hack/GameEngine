@@ -8,8 +8,6 @@
 #include "Mesh.hpp"
 #include "OpenGL.hpp"
 #include <core/Log.hpp>
-#include <glm/glm.hpp>
-
 
 Scene::Scene()
     : m_Cameras({Camera()})

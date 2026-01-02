@@ -1,7 +1,7 @@
 #pragma once
 #include <format>
 
-#include <glm/glm.hpp>
+#include <glm/fwd.hpp>
 #include <core/fmts.hpp>
 #include <engine_export.h>
 
