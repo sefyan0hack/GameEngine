@@ -13,6 +13,12 @@ jobs:
       run: |
         sudo apt-get install -y ninja-build libgl1-mesa-dev libxi-dev mesa-common-dev xvfb
 
+    - name: Install ClangBuildAnalyzer
+      run: |
+        curl -L https://github.com/aras-p/ClangBuildAnalyzer/releases/download/v1.1.0/ClangBuildAnalyzer-linux -o ClangBuildAnalyzer
+        chmod +x ClangBuildAnalyzer
+        sudo mv ClangBuildAnalyzer /usr/local/bin/
+
     - name: Configure CMake
       run: cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS="-ftime-trace"
 
@@ -24,10 +30,15 @@ jobs:
         mkdir -p compile_traces
         find build -name "*.json" -not -name "global_build_trace.json" -exec cp {} compile_traces/ \;
 
+    - name: Run ClangBuildAnalyzer
+      run: |
+        ClangBuildAnalyzer --all compile_traces result
+        ClangBuildAnalyzer --analyze result > build_result.txt
+        cp build_result.txt compile_traces
+
     - name: Upload Per-File Compilation Traces
       uses: actions/upload-artifact@v4
       with:
         name: clang-compile-details
         path: compile_traces/
         retention-days: 1
-
