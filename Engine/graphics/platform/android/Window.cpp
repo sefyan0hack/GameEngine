@@ -11,22 +11,6 @@
 
 android_app* g_android_app = nullptr;
 
-ENGINE_EXPORT extern "C" auto wait_android_native_window() -> bool
-{ // wait for native window and if destroyRequested return false
-    if (!g_android_app) return false;
-
-    while (g_android_app->window == nullptr && !g_android_app->destroyRequested) {
-        int events;
-        struct android_poll_source* source;
-        if (ALooper_pollOnce(-1, nullptr, &events, (void**)&source) >= 0) {
-            if (source) source->process(g_android_app, source);
-        }
-    }
-
-    return (g_android_app->window != nullptr && !g_android_app->destroyRequested);
-}
-
-
 auto input_callback(android_app* state, AInputEvent* event) -> int32_t
 {
     auto type = AInputEvent_getType(event);
@@ -86,11 +70,17 @@ extern int main(int argc, char** argv);
 void android_main(android_app* app)
 {
     g_android_app = app;
-    static char* args[2] = {"android", "\0"};
-
     app->onInputEvent = input_callback;
-    if (!wait_android_native_window(app)) return;
-    
+
+    while (g_android_app->window == nullptr && !g_android_app->destroyRequested) {
+        int events;
+        struct android_poll_source* source;
+        if (ALooper_pollOnce(-1, nullptr, &events, (void**)&source) >= 0) {
+            if (source) source->process(g_android_app, source);
+        }
+    }
+
+    static char* args[2] = {"android", "\0"};
     main(1, args);
 }
 
