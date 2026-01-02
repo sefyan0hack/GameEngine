@@ -56,6 +56,9 @@ auto Keyboard::to_native(Key key) -> uint32_t
         case Key::F7:   return AKEYCODE_F7;
         case Key::F8:   return AKEYCODE_F8;
         case Key::F9:   return AKEYCODE_F9;
+        case Key::F10:  return AKEYCODE_F10;
+        case Key::F11:  return AKEYCODE_F11;
+        case Key::F12:  return AKEYCODE_F12;
 
         // Specials
         case Key::Escape:       return AKEYCODE_ESCAPE;
