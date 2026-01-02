@@ -16,8 +16,7 @@ class ENGINE_EXPORT OpenGL
         OpenGL(const OpenGL& other) = delete;
         auto operator = (const OpenGL& other) -> OpenGL& = delete;
         ~OpenGL();
-        auto operator <=> (const OpenGL&) const -> bool = default;
-;
+
     public:
         auto context() const -> GL_CTX ;
         auto window() const -> const CWindow&;
