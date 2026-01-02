@@ -3,7 +3,7 @@
 
 OpenGL::~OpenGL()
 {
-    if (m_Context > 0) {
+    if (m_Context != GL_CTX{}) {
         emscripten_webgl_destroy_context(m_Context);
     }
 }
