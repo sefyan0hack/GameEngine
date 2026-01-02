@@ -11,10 +11,7 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        sudo apt-get install -y ninja-build python3 libgl1-mesa-dev libxi-dev mesa-common-dev xvfb
-        curl -L https://raw.githubusercontent.com/nico/ninjatracing/refs/heads/main/ninjatracing -o ninjatracing
-        chmod +x ninjatracing
-        sudo mv ninjatracing /usr/local/bin/
+        sudo apt-get install -y ninja-build libgl1-mesa-dev libxi-dev mesa-common-dev xvfb
 
     - name: Configure CMake
       run: cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS="-ftime-trace"
@@ -22,13 +19,15 @@ jobs:
     - name: Build Project
       run: cmake --build build
 
-    - name: Generate Trace JSON
-      run: ninjatracing build/.ninja_log > trace.json
+    - name: find tarces
+      run: |
+        mkdir -p compile_traces
+        find build -name "*.json" -not -name "global_build_trace.json" -exec cp {} compile_traces/ \;
 
-    - name: Upload Build Trace
+    - name: Upload Per-File Compilation Traces
       uses: actions/upload-artifact@v4
       with:
-        name: build-profile-trace
-        path: trace.json
+        name: clang-compile-details
+        path: compile_traces/
         retention-days: 1
-        overwrite: true
+
