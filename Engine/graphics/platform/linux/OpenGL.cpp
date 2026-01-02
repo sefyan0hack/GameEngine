@@ -4,7 +4,7 @@
 OpenGL::~OpenGL()
 {
     if (m_Context > 0) {
-        glXDestroyContext(m_Window.display(), m_Context); needs display
+        glXDestroyContext(m_Window.display(), m_Context);
     }
 }
 
