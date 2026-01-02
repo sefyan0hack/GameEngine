@@ -39,3 +39,15 @@ jobs:
         name: clang-compile-details
         path: compile_traces/
         retention-days: 1
+
+    - name: Add Analysis to Job Summary
+      shell: pwsh
+      run: |
+        $content = Get-Content build_result.txt
+        echo "## 📊 Clang Build Analysis" >> $env:GITHUB_STEP_SUMMARY
+        echo "<details><summary>Click to expand full report</summary>" >> $env:GITHUB_STEP_SUMMARY
+        echo "" >> $env:GITHUB_STEP_SUMMARY
+        echo '```text' >> $env:GITHUB_STEP_SUMMARY
+        echo $content >> $env:GITHUB_STEP_SUMMARY
+        echo '```' >> $env:GITHUB_STEP_SUMMARY
+        echo "</details>" >> $env:GITHUB_STEP_SUMMARY
