@@ -134,7 +134,6 @@ auto Mesh::operator=(Mesh &&other) noexcept -> Mesh &
 
 Mesh::~Mesh()
 {
-    debug::log("<<<{}>>>", (const void*)XXXGetCurrentContext());
     gl::DeleteBuffers(1, &VBO);
     gl::DeleteVertexArrays(1, &VAO);
 

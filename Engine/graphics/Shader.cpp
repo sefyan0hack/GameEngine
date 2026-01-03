@@ -3,7 +3,6 @@
 #include "OpenGL.hpp"
 #include "Shader.hpp"
 
-extern cmrc::embedded_filesystem embed_filesystem;
 
 namespace {
 
@@ -155,16 +154,3 @@ auto Shader::get_shader_info(GLenum what) const -> GLint
     else
         throw Exception("GetShaderiv Failed");
 }
-
-auto Shader::default_vert() -> std::shared_ptr<Shader>
-{
-    static auto v = std::make_shared<Shader>(embed_filesystem.open("res/Shaders/main.vert"), GL_VERTEX_SHADER);
-    return v;
-}
-
-auto Shader::default_frag() -> std::shared_ptr<Shader>
-{
-    static auto f = std::make_shared<Shader>(embed_filesystem.open("res/Shaders/main.frag"), GL_FRAGMENT_SHADER);
-    return f;
-}
-

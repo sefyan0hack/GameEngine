@@ -67,6 +67,7 @@ auto Material::render_sky(const Camera& cam) -> void{
 
 auto Material::skybox() -> SkyBox&
 {
-    static SkyBox skb;
-    return skb;
+    static SkyBox* skb;
+    if(!skb) skb = new SkyBox();
+    return *skb;
 }

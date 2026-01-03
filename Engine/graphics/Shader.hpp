@@ -45,9 +45,7 @@ class ENGINE_EXPORT Shader
     {
       return std::make_shared<Shader>(frag, GL_FRAGMENT_SHADER);
     }
-    
-    static auto default_vert() -> std::shared_ptr<Shader>;
-    static auto default_frag() -> std::shared_ptr<Shader>;
+
   private:
     GLuint m_Id;
     GLenum m_Type;

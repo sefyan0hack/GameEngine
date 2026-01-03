@@ -31,7 +31,6 @@ target_sources( core PUBLIC
         Event.hpp
         Function.hpp
         APP.hpp
-        ResMan.hpp
         DynLib.hpp
         SysInfo.hpp
         res.hpp

@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <span>
-#include <core/ResMan.hpp>
 #include "Window.hpp"
 #include "Camera.hpp"
 #include "GameObject.hpp"
@@ -10,39 +9,41 @@
 #include "OpenGL.hpp"
 #include "Renderer.hpp"
 #include "Scene.hpp"
+#include "Shader.hpp"
 #include "ShaderProgram.hpp"
 #include "Mesh.hpp"
 #include "Material.hpp"
 #include "Texture.hpp"
+
+extern cmrc::embedded_filesystem embed_filesystem;
 
 
 OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx)
     : m_GApi(ctx)
     , m_X(0), m_Y(0)
     , m_Width(ctx.window().dims().first), m_Height(ctx.window().dims().second)
+    , m_Vert(std::make_shared<Shader>(embed_filesystem.open("res/Shaders/main.vert"), GL_VERTEX_SHADER))
+    , m_Frag(std::make_shared<Shader>(embed_filesystem.open("res/Shaders/main.frag"), GL_FRAGMENT_SHADER))
+    , m_Program(std::make_shared<ShaderProgram>(m_Vert, m_Frag))
 {}
 
-auto OpenGLRenderer::render(const Scene& scene, const std::shared_ptr<ShaderProgram> program) const -> void
+auto OpenGLRenderer::render(const Scene& scene) const -> void
 {
     auto camera = scene.main_camera();
     Material::render_sky(camera);
 
-    program->use();
-    program->set_uniform("View", camera.view());
-    program->set_uniform("Projection", camera.projection());
-    program->set_uniform("Eye", camera.position());
+    m_Program->use();
+    m_Program->set_uniform("View", camera.view());
+    m_Program->set_uniform("Projection", camera.projection());
+    m_Program->set_uniform("Eye", camera.position());
 
-    static std::shared_ptr<Material> currMatt = nullptr;
     //Drwaing
     std::for_each(
         scene.entities().begin(), scene.entities().end(),
         [&](const auto& obj){
-            program->set_uniform("Model", obj.model());
+            m_Program->set_uniform("Model", obj.model());
 
-            if(currMatt != obj.material()){
-                currMatt = obj.material();
-                obj.material()->bind(program);
-            }
+            obj.material()->bind(m_Program);
 
             auto mesh = obj.mesh();
             draw(*mesh);

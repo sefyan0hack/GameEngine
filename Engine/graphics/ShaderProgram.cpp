@@ -387,9 +387,3 @@ auto ShaderProgram::glsl_type_to_string(GLenum type) -> const char*
         default: return "unknown";
     }
 }
-
-auto ShaderProgram::default_program() -> std::shared_ptr<ShaderProgram>
-{
-    static auto p = std::make_shared<ShaderProgram>(Shader::default_vert(), Shader::default_frag());
-    return p;
-}

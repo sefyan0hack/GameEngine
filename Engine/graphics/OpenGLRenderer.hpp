@@ -7,7 +7,7 @@ class ENGINE_EXPORT OpenGLRenderer final: public IRenderer
 public:
     OpenGLRenderer(const class OpenGL& ctx);
     
-    auto render(const class Scene& scene, std::shared_ptr<class ShaderProgram> program) const -> void override;
+    auto render(const class Scene& scene) const -> void override;
 
     auto graphic_api() const -> std::string_view override;
     auto viewport() const -> std::tuple<uint32_t, uint32_t, uint32_t, uint32_t> override;
@@ -25,4 +25,6 @@ protected:
 private:
     const class OpenGL& m_GApi;
     uint32_t m_X, m_Y, m_Width, m_Height;
+    std::shared_ptr<class Shader> m_Vert, m_Frag;
+    std::shared_ptr<class ShaderProgram> m_Program;
 };

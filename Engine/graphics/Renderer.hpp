@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <engine_export.h>
 
 
@@ -9,7 +8,7 @@ class ENGINE_EXPORT IRenderer
 public:
     virtual ~IRenderer() = default;
 
-    virtual auto render(const class Scene& scene, std::shared_ptr<class ShaderProgram> program) const -> void = 0;
+    virtual auto render(const class Scene& scene) const -> void = 0;
 
     virtual auto graphic_api() const -> std::string_view = 0;
     virtual auto viewport() const -> std::tuple<uint32_t, uint32_t, uint32_t, uint32_t> = 0;

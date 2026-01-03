@@ -18,16 +18,13 @@ public:
     {
         Material::set_skybox(std::make_shared<TextureCubeMap>(TextureCubeMap::base_to_6facesfiles("res/forest.jpg")));
 
-        ResMan::RES("brik.jpg")          = std::make_shared<Texture2D>(embed_filesystem.open("res/brik.jpg"));
-        ResMan::RES("brik.png")          = std::make_shared<Texture2D>(embed_filesystem.open("res/brik.png"));
-        ResMan::RES("kimberley.jpg")     = std::make_shared<Texture2D>(embed_filesystem.open("res/kimberley.jpg"));
-        ResMan::RES("annie_spratt.jpg")  = std::make_shared<Texture2D>(embed_filesystem.open("res/annie_spratt.jpg"));
-        ResMan::RES("sand.png")          = std::make_shared<Texture2D>(embed_filesystem.open("res/gravelly_sand_diff_4k.png"));
+        auto kimberley_jpg     = std::make_shared<Texture2D>(embed_filesystem.open("res/kimberley.jpg"));
+        auto sand_png          = std::make_shared<Texture2D>(embed_filesystem.open("res/gravelly_sand_diff_4k.png"));
 
-        ResMan::RES("CubeMattkimberley")  = std::make_shared<Material>(ResMan::RES("kimberley.jpg"));
-        ResMan::RES("CubeMattSand")  = std::make_shared<Material>(ResMan::RES("sand.png"));
-        ResMan::RES("cubeMesh")      = std::make_shared<Mesh>(Mesh::CUBE);
-        ResMan::RES("manMesh")       = std::make_shared<Mesh>(obj_to_mesh(embed_filesystem.open("res/FinalBaseMesh.obj")));
+        auto CubeMattkimberley = std::make_shared<Material>(kimberley_jpg);
+        auto CubeMattSand  = std::make_shared<Material>(sand_png);
+        auto cubeMesh      = std::make_shared<Mesh>(Mesh::CUBE);
+        auto manMesh       = std::make_shared<Mesh>(obj_to_mesh(embed_filesystem.open("res/FinalBaseMesh.obj")));
 
         constexpr int32_t Grids = 5;
 
@@ -36,15 +33,15 @@ public:
 
         for(int32_t i = -Grids; i < Grids; i ++){
             for(int32_t j = -Grids; j < Grids; j ++){
-                auto m = coin(rng) ? ResMan::RES("CubeMattkimberley") : ResMan::RES("CubeMattSand");
-                auto meshRes = ResMan::RES("cubeMesh");
+                auto m = coin(rng) ? CubeMattkimberley : CubeMattSand;
+                auto meshRes = cubeMesh;
                 auto t = Transform({i, 0, j}, {0, 0, 0}, { 0.5f, 0.5f, 0.5f});
             
                 app->MainScene << GameObject(t, m, meshRes);
             }
         }
-        app->MainScene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), ResMan::RES("CubeMattSand"), ResMan::RES("manMesh"));
-        app->MainScene << GameObject(Transform({2, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), ResMan::RES("CubeMattkimberley"), ResMan::RES("manMesh"));
+        app->MainScene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattSand, manMesh);
+        app->MainScene << GameObject(Transform({2, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattkimberley, manMesh);
 
         using namespace os::host;
         utils::async_repeat_every(100,

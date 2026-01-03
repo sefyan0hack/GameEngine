@@ -100,7 +100,7 @@ auto APP::frame(float deltaTime) -> void
 {
     Renderer->clear_screen(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     game_update(Game, deltaTime);
-    Renderer->render(MainScene, ShaderProgram::default_program());
+    Renderer->render(MainScene);
     Window.swap_buffers();
     Keyboard.save_prev_state();
     Mouse.save_prev_state();

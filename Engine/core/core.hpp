@@ -6,7 +6,6 @@
 #include "fmts.hpp"
 #include "Function.hpp"
 #include "APP.hpp"
-#include "ResMan.hpp"
 #include "Image.hpp"
 #include "Event.hpp"
 #include "SysInfo.hpp"
