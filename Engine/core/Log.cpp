@@ -8,21 +8,16 @@
 constexpr auto LOG_FILE = "Engine.log";
 
 namespace debug {
-    auto log(const char* msg) -> void
-    {
+
+    logger_handler_t* logger = [](std::string msg){
         #if !defined(NO_CONSOLE)
             std::println("{} : {}", std::chrono::system_clock::now(), msg);
         #else
             std::ofstream out(LOG_FILE, std::ios::app);
             std::println(out, "{} : {}", std::chrono::system_clock::now(), msg);
         #endif
-    }
+    };
 
-    auto log(std::string msg) -> void
-    {
-        return log(msg.c_str());
-    }
-    
     [[noreturn]] auto unimpl(std::source_location loc) noexcept -> void
     {
         log("this | {} | unimplemented -> {}:{}:{}", loc.function_name(), loc.file_name(), loc.line(), loc.column());

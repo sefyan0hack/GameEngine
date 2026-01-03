@@ -54,7 +54,7 @@ Image::Image(Pointer auto Data, uint32_t Width, uint32_t Height, uint32_t Channe
         m_Channels = Channels;
         m_Data = reinterpret_cast<std::byte*>(Data);
     }else{
-        debug::log(" Image not Valid  {}", THIS_STR);
+        debug::log(" Image not Valid {:p}", (void*)this);
     }
 }
 
@@ -143,7 +143,7 @@ auto Image::valid() const ->bool
 
 auto Image::data() const -> std::span<std::byte>
 {
-    Expect(valid(), " Image not Valid  {}", THIS_STR);
+    Expect(valid(), " Image not Valid {:p}", (void*)this);
 
     return { m_Data, size() };
 }

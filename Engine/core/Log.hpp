@@ -5,8 +5,9 @@
 #include <engine_export.h>
 
 namespace debug {
-    auto log(const char* msg) -> void;
-    auto log(std::string msg) -> void;
+    using logger_handler_t = void(std::string msg);
+
+    extern logger_handler_t* logger;
 
     [[noreturn]] auto unimpl(std::source_location loc = std::source_location::current()) noexcept -> void;
     [[noreturn]] auto unrechable(const char* msg = "", std::source_location loc = std::source_location::current()) noexcept -> void;
@@ -14,7 +15,7 @@ namespace debug {
     template <class... Ts>
     inline auto log(const std::format_string<Ts...>& fmt, Ts&&... ts) -> void
     {
-        log(std::format(fmt, std::forward<Ts>(ts)...));
+        logger(std::format(fmt, std::forward<Ts>(ts)...));
     }
 
     template <class T>
@@ -23,13 +24,7 @@ namespace debug {
         debug::log("{}", std::forward<T>(x));
     }
 
-    #define THIS_STR std::format("{}", *this)
-    #define THIS_LOG debug::log("{}", *this)
-    #define THIS_ADDR (const void*)this
-
-    // #define CTOR_LOG 
-    // #define DTOR_LOG 
-    #define CTOR_LOG debug::log("({:p})  {} {}", (const void*)this, ::type_name<std::remove_pointer_t<decltype(this)>>(), *this);
-    #define DTOR_LOG debug::log("({:p}) ~{}", (const void*)this, ::type_name<std::remove_pointer_t<decltype(this)>>());
-
 } // namespace debug
+
+#define CTOR_LOG debug::log("({:p})  {} {}", (const void*)this, ::type_name<std::remove_pointer_t<decltype(this)>>(), *this);
+#define DTOR_LOG debug::log("({:p}) ~{}", (const void*)this, ::type_name<std::remove_pointer_t<decltype(this)>>());
