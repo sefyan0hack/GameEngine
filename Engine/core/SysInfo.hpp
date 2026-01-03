@@ -36,6 +36,5 @@ namespace os
         ENGINE_EXPORT auto memory_usage() -> std::size_t;
         ENGINE_EXPORT auto memory_peak() -> std::size_t;
         ENGINE_EXPORT auto thread_count() -> std::size_t; 
-        ENGINE_EXPORT auto module() -> std::string;
     }
 }

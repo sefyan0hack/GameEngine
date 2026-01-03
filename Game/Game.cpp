@@ -46,8 +46,8 @@ public:
         using namespace os::host;
         utils::async_repeat_every(100,
             [](){ app->Window.set_title(
-                std::format("[ module: {} | id: {} | os: {} | arch: {} | fps: {:.2f} | usage: {} Mb | peak: {} Mb | thread_count: {} ]", 
-                    module(), proc_id(), name(), arch(), app->fps(), memory_usage(), memory_peak(), thread_count()
+                std::format("[ id: {} | os: {} | arch: {} | fps: {:.2f} | usage: {} Mb | peak: {} Mb | thread_count: {} ]", 
+                    proc_id(), name(), arch(), app->fps(), memory_usage(), memory_peak(), thread_count()
                 )); }
         );
 

@@ -52,8 +52,3 @@ auto os::host::thread_count() -> std::size_t
         return 1;
     });
 }
-
-auto os::host::module() -> std::string
-{
-    return "";
-}

@@ -109,12 +109,3 @@ auto os::host::thread_count() -> std::size_t
     CloseHandle(hSnapshot);
     return count;
 }
-
-auto os::host::module() -> std::string
-{
-    auto proc = GetCurrentProcess();
-    auto module = GetModuleHandle(nullptr);
-    TCHAR szName[_MAX_FNAME];
-    GetModuleBaseName(proc, module, szName, _MAX_FNAME );
-    return std::string(szName);
-}

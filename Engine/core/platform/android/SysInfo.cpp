@@ -92,14 +92,3 @@ auto os::host::thread_count() -> std::size_t
 {
     return get_proc_value("Threads:");
 }
-
-auto os::host::module() -> std::string
-{
-    char buffer[PATH_MAX];
-    ssize_t len = readlink("/proc/self/exe", buffer, sizeof(buffer) - 1);
-    if (len != -1) {
-        buffer[len] = '\0';
-        return std::string(buffer);
-    }
-    return "";
-}
