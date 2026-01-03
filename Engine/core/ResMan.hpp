@@ -62,7 +62,7 @@ public:
     }
 
     bool exists(const std::string& key) {
-        return m_Resources.find(key) != m_Resources.end();
+        return m_Resources.contains(key);
     }
 
     void remove(const std::string& key) {
