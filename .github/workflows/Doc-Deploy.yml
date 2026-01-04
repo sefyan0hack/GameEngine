@@ -18,18 +18,15 @@ jobs:
 
       - name: Install Dependencies
         shell: bash
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-dev libxi-dev mesa-common-dev
-          sudo apt-get install -y doxygen
+        run: sudo apt-get install -y libx11-dev libgl-dev doxygen
 
-      - name: Configure CMake
-        run: |
-          mkdir -pv build
-          cmake -B build -S . -DDOCS=ON
-
-      - name: Build Docs
-        run: cmake --build build --target docs
+      - name: Build Project
+        uses: ./.github/actions/build
+        with:
+          os: ${{ matrix.os }}
+          compiler: llvm
+          cmake_flags: "-DDOCS=ON"
+          cmake_target: "docs"
 
       - name: Prepare Site Structure
         run: |

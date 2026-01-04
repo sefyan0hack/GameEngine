@@ -23,6 +23,10 @@ inputs:
     description: 'Flags for CMake configuration'
     required: false
     default: ''
+  cmake_target:
+    description: 'Cmake target'
+    required: false
+    default: 'all'
 
 runs:
   using: composite
@@ -42,4 +46,4 @@ runs:
 
     - name: Build
       shell: bash
-      run: cmake --build "${{ inputs.build_dir }}" --config ${{ inputs.build_type }} --parallel
+      run: cmake --build "${{ inputs.build_dir }}" --config ${{ inputs.build_type }} --target ${{ inputs.cmake_target }} --parallel
