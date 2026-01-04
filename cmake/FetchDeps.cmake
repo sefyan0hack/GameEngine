@@ -42,3 +42,16 @@ if(EMSCRIPTEN)
     fetch_and_include_file(gl3 https://registry.khronos.org/OpenGL/api/GLES3/gl3.h)
     fetch_and_include_file(gl2ext https://registry.khronos.org/OpenGL/api/GLES2/gl2ext.h)
 endif()
+
+# freetype
+
+CPMAddPackage(
+  NAME freetype
+  GITHUB_REPOSITORY freetype/freetype
+  GIT_TAG VER-2-14-0
+  OPTIONS
+    "FT_DISABLE_HARFBUZZ ON"
+    "FT_DISABLE_PNG ON"
+    "FT_DISABLE_BZIP2 ON"
+    "FT_DISABLE_ZLIB OFF"
+)

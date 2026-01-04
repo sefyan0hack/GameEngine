@@ -215,17 +215,17 @@ endfunction()
 
 function(rtti V)
     if(V)
-    add_compile_options(
-        "$<$<CXX_COMPILER_ID:MSVC>:/GR>"
-        "$<$<CXX_COMPILER_ID:Clang,GNU>:-frtti>"
-    )
+        add_compile_options(
+            "$<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:MSVC>>:/GR>"
+            "$<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:Clang,GNU>>:-frtti>"
+        )
     else()
-    add_compile_options(
-        "$<$<CXX_COMPILER_ID:MSVC>:/GR->"
-        "$<$<CXX_COMPILER_ID:Clang,GNU>:-fno-rtti>"
-    )
+        add_compile_options(
+            "$<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:MSVC>>:/GR->"
+            "$<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:Clang,GNU>>:-fno-rtti>"
+        )
     endif()
-endfunction(rtti)
+endfunction()
 
 function(pre_include_file file)
     if(MSVC)

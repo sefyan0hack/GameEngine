@@ -58,3 +58,4 @@ target_include_directories(graphics
 target_link_libraries(graphics INTERFACE res)
 target_link_libraries(graphics INTERFACE glm::glm)
 target_link_libraries(graphics INTERFACE stb_image)
+target_link_libraries(graphics INTERFACE freetype)
