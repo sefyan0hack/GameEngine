@@ -7,10 +7,6 @@ inputs:
     description: 'Version of emsdk'
     required: false
     default: '4.0.10'
-  system_dependencies:
-    description: 'Space-separated list of system dependencies'
-    required: false
-    default: ''
   cmake_configure_flags:
     description: 'Flags for CMake configuration'
     required: false
@@ -18,7 +14,7 @@ inputs:
   build_dir:
     description: 'Build directory name'
     required: false
-    default: 'build-web'
+    default: 'build'
 
 runs:
   using: composite
@@ -46,14 +42,6 @@ runs:
     - name: Verify Emscripten
       shell: bash
       run: emcc -v
-
-    - name: Install system dependencies
-      shell: bash
-      run: |
-        if [ -n "${{ inputs.system_dependencies }}" ]; then
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends ${{ inputs.system_dependencies }}
-        fi
 
     - name: Configure with CMake
       shell: bash
