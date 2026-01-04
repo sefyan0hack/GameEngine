@@ -14,11 +14,12 @@ jobs:
         curl -L https://github.com/aras-p/ClangBuildAnalyzer/releases/download/v1.6.0/ClangBuildAnalyzer.exe -o ClangBuildAnalyzer.exe
         echo "$github_workspace" >> $GITHUB_PATH
 
-    - name: Configure CMake
-      run: cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS="-ftime-trace"
-
     - name: Build Project
-      run: cmake --build build
+      uses: ./.github/actions/build
+      with:
+        os: ${{ runner.os }}
+        compiler: llvm
+        cmake_flags: "-DCMAKE_CXX_FLAGS=-ftime-trace"
 
     - name: Organize Traces
       shell: pwsh

@@ -13,8 +13,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-dev  mesa-common-dev libxi-dev
-          sudo apt-get install -y xvfb libx11-dev xauth
+          sudo apt-get install -y libgl-dev libx11-dev
 
       - name: Configure CMake
         run: cmake -S . -B build

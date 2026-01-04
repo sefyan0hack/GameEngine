@@ -20,7 +20,7 @@ jobs:
           uses: ./.github/actions/emscripten-build
           with:
             cmake_configure_flags: ""
-            system_dependencies: "libgl1-mesa-dev mesa-common-dev libxi-dev xvfb libx11-dev"
+            system_dependencies: "libgl-dev libx11-dev"
 
         - name: Prepare Artifact
           run: |
