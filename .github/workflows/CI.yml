@@ -32,30 +32,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Cpp
-        uses: aminya/setup-cpp@v1.7.2
-        with:
-          compiler: ${{ matrix.compiler }}
-          vcvarsall: ${{ contains(matrix.os, 'windows' ) && !contains(matrix.os, 'arm' )}}
-          cmake: true
-          ninja: true
-          vcpkg: false
-
       - name: Install Dependencies
         shell: bash
         run: |
           if [[ "${{ matrix.os }}" == *ubuntu* ]]; then
-            sudo apt-get update
             sudo apt-get install -y libx11-dev libgl-dev xvfb
           fi
 
-      - name: Configure CMake
-        shell: bash
-        run: cmake -S . -B "$BUILD_DIR" -G  "Ninja" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}  -DCMAKE_TLS_VERIFY=0 -DTESTS=ON -DHARDEN=ON
-
-      - name: Build
-        shell: bash
-        run: cmake --build "${{ env.BUILD_DIR }}" --config ${{ matrix.build_type }} --parallel
+      - name: Build Project
+        uses: ./.github/actions/build
+        with:
+          os: ${{ matrix.os }}
+          compiler: ${{ matrix.compiler }}
+          build_type: ${{ matrix.build_type }}
+          build_dir: ${{ env.BUILD_DIR }}
+          cmake_flags: "-DTESTS=ON -DHARDEN=ON"
 
       - name: Upload Test Executable
         uses: actions/upload-artifact@v4
