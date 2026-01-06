@@ -47,5 +47,16 @@ auto Keyboard::clear_state() noexcept -> void
 
 auto Keyboard::from_native(uint32_t key) -> Key
 {
-    return KeyMaps[key];
+    return KeyMaps.at(key);
 }
+
+const std::map<uint32_t, Key> Keyboard::KeyMaps = [](){
+    std::map<uint32_t, Key> r;
+    for(auto k :
+        std::views::iota(std::to_underlying(Key::A), std::to_underlying(Key::Unknown)) |
+        std::views::transform([](auto&& a){ return static_cast<Key>(a); })
+    ){
+        r.try_emplace(to_native(k), k);
+    }
+    return r;
+}();

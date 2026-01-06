@@ -112,18 +112,5 @@ private:
 	std::bitset<KeyCount> m_CurrKeyState;
     std::bitset<KeyCount> m_PrevKeyState;
 
-    inline static auto KeyMaps = [](){
-        std::map<uint32_t, Key> r;
-
-        for(auto k :
-            std::views::iota(std::to_underlying(Key::A), std::to_underlying(Key::Unknown)) |
-            std::views::transform([](auto&& a){ return static_cast<Key>(a); })
-        ){
-            r.try_emplace(to_native(k), k);
-        }
-
-        return r;
-    }();
-
-	
+    static const std::map<uint32_t, Key> KeyMaps;
 };
