@@ -130,10 +130,46 @@ jobs:
         with:
           api-level: 21                # change to the API level you want
           target: google_apis          # or default; change if you prefer
-          arch: arm64-v8a
+          arch: x86_64
           force-avd-creation: true
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
-          # adjust timeout (seconds) if needed
+          script: |
+            set -e
+
+            mkdir -p ci-crash-logs
+
+            echo "=== Devices ==="
+            adb devices
+
+            echo "=== Installing APK ==="
+            adb install -r android/app/build/outputs/apk/debug/*.apk || true
+
+            echo "=== Start logcat capture ==="
+            adb logcat -v time > ci-crash-logs/logcat-live.log 2>&1 &
+            LOGCAT_PID=$!
+
+            PACKAGE="com.example.myapp"
+            ACTIVITY="com.example.myapp.MainActivity"
+
+            echo "=== Launching app ==="
+            adb shell am start -W -n "$PACKAGE/$ACTIVITY" || true
+
+            echo "=== Let app run ==="
+            sleep 30
+
+            echo "=== Dump logcat ==="
+            adb logcat -d -v time > ci-crash-logs/logcat-dump.log || true
+
+            echo "=== Pull tombstones ==="
+            mkdir -p ci-crash-logs/tombstones
+            adb shell ls /data/tombstones >/dev/null 2>&1 && \
+              adb pull /data/tombstones ci-crash-logs/tombstones || true
+
+            echo "=== Pull ANR traces ==="
+            adb pull /data/anr/traces.txt ci-crash-logs/traces.txt || true
+
+            echo "=== Stop logcat ==="
+            kill -INT $LOGCAT_PID || true
         env:
           ADB_SERVER_SOCKET: /tmp/adb.sock
 
