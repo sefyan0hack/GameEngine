@@ -87,11 +87,6 @@ target_sources( Launcher PRIVATE
 
 target_link_libraries(Launcher PRIVATE Engine)
 
-add_custom_command(TARGET Launcher POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy -t $<TARGET_FILE_DIR:Launcher> $<TARGET_RUNTIME_DLLS:Launcher>
-  COMMAND_EXPAND_LISTS
-)
-
 apply_all_options(TARGETS Launcher)
 apply_coverage_options(TARGETS Launcher)
 apply_harden_options(TARGETS Launcher)

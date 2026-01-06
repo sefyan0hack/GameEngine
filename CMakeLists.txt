@@ -46,6 +46,8 @@ include(Options)
 include(Sanitizers)
 include(LinkTimeOpt)
 include(Emscripten)
+include(RTTI)
+include(Docs)
 include(InstaledPackages)
 
 ####################################################################################################
@@ -144,6 +146,7 @@ add_compile_definitions(
     $<$<CONFIG:Release>:NDEBUG>
 
     $<$<BOOL:${NO_CONSOLE}>:NO_CONSOLE>
+    $<$<BOOL:${ROBUST_GL_CHECK}>:ROBUST_GL_CHECK>
 )
 
 ####################################################################################################

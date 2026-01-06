@@ -148,16 +148,22 @@ function(apply_harden_options)
                 )
             endif()
             if(HARDEN AND CMAKE_SIZEOF_VOID_P EQUAL 4)  # 32-bit
-                    target_compile_options(${target} PRIVATE /SafeSEH)
+                target_compile_options(${target} PRIVATE /SafeSEH)
             endif()
         elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
             if(NOT WIN32)
-                if(COMPILER_MAJOR_VERSION STREQUAL "14")
+                if(COMPILER_MAJOR_VERSION VERSION_GREATER_EQUAL "14")
                     target_compile_options(${target} PRIVATE
                         "$<$<BOOL:${HARDEN}>:-fhardened>"
                         "$<$<BOOL:${HARDEN}>:-Wno-hardened>"
                     )
                 endif()
+                if(COMPILER_MAJOR_VERSION VERSION_GREATER_EQUAL "15")
+                    target_compile_definitions(${target} PRIVATE
+                        "$<$<BOOL:${HARDEN}>:_LIBCPP_HARDENING_MODE_EXTENSIVE>"
+                    )
+                endif()
+
                 target_compile_options(${target} PRIVATE
                     "$<$<BOOL:${HARDEN}>:-fharden-compares>"
                     "$<$<BOOL:${HARDEN}>:-fharden-conditional-branches>"
@@ -210,21 +216,6 @@ function(apply_all_options)
 
         apply_warning_options(TARGETS ${target})
     endforeach()
-endfunction()
-
-
-function(rtti V)
-    if(V)
-        add_compile_options(
-            "$<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:MSVC>>:/GR>"
-            "$<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:Clang,GNU>>:-frtti>"
-        )
-    else()
-        add_compile_options(
-            "$<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:MSVC>>:/GR->"
-            "$<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:Clang,GNU>>:-fno-rtti>"
-        )
-    endif()
 endfunction()
 
 function(pre_include_file file)
