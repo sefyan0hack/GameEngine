@@ -28,18 +28,51 @@ android {
     }
 
     buildTypes {
+        debugNoSymbols {
+            // keep debug-like behavior (debuggable etc) by copying debug defaults
+            initWith debug
+            // Gradle/NDK not to package native debug metadata
+            ndk {
+                debugSymbolLevel 'none'   // valid values: 'none', 'symbol_table', 'full'
+            }
+            // ensure no unstripped libs are forced into the APK
+            packaging {
+                jniLibs {
+                    // don't keep debug symbols for .so files (default strips)
+                    // If you previously added patterns to keep symbols, clear or avoid adding them here.
+                    // keepDebugSymbols is a SetProperty; you can clear/redefine as needed.
+                }
+            }
+        }
+
+        // Debug variant WITH full native debug metadata (better symbolication)
+        debugWithSymbols {
+            initWith debug
+            // include full debug metadata packaged by Gradle (this creates native-debug-symbols/<variant>/native-debug-symbols.zip)
+            ndk {
+                debugSymbolLevel 'full'   // 'full' = full debug info packaged; 'symbol_table' = smaller
+            }
+            packaging {
+                jniLibs {
+                    // keep the .so debug symbols (prevents stripping for those files)
+                    // pattern: keep all .so so the unstripped versions are packaged for symbol generation.
+                    keepDebugSymbols.add("**/*.so")
+                }
+            }
+        }
+
+        // you can still keep the default debug as before or adjust as needed
         debug {
-            // This prevents the IDE/Gradle from stripping debug symbols 
-            // from the library during the build process
-            // packaging {
-            //     jniLibs {
-            //         keepDebugSymbols += "**/libLauncher.so"
-            //     }
-            // }
-            // ensure the build doesn't strip during the native build phase
-            // ndk {
-            //     debugSymbolLevel 'FULL'
-            // }
+            packaging {
+                jniLibs {
+                    // optional: keep debug only for a specific lib
+                    // keepDebugSymbols += "**/libLauncher.so"
+                }
+            }
+            ndk {
+                // leave default or set an explicit level for the default debug variant
+                debugSymbolLevel 'none'
+            }
         }
     }
 }
