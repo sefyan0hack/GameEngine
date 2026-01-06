@@ -119,34 +119,14 @@ jobs:
           echo "cmake.dir=$SYS_CMAKE" > android/local.properties
           echo "ndk.dir=$ANDROID_NDK_LATEST_HOME" >> android/local.properties
 
-      - name: Build Debug (no symbols)
+      - name: Build Debug
         working-directory: ./android
-        run: gradle assembleDebugNoSymbols -Porg.gradle.jvmargs="-Xmx2g"
+        run: gradle assembleDebug -Porg.gradle.jvmargs="-Xmx2g"
 
-      - name: Build Debug (with symbols)
-        working-directory: ./android
-        run: gradle assembleDebugWithSymbols -Porg.gradle.jvmargs="-Xmx2g"
-
-      - name: Upload APK - debug (no symbols)
-        uses: actions/upload-artifact@v4
-        with:
-          name: Launcher-Debug-NoSymbols-APK
-          path: android/app/build/outputs/apk/**/debugNoSymbols/*.apk
-          retention-days: 1
-          overwrite: true
-
-      - name: Upload APK - debug (with symbols)
+      - name: Upload APK - debug
         uses: actions/upload-artifact@v4
         with:
           name: Launcher-Debug-WithSymbols-APK
-          path: android/app/build/outputs/apk/**/debugWithSymbols/*.apk
-          retention-days: 1
-          overwrite: true
-
-      - name: Upload native debug symbols (.zip) for with-symbols build
-        uses: actions/upload-artifact@v4
-        with:
-          name: native-debug-symbols-debugWithSymbols
-          path: android/app/build/outputs/native-debug-symbols/**/native-debug-symbols.zip
+          path: android/app/build/outputs/apk/debug/*.apk
           retention-days: 1
           overwrite: true
