@@ -123,10 +123,123 @@ jobs:
         working-directory: ./android
         run: gradle assembleDebug
 
-      - name: Upload APK
+
+      # --- Start an Android emulator (reactivecircus action installs SDK/emulator)
+      - name: Start Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 21                # change to the API level you want
+          target: google_apis          # or default; change if you prefer
+          arch: arm64-v8a
+          force-avd-creation: true
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
+          # adjust timeout (seconds) if needed
+        env:
+          ADB_SERVER_SOCKET: /tmp/adb.sock
+
+      # --- Wait a little for adb to be ready (safety)
+      - name: Wait for emulator to boot
+        run: |
+          adb wait-for-device
+          # loop until boot completed
+          for i in {1..60}; do
+            BOOTED=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+            if [ "$BOOTED" = "1" ]; then
+              echo "Emulator booted"
+              break
+            fi
+            echo "Waiting for boot... ($i)"
+            sleep 2
+          done
+
+      # --- Install the debug APK(s)
+      - name: Install APK(s)
+        run: |
+          APK_GLOB="android/app/build/outputs/apk/debug/*.apk"
+          ls -l $APK_GLOB || true
+          for apk in $APK_GLOB; do
+            echo "Installing $apk"
+            adb install -r "$apk" || true
+          done
+
+      # --- Start a background logcat to capture live logs while we exercise the app
+      - name: Start background logcat capture
+        run: |
+          mkdir -p ci-crash-logs
+          # rotate by size or just stream to file; killed at the end
+          adb logcat -v time > ci-crash-logs/logcat-live.log 2>&1 &
+          echo $! > ci-crash-logs/logcat.pid
+
+      # --- Launch the app (replace PACKAGE/ACTIVITY below) or run tests/monkey
+      - name: Launch app & exercise
+        run: |
+          # Replace these with your actual package/activity:
+          PACKAGE="com.example.myapp"
+          ACTIVITY="com.example.myapp.MainActivity"
+          # If you don't know the package name, you can extract it from the APK using aapt:
+          # aapt dump badging android/app/build/outputs/apk/debug/app-debug.apk | awk -F"'" '/package: name=/ {print $2}'
+          echo "Starting $PACKAGE/$ACTIVITY"
+          adb shell am start -W -n "$PACKAGE/$ACTIVITY" || true
+
+          # Option A: allow the app to run for 30s and hope it crashes, or run UI tests.
+          sleep 30
+
+          # Option B (stress): run monkey for a little while to trigger crashes (uncomment if desired)
+          # adb shell monkey -p "$PACKAGE" -v 500
+
+      - name: Pull crash artifacts from device
+        run: |
+          mkdir -p ci-crash-logs
+          # dump full logcat
+          adb logcat -d -v time > ci-crash-logs/logcat-dump.log || true
+
+          # pull tombstones (native crash dumps) from emulator if any
+          mkdir -p ci-crash-logs/tombstones
+          # emulator allows reading /data/tombstones
+          if adb shell ls /data/tombstones >/dev/null 2>&1; then
+            for f in $(adb shell ls /data/tombstones | tr -d '\r'); do
+              adb pull "/data/tombstones/$f" "ci-crash-logs/tombstones/$f" || true
+            done
+          fi
+
+          # pull ANR traces
+          adb pull /data/anr/traces.txt ci-crash-logs/traces.txt || true
+
+          # capture `dmesg` (may require root)
+          adb shell dmesg > ci-crash-logs/dmesg.txt || true
+
+          # store the live logcat PID and then kill the background logcat
+          if [ -f ci-crash-logs/logcat.pid ]; then
+            kill -INT $(cat ci-crash-logs/logcat.pid) || true
+          fi
+
+      - name: (Optional) Install NDK for symbolication
+        if: always()
+        run: |
+          # install a specific NDK version with sdkmanager (requires commandlinetools installed by emulator-runner)
+          yes | sdkmanager --install "ndk;25.2.9519653" || true
+          NDK_DIR=$(ls -d $ANDROID_SDK_ROOT/ndk/* | sort -V | tail -n1)
+          echo "NDK_DIR=$NDK_DIR"
+          export ANDROID_NDK_HOME="$NDK_DIR"
+          # Example: symbolize each tombstone using ndk-stack (you must point -sym to the unstripped obj or .so debug symbol dir)
+          mkdir -p ci-crash-logs/symbolicated
+          for tb in ci-crash-logs/tombstones/*; do
+            [ -e "$tb" ] || continue
+            # you MUST supply the path where your unstripped native libs or obj files live.
+            # Example symbol dir: android/app/build/intermediates/cmake/debug/obj (update to your project layout)
+            SYM_DIR="android/app/build/intermediates/cmake/debug/obj"
+            if [ -x "${ANDROID_NDK_HOME}/ndk-stack" ]; then
+              ${ANDROID_NDK_HOME}/ndk-stack -sym "$SYM_DIR" -dump "$tb" > "ci-crash-logs/symbolicated/$(basename $tb).txt" || true
+            fi
+          done
+
+      # --- Upload artifacts: APK + logs + tombstones + symbolicated output
+      - name: Upload APK and crash artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Launcher-Debug-APK
-          path: android/app/build/outputs/apk/debug/*.apk
+          name: Launcher-Debug-APK-and-logs
+          path: |
+            android/app/build/outputs/apk/debug/*.apk
+            ci-crash-logs/**
           retention-days: 1
           overwrite: true
