@@ -84,7 +84,7 @@ void android_main(android_app* app)
     }
 
     debug::logger = [](std::string msg){
-        __android_log_print(ANDROID_LOG_INFO, "ENGINE", msg.c_str());
+        __android_log_write(ANDROID_LOG_INFO, "ENGINE", msg.c_str());
     };
 
     static char* args[2] = {"android", "\0"};
