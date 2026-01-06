@@ -121,11 +121,11 @@ jobs:
 
       - name: Build Debug (no symbols)
         working-directory: ./android
-        run: ./gradlew assembleDebugNoSymbols -Porg.gradle.jvmargs="-Xmx2g"
+        run: gradle assembleDebugNoSymbols -Porg.gradle.jvmargs="-Xmx2g"
 
       - name: Build Debug (with symbols)
         working-directory: ./android
-        run: ./gradlew assembleDebugWithSymbols -Porg.gradle.jvmargs="-Xmx2g"
+        run: gradle assembleDebugWithSymbols -Porg.gradle.jvmargs="-Xmx2g"
 
       - name: Upload APK - debug (no symbols)
         uses: actions/upload-artifact@v4
