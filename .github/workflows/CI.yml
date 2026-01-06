@@ -128,37 +128,52 @@ jobs:
       - name: Start Android emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 21                # change to the API level you want
+          api-level: 30                # change to the API level you want
           target: google_apis          # or default; change if you prefer
           arch: x86_64
           force-avd-creation: true
-          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot-load -no-snapshot -save-memory 2048
           script: |
             set -e
 
-            mkdir -p ci-crash-logs
+            echo "=== Waiting for device ==="
+            adb wait-for-device
 
-            echo "=== Devices ==="
+            echo "=== Waiting for boot completion ==="
+            for i in {1..120}; do
+              BOOTED=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+              if [ "$BOOTED" = "1" ]; then
+                echo "Boot completed"
+                break
+              fi
+              echo "Booting... ($i)"
+              sleep 5
+            done
+
             adb devices
 
-            echo "=== Installing APK ==="
+            mkdir -p ci-crash-logs
+
+            echo "=== Install APK ==="
             adb install -r android/app/build/outputs/apk/debug/*.apk || true
 
-            echo "=== Start logcat capture ==="
-            adb logcat -v time > ci-crash-logs/logcat-live.log 2>&1 &
+            echo "=== Clear logcat ==="
+            adb logcat -c
+
+            echo "=== Capture logcat ==="
+            adb logcat -v time > ci-crash-logs/logcat.log 2>&1 &
             LOGCAT_PID=$!
 
             PACKAGE="com.example.myapp"
             ACTIVITY="com.example.myapp.MainActivity"
 
-            echo "=== Launching app ==="
+            echo "=== Launch app ==="
             adb shell am start -W -n "$PACKAGE/$ACTIVITY" || true
 
-            echo "=== Let app run ==="
             sleep 30
 
-            echo "=== Dump logcat ==="
-            adb logcat -d -v time > ci-crash-logs/logcat-dump.log || true
+            echo "=== Dump logs ==="
+            adb logcat -d > ci-crash-logs/logcat-dump.log || true
 
             echo "=== Pull tombstones ==="
             mkdir -p ci-crash-logs/tombstones
@@ -168,7 +183,6 @@ jobs:
             echo "=== Pull ANR traces ==="
             adb pull /data/anr/traces.txt ci-crash-logs/traces.txt || true
 
-            echo "=== Stop logcat ==="
             kill -INT $LOGCAT_PID || true
 
       # --- Wait a little for adb to be ready (safety)
