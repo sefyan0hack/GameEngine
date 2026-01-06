@@ -170,8 +170,6 @@ jobs:
 
             echo "=== Stop logcat ==="
             kill -INT $LOGCAT_PID || true
-        env:
-          ADB_SERVER_SOCKET: /tmp/adb.sock
 
       # --- Wait a little for adb to be ready (safety)
       - name: Wait for emulator to boot
