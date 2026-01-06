@@ -6,8 +6,11 @@
 #include <core/Log.hpp>
 #include <core/Event.hpp>
 #include <core/Exception.hpp>
+#include <core/Log.hpp>
 #include <core/Event.hpp>
 #include <engine_export.h>
+
+#include <android/log.h>
 
 android_app* g_android_app = nullptr;
 
@@ -79,6 +82,10 @@ void android_main(android_app* app)
             if (source) source->process(g_android_app, source);
         }
     }
+
+    debug::logger = [](std::string msg){
+        __android_log_print(ANDROID_LOG_INFO, "ENGINE", msg);
+    };
 
     static char* args[2] = {"android", "\0"};
     main(1, args);
