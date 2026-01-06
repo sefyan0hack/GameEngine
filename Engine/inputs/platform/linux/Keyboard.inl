@@ -1,0 +1,128 @@
+#include "Keyboard.hpp"
+#include <core/Log.hpp>
+#include <X11/keysym.h>
+
+#define  KEY_NATIVE_MAP\
+        X(A, XK_A)\
+        X(B, XK_B)\
+        X(C, XK_C)\
+        X(D, XK_D)\
+        X(E, XK_E)\
+        X(F, XK_F)\
+        X(G, XK_G)\
+        X(H, XK_H)\
+        X(I, XK_I)\
+        X(J, XK_J)\
+        X(K, XK_K)\
+        X(L, XK_L)\
+        X(M, XK_M)\
+        X(N, XK_N)\
+        X(O, XK_O)\
+        X(P, XK_P)\
+        X(Q, XK_Q)\
+        X(R, XK_R)\
+        X(S, XK_S)\
+        X(T, XK_T)\
+        X(U, XK_U)\
+        X(V, XK_V)\
+        X(W, XK_W)\
+        X(X, XK_X)\
+        X(Y, XK_Y)\
+        X(Z, XK_Z)\
+        \
+        X(Num0, XK_0)\
+        X(Num1, XK_1)\
+        X(Num2, XK_2)\
+        X(Num3, XK_3)\
+        X(Num4, XK_4)\
+        X(Num5, XK_5)\
+        X(Num6, XK_6)\
+        X(Num7, XK_7)\
+        X(Num8, XK_8)\
+        X(Num9, XK_9)\
+        \
+        X(F1: XK_F1)\
+        X(F2: XK_F2)\
+        X(F3: XK_F3)\
+        X(F4: XK_F4)\
+        X(F5: XK_F5)\
+        X(F6: XK_F6)\
+        X(F7: XK_F7)\
+        X(F8: XK_F8)\
+        X(F9: XK_F9)\
+        X(F10: XK_F10)\
+        X(F11: XK_F11)\
+        X(F12: XK_F12)\
+        X(F13: XK_F13)\
+        X(F14: XK_F14)\
+        X(F15: XK_F15)\
+        X(F16: XK_F16)\
+        X(F17: XK_F17)\
+        X(F18: XK_F18)\
+        X(F19: XK_F19)\
+        X(F20: XK_F20)\
+        X(F21: XK_F21)\
+        X(F22: XK_F22)\
+        X(F23: XK_F23)\
+        X(F24: XK_F24)\
+        \
+        X(Escape,   XK_Escape)\
+        X(Enter,    XK_Return)\
+        X(Tab,  XK_Tab)\
+        X(Backspace, XK_BackSpace)\
+        X(Space,    XK_space)\
+        X(CapsLock, XK_Caps_Lock)\
+        X(PrintScreen,  XK_Print)\
+        X(ScrollLock,   XK_Scroll_Lock)\
+        X(Pause,    XK_Pause)\
+        \
+        X(Insert, XK_Insert)\
+        X(Home,	 XK_Home)\
+        X(PageUp, XK_Prior)\
+        X(Delete, XK_Delete)\
+        X(End,	 XK_End)\
+        X(PageDown, XK_Next)\
+        \
+        X(Left,	 XK_Left)\
+        X(Right, XK_Right)\
+        X(Up,	 XK_Up)\
+        X(Down,	 XK_Down)\
+        \
+        X(LeftShift, XK_Shift_L)\
+        X(LeftControl, XK_Control_L)\
+        X(LeftAlt,	 XK_Alt_L)\
+        X(LeftSuper, XK_Super_L)\
+        X(RightShift, XK_Shift_R)\
+        X(RightControl, XK_Control_R)\
+        X(RightAlt,	 XK_Alt_R)\
+        X(RightSuper, XK_Super_R)\
+        \
+        X(NumPad0,	 XK_KP_0)\
+        X(NumPad1,	 XK_KP_1)\
+        X(NumPad2,	 XK_KP_2)\
+        X(NumPad3,	 XK_KP_3)\
+        X(NumPad4,	 XK_KP_4)\
+        X(NumPad5,	 XK_KP_5)\
+        X(NumPad6,	 XK_KP_6)\
+        X(NumPad7,	 XK_KP_7)\
+        X(NumPad8,	 XK_KP_8)\
+        X(NumPad9,	 XK_KP_9)\
+        X(NumPadDecimal, XK_KP_Decimal)\
+        X(NumPadDivide,	    XK_KP_Divide)\
+        X(NumPadMultiply,   XK_KP_Multiply)\
+        X(NumPadSubtract,   XK_KP_Subtract)\
+        X(NumPadAdd,	 XK_KP_Add)\
+        X(NumPadEnter,	    XK_KP_Enter)\
+        X(NumPadEqual,	    XK_KP_Equal)\
+        \
+        X(Comma,	 XK_comma)\
+        X(Period,	 XK_period)\
+        X(Semicolon, XK_semicolon)\
+        X(Apostrophe, XK_apostrophe)\
+        X(BracketLeft, XK_bracketleft)\
+        X(BracketRight, XK_bracketright)\
+        X(Backslash, XK_backslash)\
+        X(Slash,	 XK_slash)\
+        X(GraveAccent, XK_grave)\
+        X(Minus,	 XK_minus)\
+        X(Equal,	 XK_equal)

@@ -1,4 +1,7 @@
 #include "Keyboard.hpp"
+#include <core/Log.hpp>
+
+#include <Keyboard.inl>
 
 auto Keyboard::is_down(Key key) const noexcept -> bool
 {
@@ -47,16 +50,16 @@ auto Keyboard::clear_state() noexcept -> void
 
 auto Keyboard::from_native(uint32_t key) -> Key
 {
-    return KeyMaps.at(key);
+    #define X(KEY, NATIVE_KEY) if(key == NATIVE_KEY) return Key::KEY;
+    KEY_NATIVE_MAP
+    return Key::Unknown;
+    #undef X
 }
 
-const std::map<uint32_t, Key> Keyboard::KeyMaps = [](){
-    std::map<uint32_t, Key> r;
-    for(auto k :
-        std::views::iota(std::to_underlying(Key::A), std::to_underlying(Key::Unknown)) |
-        std::views::transform([](auto&& a){ return static_cast<Key>(a); })
-    ){
-        r.try_emplace(to_native(k), k);
-    }
-    return r;
-}();
+auto Keyboard::to_native(Key key) -> uint32_t
+{
+    #define X(KEY, NATIVE_KEY) if(key == Key::KEY) return NATIVE_KEY;
+    KEY_NATIVE_MAP
+    debug::unrechable();
+    #undef X
+}

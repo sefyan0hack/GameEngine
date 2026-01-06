@@ -1,0 +1,129 @@
+#include "Keyboard.hpp"
+#include <core/Log.hpp>
+#include <windows.h>
+
+#define  KEY_NATIVE_MAP\
+    X(A, 'A')\
+    X(B, 'B')\
+    X(C, 'C')\
+    X(D, 'D')\
+    X(E, 'E')\
+    X(F, 'F')\
+    X(G, 'G')\
+    X(H, 'H')\
+    X(I, 'I')\
+    X(J, 'J')\
+    X(K, 'K')\
+    X(L, 'L')\
+    X(M, 'M')\
+    X(N, 'N')\
+    X(O, 'O')\
+    X(P, 'P')\
+    X(Q, 'Q')\
+    X(R, 'R')\
+    X(S, 'S')\
+    X(T, 'T')\
+    X(U, 'U')\
+    X(V, 'V')\
+    X(W, 'W')\
+    X(X, 'X')\
+    X(Y, 'Y')\
+    X(Z, 'Z')\
+    \
+    X(Num0, '0')\
+    X(Num1, '1')\
+    X(Num2, '2')\
+    X(Num3, '3')\
+    X(Num4, '4')\
+    X(Num5, '5')\
+    X(Num6, '6')\
+    X(Num7, '7')\
+    X(Num8, '8')\
+    X(Num9, '9')\
+    \
+    X(F1, VK_F1)\
+    X(F2, VK_F2)\
+    X(F3, VK_F3)\
+    X(F4, VK_F4)\
+    X(F5, VK_F5)\
+    X(F6, VK_F6)\
+    X(F7, VK_F7)\
+    X(F8, VK_F8)\
+    X(F9, VK_F9)\
+    X(F10, VK_F10)\
+    X(F11, VK_F11)\
+    X(F12, VK_F12)\
+    X(F13, VK_F13)\
+    X(F14, VK_F14)\
+    X(F15, VK_F15)\
+    X(F16, VK_F16)\
+    X(F17, VK_F17)\
+    X(F18, VK_F18)\
+    X(F19, VK_F19)\
+    X(F20, VK_F20)\
+    X(F21, VK_F21)\
+    X(F22, VK_F22)\
+    X(F23, VK_F23)\
+    X(F24, VK_F24)\
+    \
+    X(Escape, VK_ESCAPE)\
+    X(Enter, VK_RETURN)\
+    X(Tab, VK_TAB)\
+    X(Backspace, VK_BACK)\
+    X(Space, VK_SPACE)\
+    X(CapsLock, VK_CAPITAL)\
+    X(PrintScreen, VK_SNAPSHOT)\
+    X(ScrollLock, VK_SCROLL)\
+    X(Pause, VK_PAUSE)\
+    \
+    X(Insert, VK_INSERT)\
+    X(Home, VK_HOME)\
+    X(PageUp, VK_PRIOR)\
+    X(Delete, VK_DELETE)\
+    X(End, VK_END)\
+    X(PageDown, VK_NEXT)\
+    \
+    X(Left,  VK_LEFT)\
+    X(Right,  VK_RIGHT)\
+    X(Up,  VK_UP)\
+    X(Down,  VK_DOWN)\
+    \
+    X(LeftShift, VK_LSHIFT)\
+    X(LeftControl, VK_LCONTROL)\
+    X(LeftAlt, VK_LMENU)\
+    X(LeftSuper, VK_LWIN)\
+    X(RightShift, VK_RSHIFT)\
+    X(RightControl, VK_RCONTROL)\
+    X(RightAlt, VK_RMENU)\
+    X(RightSuper, VK_RWIN)\
+    \
+    X(NumPad0, VK_NUMPAD0)\
+    X(NumPad1, VK_NUMPAD1)\
+    X(NumPad2, VK_NUMPAD2)\
+    X(NumPad3, VK_NUMPAD3)\
+    X(NumPad4, VK_NUMPAD4)\
+    X(NumPad5, VK_NUMPAD5)\
+    X(NumPad6, VK_NUMPAD6)\
+    X(NumPad7, VK_NUMPAD7)\
+    X(NumPad8, VK_NUMPAD8)\
+    X(NumPad9, VK_NUMPAD9)\
+    X(NumPadDecimal, VK_DECIMAL)\
+    X(NumPadDivide, VK_DIVIDE)\
+    X(NumPadMultiply, VK_MULTIPLY)\
+    X(NumPadSubtract, VK_SUBTRACT)\
+    X(NumPadAdd, VK_ADD)\
+    X(NumPadEqual, VK_SEPARATOR)\
+    X(NumPadEnter, VK_RETURN)\
+    \
+    X(Comma, VK_OEM_COMMA)\
+    X(Period, VK_OEM_PERIOD)\
+    X(Semicolon, VK_OEM_1)\
+    X(Apostrophe, VK_OEM_7)\
+    X(BracketLeft, VK_OEM_4)\
+    X(BracketRight, VK_OEM_6)\
+    X(Backslash, VK_OEM_5)\
+    X(Slash, VK_OEM_2)\
+    X(GraveAccent, VK_OEM_3)\
+    X(Minus, VK_OEM_MINUS)\
+    X(Equal, VK_OEM_PLUS)
+
