@@ -53,7 +53,6 @@ endif()
 
 apply_all_options(TARGETS Engine)
 apply_coverage_options(TARGETS Engine)
-apply_harden_options(TARGETS Engine)
 apply_sanitizer_options(TARGETS Engine)
 
 # common (Not Web)
@@ -89,7 +88,6 @@ target_link_libraries(Launcher PRIVATE Engine)
 
 apply_all_options(TARGETS Launcher)
 apply_coverage_options(TARGETS Launcher)
-apply_harden_options(TARGETS Launcher)
 apply_sanitizer_options(TARGETS Launcher)
 
 print_target_compile_options(Launcher)

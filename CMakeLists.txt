@@ -48,6 +48,7 @@ include(LinkTimeOpt)
 include(Emscripten)
 include(RTTI)
 include(Docs)
+include(Harden)
 include(InstaledPackages)
 
 ####################################################################################################

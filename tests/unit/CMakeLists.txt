@@ -4,7 +4,6 @@ file(GLOB TEST_SOURCES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/" "*_test.cpp")
 add_executable(unit_tests ${TEST_SOURCES})
 
 apply_all_options(TARGETS unit_tests )
-apply_harden_options(TARGETS unit_tests)
 
 if(ONLINE)
     CPMAddPackage(

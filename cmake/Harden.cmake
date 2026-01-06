@@ -1,0 +1,26 @@
+if(HARDEN)
+    if(MSVC)
+        if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|x64|x86|AMD64")
+            add_compile_options( /sdl /GS /guard:cf )
+        endif()
+        if(CMAKE_SIZEOF_VOID_P EQUAL 4)  # 32-bit
+            add_compile_options( /SafeSEH)
+        endif()
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        if(NOT WIN32)
+            if(COMPILER_MAJOR_VERSION VERSION_GREATER_EQUAL "14")
+                add_compile_options( -fhardened -Wno-hardened )
+            endif()
+
+            if(COMPILER_MAJOR_VERSION VERSION_GREATER_EQUAL "15")
+                add_compile_definitions( _LIBCPP_HARDENING_MODE_EXTENSIVE )
+            endif()
+
+            add_compile_options( -fharden-compares -fharden-conditional-branches -fstack-protector-strong )
+        endif()
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        
+        add_compile_options( -Wformat -Wformat-security -Werror=format-security -fno-strict-aliasing -fno-common -fstack-protector-strong )
+        add_link_options("$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-Wl,-z,relro;-Wl,-z,now;-Wl,-z,shstk;-Wl,-z,notext>")
+    endif()
+endif()

@@ -28,7 +28,6 @@ endif()
 
 apply_all_options(TARGETS Game)
 apply_coverage_options(TARGETS Game)
-apply_harden_options(TARGETS Game) # it applys the stack protector and craches du to `detached threads`
 apply_sanitizer_options(TARGETS Game)
 
 print_target_compile_options(Game)
