@@ -1,10 +1,8 @@
 
 if(EMSCRIPTEN)
     set(OPENGL_LIB_NAME "WebGL")
-    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
-    set(CMAKE_EXECUTABLE_SUFFIX ".html")
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE) #need to be removed
     set(STATIC_LINK OFF)
-    set(NATIVE_OPT OFF)
 
     add_compile_options(
         -Oz
