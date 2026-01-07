@@ -53,7 +53,7 @@ public:
         using namespace os::host;
         utils::async_repeat_every(1000,
             [](){
-                app->TextRenderer.text(std::format("fps: {:.2f}", app->fps()), { 0, 0 });
+                app->TextRenderer.text(std::format("FPS: {:.2f}", app->fps()), { 0, 0 });
             }
         );
 
