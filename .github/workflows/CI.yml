@@ -82,7 +82,10 @@ jobs:
 
     - name: Test
       shell: bash
-      run: ctest --output-on-failure
+      run: |
+        pwd || true
+        ls -la build/tests || true
+        ctest --output-on-failure
 
     - name: Upload Test Executable
       uses: actions/upload-artifact@v4
