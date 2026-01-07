@@ -110,8 +110,8 @@ ENGINE_EXPORT auto from_native(const EmscriptenKeyboardEvent* ev) -> Key
         if (sv_code == "VolumeMute")    return Key::VolumeMute;
         if (sv_code == "VolumeDown")    return Key::VolumeDown;
         if (sv_code == "VolumeUp")  return Key::VolumeUp;
-        if (sv_code == "MediaTrackNext")    return Key::MediaTrackNext;
-        if (sv_code == "MediaTrackPrevious") return Key::MediaTrackPrevious;
+        if (sv_code == "MediaTrackNext")    return Key::MediaNext;
+        if (sv_code == "MediaTrackPrevious") return Key::MediaPrevious;
         if (sv_code == "MediaStop") return Key::MediaStop;
         if (sv_code == "MediaPlayPause")    return Key::MediaPlayPause;
         
