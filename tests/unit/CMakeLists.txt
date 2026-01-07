@@ -4,6 +4,9 @@ file(GLOB TEST_SOURCES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/" "*_test.cpp")
 add_executable(unit_tests ${TEST_SOURCES})
 
 apply_all_options(TARGETS unit_tests )
+apply_sanitizer_options(TARGETS unit_tests)
+print_target_compile_options(unit_tests)
+
 
 if(ONLINE)
     CPMAddPackage(
