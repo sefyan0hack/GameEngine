@@ -1,145 +1,144 @@
 #include "Keyboard.hpp"
 #include <core/Log.hpp>
 #include <android/keycodes.h>
+#include <engine_export.h>
 
-
-auto Keyboard::to_native(Key key) -> uint32_t
+ENGINE_EXPORT auto from_native(int32_t key) -> Key
 {
     switch (key) {
         // Alphabet
-        case Key::A:    return AKEYCODE_A;
-        case Key::B:    return AKEYCODE_B;
-        case Key::C:    return AKEYCODE_C;
-        case Key::D:    return AKEYCODE_D;
-        case Key::E:    return AKEYCODE_E;
-        case Key::F:    return AKEYCODE_F;
-        case Key::G:    return AKEYCODE_G;
-        case Key::H:    return AKEYCODE_H;
-        case Key::I:    return AKEYCODE_I;
-        case Key::J:    return AKEYCODE_J;
-        case Key::K:    return AKEYCODE_K;
-        case Key::L:    return AKEYCODE_L;
-        case Key::M:    return AKEYCODE_M;
-        case Key::N:    return AKEYCODE_N;
-        case Key::O:    return AKEYCODE_O;
-        case Key::P:    return AKEYCODE_P;
-        case Key::Q:    return AKEYCODE_Q;
-        case Key::R:    return AKEYCODE_R;
-        case Key::S:    return AKEYCODE_S;
-        case Key::T:    return AKEYCODE_T;
-        case Key::U:    return AKEYCODE_U;
-        case Key::V:    return AKEYCODE_V;
-        case Key::W:    return AKEYCODE_W;
-        case Key::X:    return AKEYCODE_X;
-        case Key::Y:    return AKEYCODE_Y;
-        case Key::Z:    return AKEYCODE_Z;
+        case AKEYCODE_A: return Key::A;
+        case AKEYCODE_B: return Key::B;
+        case AKEYCODE_C: return Key::C;
+        case AKEYCODE_D: return Key::D;
+        case AKEYCODE_E: return Key::E;
+        case AKEYCODE_F: return Key::F;
+        case AKEYCODE_G: return Key::G;
+        case AKEYCODE_H: return Key::H;
+        case AKEYCODE_I: return Key::I;
+        case AKEYCODE_J: return Key::J;
+        case AKEYCODE_K: return Key::K;
+        case AKEYCODE_L: return Key::L;
+        case AKEYCODE_M: return Key::M;
+        case AKEYCODE_N: return Key::N;
+        case AKEYCODE_O: return Key::O;
+        case AKEYCODE_P: return Key::P;
+        case AKEYCODE_Q: return Key::Q;
+        case AKEYCODE_R: return Key::R;
+        case AKEYCODE_S: return Key::S;
+        case AKEYCODE_T: return Key::T;
+        case AKEYCODE_U: return Key::U;
+        case AKEYCODE_V: return Key::V;
+        case AKEYCODE_W: return Key::W;
+        case AKEYCODE_X: return Key::X;
+        case AKEYCODE_Y: return Key::Y;
+        case AKEYCODE_Z: return Key::Z;
 
         // Numbers
-        case Key::Num0: return AKEYCODE_0;
-        case Key::Num1: return AKEYCODE_1;
-        case Key::Num2: return AKEYCODE_2;
-        case Key::Num3: return AKEYCODE_3;
-        case Key::Num4: return AKEYCODE_4;
-        case Key::Num5: return AKEYCODE_5;
-        case Key::Num6: return AKEYCODE_6;
-        case Key::Num7: return AKEYCODE_7;
-        case Key::Num8: return AKEYCODE_8;
-        case Key::Num9: return AKEYCODE_9;
+        case AKEYCODE_0: return Key::Num0;
+        case AKEYCODE_1: return Key::Num1;
+        case AKEYCODE_2: return Key::Num2;
+        case AKEYCODE_3: return Key::Num3;
+        case AKEYCODE_4: return Key::Num4;
+        case AKEYCODE_5: return Key::Num5;
+        case AKEYCODE_6: return Key::Num6;
+        case AKEYCODE_7: return Key::Num7;
+        case AKEYCODE_8: return Key::Num8;
+        case AKEYCODE_9: return Key::Num9;
 
         // FXX (Note: Not all F-keys are supported on all Android devices/keyboards)
-        case Key::F1:   return AKEYCODE_F1;
-        case Key::F2:   return AKEYCODE_F2;
-        case Key::F3:   return AKEYCODE_F3;
-        case Key::F4:   return AKEYCODE_F4;
-        case Key::F5:   return AKEYCODE_F5;
-        case Key::F6:   return AKEYCODE_F6;
-        case Key::F7:   return AKEYCODE_F7;
-        case Key::F8:   return AKEYCODE_F8;
-        case Key::F9:   return AKEYCODE_F9;
-        case Key::F10:  return AKEYCODE_F10;
-        case Key::F11:  return AKEYCODE_F11;
-        case Key::F12:  return AKEYCODE_F12;
+        case AKEYCODE_F1:   return Key::F1;
+        case AKEYCODE_F2:   return Key::F2;
+        case AKEYCODE_F3:   return Key::F3;
+        case AKEYCODE_F4:   return Key::F4;
+        case AKEYCODE_F5:   return Key::F5;
+        case AKEYCODE_F6:   return Key::F6;
+        case AKEYCODE_F7:   return Key::F7;
+        case AKEYCODE_F8:   return Key::F8;
+        case AKEYCODE_F9:   return Key::F9;
+        case AKEYCODE_F10:  return Key::F10;
+        case AKEYCODE_F11:  return Key::F11;
+        case AKEYCODE_F12:  return Key::F12;
 
         // Specials
-        case Key::Escape:       return AKEYCODE_ESCAPE;
-        case Key::Enter:        return AKEYCODE_ENTER;
-        case Key::Tab:          return AKEYCODE_TAB;
-        case Key::Backspace:    return AKEYCODE_DEL;
-        case Key::Space:        return AKEYCODE_SPACE;
-        case Key::CapsLock:     return AKEYCODE_CAPS_LOCK;
-        case Key::PrintScreen:  return AKEYCODE_SYSRQ;
-        case Key::ScrollLock:   return AKEYCODE_SCROLL_LOCK;
-        case Key::Pause:        return AKEYCODE_BREAK;
+        case AKEYCODE_ESCAPE:       return Key::Escape;
+        case AKEYCODE_ENTER:        return Key::Enter;
+        case AKEYCODE_TAB:          return Key::Tab;
+        case AKEYCODE_DEL:    return Key::Backspace;
+        case AKEYCODE_SPACE:        return Key::Space;
+        case AKEYCODE_CAPS_LOCK:     return Key::CapsLock;
+        case AKEYCODE_SYSRQ:  return Key::PrintScreen;
+        case AKEYCODE_SCROLL_LOCK:   return Key::ScrollLock;
+        case AKEYCODE_BREAK:        return Key::Pause;
 
         // Navigations
-        case Key::Insert:   return AKEYCODE_INSERT;
-        case Key::Home:     return AKEYCODE_MOVE_HOME;
-        case Key::PageUp:   return AKEYCODE_PAGE_UP;
-        case Key::Delete:   return AKEYCODE_FORWARD_DEL;
-        case Key::End:      return AKEYCODE_MOVE_END;
-        case Key::PageDown: return AKEYCODE_PAGE_DOWN;
+        case AKEYCODE_INSERT:   return Key::Insert;
+        case AKEYCODE_MOVE_HOME:     return Key::Home;
+        case AKEYCODE_PAGE_UP:   return Key::PageUp;
+        case AKEYCODE_FORWARD_DEL:   return Key::Delete;
+        case AKEYCODE_MOVE_END:      return Key::End;
+        case AKEYCODE_PAGE_DOWN: return Key::PageDown;
 
         // Arrows
-        case Key::Left:     return AKEYCODE_DPAD_LEFT;
-        case Key::Right:    return AKEYCODE_DPAD_RIGHT;
-        case Key::Up:       return AKEYCODE_DPAD_UP;
-        case Key::Down:     return AKEYCODE_DPAD_DOWN;
+        case AKEYCODE_DPAD_LEFT:     return Key::Left;
+        case AKEYCODE_DPAD_RIGHT:    return Key::Right;
+        case AKEYCODE_DPAD_UP:       return Key::Up;
+        case AKEYCODE_DPAD_DOWN:     return Key::Down;
 
         // Modifiers
-        case Key::LeftShift:    return AKEYCODE_SHIFT_LEFT;
-        case Key::LeftControl:  return AKEYCODE_CTRL_LEFT;
-        case Key::LeftAlt:      return AKEYCODE_ALT_LEFT;
-        case Key::LeftSuper:    return AKEYCODE_META_LEFT;
-        case Key::RightShift:   return AKEYCODE_SHIFT_RIGHT;
-        case Key::RightControl: return AKEYCODE_CTRL_RIGHT;
-        case Key::RightAlt:     return AKEYCODE_ALT_RIGHT;
-        case Key::RightSuper:   return AKEYCODE_META_RIGHT;
+        case AKEYCODE_SHIFT_LEFT:    return Key::LeftShift;
+        case AKEYCODE_CTRL_LEFT:  return Key::LeftControl;
+        case AKEYCODE_ALT_LEFT:      return Key::LeftAlt;
+        case AKEYCODE_META_LEFT:    return Key::LeftSuper;
+        case AKEYCODE_SHIFT_RIGHT:   return Key::RightShift;
+        case AKEYCODE_CTRL_RIGHT: return Key::RightControl;
+        case AKEYCODE_ALT_RIGHT:     return Key::RightAlt;
+        case AKEYCODE_META_RIGHT:   return Key::RightSuper;
 
         // Numpad
-        case Key::NumPad0:      return AKEYCODE_NUMPAD_0;
-        case Key::NumPad1:      return AKEYCODE_NUMPAD_1;
-        case Key::NumPad2:      return AKEYCODE_NUMPAD_2;
-        case Key::NumPad3:      return AKEYCODE_NUMPAD_3;
-        case Key::NumPad4:      return AKEYCODE_NUMPAD_4;
-        case Key::NumPad5:      return AKEYCODE_NUMPAD_5;
-        case Key::NumPad6:      return AKEYCODE_NUMPAD_6;
-        case Key::NumPad7:      return AKEYCODE_NUMPAD_7;
-        case Key::NumPad8:      return AKEYCODE_NUMPAD_8;
-        case Key::NumPad9:      return AKEYCODE_NUMPAD_9;
-        case Key::NumPadEnter:  return AKEYCODE_NUMPAD_ENTER;
-        case Key::NumPadAdd:    return AKEYCODE_NUMPAD_ADD;
-        case Key::NumPadDivide:      return AKEYCODE_NUMPAD_DIVIDE;
-        case Key::NumPadMultiply:      return AKEYCODE_NUMPAD_MULTIPLY;
-        case Key::NumPadSubtract:      return AKEYCODE_NUMPAD_SUBTRACT;
-        case Key::NumPadDecimal:      return AKEYCODE_NUMPAD_DOT;
-        // case Key::Num:      return AKEYCODE_NUMPAD_COMMA;
-        case Key::NumPadEqual:      return AKEYCODE_NUMPAD_EQUALS;
+        case AKEYCODE_NUMPAD_0:      return Key::NumPad0;
+        case AKEYCODE_NUMPAD_1:      return Key::NumPad1;
+        case AKEYCODE_NUMPAD_2:      return Key::NumPad2;
+        case AKEYCODE_NUMPAD_3:      return Key::NumPad3;
+        case AKEYCODE_NUMPAD_4:      return Key::NumPad4;
+        case AKEYCODE_NUMPAD_5:      return Key::NumPad5;
+        case AKEYCODE_NUMPAD_6:      return Key::NumPad6;
+        case AKEYCODE_NUMPAD_7:      return Key::NumPad7;
+        case AKEYCODE_NUMPAD_8:      return Key::NumPad8;
+        case AKEYCODE_NUMPAD_9:      return Key::NumPad9;
+        case AKEYCODE_NUMPAD_ENTER:  return Key::NumPadEnter;
+        case AKEYCODE_NUMPAD_ADD:    return Key::NumPadAdd;
+        case AKEYCODE_NUMPAD_DIVIDE:      return Key::NumPadDivide;
+        case AKEYCODE_NUMPAD_MULTIPLY:      return Key::NumPadMultiply;
+        case AKEYCODE_NUMPAD_SUBTRACT:      return Key::NumPadSubtract;
+        case AKEYCODE_NUMPAD_DOT:      return Key::NumPadDecimal;
+        // case AKEYCODE_NUMPAD_COMMA:      return Key::Numxxx;
+        case AKEYCODE_NUMPAD_EQUALS:      return Key::NumPadEqual;
 
         // Punctuation
-        case Key::Comma:        return AKEYCODE_COMMA;
-        case Key::Period:       return AKEYCODE_PERIOD;
-        case Key::Semicolon:    return AKEYCODE_SEMICOLON;
-        case Key::Apostrophe:   return AKEYCODE_APOSTROPHE;
-        case Key::BracketLeft:  return AKEYCODE_LEFT_BRACKET;
-        case Key::BracketRight: return AKEYCODE_RIGHT_BRACKET;
-        case Key::Backslash:    return AKEYCODE_BACKSLASH;
-        case Key::Slash:        return AKEYCODE_SLASH;
-        case Key::GraveAccent:  return AKEYCODE_GRAVE;
-        case Key::Minus:        return AKEYCODE_MINUS;
-        case Key::Equal:        return AKEYCODE_EQUALS;
+        case AKEYCODE_COMMA:        return Key::Comma;
+        case AKEYCODE_PERIOD:       return Key::Period;
+        case AKEYCODE_SEMICOLON:    return Key::Semicolon;
+        case AKEYCODE_APOSTROPHE:   return Key::Apostrophe;
+        case AKEYCODE_LEFT_BRACKET:  return Key::BracketLeft;
+        case AKEYCODE_RIGHT_BRACKET: return Key::BracketRight;
+        case AKEYCODE_BACKSLASH:    return Key::Backslash;
+        case AKEYCODE_SLASH:        return Key::Slash;
+        case AKEYCODE_GRAVE:        return Key::GraveAccent;
+        case AKEYCODE_MINUS:        return Key::Minus;
+        case AKEYCODE_EQUALS:        return Key::Equal;
 
-        case Key::Back:         return AKEYCODE_BACK;
-        case Key::Menu:         return AKEYCODE_MENU;
-        case Key::Search:       return AKEYCODE_SEARCH;
+        case AKEYCODE_BACK:         return Key::Back;
+        case AKEYCODE_MENU:         return Key::Menu;
+        case AKEYCODE_SEARCH:       return Key::Search;
 
-        case Key::VolumeMute:    return AKEYCODE_VOLUME_MUTE;
-        case Key::VolumeDown:    return AKEYCODE_VOLUME_DOWN;
-        case Key::VolumeUp:      return AKEYCODE_VOLUME_UP;
-        case Key::MediaNext:     return AKEYCODE_MEDIA_NEXT;
-        case Key::MediaPrevious: return AKEYCODE_MEDIA_PREVIOUS;
-        case Key::MediaStop:     return AKEYCODE_MEDIA_STOP;
-        case Key::MediaPlayPause:return AKEYCODE_MEDIA_PLAY_PAUSE;
-        case Key::Unknown:
-        default: debug::unrechable();
+        case AKEYCODE_VOLUME_MUTE:    return Key::VolumeMute;
+        case AKEYCODE_VOLUME_DOWN:    return Key::VolumeDown;
+        case AKEYCODE_VOLUME_UP:      return Key::VolumeUp;
+        case AKEYCODE_MEDIA_NEXT:     return Key::MediaNext;
+        case AKEYCODE_MEDIA_PREVIOUS: return Key::MediaPrevious;
+        case AKEYCODE_MEDIA_STOP:     return Key::MediaStop;
+        case AKEYCODE_MEDIA_PLAY_PAUSE: return  Key::MediaPlayPaus;
+        default  return Key::Unknow;
     }
 }

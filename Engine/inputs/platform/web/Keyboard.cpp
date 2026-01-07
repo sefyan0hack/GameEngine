@@ -1,155 +1,206 @@
 #include "Keyboard.hpp"
 #include <core/Log.hpp>
 #include <emscripten/key_codes.h>
+#include <emscripten/html5.h>
+#include <engine_export.h>
+#include <cstring>
+#include <cctype>
+#include <string_view>
 
-
-auto Keyboard::to_native(Key key) -> uint32_t
+ENGINE_EXPORT auto from_native(const EmscriptenKeyboardEvent* ev) -> Key
 {
-    switch (key) {
-        // Alphanumeric keys
-        case Key::A: 	return DOM_VK_A;
-        case Key::B: 	return DOM_VK_B;
-        case Key::C:	return DOM_VK_C;
-        case Key::D:	return DOM_VK_D;
-        case Key::E:	return DOM_VK_E;
-        case Key::F:	return DOM_VK_F;
-        case Key::G:	return DOM_VK_G;
-        case Key::H:	return DOM_VK_H;
-        case Key::I:	return DOM_VK_I;
-        case Key::J:	return DOM_VK_J;
-        case Key::K:	return DOM_VK_K;
-        case Key::L:	return DOM_VK_L;
-        case Key::M:	return DOM_VK_M;
-        case Key::N:	return DOM_VK_N;
-        case Key::O:	return DOM_VK_O;
-        case Key::P:	return DOM_VK_P;
-        case Key::Q:	return DOM_VK_Q;
-        case Key::R:	return DOM_VK_R;
-        case Key::S:	return DOM_VK_S;
-        case Key::T:	return DOM_VK_T;
-        case Key::U:	return DOM_VK_U;
-        case Key::V:	return DOM_VK_V;
-        case Key::W:	return DOM_VK_W;
-        case Key::X:	return DOM_VK_X;
-        case Key::Y:	return DOM_VK_Y;
-        case Key::Z:	return DOM_VK_Z;
-        // Numbers
-        case Key::Num0:	return DOM_VK_0;
-        case Key::Num1:	return DOM_VK_1;
-        case Key::Num2:	return DOM_VK_2;
-        case Key::Num3:	return DOM_VK_3;
-        case Key::Num4:	return DOM_VK_4;
-        case Key::Num5:	return DOM_VK_5;
-        case Key::Num6:	return DOM_VK_6;
-        case Key::Num7:	return DOM_VK_7;
-        case Key::Num8:	return DOM_VK_8;
-        case Key::Num9:	return DOM_VK_9;
-        // FXX keys
-        case Key::F1:	return DOM_VK_F1;
-        case Key::F2:	return DOM_VK_F2;
-        case Key::F3:	return DOM_VK_F3;
-        case Key::F4:	return DOM_VK_F4;
-        case Key::F5:	return DOM_VK_F5;
-        case Key::F6:	return DOM_VK_F6;
-        case Key::F7:	return DOM_VK_F7;
-        case Key::F8:	return DOM_VK_F8;
-        case Key::F9:	return DOM_VK_F9;
-        case Key::F10:	return DOM_VK_F10;
-        case Key::F11:	return DOM_VK_F11;
-        case Key::F12:	return DOM_VK_F12;
-        case Key::F13:	return DOM_VK_F13;
-        case Key::F14:	return DOM_VK_F14;
-        case Key::F15:	return DOM_VK_F15;
-        case Key::F16:	return DOM_VK_F16;
-        case Key::F17:	return DOM_VK_F17;
-        case Key::F18:	return DOM_VK_F18;
-        case Key::F19:	return DOM_VK_F19;
-        case Key::F20:	return DOM_VK_F20;
-        case Key::F21:	return DOM_VK_F21;
-        case Key::F22:	return DOM_VK_F22;
-        case Key::F23:	return DOM_VK_F23;
-        case Key::F24:	return DOM_VK_F24;
-        // Special keys
-        case Key::Escape: 	    return DOM_VK_ESCAPE;
-        case Key::Enter: 	    return DOM_VK_RETURN;
-        case Key::Tab: 		    return DOM_VK_TAB;
-        case Key::Backspace:	return DOM_VK_BACK_SPACE;
-        case Key::Space: 	    return DOM_VK_SPACE;
-        case Key::CapsLock: 	return DOM_VK_CAPS_LOCK;
-        case Key::PrintScreen:	return DOM_VK_PRINTSCREEN;
-        case Key::ScrollLock: 	return DOM_VK_SCROLL_LOCK;
-        case Key::Pause: 	    return DOM_VK_PAUSE;
-        // Navigation keys
-        case Key::Insert: 	return DOM_VK_INSERT;
-        case Key::Home: 	return DOM_VK_HOME;
-        case Key::PageUp: 	return DOM_VK_PAGE_UP;
-        case Key::Delete: 	return DOM_VK_DELETE;
-        case Key::End: 		return DOM_VK_END;
-        case Key::PageDown: return DOM_VK_PAGE_DOWN;
+    if (!ev) return Key::Unknown;
+
+    const char* code_c = ev->code ? ev->code : "";
+    const char* key_c  = ev->key  ? ev->key  : "";
+    const int location = ev->location; // 0 = standard, 1 = left, 2 = right, 3 = numpad
+
+    auto sv_code = std::string_view(code_c);
+    auto sv_key  = std::string_view(key_c);
+
+    auto starts_with = [](std::string_view s, std::string_view p){
+        return s.size() >= p.size() && s.substr(0, p.size()) == p;
+    };
+
+    if (!sv_code.empty()) {
+        if (sv_code == "NumpadEnter") return Key::NumPadEnter;
+        if (starts_with(sv_code, "Numpad")) {
+            if (sv_code == "Numpad0") return Key::NumPad0;
+            if (sv_code == "Numpad1") return Key::NumPad1;
+            if (sv_code == "Numpad2") return Key::NumPad2;
+            if (sv_code == "Numpad3") return Key::NumPad3;
+            if (sv_code == "Numpad4") return Key::NumPad4;
+            if (sv_code == "Numpad5") return Key::NumPad5;
+            if (sv_code == "Numpad6") return Key::NumPad6;
+            if (sv_code == "Numpad7") return Key::NumPad7;
+            if (sv_code == "Numpad8") return Key::NumPad8;
+            if (sv_code == "Numpad9") return Key::NumPad9;
+            if (sv_code == "NumpadDecimal") return Key::NumPadDecimal;
+            if (sv_code == "NumpadDivide")  return Key::NumPadDivide;
+            if (sv_code == "NumpadMultiply")return Key::NumPadMultiply;
+            if (sv_code == "NumpadSubtract")return Key::NumPadSubtract;
+            if (sv_code == "NumpadAdd")     return Key::NumPadAdd;
+            if (sv_code == "NumpadEnter")     return Key::NumPadEqual;
+            if (sv_code == "NumpadEqual")     return Key::NumPadEnter;
+        }
+
+        // Enter
+        if (sv_code == "Enter") return Key::Enter;
+
         // Arrow keys
-        case Key::Left: 	return DOM_VK_LEFT;
-        case Key::Right: 	return DOM_VK_RIGHT;
-        case Key::Up: 		return DOM_VK_UP;
-        case Key::Down: 	return DOM_VK_DOWN;
+        if (sv_code == "ArrowLeft")  return Key::Left;
+        if (sv_code == "ArrowRight") return Key::Right;
+        if (sv_code == "ArrowUp")    return Key::Up;
+        if (sv_code == "ArrowDown")  return Key::Down;
+
+        // F1 .. F24
+        if (sv_code.size() >= 2 && sv_code[0] == 'F') {
+            int fnum = 0;
+            for (size_t i = 1; i < sv_code.size(); ++i) {
+                if (!isdigit((unsigned char)sv_code[i])) { fnum = 0; break; }
+                fnum = fnum * 10 + (sv_code[i] - '0');
+            }
+            if (fnum >= 1 && fnum <= 24) {
+                switch (fnum) {
+                    case 1: return Key::F1; case 2: return Key::F2; case 3: return Key::F3;
+                    case 4: return Key::F4; case 5: return Key::F5; case 6: return Key::F6;
+                    case 7: return Key::F7; case 8: return Key::F8; case 9: return Key::F9;
+                    case 10: return Key::F10; case 11: return Key::F11; case 12: return Key::F12;
+                    case 13: return Key::F13; case 14: return Key::F14; case 15: return Key::F15;
+                    case 16: return Key::F16; case 17: return Key::F17; case 18: return Key::F18;
+                    case 19: return Key::F19; case 20: return Key::F20; case 21: return Key::F21;
+                    case 22: return Key::F22; case 23: return Key::F23; case 24: return Key::F24;
+                }
+            }
+        }
+
         // Modifiers
-        case Key::LeftShift: 
-        case Key::RightShift: 
-            return DOM_VK_SHIFT;
-        case Key::LeftControl:
-        case Key::RightControl:
-            return DOM_VK_CONTROL;
-        case Key::LeftAlt: return DOM_VK_ALT;
-        case Key::RightAlt:return DOM_VK_ALTGR;
-        case Key::LeftSuper:
-        case Key::RightSuper:
-            return DOM_VK_META;
-        // Numpad keys
-        case Key::NumPad0: 	return DOM_VK_NUMPAD0;
-        case Key::NumPad1: 	return DOM_VK_NUMPAD1;
-        case Key::NumPad2: 	return DOM_VK_NUMPAD2;
-        case Key::NumPad3: 	return DOM_VK_NUMPAD3;
-        case Key::NumPad4: 	return DOM_VK_NUMPAD4;
-        case Key::NumPad5: 	return DOM_VK_NUMPAD5;
-        case Key::NumPad6: 	return DOM_VK_NUMPAD6;
-        case Key::NumPad7: 	return DOM_VK_NUMPAD7;
-        case Key::NumPad8: 	return DOM_VK_NUMPAD8;
-        case Key::NumPad9: 	return DOM_VK_NUMPAD9;
-        case Key::NumPadDecimal: 	return DOM_VK_DECIMAL;
-        case Key::NumPadDivide: 	return DOM_VK_DIVIDE;
-        case Key::NumPadMultiply: 	return DOM_VK_MULTIPLY;
-        case Key::NumPadSubtract: 	return DOM_VK_SUBTRACT;
-        case Key::NumPadAdd: 	return DOM_VK_ADD;
-        case Key::NumPadEnter: 	return DOM_VK_ENTER;
-        case Key::NumPadEqual: 	return DOM_VK_EQUALS;
-        // Punctuation keys
-        case Key::Comma: 		return DOM_VK_COMMA;
-        case Key::Period: 		return DOM_VK_PERIOD;
-        case Key::Semicolon: 	return DOM_VK_SEMICOLON;
-        case Key::Apostrophe: 	return DOM_VK_QUOTE;
-        case Key::BracketLeft: 	return DOM_VK_OPEN_BRACKET;
-        case Key::BracketRight: return DOM_VK_CLOSE_BRACKET;
-        case Key::Backslash: 	return DOM_VK_BACK_SLASH;
-        case Key::Slash: 		return DOM_VK_SLASH;
-        case Key::GraveAccent: 	return DOM_VK_BACK_QUOTE;
-        case Key::Minus: 		return DOM_VK_HYPHEN_MINUS;
-        case Key::Equal: 		return DOM_VK_EQUALS;
-       
-        // Web-specific
-        case Key::BrowserBack:         return DOM_VK_BROWSER_BACK;
-        case Key::BrowserForward:      return DOM_VK_BROWSER_FORWARD;
-        case Key::BrowserRefresh:      return DOM_VK_BROWSER_REFRESH;
-        case Key::BrowserStop:         return DOM_VK_BROWSER_STOP;
-        case Key::BrowserSearch:       return DOM_VK_BROWSER_SEARCH;
-        case Key::BrowserFavorites:    return DOM_VK_BROWSER_FAVORITES;
-        case Key::BrowserHome:         return DOM_VK_BROWSER_HOME;
-        case Key::VolumeMute:          return DOM_VK_VOLUME_MUTE;
-        case Key::VolumeDown:          return DOM_VK_VOLUME_DOWN;
-        case Key::VolumeUp:            return DOM_VK_VOLUME_UP;
-        case Key::MediaNext:           return DOM_VK_MEDIA_TRACK_NEXT;
-        case Key::MediaPrevious:       return DOM_VK_MEDIA_TRACK_PREVIOUS;
-        case Key::MediaStop:           return DOM_VK_MEDIA_STOP;
-        case Key::MediaPlayPause:      return DOM_VK_MEDIA_PLAY_PAUSE;
-        case Key::Unknown:
-        default: debug::unrechable();
+        if (sv_code == "ShiftLeft")  return Key::LeftShift;
+        if (sv_code == "ShiftRight") return Key::RightShift;
+        if (sv_code == "ControlLeft")  return Key::LeftControl;
+        if (sv_code == "ControlRight") return Key::RightControl;
+        if (sv_code == "AltLeft" || sv_code == "AltGraph")  return Key::LeftAlt;
+        if (sv_code == "AltRight") return Key::RightAlt;
+        if (sv_code == "MetaLeft")  return Key::LeftSuper;
+        if (sv_code == "MetaRight") return Key::RightSuper;
+
+        // Punctuation / OEM names
+        if (sv_code == "Comma")        return Key::Comma;
+        if (sv_code == "Period")       return Key::Period;
+        if (sv_code == "Minus")        return Key::Minus;
+        if (sv_code == "Equal")        return Key::Equal;
+        if (sv_code == "BracketLeft")  return Key::BracketLeft;
+        if (sv_code == "BracketRight") return Key::BracketRight;
+        if (sv_code == "Backslash")    return Key::Backslash;
+        if (sv_code == "Slash")        return Key::Slash;
+        if (sv_code == "Quote")        return Key::Apostrophe;
+        if (sv_code == "Semicolon")    return Key::Semicolon;
+        if (sv_code == "Backquote" || sv_code == "IntlBackslash") return Key::GraveAccent;
+
+        // Browser control keys (DOM Level 3)
+	    if (sv_code == "BrowserBack") return Key::BrowserBack;
+        if (sv_code == "BrowserForward")    return Key::BrowserForward;
+        if (sv_code == "BrowserRefresh")    return Key::BrowserRefresh;
+        if (sv_code == "BrowserStop")   return Key::BrowserStop;
+        if (sv_code == "BrowserSearch") return Key::BrowserSearch;
+        if (sv_code == "BrowserFavorites")  return Key::BrowserFavorites;
+        if (sv_code == "BrowserHome")   return Key::BrowserHome;
+
+        // Media control keys (DOM Level 3)
+        if (sv_code == "VolumeMute")    return Key::VolumeMute;
+        if (sv_code == "VolumeDown")    return Key::VolumeDown;
+        if (sv_code == "VolumeUp")  return Key::VolumeUp;
+        if (sv_code == "MediaTrackNext")    return Key::MediaTrackNext;
+        if (sv_code == "MediaTrackPrevious") return Key::MediaTrackPrevious;
+        if (sv_code == "MediaStop") return Key::MediaStop;
+        if (sv_code == "MediaPlayPause")    return Key::MediaPlayPause;
+        
     }
+
+    // A-Z, 0-9 key top-row characters
+    if (!sv_key.empty()) {
+        if (sv_key.size() == 1) {
+            unsigned char ch = static_cast<unsigned char>(sv_key[0]);
+            if (std::isalpha(ch)) {
+                char up = static_cast<char>(std::toupper(ch));
+                switch (up) {
+                    case 'A': return Key::A; case 'B': return Key::B; case 'C': return Key::C;
+                    case 'D': return Key::D; case 'E': return Key::E; case 'F': return Key::F;
+                    case 'G': return Key::G; case 'H': return Key::H; case 'I': return Key::I;
+                    case 'J': return Key::J; case 'K': return Key::K; case 'L': return Key::L;
+                    case 'M': return Key::M; case 'N': return Key::N; case 'O': return Key::O;
+                    case 'P': return Key::P; case 'Q': return Key::Q; case 'R': return Key::R;
+                    case 'S': return Key::S; case 'T': return Key::T; case 'U': return Key::U;
+                    case 'V': return Key::V; case 'W': return Key::W; case 'X': return Key::X;
+                    case 'Y': return Key::Y; case 'Z': return Key::Z;
+                }
+            }
+
+            if (std::isdigit(ch)) {
+                switch (ch) {
+                    case '0': return Key::Num0; case '1': return Key::Num1; case '2': return Key::Num2;
+                    case '3': return Key::Num3; case '4': return Key::Num4; case '5': return Key::Num5;
+                    case '6': return Key::Num6; case '7': return Key::Num7; case '8': return Key::Num8;
+                    case '9': return Key::Num9;
+                }
+            }
+
+            // common punctuation fallback from key
+            switch (ch) {
+                case ',': return Key::Comma;
+                case '.': return Key::Period;
+                case ';': return Key::Semicolon;
+                case '\'': return Key::Apostrophe;
+                case '[': return Key::BracketLeft;
+                case ']': return Key::BracketRight;
+                case '\\': return Key::Backslash;
+                case '/': return Key::Slash;
+                case '`': return Key::GraveAccent;
+                case '-': return Key::Minus;
+                case '=': return Key::Equal;
+            }
+        }
+
+        // nspecial keys
+        if (sv_key == "Enter") return Key::Enter;
+        if (sv_key == "Backspace") return Key::Backspace;
+        if (sv_key == "Tab") return Key::Tab;
+        if (sv_key == "Escape") return Key::Escape;
+        if (sv_key == " ") return Key::Space; // some browsers use " " for space
+        if (sv_key == "Spacebar") return Key::Space; // older browsers
+        if (sv_key == "Pause") return Key::Pause;
+        if (sv_key == "ScrollLock") return Key::ScrollLock;
+        if (sv_key == "PrintScreen") return Key::PrintScreen;
+    }
+
+    // Modifiers fallback via location if we still have generic name
+    if (!sv_key.empty()) {
+        if (sv_key == "Shift" || sv_key == "ShiftLeft" || sv_key == "ShiftRight") {
+            return (location == 2) ? Key::RightShift : Key::LeftShift;
+        }
+        if (sv_key == "Control" || sv_key == "Ctrl" || sv_key == "ControlLeft" || sv_key == "ControlRight") {
+            return (location == 2) ? Key::RightControl : Key::LeftControl;
+        }
+        if (sv_key == "Alt" || sv_key == "AltLeft" || sv_key == "AltRight") {
+            return (location == 2) ? Key::RightAlt : Key::LeftAlt;
+        }
+        if (sv_key == "Meta" || sv_key == "OS") {
+            return (location == 2) ? Key::RightSuper : Key::LeftSuper;
+        }
+    }
+
+    // As a last resort, map common deprecated keyCode values
+    if (ev->keyCode) {
+        switch (ev->keyCode) {
+            case 13: return (location == 3) ? Key::NumPadEnter : Key::Enter;
+            case 37: return Key::Left;
+            case 38: return Key::Up;
+            case 39: return Key::Right;
+            case 40: return Key::Down;
+            case 46: return Key::Delete;
+            case 36: return Key::Home;
+            case 35: return Key::End;
+        }
+    }
+    return Key::Unknown;
 }

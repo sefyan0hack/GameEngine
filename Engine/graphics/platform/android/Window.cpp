@@ -9,6 +9,8 @@
 #include <core/Event.hpp>
 #include <engine_export.h>
 
+extern auto from_native(int32_t key) -> Key;
+
 android_app* g_android_app = nullptr;
 
 auto input_callback(android_app* state, AInputEvent* event) -> int32_t
@@ -18,7 +20,7 @@ auto input_callback(android_app* state, AInputEvent* event) -> int32_t
     if (type == AINPUT_EVENT_TYPE_MOTION) {
         int32_t actionWithIndex = AMotionEvent_getAction(event);
         int32_t action = actionWithIndex & AMOTION_EVENT_ACTION_MASK;
-        
+
         float x = AMotionEvent_getX(event, 0);
         float y = AMotionEvent_getY(event, 0);
 
@@ -57,7 +59,7 @@ auto input_callback(android_app* state, AInputEvent* event) -> int32_t
         } else if (action == AKEY_EVENT_ACTION_UP) {
             EventQ::self().push(Keyboard::KeyUpEvent{k});
         }
-        
+
         // Return 1 consume the key (preventing system 'Back' etc.)
         // Return 0 the OS handle it (standard for Vol Up/Down)
         return (keyCode == AKEYCODE_BACK) ? 1 : 0;

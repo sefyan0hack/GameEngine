@@ -8,6 +8,8 @@
 #include <core/Event.hpp>
 #include <X11/Xlib.h>
 
+extern auto from_native(KeySym key) -> Key;
+
 CWindow::~CWindow()
 {
 	XDestroyWindow(m_Display, m_Handle);
@@ -67,30 +69,12 @@ auto CWindow::process_messages() -> void
 
 			case KeyPress:
 			case KeyRelease: {
-				const auto keycode = static_cast<KeyCode>(event.xkey.keycode);
-				KeySym keysym = XkbKeycodeToKeysym(m_Display, keycode, 0, 0); // US layout
-				
-				uint32_t vk = 0;
-				
-				if (keysym >= XK_A && keysym <= XK_Z) {
-					vk = static_cast<uint32_t>('A' + (keysym - XK_A));
-				}
-				else if (keysym >= XK_a && keysym <= XK_z) {
-					vk = static_cast<uint32_t>('A' + (keysym - XK_a));
-				}
-				else if (keysym >= XK_0 && keysym <= XK_9) {
-					vk = static_cast<uint32_t>('0' + (keysym - XK_0));
-				}
-				else {
-					vk = static_cast<uint32_t>(keysym);
-				}
-
-				Key key = Keyboard::from_native(vk);
+				KeySym keysym = XkbKeycodeToKeysym(m_Display, event.xkey.keycode, 0, 0); // US layout
 
 				if (event.type == KeyPress) {
-					EventQ::self().push(Keyboard::KeyDownEvent{key});
+					EventQ::self().push(Keyboard::KeyDownEvent{ Keyboard::from_native(keysym)});
 				} else {
-					EventQ::self().push(Keyboard::KeyUpEvent{key});
+					EventQ::self().push(Keyboard::KeyUpEvent{ Keyboard::from_native(keysym)});
 				}
 				break;
 			}

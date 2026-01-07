@@ -4,23 +4,6 @@
 #include <map>
 #include <engine_export.h>
 
-#if defined(WEB_PLT)
-// Browser control keys (DOM Level 3)
-constexpr uint32_t DOM_VK_BROWSER_BACK = 166;
-constexpr uint32_t DOM_VK_BROWSER_FORWARD = 167;
-constexpr uint32_t DOM_VK_BROWSER_REFRESH = 168;
-constexpr uint32_t DOM_VK_BROWSER_STOP = 169;
-constexpr uint32_t DOM_VK_BROWSER_SEARCH = 170;
-constexpr uint32_t DOM_VK_BROWSER_FAVORITES = 171;
-constexpr uint32_t DOM_VK_BROWSER_HOME = 172;
-
-// Media control keys (DOM Level 3)
-constexpr uint32_t DOM_VK_MEDIA_TRACK_NEXT = 176;
-constexpr uint32_t DOM_VK_MEDIA_TRACK_PREVIOUS = 177;
-constexpr uint32_t DOM_VK_MEDIA_STOP = 178;
-constexpr uint32_t DOM_VK_MEDIA_PLAY_PAUSE = 179;
-#endif
-
 enum class Key : uint32_t {
 
     // Alphanumeric keys (A-Z, 0-9)
@@ -96,9 +79,6 @@ public:
 	auto is_down(Key key) const noexcept          -> bool ;
 	auto is_up(Key key) const noexcept            -> bool ;
 
-    static auto to_native(Key key) -> uint32_t;
-    static auto from_native(uint32_t key) -> Key;
-
 private:
 	auto on_key_down(Key key) noexcept  		-> void ;
 	auto on_key_up(Key key) noexcept 		-> void ;
@@ -111,6 +91,4 @@ private:
 
 	std::bitset<KeyCount> m_CurrKeyState;
     std::bitset<KeyCount> m_PrevKeyState;
-
-    static const std::map<uint32_t, Key> KeyMaps;
 };

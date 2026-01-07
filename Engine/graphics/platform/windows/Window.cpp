@@ -9,6 +9,9 @@
 #undef near
 #undef far
 
+
+extern auto from_native(WPARAM key, LPARAM Lpr) -> Key;
+
 CWindow::~CWindow()
 {
 	ReleaseDC(m_Handle, m_Surface);
@@ -33,64 +36,14 @@ static auto CALLBACK win_proc_thunk(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
         }
         /*********** KEYBOARD MESSAGES ***********/
 	    case WM_KEYDOWN:
-	    case WM_SYSKEYDOWN: {
-
-			const bool isExtended   = (Lpr & (1 << 24)) != 0;
-
-			Key key = Key::Unknown;
-				
-			switch (Wpr) {
-				case VK_SHIFT: {
-					const UINT scancode = (Lpr & 0x00FF0000) >> 16;
-					key = (MapVirtualKeyA(scancode, MAPVK_VSC_TO_VK_EX) == VK_RSHIFT) 
-						   ? Key::RightShift : Key::LeftShift;
-					break;
-				}
-				case VK_CONTROL:
-					key = isExtended ? Key::RightControl : Key::LeftControl;
-					break;
-				case VK_MENU:
-					key = isExtended ? Key::RightAlt : Key::LeftAlt;
-					break;
-				default:
-					key = Keyboard::from_native(static_cast<uint32_t>(Wpr));
-			}
-				
-			if (key != Key::Unknown) {
-				EventQ::self().push(Keyboard::KeyDownEvent{key});
-			}
-		}
-		break;
+	    case WM_SYSKEYDOWN:
+			EventQ::self().push(Keyboard::KeyDownEvent{from_native(Wpr, Lpr)});
+			break;
 		
 		case WM_KEYUP:
-		case WM_SYSKEYUP: {
-			const bool isExtended = (Lpr & (1 << 24)) != 0;
-			Key key = Key::Unknown;
-
-			switch (Wpr) {
-				case VK_SHIFT: {
-					const UINT scancode = (Lpr & 0x00FF0000) >> 16;
-					key = (MapVirtualKeyA(scancode, MAPVK_VSC_TO_VK_EX) == VK_RSHIFT) 
-						   ? Key::RightShift : Key::LeftShift;
-					break;
-				}
-				case VK_CONTROL:
-					key = isExtended ? Key::RightControl : Key::LeftControl;
-					break;
-				case VK_MENU:
-					key = isExtended ? Key::RightAlt : Key::LeftAlt;
-					break;
-				default:
-					key = Keyboard::from_native(static_cast<uint32_t>(Wpr));
-					break;
-			}
-			
-			if (key != Key::Unknown) {
-				EventQ::self().push(Keyboard::KeyUpEvent{key});
-            	break;
-			}
+		case WM_SYSKEYUP:
+			EventQ::self().push(Keyboard::KeyUpEvent{from_native(Wpr, Lpr)});
 			break;
-		}
 
 	    ///////////// END KEYBOARD MESSAGES /////////////
 

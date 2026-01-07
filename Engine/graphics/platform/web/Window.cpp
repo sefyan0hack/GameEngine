@@ -7,6 +7,8 @@
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
 
+extern auto from_native(const EmscriptenKeyboardEvent* ev) -> Key;
+
 CWindow::~CWindow()
 {
 }
@@ -36,123 +38,15 @@ static auto resize_callback(int32_t eventType, const EmscriptenUiEvent* e, void*
 
 static auto keyboard_callback(int32_t eventType, const EmscriptenKeyboardEvent* e, void*) -> EM_BOOL
 {
-    constexpr auto INVALID = std::numeric_limits<uint32_t>::max();
-
-    uint32_t vk = INVALID;
-
-    // Alphanumeric keys
-	if (strncmp(e->code, "Key", 3) == 0 && e->code[3] >= 'A' && e->code[3] <= 'Z') {
-        vk = DOM_VK_A + (e->code[3] - 'A');
-    }
-	else if (strncmp(e->code, "Digit", 5) == 0 && e->code[5] >= '0' && e->code[5] <= '9') {
-        vk = DOM_VK_0 + (e->code[5] - '0');
-    }
-
-	// Function keys (F1-F24)
-    else if (strlen(e->code) > 1 && e->code[0] == 'F') {
-        int fnum = atoi(e->code + 1);
-        if (fnum >= 1 && fnum <= 24)
-            vk = DOM_VK_F1 + (fnum - 1);
-    }
-
-    // Special keys
-    else if (strcmp(e->code, "Backspace") == 0) vk = DOM_VK_BACK_SPACE;
-    else if (strcmp(e->code, "Tab") == 0) vk = DOM_VK_TAB;
-    else if (strcmp(e->code, "Enter") == 0) vk = DOM_VK_ENTER;
-    else if (strcmp(e->code, "ShiftLeft") == 0 || strcmp(e->code, "ShiftRight") == 0) vk = DOM_VK_SHIFT;
-    else if (strcmp(e->code, "ControlLeft") == 0 || strcmp(e->code, "ControlRight") == 0) vk = DOM_VK_CONTROL;
-    else if (strcmp(e->code, "AltLeft") == 0) vk = DOM_VK_ALT;
-	else if (strcmp(e->code, "AltRight") == 0) vk = DOM_VK_ALTGR;
-    else if (strcmp(e->code, "Escape") == 0) vk = DOM_VK_ESCAPE;
-    else if (strcmp(e->code, "Space") == 0) vk = DOM_VK_SPACE;
-
-	else if (strcmp(e->code, "CapsLock") == 0) vk = DOM_VK_CAPS_LOCK;
-	else if (strcmp(e->code, "PrintScreen") == 0) vk = DOM_VK_PRINTSCREEN;
-	else if (strcmp(e->code, "ScrollLock") == 0) vk = DOM_VK_SCROLL_LOCK;
-	else if (strcmp(e->code, "Pause") == 0) vk = DOM_VK_PAUSE;
-
-	// Navigation keys
-	else if (strcmp(e->code, "Insert") == 0) vk = DOM_VK_INSERT;
-	else if (strcmp(e->code, "Delete") == 0) vk = DOM_VK_DELETE;
-	else if (strcmp(e->code, "Home") == 0) vk = DOM_VK_HOME;
-	else if (strcmp(e->code, "End") == 0) vk = DOM_VK_END;
-	else if (strcmp(e->code, "PageUp") == 0) vk = DOM_VK_PAGE_UP;
-	else if (strcmp(e->code, "PageDown") == 0) vk = DOM_VK_PAGE_DOWN;
-
-	// Arrow keys
-	else if (strcmp(e->code, "ArrowLeft") == 0) vk = DOM_VK_LEFT;
-	else if (strcmp(e->code, "ArrowRight") == 0) vk = DOM_VK_RIGHT;
-	else if (strcmp(e->code, "ArrowUp") == 0) vk = DOM_VK_UP;
-	else if (strcmp(e->code, "ArrowDown") == 0) vk = DOM_VK_DOWN;
-
-	// Numpad keys
-	else if (strcmp(e->code, "Numpad0") == 0) vk = DOM_VK_NUMPAD0;
-	else if (strcmp(e->code, "Numpad1") == 0) vk = DOM_VK_NUMPAD1;
-	else if (strcmp(e->code, "Numpad2") == 0) vk = DOM_VK_NUMPAD2;
-	else if (strcmp(e->code, "Numpad3") == 0) vk = DOM_VK_NUMPAD3;
-	else if (strcmp(e->code, "Numpad4") == 0) vk = DOM_VK_NUMPAD4;
-	else if (strcmp(e->code, "Numpad5") == 0) vk = DOM_VK_NUMPAD5;
-	else if (strcmp(e->code, "Numpad6") == 0) vk = DOM_VK_NUMPAD6;
-	else if (strcmp(e->code, "Numpad7") == 0) vk = DOM_VK_NUMPAD7;
-	else if (strcmp(e->code, "Numpad8") == 0) vk = DOM_VK_NUMPAD8;
-	else if (strcmp(e->code, "Numpad9") == 0) vk = DOM_VK_NUMPAD9;
-	else if (strcmp(e->code, "NumpadDecimal") == 0) vk = DOM_VK_DECIMAL;
-	else if (strcmp(e->code, "NumpadDivide") == 0) vk = DOM_VK_DIVIDE;
-	else if (strcmp(e->code, "NumpadMultiply") == 0) vk = DOM_VK_MULTIPLY;
-	else if (strcmp(e->code, "NumpadSubtract") == 0) vk = DOM_VK_SUBTRACT;
-	else if (strcmp(e->code, "NumpadAdd") == 0) vk = DOM_VK_ADD;
-	else if (strcmp(e->code, "NumpadEnter") == 0) vk = DOM_VK_ENTER;
-	else if (strcmp(e->code, "NumpadEqual") == 0) vk = DOM_VK_EQUALS;
-
-	// Punctuation keys
-	else if (strcmp(e->code, "Comma") == 0) vk = DOM_VK_COMMA;
-	else if (strcmp(e->code, "Period") == 0) vk = DOM_VK_PERIOD;
-	else if (strcmp(e->code, "Semicolon") == 0) vk = DOM_VK_SEMICOLON;
-	else if (strcmp(e->code, "Quote") == 0) vk = DOM_VK_QUOTE;
-	else if (strcmp(e->code, "BracketLeft") == 0) vk = DOM_VK_OPEN_BRACKET;
-	else if (strcmp(e->code, "BracketRight") == 0) vk = DOM_VK_CLOSE_BRACKET;
-	else if (strcmp(e->code, "Backslash") == 0) vk = DOM_VK_BACK_SLASH;
-	else if (strcmp(e->code, "Slash") == 0) vk = DOM_VK_SLASH;
-	else if (strcmp(e->code, "Backquote") == 0) vk = DOM_VK_BACK_QUOTE;
-	else if (strcmp(e->code, "Minus") == 0) vk = DOM_VK_HYPHEN_MINUS;
-	else if (strcmp(e->code, "Equal") == 0) vk = DOM_VK_EQUALS;
-
-	// Modifier keys
-	else if (strcmp(e->code, "MetaLeft") == 0 || strcmp(e->code, "MetaRight") == 0) 
-		vk = DOM_VK_META;
-
-	// Browser control keys (DOM Level 3)
-	else if (strcmp(e->code, "BrowserBack") == 0) vk = DOM_VK_BROWSER_BACK;
-	else if (strcmp(e->code, "BrowserForward") == 0) vk = DOM_VK_BROWSER_FORWARD;
-	else if (strcmp(e->code, "BrowserRefresh") == 0) vk = DOM_VK_BROWSER_REFRESH;
-	else if (strcmp(e->code, "BrowserStop") == 0) vk = DOM_VK_BROWSER_STOP;
-	else if (strcmp(e->code, "BrowserSearch") == 0) vk = DOM_VK_BROWSER_SEARCH;
-	else if (strcmp(e->code, "BrowserFavorites") == 0) vk = DOM_VK_BROWSER_FAVORITES;
-	else if (strcmp(e->code, "BrowserHome") == 0) vk = DOM_VK_BROWSER_HOME;
-
-	// Media control keys (DOM Level 3)
-	else if (strcmp(e->code, "VolumeMute") == 0) vk = DOM_VK_VOLUME_MUTE;
-	else if (strcmp(e->code, "VolumeDown") == 0) vk = DOM_VK_VOLUME_DOWN;
-	else if (strcmp(e->code, "VolumeUp") == 0) vk =  DOM_VK_VOLUME_UP;
-	else if (strcmp(e->code, "MediaTrackNext") == 0) vk = DOM_VK_MEDIA_TRACK_NEXT;
-	else if (strcmp(e->code, "MediaTrackPrevious") == 0) vk = DOM_VK_MEDIA_TRACK_PREVIOUS;
-	else if (strcmp(e->code, "MediaStop") == 0) vk = DOM_VK_MEDIA_STOP;
-	else if (strcmp(e->code, "MediaPlayPause") == 0) vk = DOM_VK_MEDIA_PLAY_PAUSE;
-
-	if (vk != INVALID) {
-        Key key = Keyboard::from_native(vk);
-
-		switch (eventType)
-		{
-			case EMSCRIPTEN_EVENT_KEYDOWN:
-				EventQ::self().push(Keyboard::KeyDownEvent{key});
-				break;
-			case EMSCRIPTEN_EVENT_KEYUP:
-				EventQ::self().push(Keyboard::KeyUpEvent{key});
-				break;
-		}
-    }
-
+	switch (eventType)
+	{
+		case EMSCRIPTEN_EVENT_KEYDOWN:
+			EventQ::self().push(Keyboard::KeyDownEvent{Keyboard::from_native(e)});
+			break;
+		case EMSCRIPTEN_EVENT_KEYUP:
+			EventQ::self().push(Keyboard::KeyUpEvent{Keyboard::from_native(e)});
+			break;
+	}
 	return EM_TRUE;
 }
 
