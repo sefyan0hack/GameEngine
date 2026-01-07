@@ -2,11 +2,8 @@
 #include <emscripten/html5.h>
 #include <emscripten/html5_webgl.h>
 #include <emscripten/key_codes.h>
-#include <GL/gl.h> // im including gl.h for some defines :) so it may caus prbblloooom
+#include <GLES3/gl3.h>
 #define GL_GLES_PROTOTYPES 1
-#include <gl3.h>
-#include <gl2ext.h>
-
 
 using H_WIN     = const char*;
 using H_SRF     = const char*;
