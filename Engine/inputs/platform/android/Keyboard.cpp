@@ -138,7 +138,7 @@ ENGINE_EXPORT auto from_native(int32_t key) -> Key
         case AKEYCODE_MEDIA_NEXT:     return Key::MediaNext;
         case AKEYCODE_MEDIA_PREVIOUS: return Key::MediaPrevious;
         case AKEYCODE_MEDIA_STOP:     return Key::MediaStop;
-        case AKEYCODE_MEDIA_PLAY_PAUSE: return  Key::MediaPlayPaus;
-        default  return Key::Unknow;
+        case AKEYCODE_MEDIA_PLAY_PAUSE: return  Key::MediaPlayPause;
+        default:  return Key::Unknown;
     }
 }
