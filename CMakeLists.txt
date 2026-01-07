@@ -49,6 +49,7 @@ include(Emscripten)
 include(RTTI)
 include(Docs)
 include(Harden)
+include(StaticLink)
 include(InstaledPackages)
 
 ####################################################################################################

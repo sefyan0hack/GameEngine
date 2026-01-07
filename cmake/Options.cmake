@@ -10,7 +10,7 @@ option(TSAN                 "Thread Sanitizer"                        OFF)
 option(LINK_TIME_OPT        "Link Time opt"                           ON)
 option(GAME_HOT_RELOADABLE  "Build Game as Shared and hot reload it"  OFF)
 option(RTTI                 "RunTime Type Info"                       ON)
-
+cmake_dependent_option(STATIC_LINK "Static link C++" ON "MINGW" OFF)
 cmake_dependent_option(ROBUST_GL_CHECK "Robust GL checks in Debug builds `slow` " ON [[ CMAKE_BUILD_TYPE STREQUAL "Debug" ]] OFF)
 cmake_dependent_option(NO_CONSOLE "No Console with Window" ON [[ CMAKE_BUILD_TYPE STREQUAL "Release" ]] OFF)
 
@@ -30,5 +30,6 @@ add_feature_info(GAME_HOT_RELOADABLE    GAME_HOT_RELOADABLE  "[Game hot reload s
 add_feature_info(ROBUST_GL_CHECK        ROBUST_GL_CHECK      "[Robust GL checks in Debug]")
 add_feature_info(NO_CONSOLE             NO_CONSOLE           "[No Console with Window]")
 add_feature_info(RTTI                   RTTI                 "[Run Time type information]")
+add_feature_info(STATIC_LINK            STATIC_LINK          "[Static link C++]")
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
