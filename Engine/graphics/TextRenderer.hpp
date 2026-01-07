@@ -28,12 +28,11 @@ public:
     auto render_single_string(const std::string& text, float x, float y, float scale) const -> void;
 
     constexpr static const char* FONT_NAME  = "res/JetBrainsMonoNL-BoldItalic.ttf";
-    constexpr static uint32_t FONT_SIZE  = 16;
+    constexpr static uint32_t FONT_SIZE = 16;
     constexpr static glm::vec3 FONT_COLOR = { 0.2126f, 0.7152f, 0.0722f };
 
 private:
     const class OpenGL& m_GApi;
-    uint32_t m_X, m_Y, m_Width, m_Height;
     std::shared_ptr<class Shader> m_Vert, m_Frag;
     std::shared_ptr<class ShaderProgram> m_Program;
     unsigned int VAO, VBO;

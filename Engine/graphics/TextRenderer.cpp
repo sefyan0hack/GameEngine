@@ -27,9 +27,6 @@ extern cmrc::embedded_filesystem embed_filesystem;
 
 TextRenderer::TextRenderer(const OpenGL& ctx)
     : m_GApi(ctx)
-    , m_X(0), m_Y(0)
-    , m_Width(static_cast<uint32_t>(ctx.window().dims().first))
-    , m_Height(static_cast<uint32_t>(ctx.window().dims().second))
     , m_Vert(std::make_shared<Shader>(embed_filesystem.open("res/Shaders/text.vert"), GL_VERTEX_SHADER))
     , m_Frag(std::make_shared<Shader>(embed_filesystem.open("res/Shaders/text.frag"), GL_FRAGMENT_SHADER))
     , m_Program(std::make_shared<ShaderProgram>(m_Vert, m_Frag))
@@ -83,8 +80,6 @@ TextRenderer::TextRenderer(const OpenGL& ctx)
             face->glyph->bitmap.buffer
         );
 
-        // gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        // gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -107,7 +102,9 @@ TextRenderer::TextRenderer(const OpenGL& ctx)
 
 auto TextRenderer::render() const -> void
 {
-    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(m_Width), 0.0f, static_cast<float>(m_Height));
+    auto [width, height] = m_GApi.window().dims();
+
+    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
 
     m_Program->use();
 
@@ -115,10 +112,17 @@ auto TextRenderer::render() const -> void
     m_Program->set_uniform("text", 0);
     m_Program->set_uniform("Projection", projection);
 
+    gl::DepthFunc(GL_ALWAYS);   // always pass depth test
+    gl::DepthMask(GL_FALSE);    // don't write depth
+
     for (const auto& [pos, content] : m_Text) {
-        float y = m_Height - pos.y - m_Ascent;
+        float y = height - pos.y - m_Ascent;
         render_single_string(content, pos.x, y, 1.0f);
     }
+
+    // restore to default
+    gl::DepthFunc(GL_LEQUAL);
+    gl::DepthMask(GL_TRUE);
 }
 
 auto TextRenderer::text(std::string text, glm::vec2 pos) -> void
