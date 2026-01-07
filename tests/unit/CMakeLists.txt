@@ -22,6 +22,24 @@ endif()
 
 target_link_libraries(unit_tests PRIVATE Engine glm::glm GTest::gtest GTest::gtest_main )
 
-if(NOT EMSCRIPTEN)
-gtest_discover_tests(unit_tests DISCOVERY_MODE PRE_TEST)
+
+
+if(EMSCRIPTEN)
+    find_program(NODEJS_EXECUTABLE node HINTS ENV PATH)
+    if(NOT NODEJS_EXECUTABLE)
+      set(NODEJS_EXECUTABLE ${CMAKE_CROSSCOMPILING_EMULATOR})
+    endif()
+
+    target_link_options(unit_tests PRIVATE
+        "-sENVIRONMENT=node"
+        "-sEXIT_RUNTIME=1"
+    )
+
+    gtest_discover_tests(unit_tests
+        DISCOVERY_MODE PRE_TEST
+        DISCOVERY_COMMAND ${NODEJS_EXECUTABLE} $<TARGET_FILE:unit_tests>
+        WORKING_DIRECTORY $<TARGET_FILE_DIR:unit_tests>
+    )
+else()
+    gtest_discover_tests(unit_tests DISCOVERY_MODE PRE_TEST)
 endif()
