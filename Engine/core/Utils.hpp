@@ -158,39 +158,6 @@ constexpr std::array<char, sizeof(Str.value)> ToUpper<Str>::value;
  */
 #define TO_UPPER(str) std::string_view(ToUpper<FixedString{str}>::value.data())
 
-
-/**
- * @brief Asynchronously load a file into a vector<char>.
- *
- * @param filename Path to the file to read.
- * @return std::future<std::vector<char>> A future that will contain the file bytes.
- *
- * @throws Exception if the file cannot be opened or is larger than vector capacity.
- *
- * @details
- * The file is opened in binary mode and read into a contiguous vector<char>.
- * The operation runs on a separate thread via std::async(launch::async).
- */
-inline std::future<std::vector<char>> load_file_async(const std::string& filename) {
-    using namespace std;
-    return async(launch::async, [filename]() -> vector<char> {
-        ifstream file(filename, ios::binary | ios::ate);
-        if (!file)
-            throw Exception("Cant open file {}", filename);
-
-        streamsize size = static_cast<std::streamsize>(file.tellg());
-        file.seekg(0, ios::beg);
- 
-        if (static_cast<std::size_t>(size) > vector<char>().max_size()){
-            throw Exception("file too big {}", size);
-        }
-
-        vector<char> buffer(static_cast<std::size_t>(size));
-        file.read(buffer.data(), size);
-        return buffer;
-    });
-}
-
 /**
  * @brief Split a C-string by a delimiter into a vector of std::string.
  *
