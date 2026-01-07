@@ -20,5 +20,5 @@ endif()
 target_link_libraries(unit_tests PRIVATE Engine glm::glm GTest::gtest GTest::gtest_main )
 
 if(NOT EMSCRIPTEN)
-gtest_discover_tests(unit_tests)
+gtest_discover_tests(unit_tests DISCOVERY_MODE PRE_TEST)
 endif()
