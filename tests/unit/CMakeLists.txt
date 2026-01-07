@@ -30,6 +30,8 @@ if(EMSCRIPTEN)
       set(NODEJS_EXECUTABLE ${CMAKE_CROSSCOMPILING_EMULATOR})
     endif()
 
+    set(CMAKE_EXECUTABLE_SUFFIX ".js")
+
     target_link_options(unit_tests PRIVATE
         "-sENVIRONMENT=node"
         "-sEXIT_RUNTIME=1"
