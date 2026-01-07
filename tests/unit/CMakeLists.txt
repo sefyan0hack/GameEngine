@@ -35,9 +35,12 @@ if(EMSCRIPTEN)
         "-sEXIT_RUNTIME=1"
     )
 
+    set_target_properties(unit_tests PROPERTIES
+        CROSSCOMPILING_EMULATOR "${NODEJS_EXECUTABLE}"
+    )
+
     gtest_discover_tests(unit_tests
         DISCOVERY_MODE PRE_TEST
-        DISCOVERY_COMMAND ${NODEJS_EXECUTABLE} $<TARGET_FILE:unit_tests>
         WORKING_DIRECTORY $<TARGET_FILE_DIR:unit_tests>
     )
 else()
