@@ -52,7 +52,7 @@ auto input_callback(android_app* state, AInputEvent* event) -> int32_t
         // Skip repeat events  EventQ doesn't need them
         if (AKeyEvent_getRepeatCount(event) > 0) return 1;
 
-        Key k = Keyboard::from_native(keyCode);
+        Key k = from_native(keyCode);
         
         if (action == AKEY_EVENT_ACTION_DOWN) {
             EventQ::self().push(Keyboard::KeyDownEvent{k});

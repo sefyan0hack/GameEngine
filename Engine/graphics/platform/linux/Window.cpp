@@ -72,9 +72,9 @@ auto CWindow::process_messages() -> void
 				KeySym keysym = XkbKeycodeToKeysym(m_Display, event.xkey.keycode, 0, 0); // US layout
 
 				if (event.type == KeyPress) {
-					EventQ::self().push(Keyboard::KeyDownEvent{ Keyboard::from_native(keysym)});
+					EventQ::self().push(Keyboard::KeyDownEvent{ from_native(keysym)});
 				} else {
-					EventQ::self().push(Keyboard::KeyUpEvent{ Keyboard::from_native(keysym)});
+					EventQ::self().push(Keyboard::KeyUpEvent{ from_native(keysym)});
 				}
 				break;
 			}

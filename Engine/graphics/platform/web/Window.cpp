@@ -41,10 +41,10 @@ static auto keyboard_callback(int32_t eventType, const EmscriptenKeyboardEvent* 
 	switch (eventType)
 	{
 		case EMSCRIPTEN_EVENT_KEYDOWN:
-			EventQ::self().push(Keyboard::KeyDownEvent{Keyboard::from_native(e)});
+			EventQ::self().push(Keyboard::KeyDownEvent{from_native(e)});
 			break;
 		case EMSCRIPTEN_EVENT_KEYUP:
-			EventQ::self().push(Keyboard::KeyUpEvent{Keyboard::from_native(e)});
+			EventQ::self().push(Keyboard::KeyUpEvent{from_native(e)});
 			break;
 	}
 	return EM_TRUE;
