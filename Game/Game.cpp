@@ -16,6 +16,12 @@ class GAME_EXPORT Game
 public:
     Game()
     {
+        // slow as fk right now 
+        // debug::logger = [](std::string m){
+        //     static auto l = 0;
+        //     app->TextRenderer.text(m, { 0, l += TextRenderer::FONT_SIZE });
+        // };
+
         Material::set_skybox(std::make_shared<TextureCubeMap>(TextureCubeMap::base_to_6facesfiles("res/forest.jpg")));
 
         auto kimberley_jpg     = std::make_shared<Texture2D>(embed_filesystem.open("res/kimberley.jpg"));
@@ -43,21 +49,25 @@ public:
         app->MainScene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattSand, manMesh);
         app->MainScene << GameObject(Transform({2, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattkimberley, manMesh);
 
+        
         using namespace os::host;
-        utils::async_repeat_every(100,
-            [](){ app->Window.set_title(
-                std::format("[ id: {} | os: {} | arch: {} | fps: {:.2f} | usage: {} Mb | peak: {} Mb | thread_count: {} ]", 
-                    proc_id(), name(), arch(), app->fps(), memory_usage(), memory_peak(), thread_count()
-                )); }
+        utils::async_repeat_every(1000,
+            [](){
+                app->TextRenderer.text(std::format("fps: {:.2f}", app->fps()), { 0, 0 });
+            }
         );
 
+        // app->TextRenderer.text(std::format("id: {}\nos: {}\narch: {}\nusage: {} Mb\npeak: {} Mb\nthread_count: {}", 
+        //     proc_id(), name(), arch(), memory_usage(), memory_peak(), thread_count()), { 0, TextRenderer::FONT_SIZE });
+        // }
+        
         debug::log("{}", VecWrapper{gl::OPENGL_FUNCTIONS_NAME});
     }
 
     auto update(float delta) -> void
     {
         camera_mouvment(delta);
-    }
+    } 
 
     auto on_deltamouse(float dx, float dy) -> void
     {

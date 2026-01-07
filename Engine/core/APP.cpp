@@ -14,6 +14,7 @@
 #include <graphics/Scene.hpp>
 #include <graphics/ShaderProgram.hpp>
 #include <graphics/OpenGLRenderer.hpp>
+#include <graphics/TextRenderer.hpp>
 
 #undef X
 #define X(name, r, args) extern "C" DECLARE_FUNCTION(name, r, args);
@@ -44,6 +45,7 @@ APP::APP()
     , m_Fps(60.0f)
     , m_GApi(Window)
     , Renderer(new OpenGLRenderer(m_GApi))
+    , TextRenderer(m_GApi)
     , MainScene()
     , lib("Game", GAME_LIB_NOW)
     , Game()
@@ -101,6 +103,7 @@ auto APP::frame(float deltaTime) -> void
     Renderer->clear_screen(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     game_update(Game, deltaTime);
     Renderer->render(MainScene);
+    TextRenderer.render();
     Window.swap_buffers();
     Keyboard.save_prev_state();
     Mouse.save_prev_state();

@@ -15,3 +15,4 @@
 #include "GameObject.hpp"
 #include "Camera.hpp"
 #include "OpenGLRenderer.hpp"
+#include "TextRenderer.hpp"

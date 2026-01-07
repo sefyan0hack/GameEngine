@@ -24,6 +24,7 @@ target_sources( graphics PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/GameObject.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/OpenGLRenderer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/gl.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/TextRenderer.cpp
 )
 
 target_sources( graphics PUBLIC
@@ -31,6 +32,7 @@ target_sources( graphics PUBLIC
       TYPE HEADERS
       FILES
         gl.hpp
+        TextRenderer.hpp
         Window.hpp
         Renderer.hpp
         Shader.hpp

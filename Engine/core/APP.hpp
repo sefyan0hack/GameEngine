@@ -3,6 +3,7 @@
 #include <graphics/Window.hpp>
 #include <graphics/OpenGL.hpp>
 #include <graphics/Renderer.hpp>
+#include <graphics/TextRenderer.hpp>
 #include <inputs/Keyboard.hpp>
 #include <inputs/Mouse.hpp>
 #include "DynLib.hpp"
@@ -56,6 +57,7 @@ private:
 
     OpenGL m_GApi;
     IRenderer* Renderer;
+    TextRenderer TextRenderer;
     Scene MainScene;
 
     DynLib lib;
