@@ -19,5 +19,57 @@
 <body>
   <canvas  id="canvas" oncontextmenu="event.preventDefault()" tabindex="0" ></canvas>
   <script async="" type="text/javascript" src="Launcher.js"></script>
+  <script>
+  const canvas = document.getElementById("canvas");
+  function isMobileDevice() {
+    return (
+      window.matchMedia("(pointer: coarse)").matches &&
+      window.matchMedia("(max-width: 1024px)").matches
+    );
+  }
+
+  async function lockOrientation(orient="landscape") {
+    if(!isMobileDevice()) return false;
+    try {
+      if (!document.fullscreenElement) {
+        await canvas.requestFullscreen();
+      }
+      if (screen.orientation && screen.orientation.lock) {
+        await screen.orientation.lock(orient);
+        return true;
+      }
+      return false;
+    } catch(e) {
+      console.warn("Orientation lock failed:", e);
+      return false;
+    }
+  }
+
+  function showRotateOverlay() {
+    // simple example; replace with your UI
+    if(!isMobileDevice()) return;
+    let o = document.getElementById("rotateOverlay");
+    if (!o) {
+      o = document.createElement("div");
+      o.id = "rotateOverlay";
+      Object.assign(o.style, {
+        position: "fixed", inset: 0, display: "flex",
+        "align-items": "center", "justify-content": "center",
+        "background-color": "rgba(0,0,0,0.6)", color: "white",
+        "font-size": "20px", "z-index": 9999
+      });
+      o.textContent = "Please rotate your device to landscape for the best experience";
+      document.body.appendChild(o);
+    }
+    o.style.display = "flex";
+  }
+
+  canvas.addEventListener("pointerdown", async function onFirstPointer() {
+    if(!isMobileDevice()) return;
+    canvas.removeEventListener("pointerdown", onFirstPointer);
+    const ok = await lockOrientation("landscape");
+    if (!ok) showRotateOverlay();
+  });
+</script>
 </body>
 </html>
