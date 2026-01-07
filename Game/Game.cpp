@@ -54,6 +54,7 @@ public:
         utils::async_repeat_every(1000,
             [](){
                 app->TextRenderer.text(std::format("FPS: {:.2f}", app->fps()), { 0, 0 });
+                app->TextRenderer.text(std::format("Memory: {}/{}", memory_usage(), memory_peak()), { 0, TextRenderer::FONT_SIZE });
             }
         );
 

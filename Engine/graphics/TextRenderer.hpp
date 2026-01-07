@@ -27,8 +27,9 @@ public:
     auto text(std::string text, glm::vec2 pos) -> void;
     auto render_single_string(const std::string& text, float x, float y, float scale) const -> void;
 
-    constexpr static uint32_t FONT_SIZE  = 25;
-    constexpr static glm::vec3 FONT_COLOR = { 1, 0, 0 }; // (red)
+    constexpr static const char* FONT_NAME  = "res/JetBrainsMonoNL-BoldItalic.ttf";
+    constexpr static uint32_t FONT_SIZE  = 16;
+    constexpr static glm::vec3 FONT_COLOR = { 0.2126f, 0.7152f, 0.0722f };
 
 private:
     const class OpenGL& m_GApi;

@@ -44,7 +44,7 @@ TextRenderer::TextRenderer(const OpenGL& ctx)
         throw Exception("ERROR::FREETYPE: Could not init FreeType Library");
     }
 
-    auto font_data = embed_filesystem.open("res/BASKVILL.TTF");
+    auto font_data = embed_filesystem.open(FONT_NAME);
 
     if (FT_New_Memory_Face(ft, reinterpret_cast<FT_Byte const*>(font_data.begin()), static_cast<FT_Long>(font_data.size()), 0, &face)) {
         throw Exception("ERROR::FREETYPE: Failed to load font");
@@ -83,8 +83,8 @@ TextRenderer::TextRenderer(const OpenGL& ctx)
             face->glyph->bitmap.buffer
         );
 
-        gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        // gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        // gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
