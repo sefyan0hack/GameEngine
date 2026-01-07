@@ -22,17 +22,14 @@ static auto is_mobile() -> bool
 
 static auto resize_callback(int32_t eventType, const EmscriptenUiEvent* e, void*) -> EM_BOOL
 {
-
 	double css_w, css_h;
-    emscripten_get_element_css_size("#canvas", &css_w, &css_h); // for now
-    
-    double dpr = emscripten_get_device_pixel_ratio();
-    
-    int32_t pixel_w = static_cast<int32_t>(css_w * dpr);
-    int32_t pixel_h = static_cast<int32_t>(css_h * dpr);
-    emscripten_set_canvas_element_size("#canvas", pixel_w, pixel_h);
-
-    EventQ::self().push(CWindow::ResizeEvent{pixel_w, pixel_h});
+	emscripten_get_element_css_size("#canvas", &css_w, &css_h);
+	double dpr = emscripten_get_device_pixel_ratio();
+	// dpr = std::min(dpr, 2.0); // clamp DPR for perf
+	int pixel_w = static_cast<int>(std::round(css_w * dpr));
+	int pixel_h = static_cast<int>(std::round(css_h * dpr));
+	emscripten_set_canvas_element_size("#canvas", pixel_w, pixel_h);
+	EventQ::self().push(CWindow::ResizeEvent{ pixel_w, pixel_h });
     return EM_TRUE;
 }
 
@@ -50,23 +47,32 @@ static auto keyboard_callback(int32_t eventType, const EmscriptenKeyboardEvent* 
 	return EM_TRUE;
 }
 
-static auto mouse_callback( int32_t eventType, const EmscriptenMouseEvent* e, void*) -> EM_BOOL
+static auto mouse_callback(int32_t eventType, const EmscriptenMouseEvent* e, void*) -> EM_BOOL
 {
-	auto btn = 
-		e->button == 0 ? Mouse::Button::Left:
-		e->button == 1 ? Mouse::Button::Middle: Mouse::Button::Right;
+    const double dpr = emscripten_get_device_pixel_ratio();
 
-	switch (eventType) {
+    const int32_t x = static_cast<int32_t>(std::round(e->targetX * dpr));
+    const int32_t y = static_cast<int32_t>(std::round(e->targetY * dpr));
 
+    const float dx = static_cast<float>(e->movementX * dpr);
+    const float dy = static_cast<float>(e->movementY * dpr);
+
+    auto btn =
+        e->button == 0 ? Mouse::Button::Left :
+        e->button == 1 ? Mouse::Button::Middle : Mouse::Button::Right;
+
+    switch (eventType) {
         case EMSCRIPTEN_EVENT_MOUSEDOWN:
-			EventQ::self().push(Mouse::ButtonDownEvent{btn});
-			break;
-        case EMSCRIPTEN_EVENT_MOUSEUP:
-			EventQ::self().push(Mouse::ButtonUpEvent{btn});
+            EventQ::self().push(Mouse::ButtonDownEvent{ btn });
             break;
+
+        case EMSCRIPTEN_EVENT_MOUSEUP:
+            EventQ::self().push(Mouse::ButtonUpEvent{ btn });
+            break;
+
         case EMSCRIPTEN_EVENT_MOUSEMOVE:
-			EventQ::self().push(Mouse::MoveEvent{e->targetX, e->targetY});
-			EventQ::self().push(Mouse::MovementEvent{static_cast<float>(e->movementX), static_cast<float>(e->movementY)});
+            EventQ::self().push(Mouse::MoveEvent{ x, y });
+            EventQ::self().push(Mouse::MovementEvent{ dx, dy });
             break;
 
         case EMSCRIPTEN_EVENT_MOUSEENTER:
@@ -74,69 +80,55 @@ static auto mouse_callback( int32_t eventType, const EmscriptenMouseEvent* e, vo
             break;
 
         case EMSCRIPTEN_EVENT_MOUSELEAVE:
-			EventQ::self().push(Mouse::LeaveEvent{});
+            EventQ::self().push(Mouse::LeaveEvent{});
             break;
     }
 
     return EM_TRUE;
 }
 
+
 static auto touch_callback(int32_t eventType, const EmscriptenTouchEvent* e, void*) -> EM_BOOL
 {
-    static std::unordered_map<int32_t, std::pair<int16_t, int16_t>> lastPos;
+    static std::unordered_map<int32_t, std::pair<int32_t, int32_t>> lastPos;
 
-    EM_ASM({
-        Module._windowwidth = window.innerWidth;
-        Module._windowheight = window.innerHeight;
-    });
-
-    double windowwidth = EM_ASM_DOUBLE(return Module._windowwidth;);
-    double windowheight = EM_ASM_DOUBLE(return Module._windowheight;);
+    const double dpr = emscripten_get_device_pixel_ratio();
 
     for (int32_t i = 0; i < e->numTouches; ++i) {
         const auto& t = e->touches[i];
-        if (!t.isChanged) 
+        if (!t.isChanged)
             continue;
 
-        int32_t id = t.identifier;
+        const int32_t id = t.identifier;
 
-        double x = static_cast<double>(t.targetX);
-        double y = static_cast<double>(t.targetY);
+        const int32_t x = static_cast<int32_t>(std::round(t.targetX * dpr));
+        const int32_t y = static_cast<int32_t>(std::round(t.targetY * dpr));
 
-        if (is_mobile()) {
-
-            double normX = x / windowwidth;
-            double normY = y / windowheight;
- 
-            double logical_x = normY * windowwidth;    
-            double logical_y = (1.0 - normX) * windowheight; 
-
-            x = logical_x;
-            y = logical_y;
-            
-        }
-        
         switch (eventType) {
+
             case EMSCRIPTEN_EVENT_TOUCHSTART:
-				lastPos[id] = { static_cast<int16_t>(x), static_cast<int16_t>(y) };
-				EventQ::self().push(Mouse::EnterEvent{});
+                lastPos[id] = { x, y };
+                EventQ::self().push(Mouse::EnterEvent{});
+                EventQ::self().push(Mouse::MoveEvent{ x, y });
                 break;
-				case EMSCRIPTEN_EVENT_TOUCHEND:
-				case EMSCRIPTEN_EVENT_TOUCHCANCEL:
-				lastPos.erase(id);
-				EventQ::self().push(Mouse::LeaveEvent{});
+
+            case EMSCRIPTEN_EVENT_TOUCHEND:
+            case EMSCRIPTEN_EVENT_TOUCHCANCEL:
+                lastPos.erase(id);
+                EventQ::self().push(Mouse::LeaveEvent{});
                 break;
-				case EMSCRIPTEN_EVENT_TOUCHMOVE:{
-				auto old = lastPos.find(id);
-				if (old != lastPos.end()) {
-					int32_t dx = static_cast<int32_t>(x) - old->second.first;
-					int32_t dy = static_cast<int32_t>(y) - old->second.second;
-					EventQ::self().push(Mouse::MovementEvent{ static_cast<float>(dx), static_cast<float>(dy) });
-				}
-				lastPos[id] = { static_cast<int16_t>(x), static_cast<int16_t>(y) };
-				EventQ::self().push(Mouse::MoveEvent{static_cast<int32_t>(x), static_cast<int32_t>(y)});
-			}
-            break;
+
+            case EMSCRIPTEN_EVENT_TOUCHMOVE: {
+                auto it = lastPos.find(id);
+                if (it != lastPos.end()) {
+                    const float dx = static_cast<float>(x - it->second.first);
+                    const float dy = static_cast<float>(y - it->second.second);
+                    EventQ::self().push(Mouse::MovementEvent{ dx, dy });
+                }
+                lastPos[id] = { x, y };
+                EventQ::self().push(Mouse::MoveEvent{ x, y });
+                break;
+            }
         }
     }
 

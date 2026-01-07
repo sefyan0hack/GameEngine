@@ -5,32 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
     * { touch-action: manipulation }
-
-    html, body {
-      overflow: hidden; 
-      background: #1a1a1a;
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-    }
-
     #canvas {
       display: block;
-      width: 100vmax;
-      height: 100vmax;
       position: fixed;
-    }
-
-    @media only screen and (max-width: 767px) {
-      #canvas {
-        width: 100vmax;  
-        height: 100vmax; 
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) rotate(90deg);
-      }
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
     }
   </style>
   <script src="coi-serviceworker.js"></script>
