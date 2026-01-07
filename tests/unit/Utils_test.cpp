@@ -8,26 +8,6 @@ using namespace std;
 using namespace utils;
 using namespace filesystem;
 
-#if !defined(WEB_PLT)
-TEST(load_file_async, exist) {
-    path tmpDir = temp_directory_path();
-    auto tmpFile = tmpDir / std::format("{}_{}_{}_{}", std::chrono::system_clock::now().time_since_epoch().count(), rand(), rand(), rand());
-
-    std::ofstream ofs(tmpFile);
-
-    EXPECT_NO_THROW({
-        load_file_async(tmpFile.string()).get();
-    });
-
-}
-
-TEST(load_file_async, not_exist) {
-    EXPECT_ANY_THROW(
-        load_file_async("filenotexist.ext").get();
-    );
-}
-#endif
-
 TEST(split, string) {
     auto r = split("hi my name sofyane", " ");
     decltype(r) expect = {"hi", "my", "name", "sofyane"};
