@@ -135,10 +135,8 @@ jobs:
           # 1. Link resources and Manifest
           $SDK_TOOLS/aapt2 link -I "$PLATFORM_JAR" --manifest cmake/AndroidManifest.xml -o base.apk
 
-          # 2. Add native 
-          cd build
-          zip -ur base.apk lib
-          cd ..
+          # 2. Add native libraries
+          zip -ur base.apk build/lib/**/*.so
 
           # 3. Zipalign
           $SDK_TOOLS/zipalign -v 4 base.apk final-aligned.apk
