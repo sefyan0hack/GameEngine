@@ -42,13 +42,15 @@ jobs:
           $SDK_TOOLS/aapt2 link -I "$PLATFORM_JAR" --manifest cmake/AndroidManifest.xml -o base.apk
 
           # 2. Add native libraries
+          cd build
           zip -ur base.apk build/lib
+          cd ..
 
           # 3. Zipalign
           $SDK_TOOLS/zipalign -v 4 base.apk final-aligned.apk
 
           # 4. Sign the APK
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.keystore
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -di > release.keystore
           $SDK_TOOLS/apksigner sign --ks release.keystore \
             --ks-pass pass:"${{ secrets.KEYSTORE_PASSWORD }}" \
             --out final-signed.apk final-aligned.apk
