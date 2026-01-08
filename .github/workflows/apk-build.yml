@@ -1,6 +1,12 @@
 name: Android
 on: [workflow_dispatch]
 
+
+env:
+  NATIVE_LIB_NAME: Launcher
+  ANDROID_ABI: arm64-v8a
+  ANDROID_PLATFORM: android-21
+
 jobs:
   Build-android:
     runs-on: ubuntu-latest
@@ -15,17 +21,88 @@ jobs:
         run: |
           cmake -S . -B build -DCMAKE_TLS_VERIFY=0 \
           -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_LATEST_HOME/build/cmake/android.toolchain.cmake \
-          -DCMAKE_SYSTEM_NAME="Android" \
-          -DANDROID_ABI=arm64-v8a \
-          -DANDROID_PLATFORM=android-21
+          -DCMAKE_SYSTEM_NAME=Android \
+          -DANDROID_ABI=$ANDROID_ABI \
+          -DANDROID_PLATFORM=$ANDROID_PLATFORM \
+          -DCMAKE_BUILD_TYPE=Debug
 
-      - name: Build
+      - name: Build native
         run: cmake --build build --parallel
+
+      - name: Prepare APK contents
+        shell: bash
+        run: |
+          set -e
+          APKDIR=build/apk
+          TARGET_LIB_NAME="lib${NATIVE_LIB_NAME}.so"
+          mkdir -p "${APKDIR}/lib/${ANDROID_ABI}"
+
+          # Try to find the built .so and copy it into the APK lib folder
+          LIB_PATH=$(find build -type f -name "${TARGET_LIB_NAME}" | head -n1 || true)
+          if [ -z "${LIB_PATH}" ]; then
+            echo "ERROR: built library ${TARGET_LIB_NAME} not found under build/."
+            echo "Listing build/ for debugging:"
+            find build -maxdepth 3 -type f -print || true
+            exit 1
+          fi
+          echo "Found library at: ${LIB_PATH}"
+          cp -v "${LIB_PATH}" "${APKDIR}/lib/${ANDROID_ABI}/"
+
+          # Copy manifest into APK dir
+          if [ -f cmake/AndroidManifest.xml ]; then
+            cp -v cmake/AndroidManifest.xml "${APKDIR}/AndroidManifest.xml"
+          else
+            echo "WARNING: cmake/AndroidManifest.xml not found — aapt will probably fail."
+          fi
+      
+      - name: Package, align and sign APK
+        shell: bash
+        env:
+          SDK_ROOT: ${{ env.ANDROID_SDK_ROOT || env.ANDROID_HOME }}
+        run: |
+          set -e
+          APKDIR=build/apk
+          UNALIGNED="${APKDIR}/unaligned.apk"
+          ALIGNED="${APKDIR}/aligned.apk"
+          SIGNED="${APKDIR}/launcher-signed.apk"
+
+          # Find aapt / zipalign / apksigner from the SDK
+          AAPT=$(find "${SDK_ROOT}" -type f -path "*/build-tools/*/aapt" | head -n1 || true)
+          ZIPALIGN=$(find "${SDK_ROOT}" -type f -path "*/build-tools/*/zipalign" | head -n1 || true)
+          APKSIGNER=$(find "${SDK_ROOT}" -type f -path "*/build-tools/*/apksigner" | head -n1 || true)
+          PLATFORM_JAR=$(find "${SDK_ROOT}" -type f -path "*/platforms/android-*/android.jar" | head -n1 || true)
+
+          echo "aapt: $AAPT"
+          echo "zipalign: $ZIPALIGN"
+          echo "apksigner: $APKSIGNER"
+          echo "platform jar: $PLATFORM_JAR"
+
+          # Create a minimal resources dir so aapt can operate (safe even if empty)
+          mkdir -p "${APKDIR}/res" "${APKDIR}/assets"
+
+          # Package APK
+          "$AAPT" package -f -M "${APKDIR}/AndroidManifest.xml" -F "${UNALIGNED}" -I "${PLATFORM_JAR}"
+
+          # Align
+          "$ZIPALIGN" 4 "${UNALIGNED}" "${ALIGNED}"
+
+          # Ensure debug keystore exists (create if missing)
+          KEYSTORE="$HOME/.android/debug.keystore"
+          if [ ! -f "$KEYSTORE" ]; then
+            mkdir -p "$(dirname "$KEYSTORE")"
+            keytool -genkeypair -alias androiddebugkey -storepass android -keypass android \
+              -keystore "$KEYSTORE" -dname "CN=Android Debug" -keyalg RSA -validity 10000 -storetype PKCS12
+          fi
+
+          # Sign APK
+          "$APKSIGNER" sign --ks "$KEYSTORE" --ks-pass pass:android --key-pass pass:android --out "${SIGNED}" "${ALIGNED}"
+
+          echo "Signed APK created at: ${SIGNED}"
+          ls -l "${APKDIR}"
 
       - name: Upload APK - debug
         uses: actions/upload-artifact@v4
         with:
-          name: Launcher-Debug-WithSymbols-APK
-          path: build/*.apk
+          name: Launcher-Debug-APK
+          path: build/apk/launcher-signed.apk
           retention-days: 1
-          overwrite: true
