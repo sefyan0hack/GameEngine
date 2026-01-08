@@ -51,6 +51,7 @@ include(Docs)
 include(Harden)
 include(StaticLink)
 include(InstaledPackages)
+include(BunndleApk)
 
 ####################################################################################################
 # Vsisibility
