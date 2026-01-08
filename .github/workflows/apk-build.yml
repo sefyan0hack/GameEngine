@@ -48,9 +48,12 @@ jobs:
           $SDK_TOOLS/zipalign -v 4 base.apk final-aligned.apk
 
           # 4. Sign the APK
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -di > release.keystore
-          $SDK_TOOLS/apksigner sign --ks release.keystore \
-            --ks-pass pass:"${{ secrets.KEYSTORE_PASSWORD }}" \
+          DEBUG_KEYSTORE="$HOME/.android/debug.keystore"
+          $SDK_TOOLS/apksigner sign \
+            --ks "$DEBUG_KEYSTORE" \
+            --ks-pass pass:android \
+            --key-pass pass:android \
+            --ks-key-alias androiddebugkey \
             --out final-signed.apk final-aligned.apk
 
       - name: Upload Artifact
