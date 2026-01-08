@@ -31,6 +31,16 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Create debug keystore (if missing)
+        run: |
+          mkdir -p "$HOME/.android"
+          if [ ! -f "$HOME/.android/debug.keystore" ]; then
+            keytool -genkeypair -keystore "$HOME/.android/debug.keystore" \
+              -storepass android -keypass android -alias androiddebugkey \
+              -dname "CN=Android Debug,O=Android,C=US" -storetype JKS \
+              -keyalg RSA -keysize 2048 -validity 10000
+          fi
+
       - name: Package and Sign APK
         run: |
           BUILD_TOOLS_ROOT="$ANDROID_HOME/build-tools"
@@ -48,9 +58,8 @@ jobs:
           $SDK_TOOLS/zipalign -v 4 base.apk final-aligned.apk
 
           # 4. Sign the APK
-          DEBUG_KEYSTORE="$HOME/.android/debug.keystore"
           $SDK_TOOLS/apksigner sign \
-            --ks "$DEBUG_KEYSTORE" \
+            --ks "$HOME/.android/debug.keystore" \
             --ks-pass pass:android \
             --key-pass pass:android \
             --ks-key-alias androiddebugkey \
