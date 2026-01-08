@@ -31,11 +31,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Prepare APK Structure
-        run: |
-          mkdir -p apk_root/lib/$ANDROID_ABI
-          cp build/lib${{ env.NATIVE_LIB_NAME }}.so apk_root/lib/$ANDROID_ABI/
-
       - name: Package and Sign APK
         run: |
           BUILD_TOOLS_ROOT="$ANDROID_HOME/build-tools"
@@ -54,9 +49,7 @@ jobs:
             -o base.apk
 
           # 2. Add native libraries
-          cd apk_root
-          zip -ur ../base.apk lib/
-          cd ..
+          zip -ur base.apk build/lib
 
           # 3. Zipalign
           $SDK_TOOLS/zipalign -v 4 base.apk final-aligned.apk
