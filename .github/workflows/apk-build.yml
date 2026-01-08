@@ -22,15 +22,6 @@ jobs:
           -DANDROID_PLATFORM=$ANDROID_PLATFORM \
           -DCMAKE_BUILD_TYPE=Debug
 
-      - name: Build native
-        run: cmake --build build --parallel
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
       - name: Create debug keystore (if missing)
         run: |
           mkdir -p "$HOME/.android"
