@@ -77,7 +77,7 @@ if(ANDROID)
     add_library(Launcher SHARED)
     target_link_options(Launcher PRIVATE "-Wl,-u,ANativeActivity_onCreate")
 
-    set(OUT_LIB_ "${CMAKE_BINARY_DIR}/lib/${ANDROID_ABI}")
+    set(OUT_LIB_ "${CMAKE_BINARY_DIR}/apk/lib/${ANDROID_ABI}")
     file(MAKE_DIRECTORY ${OUT_LIB_})
     set_target_properties(Launcher PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUT_LIB_})
 
