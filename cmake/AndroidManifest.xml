@@ -13,8 +13,9 @@
         android:hasCode="false">
         
         <activity android:name="android.app.NativeActivity"
-                  android:screenOrientation="sensorLandscape"
+                  android:screenOrientation="landscape"
                   android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
                   android:exported="true">
             <meta-data android:name="android.app.lib_name" android:value="Launcher" />
             <intent-filter>
