@@ -19,7 +19,7 @@ public:
         // slow as fk right now 
         // debug::logger = [](std::string m){
         //     static auto l = 0;
-        //     app->TextRenderer.text(m, { 0, l += TextRenderer::FONT_SIZE });
+        //     app->UiText.text(m, { 0, l += Text::FONT_SIZE });
         // };
 
         Material::set_skybox(std::make_shared<TextureCubeMap>(TextureCubeMap::base_to_6facesfiles("res/forest.jpg")));
@@ -53,13 +53,13 @@ public:
         using namespace os::host;
         utils::async_repeat_every(1000,
             [](){
-                app->TextRenderer.text(std::format("FPS: {:.2f}", app->fps()), { 0, 0 });
-                app->TextRenderer.text(std::format("Memory: {}/{}", memory_usage(), memory_peak()), { 0, TextRenderer::FONT_SIZE });
+                app->UiText.text(std::format("FPS: {:.2f}", app->fps()), { 0, 0 });
+                app->UiText.text(std::format("Memory: {}/{}", memory_usage(), memory_peak()), { 0, Text::FONT_SIZE });
             }
         );
 
-        // app->TextRenderer.text(std::format("id: {}\nos: {}\narch: {}\nusage: {} Mb\npeak: {} Mb\nthread_count: {}", 
-        //     proc_id(), name(), arch(), memory_usage(), memory_peak(), thread_count()), { 0, TextRenderer::FONT_SIZE });
+        // app->UiText.text(std::format("id: {}\nos: {}\narch: {}\nusage: {} Mb\npeak: {} Mb\nthread_count: {}", 
+        //     proc_id(), name(), arch(), memory_usage(), memory_peak(), thread_count()), { 0, Text::FONT_SIZE });
         // }
         
         debug::log("{}", VecWrapper{gl::OPENGL_FUNCTIONS_NAME});

@@ -3,9 +3,9 @@
 #include <graphics/Window.hpp>
 #include <graphics/OpenGL.hpp>
 #include <graphics/Renderer.hpp>
-#include <graphics/TextRenderer.hpp>
 #include <inputs/Keyboard.hpp>
 #include <inputs/Mouse.hpp>
+#include <ui/Text.hpp>
 #include "DynLib.hpp"
 #include "Scene.hpp"
 #include <engine_export.h>
@@ -50,14 +50,14 @@ private:
     CWindow Window;
     Keyboard Keyboard;
     Mouse Mouse;
-
+    
     bool m_Running;
     std::chrono::steady_clock::time_point m_LastFrameTime;
     float m_Fps;
-
+    
     OpenGL m_GApi;
     IRenderer* Renderer;
-    TextRenderer TextRenderer;
+    Text UiText;
     Scene MainScene;
 
     DynLib lib;

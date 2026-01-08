@@ -1,4 +1,4 @@
-#include "TextRenderer.hpp"
+#include "Text.hpp"
 #include "gl.hpp"
 #include <core/Exception.hpp>
 #include <core/res.hpp>
@@ -8,6 +8,7 @@
 #include "OpenGL.hpp"
 #include "Shader.hpp"
 #include "ShaderProgram.hpp"
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/fast_trigonometry.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -25,7 +26,7 @@
 
 extern cmrc::embedded_filesystem embed_filesystem;
 
-TextRenderer::TextRenderer(const OpenGL& ctx)
+Text::Text(const OpenGL& ctx)
     : m_GApi(ctx)
     , m_Vert(std::make_shared<Shader>(embed_filesystem.open("res/Shaders/text.vert"), GL_VERTEX_SHADER))
     , m_Frag(std::make_shared<Shader>(embed_filesystem.open("res/Shaders/text.frag"), GL_FRAGMENT_SHADER))
@@ -100,7 +101,7 @@ TextRenderer::TextRenderer(const OpenGL& ctx)
 }
 
 
-auto TextRenderer::render() const -> void
+auto Text::render() const -> void
 {
     auto [width, height] = m_GApi.window().dims();
 
@@ -125,12 +126,12 @@ auto TextRenderer::render() const -> void
     gl::DepthMask(GL_TRUE);
 }
 
-auto TextRenderer::text(std::string text, glm::vec2 pos) -> void
+auto Text::text(std::string text, glm::vec2 pos) -> void
 {
     m_Text[pos] = text;
 }
 
-void TextRenderer::render_single_string(const std::string& text, float x, float y, float scale) const
+void Text::render_single_string(const std::string& text, float x, float y, float scale) const
 {
     gl::ActiveTexture(GL_TEXTURE0);
     gl::BindVertexArray(VAO);

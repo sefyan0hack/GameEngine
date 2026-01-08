@@ -6,10 +6,12 @@ include(GenerateExportHeader)
 add_subdirectory(core)
 add_subdirectory(graphics)
 add_subdirectory(inputs)
+add_subdirectory(ui)
 
 get_target_property(CORE_SRCS core SOURCES)
 get_target_property(INPUT_SRCS inputs SOURCES)
 get_target_property(GRAPHICS_SRCS graphics SOURCES)
+get_target_property(UI_SRCS ui SOURCES)
 
 add_library(Engine)
 set_target_properties(Engine PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
@@ -29,6 +31,7 @@ target_sources( Engine
         ${CORE_SRCS}
         ${INPUT_SRCS}
         ${GRAPHICS_SRCS}
+        ${UI_SRCS}
 )
 
 if(ANDROID)
@@ -41,6 +44,7 @@ target_link_libraries(Engine
         core
         graphics
         inputs
+        ui
         $<$<PLATFORM_ID:Android>:android>
         $<$<PLATFORM_ID:Android>:EGL>
         $<$<PLATFORM_ID:Android>:GLESv3>
