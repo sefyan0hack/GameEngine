@@ -13,9 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Ninja
-        run: sudo apt-get install ninja-build
-    
       - name: Configure CMake
         shell: bash
         run: |
@@ -28,6 +25,12 @@ jobs:
 
       - name: Build native
         run: cmake --build build --parallel
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
       - name: Prepare APK contents
         shell: bash
