@@ -42,7 +42,7 @@ jobs:
           PLATFORM_JAR=$(ls -1v $ANDROID_HOME/platforms/android-*/android.jar | tail -n 1)
 
           # 1. Link resources and Manifest
-          $SDK_TOOLS/aapt2 link -I "$PLATFORM_JAR" --manifest cmake/AndroidManifest.xml -o base.apk
+          $SDK_TOOLS/aapt2 link -I "$PLATFORM_JAR" --manifest --min-sdk-version 21 --target-sdk-version 33 --version-code 2 --version-name 1.0.1 cmake/AndroidManifest.xml -o base.apk
 
           # 2. Add native libraries
           zip -ur base.apk build/lib
