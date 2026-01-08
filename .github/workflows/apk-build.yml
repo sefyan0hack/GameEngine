@@ -10,15 +10,17 @@ jobs:
       - name: Set up Ninja
         run: sudo apt-get install ninja-build
     
-      - name: Build Libs
+      - name: Configure CMake
+        shell: bash
         run: |
-          cmake -S . -B build \
+          cmake -S . -B build -G "Ninja" -DCMAKE_TLS_VERIFY=0 \
+          -DCMAKE_SYSTEM_NAME="Android" \
           -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake \
           -DANDROID_ABI=arm64-v8a \
           -DANDROID_PLATFORM=android-21
 
-      - name: Build Apk
-        run: cmake --build build --target apk
+      - name: Build
+        run: cmake --build build --parallel
 
       - name: Upload APK - debug
         uses: actions/upload-artifact@v4
