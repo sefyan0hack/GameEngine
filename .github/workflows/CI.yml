@@ -132,13 +132,13 @@ jobs:
           SDK_TOOLS="$BUILD_TOOLS_ROOT/$VERSION"
           PLATFORM_JAR=$(ls -1v $ANDROID_HOME/platforms/android-*/android.jar | tail -n 1)
 
-          # 1. Link resources and Manifest
-          $SDK_TOOLS/aapt2 package -f -I "$PLATFORM_JAR" -M cmake/AndroidManifest.xml -F base.apk build/apk
+          # Link resources and Manifest
+          $SDK_TOOLS/aapt package -f -I "$PLATFORM_JAR" -M cmake/AndroidManifest.xml -F base.apk build/apk
 
-          # 3. Zipalign
+          # Zipalign
           $SDK_TOOLS/zipalign -v 4 base.apk final-aligned.apk
 
-          # 4. Sign the APK
+          # Sign the APK
           $SDK_TOOLS/apksigner sign \
             --ks "$HOME/.android/debug.keystore" \
             --ks-pass pass:android \
