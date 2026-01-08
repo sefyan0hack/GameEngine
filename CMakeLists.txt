@@ -50,8 +50,8 @@ include(RTTI)
 include(Docs)
 include(Harden)
 include(StaticLink)
+include(AndroidNativeApk)
 include(InstaledPackages)
-include(BunndleApk)
 
 ####################################################################################################
 # Vsisibility
