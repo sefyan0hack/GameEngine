@@ -117,7 +117,7 @@ auto Text::render() const -> void
     gl::DepthMask(GL_FALSE);    // don't write depth
 
     for (const auto& [pos, content] : m_Text) {
-        float y = height - pos.y - m_Ascent;
+        float y = height - pos.y - static_cast<float>(m_Ascent);
         render_single_string(content, pos.x, y, 1.0f);
     }
 
