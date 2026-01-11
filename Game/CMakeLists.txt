@@ -4,7 +4,7 @@ include(helpers)
 include(GenerateExportHeader)
 
 if(GAME_HOT_RELOADABLE)
-  add_library(Game SHARED)
+  add_library(Game MODULE )
 else()
   add_library(Game)
 endif()

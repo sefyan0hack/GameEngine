@@ -45,8 +45,7 @@ auto OpenGLRenderer::render(const Scene& scene) const -> void
 
             obj.material()->bind(m_Program);
 
-            auto mesh = obj.mesh();
-            draw(*mesh);
+            draw(*obj.mesh());
         }
     );
 
@@ -55,11 +54,7 @@ auto OpenGLRenderer::render(const Scene& scene) const -> void
 
 auto OpenGLRenderer::draw(const Mesh& mesh) const -> void
 {
-    static GLuint currVAO = mesh.VAO;
-    if(currVAO != mesh.VAO){
-        currVAO = mesh.VAO;
-        gl::BindVertexArray(currVAO);
-    }
+    gl::BindVertexArray(mesh.VAO);
     gl::DrawArrays(GL_TRIANGLES, 0, mesh.vextex_size());
 }
 

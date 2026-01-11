@@ -22,10 +22,6 @@ target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
 target_precompile_headers(Engine PUBLIC "${CMAKE_SOURCE_DIR}/Engine/Platform.hpp")
 
-if(MSVC)
-    target_compile_options(Engine PRIVATE /wd4251 /wd4275)
-endif()
-
 target_sources( Engine
     PRIVATE
         ${CORE_SRCS}
@@ -34,30 +30,22 @@ target_sources( Engine
         ${UI_SRCS}
 )
 
-if(ANDROID)
-    add_library(native_app_glue STATIC ${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c)
-    target_include_directories(native_app_glue PUBLIC ${ANDROID_NDK}/sources/android/native_app_glue)
-endif()
-
 target_link_libraries(Engine
     PUBLIC
         core
         graphics
         inputs
         ui
-        $<$<PLATFORM_ID:Android>:android>
-        $<$<PLATFORM_ID:Android>:EGL>
-        $<$<PLATFORM_ID:Android>:GLESv3>
-        $<$<PLATFORM_ID:Android>:log>
-        $<$<PLATFORM_ID:Android>:native_app_glue>
 )
-if(ANDROID)
-    target_link_options(Engine INTERFACE "-Wl,-u,ANativeActivity_onCreate")
+
+if(MSVC)
+    target_compile_options(Engine PRIVATE /wd4251 /wd4275)
 endif()
 
-apply_all_options(TARGETS Engine)
-apply_coverage_options(TARGETS Engine)
-apply_sanitizer_options(TARGETS Engine)
+if(ANDROID)
+    add_library(native_app_glue STATIC ${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c)
+    target_include_directories(native_app_glue PUBLIC ${ANDROID_NDK}/sources/android/native_app_glue)
+endif()
 
 # common (Not Web)
 if(NOT EMSCRIPTEN)
@@ -67,37 +55,36 @@ if(NOT EMSCRIPTEN)
 
     target_link_libraries(Engine
         PRIVATE
-            Threads::Threads
-            $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
-            $<$<PLATFORM_ID:Linux>:dl>
-            $<$<PLATFORM_ID:Android>:dl>
             ${OPENGL_LIBRARIES}
+            $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
+            $<$<PLATFORM_ID:Unix>:dl>
             $<$<PLATFORM_ID:Linux>:${X11_LIBRARIES}>
+            $<$<PLATFORM_ID:Android>:android>
+            $<$<PLATFORM_ID:Android>:EGL>
+            $<$<PLATFORM_ID:Android>:GLESv3>
+            $<$<PLATFORM_ID:Android>:log>
+            $<$<PLATFORM_ID:Android>:native_app_glue>
     )
 endif()
 ### Launcher
 
 if(ANDROID)
-    add_library(Launcher SHARED)
-    target_link_options(Launcher PRIVATE "-Wl,-u,ANativeActivity_onCreate")
+    add_library(Launcher SHARED main.cpp)
+    target_link_options(Engine PRIVATE "-Wl,-u,ANativeActivity_onCreate")
 
     set(OUT_LIB_ "${CMAKE_BINARY_DIR}/apk/lib/${ANDROID_ABI}")
     file(MAKE_DIRECTORY ${OUT_LIB_})
     set_target_properties(Launcher PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUT_LIB_})
 
 else()
-    add_executable(Launcher)
+    add_executable(Launcher main.cpp)
 endif()
-
-target_sources( Launcher PRIVATE
-    main.cpp 
-)
 
 target_link_libraries(Launcher PRIVATE Engine)
 
-apply_all_options(TARGETS Launcher)
-apply_coverage_options(TARGETS Launcher)
-apply_sanitizer_options(TARGETS Launcher)
+apply_all_options(TARGETS Engine Launcher)
+apply_coverage_options(TARGETS Engine Launcher)
+apply_sanitizer_options(TARGETS Engine Launcher)
 
 print_target_compile_options(Launcher)
 print_target_compile_options(Engine)
