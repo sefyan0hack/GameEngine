@@ -9,6 +9,8 @@
 #include <core/Event.hpp>
 #include <engine_export.h>
 
+#include <android_native_app_glue.h>
+
 extern auto from_native(int32_t key) -> Key;
 
 android_app* g_android_app = nullptr;
