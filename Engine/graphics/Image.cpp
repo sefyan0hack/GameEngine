@@ -143,7 +143,7 @@ auto Image::valid() const ->bool
 
 auto Image::data() const -> std::span<std::byte>
 {
-    Expect(valid(), " Image not Valid {:p}", (void*)this);
+    Expect(valid(), " Image not Valid {:p}", (const void*)this);
 
     return { m_Data, size() };
 }

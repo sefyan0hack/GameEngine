@@ -40,17 +40,19 @@ string(REGEX MATCH "^[0-9]+" COMPILER_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSIO
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 include(CTest)
-include(helpers)
 include(FeatureSummary)
+include(InstaledPackages)
+include(helpers)
 include(Options)
-include(Sanitizers)
 include(LinkTimeOpt)
 include(Emscripten)
 include(RTTI)
 include(Docs)
 include(Harden)
 include(StaticLink)
-include(InstaledPackages)
+include(Coverage)
+include(Sanitize)
+include(CompilerFlags)
 
 ####################################################################################################
 # Vsisibility

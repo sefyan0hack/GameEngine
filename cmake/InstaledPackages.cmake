@@ -9,13 +9,6 @@ if(NOT EMSCRIPTEN)
         PURPOSE "Crucial for the rendering engine to work."
     )
 
-    # Find Threads package
-    find_package(Threads QUIET)
-    set_package_properties(OpenGL PROPERTIES
-        DESCRIPTION "Threading support lib  ` posix or any `"
-        TYPE REQUIRED
-        PURPOSE "support parallel work"
-    )
     # Find X11 package
     if(LINUX)
         find_package(X11 QUIET)
@@ -26,6 +19,7 @@ if(NOT EMSCRIPTEN)
             PURPOSE "Required to  to open windows in linux"
         )
     endif()
+
     # Extract the core OpenGL library (first entry in the list)
     list(GET OPENGL_LIBRARIES 0 CORE_OPENGL_LIB)
 endif()

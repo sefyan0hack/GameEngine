@@ -1,13 +1,13 @@
 #include "Material.hpp"
 #include "Texture.hpp"
 #include "ShaderProgram.hpp"
-#include "OpenGL.hpp"
 #include "Camera.hpp"
 #include "SkyBox.hpp"
 
 #include <glm/matrix.hpp>
 
-#define LAST_SLOT OpenGL::max_texture_units() - 1
+#define Diffuse_SLOT 0
+#define SkyBox_SLOT 1
 
 Material::Material()
     : m_Diffuse(std::make_shared<Texture2D>())
@@ -22,13 +22,12 @@ Material::Material(std::shared_ptr<Texture> diffuse)
 
 auto Material::bind(std::shared_ptr<ShaderProgram> program) -> void
 {
-    m_Diffuse->bind(0); // diffuse takes 0 slot
-    program->set_uniform("uDiffuseMap", 0);
+    m_Diffuse->bind(Diffuse_SLOT);
+    program->set_uniform("uDiffuseMap", Diffuse_SLOT);
 
-    // skybox().m_Texture->bind(LAST_SLOT); // skybox takes last slot && not needed to to bind more then ones
-    program->set_uniform("uSkyboxMap", LAST_SLOT);
+    // skybox().m_Texture->bind(SkyBox_SLOT); // skybox takes last slot && not needed to to bind more then ones
+    program->set_uniform("uSkyboxMap", SkyBox_SLOT);
 }
-
 
 auto Material::diffuse() const noexcept-> std::shared_ptr<Texture>
 {
@@ -39,8 +38,6 @@ auto Material::set_diffuse(std::shared_ptr<Texture> texture) -> void
 {
     m_Diffuse = texture;
 }
-
-
 
 auto Material::set_skybox(std::shared_ptr<Texture> texture) -> void
 {
@@ -56,8 +53,8 @@ auto Material::render_sky(const Camera& cam) -> void{
     sk.m_Program.use();
     sk.m_Program.set_uniform("View", glm::mat4(glm::mat3(cam.view())));
     sk.m_Program.set_uniform("Projection", cam.perspective());
-    sk.m_Texture->bind(LAST_SLOT);
-    sk.m_Program.set_uniform("uDiffuseMap", LAST_SLOT);
+    sk.m_Texture->bind(SkyBox_SLOT);
+    sk.m_Program.set_uniform("uDiffuseMap", SkyBox_SLOT);
 
     gl::BindVertexArray(sk.m_DummyVAO);
     gl::DrawArrays(GL_TRIANGLES, 0, 36);

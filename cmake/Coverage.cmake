@@ -1,7 +1,11 @@
-if(TESTS AND ENABLE_COVERAGE)
-    
+if(COVERAGE)
+
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    add_link_options(--coverage)
+        set( CLANG_COVERAGE_FLAGS
+            -fprofile-instr-generate
+            -fcoverage-mapping
+            -fcoverage-mcdc
+        )
 
         find_program(GCOVR_PATH gcovr REQUIRED)
         find_program(GCOV_PATH NAMES "gcov-${COMPILER_MAJOR_VERSION}" "gcov" REQUIRED)
@@ -29,6 +33,7 @@ if(TESTS AND ENABLE_COVERAGE)
                 --calls
                 -s
             )
+
             add_custom_target(pre_coverage
                 COMMAND ${GCOVR_PATH} --version
                 COMMAND ${GCOV_PATH} --version
@@ -51,13 +56,17 @@ if(TESTS AND ENABLE_COVERAGE)
             )
         endif()
     elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        
-        add_link_options(-fprofile-instr-generate)
-        
+        set( GNU_COVERAGE_FLAGS
+            --coverage
+            -fno-omit-frame-pointer
+            -fno-elide-constructors # Track copy/move constructors
+            -fprofile-abs-path # Absolute paths for gcovr
+            -fno-inline
+        )
+
         # find_program(LCOV_PATH lcov REQUIRED)
         find_program(LLVM_PROFDATA_PATH llvm-profdata REQUIRED)
         find_program(LLVM_COV_PATH llvm-cov REQUIRED)
-
 
         add_custom_target(pre_coverage
             COMMAND ${LLVM_COV_PATH} --version
@@ -98,7 +107,14 @@ if(TESTS AND ENABLE_COVERAGE)
             DEPENDS pre_coverage
             COMMENT "Generating Clang html coverage reports..."
         )
-
     endif()
 
 endif()
+
+
+add_library(project_coverage_flags INTERFACE)
+
+target_compile_options(project_coverage_flags INTERFACE
+    $<$<CXX_COMPILER_ID:GNU>:${GNU_COVERAGE_FLAGS}>
+    $<$<CXX_COMPILER_ID:Clang>:${CLANG_COVERAGE_FLAGS}>
+)

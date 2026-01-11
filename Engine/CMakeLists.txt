@@ -1,4 +1,3 @@
-# Engine/cmakelists.txt
 
 include(helpers)
 include(GenerateExportHeader)
@@ -38,10 +37,6 @@ target_link_libraries(Engine
         ui
 )
 
-if(MSVC)
-    target_compile_options(Engine PRIVATE /wd4251 /wd4275)
-endif()
-
 if(ANDROID)
     add_library(native_app_glue STATIC ${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c)
     target_include_directories(native_app_glue PUBLIC ${ANDROID_NDK}/sources/android/native_app_glue)
@@ -56,6 +51,9 @@ if(NOT EMSCRIPTEN)
     target_link_libraries(Engine
         PRIVATE
             ${OPENGL_LIBRARIES}
+            project_warnings_flags
+            project_coverage_flags
+            project_sanitizer_flags
             $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
             $<$<PLATFORM_ID:Unix>:dl>
             $<$<PLATFORM_ID:Linux>:${X11_LIBRARIES}>
@@ -81,10 +79,3 @@ else()
 endif()
 
 target_link_libraries(Launcher PRIVATE Engine)
-
-apply_all_options(TARGETS Engine Launcher)
-apply_coverage_options(TARGETS Engine Launcher)
-apply_sanitizer_options(TARGETS Engine Launcher)
-
-print_target_compile_options(Launcher)
-print_target_compile_options(Engine)

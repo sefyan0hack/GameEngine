@@ -1,4 +1,3 @@
-# sandbox/cmakelists.txt
 
 include(helpers)
 include(GenerateExportHeader)
@@ -16,7 +15,15 @@ target_sources( Game PRIVATE
 )
 
 target_include_directories(Game PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-target_link_libraries(Game PRIVATE glm::glm Engine)
+
+target_link_libraries(Game 
+  PRIVATE 
+    project_warnings_flags
+    project_coverage_flags
+    project_sanitizer_flags 
+    glm::glm 
+    Engine
+)
 
 if(NOT GAME_HOT_RELOADABLE)
   target_link_libraries(Launcher PRIVATE Game)
@@ -25,9 +32,3 @@ else()
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Game> $<TARGET_FILE_DIR:Launcher>
   )
 endif()
-
-apply_all_options(TARGETS Game)
-apply_coverage_options(TARGETS Game)
-apply_sanitizer_options(TARGETS Game)
-
-print_target_compile_options(Game)

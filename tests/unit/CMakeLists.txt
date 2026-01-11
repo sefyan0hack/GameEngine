@@ -3,11 +3,6 @@ file(GLOB TEST_SOURCES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/" "*_test.cpp")
 
 add_executable(unit_tests ${TEST_SOURCES})
 
-apply_all_options(TARGETS unit_tests )
-apply_sanitizer_options(TARGETS unit_tests)
-print_target_compile_options(unit_tests)
-
-
 if(ONLINE)
     CPMAddPackage(
         URI "gh:google/googletest@1.17.0" 
@@ -20,6 +15,11 @@ else()
     )
 endif()
 
-target_link_libraries(unit_tests PRIVATE Engine glm::glm GTest::gtest GTest::gtest_main )
+target_link_libraries(unit_tests 
+    PRIVATE 
+        project_warnings_flags project_coverage_flags
+        Engine
+        glm::glm GTest::gtest GTest::gtest_main
+)
 
 gtest_discover_tests(unit_tests DISCOVERY_MODE PRE_TEST)
