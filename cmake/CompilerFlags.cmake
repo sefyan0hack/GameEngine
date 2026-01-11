@@ -4,8 +4,7 @@ set(MSVC_WARNING_FLAGS
 )
 
 set(GNU_WARNING_FLAGS
-    -pedantic -Wno-cast-function-type -Winit-self -Wcast-qual
-    -Wsuggest-final-types -Wsuggest-final-methods -Wno-changes-meaning
+    -Wno-changes-meaning
 )
 
 set(CLANG_WARNING_FLAGS 
@@ -13,8 +12,9 @@ set(CLANG_WARNING_FLAGS
 )
 
 set(CLANG_AND_GNU_WARNING_FLAGS
-    -Wall -Wextra -Wpedantic -Wconversion -Wfloat-equal -Wwrite-strings -Wno-sign-conversion -Werror=null-dereference 
+    -Wall -Wextra -pedantic -Wconversion -Wfloat-equal -Wwrite-strings -Wno-sign-conversion -Werror=null-dereference 
     -Wnull-dereference -Wswitch-enum -Wuninitialized -Wpointer-arith -Wreturn-type -Wredundant-decls -fno-operator-names
+    -Winit-self -Wcast-qual -Wshadow
 )
 
 add_library(project_warnings_flags INTERFACE)
