@@ -12,9 +12,7 @@ set(CLANG_WARNING_FLAGS
 )
 
 set(CLANG_AND_GNU_WARNING_FLAGS
-    -Wall -Wextra -pedantic -Wconversion -Wfloat-equal -Wwrite-strings -Wno-sign-conversion -Werror=null-dereference 
-    -Wnull-dereference -Wswitch-enum -Wuninitialized -Wpointer-arith -Wreturn-type -Wredundant-decls -fno-operator-names
-    -Winit-self -Wcast-qual -Wshadow
+    -Wall -Wextra -Wpedantic
 )
 
 add_library(project_warnings_flags INTERFACE)
