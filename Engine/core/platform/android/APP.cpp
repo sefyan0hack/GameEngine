@@ -1,4 +1,5 @@
 #include "APP.hpp"
+#include <android_native_app_glue.h>
 
 extern struct android_app* g_android_app;
 auto APP::run() -> void {
