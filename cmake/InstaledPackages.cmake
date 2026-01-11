@@ -1,13 +1,15 @@
 
 if(NOT EMSCRIPTEN)
     # Find OpenGL package
-    find_package(OpenGL QUIET)
-    set_package_properties(OpenGL PROPERTIES
-        URL "https://www.opengl.org"
-        DESCRIPTION "A cross-language, cross-platform application programming interface for rendering 2D and 3D vector graphics."
-        TYPE REQUIRED
-        PURPOSE "Crucial for the rendering engine to work."
-    )
+    if(NOT ANDROID)
+        find_package(OpenGL QUIET)
+        set_package_properties(OpenGL PROPERTIES
+            URL "https://www.opengl.org"
+            DESCRIPTION "A cross-language, cross-platform application programming interface for rendering 2D and 3D vector graphics."
+            TYPE REQUIRED
+            PURPOSE "Crucial for the rendering engine to work."
+        )
+    endif()
 
     # Find X11 package
     if(LINUX)
