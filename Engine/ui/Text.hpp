@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include <engine_export.h>
+
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -13,7 +15,7 @@ struct Glyph  {
     uint32_t advance;    // Offset to advance to next glyph
 };
 
-class Text {
+class ENGINE_EXPORT Text {
 public:
     Text(const class OpenGL& ctx);
 

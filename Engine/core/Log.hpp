@@ -7,10 +7,10 @@
 namespace debug {
     using logger_handler_t = void(std::string msg);
 
-    extern logger_handler_t* logger;
+    ENGINE_EXPORT extern logger_handler_t* logger;
 
-    [[noreturn]] auto unimpl(std::source_location loc = std::source_location::current()) noexcept -> void;
-    [[noreturn]] auto unrechable(const char* msg = "", std::source_location loc = std::source_location::current()) noexcept -> void;
+    ENGINE_EXPORT [[noreturn]] auto unimpl(std::source_location loc = std::source_location::current()) noexcept -> void;
+    ENGINE_EXPORT [[noreturn]] auto unrechable(const char* msg = "", std::source_location loc = std::source_location::current()) noexcept -> void;
 
     template <class... Ts>
     inline auto log(const std::format_string<Ts...>& fmt, Ts&&... ts) -> void
