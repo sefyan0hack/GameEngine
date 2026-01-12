@@ -4,7 +4,7 @@ set(CLANG_AND_GNU_WARNING_FLAGS
 )
 
 set(GNU_WARNING_FLAGS
-    -Wno-error=changes-meaning -Wno-changes-meaning
+    -Wno-changes-meaning
 )
 
 set(CLANG_WARNING_FLAGS 

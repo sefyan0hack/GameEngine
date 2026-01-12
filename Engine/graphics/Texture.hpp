@@ -29,7 +29,7 @@ public:
     auto type() const -> GLenum;
     auto type_name() const -> std::string;
 
-    auto img2d_to_gpu(auto* data, GLsizei width, GLsizei height, GLint intformat = GL_RGBA8, GLenum format = GL_RGBA) const -> void;
+    auto img2d_to_gpu(const auto* data, GLsizei width, GLsizei height, GLint intformat = GL_RGBA8, GLenum format = GL_RGBA) const -> void;
 
 protected:
     GLuint m_Id;

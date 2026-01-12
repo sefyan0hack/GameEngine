@@ -23,7 +23,7 @@ public:
     auto set_diffuse(std::shared_ptr<class Texture> texture) -> void;
 
     static auto set_skybox(const std::string& BasePathName) -> void;
-    static auto set_skybox(std::shared_ptr<class Texture> texture) -> void;
+    static auto set_skybox(std::shared_ptr<class TextureCubeMap> texture) -> void;
     static auto render_sky(const class Camera& cam) -> void;
 
     static auto skybox() -> class SkyBox&;

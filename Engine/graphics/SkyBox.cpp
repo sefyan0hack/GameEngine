@@ -60,13 +60,13 @@ SkyBox::SkyBox()
   , m_Texture(std::make_shared<TextureCubeMap>())
 { gl::GenVertexArrays(1, &m_DummyVAO); }
 
-SkyBox::SkyBox(std::shared_ptr<Texture> texture)
+SkyBox::SkyBox(std::shared_ptr<TextureCubeMap> texture)
   : SkyBox()
 {
   set_texture(texture);
 }
 
-auto SkyBox::set_texture(std::shared_ptr<Texture> texture) -> void
+auto SkyBox::set_texture(std::shared_ptr<TextureCubeMap> texture) -> void
 {
   m_Texture = texture;
 }

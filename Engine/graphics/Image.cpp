@@ -7,46 +7,42 @@
 #define STBI_NO_THREAD_LOCALS
 #include <stb_image.h>
 
+constexpr std::size_t checkerboard_size = 64;
+constexpr std::size_t checkerboard_bytes_per_pixel = 3;
 
-template <std::size_t Size>
-constexpr auto generate_checkerboard(const uint32_t color1, const uint32_t color2)
-{
-    constexpr std::size_t bytes_per_pixel = 3;
-    constexpr std::size_t total_bytes = Size * Size * bytes_per_pixel;
+constexpr auto checkerboard = [](){
+    constexpr std::size_t total_bytes = checkerboard_size * checkerboard_size * checkerboard_bytes_per_pixel;
+    constexpr uint32_t color1 = 0xFFFF00FF;
+    constexpr uint32_t color2 = 0x00000000;
 
-    std::array<std::byte, total_bytes> data{};
+    std::array<std::byte, total_bytes> data;
 
-    for (std::size_t y = 0; y < Size; ++y) {
-        for (std::size_t x = 0; x < Size; ++x) {
+    for (std::size_t y = 0; y < checkerboard_size; ++y) {
+        for (std::size_t x = 0; x < checkerboard_size; ++x) {
 
             const bool use_first = ((x / 5 + y / 5) % 2) == 0;
             const uint32_t c = use_first ? color1 : color2;
 
-            const std::size_t idx = (y * Size + x) * bytes_per_pixel;
+            const std::size_t idx = (y * checkerboard_size + x) * checkerboard_bytes_per_pixel;
 
-            for (std::size_t b = 0; b < bytes_per_pixel; ++b) {
+            for (std::size_t b = 0; b < checkerboard_bytes_per_pixel; ++b) {
                 data[idx + b] = static_cast<std::byte>((c >> (8 * b)) & 0xFFu);
             }
         }
     }
-
     return data;
-}
+}();
 
-// magenta/black checkerboard 50x50
-// constexpr auto checkerboard = generate_checkerboard<50>(0xFFFF00FF, 0x00000000);
 
 Image::Image()
-    : m_Width(50), m_Height(50), m_Channels(3)
-    , m_Data(static_cast<std::byte*>(STBI_MALLOC(size())))
+    : m_Width(checkerboard_size)
+    , m_Height(checkerboard_size)
+    , m_Channels(checkerboard_bytes_per_pixel)
+    , m_Data(checkerboard.data())
 {
-    // magenta/black checkerboard 50x50
-    std::memcpy(m_Data, generate_checkerboard<50>(0xFFFF00FF, 0x00000000).data(), size());
-    CTOR_LOG
 }
 
 Image::Image(Pointer auto Data, uint32_t Width, uint32_t Height, uint32_t Channels)
-    : Image()
 {
     if(Data != nullptr && Width > 0 && Height > 0 && Channels > 0){
         m_Width = Width;
@@ -54,45 +50,65 @@ Image::Image(Pointer auto Data, uint32_t Width, uint32_t Height, uint32_t Channe
         m_Channels = Channels;
         m_Data = reinterpret_cast<std::byte*>(Data);
     }else{
-        debug::log(" Image not Valid {:p}", (void*)this);
+        m_Width = checkerboard_size;
+        m_Height = checkerboard_size;
+        m_Channels = checkerboard_bytes_per_pixel;
+        m_Data = checkerboard.data();
+
+        debug::log("Can't load raw data");
     }
+
+    CTOR_LOG
 }
 
 Image::Image(const std::string& filename, bool flip)
-    : Image()
 {
     stbi_set_flip_vertically_on_load(flip);
     auto data = stbi_load(filename.c_str(), &m_Width, &m_Height, &m_Channels, 0);
 
-    if(data)
+    if(data){
         m_Data = reinterpret_cast<std::byte*>(data);
+    }
     else
+    {
+        m_Width = checkerboard_size;
+        m_Height = checkerboard_size;
+        m_Channels = checkerboard_bytes_per_pixel;
+        m_Data = checkerboard.data();
+
         debug::log("Can't read {} . reason : {}", filename.c_str(), stbi_failure_reason());
+    }
+
+    CTOR_LOG
 }
 
 Image::Image(const cmrc::file& src, bool flip)
-
 {
     stbi_set_flip_vertically_on_load(flip);
     auto size = std::distance(src.begin(), src.end());
 
     auto data = stbi_load_from_memory(reinterpret_cast<const unsigned char*>(src.begin()), static_cast<int>(size), &m_Width, &m_Height, &m_Channels, 0);
 
-    if(data)
+    if(data){
         m_Data = reinterpret_cast<std::byte*>(data);
-    else
+    }
+    else{
+        m_Width = checkerboard_size;
+        m_Height = checkerboard_size;
+        m_Channels = checkerboard_bytes_per_pixel;
+        m_Data = checkerboard.data();
+
         debug::log("Can't read file . reason : {}", stbi_failure_reason());
+    }
 
     CTOR_LOG
 }
 
-
 Image::~Image()
 {
-    if(m_Data) stbi_image_free(m_Data);
+    if(m_Data && m_Data != checkerboard.data()) stbi_image_free(const_cast<std::byte*>(m_Data));
     DTOR_LOG
 }
-
 
 Image::Image(Image&& other)
     : m_Width(std::exchange(other.m_Width, 0))
@@ -141,7 +157,7 @@ auto Image::valid() const ->bool
 }
 
 
-auto Image::data() const -> std::span<std::byte>
+auto Image::data() const -> std::span<const std::byte>
 {
     Expect(valid(), " Image not Valid {:p}", (const void*)this);
 

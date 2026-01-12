@@ -39,7 +39,7 @@ auto Material::set_diffuse(std::shared_ptr<Texture> texture) -> void
     m_Diffuse = texture;
 }
 
-auto Material::set_skybox(std::shared_ptr<Texture> texture) -> void
+auto Material::set_skybox(std::shared_ptr<TextureCubeMap> texture) -> void
 {
     skybox().set_texture(texture);
 }

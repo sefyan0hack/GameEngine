@@ -12,7 +12,6 @@ class ENGINE_EXPORT Image
 {
 public:
     friend struct std::formatter<Image>;
-
     Image();
     Image(const std::string& filename, bool flip = false);
     Image(const cmrc::file& src, bool flip = false);
@@ -38,13 +37,13 @@ public:
     static auto channel_from_cpu_format(GLenum format) -> std::int32_t;
     static auto channel_from_gpu_format(GLint format) -> std::int32_t;
 
-    auto data() const -> std::span<std::byte>;
+    auto data() const -> std::span<const std::byte>;
     auto size() const -> std::size_t;
     auto valid() const -> bool;
 
 private:
     int32_t m_Width, m_Height, m_Channels;
-    std::byte* m_Data;
+    const std::byte* m_Data;
 };
 
 // custom Image Format

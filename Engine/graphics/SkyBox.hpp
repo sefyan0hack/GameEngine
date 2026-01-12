@@ -10,12 +10,12 @@ class ENGINE_EXPORT SkyBox
   friend class Material;
 
   SkyBox();
-  SkyBox(std::shared_ptr<class Texture> texture);
+  SkyBox(std::shared_ptr<class TextureCubeMap> texture);
 
-  auto set_texture(std::shared_ptr<class Texture> texture) -> void;
+  auto set_texture(std::shared_ptr<class TextureCubeMap> texture) -> void;
 
 private:
   ShaderProgram m_Program;
-  std::shared_ptr<class Texture> m_Texture;
+  std::shared_ptr<class TextureCubeMap> m_Texture;
   GLuint m_DummyVAO;
 };
