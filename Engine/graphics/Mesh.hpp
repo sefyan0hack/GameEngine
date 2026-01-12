@@ -63,8 +63,8 @@ public:
         auto bind_vbo() -> void;
         // auto bind_ibo() -> void;
   public:
-    std::vector<VetexData> vertices;
-    std::vector<AttributeInfo> attribs;
+    std::vector<VetexData> m_Vertices;
+    std::vector<AttributeInfo> m_Attribs;
     GLuint VBO, VAO;
     static std::vector<Vertex> CUBE;
 };

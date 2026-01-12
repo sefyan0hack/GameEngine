@@ -90,8 +90,8 @@ namespace {
 }
 
 Mesh::Mesh(const std::vector<Vertex> &vertices)
-    : vertices(vertices)
-    , attribs({position, normals, texCoords})
+    : m_Vertices(vertices)
+    , m_Attribs({position, normals, texCoords})
     , VBO(gen_buffer())
     , VAO(gen_vertexarray())
 {
@@ -105,8 +105,8 @@ Mesh::Mesh(const std::vector<Vertex> &vertices)
 }
 
 Mesh::Mesh(Mesh &&other) noexcept
-    : vertices(std::move(other.vertices))
-    , attribs(std::move(other.attribs))
+    : m_Vertices(std::move(other.m_Vertices))
+    , m_Attribs(std::move(other.m_Attribs))
     , VBO(other.VBO)
     , VAO(other.VAO)
 {
@@ -120,8 +120,8 @@ auto Mesh::operator=(Mesh &&other) noexcept -> Mesh &
         gl::DeleteBuffers(1, &VBO);
         gl::DeleteVertexArrays(1, &VAO);
 
-        vertices = std::move(other.vertices);
-        attribs = std::move(other.attribs);
+        m_Vertices = std::move(other.m_Vertices);
+        m_Attribs = std::move(other.m_Attribs);
 
         VBO = other.VBO;
         VAO = other.VAO;
@@ -197,14 +197,14 @@ auto Mesh::set_attribute(GLuint index, AttributeInfo att) -> void
 auto Mesh::prepare_attribs() -> void
 {
     GLuint index = 0;
-    for(const auto& attrib : attribs){
+    for(const auto& attrib : m_Attribs){
         set_attribute(index++, attrib);
     }
 }
 
 auto Mesh::enable_attribs() const -> void
 {
-    for(GLuint i = 0; i < attribs.size(); i++){
+    for(GLuint i = 0; i < m_Attribs.size(); i++){
         gl::EnableVertexAttribArray(i);
     }
 }
@@ -226,7 +226,7 @@ auto Mesh::current_vbo() -> GLuint
 
 auto Mesh::updata() -> void
 {
-    gl::BufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(vertices.size() * sizeof(Mesh::VetexData)), vertices.data(), GL_STATIC_DRAW);
+    gl::BufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(m_Vertices.size() * sizeof(Mesh::VetexData)), m_Vertices.data(), GL_STATIC_DRAW);
 }
 
 auto Mesh::gen_vertexarray() -> GLuint
@@ -268,7 +268,7 @@ auto Mesh::bind_vbo() -> void
 
 auto Mesh::vextex_size() const noexcept -> GLsizei
 {
-    return static_cast<GLsizei>(vertices.size());
+    return static_cast<GLsizei>(m_Vertices.size());
 }
 
 auto Mesh::flip_faces(std::vector<Vertex> verts) -> std::vector<Vertex>
