@@ -1,6 +1,6 @@
 
 set(CLANG_AND_GNU_WARNING_FLAGS
-    -Wall -Wextra -Wpedantic
+    -Wall -Wextra -Wconversion -Wshadow
 )
 
 set(GNU_WARNING_FLAGS
