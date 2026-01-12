@@ -1,5 +1,4 @@
 
-include(helpers)
 include(GenerateExportHeader)
 
 add_subdirectory(core)

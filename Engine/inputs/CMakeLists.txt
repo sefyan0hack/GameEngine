@@ -1,6 +1,3 @@
-# Engine/inputs/cmakelists.txt
-
-include(helpers)
 
 add_library(inputs INTERFACE)
 

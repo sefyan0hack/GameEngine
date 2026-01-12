@@ -1,5 +1,4 @@
 
-include(helpers)
 include(GenerateExportHeader)
 
 if(GAME_HOT_RELOADABLE)
@@ -10,18 +9,16 @@ endif()
 
 generate_export_header(Game)
 
-target_sources( Game PRIVATE
-  Game.cpp 
-)
+target_sources( Game PRIVATE Game.cpp )
 
 target_include_directories(Game PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
 target_link_libraries(Game 
-  PRIVATE 
+  PRIVATE
     project_warnings_flags
     project_coverage_flags
     project_sanitizer_flags 
-    glm::glm 
+    glm::glm
     Engine
 )
 

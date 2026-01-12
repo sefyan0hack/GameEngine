@@ -1,6 +1,3 @@
-# Engine/graphics/cmakelists.txt
-
-include(helpers)
 
 add_library(graphics INTERFACE)
 

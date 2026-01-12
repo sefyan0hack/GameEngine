@@ -1,6 +1,3 @@
-# Engine/core/cmakelists.txt
-
-include(helpers)
 
 add_library(core INTERFACE)
 
