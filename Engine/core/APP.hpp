@@ -47,9 +47,9 @@ private:
     auto frame(float deltaTime) -> void;
 
 private:
-    CWindow Window;
-    Keyboard Keyboard;
-    Mouse Mouse;
+    ::CWindow Window;
+    ::Keyboard Keyboard;
+    ::Mouse Mouse;
     
     bool m_Running;
     std::chrono::steady_clock::time_point m_LastFrameTime;
