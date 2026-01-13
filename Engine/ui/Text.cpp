@@ -44,7 +44,7 @@ Text::Text(const OpenGL& ctx)
 
     auto font_data = embed_filesystem.open(FONT_NAME);
 
-    if (FT_New_Memory_Face(ft, reinterpret_cast<FT_Byte const*>(font_data.begin()), static_cast<FT_Long>(font_data.size()), 0, &face)) {
+    if (FT_New_Memory_Face(ft, std::bit_cast<FT_Byte const*>(font_data.begin()), static_cast<FT_Long>(font_data.size()), 0, &face)) {
         throw Exception("ERROR::FREETYPE: Failed to load font");
     }
 

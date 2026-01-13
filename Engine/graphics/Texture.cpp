@@ -76,7 +76,7 @@ Texture2D::Texture2D()
 {
     // Ensure GLubyte and std::byte are the same size at compile time
     static_assert(sizeof(GLubyte) == sizeof(std::byte), "GLubyte and std::byte size mismatch!");
-    img2d_to_gpu(reinterpret_cast<const GLubyte*>(m_Img.data().data()), m_Img.width(), m_Img.height(), m_Img.gpu_format(), m_Img.cpu_format());
+    img2d_to_gpu(std::bit_cast<const GLubyte*>(m_Img.data().data()), m_Img.width(), m_Img.height(), m_Img.gpu_format(), m_Img.cpu_format());
     gl::GenerateMipmap(m_Type);
 }
 
@@ -86,7 +86,7 @@ Texture2D::Texture2D(const std::string &name)
 {
     // Ensure GLubyte and std::byte are the same size at compile time
     static_assert(sizeof(GLubyte) == sizeof(std::byte), "GLubyte and std::byte size mismatch!");
-    img2d_to_gpu(reinterpret_cast<const GLubyte*>(m_Img.data().data()), m_Img.width(), m_Img.height(), m_Img.gpu_format(), m_Img.cpu_format());
+    img2d_to_gpu(std::bit_cast<const GLubyte*>(m_Img.data().data()), m_Img.width(), m_Img.height(), m_Img.gpu_format(), m_Img.cpu_format());
     gl::GenerateMipmap(m_Type);
 }
 
@@ -95,7 +95,7 @@ Texture2D::Texture2D(const cmrc::file &src)
 {
     // Ensure GLubyte and std::byte are the same size at compile time
     static_assert(sizeof(GLubyte) == sizeof(std::byte), "GLubyte and std::byte size mismatch!");
-    img2d_to_gpu(reinterpret_cast<const GLubyte*>(m_Img.data().data()), m_Img.width(), m_Img.height(), m_Img.gpu_format(), m_Img.cpu_format());
+    img2d_to_gpu(std::bit_cast<const GLubyte*>(m_Img.data().data()), m_Img.width(), m_Img.height(), m_Img.gpu_format(), m_Img.cpu_format());
     gl::GenerateMipmap(m_Type);
 }
 
