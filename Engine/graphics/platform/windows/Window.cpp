@@ -4,6 +4,7 @@
 #include <core/Log.hpp>
 #include <core/Event.hpp>
 #include <core/Exception.hpp>
+#include <bit>
 
 #include <windows.h>
 #undef near
@@ -254,7 +255,7 @@ auto CWindow::toggle_fullscreen() -> void
 			SWP_FRAMECHANGED | SWP_NOZORDER
 		);
 	
-		SetProp(m_Handle, FULLSCREEN_STATE_PROP, reinterpret_cast<HANDLE>(storedState));
+		SetProp(m_Handle, FULLSCREEN_STATE_PROP, std::bit_cast<HANDLE>(storedState));
 		m_FullScreen = true;
 	}
 }

@@ -48,7 +48,7 @@ Image::Image(Pointer auto Data, uint32_t Width, uint32_t Height, uint32_t Channe
         m_Width = Width;
         m_Height = Height;
         m_Channels = Channels;
-        m_Data = reinterpret_cast<std::byte*>(Data);
+        m_Data = reinterpret_cast<const std::byte*>(Data);
     }else{
         m_Width = checkerboard_size;
         m_Height = checkerboard_size;
@@ -67,7 +67,7 @@ Image::Image(const std::string& filename, bool flip)
     auto data = stbi_load(filename.c_str(), &m_Width, &m_Height, &m_Channels, 0);
 
     if(data){
-        m_Data = reinterpret_cast<std::byte*>(data);
+        m_Data = reinterpret_cast<const std::byte*>(data);
     }
     else
     {
@@ -90,7 +90,7 @@ Image::Image(const cmrc::file& src, bool flip)
     auto data = stbi_load_from_memory(reinterpret_cast<const unsigned char*>(src.begin()), static_cast<int>(size), &m_Width, &m_Height, &m_Channels, 0);
 
     if(data){
-        m_Data = reinterpret_cast<std::byte*>(data);
+        m_Data = reinterpret_cast<const std::byte*>(data);
     }
     else{
         m_Width = checkerboard_size;
