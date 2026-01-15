@@ -12,31 +12,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_USE_RELATIVE_PATHS true)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-if(WIN32)
-    add_compile_definitions(
-        _CRT_SECURE_NO_WARNINGS
-        WIN32_LEAN_AND_MEAN
-        NOMINMAX
-    )
-    if(NO_CONSOLE)
-        set(CMAKE_WIN32_EXECUTABLE ON)
-    else()
-        set(CMAKE_WIN32_EXECUTABLE OFF)
-    endif()
-
-    set(DIR_PLT_NAME "windows")
-elseif(EMSCRIPTEN)
-    set(DIR_PLT_NAME "web")
-elseif(ANDROID)
-    set(DIR_PLT_NAME "android")
-elseif(LINUX)
-    set(DIR_PLT_NAME "linux")
-endif()
-
-set(PLT_DIR_PATH_SUFFIX "platform/${DIR_PLT_NAME}")
-
-string(REGEX MATCH "^[0-9]+" COMPILER_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSION}")
-
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 include(CTest)
@@ -53,6 +28,31 @@ include(StaticLink)
 include(Coverage)
 include(Sanitize)
 include(CompilerFlags)
+
+if(WIN32)
+    add_compile_definitions(
+        _CRT_SECURE_NO_WARNINGS
+        WIN32_LEAN_AND_MEAN
+        NOMINMAX
+    )
+    if(CONSOLE_ATTACHED)
+        set(CMAKE_WIN32_EXECUTABLE OFF)
+    else()
+        set(CMAKE_WIN32_EXECUTABLE ON)
+    endif()
+
+    set(DIR_PLT_NAME "windows")
+elseif(EMSCRIPTEN)
+    set(DIR_PLT_NAME "web")
+elseif(ANDROID)
+    set(DIR_PLT_NAME "android")
+elseif(LINUX)
+    set(DIR_PLT_NAME "linux")
+endif()
+
+set(PLT_DIR_PATH_SUFFIX "platform/${DIR_PLT_NAME}")
+
+string(REGEX MATCH "^[0-9]+" COMPILER_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSION}")
 
 ####################################################################################################
 # Vsisibility
@@ -149,7 +149,7 @@ add_compile_definitions(
     $<$<CONFIG:Debug>:DEBUG>
     $<$<CONFIG:Release>:NDEBUG>
 
-    $<$<BOOL:${NO_CONSOLE}>:NO_CONSOLE>
+    $<$<BOOL:${CONSOLE_ATTACHED}>:CONSOLE_ATTACHED>
     $<$<BOOL:${ROBUST_GL_CHECK}>:ROBUST_GL_CHECK>
 )
 
