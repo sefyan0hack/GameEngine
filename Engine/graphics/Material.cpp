@@ -22,10 +22,11 @@ Material::Material(std::shared_ptr<Texture> diffuse)
 
 auto Material::bind(std::shared_ptr<ShaderProgram> program) -> void
 {
-    m_Diffuse->bind(Diffuse_SLOT);
+    gl::ActiveTexture(GL_TEXTURE0 + Diffuse_SLOT);
+    m_Diffuse->bind();
     program->set_uniform("uDiffuseMap", Diffuse_SLOT);
 
-    // skybox().m_Texture->bind(SkyBox_SLOT); // skybox takes last slot && not needed to to bind more then ones
+    gl::ActiveTexture(GL_TEXTURE0 + SkyBox_SLOT);
     program->set_uniform("uSkyboxMap", SkyBox_SLOT);
 }
 
@@ -53,7 +54,8 @@ auto Material::render_sky(const Camera& cam) -> void{
     sk.m_Program.use();
     sk.m_Program.set_uniform("View", glm::mat4(glm::mat3(cam.view())));
     sk.m_Program.set_uniform("Projection", cam.perspective());
-    sk.m_Texture->bind(SkyBox_SLOT);
+    gl::ActiveTexture(GL_TEXTURE0 + SkyBox_SLOT);
+    sk.m_Texture->bind();
     sk.m_Program.set_uniform("uDiffuseMap", SkyBox_SLOT);
 
     gl::BindVertexArray(sk.m_DummyVAO);

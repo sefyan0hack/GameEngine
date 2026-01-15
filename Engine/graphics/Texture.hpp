@@ -25,7 +25,7 @@ protected:
 
 public:
     auto id() const -> GLuint;
-    auto bind(uint8_t slot) const -> void;
+    auto bind() const -> void;
     auto type() const -> GLenum;
     auto type_name() const -> std::string;
 
