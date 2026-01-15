@@ -7,6 +7,7 @@
 namespace debug {
     using logger_handler_t = void(std::string msg);
 
+    ENGINE_EXPORT logger_handler_t default_logger;
     ENGINE_EXPORT extern logger_handler_t* logger;
 
     ENGINE_EXPORT [[noreturn]] auto unimpl(std::source_location loc = std::source_location::current()) noexcept -> void;
@@ -15,7 +16,7 @@ namespace debug {
     template <class... Ts>
     inline auto log(const std::format_string<Ts...>& fmt, Ts&&... ts) -> void
     {
-        logger(std::format(fmt, std::forward<Ts>(ts)...));
+        if(logger) logger(std::format(fmt, std::forward<Ts>(ts)...));
     }
 
     template <class T>

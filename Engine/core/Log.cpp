@@ -1,5 +1,5 @@
 #include "Log.hpp"
-#include <print>
+#include <cstdio>
 #include <ostream>
 #include <fstream>
 #include <chrono>
@@ -12,19 +12,22 @@
 constexpr auto LOG_FILE = "Engine.log";
 
 namespace debug {
+    auto default_logger(std::string msg ) -> void {
+        auto now = std::format("{}", std::chrono::system_clock::now());
 
-    logger_handler_t* logger = [](std::string msg){
-        #if !defined(NO_CONSOLE)
+        #if defined(CONSOLE_ATTACHED)
         #   if defined(ANDROID_PLT)
-            __android_log_write(ANDROID_LOG_INFO, "ENGINE", msg.c_str());
+            __android_log_printf(ANDROID_LOG_INFO, "ENGINE", "%s : %s", now.c_str(), msg.c_str());
         #   else
-            std::println("{} : {}", std::chrono::system_clock::now(), msg);
+            std::printf("%s : %s\n", now.c_str(), msg.c_str());
         #   endif
         #else
             std::ofstream out(LOG_FILE, std::ios::app);
-            std::println(out, "{} : {}", std::chrono::system_clock::now(), msg);
+            out << now << " : " << msg;
         #endif
     };
+
+    logger_handler_t* logger = default_logger;
 
     [[noreturn]] auto unimpl(std::source_location loc) noexcept -> void
     {
