@@ -4,11 +4,11 @@ set(CLANG_AND_GNU_WARNING_FLAGS
 )
 
 set(GNU_WARNING_FLAGS
-    -Wno-changes-meaning -Warray-bounds -Wstringop-overflow -Wformat-overflow
+    -Wno-changes-meaning -Warray-bounds -Wstringop-overflow -Wformat-overflow -Wdangling-pointer=2
 )
 
 set(CLANG_WARNING_FLAGS 
-    -Wno-language-extension-token -Wunsafe-buffer-usage
+    -Wno-language-extension-token -Wunsafe-buffer-usage -Wdangling-gsl
 )
 
 set(MSVC_WARNING_FLAGS 
