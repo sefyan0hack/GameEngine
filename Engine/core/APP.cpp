@@ -170,44 +170,19 @@ auto APP::loop_body(void* ctx) -> void
 
     app->m_Fps = 1.0f / deltaTime;
 
-    // Wireframe Mode
-    static bool wireframe_enabled = false;
-    static bool h_key_was_pressed = false;
+    // normal Mode
+    if (app->Keyboard.is_pressed(Key::Space)) {        
+        app->Renderer->normal_mode();
+    }
 
+    // Wireframe Mode
     if (app->Keyboard.is_pressed(Key::H)) {        
-        if (!h_key_was_pressed) {
-            wireframe_enabled = !wireframe_enabled;
-            
-            if (wireframe_enabled) {
-                app->Renderer->enable_wireframe();
-            } else {
-                app->Renderer->disable_wireframe();
-            }
-            
-            h_key_was_pressed = true;
-        }
-    } else {
-        h_key_was_pressed = false;
+        app->Renderer->wireframe_mode();
     }
 
     // Points Mode
-    static bool points_enabled = false;
-    static bool p_key_was_pressed = false;
-
     if (app->Keyboard.is_pressed(Key::P)) {        
-        if (!p_key_was_pressed) {
-            points_enabled = !points_enabled;
-            
-            if (points_enabled) {
-                app->Renderer->enable_points();
-            } else {
-                app->Renderer->disable_points();
-            }
-            
-            p_key_was_pressed = true;
-        }
-    } else {
-        p_key_was_pressed = false;
+        app->Renderer->points_mode();
     }
 
     // Fullscreen 

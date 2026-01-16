@@ -74,7 +74,15 @@ auto OpenGLRenderer::viewport() const -> std::tuple<uint32_t, uint32_t, uint32_t
     return {m_X, m_Y, m_Width, m_Height};
 }
 
-auto OpenGLRenderer::enable_wireframe() -> void
+
+auto OpenGLRenderer::normal_mode() -> void
+{
+    #if defined(CORE_GL)
+    gl::PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    #endif
+}
+
+auto OpenGLRenderer::wireframe_mode() -> void
 {
     #if defined(WEB_PLT)
     static bool webPolyModeAvailable = has_extension("WEBGL_polygon_mode");
@@ -86,53 +94,33 @@ auto OpenGLRenderer::enable_wireframe() -> void
         });
     }
     #elif defined(CORE_GL)
-    gl::Enable(GL_LINE_SMOOTH);
-    gl::Enable(GL_POLYGON_OFFSET_LINE);
-    gl::PolygonOffset(-1.0f, -1.0f);
     gl::PolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     #endif
 }
 
-auto OpenGLRenderer::disable_wireframe() -> void
-{
-    #if defined(WEB_PLT)
-    static bool webPolyModeAvailable = has_extension("WEBGL_polygon_mode");
-    if (webPolyModeAvailable) {
-        EM_ASM({
-            const gl = Module.ctx;
-            const ext = gl.getExtension("WEBGL_polygon_mode");
-            ext.polygonModeWEBGL(gl.FRONT_AND_BACK, ext.FILL_WEBGL);
-        });
-    }
-    #endif
+// auto OpenGLRenderer::disable_wireframe() -> void
+// {
+//     #if defined(WEB_PLT)
+//     static bool webPolyModeAvailable = has_extension("WEBGL_polygon_mode");
+//     if (webPolyModeAvailable) {
+//         EM_ASM({
+//             const gl = Module.ctx;
+//             const ext = gl.getExtension("WEBGL_polygon_mode");
+//             ext.polygonModeWEBGL(gl.FRONT_AND_BACK, ext.FILL_WEBGL);
+//         });
+//     }
+//     #endif
 
-    #if defined(CORE_GL)
-    gl::Disable(GL_POLYGON_OFFSET_LINE);
-    gl::Disable(GL_LINE_SMOOTH);
-    gl::PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    #endif
-}
+//     #if defined(CORE_GL)
+//     gl::PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+//     #endif
+// }
 
 
-auto OpenGLRenderer::enable_points() -> void
+auto OpenGLRenderer::points_mode() -> void
 {
     #if defined(CORE_GL)
-    gl::Enable(GL_PROGRAM_POINT_SIZE);
-    GLfloat widths[2];
-    auto& min = widths[0];
-    auto& max = widths[1];
-    gl::GetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, widths);
-    gl::PointSize((max-min)/2);
-
     gl::PolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-    #endif
-}
-
-auto OpenGLRenderer::disable_points() -> void
-{
-    #if defined(CORE_GL)
-    gl::Disable(GL_PROGRAM_POINT_SIZE);
-    gl::PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     #endif
 }
 
