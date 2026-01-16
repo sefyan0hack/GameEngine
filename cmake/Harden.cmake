@@ -1,26 +1,43 @@
+add_library(project_hardening_flags INTERFACE)
+
 if(HARDEN)
-    if(MSVC)
-        if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|x64|x86|AMD64")
-            add_compile_options( /sdl /GS /guard:cf )
-        endif()
-        if(CMAKE_SIZEOF_VOID_P EQUAL 4)  # 32-bit
-            add_compile_options( /SafeSEH)
-        endif()
-    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        if(NOT WIN32)
-            if(COMPILER_MAJOR_VERSION VERSION_GREATER_EQUAL "14")
-                add_compile_options( -fhardened -Wno-hardened )
-            endif()
+    target_compile_options(project_hardening_flags INTERFACE
+        $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
+            # GCC 14+ / GCC 15.2 'fhardened' enables:
+            # _FORTIFY_SOURCE=3, -fstack-protector-strong, -fstack-clash-protection, 
+            # -fcf-protection (x86), -Wl,-z,relro,-z,now
+            -fhardened
+            
+            # Additional warnings as security measures
+            -Wformat -Wformat-security -Werror=format-security
+        >
 
-            if(COMPILER_MAJOR_VERSION VERSION_GREATER_EQUAL "15")
-                add_compile_definitions( _LIBCPP_HARDENING_MODE_EXTENSIVE )
-            endif()
+        # --- MSVC ---
+        $<$<CXX_COMPILER_ID:MSVC>:
+            /sdl            # Enable Additional Security Checks
+            /GS             # Buffer Security Check
+            /guard:cf       # Control Flow Guard
+            /CETCOMPAT      # Shadow Stack / Control-flow Enforcement
+            /W4 /WX         # Warnings as Errors
+        >
+    )
 
-            add_compile_options( -fharden-compares -fharden-conditional-branches -fstack-protector-strong )
-        endif()
-    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    # 3. Add Hardened Linker Options
+    target_link_options(project_hardening_flags INTERFACE
+        # --- MSVC Linker ---
+        $<$<CXX_COMPILER_ID:MSVC>:
+            /DYNAMICBASE    # ASLR
+            /HIGHENTROPYVA  # 64-bit ASLR
+            /NXCOMPAT       # Data Execution Prevention (DEP)
+        >
+    )
+
+    # 4. Standard Library Hardening Definitions
+    target_compile_definitions(project_hardening_flags INTERFACE
+        # libstdc++ (GCC) assertions
+        $<$<CXX_COMPILER_ID:GNU>:_GLIBCXX_ASSERTIONS>
         
-        add_compile_options( -Wformat -Wformat-security -Werror=format-security -fno-strict-aliasing -fno-common -fstack-protector-strong )
-        add_link_options("$<$<STREQUAL:$<PLATFORM_ID>,Linux>:-Wl,-z,relro;-Wl,-z,now;-Wl,-z,shstk;-Wl,-z,notext>")
-    endif()
+        # libc++ (Clang) extensive hardening (replaces older modes)
+        $<$<CXX_COMPILER_ID:Clang>:_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE>
+    )
 endif()

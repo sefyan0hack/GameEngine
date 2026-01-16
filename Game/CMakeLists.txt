@@ -17,7 +17,8 @@ target_link_libraries(Game
   PRIVATE
     project_warnings_flags
     project_coverage_flags
-    project_sanitizer_flags 
+    project_sanitizer_flags
+    project_hardening_flags
     glm::glm
     Engine
 )

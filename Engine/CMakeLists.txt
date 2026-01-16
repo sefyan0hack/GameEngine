@@ -53,6 +53,7 @@ if(NOT EMSCRIPTEN)
             project_warnings_flags
             project_coverage_flags
             project_sanitizer_flags
+            project_hardening_flags
             $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
             $<$<PLATFORM_ID:Unix>:dl>
             $<$<PLATFORM_ID:Linux>:${X11_LIBRARIES}>
