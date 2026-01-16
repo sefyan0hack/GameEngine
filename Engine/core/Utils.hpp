@@ -83,22 +83,6 @@ consteval auto get_file_directory(const std::string_view file_path = __FILE__) -
 }
 
 /**
- * @brief Check whether an integral value is odd.
- *
- * @param x Value to test (any type supporting % and comparison).
- * @return true if x is odd, false otherwise.
- *
- * @details
- * A constexpr helper for simple odd/even checks.
- */
-
-constexpr auto is_odd(auto x) -> bool
-{
-    return x % 2 != 0;
-}
-
-
-/**
  * @brief Simple compile-time fixed string wrapper usable as a NTTP.
  *
  * @tparam N Size of the stored char array (including terminating null).
