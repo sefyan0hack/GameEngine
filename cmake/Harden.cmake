@@ -2,13 +2,10 @@ add_library(project_hardening_flags INTERFACE)
 
 if(HARDEN)
     target_compile_options(project_hardening_flags INTERFACE
-        $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
-            # GCC 14+ / GCC 15.2 'fhardened' enables:
-            # _FORTIFY_SOURCE=3, -fstack-protector-strong, -fstack-clash-protection, 
-            # -fcf-protection (x86), -Wl,-z,relro,-z,now
-            -fhardened
-            
-            # Additional warnings as security measures
+
+        $<$<CXX_COMPILER_ID:GNU,Clang>:
+            $<$<NOT:$<PLATFORM_ID:Windows>>:-fhardened>
+            $<$<PLATFORM_ID:Windows>:-fstack-protector-strong -D_FORTIFY_SOURCE=2>
             -Wformat -Wformat-security -Werror=format-security
         >
 
