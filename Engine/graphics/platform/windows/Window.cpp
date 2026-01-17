@@ -7,9 +7,13 @@
 #include <bit>
 
 #include <windows.h>
-#undef near
-#undef far
 
+#if !defined(CONSOLE_ATTACHED)
+extern int main(int argc, char** argv);
+int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow) {
+    return main(__argc, __argv);
+}
+#endif
 
 extern auto from_native(WPARAM key, LPARAM Lpr) -> Key;
 
