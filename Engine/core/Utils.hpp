@@ -16,18 +16,6 @@
 
 #include "Exception.hpp"
 
-#if defined(WINDOWS_PLT)
-#include <windows.h>
-#undef near
-#undef far
-#elif defined(LINUX_PLT) || defined(ANDROID_PLT)
-#include <dlfcn.h>
-#elif defined(WEB_PLT)
-#include <emscripten/emscripten.h>
-#include <emscripten/html5.h>
-#endif
-
-
 namespace utils {
 
 /**
@@ -369,54 +357,6 @@ auto pointer_to_string(Pointer auto ptr) -> std::string
     else if constexpr (formattable<Pointee>) return std::format(r, type, *ptr);
     else if constexpr (std::is_function_v<Pointee>) return std::format(r, type, "");
     else return std::format(r, type, to_hex(ptr));
-}
-
-/**
- * @brief Platform-agnostic runtime loader for function addresses from a module.
- *
- * @param module Platform-dependent module name or library path (e.g. "opengl32.dll" or "libGL.so").
- * @param name Name of the symbol/function to resolve.
- * @return void* Address of the resolved symbol.
- *
- * @throws Exception if the module cannot be loaded or the symbol cannot be resolved.
- *
- * @details
- * - On Windows, attempts GetModuleHandleA(module) then LoadLibraryA(module) if needed,
- *   and resolves the symbol with GetProcAddress.
- * - On Linux, attempts dlopen(module, RTLD_LAZY | RTLD_NOLOAD) and resolves with dlsym.
- * - On Web (Emscripten), uses emscripten_webgl_get_proc_address.
- *
- * The function throws a Exception describing the failure reason if the module
- * cannot be loaded or the symbol cannot be found.
- */
-inline auto get_proc_address([[maybe_unused]] const char* module, const char* name) -> void* {
-
-    void* lib = nullptr;
-    void* address = nullptr;
-    std::string failreson;
-
-    #if defined(WINDOWS_PLT)
-    lib = [&module](){
-        void* handle = GetModuleHandleA(module);
-        return handle ? handle : LoadLibraryA(module);
-    }();
-    
-    failreson = lib ? "" : std::to_string(GetLastError());
-    address = (void *) ::GetProcAddress(reinterpret_cast<HMODULE>(lib), name);
-    #elif defined(LINUX_PLT) || defined(ANDROID_PLT)
-    lib = dlopen(module, RTLD_LAZY | RTLD_NOLOAD);
-    failreson = lib ? "" : std::string(dlerror());
-    address = (void *)dlsym(lib, name);
-    #elif defined(WEB_PLT)
-    address = reinterpret_cast<void*>(emscripten_webgl_get_proc_address(name));
-    failreson = lib ? "" : reinterpret_cast<const char*>(emscripten_webgl_get_proc_address(name));
-    #endif
-
-    if(lib == nullptr){
-        throw Exception("Couldn't load lib {} reason: {}, fn name: {}", module, failreson, name);
-    }
-
-    return address;
 }
 
 template<Variant TVarinat, class... TMatchers>

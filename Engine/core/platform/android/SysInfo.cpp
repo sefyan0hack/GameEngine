@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/system_properties.h>
+#include <dlfcn.h>
 
 auto os::host::name_tag() -> os::Target
 {
@@ -91,4 +92,25 @@ auto os::host::memory_peak() -> std::size_t
 auto os::host::thread_count() -> std::size_t
 {
     return get_proc_value("Threads:");
+}
+
+auto auto os::get_proc_address(const char* module, const char* sym) -> void* {
+
+    void* lib = nullptr;
+    void* address = nullptr;
+    std::string failreson;
+
+    lib = dlopen(module, RTLD_LAZY | RTLD_NOLOAD);
+    failreson = lib ? "" : std::string(dlerror());
+    address = (void *)dlsym(lib, sym);
+
+    if(lib == nullptr){
+        throw Exception("Couldn't load lib {} reason: {}, fn name: {}", module, failreson, sym);
+    }
+
+    if(address == nullptr){
+        throw Exception("Couldn't load symbole {} reason: {}", sym, failreson);
+    }
+
+    return address;
 }

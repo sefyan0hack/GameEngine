@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <psapi.h>
 #include <tlhelp32.h>
+#include "Exception.hpp"
 
 auto os::host::name_tag() -> os::Target
 {
@@ -108,4 +109,29 @@ auto os::host::thread_count() -> std::size_t
 
     CloseHandle(hSnapshot);
     return count;
+}
+
+auto os::get_proc_address(const char* module, const char* sym) -> void* {
+
+    void* lib = nullptr;
+    void* address = nullptr;
+    std::string failreson;
+
+    lib = [&module](){
+        void* handle = GetModuleHandleA(module);
+        return handle ? handle : LoadLibraryA(module);
+    }();
+
+    failreson = lib ? "" : std::to_string(GetLastError());
+    address = (void *) ::GetProcAddress(reinterpret_cast<HMODULE>(lib), sym);
+
+    if(lib == nullptr){
+        throw Exception("Couldn't load lib {} reason: {}, fn name: {}", module, failreson, sym);
+    }
+
+    if(address == nullptr){
+        throw Exception("Couldn't load symbole {} reason: {}", sym, failreson);
+    }
+
+    return address;
 }

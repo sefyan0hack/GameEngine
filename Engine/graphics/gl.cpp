@@ -1,17 +1,16 @@
 #include "gl.hpp"
 #include <core/Log.hpp>
+#include <core/SysInfo.hpp>
 namespace gl {
 
     auto get_proc_address(const char* name) -> void* {
         void *address = reinterpret_cast<void*>(XXXGetProcAddress(name));
 
         if(address == nullptr){
-            address = utils::get_proc_address(OPENGL_MODULE_NAME, name);
+            address = os::get_proc_address(OPENGL_MODULE_NAME, name);
         }
 
-        if (address != nullptr) {
-            debug::log("from LIB:`{}`: load function `{}` at : {}", OPENGL_MODULE_NAME, name, address);
-        } else {
+        if (address == nullptr) {
             throw Exception("Couldn't load {} function `{}`", OPENGL_MODULE_NAME, name);
         }
 

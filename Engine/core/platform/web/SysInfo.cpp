@@ -2,6 +2,10 @@
 #include <emscripten.h>
 #include <emscripten/heap.h>
 #include <unistd.h>
+#include <emscripten/emscripten.h>
+#include <emscripten/html5.h>
+
+#include "Exception.hpp"
 
 auto os::host::name_tag() -> os::Target
 {
@@ -51,4 +55,24 @@ auto os::host::thread_count() -> std::size_t
         }
         return 1;
     });
+}
+
+auto auto os::get_proc_address(const char* module, const char* sym) -> void* {
+
+    void* lib = nullptr;
+    void* address = nullptr;
+    std::string failreson;
+
+    address = reinterpret_cast<void*>(emscripten_webgl_get_proc_address(sym));
+    failreson = lib ? "" : reinterpret_cast<const char*>(emscripten_webgl_get_proc_address(sym));
+
+    if(lib == nullptr){
+        throw Exception("Couldn't load lib {} reason: {}, fn name: {}", module, failreson, sym);
+    }
+
+    if(address == nullptr){
+        throw Exception("Couldn't load symbole {} reason: {}", sym, failreson);
+    }
+
+    return address;
 }
