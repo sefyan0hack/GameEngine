@@ -112,7 +112,7 @@ auto os::host::thread_count() -> std::size_t
 }
 
 
-auto auto os::get_proc_address(const char* module, const char* sym) -> void* {
+auto os::get_proc_address(const char* module, const char* sym) -> void* {
 
     void* lib = nullptr;
     void* address = nullptr;
