@@ -4,7 +4,7 @@
 
 using namespace std;
 
-using SubType = std::size_t (PLT_CALL * )(int32_t, int32_t);
+using SubType = std::size_t (APIENTRY * )(int32_t, int32_t);
 
 
 // TEST_F(Function_Test_Ctor1, ctor) {
