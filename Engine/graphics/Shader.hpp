@@ -31,11 +31,10 @@ class ENGINE_EXPORT Shader
     auto type() const              -> GLenum ;
     auto type_name() const          -> const char* ;
 
-    auto set_source(const std::string& src) const -> void;
+    auto set_sources(const std::span<const char* const> srcs) const -> void;
     auto compile()                           -> void;
     auto check_compile_status() -> void;
     auto get_shader_info(GLenum what) const-> GLint; //what : GL_SHADER_TYPE, GL_DELETE_STATUS, GL_COMPILE_STATUS, GL_INFO_LOG_LENGTH, GL_SHADER_SOURCE_LENGTH.
-    static auto pre_process() -> std::string;
     static auto new_vertex(either<std::string, cmrc::file> auto const & vert) -> std::shared_ptr<Shader>
     {
       return std::make_shared<Shader>(vert, GL_VERTEX_SHADER);
@@ -50,7 +49,7 @@ class ENGINE_EXPORT Shader
     GLuint m_Id;
     GLenum m_Type;
 
-    
+    static std::string glsl_header;
 };
 
 // custom Shader Format

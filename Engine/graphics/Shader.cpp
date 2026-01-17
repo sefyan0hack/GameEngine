@@ -4,18 +4,30 @@
 #include "Shader.hpp"
 
 
-namespace {
+std::string Shader::glsl_header = std::format(
+    "#version {}{}0 {}\n"
+    "precision {} float;\n",
+    gl::OPENGL_MAJOR_VERSION, gl::OPENGL_MINOR_VERSION, 
+    gl::api == gl::API::ES ? "es" : "core",
+    gl::api == gl::API::ES ? "mediump" : "highp"
+);
 
-constexpr auto to_string(GLenum type) -> const char*
-{
-  switch(type){
-    case GL_VERTEX_SHADER: return "GL_VERTEX_SHADER";
-    case GL_FRAGMENT_SHADER: return "GL_FRAGMENT_SHADER";
-    default: return "UNKNOWN";
-  }
+constexpr auto glsl_lib = R"(
+//Luminance (Grayscale conversion)
+float luminance(vec3 color) {
+    return dot(color, vec3(0.2126, 0.7152, 0.0722));
 }
-
+// UV Tiling and Offset
+vec2 scaleOffset(vec2 uv, vec2 scale, vec2 offset) {
+    return uv * scale + offset;
 }
+// Saturation
+vec3 saturate(vec3 rgb, float adjustment) {
+    const vec3 W = vec3(0.2125, 0.7154, 0.0721);
+    vec3 intensity = vec3(dot(rgb, W));
+    return mix(intensity, rgb, adjustment);
+}
+)";
 
 Shader::Shader()
     : m_Id(0), m_Type(0)
@@ -55,9 +67,9 @@ Shader::Shader(const std::string& filename)
     }
 
     m_Id = gl::CreateShader(m_Type);
-    auto src = pre_process() + utils::file_to_str(filename.c_str());
-
-    set_source(src);
+    auto srcs = {glsl_header.c_str(), glsl_lib, utils::file_to_str(filename.c_str()).c_str()};
+    
+    set_sources(srcs);
     compile();
     check_compile_status();
 
@@ -68,9 +80,9 @@ Shader::Shader(std::string Src, GLenum type)
 {
     m_Id = gl::CreateShader(type);
     m_Type = type;
-    auto src = pre_process() + Src;
+    auto srcs = {glsl_header.c_str(), glsl_lib, Src.c_str()};
 
-    set_source(src);
+    set_sources(srcs);
     compile();
     check_compile_status();
 
@@ -81,27 +93,9 @@ Shader::Shader(const cmrc::file& Src, GLenum type)
     : Shader(std::string(Src.begin(), Src.end()), type)
 {}
 
-
-
-auto Shader::set_source(const std::string& src) const -> void
+auto Shader::set_sources(const std::span<const char* const> srcs) const -> void
 {
-    const auto ShaderSource = src.data();
-    const auto size = static_cast<GLint>(src.size());
-    gl::ShaderSource(m_Id, 1, &ShaderSource, &size);
-}
-
-auto Shader::pre_process() -> std::string
-{
-    auto result = std::string();
-
-    GLint m_Major = gl::get_integer(GL_MAJOR_VERSION);
-
-    GLint m_Minor = gl::get_integer(GL_MINOR_VERSION);
-    auto glsl_verion = std::format("{}{}0", m_Major, m_Minor);
-
-    result += std::format("#version {} {}\n", glsl_verion, gl::api == gl::API::ES ? "es" : "core");
-    result += std::format("precision {} float;\n", gl::api == gl::API::ES ? "mediump" : "highp");
-    return result;
+    gl::ShaderSource(m_Id, static_cast<GLsizei>(srcs.size()), srcs.data(), nullptr);
 }
 
 auto Shader::compile() -> void
@@ -138,7 +132,11 @@ auto Shader::type() const -> GLenum
 
 auto Shader::type_name() const -> const char*
 {
-    return to_string(m_Type);
+    switch(m_Type){
+        case GL_VERTEX_SHADER: return "GL_VERTEX_SHADER";
+        case GL_FRAGMENT_SHADER: return "GL_FRAGMENT_SHADER";
+        default: return "UNKNOWN";
+    }
 }
 
 auto Shader::get_shader_info(GLenum what) const -> GLint
