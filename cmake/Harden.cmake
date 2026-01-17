@@ -2,9 +2,8 @@ add_library(project_hardening_flags INTERFACE)
 
 if(HARDEN)
     target_compile_options(project_hardening_flags INTERFACE
-
+        $<$<AND:$<CXX_COMPILER_ID:GNU>,$<NOT:$<PLATFORM_ID:Windows>>>:-fhardened>
         $<$<CXX_COMPILER_ID:GNU,Clang>:
-            $<$<NOT:$<PLATFORM_ID:Windows>>:-fhardened>
             $<$<PLATFORM_ID:Windows>:-fstack-protector-strong -D_FORTIFY_SOURCE=2>
             -Wformat -Wformat-security -Werror=format-security
         >
