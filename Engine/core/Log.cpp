@@ -17,7 +17,7 @@ namespace debug {
 
         #if defined(CONSOLE_ATTACHED)
         #   if defined(ANDROID_PLT)
-            __android_log_printf(ANDROID_LOG_INFO, "ENGINE", "%s : %s", now.c_str(), msg.c_str());
+            __android_log_print(ANDROID_LOG_INFO, "ENGINE", "%s : %s", now.c_str(), msg.c_str());
         #   else
             std::printf("%s : %s\n", now.c_str(), msg.c_str());
         #   endif
