@@ -105,7 +105,6 @@ jobs:
         with:
           abi: "arm64-v8a"
           build_type: "Debug"
-          build_dir: "build"
           cmake_flags: "-DTESTS=ON -DHARDEN=ON"
 
       - name: Create debug keystore (if missing)

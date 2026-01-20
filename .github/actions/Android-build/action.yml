@@ -34,4 +34,5 @@ runs:
         ${{ inputs.cmake_flags }}
 
     - name: Build
+      shell: bash
       run: cmake --build build --target ${{ inputs.cmake_target }} --parallel
