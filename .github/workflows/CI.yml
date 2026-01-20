@@ -39,7 +39,7 @@ jobs:
             sudo apt-get install -y libx11-dev libgl-dev xvfb
           fi
 
-      - name: Build Project
+      - name: Build
         uses: ./.github/actions/build
         with:
           os: ${{ matrix.os }}
@@ -47,14 +47,6 @@ jobs:
           build_type: ${{ matrix.build_type }}
           build_dir: ${{ env.BUILD_DIR }}
           cmake_flags: "-DTESTS=ON -DHARDEN=ON"
-
-      - name: Upload Test Executable
-        uses: actions/upload-artifact@v4
-        with:
-          name: unit_tests-${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
-          path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests${{ env.APP_EXT }}
-          retention-days: 1
-          overwrite: true
 
       - name: Test
         shell: bash
@@ -64,6 +56,14 @@ jobs:
           else
             ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
           fi
+
+      - name: Upload Test Executable on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit_tests-${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
+          path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests${{ env.APP_EXT }}
+          retention-days: 7
 
   Build-Web:
     if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip web]')"
@@ -84,7 +84,8 @@ jobs:
       shell: bash
       run: ctest --test-dir build --output-on-failure
 
-    - name: Upload Test Executable
+    - name: Upload Test Executable on Failure
+      if: failure()
       uses: actions/upload-artifact@v4
       with:
         name: unit_tests-web
@@ -93,8 +94,7 @@ jobs:
           build/tests/**/*.html
           build/tests/**/*.wasm
           build/tests/**/*.data
-        retention-days: 1
-        overwrite: true
+        retention-days: 7
 
   Build-android:
     if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip android]')"
