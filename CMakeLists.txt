@@ -172,3 +172,16 @@ if(TESTS)
     target_link_libraries(unit_tests PUBLIC res)
 
 endif()
+
+
+## for web now `cmake --install build --prefix site`
+install(TARGETS Launcher
+    RUNTIME DESTINATION .
+)
+
+install(FILES 
+    $<TARGET_FILE:Launcher>
+    DESTINATION .
+)
+
+install(FILES "${CMAKE_BINARY_DIR}/index.html" DESTINATION .)
