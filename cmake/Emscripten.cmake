@@ -19,7 +19,6 @@ if(EMSCRIPTEN)
         -flto
         -pthread
         -matomics
-        -sSINGLE_FILE=1
         -sASYNCIFY
         -sUSE_WEBGL2=1
         -sMIN_WEBGL_VERSION=1

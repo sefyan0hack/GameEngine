@@ -78,7 +78,7 @@ jobs:
     - name: Build
       uses: ./.github/actions/Web-build
       with:
-        cmake_flags: "-DTESTS=ON"
+        cmake_flags: "-DTESTS=ON -DCMAKE_CXX_FLAGS=-sSINGLE_FILE=1"
 
     - name: Test
       shell: bash
