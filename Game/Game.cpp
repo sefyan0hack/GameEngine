@@ -16,11 +16,6 @@ class GAME_EXPORT Game
 public:
     Game()
     {
-        // slow as fk right now 
-        // debug::logger = [](std::string m){
-        //     static auto l = 0;
-        //     app->UiText.text(m, { 0, l += Text::FONT_SIZE });
-        // };
 
         Material::set_skybox(std::make_shared<TextureCubeMap>(TextureCubeMap::base_to_6facesfiles("res/forest.jpg")));
 
@@ -49,7 +44,6 @@ public:
         app->MainScene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattSand, manMesh);
         app->MainScene << GameObject(Transform({2, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattkimberley, manMesh);
 
-        
         using namespace os::host;
         utils::async_repeat_every(1000,
             [](){
@@ -58,11 +52,7 @@ public:
             }
         );
 
-        // app->UiText.text(std::format("id: {}\nos: {}\narch: {}\nusage: {} Mb\npeak: {} Mb\nthread_count: {}", 
-        //     proc_id(), name(), arch(), memory_usage(), memory_peak(), thread_count()), { 0, Text::FONT_SIZE });
-        // }
-        
-        debug::log("{}", VecWrapper{gl::OPENGL_FUNCTIONS_NAME});
+        debug::log(VecWrapper{gl::OPENGL_FUNCTIONS_NAME});
     }
 
     auto update(float delta) -> void
