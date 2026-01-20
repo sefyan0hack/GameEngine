@@ -17,39 +17,20 @@
   <script src="coi-serviceworker.js"></script>
 </head>
 <body>
-  <canvas  id="canvas" oncontextmenu="event.preventDefault()" tabindex="0" ></canvas>
-  <script async="" type="text/javascript" src="Launcher.js"></script>
+  <canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex="0"></canvas>
+  <script async type="text/javascript" src="Launcher.js"></script>
   <script>
-  const canvas = document.getElementById("canvas");
-  function isMobileDevice() {
-    return (
-      window.matchMedia("(pointer: coarse)").matches &&
-      window.matchMedia("(max-width: 1024px)").matches
-    );
-  }
+    const canvas = document.getElementById("canvas");
 
-  async function lockOrientation(orient="landscape") {
-    if(!isMobileDevice()) return false;
-    try {
-      if (!document.fullscreenElement) {
-        await canvas.requestFullscreen();
-      }
-      if (screen.orientation && screen.orientation.lock) {
-        await screen.orientation.lock(orient);
-        return true;
-      }
-      return false;
-    } catch(e) {
-      console.warn("Orientation lock failed:", e);
-      return false;
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     }
-  }
 
-  canvas.addEventListener("pointerdown", async function onFirstPointer() {
-    if(!isMobileDevice()) return;
-    canvas.removeEventListener("pointerdown", onFirstPointer);
-    const ok = await lockOrientation("landscape");
-  });
-</script>
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('orientationchange', resizeCanvas);
+
+    resizeCanvas();
+  </script>
 </body>
 </html>
