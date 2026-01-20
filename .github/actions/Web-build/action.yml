@@ -44,4 +44,4 @@ runs:
 
     - name: Build
       shell: bash
-      run: cmake --build build --taget ${{ inputs.cmake_target }} --parallel
+      run: cmake --build build --target ${{ inputs.cmake_target }} --parallel
