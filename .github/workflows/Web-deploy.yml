@@ -16,23 +16,22 @@ jobs:
       steps:
         - uses: actions/checkout@v3
 
+        - name: Install Dependencies
+          shell: bash
+          run: sudo apt-get install -y libx11-dev libgl-dev
+
         - name: Build
-          uses: ./.github/actions/emscripten-build
+          uses: ./.github/actions/Web-build
           with:
-            cmake_configure_flags: ""
-            system_dependencies: "libgl-dev libx11-dev"
+            cmake_flags: "-DHARDEN=ON"
+            build_type: "Release"
 
         - name: Prepare Artifact
           run: |
-            mkdir -p site
+            cmake -E make_directory "site"
+            cmake --install build --prefix site
             cp build/index.html site/index.html
-            # Copy only essential files (js, wasm, data)
-            find build/ -type f \( \
-              -name "*.js" \
-              -o -name "*.wasm" \
-              -o -name "*.data" \
-            \) -exec cp {} site/ \;
-
+  
         - name: Setup Pages
           uses: actions/configure-pages@v5
 

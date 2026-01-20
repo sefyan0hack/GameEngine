@@ -79,7 +79,6 @@ jobs:
       uses: ./.github/actions/Web-build
       with:
         cmake_flags: "-DTESTS=ON"
-        build_type: "Release"
 
     - name: Test
       shell: bash
@@ -90,9 +89,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: unit_tests-web
-        path: |
-          build/tests/**/*.js
-          build/tests/**/*.wasm
+        path: build/tests/uint/unit_tests.js
         retention-days: 7
 
   Build-android:

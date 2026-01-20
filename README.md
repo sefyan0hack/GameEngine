@@ -22,7 +22,7 @@ Welcome to the **GameEngine** repository! This engine is designed to provide a s
 $ git clone https://github.com/sefyan0hack/GameEngine.git
 $ cd GameEngine
 
-$ cmake -E make_directory "build
+$ cmake -E make_directory "build"
 $ cmake -S . -B build
 $ cmake --build build --config Release
 ```
