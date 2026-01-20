@@ -8,7 +8,7 @@ TEST(Transform, ctor) {
     auto r = Transform(vec3(0.0f, 0.0f, 0.0f));
     EXPECT_EQ(r.position, vec3(0.0f, 0.0f, 0.0f));
     EXPECT_EQ(r.rotation, vec3(0.0f, 0.0f, 0.0f));
-    EXPECT_EQ(r.scale, vec3(10.0f, 1.0f, 1.0f));
+    EXPECT_EQ(r.scale, vec3(1.0f, 1.0f, 1.0f));
 }
 
 TEST(Transform, empty_ctor) {
