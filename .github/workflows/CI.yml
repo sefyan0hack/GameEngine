@@ -76,9 +76,10 @@ jobs:
       run: sudo apt-get install -y libx11-dev libgl-dev
 
     - name: Build
-      uses: ./.github/actions/emscripten-build
+      uses: ./.github/actions/Emscripten-build
       with:
-        cmake_configure_flags: "-DTESTS=ON"
+        cmake_flags: "-DTESTS=ON"
+        build_type: "Release"
 
     - name: Test
       shell: bash

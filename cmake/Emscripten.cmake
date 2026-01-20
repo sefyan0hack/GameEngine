@@ -1,7 +1,6 @@
 
 if(EMSCRIPTEN)
     set(OPENGL_LIB_NAME "WebGL")
-    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE) #need to be removed
     set(STATIC_LINK OFF)
 
     add_compile_options(
@@ -20,6 +19,7 @@ if(EMSCRIPTEN)
         -flto
         -pthread
         -matomics
+        -sSINGLE_FILE=1
         -sASYNCIFY
         -sUSE_WEBGL2=1
         -sMIN_WEBGL_VERSION=1

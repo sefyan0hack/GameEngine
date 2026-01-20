@@ -1,32 +1,31 @@
-name: 'Emscripten Build'
+name: 'Build'
 
-description: 'Build a project using Emscripten'
+description: 'Building'
 
 inputs:
   emsdk_version:
     description: 'Version of emsdk'
     required: false
     default: '4.0.10'
-  cmake_configure_flags:
+  cmake_flags:
     description: 'Flags for CMake configuration'
     required: false
     default: ''
-  build_dir:
-    description: 'Build directory name'
+  build_type:
+    description: 'Debug or Release'
+    required: true
+    default: 'Debug'
+  cmake_target:
+    description: 'Cmake target'
     required: false
-    default: 'build'
-
+    default: 'all'
 runs:
   using: composite
   steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
 
     - name: Set environment variables
       shell: bash
-      run: |
-        echo "BUILD_DIR=${{ inputs.build_dir }}" >> $GITHUB_ENV
-        echo "EMSDK_PATH=$HOME/emsdk" >> $GITHUB_ENV
+      run: echo "EMSDK_PATH=$HOME/emsdk" >> $GITHUB_ENV
 
     - name: Cache emsdk
       uses: actions/cache@v3
@@ -39,14 +38,10 @@ runs:
       with:
         version: ${{ inputs.emsdk_version }}
 
-    - name: Verify Emscripten
+    - name: Configure
       shell: bash
-      run: emcc -v
+      run: emcmake cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=${{ inputs.build_type }} ${{ inputs.cmake_flags }}
 
-    - name: Configure with CMake
+    - name: Build
       shell: bash
-      run: emcmake cmake -S . -B "$BUILD_DIR" -G Ninja ${{ inputs.cmake_configure_flags }}
-
-    - name: Build project
-      shell: bash
-      run: cmake --build "$BUILD_DIR"
+      run: cmake --build build --taget ${{ inputs.cmake_target }} --parallel
