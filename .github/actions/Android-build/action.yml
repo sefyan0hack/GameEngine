@@ -1,0 +1,38 @@
+name: 'Build'
+
+description: 'Building'
+
+inputs:
+  build_type:
+    description: 'Debug or Release'
+    required: true
+    default: 'Debug'
+  cmake_flags:
+    description: 'Flags for CMake configuration'
+    required: false
+    default: ''
+  cmake_target:
+    description: 'Cmake target'
+    required: false
+    default: 'all'
+  abi:
+    description: 'ABI'
+    required: true
+    default: 'arm64-v8a'
+
+runs:
+  using: composite
+  steps:
+    - name: Configure
+      shell: bash
+      run: |
+        cmake -S . -B build -DCMAKE_TLS_VERIFY=0 \
+        -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_LATEST_HOME/build/cmake/android.toolchain.cmake \
+        -DCMAKE_SYSTEM_NAME=Android \
+        -DANDROID_ABI=${{ inputs.abi }} \
+        -DANDROID_PLATFORM=android-21 \
+        -DCMAKE_BUILD_TYPE=${{ inputs.build_type }} \
+        ${{ inputs.cmake_flags }}
+
+    - name: Build
+      run: cmake --build build --target ${{ inputs.cmake_target }} --parallel
