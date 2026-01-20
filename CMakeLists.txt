@@ -29,6 +29,7 @@ include(StaticLink)
 include(Coverage)
 include(Sanitize)
 include(CompilerFlags)
+include(ResMC)
 
 if(WIN32)
     add_compile_definitions(
