@@ -103,6 +103,7 @@ jobs:
       - name: Build
         uses: ./.github/actions/Android-build
         with:
+          abi: "arm64-v8a"
           build_type: "Debug"
           build_dir: "build"
           cmake_flags: "-DTESTS=ON -DHARDEN=ON"
