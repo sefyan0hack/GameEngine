@@ -58,4 +58,5 @@ if(EMSCRIPTEN)
         "${CMAKE_BINARY_DIR}/coi-serviceworker.js"
         SHOW_PROGRESS
     )
+
 endif()

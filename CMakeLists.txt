@@ -173,15 +173,11 @@ if(TESTS)
 
 endif()
 
-
 ## for web now `cmake --install build --prefix site`
-install(TARGETS Launcher
-    RUNTIME DESTINATION .
-)
 
-install(FILES 
-    $<TARGET_FILE:Launcher>
-    DESTINATION .
-)
-
-install(FILES "${CMAKE_BINARY_DIR}/index.html" DESTINATION .)
+if(EMSCRIPTEN)
+    install(TARGETS Launcher RUNTIME DESTINATION .)
+    install(FILES $<TARGET_FILE:Launcher> DESTINATION .)
+    install(FILES "${CMAKE_BINARY_DIR}/index.html" DESTINATION .)
+    install(FILES "${CMAKE_BINARY_DIR}/coi-serviceworker.js" DESTINATION .)
+endif()
