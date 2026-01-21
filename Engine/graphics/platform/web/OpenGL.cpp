@@ -34,7 +34,7 @@ auto OpenGL::create_opengl_context() -> GL_CTX
     auto context = emscripten_webgl_create_context(surface, &attrs);
 
     if (context <= 0) {
-        throw Exception("Failed to create WebGL context: error {}", static_cast<int32_t>(context));
+        throw Exception("Failed to create WebGL context");
     }
 
     return context;
