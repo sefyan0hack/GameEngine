@@ -172,13 +172,3 @@ if(TESTS)
     target_link_libraries(unit_tests PUBLIC res)
 
 endif()
-
-## for web now `cmake --install build --prefix site`
-
-if(EMSCRIPTEN)
-    install(TARGETS Launcher RUNTIME DESTINATION .)
-    install(FILES $<TARGET_FILE:Launcher> DESTINATION .)
-    install(FILES "$<TARGET_FILE_DIR:Launcher>/$<TARGET_FILE_BASE_NAME:Launcher>.wasm" DESTINATION . OPTIONAL)
-    install(FILES "${CMAKE_BINARY_DIR}/index.html" DESTINATION .)
-    install(FILES "${CMAKE_BINARY_DIR}/coi-serviceworker.js" DESTINATION .)
-endif()

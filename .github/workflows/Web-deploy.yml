@@ -26,19 +26,13 @@ jobs:
             cmake_flags: "-DHARDEN=ON"
             build_type: "Release"
 
-        - name: Prepare Artifact
-          run: |
-            cmake -E make_directory "site"
-            cmake --install build --prefix site
-            cp build/index.html site/index.html
-  
         - name: Setup Pages
           uses: actions/configure-pages@v5
 
         - name: Upload to Pages
           uses: actions/upload-pages-artifact@v3
           with:
-            path: site
+            path: build/site
 
         - name: Deploy to GitHub Pages
           id: deployment

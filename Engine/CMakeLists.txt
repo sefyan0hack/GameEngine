@@ -78,4 +78,39 @@ else()
     add_executable(Launcher main.cpp)
 endif()
 
+if(EMSCRIPTEN)
+    set(SITE_DIR "${CMAKE_BINARY_DIR}/site")
+
+    add_custom_command(
+        TARGET Launcher
+        POST_BUILD
+
+        # Create site directory
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${SITE_DIR}"
+
+        # Copy static index.html
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_SOURCE_DIR}/cmake/index.html"
+            "${SITE_DIR}/index.html"
+
+        # Download COOP / COEP service worker
+        COMMAND ${CMAKE_COMMAND} -E echo "Downloading coi-serviceworker.js"
+        COMMAND ${CMAKE_COMMAND} -E rm -f "${SITE_DIR}/coi-serviceworker.js"
+        COMMAND ${CMAKE_COMMAND} -E env
+            curl -fsSL
+            "https://raw.githubusercontent.com/gzuidhof/coi-serviceworker/master/coi-serviceworker.js"
+            -o "${SITE_DIR}/coi-serviceworker.js"
+
+        # Prevent GitHub Pages from using Jekyll
+        COMMAND ${CMAKE_COMMAND} -E touch "${SITE_DIR}/.nojekyll"
+
+        # Copy ALL Emscripten-generated outputs
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "$<TARGET_FILE_DIR:Launcher>"
+            "${SITE_DIR}"
+
+        COMMENT "Assembling web site artifacts for Launcher"
+    )
+endif()
+
 target_link_libraries(Launcher PRIVATE Engine)
