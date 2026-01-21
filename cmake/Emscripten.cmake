@@ -32,6 +32,7 @@ if(EMSCRIPTEN)
         -sEXIT_RUNTIME=1
         -sUSE_PTHREADS=1
         -sERROR_ON_UNDEFINED_SYMBOLS=0
+        -sASSERTIONS=1
     )
 
 endif()
