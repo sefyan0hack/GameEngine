@@ -6,9 +6,13 @@ if(EMSCRIPTEN)
     add_compile_options(
         -Wno-character-conversion -Wno-dollar-in-identifier-extension
         -fexperimental-library
+        -pthread
+
     )
 
     add_link_options(
+        -pthread
+        -sUSE_PTHREADS=1
         -sUSE_WEBGL2=1
         -sFULL_ES3=1
         -sMIN_WEBGL_VERSION=1
