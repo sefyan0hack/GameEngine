@@ -23,7 +23,7 @@ jobs:
         - name: Build
           uses: ./.github/actions/Web-build
           with:
-            build_type: "Debug"
+            build_type: "Release"
 
         - name: Setup Pages
           uses: actions/configure-pages@v5
