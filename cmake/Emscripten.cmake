@@ -14,6 +14,8 @@ if(EMSCRIPTEN)
         -sMAX_WEBGL_VERSION=2
         -sALLOW_MEMORY_GROWTH=1 # -pthread + ALLOW_MEMORY_GROWTH may run non-wasm code slowly
         -sFULL_ES3=1
+        -sDISABLE_EXCEPTION_THROWING=0
+        -sDISABLE_EXCEPTION_CATCHING=0
         -sFILESYSTEM=1 # needed for DynLib 
         -sEXIT_RUNTIME=1
         -sGL_DEBUG=1
