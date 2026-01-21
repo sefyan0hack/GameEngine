@@ -21,7 +21,15 @@ void main() {
 
     Uv = aUv;
     Barycentric = vec3(0.0);
-    Barycentric[gl_VertexID % 3] = 1.0;
+    int index = gl_VertexID % 3;
+
+    if (index == 0) {
+        Barycentric.x = 1.0;
+    } else if (index == 1) {
+        Barycentric.y = 1.0;
+    } else {
+        Barycentric.z = 1.0;
+    }
 
     gl_Position = Projection * View * worldPos_;
 }
