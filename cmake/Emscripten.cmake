@@ -4,21 +4,11 @@ if(EMSCRIPTEN)
     set(STATIC_LINK OFF)
 
     add_compile_options(
-        -Oz
         -Wno-character-conversion -Wno-dollar-in-identifier-extension
-        -msimd128
-        -fPIC
-        -pthread
-        -matomics
-        -flto
         -fexperimental-library
     )
 
     add_link_options(
-        -Oz
-        -flto
-        -pthread
-        -matomics
         -sASYNCIFY
         -sUSE_WEBGL2=1
         -sMIN_WEBGL_VERSION=1
@@ -28,11 +18,8 @@ if(EMSCRIPTEN)
         -sDISABLE_EXCEPTION_THROWING=0
         -sDISABLE_EXCEPTION_CATCHING=0
         -sFILESYSTEM=1 # needed for DynLib 
-        -sPTHREAD_POOL_SIZE=4
         -sEXIT_RUNTIME=1
-        -sUSE_PTHREADS=1
         -sERROR_ON_UNDEFINED_SYMBOLS=0
-        -sASSERTIONS=2
         -sGL_DEBUG=1
     )
 
