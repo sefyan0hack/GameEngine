@@ -33,6 +33,7 @@ if(EMSCRIPTEN)
         -sUSE_PTHREADS=1
         -sERROR_ON_UNDEFINED_SYMBOLS=0
         -sASSERTIONS=2
+        -sGL_DEBUG=1
     )
 
 endif()
