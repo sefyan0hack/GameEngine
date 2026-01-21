@@ -23,8 +23,7 @@ jobs:
         - name: Build
           uses: ./.github/actions/Web-build
           with:
-            cmake_flags: "-DHARDEN=ON"
-            build_type: "Release"
+            build_type: "Debug"
 
         - name: Setup Pages
           uses: actions/configure-pages@v5
