@@ -9,17 +9,13 @@ if(EMSCRIPTEN)
     )
 
     add_link_options(
-        -sASYNCIFY
         -sUSE_WEBGL2=1
         -sMIN_WEBGL_VERSION=1
         -sMAX_WEBGL_VERSION=2
         -sALLOW_MEMORY_GROWTH=1 # -pthread + ALLOW_MEMORY_GROWTH may run non-wasm code slowly
         -sFULL_ES3=1
-        -sDISABLE_EXCEPTION_THROWING=0
-        -sDISABLE_EXCEPTION_CATCHING=0
         -sFILESYSTEM=1 # needed for DynLib 
         -sEXIT_RUNTIME=1
-        -sERROR_ON_UNDEFINED_SYMBOLS=0
         -sGL_DEBUG=1
     )
 
