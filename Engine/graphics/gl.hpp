@@ -139,8 +139,12 @@ namespace gl {
     constexpr auto OPENGL_FUNCTIONS_NAME = { GLFUNCS };
     constexpr auto OPENGL_FUNCTIONS_COUNT = OPENGL_FUNCTIONS_NAME.size();
     constexpr int32_t OPENGL_MAJOR_VERSION = 3;
-    constexpr int32_t OPENGL_MINOR_VERSION = 3;
-
+    #if defined(CORE_GL)
+        constexpr int32_t OPENGL_MINOR_VERSION = 3;
+    #elif defined(ES_GL)
+        constexpr int32_t OPENGL_MINOR_VERSION = 0;
+    #endif
+    
     constexpr int32_t StencilBufferBits = 8;
     constexpr int32_t ChannelBits       = 8;
     constexpr int32_t AlphaBits         = 8;
