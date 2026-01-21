@@ -24,6 +24,7 @@ jobs:
           uses: ./.github/actions/Web-build
           with:
             build_type: "Release"
+            cmake_flags: "-DCMAKE_CXX_FLAGS=-sENVIRONMENT=web"
 
         - name: Setup Pages
           uses: actions/configure-pages@v5
