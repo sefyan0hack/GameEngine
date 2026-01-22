@@ -1,11 +1,19 @@
-in vec2 TexCoord;
+
+in vec2 v_TexCoord;
+in vec4 v_Color;
+
 out vec4 FragColor;
 
-uniform sampler2D text;
-uniform vec3 textColor;
+uniform sampler2D u_Texture;
+uniform vec3 u_Color;
 
-void main()
-{
-    float alpha = texture(text, TexCoord).r;
-    FragColor = vec4(textColor, alpha);
+void main() {
+    // Sample from texture atlas
+    vec4 texColor = texture(u_Texture, v_TexCoord);
+    
+    // Use red channel as alpha (font texture is single-channel)
+    float alpha = texColor.r;
+    
+    // Combine u_Color (RGB) with the calculated alpha (A)
+    FragColor = vec4(u_Color, alpha);
 }

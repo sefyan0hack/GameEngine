@@ -16,7 +16,6 @@ class GAME_EXPORT Game
 public:
     Game()
     {
-
         Material::set_skybox(std::make_shared<TextureCubeMap>(TextureCubeMap::base_to_6facesfiles("res/forest.jpg")));
 
         auto kimberley_jpg     = std::make_shared<Texture2D>(embed_filesystem.open("res/kimberley.jpg"));
@@ -45,10 +44,10 @@ public:
         app->MainScene << GameObject(Transform({2, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattkimberley, manMesh);
 
         using namespace os::host;
-        utils::async_repeat_every(1000,
+        utils::async_repeat_every(100,
             [](){
-                app->UiText.text(std::format("FPS: {:.2f}", app->fps()), { 0, 0 });
-                app->UiText.text(std::format("Memory: {}/{}", memory_usage(), memory_peak()), { 0, Text::FONT_SIZE });
+                app->UiText.text(std::format("FPS: قد {:.2f}", app->fps()), { 0, 0 });
+                app->UiText.text(std::format("Memory: {}/{} MB", memory_usage(), memory_peak()), { 0, Text::FONT_SIZE });
             }
         );
 
