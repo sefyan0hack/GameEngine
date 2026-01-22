@@ -46,7 +46,7 @@ public:
         using namespace os::host;
         utils::async_repeat_every(100,
             [](){
-                app->UiText.text(std::format("FPS: قد {:.2f}", app->fps()), { 0, 0 });
+                app->UiText.text(std::format("FPS: {:.2f}", app->fps()), { 0, 0 });
                 app->UiText.text(std::format("Memory: {}/{} MB", memory_usage(), memory_peak()), { 0, Text::FONT_SIZE });
             }
         );

@@ -42,18 +42,22 @@ public:
     constexpr static uint8_t FIRST_GLYPH = 32;
     constexpr static uint8_t LAST_GLYPH = 127;
 
-    constexpr static uint32_t NUM_GLYPHS = LAST_GLYPH - FIRST_GLYPH + 1;
+    constexpr static uint32_t CHAR_COUNT = LAST_GLYPH - FIRST_GLYPH + 1;
     constexpr static uint32_t CELL_SIZE = FONT_SIZE + (GLYPH_PADDING * 2);
 
-    constexpr static uint32_t ATLAS_COLS = std::bit_ceil(static_cast<uint32_t>(std::ceil(std::sqrt(NUM_GLYPHS))));
-    constexpr static uint32_t ATLAS_ROWS = (NUM_GLYPHS + ATLAS_COLS - 1) / ATLAS_COLS;
+    constexpr static uint32_t ATLAS_COLS = std::bit_ceil(static_cast<uint32_t>(std::ceil(std::sqrt(CHAR_COUNT ))));
+    constexpr static uint32_t ATLAS_ROWS = (CHAR_COUNT  + ATLAS_COLS - 1) / ATLAS_COLS;
 
     constexpr static uint32_t ATLAS_WIDTH  = std::bit_ceil(ATLAS_COLS * CELL_SIZE);
     constexpr static uint32_t ATLAS_HEIGHT = std::bit_ceil(ATLAS_ROWS * CELL_SIZE);
 
-    constexpr static uint32_t MAX_QUADS = 10000;   // Max quads per batch
+    constexpr static uint32_t MAX_QUADS = 10000;
+
     constexpr static uint32_t VERTICES_PER_QUAD = 4;
+    static constexpr uint32_t MAX_VERTICES = MAX_QUADS * VERTICES_PER_QUAD;
+
     constexpr static uint32_t INDICES_PER_QUAD = 6;
+    static constexpr uint32_t MAX_INDICES = MAX_QUADS * INDICES_PER_QUAD;
 
 private:
     struct Vertex {
@@ -72,7 +76,12 @@ private:
     const class OpenGL& m_GApi;
     std::shared_ptr<class Shader> m_Vert, m_Frag;
     std::shared_ptr<class ShaderProgram> m_Program;
-    
+
+    // Glyph storage
+    std::unordered_map<uint32_t, AtlasGlyph> m_Glyphs;  // char32_t to glyph
+    // Batch rendering
+    std::unordered_map<glm::vec2, std::string> m_Batches;
+
     // Buffers
     uint32_t VAO, VBO, EBO;
     std::vector<Vertex> m_Vertices;
@@ -80,16 +89,8 @@ private:
     uint32_t m_IndexCount = 0;
 
     // Rendering state
-    uint32_t m_AtlasTexture;
-
-    // Glyph storage
-    std::unordered_map<uint32_t, AtlasGlyph> m_Glyphs;  // char32_t to glyph
+    uint32_t m_AtlasTexture;;
 
     // Font metrics
     int32_t m_Ascent = 0;
-    int32_t m_Descent = 0;
-    int32_t m_LineGap = 0;
-
-    // Batch rendering
-    std::unordered_map<glm::vec2, std::string> m_Batches;
 };

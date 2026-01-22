@@ -52,13 +52,12 @@ auto Text::init_buffers() -> void {
     gl::GenBuffers(1, &VBO);
     gl::GenBuffers(1, &EBO);
 
-    // Pre-allocate vertex buffer
-    m_Vertices.reserve(MAX_QUADS * VERTICES_PER_QUAD);
-
-    // Create indices for quad rendering (reusable)
-    m_Indices.reserve(MAX_QUADS * INDICES_PER_QUAD);
+    // Pre-allocate
+    m_Vertices.reserve(MAX_VERTICES);
+    m_Indices.reserve(MAX_INDICES);
+    
     for (uint32_t i = 0; i < MAX_QUADS; ++i) {
-        uint32_t offset = i * 4;
+        uint32_t offset = i * VERTICES_PER_QUAD;
         m_Indices.insert(m_Indices.end(), {
             offset + 0, offset + 1, offset + 2,
             offset + 0, offset + 2, offset + 3
@@ -71,7 +70,7 @@ auto Text::init_buffers() -> void {
 
     // Set up vertex attributes for batched rendering
     gl::BindBuffer(GL_ARRAY_BUFFER, VBO);
-    gl::BufferData(GL_ARRAY_BUFFER, MAX_QUADS * VERTICES_PER_QUAD * sizeof(Vertex), nullptr, GL_DYNAMIC_DRAW);
+    gl::BufferData(GL_ARRAY_BUFFER, MAX_VERTICES * sizeof(Vertex), nullptr, GL_DYNAMIC_DRAW);
 
     // Position - CHANGED TO 2 FLOATS (2D)
     gl::EnableVertexAttribArray(0);
@@ -103,8 +102,6 @@ auto Text::create_atlas() -> void {
 
     // Get font metrics
     m_Ascent = face->size->metrics.ascender >> 6;
-    m_Descent = face->size->metrics.descender >> 6;
-    m_LineGap = (face->size->metrics.height >> 6) - m_Ascent + m_Descent;
 
     // Create atlas texture
     gl::GenTextures(1, &m_AtlasTexture);
@@ -226,7 +223,7 @@ auto Text::render() -> void {
 
             x += static_cast<float>(glyph.advance >> 6);
 
-            if (m_IndexCount >= MAX_QUADS * INDICES_PER_QUAD) {
+            if (m_IndexCount >= MAX_INDICES) {
                 flush_batch();
                 m_Vertices.clear(); 
                 m_IndexCount = 0;
@@ -256,26 +253,15 @@ auto Text::flush_batch() -> void {
 }
 
 auto Text::push_quad(const glm::vec2& position, const glm::vec2& size, const glm::vec2& texMin, const glm::vec2& texMax) -> void {
-    // Create 4 vertices for the quad
-    Vertex v0, v1, v2, v3;
+    Vertex vertices[4] = {
+        {glm::vec2(position.x, position.y),                 glm::vec2(texMin.x, texMax.y)},
+        {glm::vec2(position.x + size.x, position.y),        glm::vec2(texMax.x, texMax.y)},
+        {glm::vec2(position.x + size.x, position.y + size.y), glm::vec2(texMax.x, texMin.y)},
+        {glm::vec2(position.x, position.y + size.y),        glm::vec2(texMin.x, texMin.y)}
+    };
 
-    // Positions - CHANGED TO vec2 (2D)
-    v0.position = glm::vec2(position.x, position.y);
-    v1.position = glm::vec2(position.x + size.x, position.y);
-    v2.position = glm::vec2(position.x + size.x, position.y + size.y);
-    v3.position = glm::vec2(position.x, position.y + size.y);
-    
-    // Texture coordinates
-    v0.texCoord = glm::vec2(texMin.x, texMax.y);
-    v1.texCoord = glm::vec2(texMax.x, texMax.y);
-    v2.texCoord = glm::vec2(texMax.x, texMin.y);
-    v3.texCoord = glm::vec2(texMin.x, texMin.y);
-
-    // Add to vertices
-    m_Vertices.insert(m_Vertices.end(), {v0, v1, v2, v3});
-
-    // Update index count
-    m_IndexCount += 6;  // 2 triangles = 6 indices
+    m_Vertices.insert(m_Vertices.end(), vertices, vertices + 4);
+    m_IndexCount += INDICES_PER_QUAD;
 }
 
 auto Text::text(std::string text, glm::vec2 pos) -> void {
