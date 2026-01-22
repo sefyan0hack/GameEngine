@@ -2,6 +2,7 @@
 #include <core/SysInfo.hpp>
 #include "OpenGL.hpp"
 #include "Shader.hpp"
+#include <ranges>
 
 
 std::string Shader::glsl_header = std::format(
@@ -71,7 +72,18 @@ Shader::Shader(const std::string& filename)
     
     set_sources(srcs);
     compile();
-    check_compile_status();
+    try {
+        check_compile_status();
+    }catch(const Exception& e){
+        std::string out;
+        for (std::string_view sv : srcs | std::views::transform([](const char* s){
+                return std::string_view{s};
+            }))
+        {
+            out.append(sv);
+        }
+        debug::log("glsl Compile error ({}) : code :\n{}", e.what(), out);
+    }
 
     CTOR_LOG
 }
@@ -84,7 +96,19 @@ Shader::Shader(std::string Src, GLenum type)
 
     set_sources(srcs);
     compile();
-    check_compile_status();
+
+    try {
+        check_compile_status();
+    }catch(const Exception& e){
+        std::string out;
+        for (std::string_view sv : srcs | std::views::transform([](const char* s){
+                return std::string_view{s};
+            }))
+        {
+            out.append(sv);
+        }
+        debug::log("glsl Compile error ({}) : code :\n{}", e.what(), out);
+    }
 
     CTOR_LOG
 }
