@@ -29,7 +29,7 @@ jobs:
           fi
   
       - name: Build Project
-        uses: ./.github/actions/build
+        uses: ./.github/actions/Desktop-build
         with:
           os: ${{ matrix.os }}
           compiler: ${{ matrix.compiler }}
