@@ -10,7 +10,6 @@ if(EMSCRIPTEN)
     )
 
     add_link_options(
-        $<$<CONFIG:Release>:--closure 1>
 
         -sUSE_PTHREADS=1
         -sPTHREAD_POOL_SIZE=4
