@@ -39,14 +39,14 @@ public:
 
     constexpr static uint32_t GLYPH_PADDING = 1;
 
-    constexpr static uint8_t FIRST_GLYPH = 32;
+    constexpr static uint8_t FIRST_GLYPH = 0;
     constexpr static uint8_t LAST_GLYPH = 127;
 
     constexpr static uint32_t CHAR_COUNT = LAST_GLYPH - FIRST_GLYPH + 1;
     constexpr static uint32_t CELL_SIZE = FONT_SIZE + (GLYPH_PADDING * 2);
 
-    constexpr static uint32_t ATLAS_COLS = std::bit_ceil(static_cast<uint32_t>(std::ceil(std::sqrt(CHAR_COUNT ))));
-    constexpr static uint32_t ATLAS_ROWS = (CHAR_COUNT  + ATLAS_COLS - 1) / ATLAS_COLS;
+    constexpr static uint32_t ATLAS_COLS = std::bit_ceil(1u << ((std::bit_width(CHAR_COUNT - 1)) / 2));
+    constexpr static uint32_t ATLAS_ROWS = (CHAR_COUNT + ATLAS_COLS - 1) / ATLAS_COLS;
 
     constexpr static uint32_t ATLAS_WIDTH  = std::bit_ceil(ATLAS_COLS * CELL_SIZE);
     constexpr static uint32_t ATLAS_HEIGHT = std::bit_ceil(ATLAS_ROWS * CELL_SIZE);
