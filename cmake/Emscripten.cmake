@@ -10,8 +10,8 @@ if(EMSCRIPTEN)
     )
 
     add_link_options(
-        --closure 1
-        
+        $<$<CONFIG:Release>:--closure 1>
+
         -sUSE_PTHREADS=1
         -sPTHREAD_POOL_SIZE=4
 
@@ -19,8 +19,8 @@ if(EMSCRIPTEN)
         -sFULL_ES3=1
         -sMIN_WEBGL_VERSION=1
         -sMAX_WEBGL_VERSION=2
-    
-        -sALLOW_MEMORY_GROWTH=1
+
+        -sINITIAL_MEMORY=268435456
     
         -sDISABLE_EXCEPTION_THROWING=0
         -sDISABLE_EXCEPTION_CATCHING=0

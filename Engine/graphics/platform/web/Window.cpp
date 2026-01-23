@@ -276,7 +276,7 @@ auto CWindow::resize(int32_t width, int32_t height) -> void
 {
     EM_ASM({
 		var selector = UTF8ToString($0);
-        var canvas = document.querySelector(selector)
+        var canvas = document.querySelector(selector);
         if (canvas) {
             canvas.style.width = $1 + 'px';
             canvas.style.height = $2 + 'px';
