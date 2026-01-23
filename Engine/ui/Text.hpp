@@ -39,7 +39,7 @@ public:
 
     constexpr static uint32_t GLYPH_PADDING = 1;
 
-    constexpr static uint8_t FIRST_GLYPH = 0;
+    constexpr static uint8_t FIRST_GLYPH = 32;
     constexpr static uint8_t LAST_GLYPH = 127;
 
     constexpr static uint32_t CHAR_COUNT = LAST_GLYPH - FIRST_GLYPH + 1;
