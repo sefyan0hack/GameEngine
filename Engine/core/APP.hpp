@@ -44,17 +44,16 @@ private:
     auto init_game_functions() -> void;
     auto hot_reload_game_library() -> bool;
 
-    auto frame(float deltaTime) -> void;
+    auto frame() -> void;
 
 private:
     ::CWindow Window;
     ::Keyboard Keyboard;
     ::Mouse Mouse;
-    
+
     bool m_Running;
-    std::chrono::steady_clock::time_point m_LastFrameTime;
     float m_Fps;
-    
+
     OpenGL m_GApi;
     IRenderer* Renderer;
     Text UiText;

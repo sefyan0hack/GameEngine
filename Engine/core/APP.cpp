@@ -40,7 +40,6 @@ APP::APP()
     , Keyboard()
     , Mouse()
     , m_Running(true)
-    , m_LastFrameTime(std::chrono::steady_clock::now())
     , m_Fps(60.0f)
     , m_GApi(Window)
     , Renderer(new OpenGLRenderer(m_GApi))
@@ -97,15 +96,19 @@ auto APP::hot_reload_game_library() -> bool
     }
 }
 
-auto APP::frame(float deltaTime) -> void
+auto APP::frame() -> void
 {
+    auto begin = std::chrono::steady_clock::now();
+
     Renderer->clear_screen(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    game_update(Game, deltaTime);
+    game_update(Game, 1.0f/m_Fps);
     Renderer->render(MainScene);
     UiText.render();
     Window.swap_buffers();
     Keyboard.save_prev_state();
     Mouse.save_prev_state();
+
+    m_Fps = 1.0f/std::chrono::duration<float>(std::chrono::steady_clock::now() - begin).count();
 }
 
 auto APP::loop_body(void* ctx) -> void
@@ -164,12 +167,6 @@ auto APP::loop_body(void* ctx) -> void
         );
     }
 
-    auto now = std::chrono::steady_clock::now();
-    float deltaTime = std::chrono::duration<float>(now - app->m_LastFrameTime).count();
-    app->m_LastFrameTime = now;
-
-    app->m_Fps = 1.0f / deltaTime;
-
     // normal Mode
     if (app->Keyboard.is_pressed(Key::Space)) {        
         app->Renderer->normal_mode();
@@ -214,7 +211,7 @@ auto APP::loop_body(void* ctx) -> void
     }
 
     #endif
-    app->frame(deltaTime);
+    app->frame();
 }
 
 auto APP::fps() const -> float
