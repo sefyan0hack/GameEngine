@@ -47,12 +47,12 @@ private:
     auto frame() -> void;
 
 private:
+    bool m_Running;
+    float m_Fps;
+
     ::CWindow Window;
     ::Keyboard Keyboard;
     ::Mouse Mouse;
-
-    bool m_Running;
-    float m_Fps;
 
     OpenGL m_GApi;
     IRenderer* Renderer;

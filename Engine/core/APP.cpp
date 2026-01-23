@@ -36,11 +36,11 @@
 
 
 APP::APP()
-    : Window(WINDOW_WIDTH, WINDOW_HIEGHT, "")
+    : m_Running(true)
+    , m_Fps(60.0f)
+    , Window(WINDOW_WIDTH, WINDOW_HIEGHT, "")
     , Keyboard()
     , Mouse()
-    , m_Running(true)
-    , m_Fps(60.0f)
     , m_GApi(Window)
     , Renderer(new OpenGLRenderer(m_GApi))
     , UiText(m_GApi)
