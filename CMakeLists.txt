@@ -172,3 +172,4 @@ if(TESTS)
     target_link_libraries(unit_tests PUBLIC res)
 
 endif()
+
