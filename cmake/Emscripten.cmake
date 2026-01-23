@@ -10,7 +10,6 @@ if(EMSCRIPTEN)
     )
 
     add_link_options(
-
         -sUSE_PTHREADS=1
         -sPTHREAD_POOL_SIZE=4
 
