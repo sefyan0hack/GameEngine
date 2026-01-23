@@ -156,10 +156,10 @@ auto Text::create_atlas() -> void {
 
         // Store glyph
         m_Glyphs[charcode] = AtlasGlyph{
-            glm::vec2(tx_min, ty_min),
-            glm::vec2(tx_max, ty_max),
             glm::ivec2(bitmap->width, bitmap->rows),
             glm::ivec2(glyph->bitmap_left, glyph->bitmap_top),
+            glm::vec2(tx_min, ty_min),
+            glm::vec2(tx_max, ty_max),
             static_cast<uint32_t>(glyph->advance.x)
         };
 
@@ -220,7 +220,7 @@ auto Text::render() -> void {
             float xpos = x + static_cast<float>(glyph.bearing.x);
             float ypos = y - static_cast<float>(glyph.size.y - glyph.bearing.y);
 
-            push_quad({xpos, ypos}, {w, h}, glyph.texCoordsMin, glyph.texCoordsMax);
+            push_quad({xpos, ypos}, {w, h}, glyph.topleft, glyph.botright);
 
             x += static_cast<float>(glyph.advance >> 6);
 

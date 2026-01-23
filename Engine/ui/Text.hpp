@@ -15,10 +15,10 @@
 #include <unordered_map>
 
 struct AtlasGlyph {
-    glm::vec2 texCoordsMin;      // Top-left texture coordinates in atlas
-    glm::vec2 texCoordsMax;      // Bottom-right texture coordinates in atlas
     glm::ivec2 size;            // Size of glyph in pixels
     glm::ivec2 bearing;         // Offset from baseline to left/top of glyph
+    glm::vec2 topleft;      // Top-left texture coordinates in atlas
+    glm::vec2 botright;      // Bottom-right texture coordinates in atlas
     uint32_t advance;           // Offset to advance to next glyph (in 1/64 pixels)
 };
 
