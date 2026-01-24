@@ -13,6 +13,7 @@
 
 #include <core/res.hpp>
 extern cmrc::embedded_filesystem embed_filesystem;
+#ifdef __cpp_lib_formatters
 
 using namespace glm;
 
@@ -140,3 +141,4 @@ TEST(Formatters, DISABLED_GameObject){
     );
     EXPECT_EQ(r, e);
 }
+#endif
