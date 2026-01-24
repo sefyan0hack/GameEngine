@@ -93,13 +93,10 @@ if(EMSCRIPTEN)
             "${CMAKE_SOURCE_DIR}/cmake/index.html"
             "${SITE_DIR}/index.html"
 
-        # Download COOP / COEP service worker
-        COMMAND ${CMAKE_COMMAND} -E echo "Downloading coi-serviceworker.js"
-        COMMAND ${CMAKE_COMMAND} -E rm -f "${SITE_DIR}/coi-serviceworker.js"
-        COMMAND ${CMAKE_COMMAND} -E env
-            curl -fsSL
-            "https://raw.githubusercontent.com/gzuidhof/coi-serviceworker/master/coi-serviceworker.js"
-            -o "${SITE_DIR}/coi-serviceworker.js"
+        # Copy local COOP / COEP service worker
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_SOURCE_DIR}/cmake/coi-serviceworker.js" 
+            "${SITE_DIR}/coi-serviceworker.js"
 
         # Prevent GitHub Pages from using Jekyll
         COMMAND ${CMAKE_COMMAND} -E touch "${SITE_DIR}/.nojekyll"
