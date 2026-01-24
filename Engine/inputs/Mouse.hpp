@@ -77,8 +77,8 @@ private:
 	
 };
 
+#ifdef __cpp_lib_formatters
 // custom Mouse Format
-
 template<>
 struct std::formatter<Mouse> {
   constexpr auto parse(std::format_parse_context& context) {
@@ -91,3 +91,4 @@ struct std::formatter<Mouse> {
   	);
   }
 };
+#endif

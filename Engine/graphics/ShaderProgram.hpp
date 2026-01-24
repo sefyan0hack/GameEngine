@@ -64,6 +64,7 @@ private:
 
 };
 
+#ifdef __cpp_lib_formatters
 // custom ShaderProgram::GlslType Format
 template<>
 struct std::formatter<ShaderProgram::GlslType> {
@@ -90,3 +91,4 @@ struct std::formatter<ShaderProgram> {
     obj.m_Id, MapWrapper{obj.m_Attribs}, MapWrapper{obj.m_Uniforms});
   }
 };
+#endif

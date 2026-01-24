@@ -72,6 +72,7 @@ public:
 auto ENGINE_EXPORT obj_to_mesh(const char* filename) -> std::vector<Vertex>;
 auto ENGINE_EXPORT obj_to_mesh(cmrc::file src) -> std::vector<Vertex>;
 
+#ifdef __cpp_lib_formatters
 // custom Mesh Format
 template<>
 struct std::formatter<Mesh> {
@@ -84,3 +85,4 @@ struct std::formatter<Mesh> {
     , obj.VAO, obj.VBO, obj.vextex_size());
   }
 };
+#endif

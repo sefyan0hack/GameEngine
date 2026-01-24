@@ -4,6 +4,7 @@
 #include <format>
 #include <glm/glm.hpp>
 
+#ifdef __cpp_lib_formatters
 // custom glm::vec2 Format
 template<class... Ts>
 struct std::formatter<std::variant<Ts...>> {
@@ -32,7 +33,7 @@ struct std::formatter<glm::vec2> {
 
 // custom glm::vec3 Format
 template<>
-struct std::formatter<glm::vec3> {
+struct std::formatter<glm::vec3, char> {
   constexpr auto parse(std::format_parse_context& context) {
     return context.begin();
   }
@@ -155,3 +156,4 @@ struct std::formatter<Type<T>> {
         );
     }
 };
+#endif

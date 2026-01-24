@@ -44,6 +44,7 @@ private:
 auto ENGINE_EXPORT to_string(const stacktrace_entry& ste ) -> std::string;
 auto ENGINE_EXPORT to_string(const stacktrace& st ) -> std::string;
 
+#ifdef __cpp_lib_formatters
 template<either<stacktrace_entry, stacktrace> T>
 struct std::formatter<T> {
   constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
@@ -51,5 +52,6 @@ struct std::formatter<T> {
     return std::format_to(ctx.out(), "{}", to_string(obj));
   }
 };
+#endif
 
 #endif

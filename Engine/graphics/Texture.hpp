@@ -66,7 +66,7 @@ class ENGINE_EXPORT TextureCubeMap final : public Texture
     std::array<Image, 6> m_Imgs;
 };
 
-
+#ifdef __cpp_lib_formatters
 // custom Texture Format
 template<>
 struct std::formatter<Texture> {
@@ -79,3 +79,4 @@ struct std::formatter<Texture> {
     , obj.m_Id, obj.type_name());
   }
 };
+#endif

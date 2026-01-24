@@ -52,6 +52,7 @@ class ENGINE_EXPORT Shader
     static std::string glsl_header;
 };
 
+#ifdef __cpp_lib_formatters
 // custom Shader Format
 template<>
 struct std::formatter<Shader> {
@@ -64,3 +65,4 @@ struct std::formatter<Shader> {
     , obj.m_Id, obj.type_name());
   }
 };
+#endif
