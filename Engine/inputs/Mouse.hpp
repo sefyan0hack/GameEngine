@@ -92,6 +92,4 @@ struct std::formatter<Mouse> {
   	);
   }
 };
-#else
-#error "__cpp_lib_formatters not defined"
 #endif

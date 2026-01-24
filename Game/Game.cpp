@@ -51,7 +51,7 @@ public:
             }
         );
 
-        debug::log(VecWrapper{gl::OPENGL_FUNCTIONS_NAME});
+        // debug::log(VecWrapper{gl::OPENGL_FUNCTIONS_NAME});
     }
 
     auto update(float delta) -> void

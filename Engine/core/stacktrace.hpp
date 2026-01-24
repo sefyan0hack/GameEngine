@@ -52,9 +52,6 @@ struct std::formatter<T> {
     return std::format_to(ctx.out(), "{}", to_string(obj));
   }
 };
-
-#else
-#error "__cpp_lib_formatters not defined"
 #endif
 
 #endif

@@ -80,6 +80,4 @@ struct std::formatter<Texture> {
     , obj.m_Id, obj.type_name());
   }
 };
-#else
-#error "__cpp_lib_formatters not defined"
 #endif

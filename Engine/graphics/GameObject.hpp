@@ -47,7 +47,4 @@ struct std::formatter<GameObject> {
     obj.m_Transform);
   }
 };
-
-#else
-#error "__cpp_lib_formatters not defined"
 #endif

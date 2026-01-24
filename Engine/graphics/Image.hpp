@@ -59,6 +59,4 @@ struct std::formatter<Image> {
     , obj.m_Width, obj.m_Height, obj.m_Channels, static_cast<const void*>(obj.m_Data));
   }
 };
-#else
-#error "__cpp_lib_formatters not defined"
 #endif

@@ -91,7 +91,4 @@ struct std::formatter<ShaderProgram> {
     obj.m_Id, MapWrapper{obj.m_Attribs}, MapWrapper{obj.m_Uniforms});
   }
 };
-
-#else
-#error "__cpp_lib_formatters not defined"
 #endif

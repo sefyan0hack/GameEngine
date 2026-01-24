@@ -81,7 +81,4 @@ struct std::formatter<Camera> {
     , obj.m_Position, obj.view());
   }
 };
-
-#else
-#error "__cpp_lib_formatters not defined"
 #endif
