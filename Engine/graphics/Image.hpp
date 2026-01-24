@@ -46,7 +46,6 @@ private:
     const std::byte* m_Data;
 };
 
-#ifdef __cpp_lib_formatters
 // custom Image Format
 template<>
 struct std::formatter<Image> {
@@ -59,4 +58,3 @@ struct std::formatter<Image> {
     , obj.m_Width, obj.m_Height, obj.m_Channels, static_cast<const void*>(obj.m_Data));
   }
 };
-#endif

@@ -34,7 +34,6 @@ private:
     std::shared_ptr<class Mesh> m_Mesh;
 };
 
-#ifdef __cpp_lib_formatters
 // custom GameObject Format
 template<>
 struct std::formatter<GameObject> {
@@ -47,4 +46,3 @@ struct std::formatter<GameObject> {
     obj.m_Transform);
   }
 };
-#endif

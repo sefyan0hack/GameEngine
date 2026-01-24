@@ -68,7 +68,6 @@ private:
     
 };
 
-#ifdef __cpp_lib_formatters
 // custom Camera Format
 template<>
 struct std::formatter<Camera> {
@@ -81,4 +80,3 @@ struct std::formatter<Camera> {
     , obj.m_Position, obj.view());
   }
 };
-#endif

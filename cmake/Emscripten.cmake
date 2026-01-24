@@ -24,6 +24,8 @@ if(EMSCRIPTEN)
         -sDISABLE_EXCEPTION_CATCHING=0
 
         -sFILESYSTEM=1 # needed for DynLib 
+
+        -sGL_DEBUG=1
     )
 
 endif()
