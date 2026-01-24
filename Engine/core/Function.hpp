@@ -162,7 +162,7 @@ auto Function<R(APIENTRY*)(Args...)>::function_count() -> std::size_t
 
 template <typename R, typename... Args>
 auto Function<R(APIENTRY*)(Args...)>::this_func_sig() const -> std::string {
-    std::string result = std::format("{} {}(", m_ReturnType, m_Name);
+    std::string result = ::format("{} {}(", m_ReturnType, m_Name);
     format_arguments(result);
     return result + ")";
 }
@@ -170,7 +170,7 @@ auto Function<R(APIENTRY*)(Args...)>::this_func_sig() const -> std::string {
 template <typename R, typename... Args>
 auto Function<R(APIENTRY*)(Args...)>::function_info(const std::source_location& loc) -> std::string
 {
-    return std::format(
+    return ::format(
         "call Number: {} ; instrments(Befor: {}, After: {}) |>=> {} -> {}:{}\n",
         m_CallCount,
         m_Befor ? "true" : "false", m_After ? "true" : "false",
@@ -187,7 +187,7 @@ auto Function<R(APIENTRY*)(Args...)>::function_info(const std::source_location& 
 //     bool first = true;
 //     for (const auto& [type, value] : std::views::zip(m_ArgsTypes, ArgsValues())) {
 //         if (!first) result += ", ";
-//         result += std::format("{} arg_{} = {}", type, index++, value);
+//         result += ::format("{} arg_{} = {}", type, index++, value);
 //         first = false;
 //     }
 // }
@@ -201,7 +201,7 @@ auto Function<R(APIENTRY*)(Args...)>::format_arguments(std::string& result) cons
 
     for (std::size_t i = 0; i < m_ArgsTypes.size(); ++i) {
         if (!first) result += ", ";
-        result += std::format("{} arg_{} = {}", m_ArgsTypes[i], index++, argsValues[i]);
+        result += ::format("{} arg_{} = {}", m_ArgsTypes[i], index++, argsValues[i]);
         first = false;
     }
 }

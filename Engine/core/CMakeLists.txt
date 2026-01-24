@@ -31,6 +31,7 @@ target_sources( core PUBLIC
         DynLib.hpp
         SysInfo.hpp
         res.hpp
+        format.hpp
 )
 
 target_include_directories(core 

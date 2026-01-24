@@ -10,3 +10,4 @@
 #include "Event.hpp"
 #include "SysInfo.hpp"
 #include "res.hpp"
+#include "format.hpp"

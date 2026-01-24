@@ -1,7 +1,7 @@
 #pragma once
 #include <exception>
 #include <source_location>
-#include <format>
+#include "format.hpp"
 #include <engine_export.h>
 #include "stacktrace.hpp"
 
@@ -15,9 +15,9 @@ public:
     Ts&&... args
   ) : m_Trace(stacktrace::current(1))
   {
-    std::string user_msg = std::format(fmt, std::forward<Ts>(args)...);
+    std::string user_msg = ::format(fmt, std::forward<Ts>(args)...);
      
-    m_FullMessage = std::format(
+    m_FullMessage = ::format(
         "(Exception) at [{}] in {}\n"
         "\t-> {}\n"
         "{}",

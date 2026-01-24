@@ -13,7 +13,7 @@ constexpr auto LOG_FILE = "Engine.log";
 
 namespace debug {
     auto default_logger(std::string msg ) -> void {
-        auto now = std::format("{}", std::chrono::system_clock::now());
+        auto now = ::format("{}", std::chrono::system_clock::now());
 
         #if defined(CONSOLE_ATTACHED)
         #   if defined(ANDROID_PLT)

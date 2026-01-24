@@ -1,6 +1,6 @@
 #pragma once
 
-#include <format>
+#include "format.hpp"
 #include <source_location>
 #include <engine_export.h>
 
@@ -16,7 +16,7 @@ namespace debug {
     template <class... Ts>
     inline auto log(const std::format_string<Ts...>& fmt, Ts&&... ts) -> void
     {
-        if(logger) logger(std::format(fmt, std::forward<Ts>(ts)...));
+        if(logger) logger(::format(fmt, std::forward<Ts>(ts)...));
     }
 
     template <class T>
