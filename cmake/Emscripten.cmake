@@ -4,7 +4,7 @@ if(EMSCRIPTEN)
     set(STATIC_LINK OFF)
 
     add_compile_options(
-        -Wno-character-conversion -Wno-dollar-in-identifier-extension
+        -Wno-dollar-in-identifier-extension
         -fexperimental-library
         -pthread
     )
