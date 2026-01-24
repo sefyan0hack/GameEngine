@@ -27,16 +27,11 @@ public:
     auto model() const                                       -> glm::mat4 ;
     auto mesh() const                                        -> std::shared_ptr<class Mesh> ;
     auto material() const                                    -> std::shared_ptr<class Material> ;
-    auto name() const                                        -> std::string;
 
 private:
     Transform m_Transform;
     std::shared_ptr<class Material> m_Material;
     std::shared_ptr<class Mesh> m_Mesh;
-    std::string m_Name;
-    inline static std::size_t Count = 1;
-
-    
 };
 
 // custom GameObject Format

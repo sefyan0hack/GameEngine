@@ -6,37 +6,26 @@
 #include <glm/vec3.hpp>
 #include <glm/matrix.hpp>
 
-GameObject::GameObject(glm::vec3 position, std::shared_ptr<Material> matt, std::shared_ptr<Mesh> mesh, std::string Name) noexcept
+GameObject::GameObject(glm::vec3 position, std::shared_ptr<Material> matt, std::shared_ptr<Mesh> mesh) noexcept
     : m_Transform(Transform(position))
     , m_Material(matt)
     , m_Mesh(mesh)
-    , m_Name(Name)
-{    
-    Count++;
-    CTOR_LOG
-}
+{CTOR_LOG}
 
-GameObject::GameObject(Transform transform, std::shared_ptr<Material> matt, std::shared_ptr<Mesh> mesh, std::string Name) noexcept
+GameObject::GameObject(Transform transform, std::shared_ptr<Material> matt, std::shared_ptr<Mesh> mesh) noexcept
     : m_Transform(transform)
     , m_Material(matt)
     , m_Mesh(mesh)
-    , m_Name(Name)
-{    
-    Count++;
-}
+{CTOR_LOG}
 
 GameObject::~GameObject()
-{
-    Count--;
-    DTOR_LOG
-}
+{DTOR_LOG}
 
 
 GameObject::GameObject(GameObject&& other) noexcept
     : m_Transform(std::move(other.m_Transform))
     , m_Material(other.m_Material)
     , m_Mesh(other.m_Mesh)  
-    , m_Name(std::move(other.m_Name))
 {
     other.m_Material.reset();
     other.m_Mesh.reset();
@@ -44,13 +33,10 @@ GameObject::GameObject(GameObject&& other) noexcept
 
 auto GameObject::operator=(GameObject&& other) noexcept -> GameObject&
 {
-    debug::log("Move {}", Count);
-
     if(this != &other){
         m_Transform = std::move(other.m_Transform);
         m_Material = std::move(other.m_Material);
         m_Mesh = std::move(other.m_Mesh);
-        m_Name = std::move(other.m_Name);
     }
     return *this;
 }
@@ -89,10 +75,4 @@ auto GameObject::mesh() const -> std::shared_ptr<Mesh>
 auto GameObject::material() const -> std::shared_ptr<Material>
 {
     return m_Material;
-}
-
-
-auto GameObject::name() const -> std::string
-{
-    return m_Name;
 }
