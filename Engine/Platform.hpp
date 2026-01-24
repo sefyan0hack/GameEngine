@@ -22,7 +22,6 @@
   #endif
 #endif
 
-
 /**
  * @brief  Concept that tests whether a non-type template parameter names a free/static object
  *         (or pointer to one) and is **not** a pointer-to-member-object.

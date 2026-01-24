@@ -78,6 +78,8 @@ private:
 };
 
 // custom Mouse Format
+
+#ifdef __cpp_lib_formatters
 template<>
 struct std::formatter<Mouse> {
   constexpr auto parse(std::format_parse_context& context) {
@@ -90,3 +92,6 @@ struct std::formatter<Mouse> {
   	);
   }
 };
+#else
+#error "__cpp_lib_formatters not defined"
+#endif

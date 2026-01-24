@@ -10,8 +10,8 @@
 class ENGINE_EXPORT GameObject {
 public:
     friend struct std::formatter<GameObject>;
-    GameObject(glm::vec3 position, std::shared_ptr<class Material> matt, std::shared_ptr<class Mesh> mesh, std::string Name = std::format("Obj{}", Count)) noexcept;
-    GameObject(Transform transform, std::shared_ptr<class Material> matt, std::shared_ptr<class Mesh> mesh, std::string Name = std::format("Obj{}", Count)) noexcept;
+    GameObject(glm::vec3 position, std::shared_ptr<class Material> matt, std::shared_ptr<class Mesh> mesh) noexcept;
+    GameObject(Transform transform, std::shared_ptr<class Material> matt, std::shared_ptr<class Mesh> mesh) noexcept;
     ~GameObject();
 
     GameObject(const GameObject&) = default;
@@ -34,6 +34,7 @@ private:
     std::shared_ptr<class Mesh> m_Mesh;
 };
 
+#ifdef __cpp_lib_formatters
 // custom GameObject Format
 template<>
 struct std::formatter<GameObject> {
@@ -42,7 +43,11 @@ struct std::formatter<GameObject> {
   }
   auto format(const GameObject& obj, std::format_context& context) const {
     return std::format_to(context.out(),
-    R"({{ "name": "{}", "transform": {} }})"
-    , obj.m_Name, obj.m_Transform);
+    R"({{ "transform": {} }})",
+    obj.m_Transform);
   }
 };
+
+#else
+#error "__cpp_lib_formatters not defined"
+#endif

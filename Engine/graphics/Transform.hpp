@@ -25,6 +25,7 @@ public:
     glm::vec3 scale;
 };
 
+#ifdef __cpp_lib_formatters
 // custom Transform Format
 template<>
 struct std::formatter<Transform> {
@@ -37,3 +38,6 @@ struct std::formatter<Transform> {
     , obj.position, obj.rotation, obj.scale);
   }
 };
+#else
+#error "__cpp_lib_formatters not defined"
+#endif

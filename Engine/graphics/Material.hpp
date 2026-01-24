@@ -14,7 +14,6 @@ public:
                               //loc    type    size
     using GLSLVar = std::tuple<GLuint, GLenum, GLsizei>;
 
-    friend struct std::formatter<Material>;
     Material();
     Material(std::shared_ptr<class Texture> diffuse);
 

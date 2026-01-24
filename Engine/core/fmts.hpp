@@ -4,6 +4,7 @@
 #include <format>
 #include <glm/glm.hpp>
 
+#ifdef __cpp_lib_formatters
 
 // custom glm::vec2 Format
 template<class... Ts>
@@ -156,3 +157,6 @@ struct std::formatter<Type<T>> {
         );
     }
 };
+#else
+#error "__cpp_lib_formatters not defined"
+#endif

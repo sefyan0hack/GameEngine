@@ -34,6 +34,7 @@ private:
 
 };
 
+#ifdef __cpp_lib_formatters
 // custom Mesh Format
 template<>
 struct std::formatter<Scene> {
@@ -46,3 +47,7 @@ struct std::formatter<Scene> {
     , VecWrapper{obj.m_Entities});
   }
 };
+
+#else
+#error "__cpp_lib_formatters not defined"
+#endif
