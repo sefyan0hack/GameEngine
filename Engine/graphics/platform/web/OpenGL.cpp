@@ -23,18 +23,13 @@ auto OpenGL::create_opengl_context() -> GL_CTX
     attrs.depth = EM_TRUE;
     attrs.stencil = EM_TRUE;
     attrs.antialias = EM_TRUE;
-    attrs.premultipliedAlpha = EM_FALSE;
-    attrs.preserveDrawingBuffer = EM_FALSE;
-    attrs.powerPreference = EM_WEBGL_POWER_PREFERENCE_HIGH_PERFORMANCE;
-    attrs.failIfMajorPerformanceCaveat = EM_FALSE;
     attrs.majorVersion = 2;
     attrs.minorVersion = 0;
-    attrs.enableExtensionsByDefault = EM_TRUE;
 
     auto context = emscripten_webgl_create_context(surface, &attrs);
 
     if (context <= 0) {
-        throw Exception("Failed to create WebGL context");
+        throw Exception("Failed to create WebGL context: GPU acceleration may be disabled.");
     }
 
     return context;
