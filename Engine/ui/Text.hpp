@@ -89,7 +89,7 @@ private:
     uint32_t m_IndexCount = 0;
 
     // Rendering state
-    uint32_t m_AtlasTexture;;
+    uint32_t m_AtlasTexture;
 
     // Font metrics
     int32_t m_Ascent = 0;
