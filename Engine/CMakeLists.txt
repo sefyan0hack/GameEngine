@@ -182,13 +182,13 @@ if(ANDROID)
             -I "${ANDROID_PLATFORM_JAR}"
             -M ${CMAKE_SOURCE_DIR}/cmake/AndroidManifest.xml
             -F base.apk ${CMAKE_BINARY_DIR}/apk
-        COMMAND ${ZIPALIGN} -f 4 base.apk final-aligned.apk
+        COMMAND ${ZIPALIGN} -f 4 base.apk aligned.apk
         COMMAND ${APKSIGNER} sign
             --ks debug.keystore
             --ks-pass pass:android
             --key-pass pass:android
             --ks-key-alias androiddebugkey
-            --out final-signed.apk final-aligned.apk
+            --out signed.apk aligned.apk
 
         COMMENT "Packaging & Signing apk"
     )

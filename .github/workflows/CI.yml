@@ -105,37 +105,9 @@ jobs:
           build_type: "Debug"
           cmake_flags: "-DTESTS=ON -DHARDEN=ON"
 
-      # - name: Create debug keystore
-      #   run: |
-      #     keytool -genkeypair -keystore "debug.keystore" \
-      #       -storepass android -keypass android -alias androiddebugkey \
-      #       -dname "CN=Android Debug,O=Android,C=US" -storetype JKS \
-      #       -keyalg RSA -keysize 2048 -validity 10000
-
-      # - name: Package and Sign APK
-      #   run: |
-      #     BUILD_TOOLS_ROOT="$ANDROID_HOME/build-tools"
-      #     VERSION=$(ls -1 "$BUILD_TOOLS_ROOT" | sort -V | tail -n 1)
-      #     SDK_TOOLS="$BUILD_TOOLS_ROOT/$VERSION"
-      #     PLATFORM_JAR=$(ls -1v $ANDROID_HOME/platforms/android-*/android.jar | tail -n 1)
-
-      #     # Link resources and Manifest
-      #     $SDK_TOOLS/aapt package -f -I "$PLATFORM_JAR" -M cmake/AndroidManifest.xml -F base.apk build/apk
-
-      #     # Zipalign
-      #     $SDK_TOOLS/zipalign -v 4 base.apk final-aligned.apk
-
-      #     # Sign the APK
-      #     $SDK_TOOLS/apksigner sign \
-      #       --ks "debug.keystore" \
-      #       --ks-pass pass:android \
-      #       --key-pass pass:android \
-      #       --ks-key-alias androiddebugkey \
-      #       --out final-signed.apk final-aligned.apk
-
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: signed-apk
-          path: final-signed.apk
+          path: build/signed.apk
           retention-days: 1
