@@ -166,23 +166,30 @@ if(ANDROID)
     NO_DEFAULT_PATH
     REQUIRED)
 
-    set(OUT_LIB_DIR "${CMAKE_BINARY_DIR}/apk/lib/${ANDROID_ABI}")
+    set(APK_LIB_DIR "${CMAKE_BINARY_DIR}/apk/lib/${ANDROID_ABI}")
 
     add_custom_command(
         TARGET Launcher
         POST_BUILD
 
-        COMMAND ${CMAKE_COMMAND} -E make_directory "${OUT_LIB_DIR}"
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Launcher> "${OUT_LIB_DIR}"
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${APK_LIB_DIR}"
+
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Launcher> "${APK_LIB_DIR}"
+
         COMMAND ${KEYTOOL} -genkeypair -keystore "debug.keystore"
             -storepass android -keypass android -alias androiddebugkey
             -dname "CN=Android Debug,O=Android,C=US" -storetype JKS
             -keyalg RSA -keysize 2048 -validity 10000
+
         COMMAND ${AAPT} package -f
             -I "${ANDROID_PLATFORM_JAR}"
             -M ${CMAKE_SOURCE_DIR}/cmake/AndroidManifest.xml
             -F base.apk ${CMAKE_BINARY_DIR}/apk
+
         COMMAND ${ZIPALIGN} -f 4 base.apk aligned.apk
+
         COMMAND ${APKSIGNER} sign
             --ks debug.keystore
             --ks-pass pass:android
@@ -190,6 +197,6 @@ if(ANDROID)
             --ks-key-alias androiddebugkey
             --out signed.apk aligned.apk
 
-        COMMENT "Packaging & Signing apk"
+        COMMENT "Packaging & Signing APK"
     )
 endif()
