@@ -105,15 +105,12 @@ jobs:
           build_type: "Debug"
           cmake_flags: "-DTESTS=ON -DHARDEN=ON"
 
-      - name: Create debug keystore (if missing)
+      - name: Create debug keystore
         run: |
-          mkdir -p "$HOME/.android"
-          if [ ! -f "$HOME/.android/debug.keystore" ]; then
-            keytool -genkeypair -keystore "$HOME/.android/debug.keystore" \
-              -storepass android -keypass android -alias androiddebugkey \
-              -dname "CN=Android Debug,O=Android,C=US" -storetype JKS \
-              -keyalg RSA -keysize 2048 -validity 10000
-          fi
+          keytool -genkeypair -keystore "debug.keystore" \
+            -storepass android -keypass android -alias androiddebugkey \
+            -dname "CN=Android Debug,O=Android,C=US" -storetype JKS \
+            -keyalg RSA -keysize 2048 -validity 10000
 
       - name: Package and Sign APK
         run: |
@@ -130,7 +127,7 @@ jobs:
 
           # Sign the APK
           $SDK_TOOLS/apksigner sign \
-            --ks "$HOME/.android/debug.keystore" \
+            --ks "debug.keystore" \
             --ks-pass pass:android \
             --key-pass pass:android \
             --ks-key-alias androiddebugkey \
