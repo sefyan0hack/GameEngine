@@ -164,7 +164,7 @@ if(ANDROID)
         COMMAND ${AAPT} package -f
             -I ${ANDROID_PLATFORM_JAR}
             -M ${CMAKE_SOURCE_DIR}/cmake/AndroidManifest.xml
-            -F base.apk build/apk
+            -F base.apk ${CMAKE_BINARY_DIR}/apk
         COMMAND ${ZIPALIGN} -f 4 base.apk final-aligned.apk
         COMMAND ${APKSIGNER} sign
             --ks debug.keystore
