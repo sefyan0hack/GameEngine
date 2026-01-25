@@ -78,6 +78,7 @@ else()
     add_executable(Launcher main.cpp)
 endif()
 
+target_link_libraries(Launcher PRIVATE Engine)
 if(EMSCRIPTEN)
     set(SITE_DIR "${CMAKE_BINARY_DIR}/site")
 
@@ -110,4 +111,65 @@ if(EMSCRIPTEN)
     )
 endif()
 
-target_link_libraries(Launcher PRIVATE Engine)
+if(ANDROID)
+    if(NOT DEFINED ENV{ANDROID_SDK_ROOT})
+        message(FATAL_ERROR "ANDROID_SDK_ROOT is not set")
+    endif()
+
+    if(NOT DEFINED ENV{JAVA_HOME})
+        message(FATAL_ERROR "JAVA_HOME is not set (keytool requires a JDK)")
+    endif()
+
+    set(JAVA_HOME "$ENV{JAVA_HOME}")
+    set(ANDROID_SDK_ROOT "$ENV{ANDROID_SDK_ROOT}")
+    
+    file(GLOB ANDROID_BUILD_TOOLS_DIRS
+        LIST_DIRECTORIES true
+        "${ANDROID_SDK_ROOT}/build-tools/*")
+
+    list(SORT ANDROID_BUILD_TOOLS_DIRS COMPARE NATURAL)
+    list(REVERSE ANDROID_BUILD_TOOLS_DIRS)
+
+    find_program(KEYTOOL
+    NAMES keytool keytool.exe
+    PATHS "${JAVA_HOME}/bin"
+    NO_DEFAULT_PATH
+    REQUIRED)
+
+    find_program(AAPT
+    NAMES aapt aapt.exe
+    PATHS ${ANDROID_BUILD_TOOLS_DIRS}
+    NO_DEFAULT_PATH
+    REQUIRED)
+
+    find_program(ZIPALIGN
+    NAMES zipalign zipalign.exe
+    PATHS ${ANDROID_BUILD_TOOLS_DIRS}
+    NO_DEFAULT_PATH
+    REQUIRED)
+
+    find_program(APKSIGNER
+    NAMES apksigner apksigner.bat
+    PATHS ${ANDROID_BUILD_TOOLS_DIRS}
+    NO_DEFAULT_PATH
+    REQUIRED)
+
+    add_custom_command(
+    OUTPUT final-signed.apk
+    COMMAND ${KEYTOOL} -genkeypair -keystore "debug.keystore"
+            -storepass android -keypass android -alias androiddebugkey
+            -dname "CN=Android Debug,O=Android,C=US" -storetype JKS
+            -keyalg RSA -keysize 2048 -validity 10000
+    COMMAND ${AAPT} package -f
+            -I ${ANDROID_PLATFORM_JAR}
+            -M ${CMAKE_SOURCE_DIR}/cmake/AndroidManifest.xml
+            -F base.apk build/apk
+    COMMAND ${ZIPALIGN} -f 4 base.apk final-aligned.apk
+    COMMAND ${APKSIGNER} sign
+            --ks debug.keystore
+            --ks-pass pass:android
+            --key-pass pass:android
+            --ks-key-alias androiddebugkey
+            --out final-signed.apk final-aligned.apk
+    )
+endif()
