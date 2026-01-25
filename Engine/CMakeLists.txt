@@ -118,7 +118,8 @@ if(ANDROID)
     set(JAVA_HOME "$ENV{JAVA_HOME}")
     set(ANDROID_SDK_ROOT "$ENV{ANDROID_SDK_ROOT}")
     set(ANDROID_PLATFORM_JAR "${ANDROID_SDK_ROOT}/platforms/${ANDROID_PLATFORM}/android.jar")
-    
+    set(ANDROID_FRAMEWORK_APK "${ANDROID_SDK_ROOT}/platforms/${ANDROID_PLATFORM}/data/framework-res.apk")
+
     file(GLOB ANDROID_BUILD_TOOLS_DIRS
         LIST_DIRECTORIES true
         "${ANDROID_SDK_ROOT}/build-tools/*")
@@ -163,7 +164,7 @@ if(ANDROID)
             -dname "CN=Android Debug,O=Android,C=US" -storetype JKS
             -keyalg RSA -keysize 2048 -validity 10000
         COMMAND ${AAPT} package -f
-            -I ${ANDROID_PLATFORM_JAR}
+            -I ${ANDROID_FRAMEWORK_APK}
             -M ${CMAKE_SOURCE_DIR}/cmake/AndroidManifest.xml
             -F base.apk ${CMAKE_BINARY_DIR}/apk
         COMMAND ${ZIPALIGN} -f 4 base.apk final-aligned.apk
