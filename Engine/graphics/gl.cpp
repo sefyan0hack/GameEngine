@@ -4,7 +4,7 @@
 namespace gl {
 
     auto get_proc_address(const char* name) -> void* {
-        void *address = reinterpret_cast<void*>(XXXGetProcAddress(name));
+        void *address = reinterpret_cast<void*>(gl::GetProcAddress(name));
 
         if(address == nullptr){
             address = os::get_proc_address(OPENGL_MODULE_NAME, name);
@@ -53,7 +53,7 @@ namespace gl {
         #   define X(name)\
             name = Function<PFN_gl##name>{};\
             name.m_Func  = reinterpret_cast<PFN_gl##name>(gl::get_proc_address("gl"#name));\
-            name.m_After = [](std::string info) { Expect(XXXGetCurrentContext()); auto err = glGetError(); if(err != GL_NO_ERROR) if(!info.contains("glClear")) throw Exception("gl error id {} {}", err, info); };\
+            name.m_After = [](std::string info) { Expect(gl::GetCurrentContext()); auto err = glGetError(); if(err != GL_NO_ERROR) if(!info.contains("glClear")) throw Exception("gl error id {} {}", err, info); };\
             name.m_Name  = "gl"#name;
         #else
         #   define X(name)\
@@ -84,7 +84,7 @@ namespace gl {
         #if ROBUST_GL_CHECK
         #   define X(name) \
             name.m_Func  = reinterpret_cast<std::remove_reference_t<PFN_gl##name>>(funcs[index++]);\
-            name.m_After = [](std::string info) { Expect(XXXGetCurrentContext()); auto err = glGetError(); if(err != GL_NO_ERROR) if(!info.contains("glClear")) throw Exception("gl error id {} {}", err, info); };\
+            name.m_After = [](std::string info) { Expect(gl::GetCurrentContext()); auto err = glGetError(); if(err != GL_NO_ERROR) if(!info.contains("glClear")) throw Exception("gl error id {} {}", err, info); };\
             name.m_Name  = "gl"#name;
         #else
         #   define X(name) name = reinterpret_cast<std::remove_reference_t<PFN_gl##name>>(funcs[index++]);

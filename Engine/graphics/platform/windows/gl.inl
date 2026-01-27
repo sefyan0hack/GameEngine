@@ -7,9 +7,7 @@ using H_WIN     = HWND;
 using H_SRF     = HDC;
 using H_DSP     = uint32_t;
 using GL_CTX    = HGLRC;
-
-#define XXXGetProcAddress(name) wglGetProcAddress(name)
-#define XXXGetCurrentContext() wglGetCurrentContext()
+using FUNC_T    = PROC;
 
 // Declare function pointers using typedefs
 [[maybe_unused]] inline PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB = nullptr;
@@ -17,5 +15,7 @@ using GL_CTX    = HGLRC;
 [[maybe_unused]] inline PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = nullptr;
 
 namespace gl {
+    inline auto GetProcAddress(const char* name) -> FUNC_T { return wglGetProcAddress(name); }
+    inline auto GetCurrentContext() -> GL_CTX { return wglGetCurrentContext(); }
     constexpr int32_t DepthBufferBits = 32;
 }

@@ -11,13 +11,13 @@ using H_WIN     = Window;
 using H_SRF     = Window;
 using H_DSP     = Display*;
 using GL_CTX    = GLXContext;
-
-#define XXXGetProcAddress(name) glXGetProcAddress((const GLubyte*)name)
-#define XXXGetCurrentContext() glXGetCurrentContext()
+using FUNC_T    = void(*)();
 
 [[maybe_unused]] inline PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB = nullptr;
 [[maybe_unused]] inline PFNGLXSWAPINTERVALEXTPROC glXSwapIntervalEXT = nullptr;
 
 namespace gl {
+    inline auto GetProcAddress(const char* name) -> FUNC_T { return glXGetProcAddress(name); }
+    inline auto GetCurrentContext() -> GL_CTX { return glXGetCurrentContext(); }
     constexpr int32_t DepthBufferBits = 32;
 }
