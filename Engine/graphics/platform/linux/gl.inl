@@ -17,7 +17,7 @@ using FUNC_T    = void(*)();
 [[maybe_unused]] inline PFNGLXSWAPINTERVALEXTPROC glXSwapIntervalEXT = nullptr;
 
 namespace gl {
-    inline auto GetProcAddress(const char* name) -> FUNC_T { return glXGetProcAddress(name); }
+    inline auto GetProcAddress(const char* name) -> FUNC_T { return glXGetProcAddress(reinterpret_cast<const GLubyte*>(name)); }
     inline auto GetCurrentContext() -> GL_CTX { return glXGetCurrentContext(); }
     constexpr int32_t DepthBufferBits = 32;
 }
