@@ -15,7 +15,7 @@ jobs:
         echo "$github_workspace" >> $GITHUB_PATH
 
     - name: Build Project
-      uses: ./.github/actions/build
+      uses: ./.github/actions/Desktop-build
       with:
         os: ${{ runner.os }}
         compiler: llvm
