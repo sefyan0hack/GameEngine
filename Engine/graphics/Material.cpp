@@ -6,8 +6,8 @@
 
 #include <glm/matrix.hpp>
 
-#define Diffuse_SLOT 0
-#define SkyBox_SLOT 1
+constexpr int32_t Diffuse_SLOT = 0;
+constexpr int32_t SkyBox_SLOT = 1;
 
 Material::Material()
     : m_Diffuse(std::make_shared<Texture2D>())
@@ -18,7 +18,6 @@ Material::Material(std::shared_ptr<Texture> diffuse)
     : m_Diffuse(diffuse)
 {
 }
-
 
 auto Material::bind(std::shared_ptr<ShaderProgram> program) -> void
 {

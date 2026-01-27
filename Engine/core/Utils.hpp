@@ -126,10 +126,15 @@ constexpr std::array<char, sizeof(Str.value)> ToUpper<Str>::value;
  *
  * @details
  * Expands to a std::string_view referencing the compile-time uppercased data.
- * Example: TO_UPPER("hello") yields "HELLO".
+ * Example: to_upper("hello") yields "HELLO".
  */
-#define TO_UPPER(str) std::string_view(ToUpper<FixedString{str}>::value.data())
-
+template <FixedString Str>
+constexpr std::string_view to_upper() {
+    return std::string_view{
+        ToUpper<Str>::value.data(),
+        ToUpper<Str>::value.size() - 1 // exclude null terminator
+    };
+}
 /**
  * @brief Split a C-string by a delimiter into a vector of std::string.
  *

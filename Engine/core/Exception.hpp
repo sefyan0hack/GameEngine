@@ -35,10 +35,10 @@ private:
   stacktrace m_Trace;
 };
 
-#ifndef Try
-#define Try(f) try {f;} catch(...){}
-#endif
 
-#ifndef Expect
-#define Expect(cond, ...) if (!(cond)) [[unlikely]] throw Exception("Expectation ["#cond"] Failed : " __VA_ARGS__);
-#endif
+template<class... Args>
+inline void Expect(bool cond, std::format_string<Args...> fmt = {}, Args&&... args)
+{
+  if (!cond) [[unlikely]]
+    throw Exception("Expectation Failed. {}", ::format(fmt, std::forward<Args>(args)...));
+}
