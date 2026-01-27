@@ -80,11 +80,12 @@ if(COVERAGE)
             COMMAND ${LLVM_COV_PATH} export $<TARGET_FILE:unit_tests>
                 -instr-profile=coverage.profdata
                 -format=lcov
-                -ignore-filename-regex='(tests/|3party/)'
-                > ${CMAKE_BINARY_DIR}/coverage.lcov
+                -ignore-filename-regex=(tests/|3party/)
+                -output-file=${CMAKE_BINARY_DIR}/coverage.lcov
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
             DEPENDS pre_coverage
         )
+
     endif()
 endif()
 
