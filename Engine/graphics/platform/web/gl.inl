@@ -3,7 +3,6 @@
 #include <emscripten/html5_webgl.h>
 #include <emscripten/key_codes.h>
 #include <GLES3/gl3.h>
-#define GL_GLES_PROTOTYPES 1
 
 using H_WIN     = const char*;
 using H_SRF     = const char*;

@@ -202,8 +202,10 @@ auto CWindow::set_title(std::string  title) -> void
 
 auto CWindow::set_vsync(bool state) -> void
 {
-	if(!glXSwapIntervalEXT) glXSwapIntervalEXT = reinterpret_cast<PFNGLXSWAPINTERVALEXTPROC>(glXGetProcAddress((const GLubyte*)"glXSwapIntervalEXT"));
-	glXSwapIntervalEXT(m_Display, m_Handle, state);
+	if(!gl::SwapIntervalEXT) 
+		gl::SwapIntervalEXT = reinterpret_cast<decltype(gl::SwapIntervalEXT)>(gl::GetProcAddress("glXSwapIntervalEXT"));
+
+	gl::SwapIntervalEXT(m_Display, m_Handle, state);
 }
 
 auto CWindow::message_box(const char* title, const char* body) -> bool

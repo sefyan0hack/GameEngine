@@ -293,9 +293,9 @@ auto CWindow::set_title(std::string  title) -> void
 auto CWindow::set_vsync(bool state) -> void
 {
 	BEGIN_IGNORE_WARN_CALNG("-Wcast-function-type-mismatch")
-	if(!wglSwapIntervalEXT) wglSwapIntervalEXT = reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC>(wglGetProcAddress("wglSwapIntervalEXT"));
+	if(!gl::SwapIntervalEXT) gl::SwapIntervalEXT = reinterpret_cast<decltype(gl::SwapIntervalEXT)>(gl::GetProcAddress("wglSwapIntervalEXT"));
 	END_IGNORE_WARN_CALNG()
-	wglSwapIntervalEXT(state);
+	gl::SwapIntervalEXT(state);
 }
 
 auto CWindow::message_box(const char* title, const char* body) -> bool

@@ -51,15 +51,15 @@ auto OpenGL::create_opengl_context() -> GL_CTX
     }
 
     BEGIN_IGNORE_WARN_CALNG("-Wcast-function-type-mismatch")
-    wglGetExtensionsStringARB  = reinterpret_cast<PFNWGLGETEXTENSIONSSTRINGARBPROC>(wglGetProcAddress("wglGetExtensionsStringARB"));
-    wglCreateContextAttribsARB = reinterpret_cast<PFNWGLCREATECONTEXTATTRIBSARBPROC>(wglGetProcAddress("wglCreateContextAttribsARB"));
+    gl::GetExtensionsStringARB  = reinterpret_cast<decltype(gl::GetExtensionsStringARB)>(gl::GetProcAddress("wglGetExtensionsStringARB"));
+    gl::CreateContextAttribsARB = reinterpret_cast<decltype(gl::CreateContextAttribsARB)>(gl::GetProcAddress("wglCreateContextAttribsARB"));
     END_IGNORE_WARN_CALNG()
 
-    if (!wglGetExtensionsStringARB){
+    if (!gl::GetExtensionsStringARB){
         throw Exception("Failed to load wglGetExtensionsStringARB. : {}", GetLastError());
     }
 
-    if(!wglCreateContextAttribsARB) {
+    if(!gl::CreateContextAttribsARB) {
         throw Exception("Failed to load wglCreateContextAttribsARB. : {}", GetLastError());
     }
 
@@ -74,7 +74,7 @@ auto OpenGL::create_opengl_context() -> GL_CTX
 
 
     GL_CTX opengl_context = nullptr;
-    if (nullptr == (opengl_context = wglCreateContextAttribsARB(surface, nullptr, gl_attribs))) {
+    if (nullptr == (opengl_context = gl::CreateContextAttribsARB(surface, nullptr, gl_attribs))) {
         m_Context = nullptr;
 
         if (GetLastError() == ERROR_INVALID_VERSION_ARB){ // ?

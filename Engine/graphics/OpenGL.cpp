@@ -33,7 +33,7 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     m_Renderer = renderer ? renderer : "unknown";
 
     #if defined(WINDOWS_PLT)
-    auto exts = reinterpret_cast<const char*>(wglGetExtensionsStringARB(window.surface()));
+    auto exts = reinterpret_cast<const char*>(gl::GetExtensionsStringARB(window.surface()));
     #elif defined(LINUX_PLT)
     auto exts = reinterpret_cast<const char*>(glXQueryExtensionsString(window.display(), DefaultScreen(window.display())));
     #elif defined(WEB_PLT)
