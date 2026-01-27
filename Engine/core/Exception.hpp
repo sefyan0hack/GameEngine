@@ -36,8 +36,14 @@ private:
 };
 
 
+inline void Expect(bool cond)
+{
+  if (!cond) [[unlikely]]
+    throw Exception("Expectation Failed.");
+}
+
 template<class... Args>
-inline void Expect(bool cond, std::format_string<Args...> fmt = {}, Args&&... args)
+inline void Expect(bool cond, std::format_string<Args...> fmt, Args&&... args)
 {
   if (!cond) [[unlikely]]
     throw Exception("Expectation Failed. {}", ::format(fmt, std::forward<Args>(args)...));

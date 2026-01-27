@@ -13,7 +13,6 @@ if(HARDEN)
             /sdl            # Enable Additional Security Checks
             /GS             # Buffer Security Check
             /guard:cf       # Control Flow Guard
-            /CETCOMPAT      # Shadow Stack / Control-flow Enforcement
             /W4 /WX         # Warnings as Errors
         >
     )
