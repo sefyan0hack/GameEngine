@@ -128,18 +128,6 @@ if(ANDROID)
 
     list(SORT ANDROID_BUILD_TOOLS_DIRS COMPARE NATURAL)
     list(REVERSE ANDROID_BUILD_TOOLS_DIRS)
-    #---------------------------------
-    file(GLOB ANDROID_PLATFORM_JARS
-        "${ANDROID_SDK_ROOT}/platforms/android-*/android.jar"
-    )
-
-    if(NOT ANDROID_PLATFORM_JARS)
-        message(FATAL_ERROR "No android.jar found in SDK platforms")
-    endif()
-    #--------------------------------
-
-    list(SORT ANDROID_PLATFORM_JARS COMPARE NATURAL)
-    list(GET ANDROID_PLATFORM_JARS -1 ANDROID_PLATFORM_JAR)
 
     find_program(KEYTOOL
     NAMES keytool keytool.exe
@@ -167,31 +155,35 @@ if(ANDROID)
 
     set(APK_LIB_DIR "${CMAKE_BINARY_DIR}/apk/lib/${ANDROID_ABI}")
 
-    message(STATUS "---------- ${ANDROID_PLATFORM_JAR} -------------")
-
     add_custom_command(
         TARGET Launcher
         POST_BUILD
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         VERBATIM
 
+        COMMAND ${CMAKE_COMMAND} -E echo "Making APK lib dir: ${APK_LIB_DIR}"
         COMMAND ${CMAKE_COMMAND} -E make_directory "${APK_LIB_DIR}"
 
+        COMMAND ${CMAKE_COMMAND} -E echo "Copying Launcher executable"
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Launcher> "${APK_LIB_DIR}"
 
+        COMMAND ${CMAKE_COMMAND} -E echo "Generating debug keystore"
         COMMAND ${KEYTOOL} -genkeypair -keystore "debug.keystore"
             -storepass android -keypass android -alias androiddebugkey
             -dname "CN=Android Debug,O=Android,C=US" -storetype JKS
             -keyalg RSA -keysize 2048 -validity 10000
 
+        COMMAND ${CMAKE_COMMAND} -E echo "Running AAPT packaging. ndk-min: ${ANDROID_NATIVE_API_LEVEL} ndk-max: ${NDK_MAX_PLATFORM_LEVEL}"
         COMMAND ${AAPT} package -f
             -I "${ANDROID_SDK_ROOT}/platforms/android-${NDK_MAX_PLATFORM_LEVEL}/android.jar"
             -M "${CMAKE_SOURCE_DIR}/cmake/AndroidManifest.xml"
-            --min-sdk-version ${ANDROID_NATIVE_API_LEVEL} --target-sdk-version ${ANDROID_PLATFORM}
+            --min-sdk-version ${ANDROID_NATIVE_API_LEVEL} --target-sdk-version ${NDK_MAX_PLATFORM_LEVEL}
             -F base.apk ${CMAKE_BINARY_DIR}/apk
 
+        COMMAND ${CMAKE_COMMAND} -E echo "Aligning APK"
         COMMAND ${ZIPALIGN} -f 4 base.apk aligned.apk
 
+        COMMAND ${CMAKE_COMMAND} -E echo "Signing APK"
         COMMAND ${APKSIGNER} sign
             --ks debug.keystore
             --ks-pass pass:android
