@@ -185,6 +185,7 @@ if(ANDROID)
         COMMAND ${AAPT} package -f
             -I "${ANDROID_PLATFORM_JAR}"
             -M ${CMAKE_SOURCE_DIR}/cmake/AndroidManifest.xml
+            --min-sdk-version ${ANDROID_NATIVE_API_LEVEL} --target-sdk-version ${ANDROID_PLATFORM}
             -F base.apk ${CMAKE_BINARY_DIR}/apk
 
         COMMAND ${ZIPALIGN} -f 4 base.apk aligned.apk
