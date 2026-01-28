@@ -44,25 +44,23 @@ if(ANDROID)
     target_include_directories(native_app_glue PUBLIC ${ANDROID_NDK}/sources/android/native_app_glue)
 endif()
 
-# common (Not Web)
-if(NOT EMSCRIPTEN)
-    if(LINUX)
-        target_link_libraries(Engine PRIVATE $<$<CXX_COMPILER_ID:Clang>:stdc++exp>)
-    endif()
+target_link_libraries(Engine
+    PRIVATE
+        ${OPENGL_LIBRARIES}
+        $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
+        $<$<AND:$<CXX_COMPILER_ID:Clang>,$<PLATFORM_ID:Linux>>:stdc++exp>
 
-    target_link_libraries(Engine
-        PRIVATE
-            ${OPENGL_LIBRARIES}
-            $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
-            $<$<PLATFORM_ID:Unix>:dl>
-            $<$<PLATFORM_ID:Linux>:${X11_LIBRARIES}>
-            $<$<PLATFORM_ID:Android>:android>
-            $<$<PLATFORM_ID:Android>:EGL>
-            $<$<PLATFORM_ID:Android>:GLESv3>
-            $<$<PLATFORM_ID:Android>:log>
-            $<$<PLATFORM_ID:Android>:native_app_glue>
-    )
-endif()
+        $<$<PLATFORM_ID:Unix>:dl>
+        $<$<PLATFORM_ID:Linux>:${X11_LIBRARIES}>
+
+        $<$<PLATFORM_ID:Android>:
+            android
+            EGL
+            GLESv3
+            log
+            native_app_glue
+        >
+)
 
 ### Launcher
 if(ANDROID)
