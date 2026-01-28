@@ -17,6 +17,7 @@ set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
+include(CMakePrintSystemInformation)
 include(CTest)
 include(FeatureSummary)
 include(InstaledPackages)

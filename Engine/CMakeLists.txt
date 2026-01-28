@@ -7,7 +7,6 @@ add_subdirectory(inputs)
 add_subdirectory(ui)
 
 add_library(Engine)
-set_target_properties(Engine PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
 target_precompile_headers(Engine PUBLIC "${CMAKE_SOURCE_DIR}/Engine/Platform.hpp")
 
@@ -64,8 +63,8 @@ if(NOT EMSCRIPTEN)
             $<$<PLATFORM_ID:Android>:native_app_glue>
     )
 endif()
-### Launcher
 
+### Launcher
 if(ANDROID)
     add_library(Launcher SHARED main.cpp)
     target_link_options(Engine PRIVATE "-Wl,-u,ANativeActivity_onCreate")
