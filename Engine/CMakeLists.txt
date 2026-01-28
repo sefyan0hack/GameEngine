@@ -6,26 +6,25 @@ add_subdirectory(graphics)
 add_subdirectory(inputs)
 add_subdirectory(ui)
 
-get_target_property(CORE_SRCS core SOURCES)
-get_target_property(INPUT_SRCS inputs SOURCES)
-get_target_property(GRAPHICS_SRCS graphics SOURCES)
-get_target_property(UI_SRCS ui SOURCES)
-
 add_library(Engine)
 set_target_properties(Engine PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
-generate_export_header(Engine)
-
-target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-
 target_precompile_headers(Engine PUBLIC "${CMAKE_SOURCE_DIR}/Engine/Platform.hpp")
+
+generate_export_header(Engine)
+target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_sources( Engine
     PRIVATE
-        ${CORE_SRCS}
-        ${INPUT_SRCS}
-        ${GRAPHICS_SRCS}
-        ${UI_SRCS}
+        $<TARGET_PROPERTY:core,SOURCES>
+        $<TARGET_PROPERTY:inputs,SOURCES>
+        $<TARGET_PROPERTY:graphics,SOURCES>
+        $<TARGET_PROPERTY:ui,SOURCES>
+    PUBLIC
+    FILE_SET generated_headers
+      TYPE HEADERS
+      BASE_DIRS $<TARGET_PROPERTY:Engine,BINARY_DIR>
+      FILES ${CMAKE_CURRENT_BINARY_DIR}/engine_export.h
 )
 
 target_link_libraries(Engine
@@ -34,6 +33,11 @@ target_link_libraries(Engine
         graphics
         inputs
         ui
+
+        project_warnings_flags
+        project_coverage_flags
+        project_sanitizer_flags
+        project_hardening_flags
 )
 
 if(ANDROID)
@@ -50,10 +54,6 @@ if(NOT EMSCRIPTEN)
     target_link_libraries(Engine
         PRIVATE
             ${OPENGL_LIBRARIES}
-            project_warnings_flags
-            project_coverage_flags
-            project_sanitizer_flags
-            project_hardening_flags
             $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
             $<$<PLATFORM_ID:Unix>:dl>
             $<$<PLATFORM_ID:Linux>:${X11_LIBRARIES}>
