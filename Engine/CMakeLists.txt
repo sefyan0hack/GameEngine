@@ -197,6 +197,6 @@ if(ANDROID)
             --ks-key-alias androiddebugkey
             --out signed.apk aligned.apk
 
-        COMMENT "Packaging & Signing APK"
+        COMMENT "Packaging & Signing APK abi: ${ANDROID_ABI} api-level: ${ANDROID_NATIVE_API_LEVEL} target-platform: ${ANDROID_PLATFORM}"
     )
 endif()
