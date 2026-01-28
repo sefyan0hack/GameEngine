@@ -114,11 +114,14 @@ if(ANDROID)
         message(STATUS "ANDROID_SDK_ROOT not found getting it from env : ${ANDROID_SDK_ROOT}")
     endif()
 
-    # Find latest build-tools >= target platform
+    # --- Pick the first build-tools directory ---
     file(GLOB BUILD_TOOLS_VERSIONS RELATIVE "${ANDROID_SDK_ROOT}/build-tools" "${ANDROID_SDK_ROOT}/build-tools/*")
-    list(SORT BUILD_TOOLS_VERSIONS VERSION)
+    list(SORT BUILD_TOOLS_VERSIONS)
     list(REVERSE BUILD_TOOLS_VERSIONS)
-    set(BUILD_TOOLS_DIR "${ANDROID_SDK_ROOT}/build-tools/${BUILD_TOOLS_VERSIONS[0]}")
+    list(GET BUILD_TOOLS_VERSIONS 0 BUILD_TOOLS_LATEST)
+    set(BUILD_TOOLS_DIR "${ANDROID_SDK_ROOT}/build-tools/${BUILD_TOOLS_LATEST}")
+
+    message(STATUS "Using build-tools dir: ${BUILD_TOOLS_DIR}")
 
     find_program(KEYTOOL keytool REQUIRED)
     find_program(AAPT aapt PATHS "${BUILD_TOOLS_DIR}" REQUIRED)
