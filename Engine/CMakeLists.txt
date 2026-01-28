@@ -167,6 +167,8 @@ if(ANDROID)
 
     set(APK_LIB_DIR "${CMAKE_BINARY_DIR}/apk/lib/${ANDROID_ABI}")
 
+    message(STATUS "---------- ${ANDROID_PLATFORM_JARS} -------------")
+
     add_custom_command(
         TARGET Launcher
         POST_BUILD
@@ -183,8 +185,8 @@ if(ANDROID)
             -keyalg RSA -keysize 2048 -validity 10000
 
         COMMAND ${AAPT} package -f
-            -I "${ANDROID_PLATFORM_JAR}"
-            -M ${CMAKE_SOURCE_DIR}/cmake/AndroidManifest.xml
+            -I "${ANDROID_SDK_ROOT}/platforms/${ANDROID_PLATFORM}/android.jar"
+            -M "${CMAKE_SOURCE_DIR}/cmake/AndroidManifest.xml"
             --min-sdk-version ${ANDROID_NATIVE_API_LEVEL} --target-sdk-version ${ANDROID_PLATFORM}
             -F base.apk ${CMAKE_BINARY_DIR}/apk
 
