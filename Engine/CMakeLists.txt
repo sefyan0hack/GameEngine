@@ -106,52 +106,11 @@ if(EMSCRIPTEN)
 endif()
 
 if(ANDROID)
-    if(NOT DEFINED ENV{ANDROID_SDK_ROOT})
-        message(FATAL_ERROR "ANDROID_SDK_ROOT is not set")
-    endif()
 
-    if(NOT DEFINED ENV{JAVA_HOME})
-        message(FATAL_ERROR "JAVA_HOME is not set (keytool requires a JDK)")
-    endif()
-
-    set(JAVA_HOME "$ENV{JAVA_HOME}")
-    set(ANDROID_SDK_ROOT "$ENV{ANDROID_SDK_ROOT}")
-
-    file(GLOB ANDROID_BUILD_TOOLS_DIRS
-        LIST_DIRECTORIES true
-        "${ANDROID_SDK_ROOT}/build-tools/*")
-
-    if(NOT ANDROID_BUILD_TOOLS_DIRS)
-        message(FATAL_ERROR "No build found")
-    endif()
-
-    list(SORT ANDROID_BUILD_TOOLS_DIRS COMPARE NATURAL)
-    list(REVERSE ANDROID_BUILD_TOOLS_DIRS)
-    message(STATUS "sdk tools dir :${ANDROID_BUILD_TOOLS_DIRS}")
-
-    find_program(KEYTOOL
-    NAMES keytool keytool.exe
-    PATHS "${JAVA_HOME}/bin"
-    NO_DEFAULT_PATH
-    REQUIRED)
-
-    find_program(AAPT
-    NAMES aapt aapt.exe
-    PATHS ${ANDROID_BUILD_TOOLS_DIRS}
-    NO_DEFAULT_PATH
-    REQUIRED)
-
-    find_program(ZIPALIGN
-    NAMES zipalign zipalign.exe
-    PATHS ${ANDROID_BUILD_TOOLS_DIRS}
-    NO_DEFAULT_PATH
-    REQUIRED)
-
-    find_program(APKSIGNER
-    NAMES apksigner apksigner.bat
-    PATHS ${ANDROID_BUILD_TOOLS_DIRS}
-    NO_DEFAULT_PATH
-    REQUIRED)
+    find_program(KEYTOOL keytool REQUIRED)
+    find_program(AAPT aapt REQUIRED)
+    find_program(ZIPALIGN zipalign REQUIRED)
+    find_program(APKSIGNER apksigner REQUIRED)
 
     set(APK_LIB_DIR "${CMAKE_BINARY_DIR}/apk/lib/${ANDROID_ABI}")
 
@@ -173,11 +132,11 @@ if(ANDROID)
             -dname "CN=Android Debug,O=Android,C=US" -storetype JKS
             -keyalg RSA -keysize 2048 -validity 10000
 
-        COMMAND ${CMAKE_COMMAND} -E echo "Running AAPT packaging. ndk-min: ${ANDROID_NATIVE_API_LEVEL} ndk-max: ${NDK_MAX_PLATFORM_LEVEL}"
+        COMMAND ${CMAKE_COMMAND} -E echo "Running AAPT packaging. ndk-min: ${NDK_MIN_PLATFORM_LEVEL} ndk-max: ${NDK_MAX_PLATFORM_LEVEL}"
         COMMAND ${AAPT} package -f
             -I "${ANDROID_SDK_ROOT}/platforms/android-${NDK_MAX_PLATFORM_LEVEL}/android.jar"
             -M "${CMAKE_SOURCE_DIR}/cmake/AndroidManifest.xml"
-            --min-sdk-version ${ANDROID_NATIVE_API_LEVEL} --target-sdk-version ${NDK_MAX_PLATFORM_LEVEL}
+            --min-sdk-version ${NDK_MIN_PLATFORM_LEVEL} --target-sdk-version ${NDK_MAX_PLATFORM_LEVEL}
             -F base.apk ${CMAKE_BINARY_DIR}/apk
 
         COMMAND ${CMAKE_COMMAND} -E echo "Aligning APK"
@@ -191,6 +150,6 @@ if(ANDROID)
             --ks-key-alias androiddebugkey
             --out signed.apk aligned.apk
 
-        COMMENT "Packaging & Signing APK. ndk: ${CMAKE_ANDROID_NDK_VERSION} abi: ${ANDROID_ABI} min-sdk: ${ANDROID_NATIVE_API_LEVEL} target-sdk: ${NDK_MAX_PLATFORM_LEVEL}"
+        COMMENT "Packaging & Signing APK. ndk: ${CMAKE_ANDROID_NDK_VERSION} abi: ${ANDROID_ABI} min-sdk: ${NDK_MIN_PLATFORM_LEVEL} target-sdk: ${NDK_MAX_PLATFORM_LEVEL}"
     )
 endif()
