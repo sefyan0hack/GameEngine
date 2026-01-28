@@ -106,11 +106,24 @@ if(EMSCRIPTEN)
 endif()
 
 if(ANDROID)
+    if(NOT DEFINED ANDROID_SDK_ROOT AND DEFINED ENV{ANDROID_SDK_ROOT})
+        set(ANDROID_SDK_ROOT $ENV{ANDROID_SDK_ROOT})
+        message(STATUS "ANDROID_SDK_ROOT not found getting it from env : ${ANDROID_SDK_ROOT}")
+    elseif(NOT DEFINED ANDROID_SDK_ROOT AND DEFINED ENV{ANDROID_HOME})
+        set(ANDROID_SDK_ROOT $ENV{ANDROID_HOME})
+        message(STATUS "ANDROID_SDK_ROOT not found getting it from env : ${ANDROID_SDK_ROOT}")
+    endif()
+
+    # Find latest build-tools >= target platform
+    file(GLOB BUILD_TOOLS_VERSIONS RELATIVE "${ANDROID_SDK_ROOT}/build-tools" "${ANDROID_SDK_ROOT}/build-tools/*")
+    list(SORT BUILD_TOOLS_VERSIONS VERSION)
+    list(REVERSE BUILD_TOOLS_VERSIONS)
+    set(BUILD_TOOLS_DIR "${ANDROID_SDK_ROOT}/build-tools/${BUILD_TOOLS_VERSIONS[0]}")
 
     find_program(KEYTOOL keytool REQUIRED)
-    find_program(AAPT aapt REQUIRED)
-    find_program(ZIPALIGN zipalign REQUIRED)
-    find_program(APKSIGNER apksigner REQUIRED)
+    find_program(AAPT aapt PATHS "${BUILD_TOOLS_DIR}" REQUIRED)
+    find_program(ZIPALIGN zipalign PATHS "${BUILD_TOOLS_DIR}" REQUIRED)
+    find_program(APKSIGNER apksigner PATHS "${BUILD_TOOLS_DIR}" REQUIRED)
 
     set(APK_LIB_DIR "${CMAKE_BINARY_DIR}/apk/lib/${ANDROID_ABI}")
 
