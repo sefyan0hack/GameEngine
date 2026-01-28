@@ -19,13 +19,11 @@ if(EMSCRIPTEN)
         -sMAX_WEBGL_VERSION=2
 
         -sINITIAL_MEMORY=268435456
-    
+
         -sDISABLE_EXCEPTION_THROWING=0
         -sDISABLE_EXCEPTION_CATCHING=0
 
         -sFILESYSTEM=1 # needed for DynLib 
-
-        -sGL_DEBUG=1
     )
 
 endif()

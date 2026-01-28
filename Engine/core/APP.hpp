@@ -49,6 +49,8 @@ private:
 private:
     bool m_Running;
     float m_Fps;
+    uint32_t m_FrameCount;
+    float m_AccumulatedTime;
 
     ::CWindow Window;
     ::Keyboard Keyboard;

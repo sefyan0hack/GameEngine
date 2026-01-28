@@ -38,6 +38,8 @@
 APP::APP()
     : m_Running(true)
     , m_Fps(60.0f)
+    , m_FrameCount(0)
+    , m_AccumulatedTime(0.0f)
     , Window(WINDOW_WIDTH, WINDOW_HIEGHT, "")
     , Keyboard()
     , Mouse()
@@ -108,7 +110,17 @@ auto APP::frame() -> void
     Keyboard.save_prev_state();
     Mouse.save_prev_state();
 
-    m_Fps = 1.0f/std::chrono::duration<float>(std::chrono::steady_clock::now() - begin).count();
+    auto elapsed = std::chrono::steady_clock::now() - begin;
+    float deltaTime = std::chrono::duration<float>(elapsed).count();
+
+    m_AccumulatedTime += deltaTime;
+    ++m_FrameCount;
+
+    if (m_AccumulatedTime >= 1.0f) {
+        m_Fps = static_cast<float>(m_FrameCount) / m_AccumulatedTime; // Average FPS over the last second
+        m_AccumulatedTime = 0.0f;
+        m_FrameCount = 0;
+    }
 }
 
 auto APP::loop_body(void* ctx) -> void
