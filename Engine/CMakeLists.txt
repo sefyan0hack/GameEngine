@@ -117,7 +117,6 @@ if(ANDROID)
     set(JAVA_HOME "$ENV{JAVA_HOME}")
     set(ANDROID_SDK_ROOT "$ENV{ANDROID_SDK_ROOT}")
 
-    #--------------------------------
     file(GLOB ANDROID_BUILD_TOOLS_DIRS
         LIST_DIRECTORIES true
         "${ANDROID_SDK_ROOT}/build-tools/*")
@@ -128,6 +127,7 @@ if(ANDROID)
 
     list(SORT ANDROID_BUILD_TOOLS_DIRS COMPARE NATURAL)
     list(REVERSE ANDROID_BUILD_TOOLS_DIRS)
+    message(STATUS "sdk tools dir :${ANDROID_BUILD_TOOLS_DIRS}")
 
     find_program(KEYTOOL
     NAMES keytool keytool.exe
@@ -191,6 +191,6 @@ if(ANDROID)
             --ks-key-alias androiddebugkey
             --out signed.apk aligned.apk
 
-        COMMENT "Packaging & Signing APK abi: ${ANDROID_ABI} api-level: ${ANDROID_NATIVE_API_LEVEL} target-platform: ${ANDROID_PLATFORM}"
+        COMMENT "Packaging & Signing APK. ndk: ${CMAKE_ANDROID_NDK_VERSION} abi: ${ANDROID_ABI} min-sdk: ${ANDROID_NATIVE_API_LEVEL} target-sdk: ${NDK_MAX_PLATFORM_LEVEL}"
     )
 endif()
