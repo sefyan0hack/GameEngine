@@ -1,6 +1,8 @@
 
 # Find OpenGL package
-if(NOT ANDROID)
+if(ANDROID)
+    set(CORE_OPENGL_LIB GLESv3)
+else()
     find_package(OpenGL QUIET)
     set_package_properties(OpenGL PROPERTIES
         URL "https://www.opengl.org"
@@ -8,6 +10,9 @@ if(NOT ANDROID)
         TYPE REQUIRED
         PURPOSE "Crucial for the rendering engine to work."
     )
+
+    # Extract the core OpenGL library
+    list(GET OPENGL_LIBRARIES 0 CORE_OPENGL_LIB)
 endif()
 
 # Find X11 package
@@ -17,9 +22,6 @@ if(LINUX)
         DESCRIPTION "X11 Linux windowing lib"
         URL "https://x.org"
         TYPE REQUIRED
-        PURPOSE "Required to  to open windows in linux"
+        PURPOSE "Required to to open windows in linux"
     )
 endif()
-
-# Extract the core OpenGL library (first entry in the list)
-list(GET OPENGL_LIBRARIES 0 CORE_OPENGL_LIB)

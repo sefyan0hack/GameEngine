@@ -2,9 +2,8 @@
 include(CPM)
 include(helpers)
 
-# deps :
 
-    # add glm 1.0.1
+# add glm 1.0.1
 CPMAddPackage("gh:g-truc/glm#1.0.1")
 
 # stb_image v2.30
@@ -14,32 +13,30 @@ add_library(stb_image INTERFACE)
 target_include_directories(stb_image SYSTEM INTERFACE ${stb_image_SOURCE_DIR})
 
 
-fetch_and_include_file(khrplatform https://raw.githubusercontent.com/KhronosGroup/EGL-Registry/main/api/KHR/khrplatform.h)
-
-if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/KHR/khrplatform.h)
-    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/KHR)
-    include_directories( SYSTEM ${CMAKE_CURRENT_BINARY_DIR})
-
-    file(RENAME
-        ${khrplatform_SOURCE_DIR}/khrplatform.h
-        ${CMAKE_CURRENT_BINARY_DIR}/KHR/khrplatform.h
-    )
-endif()
-
 # fetch Opengl headers
+# fetch_and_include_file(khrplatform https://raw.githubusercontent.com/KhronosGroup/EGL-Registry/main/api/KHR/khrplatform.h)
 
-fetch_and_include_file(glext https://registry.khronos.org/OpenGL/api/GL/glext.h)
+# if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/KHR/khrplatform.h)
+#     file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/KHR)
+#     include_directories( SYSTEM ${CMAKE_CURRENT_BINARY_DIR})
 
-if(WIN32)
-    fetch_and_include_file(wglext https://registry.khronos.org/OpenGL/api/GL/wglext.h)
-endif()
+#     file(RENAME
+#         ${khrplatform_SOURCE_DIR}/khrplatform.h
+#         ${CMAKE_CURRENT_BINARY_DIR}/KHR/khrplatform.h
+#     )
+# endif()
 
-if(LINUX)
-    fetch_and_include_file(glxext https://registry.khronos.org/OpenGL/api/GL/glxext.h)
-endif()
+# fetch_and_include_file(glext https://registry.khronos.org/OpenGL/api/GL/glext.h)
 
-# freetype
+# if(WIN32)
+#     fetch_and_include_file(wglext https://registry.khronos.org/OpenGL/api/GL/wglext.h)
+# endif()
 
+# if(LINUX)
+#     fetch_and_include_file(glxext https://registry.khronos.org/OpenGL/api/GL/glxext.h)
+# endif()
+
+# freetype 2-14-0
 CPMAddPackage(
   NAME freetype
   GITHUB_REPOSITORY freetype/freetype
