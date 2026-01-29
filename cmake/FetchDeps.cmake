@@ -1,4 +1,3 @@
-
 include(CPM)
 include(helpers)
 
@@ -12,6 +11,7 @@ fetch_and_include_file(stb_image https://raw.githubusercontent.com/nothings/stb/
 if(WIN32)
   fetch_and_include_file(khrplatform https://registry.khronos.org/EGL/api/KHR/khrplatform.h KHR)
   fetch_and_include_file(glext https://registry.khronos.org/OpenGL/api/GL/glext.h GL)
+  fetch_and_include_file(wglext https://registry.khronos.org/OpenGL/api/GL/wglext.h GL)
 endif()
 
 # freetype 2-14-0
