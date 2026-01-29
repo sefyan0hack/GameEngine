@@ -17,27 +17,27 @@ template <typename R, typename... Args>
 class Function<R(*)(Args...)> {
 public:
     using FuncType = R(*)(Args...);
-    using BeforType = void(*)(void);
+    using BeforeType = void(*)(void);
     using AfterType = void(*)(std::string);
 
     Function();
+    Function(FuncType fptr, std::string name, BeforeType before = nullptr, AfterType after = nullptr);
     auto operator= (Function&& other) -> Function&;
-    auto operator= (const Function& other) -> Function& = delete;
-    Function(Function&& other) = delete;
-    Function(const Function& other) = delete;
+    auto operator= (const Function& other) -> Function&;
+    Function(Function&& other);
+    Function(const Function& other);
 
     auto operator()(Args... args, std::source_location loc = std::source_location::current()) -> R;
 
-    static auto  default_([[maybe_unused]] Args... args) -> R;
-    
+    static auto default_([[maybe_unused]] Args... args) -> R;
+    auto name() -> std::string;
+    auto function() -> FuncType;
     auto return_type() const -> std::string_view;
     auto args_values() const -> std::array<std::string, sizeof...(Args)>;
     auto args_types() const  -> std::array<std::string_view, sizeof...(Args)>;
     constexpr auto args_count() const -> std::size_t;
     auto calls_count() const -> std::size_t;
 
-    static auto function_count() -> std::size_t;
-    
 private:
     auto this_func_sig() const -> std::string ;
 
@@ -46,25 +46,21 @@ private:
 
     static auto to_string(const auto& value) -> std::string ;
 
-public:
+private:
     FuncType m_Func;
-    BeforType m_Befor;
+    BeforeType m_Befor;
     AfterType m_After;
     std::string m_Name;
-private:
     std::string_view m_ReturnType;
     std::array<std::string_view, sizeof...(Args)> m_ArgsTypes;
     std::tuple<Args...> m_ArgsValues;
     std::size_t m_CallCount;
-    inline static std::size_t m_Count = 0;
-
-    
 };
 
 // impl
 
 template <typename R, typename... Args>
-Function<R(*)(Args...)>::Function()
+inline Function<R(*)(Args...)>::Function()
     : m_Func(&default_)
     , m_Befor(nullptr)
     , m_After(nullptr)
@@ -73,27 +69,81 @@ Function<R(*)(Args...)>::Function()
     , m_ArgsTypes{::type_name<Args>()...}
     , m_ArgsValues{}
     , m_CallCount(0)
-    { 
-        m_Count++;
-    }
+    {}
 
 template <typename R, typename... Args>
-auto Function<R( *)(Args...)>::operator=(Function &&other) -> Function &
+inline Function<R (*)(Args...)>::Function(FuncType fptr, std::string name, BeforeType before, AfterType after)
+    : m_Func(fptr)
+    , m_Befor(before)
+    , m_After(after)
+    , m_Name(name)
+    , m_ReturnType(::type_name<R>())
+    , m_ArgsTypes{::type_name<Args>()...}
+    , m_ArgsValues{}
+    , m_CallCount(0)
 {
-    this->m_Func = std::exchange(other.m_Func, nullptr);
-    this->m_Befor = std::exchange(other.m_Befor, nullptr);
-    this->m_After = std::exchange(other.m_After, nullptr);
-    this->m_Name = std::exchange(other.m_Name, std::string());
-    this->m_ReturnType = std::exchange(other.m_ReturnType, std::string_view());
-    this->m_ArgsTypes = std::exchange(other.m_ArgsTypes, {});
-    this->m_ArgsValues = std::exchange(other.m_ArgsValues, {});
-    this->m_CallCount = std::exchange(other.m_CallCount, 0);
-    
+}
+
+template <typename R, typename... Args>
+inline auto Function<R(*)(Args...)>::operator=(const Function &other) -> Function&
+{
+    if(this != &other){
+        this->m_Func = other.m_Func;
+        this->m_Befor = other.m_Befor;
+        this->m_After = other.m_After;
+        this->m_Name = other.m_Name;
+        this->m_ReturnType = other.m_ReturnType;
+        this->m_ArgsTypes = other.m_ArgsTypes;
+        this->m_ArgsValues = other.m_ArgsValues;
+        this->m_CallCount = other.m_CallCount;
+    }
+
     return *this;
 }
 
 template <typename R, typename... Args>
-auto  Function<R(*)(Args...)>::default_([[maybe_unused]] Args... args) -> R
+inline Function<R(*)(Args...)>::Function(const Function &other)
+    : m_Func(other.m_Func)
+    , m_Befor(other.m_Befor)
+    , m_After(other.m_After)
+    , m_Name(other.m_Name)
+    , m_ReturnType(other.m_ReturnType)
+    , m_ArgsTypes(other.m_ArgsTypes)
+    , m_ArgsValues(other.m_ArgsValues)
+    , m_CallCount(other.m_CallCount)
+    {}
+
+template <typename R, typename... Args>
+inline auto Function<R(*)(Args...)>::operator=(Function &&other) -> Function&
+{
+    if(this != &other){
+        this->m_Func = std::exchange(other.m_Func, nullptr);
+        this->m_Befor = std::exchange(other.m_Befor, nullptr);
+        this->m_After = std::exchange(other.m_After, nullptr);
+        this->m_Name = std::exchange(other.m_Name, "Function");
+        this->m_ReturnType = std::exchange(other.m_ReturnType, ::type_name<R>());
+        this->m_ArgsTypes = std::exchange(other.m_ArgsTypes, {::type_name<Args>()...});
+        this->m_ArgsValues = std::exchange(other.m_ArgsValues, {});
+        this->m_CallCount = std::exchange(other.m_CallCount, 0);
+    }
+
+    return *this;
+}
+
+template <typename R, typename... Args>
+inline Function<R(*)(Args...)>::Function(Function &&other)
+    : m_Func(std::exchange(other.m_Func, nullptr))
+    , m_Befor(std::exchange(other.m_Befor, nullptr))
+    , m_After(std::exchange(other.m_After, nullptr))
+    , m_Name(std::exchange(other.m_Name, "Function"))
+    , m_ReturnType(std::exchange(other.m_ReturnType, ::type_name<R>()))
+    , m_ArgsTypes(std::exchange(other.m_ArgsTypes, {::type_name<Args>()...}))
+    , m_ArgsValues(std::exchange(other.m_ArgsValues, {}))
+    , m_CallCount(std::exchange(other.m_CallCount, 0))
+    {}
+
+template <typename R, typename... Args>
+inline auto  Function<R(*)(Args...)>::default_([[maybe_unused]] Args... args) -> R
 {
     if constexpr (!std::is_void_v<R>) {
         return R{};
@@ -101,9 +151,9 @@ auto  Function<R(*)(Args...)>::default_([[maybe_unused]] Args... args) -> R
 }
 
 template <typename R, typename... Args>
-auto Function<R(*)(Args...)>::operator()(Args... args, std::source_location loc) -> R
+inline auto Function<R(*)(Args...)>::operator()(Args... args, std::source_location loc) -> R
 {
-    if(m_Func == nullptr)  [[unlikely]] throw Exception( "{} not loaded!", m_Name);
+    if(m_Func == nullptr) [[unlikely]] throw Exception( "{} not loaded!", m_Name);
     m_ArgsValues = std::make_tuple(args...);
     m_CallCount++;
 
@@ -120,7 +170,19 @@ auto Function<R(*)(Args...)>::operator()(Args... args, std::source_location loc)
 }
 
 template <typename R, typename... Args>
-auto Function<R(*)(Args...)>::args_values() const -> std::array<std::string, sizeof...(Args)>
+inline auto Function<R (*)(Args...)>::name() -> std::string
+{
+    return m_Name;
+}
+
+template <typename R, typename... Args>
+inline auto Function<R (*)(Args...)>::function() -> FuncType
+{
+    return m_Func;
+}
+
+template <typename R, typename... Args>
+inline auto Function<R(*)(Args...)>::args_values() const -> std::array<std::string, sizeof...(Args)>
 {
     std::array<std::string, sizeof...(Args)> result;
     std::size_t i = 0;
@@ -131,19 +193,19 @@ auto Function<R(*)(Args...)>::args_values() const -> std::array<std::string, siz
 }
 
 template <typename R, typename... Args>
-auto Function<R(*)(Args...)>::return_type() const -> std::string_view
+inline auto Function<R(*)(Args...)>::return_type() const -> std::string_view
 {
     return m_ReturnType;
 }
 
 template <typename R, typename... Args>
-auto Function<R(*)(Args...)>::args_types() const -> std::array<std::string_view, sizeof...(Args)>
+inline auto Function<R(*)(Args...)>::args_types() const -> std::array<std::string_view, sizeof...(Args)>
 {
     return m_ArgsTypes;
 }
 
 template <typename R, typename... Args>
-auto Function<R(*)(Args...)>::calls_count() const -> std::size_t
+inline auto Function<R(*)(Args...)>::calls_count() const -> std::size_t
 {
     return m_CallCount;
 }
@@ -154,21 +216,16 @@ constexpr auto Function<R(*)(Args...)>::args_count() const -> std::size_t
     return sizeof...(Args);
 }
 
-template <typename R, typename... Args>
-auto Function<R(*)(Args...)>::function_count() -> std::size_t
-{
-    return m_Count;
-}
 
 template <typename R, typename... Args>
-auto Function<R(*)(Args...)>::this_func_sig() const -> std::string {
+inline auto Function<R(*)(Args...)>::this_func_sig() const -> std::string {
     std::string result = ::format("{} {}(", m_ReturnType, m_Name);
     format_arguments(result);
     return result + ")";
 }
 
 template <typename R, typename... Args>
-auto Function<R(*)(Args...)>::function_info(const std::source_location& loc) -> std::string
+inline auto Function<R(*)(Args...)>::function_info(const std::source_location& loc) -> std::string
 {
     return ::format(
         "call Number: {} ; instrments(Befor: {}, After: {}) |>=> {} -> {}:{}\n",
@@ -193,7 +250,7 @@ auto Function<R(*)(Args...)>::function_info(const std::source_location& loc) -> 
 // }
 
 template <typename R, typename... Args>
-auto Function<R(*)(Args...)>::format_arguments(std::string& result) const -> void
+inline auto Function<R(*)(Args...)>::format_arguments(std::string& result) const -> void
 {
     std::size_t index = 1;
     bool first = true;
@@ -207,7 +264,7 @@ auto Function<R(*)(Args...)>::format_arguments(std::string& result) const -> voi
 }
 
 template <typename R, typename... Args>
-auto Function<R(*)(Args...)>::to_string(const auto& value) -> std::string
+inline auto Function<R(*)(Args...)>::to_string(const auto& value) -> std::string
 {
     using T = std::decay_t<decltype(value)>;
     if constexpr (std::is_pointer_v<T>) {

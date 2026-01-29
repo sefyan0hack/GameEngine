@@ -70,7 +70,7 @@ auto input_callback(android_app* state, AInputEvent* event) -> int32_t
     return 0;
 }
 
-extern int main(int argc, char** argv);
+extern int main(int, char**);
 void android_main(android_app* app)
 {
     g_android_app = app;

@@ -51,10 +51,12 @@ namespace gl {
         #undef X
         #ifdef ROBUST_GL_CHECK
         #   define X(name)\
-            name = Function<PFN_gl##name>{};\
-            name.m_Func  = reinterpret_cast<PFN_gl##name>(gl::get_proc_address("gl"#name));\
-            name.m_After = [](std::string info) { Expect(gl::GetCurrentContext()); auto err = glGetError(); if(err != GL_NO_ERROR) if(!info.contains("glClear")) throw Exception("gl error id {} {}", err, info); };\
-            name.m_Name  = "gl"#name;
+            name = Function<PFN_gl##name>(\
+                reinterpret_cast<PFN_gl##name>(gl::get_proc_address("gl"#name)),\
+                "gl"#name,\
+                nullptr,\
+                [](std::string info) { Expect(gl::GetCurrentContext()); auto err = glGetError(); if(err != GL_NO_ERROR) if(!info.contains("glClear")) throw Exception("gl error id {} {}", err, info); }\
+            );
         #else
         #   define X(name)\
             name = reinterpret_cast<PFN_gl##name>(gl::get_proc_address("gl"#name));
@@ -66,11 +68,7 @@ namespace gl {
     auto export_opengl_functions() -> void**
     {
         #undef X
-        #if ROBUST_GL_CHECK
-        #   define X(name) (void*)name.m_Func, 
-        #else
-        #   define X(name) (void*)name, 
-        #endif
+        #define X(name) (void*)&name,
         
         static void* funcs[OPENGL_FUNCTIONS_COUNT] = { GLFUNCS };
 
@@ -82,12 +80,9 @@ namespace gl {
         int index = 0;
         #undef X
         #if ROBUST_GL_CHECK
-        #   define X(name) \
-            name.m_Func  = reinterpret_cast<std::remove_reference_t<PFN_gl##name>>(funcs[index++]);\
-            name.m_After = [](std::string info) { Expect(gl::GetCurrentContext()); auto err = glGetError(); if(err != GL_NO_ERROR) if(!info.contains("glClear")) throw Exception("gl error id {} {}", err, info); };\
-            name.m_Name  = "gl"#name;
+        #   define X(name) name = *static_cast<Function<PFN_gl##name>*>(funcs[index++]);
         #else
-        #   define X(name) name = reinterpret_cast<std::remove_reference_t<PFN_gl##name>>(funcs[index++]);
+        #   define X(name) name = reinterpret_cast<PFN_gl##name>(funcs[index++]);
         #endif
 
         GLFUNCS

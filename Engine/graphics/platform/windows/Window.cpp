@@ -9,7 +9,7 @@
 #include <windows.h>
 
 #if !defined(CONSOLE_ATTACHED)
-extern int main(int argc, char** argv);
+extern int main(int, char**);
 int APIENTRY WinMain(HINSTANCE, HINSTANCE, PSTR, int) {
     return main(__argc, __argv);
 }
