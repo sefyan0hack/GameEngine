@@ -1,7 +1,7 @@
 #include <windows.h>
 #include <GL/gl.h>
-#include <GL/glext.h>
 #include <GL/wglext.h>
+#include <glext.h>
 
 using H_WIN     = HWND;
 using H_SRF     = HDC;
