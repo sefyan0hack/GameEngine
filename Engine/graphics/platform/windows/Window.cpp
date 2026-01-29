@@ -10,7 +10,7 @@
 
 #if !defined(CONSOLE_ATTACHED)
 extern int main(int argc, char** argv);
-int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow) {
+int APIENTRY WinMain(HINSTANCE, HINSTANCE, PSTR, int) {
     return main(__argc, __argv);
 }
 #endif
