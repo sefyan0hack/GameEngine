@@ -9,7 +9,7 @@
 #include <android/log.h>
 #endif
 
-constexpr auto LOG_FILE = "Engine.log";
+[[maybe_unused]] constexpr auto LOG_FILE = "Engine.log";
 
 namespace debug {
     auto default_logger(std::string msg ) -> void {

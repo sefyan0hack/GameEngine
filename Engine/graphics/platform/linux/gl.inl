@@ -3,8 +3,8 @@
 #include <X11/XKBlib.h>
 #include <GL/gl.h>
 #include <GL/glx.h>
-#include <glext.h>
-#include <glxext.h>
+#include <GL/glext.h>
+#include <GL/glxext.h>
 
 using H_WIN     = Window;
 using H_SRF     = Window;
