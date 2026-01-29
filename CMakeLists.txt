@@ -155,8 +155,8 @@ add_compile_definitions(
 
     $<$<BOOL:${CONSOLE_ATTACHED}>:CONSOLE_ATTACHED>
     $<$<BOOL:${ROBUST_GL_CHECK}>:ROBUST_GL_CHECK>
-    $<$<PLATFORM_ID:Windows>:APIENTRY=__stdcall>
-    $<$<NOT:$<PLATFORM_ID:Windows>>:APIENTRY=>
+    $<$<PLATFORM_ID:Windows>:EG_APIENTRY=APIENTRY>
+    $<$<NOT:$<PLATFORM_ID:Windows>>:EG_APIENTRY=>
 )
 
 ####################################################################################################

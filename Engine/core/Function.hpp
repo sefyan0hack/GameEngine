@@ -14,9 +14,9 @@ template <typename T>
 class ENGINE_EXPORT Function;
 
 template <typename R, typename... Args>
-class Function<R(APIENTRY*)(Args...)> {
+class Function<R(EG_APIENTRY*)(Args...)> {
 public:
-    using FuncType = R(APIENTRY*)(Args...);
+    using FuncType = R(EG_APIENTRY*)(Args...);
     using BeforType = void(*)(void);
     using AfterType = void(*)(std::string);
 
@@ -28,7 +28,7 @@ public:
 
     auto operator()(Args... args, std::source_location loc = std::source_location::current()) -> R;
 
-    static auto APIENTRY default_([[maybe_unused]] Args... args) -> R;
+    static auto EG_APIENTRY default_([[maybe_unused]] Args... args) -> R;
     
     auto return_type() const -> std::string_view;
     auto args_values() const -> std::array<std::string, sizeof...(Args)>;
@@ -64,7 +64,7 @@ private:
 // impl
 
 template <typename R, typename... Args>
-Function<R(APIENTRY*)(Args...)>::Function()
+Function<R(EG_APIENTRY*)(Args...)>::Function()
     : m_Func(&default_)
     , m_Befor(nullptr)
     , m_After(nullptr)
@@ -78,7 +78,7 @@ Function<R(APIENTRY*)(Args...)>::Function()
     }
 
 template <typename R, typename... Args>
-auto Function<R(APIENTRY *)(Args...)>::operator=(Function &&other) -> Function &
+auto Function<R(EG_APIENTRY *)(Args...)>::operator=(Function &&other) -> Function &
 {
     this->m_Func = std::exchange(other.m_Func, nullptr);
     this->m_Befor = std::exchange(other.m_Befor, nullptr);
@@ -93,7 +93,7 @@ auto Function<R(APIENTRY *)(Args...)>::operator=(Function &&other) -> Function &
 }
 
 template <typename R, typename... Args>
-auto APIENTRY Function<R(APIENTRY*)(Args...)>::default_([[maybe_unused]] Args... args) -> R
+auto EG_APIENTRY Function<R(EG_APIENTRY*)(Args...)>::default_([[maybe_unused]] Args... args) -> R
 {
     if constexpr (!std::is_void_v<R>) {
         return R{};
@@ -101,7 +101,7 @@ auto APIENTRY Function<R(APIENTRY*)(Args...)>::default_([[maybe_unused]] Args...
 }
 
 template <typename R, typename... Args>
-auto Function<R(APIENTRY*)(Args...)>::operator()(Args... args, std::source_location loc) -> R
+auto Function<R(EG_APIENTRY*)(Args...)>::operator()(Args... args, std::source_location loc) -> R
 {
     if(m_Func == nullptr)  [[unlikely]] throw Exception( "{} not loaded!", m_Name);
     m_ArgsValues = std::make_tuple(args...);
@@ -120,7 +120,7 @@ auto Function<R(APIENTRY*)(Args...)>::operator()(Args... args, std::source_locat
 }
 
 template <typename R, typename... Args>
-auto Function<R(APIENTRY*)(Args...)>::args_values() const -> std::array<std::string, sizeof...(Args)>
+auto Function<R(EG_APIENTRY*)(Args...)>::args_values() const -> std::array<std::string, sizeof...(Args)>
 {
     std::array<std::string, sizeof...(Args)> result;
     std::size_t i = 0;
@@ -131,44 +131,44 @@ auto Function<R(APIENTRY*)(Args...)>::args_values() const -> std::array<std::str
 }
 
 template <typename R, typename... Args>
-auto Function<R(APIENTRY*)(Args...)>::return_type() const -> std::string_view
+auto Function<R(EG_APIENTRY*)(Args...)>::return_type() const -> std::string_view
 {
     return m_ReturnType;
 }
 
 template <typename R, typename... Args>
-auto Function<R(APIENTRY*)(Args...)>::args_types() const -> std::array<std::string_view, sizeof...(Args)>
+auto Function<R(EG_APIENTRY*)(Args...)>::args_types() const -> std::array<std::string_view, sizeof...(Args)>
 {
     return m_ArgsTypes;
 }
 
 template <typename R, typename... Args>
-auto Function<R(APIENTRY*)(Args...)>::calls_count() const -> std::size_t
+auto Function<R(EG_APIENTRY*)(Args...)>::calls_count() const -> std::size_t
 {
     return m_CallCount;
 }
 
 template <typename R, typename... Args>
-constexpr auto Function<R(APIENTRY*)(Args...)>::args_count() const -> std::size_t
+constexpr auto Function<R(EG_APIENTRY*)(Args...)>::args_count() const -> std::size_t
 {
     return sizeof...(Args);
 }
 
 template <typename R, typename... Args>
-auto Function<R(APIENTRY*)(Args...)>::function_count() -> std::size_t
+auto Function<R(EG_APIENTRY*)(Args...)>::function_count() -> std::size_t
 {
     return m_Count;
 }
 
 template <typename R, typename... Args>
-auto Function<R(APIENTRY*)(Args...)>::this_func_sig() const -> std::string {
+auto Function<R(EG_APIENTRY*)(Args...)>::this_func_sig() const -> std::string {
     std::string result = ::format("{} {}(", m_ReturnType, m_Name);
     format_arguments(result);
     return result + ")";
 }
 
 template <typename R, typename... Args>
-auto Function<R(APIENTRY*)(Args...)>::function_info(const std::source_location& loc) -> std::string
+auto Function<R(EG_APIENTRY*)(Args...)>::function_info(const std::source_location& loc) -> std::string
 {
     return ::format(
         "call Number: {} ; instrments(Befor: {}, After: {}) |>=> {} -> {}:{}\n",
@@ -181,7 +181,7 @@ auto Function<R(APIENTRY*)(Args...)>::function_info(const std::source_location& 
 
 // in clang ubuntu arm the  `zip` not compiling
 // template <typename R, typename... Args>
-// auto Function<R(APIENTRY*)(Args...)>::format_arguments(std::string& result) const -> void
+// auto Function<R(EG_APIENTRY*)(Args...)>::format_arguments(std::string& result) const -> void
 // {
 //     std::size_t index = 1;
 //     bool first = true;
@@ -193,7 +193,7 @@ auto Function<R(APIENTRY*)(Args...)>::function_info(const std::source_location& 
 // }
 
 template <typename R, typename... Args>
-auto Function<R(APIENTRY*)(Args...)>::format_arguments(std::string& result) const -> void
+auto Function<R(EG_APIENTRY*)(Args...)>::format_arguments(std::string& result) const -> void
 {
     std::size_t index = 1;
     bool first = true;
@@ -207,7 +207,7 @@ auto Function<R(APIENTRY*)(Args...)>::format_arguments(std::string& result) cons
 }
 
 template <typename R, typename... Args>
-auto Function<R(APIENTRY*)(Args...)>::to_string(const auto& value) -> std::string
+auto Function<R(EG_APIENTRY*)(Args...)>::to_string(const auto& value) -> std::string
 {
     using T = std::decay_t<decltype(value)>;
     if constexpr (std::is_pointer_v<T>) {
