@@ -17,5 +17,4 @@ target_sources( ui
 
 target_link_libraries(ui INTERFACE res)
 target_link_libraries(ui INTERFACE glm::glm)
-target_link_libraries(ui INTERFACE stb_image)
 target_link_libraries(ui INTERFACE freetype)

@@ -6,7 +6,7 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_NO_THREAD_LOCALS
-#include <stb_image.h>
+#include <stb/stb_image.h>
 
 constexpr std::size_t checkerboard_size = 64;
 constexpr std::size_t checkerboard_bytes_per_pixel = 3;
