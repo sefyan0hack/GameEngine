@@ -44,14 +44,28 @@ function(delete_files_by_extension DIR EXTENSION)
     endforeach()
 endfunction()
 
-#
-macro(fetch_and_include_file name url)
+function(fetch_and_include_file name url)
+
+    if(${ARGC} GREATER 2)
+        set(dest_dir "${CMAKE_BINARY_DIR}/${ARGV2}")
+
+        if(NOT EXISTS "${dest_dir}")
+            file(MAKE_DIRECTORY "${dest_dir}")
+        endif()
+
+        set(SOURCE_DIR_ARG SOURCE_DIR "${dest_dir}")
+    else()
+        set(SOURCE_DIR_ARG "")
+    endif()
+
     CPMAddPackage(
         NAME ${name}
         URL ${url}
+        ${SOURCE_DIR_ARG}
         DOWNLOAD_ONLY YES
         DOWNLOAD_NO_EXTRACT TRUE
         DOWNLOAD_NAME ${name}.h
     )
-    include_directories(${${name}_SOURCE_DIR})
-endmacro()
+
+    include_directories("${${name}_SOURCE_DIR}")
+endfunction()

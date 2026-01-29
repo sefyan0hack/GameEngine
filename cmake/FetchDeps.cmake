@@ -26,11 +26,9 @@ target_include_directories(stb_image SYSTEM INTERFACE ${stb_image_SOURCE_DIR})
 #     )
 # endif()
 
-fetch_and_include_file(glext https://registry.khronos.org/OpenGL/api/GL/glext.h)
-
-# if(WIN32)
-#     fetch_and_include_file(wglext https://registry.khronos.org/OpenGL/api/GL/wglext.h)
-# endif()
+if(WIN32)
+  fetch_and_include_file_ext(glext https://registry.khronos.org/OpenGL/api/GL/glext.h GL)
+endif()
 
 # freetype 2-14-0
 CPMAddPackage(
