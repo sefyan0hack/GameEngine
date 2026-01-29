@@ -12,7 +12,6 @@ fetch_and_include_file(stb_image https://raw.githubusercontent.com/nothings/stb/
 add_library(stb_image INTERFACE)
 target_include_directories(stb_image SYSTEM INTERFACE ${stb_image_SOURCE_DIR})
 
-
 # fetch Opengl headers
 # fetch_and_include_file(khrplatform https://raw.githubusercontent.com/KhronosGroup/EGL-Registry/main/api/KHR/khrplatform.h)
 
@@ -27,7 +26,7 @@ target_include_directories(stb_image SYSTEM INTERFACE ${stb_image_SOURCE_DIR})
 # endif()
 
 if(WIN32)
-  fetch_and_include_file_ext(glext https://registry.khronos.org/OpenGL/api/GL/glext.h GL)
+  fetch_and_include_file(glext https://registry.khronos.org/OpenGL/api/GL/glext.h GL)
 endif()
 
 # freetype 2-14-0
