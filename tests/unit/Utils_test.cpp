@@ -1,47 +1,76 @@
-#include <fstream>
-#include <filesystem>
-
 #include <gtest/gtest.h>
 #include <core/Utils.hpp>
 
 using namespace std;
-using namespace utils;
-using namespace filesystem;
 
-TEST(split, string) {
-    auto r = split("hi my name sofyane", " ");
+TEST(SplitBySpace, String) {
+    auto r = utils::split("hi my name sofyane", " ");
     decltype(r) expect = {"hi", "my", "name", "sofyane"};
     EXPECT_EQ(r, expect);
 }
 
-TEST(split, empty_string) {
-    auto r = split("", " ");
-    decltype(r) expect;
+TEST(SplitBySpace, EmptyString) {
+    auto r = utils::split("", " ");
+    EXPECT_TRUE(r.empty());
+}
+
+TEST(SplitBySpace, StringWith1Delim) {
+    auto r = utils::split(" ", " ");
+    decltype(r) expect = {"", ""};
     EXPECT_EQ(r, expect);
 }
 
-TEST(split, empty_null) {
-    auto r = split((const char*)nullptr, " ");
-    decltype(r) expect;
+TEST(SplitBySpace, StringWith2Delim) {
+    auto r = utils::split("  ", " ");
+    decltype(r) expect = {"", "", ""};
     EXPECT_EQ(r, expect);
 }
 
-TEST(replace, with_char) {
-    auto r = replace("fuzz", 'f', 'b');
+TEST(SplitBySpace, NullString) {
+    auto r = utils::split((const char*)nullptr, " ");
+    EXPECT_TRUE(r.empty());
+}
+
+TEST(SplitByDot, StringBeginsDelim) {
+    auto r = utils::split(".hi", ".");
+    decltype(r) expect = {"", "hi"};
+    EXPECT_EQ(r, expect);
+}
+
+TEST(SplitByDot, StringEndsDelim) {
+    auto r = utils::split("hi.", ".");
+    decltype(r) expect = {"hi", ""};
+    EXPECT_EQ(r, expect);
+}
+
+TEST(SplitByDot, StringBeginsAndEndsDelim) {
+    auto r = utils::split(".hi.", ".");
+    decltype(r) expect = { "", "hi", ""};
+    EXPECT_EQ(r, expect);
+}
+
+TEST(SplitByDot, StringWith2DelimAtached) {
+    auto r = utils::split("im.the..best.dev.", ".");
+    decltype(r) expect = {"im", "the", "", "best", "dev", ""};
+    EXPECT_EQ(r, expect);
+}
+
+TEST(Replace, ExistingChar) {
+    auto r = utils::replace("fuzz", 'f', 'b');
     EXPECT_EQ(r, "buzz");
 }
 
-TEST(replace, with_null_char) {
-    auto r = replace("fuzz", 'f', '\0');
+TEST(Replace, ExistingCharWithNullChar) {
+    auto r = utils::replace("fuzz", 'f', '\0');
     EXPECT_EQ(r, "fuzz");
 }
 
-TEST(replace, with_not_exist_char) {
-    auto r = replace("fuzz", 'a', 'b');
+TEST(Replace, NotExistingChar) {
+    auto r = utils::replace("fuzz", 'a', 'b');
     EXPECT_EQ(r, "fuzz");
 }
 
-TEST(replace, c_null) {
-    auto r = replace("fuzz", '\0', 'b');
+TEST(Replace, NullChar) {
+    auto r = utils::replace("fuzz", '\0', 'b');
     EXPECT_EQ(r, "fuzz");
 }
