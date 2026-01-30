@@ -1,6 +1,6 @@
 include(CMakeDependentOption)
 
-option(TESTS                "Tests"                                   OFF)
+option(WITH_TESTS           "Tests"                                   OFF)
 option(DOCS                 "Docs"                                    OFF)
 option(COVERAGE             "Code coverage"                           OFF)
 option(HARDEN               "Hardening"                               ON)
@@ -18,7 +18,7 @@ cmake_dependent_option(CONSOLE_ATTACHED "Console Attached to Window" OFF [[ CMAK
 # Print Option Status
 ####################################################################################################
 
-add_feature_info(TESTS                  TESTS                "[Build the testing suite]")
+add_feature_info(WITH_TESTS             WITH_TESTS           "[Build the testing suite]")
 add_feature_info(DOCS                   DOCS                 "[Build documentation]")
 add_feature_info(COVERAGE               COVERAGE             "[Generate coverage reports]")
 add_feature_info(HARDEN                 HARDEN               "[Security hardening flags]")

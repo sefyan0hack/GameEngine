@@ -3,7 +3,7 @@ if(LINK_TIME_OPT)
     include(CheckIPOSupported)
     check_ipo_supported(RESULT IPO_SUPPORTED OUTPUT OUTPUT)
 
-    if(IPO_SUPPORTED AND NOT TESTS)
+    if(IPO_SUPPORTED AND NOT WITH_TESTS)
         set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
     endif()
 

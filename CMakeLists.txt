@@ -166,10 +166,7 @@ add_subdirectory(Game)
 ####################################################################################################
 # TEST
 ####################################################################################################
-if(TESTS)
-    enable_testing()
-    include(GoogleTest)
+if(WITH_TESTS)
     add_subdirectory(tests/unit)
-    target_link_libraries(unit_tests PUBLIC res)
 endif()
 

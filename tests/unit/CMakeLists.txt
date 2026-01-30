@@ -1,3 +1,5 @@
+enable_testing()
+include(GoogleTest)
 
 file(GLOB TEST_SOURCES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/" "*_test.cpp")
 
@@ -20,6 +22,7 @@ target_link_libraries(unit_tests
         project_warnings_flags project_coverage_flags
         Engine
         glm::glm GTest::gtest GTest::gtest_main
+        res
 )
 
 gtest_discover_tests(unit_tests DISCOVERY_MODE PRE_TEST)

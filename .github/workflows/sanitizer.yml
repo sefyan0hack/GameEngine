@@ -34,7 +34,7 @@ jobs:
           os: ${{ matrix.os }}
           compiler: ${{ matrix.compiler }}
           build_dir: ${{ env.BUILD_DIR }}
-          cmake_flags: "-DTESTS=ON -D${{ matrix.sanitizers }}=ON -DHARDEN=ON"
+          cmake_flags: "-DWITH_TESTS=ON -D${{ matrix.sanitizers }}=ON -DHARDEN=ON"
 
       - name: Test
         shell: bash
