@@ -171,6 +171,5 @@ if(TESTS)
     include(GoogleTest)
     add_subdirectory(tests/unit)
     target_link_libraries(unit_tests PUBLIC res)
-
 endif()
 

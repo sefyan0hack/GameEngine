@@ -55,7 +55,7 @@ namespace gl {
                 reinterpret_cast<PFN_gl##name>(gl::get_proc_address("gl"#name)),\
                 "gl"#name,\
                 nullptr,\
-                [](std::string info) { Expect(gl::GetCurrentContext()); auto err = glGetError(); if(err != GL_NO_ERROR) if(!info.contains("glClear")) throw Exception("gl error id {} {}", err, info); }\
+                [](std::string info) { auto err = glGetError(); if(err != GL_NO_ERROR) if(!info.contains("glClear")) throw Exception("gl error id {} {}", err, info); }\
             );
         #else
         #   define X(name)\
