@@ -23,7 +23,6 @@ target_sources( core
         ${CMAKE_CURRENT_SOURCE_DIR}/stacktrace.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Log.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Utils.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/fmts.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Event.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Function.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/APP.hpp

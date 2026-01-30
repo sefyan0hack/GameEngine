@@ -3,7 +3,6 @@
 #include "Platform.hpp"
 #include "Log.hpp"
 #include "Utils.hpp"
-#include "fmts.hpp"
 #include "Function.hpp"
 #include "APP.hpp"
 #include "Image.hpp"

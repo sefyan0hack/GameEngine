@@ -2,7 +2,7 @@
 #include <format>
 
 #include <glm/fwd.hpp>
-#include <core/fmts.hpp>
+#include <core/format.hpp>
 #include <engine_export.h>
 
 class ENGINE_EXPORT Transform
@@ -12,7 +12,6 @@ public:
     Transform();
     Transform(glm::vec3 position, glm::vec3 rotaion = {0.0f, 0.0f, 0.0f}, glm::vec3 scale = {1.0f, 1.0f, 1.0f});
 
-    
     auto operator=(const glm::mat4& M) -> Transform;
     operator glm::mat4 () const;
 

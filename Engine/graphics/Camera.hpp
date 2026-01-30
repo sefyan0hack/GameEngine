@@ -4,7 +4,7 @@
 #include <utility>
 
 #include <glm/fwd.hpp>
-#include <core/fmts.hpp>
+#include <core/format.hpp>
 #include <engine_export.h>
 
 class ENGINE_EXPORT Camera

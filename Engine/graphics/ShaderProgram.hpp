@@ -8,7 +8,7 @@
 
 #include "gl.hpp"
 #include <glm/fwd.hpp>
-#include <core/fmts.hpp>
+#include <core/format.hpp>
 #include <engine_export.h>
 
 
@@ -59,9 +59,6 @@ private:
     std::vector<std::shared_ptr<class Shader>> m_Shaders;
     std::unordered_map<std::string, GlslType> m_Attribs;
     std::unordered_map<std::string, GlslType> m_Uniforms;
-
-    
-
 };
 
 #ifdef __cpp_lib_formatters
