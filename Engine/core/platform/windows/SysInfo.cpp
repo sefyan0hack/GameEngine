@@ -5,17 +5,17 @@
 #include <tlhelp32.h>
 #include "Exception.hpp"
 
-auto os::host::name_tag() -> os::Target
+auto os::system() -> os::Target
 {
     return os::Target::Windows;
 }
 
-auto os::host::name() -> std::string
+auto os::system_name() -> std::string
 {
     return "windows";
 }
 
-auto os::host::arch_tag() -> os::Arch
+auto os::arch() -> os::Arch
 {
     SYSTEM_INFO SYS_INFO{};
     GetSystemInfo(&SYS_INFO);
@@ -35,9 +35,9 @@ auto os::host::arch_tag() -> os::Arch
     }
 }
 
-auto os::host::arch() -> std::string
+auto os::arch_name() -> std::string
 {
-    switch (arch_tag())
+    switch (arch())
     {
         case Arch::x64:
             return "x64";
@@ -55,12 +55,12 @@ auto os::host::arch() -> std::string
     }
 }
 
-auto os::host::proc_id() -> std::size_t
+auto os::proc_id() -> std::size_t
 {
     return static_cast<std::size_t>(GetCurrentProcessId());
 }
 
-auto os::host::memory_usage() -> std::size_t
+auto os::memory_usage() -> std::size_t
 {
     PROCESS_MEMORY_COUNTERS_EX pmc;
     if (GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc)))
@@ -69,7 +69,7 @@ auto os::host::memory_usage() -> std::size_t
         return 0;
 }
 
-auto os::host::memory_peak() -> std::size_t
+auto os::memory_peak() -> std::size_t
 {
     PROCESS_MEMORY_COUNTERS_EX pmc;
     if (GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc)))
@@ -78,7 +78,7 @@ auto os::host::memory_peak() -> std::size_t
         return 0;
 }
 
-auto os::host::thread_count() -> std::size_t
+auto os::thread_count() -> std::size_t
 {    
     // Take a snapshot of all processes in the system
     HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);

@@ -43,11 +43,10 @@ public:
         app->MainScene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattSand, manMesh);
         app->MainScene << GameObject(Transform({2, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattkimberley, manMesh);
 
-        using namespace os::host;
         utils::async_repeat_every(1000,
             [](){
                 app->UiText.text(std::format("FPS: {:.2f}", app->fps()), { 0, 0 });
-                app->UiText.text(std::format("Memory: {}/{} MB", memory_usage(), memory_peak()), { 0, Text::FONT_SIZE });
+                app->UiText.text(std::format("Memory: {}/{} MB", os::memory_usage(), os::memory_peak()), { 0, Text::FONT_SIZE });
             }
         );
 

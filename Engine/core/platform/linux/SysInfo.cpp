@@ -11,17 +11,17 @@
 #include <dlfcn.h>
 #include "Exception.hpp"
 
-auto os::host::name_tag() -> os::Target
+auto os::system() -> os::Target
 {
     return os::Target::Linux;
 }
     
-auto os::host::name() -> std::string
+auto os::system_name() -> std::string
 {
     return "linux";
 }
 
-auto os::host::arch_tag() -> os::Arch
+auto os::arch() -> os::Arch
 {
     utsname system_info;
     uname(&system_info);
@@ -46,9 +46,9 @@ auto os::host::arch_tag() -> os::Arch
     }
 }
 
-auto os::host::arch() -> std::string
+auto os::arch_name() -> std::string
 {
-    switch (arch_tag())
+    switch (arch())
     {
         case Arch::x64:
             return "x64";
@@ -68,7 +68,7 @@ auto os::host::arch() -> std::string
     }
 }
 
-auto os::host::proc_id() -> std::size_t
+auto os::proc_id() -> std::size_t
 {
     // getpid() returns a pid_t (typically an int or long), which we cast to std::size_t.
     return static_cast<std::size_t>(getpid());
@@ -94,19 +94,19 @@ static std::size_t get_proc_value(const std::string& key)
     return 0;
 }
 
-auto os::host::memory_usage() -> std::size_t
+auto os::memory_usage() -> std::size_t
 {
     // VmRSS (Resident Set Size) is the closest match to "Private Usage" 
     return get_proc_value("VmRSS:") / 1024; //  kB -> MB
 }
 
-auto os::host::memory_peak() -> std::size_t
+auto os::memory_peak() -> std::size_t
 {
     // VmHWM (High Water Mark) is the peak resident set size.
     return get_proc_value("VmHWM:") / 1024; // kB -> MB
 }
 
-auto os::host::thread_count() -> std::size_t
+auto os::thread_count() -> std::size_t
 {
     return get_proc_value("Threads:");
 }

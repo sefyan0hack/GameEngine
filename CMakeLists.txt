@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.28)
 
 project(
-    GameEngine 
-    LANGUAGES C CXX 
-    VERSION 0.0.1
+    GameEngine
+    LANGUAGES C CXX
+    VERSION 0.0.0
 )
 
 set(CMAKE_CXX_STANDARD 23)
@@ -56,8 +56,6 @@ endif()
 
 set(PLT_DIR_PATH_SUFFIX "platform/${DIR_PLT_NAME}")
 
-string(REGEX MATCH "^[0-9]+" COMPILER_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSION}")
-
 ####################################################################################################
 # Vsisibility
 ####################################################################################################
@@ -70,22 +68,6 @@ set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 ####################################################################################################
 
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
-
-####################################################################################################
-# Compiler Check
-####################################################################################################
-
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "13")
-    message(FATAL_ERROR "Compiler version old for this project. Please upgrade your compiler to version 13 or higher.")
-  endif()
-endif()
-
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "16.10")
-    message(FATAL_ERROR "MSVC version old for this project. Please upgrade to Visual Studio 2019 or later.")
-  endif()
-endif()
 
 ####################################################################################################
 # Check if We Want Fetch or include Deps
@@ -103,10 +85,10 @@ else()
     include(IncludeDeps)
 endif()
 
-
 ####################################################################################################
 # Resources
 ####################################################################################################
+
 include(CMakeRC)
 
 file(GLOB_RECURSE RES_FILES
@@ -128,15 +110,27 @@ set_target_properties(resources PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 ####################################################################################################
 
 add_compile_definitions(
-    PLATFORM_NAME="${CMAKE_SYSTEM_NAME}"
-    PLATFORM_VERSION="${CMAKE_SYSTEM_VERSION}"
-    PLATFORM_ARCH="${CMAKE_SYSTEM_PROCESSOR}"
+    SYSTEM_HOST_NAME="${CMAKE_HOST_SYSTEM_NAME}"
+    SYSTEM_HOST_VERSION="${CMAKE_HOST_SYSTEM_VERSION}"
+    SYSTEM_HOST_ARCH="${CMAKE_HOST_SYSTEM_PROCESSOR}"
+
+    COMPILER_NAME="${CMAKE_CXX_COMPILER_ID}"
+    COMPILER_VERSION="${CMAKE_CXX_COMPILER_VERSION}"
+
+    LINKER_NAME="${CMAKE_CXX_COMPILER_LINKER_ID}"
+    LINKER_VERSION="${CMAKE_CXX_COMPILER_LINKER_VERSION}"
+
+    CXX_STANDARD="${CMAKE_CXX_STANDARD}"
 
     OPENGL_LIB="${CORE_OPENGL_LIB}"
+
     DYN_LIB_PREFIX="${CMAKE_SHARED_LIBRARY_PREFIX}"
     DYN_LIB_SUFFIX="${CMAKE_SHARED_LIBRARY_SUFFIX}"
 
     $<$<BOOL:${GAME_HOT_RELOADABLE}>:GAME_HOT_RELOADABLE>
+    $<$<BOOL:${CONSOLE_ATTACHED}>:CONSOLE_ATTACHED>
+    $<$<BOOL:${ROBUST_GL_CHECK}>:ROBUST_GL_CHECK>
+
     $<$<PLATFORM_ID:Windows>:WINDOWS_PLT>
     $<$<PLATFORM_ID:Unix>:UNIX_PLT>
     $<$<PLATFORM_ID:Linux>:LINUX_PLT>
@@ -152,20 +146,19 @@ add_compile_definitions(
 
     $<$<CONFIG:Debug>:DEBUG>
     $<$<CONFIG:Release>:NDEBUG>
-
-    $<$<BOOL:${CONSOLE_ATTACHED}>:CONSOLE_ATTACHED>
-    $<$<BOOL:${ROBUST_GL_CHECK}>:ROBUST_GL_CHECK>
 )
 
 ####################################################################################################
 # Sub Dirs
 ####################################################################################################
+
 add_subdirectory(Engine)
 add_subdirectory(Game)
 
 ####################################################################################################
 # TEST
 ####################################################################################################
+
 if(WITH_TESTS)
     add_subdirectory(tests/unit)
 endif()

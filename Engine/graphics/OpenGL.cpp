@@ -60,7 +60,7 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     #endif
 
     debug::log("=================================================================================");
-    debug::log("Platform : {}, Arch : {}", os::host::name(), os::host::arch());
+    debug::log("Platform : {}, Arch : {}", os::system_name(), os::arch_name());
     debug::log("GL Version : Wanted:({}.{}) -> Got:({}.{})", gl::OPENGL_MAJOR_VERSION, gl::OPENGL_MINOR_VERSION, m_Major, m_Minor);
     debug::log("GL Vendor : {}", m_Vendor);
     debug::log("GL Renderer : {}", m_Renderer);

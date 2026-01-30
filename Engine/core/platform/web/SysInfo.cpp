@@ -7,29 +7,29 @@
 
 #include "Exception.hpp"
 
-auto os::host::name_tag() -> os::Target
+auto os::system() -> os::Target
 {
     return os::Target::Web;
 }
     
-auto os::host::name() -> std::string
+auto os::system_name() -> std::string
 {
     return "web";
 }
 
-auto os::host::arch_tag() -> os::Arch
+auto os::arch() -> os::Arch
 {
     if constexpr(sizeof(void*) == 8) return os::Arch::wasm64;
     else return os::Arch::wasm;
 }
 
-auto os::host::arch() -> std::string
+auto os::arch_name() -> std::string
 {
-    if(arch_tag() == os::Arch::wasm64) return "wasm64";
+    if(arch() == os::Arch::wasm64) return "wasm64";
     else return "wasm";
 }
 
-auto os::host::proc_id() -> std::size_t
+auto os::proc_id() -> std::size_t
 {
     // Emscripten provides a shim for getpid() which returns the process ID
     // In a WASM/browser context, this ID is typically fixed (1)
@@ -37,17 +37,17 @@ auto os::host::proc_id() -> std::size_t
     return static_cast<std::size_t>(getpid());
 }
 
-auto os::host::memory_usage() -> std::size_t
+auto os::memory_usage() -> std::size_t
 {
     return emscripten_get_heap_size() / 1024 / 1024; // MB
 }
 
-auto os::host::memory_peak() -> std::size_t
+auto os::memory_peak() -> std::size_t
 {
     return emscripten_get_heap_max() / 1024 / 1024; // MB
 }
 
-auto os::host::thread_count() -> std::size_t
+auto os::thread_count() -> std::size_t
 {
     return (std::size_t)EM_ASM_INT({
         if (typeof PThread !== 'undefined' && PThread.pthreads) {
