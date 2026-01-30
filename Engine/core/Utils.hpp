@@ -360,6 +360,11 @@ auto pointer_to_string(Pointer auto ptr) -> std::string
     else if constexpr (std::is_pointer_v<Pointee>) return pointer_to_string(*ptr);
     else if constexpr (std::is_same_v<Pointee, void>) return ::format(r, type, "??");
     else if constexpr (formattable<Pointee>) return ::format(r, type, *ptr);
+    else if constexpr (requires(std::ostream& os) { os << *ptr; }) {
+        std::stringstream ss;
+        ss << *ptr;
+        return ::format(r, type, ss.str());
+    }
     else if constexpr (std::is_function_v<Pointee>) return ::format(r, type, "");
     else return ::format(r, type, to_hex(ptr));
 }

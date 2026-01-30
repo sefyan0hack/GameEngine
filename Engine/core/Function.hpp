@@ -3,7 +3,6 @@
 #include <string_view>
 #include <source_location>
 #include <array>
-#include <tuple>
 #include <utility>
 #include <sstream>
 #include <type_traits>
@@ -31,7 +30,7 @@ public:
     auto return_type() const -> std::string_view;
     auto args_types() const  -> std::array<std::string_view, sizeof...(Args)>;
     auto calls() const -> std::size_t;
-    
+
     static auto default_([[maybe_unused]] Args... args) -> R;
 private:
     auto this_func_sig(Args... args) const -> std::string ;
@@ -124,7 +123,6 @@ inline auto Function<R(*)(Args...)>::calls() const -> std::size_t
 {
     return m_Calls;
 }
-
 
 template <typename R, typename... Args>
 inline auto Function<R(*)(Args...)>::this_func_sig(Args... args) const -> std::string {

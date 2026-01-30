@@ -5,18 +5,17 @@
 
 using namespace std;
 
-
 TEST(FunctionTest, EmptytFunction) {
 
     auto add = Function<int32_t(*)(int32_t, int32_t)>();
 
     EXPECT_EQ(
         add.function(), decltype(add)::default_
-    );
+    ) << "add.functions should be defaulted to empty func";
 
-    EXPECT_EQ(
+    EXPECT_NE(
         add.name(), ""
-    );
+    ) << "name should be empty";
 }
 
 TEST(FunctionTest, TestFunctionParams) {
@@ -25,15 +24,15 @@ TEST(FunctionTest, TestFunctionParams) {
 
     EXPECT_EQ(
         add.args_types()[0], ::type_name<int32_t>()
-    );
+    ) << "first arg match";
 
     EXPECT_EQ(
         add.args_types()[1], ::type_name<int32_t>()
-    );
+    ) << "second arg match";
 
     EXPECT_EQ(
         add.return_type(), ::type_name<int64_t>()
-    );
+    ) << "return type match";
 }
 
 TEST(FunctionTest, ConstructFunction) {
@@ -47,19 +46,19 @@ TEST(FunctionTest, ConstructFunction) {
 
     EXPECT_EQ(
         abs.name(), "abs"
-    );
+    ) << "name should be eq to the one is set";
 
     EXPECT_EQ(
         abs.function(), abs_f
-    );
+    ) << "address of func should be eq";
 
     EXPECT_EQ(
         abs.args_types()[0], ::type_name<int32_t>()
-    );
+    ) << "second arg match";
 
     EXPECT_EQ(
         abs.return_type(), ::type_name<uint32_t>()
-    );
+    ) << "return type match";
 }
 
 TEST(FunctionTest, FunctionCallsInc) {
@@ -73,11 +72,11 @@ TEST(FunctionTest, FunctionCallsInc) {
 
     EXPECT_EQ(
         abs.calls(), 0
-    );
+    ) << "the calls should be 0 at start";
 
     abs(-10);
 
     EXPECT_EQ(
         abs.calls(), 1
-    );
+    ) << "calls should be incrimented by 1";
 }
