@@ -71,5 +71,5 @@ function(fetch_and_include_file name url)
         DOWNLOAD_NAME ${name}.h
     )
 
-    include_directories("${INCLUDE_PATH_}")
+    include_directories( SYSTEM "${INCLUDE_PATH_}")
 endfunction()
