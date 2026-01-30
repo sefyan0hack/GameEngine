@@ -54,7 +54,7 @@ inline Function<R(*)(Args...)>::Function()
     : m_Func(&default_)
     , m_Befor(nullptr)
     , m_After(nullptr)
-    , m_Name("Function")
+    , m_Name()
     , m_ReturnType(::type_name<R>())
     , m_ArgsTypes{::type_name<Args>()...}
     , m_Calls(0)

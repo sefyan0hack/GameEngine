@@ -1,62 +1,83 @@
 #include <gtest/gtest.h>
 #include <core/Function.hpp>
-
+#include <core/Log.hpp>
+#include <Platform.hpp>
 
 using namespace std;
 
-using SubType = std::size_t (*)(int32_t, int32_t);
 
+TEST(FunctionTest, EmptytFunction) {
 
-// TEST_F(Function_Test_Ctor1, ctor) {
-//     int32_t arg1 = 1, arg2 = 2;
+    auto add = Function<int32_t(*)(int32_t, int32_t)>();
 
-//     EXPECT_NE(m_Func, nullptr);
-//     EXPECT_EQ(m_Befor, nullptr);
-//     EXPECT_EQ(m_After, nullptr);
-//     EXPECT_EQ(m_Name, "add");
+    EXPECT_EQ(
+        add.function(), decltype(add)::default_
+    );
 
-//     EXPECT_EQ(m_Func(arg1, arg2), arg1+arg2);
+    EXPECT_EQ(
+        add.name(), ""
+    );
+}
 
-//     EXPECT_EQ(member(arg1, arg2), arg1+arg2);
+TEST(FunctionTest, TestFunctionParams) {
 
-//     auto expectargvalues = std::tuple<int32_t, int32_t>(arg1, arg2);
-//     EXPECT_EQ(m_ArgsValues,  expectargvalues);
+    auto add = Function<int64_t(*)(int32_t, int32_t)>();
 
-//     EXPECT_EQ(m_ReturnType, ::type_name<std::size_t>());
+    EXPECT_EQ(
+        add.args_types()[0], ::type_name<int32_t>()
+    );
 
-//     auto expargstypes = std::array{::type_name<int32_t>(), ::type_name<int32_t>()};
-//     EXPECT_EQ(m_ArgsTypes, expargstypes);
-// }
+    EXPECT_EQ(
+        add.args_types()[1], ::type_name<int32_t>()
+    );
 
-// TEST_F(Function_Test_Ctor1, default_) {
-//     auto got = ::type_name<decltype(default_(1,2))>();
-//     auto expct = ::type_name<decltype(m_Func(1,2))>();
-//     EXPECT_EQ(got, expct);
-// }
+    EXPECT_EQ(
+        add.return_type(), ::type_name<int64_t>()
+    );
+}
 
-// TEST_F(Function_Test_Ctor1, ArgsXXX) {
-//     auto got = args_values().size();
-//     auto expct = 2;
-//     EXPECT_EQ(got, expct);
-//     EXPECT_EQ(got, args_types().size());
-//     EXPECT_EQ(args_count(), expct);
-    
-// }
+TEST(FunctionTest, ConstructFunction) {
 
-// TEST_F(Function_Test_Ctor1, ReturnType) {
-//     auto got = return_type();
-//     auto expct = ::type_name<std::size_t>();
-//     EXPECT_EQ(got, expct);
-// }
+    auto abs_f = +[](int32_t x) -> uint32_t { return x > 0 ? x : -x; };
 
-// TEST_F(Function_Test_Ctor1, this_func_sig) {
-//     auto got = this_func_sig();
-//     auto expct = std::format(
-//         "{} {}({} arg_1 = 0, {} arg_2 = 0)",
-//         ::type_name<std::size_t>(),
-//         m_Name,
-//         ::type_name<int32_t>(),
-//         ::type_name<int32_t>()
-//     );
-//     EXPECT_EQ(got, expct);
-// }
+    auto abs = Function<decltype(abs_f)>(
+        abs_f,
+        "abs"
+    );
+
+    EXPECT_EQ(
+        abs.name(), "abs"
+    );
+
+    EXPECT_EQ(
+        abs.function(), abs_f
+    );
+
+    EXPECT_EQ(
+        abs.args_types()[0], ::type_name<int32_t>()
+    );
+
+    EXPECT_EQ(
+        abs.return_type(), ::type_name<uint32_t>()
+    );
+}
+
+TEST(FunctionTest, FunctionCallsInc) {
+
+    auto abs_f = +[](int32_t x) -> uint32_t { return x > 0 ? x : -x; };
+
+    auto abs = Function<decltype(abs_f)>(
+        abs_f,
+        "abs"
+    );
+
+    EXPECT_EQ(
+        abs.calls(), 0
+    );
+
+    abs(-10);
+
+    EXPECT_EQ(
+        abs.calls(), 1
+    );
+}
