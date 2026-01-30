@@ -13,7 +13,7 @@ TEST(FunctionTest, EmptytFunction) {
         add.function(), decltype(add)::default_
     ) << "add.functions should be defaulted to empty func";
 
-    EXPECT_NE(
+    EXPECT_EQ(
         add.name(), ""
     ) << "name should be empty";
 }
