@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Configure CMake
-        run: cmake -S . -B ${{ env.build }}
+        run: cmake -S . -B ${{ env.build }} -DCMAKE_BUILD_TYPE=${{ env.config }}
 
       - name: Build CMake
         run: cmake --build ${{ env.build }} --config ${{ env.config }}
