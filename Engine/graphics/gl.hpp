@@ -108,14 +108,11 @@
 #include <engine_export.h>
 #include "gl.inl"
 
+//TODO: remove this and make some sort of extention system
 #if defined(CORE_GL)
     #define GLFUNCS GLFUNCS_COMMON\
         X(PolygonMode)\
-        X(PointSize)\
-        X(GetProgramResourceiv)\
-        X(GetProgramResourceName)\
-        X(GetProgramResourceLocation)\
-        X(GetProgramInterfaceiv)
+        X(PointSize)
 #elif defined(ES_GL)
     #define GLFUNCS GLFUNCS_COMMON
 #else
@@ -135,7 +132,6 @@ namespace gl {
     #undef X 
     #define X(name) "gl"#name, 
 
-    constexpr auto OPENGL_MODULE_NAME = OPENGL_LIB;
     constexpr auto OPENGL_FUNCTIONS_NAME = { GLFUNCS };
     constexpr auto OPENGL_FUNCTIONS_COUNT = OPENGL_FUNCTIONS_NAME.size();
     constexpr int32_t OPENGL_MAJOR_VERSION = 3;

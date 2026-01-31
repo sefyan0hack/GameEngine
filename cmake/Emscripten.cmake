@@ -1,6 +1,6 @@
 
 if(EMSCRIPTEN)
-    set(OPENGL_LIB_NAME "WebGL")
+    set(CORE_OPENGL_LIB "WebGL")
     set(STATIC_LINK OFF)
 
     add_compile_options(

@@ -158,7 +158,7 @@ auto DynLib::name() -> std::string {
 }
     
 auto DynLib::full_name() -> std::string {
-    return PREFIX + m_name + SUFFIX;
+    return DYN_LIB_PREFIX + m_name + DYN_LIB_SUFFIX;
 }
     
 auto DynLib::is_loaded() const -> bool {

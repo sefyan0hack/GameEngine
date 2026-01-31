@@ -9,7 +9,6 @@ extern cmrc::embedded_filesystem embed_filesystem;
 
 using namespace std;
 
-
 class GAME_EXPORT Game
 {
 

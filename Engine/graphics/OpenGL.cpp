@@ -59,6 +59,7 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     gl::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     #endif
 
+    debug::log(os::build_info());
     debug::log("=================================================================================");
     debug::log("Platform : {}, Arch : {}", os::system_name(), os::arch_name());
     debug::log("GL Version : Wanted:({}.{}) -> Got:({}.{})", gl::OPENGL_MAJOR_VERSION, gl::OPENGL_MINOR_VERSION, m_Major, m_Minor);
@@ -72,7 +73,6 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     debug::log("=================================================================================");
 
 }
-
 
 auto OpenGL::window() const -> const CWindow&
 {

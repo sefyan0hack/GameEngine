@@ -35,9 +35,6 @@ public:
     auto full_name() -> std::string;
     auto is_loaded() const -> bool;
 
-    inline static auto PREFIX  = DYN_LIB_PREFIX;
-    inline static auto SUFFIX  = DYN_LIB_SUFFIX;
-
 private:
     void* m_handle;
     std::string m_name;

@@ -103,51 +103,6 @@ cmrc_add_resource_library( resources
     ${RES_FILES}
 )
 
-set_target_properties(resources PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
-
-####################################################################################################
-# Global defines 
-####################################################################################################
-
-add_compile_definitions(
-    SYSTEM_HOST_NAME="${CMAKE_HOST_SYSTEM_NAME}"
-    SYSTEM_HOST_VERSION="${CMAKE_HOST_SYSTEM_VERSION}"
-    SYSTEM_HOST_ARCH="${CMAKE_HOST_SYSTEM_PROCESSOR}"
-
-    COMPILER_NAME="${CMAKE_CXX_COMPILER_ID}"
-    COMPILER_VERSION="${CMAKE_CXX_COMPILER_VERSION}"
-
-    LINKER_NAME="${CMAKE_CXX_COMPILER_LINKER_ID}"
-    LINKER_VERSION="${CMAKE_CXX_COMPILER_LINKER_VERSION}"
-
-    CXX_STANDARD="${CMAKE_CXX_STANDARD}"
-
-    OPENGL_LIB="${CORE_OPENGL_LIB}"
-
-    DYN_LIB_PREFIX="${CMAKE_SHARED_LIBRARY_PREFIX}"
-    DYN_LIB_SUFFIX="${CMAKE_SHARED_LIBRARY_SUFFIX}"
-
-    $<$<BOOL:${GAME_HOT_RELOADABLE}>:GAME_HOT_RELOADABLE>
-    $<$<BOOL:${CONSOLE_ATTACHED}>:CONSOLE_ATTACHED>
-    $<$<BOOL:${ROBUST_GL_CHECK}>:ROBUST_GL_CHECK>
-
-    $<$<PLATFORM_ID:Windows>:WINDOWS_PLT>
-    $<$<PLATFORM_ID:Unix>:UNIX_PLT>
-    $<$<PLATFORM_ID:Linux>:LINUX_PLT>
-    $<$<PLATFORM_ID:Emscripten>:WEB_PLT>
-    $<$<PLATFORM_ID:Android>:ANDROID_PLT>
-
-    $<$<OR:$<PLATFORM_ID:Windows>,$<PLATFORM_ID:Linux>>:CORE_GL>
-    $<$<OR:$<PLATFORM_ID:Android>,$<PLATFORM_ID:Emscripten>>:ES_GL>
-
-    $<$<CXX_COMPILER_ID:GNU>:GNU_CPL>
-    $<$<CXX_COMPILER_ID:Clang>:CLANG_CPL>
-    $<$<CXX_COMPILER_ID:MSVC>:MSVC_CPL>
-
-    $<$<CONFIG:Debug>:DEBUG>
-    $<$<CONFIG:Release>:NDEBUG>
-)
-
 ####################################################################################################
 # Sub Dirs
 ####################################################################################################

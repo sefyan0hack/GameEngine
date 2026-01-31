@@ -26,21 +26,7 @@ namespace os
         unknown
     };
 
-    constexpr auto build_system_name = SYSTEM_HOST_NAME;
-    constexpr auto build_system_version = SYSTEM_HOST_VERSION;
-    constexpr auto build_system_arch = SYSTEM_HOST_ARCH;
-
-    constexpr auto build_compiler_name = COMPILER_NAME;
-    constexpr auto build_compiler_version = COMPILER_VERSION;
-
-    constexpr auto build_linker_name = LINKER_NAME;
-    constexpr auto build_linker_version = LINKER_VERSION;
-
-    constexpr auto build_cxx_std = CXX_STANDARD;
-
-    constexpr auto build_timestamp = __TIMESTAMP__;
-
-    ENGINE_EXPORT auto build_info() -> std::string;
+    ENGINE_EXPORT auto build_info() -> const char*;
 
     ENGINE_EXPORT auto system() -> os::Target;
     ENGINE_EXPORT auto system_name() -> std::string;

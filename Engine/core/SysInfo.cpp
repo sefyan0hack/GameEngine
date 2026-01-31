@@ -1,23 +1,16 @@
 #include "SysInfo.hpp"
 #include "format.hpp"
 
-auto os::build_info() -> std::string
+auto os::build_info() -> const char*
 {
-    return ::format(
-        "Build info: \n",
-        " - system_name: {}\n",
-        " - system_version: {}\n",
-        " - system_arch: {}\n",
-        " - compiler_name: {}\n",
-        " - compiler_version: {}\n",
-        " - linker_name: {}\n",
-        " - linker_version: {}\n",
-        " - cxx_std: {}\n",
-        " - timestamp: {}\n",
-        build_system_name, build_system_version, build_system_arch,
-        build_compiler_name, build_compiler_version,
-        build_linker_name, build_linker_version,
-        build_cxx_std,
-        build_timestamp
-    );
+    return "Build info: \n"
+    " - system_name: " SYSTEM_HOST_NAME "\n"
+    " - system_version: " SYSTEM_HOST_VERSION "\n"
+    " - system_arch: " SYSTEM_HOST_ARCH "\n"
+    " - compiler_name: " COMPILER_NAME "\n"
+    " - compiler_version: " COMPILER_VERSION "\n"
+    " - linker_name: " LINKER_NAME "\n"
+    " - linker_version: " LINKER_VERSION "\n"
+    " - cxx_std: " CXX_STANDARD "\n"
+    " - timestamp: " __TIMESTAMP__ "\n";  
 }
