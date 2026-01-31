@@ -9,8 +9,6 @@ auto os::build_info() -> const char*
     " - system_arch: " SYSTEM_HOST_ARCH "\n"
     " - compiler_name: " COMPILER_NAME "\n"
     " - compiler_version: " COMPILER_VERSION "\n"
-    " - linker_name: " LINKER_NAME "\n"
-    " - linker_version: " LINKER_VERSION "\n"
     " - cxx_std: " CXX_STANDARD "\n"
     " - timestamp: " __TIMESTAMP__ "\n";  
 }

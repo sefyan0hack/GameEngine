@@ -1,7 +1,6 @@
 #include "Window.hpp"
 #include <inputs/Keyboard.hpp>
 #include <inputs/Mouse.hpp>
-#include <core/Log.hpp>
 #include <core/Event.hpp>
 #include <core/Exception.hpp>
 #include <bit>
@@ -28,7 +27,6 @@ static auto CALLBACK win_proc_thunk(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
     switch (msg)
     {
         case WM_CREATE:{
-			debug::log("Creat Main CWindow");
             return 0;
         }
         case WM_CLOSE:{
