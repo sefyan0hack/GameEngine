@@ -25,11 +25,11 @@ runs:
     - name: Configure
       shell: bash
       run: |
-        cmake -S . -B build --config ${{ inputs.build_type }} -DCMAKE_TLS_VERIFY=0 \
+        cmake -S . -B build -DCMAKE_TLS_VERIFY=0 \
         -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_LATEST_HOME/build/cmake/android.toolchain.cmake \
         -DANDROID_ABI=${{ inputs.abi }} \
         ${{ inputs.cmake_flags }}
 
     - name: Build
       shell: bash
-      run: cmake --build build --target ${{ inputs.cmake_target }} --parallel
+      run: cmake --build build --target ${{ inputs.cmake_target }} --config ${{ inputs.build_type }} --parallel

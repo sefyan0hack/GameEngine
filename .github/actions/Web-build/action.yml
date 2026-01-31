@@ -40,8 +40,8 @@ runs:
 
     - name: Configure
       shell: bash
-      run: emcmake cmake -S . -B build --config ${{ inputs.build_type }} -G Ninja ${{ inputs.cmake_flags }}
+      run: emcmake cmake -S . -B build -G Ninja ${{ inputs.cmake_flags }}
 
     - name: Build
       shell: bash
-      run: cmake --build build --target ${{ inputs.cmake_target }} --parallel
+      run: cmake --build build --target ${{ inputs.cmake_target }} --config ${{ inputs.build_type }} --parallel
