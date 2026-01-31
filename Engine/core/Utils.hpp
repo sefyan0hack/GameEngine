@@ -13,6 +13,7 @@
 #include <thread>
 #include <future>
 #include <functional>
+#include <ranges>
 
 #include "Exception.hpp"
 
@@ -259,6 +260,42 @@ inline auto file_to_vec(const char* path) -> std::vector<std::byte>
 }
 
 /**
+ * @brief Format raw memory (pointer + count) as a hex string.
+ *
+ * @tparam T Element type.
+ * @param data Pointer to the first element.
+ * @param n Number of elements (not bytes) to format.
+ * @return std::string Human-readable hex dump of the memory region.
+ *
+ * @details
+ * The function treats the memory as a sequence of unsigned bytes and formats
+ * each byte in hex. The total number of bytes processed is n * sizeof(T).
+ */
+template <class T>
+inline auto to_hex(T* data, std::size_t n) -> std::string
+{
+    static_assert(std::is_trivially_copyable_v<T>, "to_hex requires trivially copyable types for safe byte access");
+    return
+        std::as_bytes(std::span(data, n)) 
+        | std::views::transform([](auto b) { return ::format("0x{:02X}", static_cast<uint8_t>(b)); })
+        | std::views::join_with(' ')
+        | std::ranges::to<std::string>();
+}
+
+/**
+ * @brief Format a pointer to a single object as a hex string.
+ *
+ * @tparam T Pointee type.
+ * @param data Pointer to the object.
+ * @return std::string Hex dump of the object bytes (size determined by sizeof(T)).
+ */
+template <class T>
+inline auto to_hex(T* data) -> std::string
+{
+    return to_hex(data, 1);
+}
+
+/**
  * @brief Format arbitrary data as a hex string (single-byte granularity).
  *
  * @tparam T Data element type.
@@ -273,9 +310,8 @@ inline auto file_to_vec(const char* path) -> std::vector<std::byte>
 template <class T>
 inline auto to_hex(const T& data) -> std::string
 {
-    return to_hex(data, 1);
+    return to_hex(&data, 1);
 }
-
 
 /**
  * @brief Format a C-style array as a hex string.
@@ -289,48 +325,6 @@ template <class T, std::size_t N>
 inline auto to_hex(const T (&data)[N]) -> std::string
 {
     return to_hex(data, N);
-}
-
-
-/**
- * @brief Format raw memory (pointer + count) as a hex string.
- *
- * @tparam T Element type.
- * @param data Pointer to the first element.
- * @param n Number of elements (not bytes) to format.
- * @return std::string Human-readable hex dump of the memory region.
- *
- * @details
- * The function treats the memory as a sequence of unsigned bytes and formats
- * each byte in hex. The total number of bytes processed is n * sizeof(T).
- */
-template <class T>
-inline auto to_hex(const T* data, std::size_t n) -> std::string
-{
-    auto result = std::stringstream{};
-    auto data_as_byte = reinterpret_cast<const unsigned char*>(data);
-    std::size_t total_bytes = n * sizeof(T);
-
-    for (std::size_t i = 0; i < total_bytes; ++i) {
-        unsigned char byte = data_as_byte[i];
-        result << std::hex << std::setw(2) << std::setfill('0')
-               << static_cast<int>(byte) << ' ';
-       if ((i + 1) % 8 == 0) result << "  ";
-    }
-    return result.str();
-}
-
-/**
- * @brief Format a pointer to a single object as a hex string.
- *
- * @tparam T Pointee type.
- * @param data Pointer to the object.
- * @return std::string Hex dump of the object bytes (size determined by sizeof(T)).
- */
-template <class T>
-inline auto to_hex(T* data) -> std::string
-{
-    return to_hex(data, 1);
 }
 
 /**
