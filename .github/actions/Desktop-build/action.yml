@@ -49,7 +49,7 @@ runs:
           ~/.ccache
           ~/.config/ccache
           ~/Library/Caches/ccache
-        key: ${{ runner.os }}-${{ matrix.compiler }}-${{ inputs.build_type }}-${{ hashFiles('**/CMakeLists.txt', './vcpkg.json') }}
+        key: ${{ runner.os }}-${{ matrix.compiler }}-${{ inputs.build_type }}-${{ hashFiles('**/CMakeLists.txt') }}
         restore-keys: ${{ runner.os }}-${{ inputs.build_type }}-
 
     - name: Configure CMake

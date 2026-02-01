@@ -22,6 +22,17 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ./build/
+          ~/.cache/ccache
+          ~/.ccache
+          ~/.config/ccache
+        key: ${{ runner.os }}--${{ inputs.build_type }}-${{ hashFiles('**/CMakeLists.txt') }}
+        restore-keys: ${{ runner.os }}-${{ inputs.build_type }}-
+
     - name: Configure
       shell: bash
       run: |
