@@ -6,7 +6,7 @@ inputs:
   emsdk_version:
     description: 'Version of emsdk'
     required: false
-    default: '5.0.0'
+    default: 'latest'
   cmake_flags:
     description: 'Flags for CMake configuration'
     required: false
@@ -23,20 +23,17 @@ runs:
   using: composite
   steps:
 
-    - name: Set environment variables
-      shell: bash
-      run: echo "EMSDK_PATH=$HOME/emsdk" >> $GITHUB_ENV
-
-    - name: Cache emsdk
-      uses: actions/cache@v3
+    - name: Setup cache
+      id: cache-system-libraries
+      uses: actions/cache@v2
       with:
-        path: ~/emsdk
-        key: emsdk-${{ runner.os }}-${{ inputs.emsdk_version }}
+        path: emsdk-cache
+        key: ${{ inputs.emsdk_version }}-${{ runner.os }}
 
-    - name: Setup Emscripten
-      uses: mymindstorm/setup-emsdk@v14
+    - uses: mymindstorm/setup-emsdk@v14
       with:
         version: ${{ inputs.emsdk_version }}
+        actions-cache-folder: emsdk-cache
 
     - name: Configure
       shell: bash
