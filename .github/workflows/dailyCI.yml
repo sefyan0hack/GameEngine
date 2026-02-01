@@ -61,7 +61,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: cmake --build build --config Debug --parallel
+        run: cmake --build build --parallel
 
       - name: Code Coverage
         shell: bash

@@ -26,7 +26,7 @@ jobs:
         run: cmake -S . -B ${{ env.build }} -DCMAKE_BUILD_TYPE=${{ env.config }}
 
       - name: Build CMake
-        run: cmake --build ${{ env.build }} --config ${{ env.config }}
+        run: cmake --build ${{ env.build }}
 
       - name: Run MSVC Code Analysis
         uses: microsoft/msvc-code-analysis-action@v0.1.1

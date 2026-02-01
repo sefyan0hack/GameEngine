@@ -58,4 +58,4 @@ runs:
 
     - name: Build
       shell: bash
-      run: cmake --build "${{ inputs.build_dir }}" --config ${{ inputs.build_type }} --target ${{ inputs.cmake_target }} --parallel
+      run: cmake --build "${{ inputs.build_dir }}" --target ${{ inputs.cmake_target }} --parallel
