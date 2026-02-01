@@ -40,6 +40,18 @@ runs:
         ninja: true
         vcpkg: false
 
+    - name: Cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ./build/
+          ~/.cache/ccache
+          ~/.ccache
+          ~/.config/ccache
+          ~/Library/Caches/ccache
+        key: ${{ runner.os }}-${{ matrix.compiler }}-${{ inputs.build_type }}-${{ hashFiles('**/CMakeLists.txt', './vcpkg.json') }}
+        restore-keys: ${{ runner.os }}-${{ inputs.build_type }}-
+
     - name: Configure CMake
       shell: bash
       run: cmake -S . -B "${{ inputs.build_dir }}" -G Ninja -DCMAKE_BUILD_TYPE=${{ inputs.build_type }} -DCMAKE_TLS_VERIFY=0 ${{ inputs.cmake_flags }}
