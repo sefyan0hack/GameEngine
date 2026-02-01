@@ -6,7 +6,7 @@ inputs:
   emsdk_version:
     description: 'Version of emsdk'
     required: false
-    default: '4.0.10'
+    default: '5.0.0'
   cmake_flags:
     description: 'Flags for CMake configuration'
     required: false

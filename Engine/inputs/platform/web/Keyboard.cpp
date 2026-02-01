@@ -56,9 +56,9 @@ ENGINE_EXPORT auto from_native(const EmscriptenKeyboardEvent* ev) -> Key
         // F1 .. F24
         if (sv_code.size() >= 2 && sv_code[0] == 'F') {
             int fnum = 0;
-            for (size_t i = 1; i < sv_code.size(); ++i) {
-                if (!isdigit((unsigned char)sv_code[i])) { fnum = 0; break; }
-                fnum = fnum * 10 + (sv_code[i] - '0');
+            for (const auto& c : sv_code) {
+                if (!isdigit((unsigned char)c)) { fnum = 0; break; }
+                fnum = fnum * 10 + (c - '0');
             }
             if (fnum >= 1 && fnum <= 24) {
                 switch (fnum) {
