@@ -275,11 +275,21 @@ template <class T>
 inline auto to_hex(T* data, std::size_t n) -> std::string
 {
     static_assert(std::is_trivially_copyable_v<T>, "to_hex requires trivially copyable types for safe byte access");
-    return
-        std::as_bytes(std::span(data, n)) 
+
+    #if defined(__cpp_lib_ranges_join_with) && defined(__cpp_lib_ranges_to)
+    return std::as_bytes(std::span(data, n)) 
         | std::views::transform([](auto b) { return ::format("0x{:02X}", static_cast<uint8_t>(b)); })
         | std::views::join_with(' ')
         | std::ranges::to<std::string>();
+    #else
+        // Fallback for Android NDK / Older Libs
+        std::string res;
+        for (auto const& b : std::as_bytes(std::span(data, n)) ) {
+            if (!res.empty()) res += ' ';
+            res += ::format("0x{:02X}", static_cast<uint8_t>(b));
+        }
+        return res;
+    #endif
 }
 
 /**
