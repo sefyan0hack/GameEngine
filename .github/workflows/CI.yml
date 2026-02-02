@@ -2,7 +2,7 @@ name: CI
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  Build:
+  Desktop:
     name: "${{ matrix.os }} x ${{ matrix.compiler }} x ${{ matrix.build_type }}"
     if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip desk]')"
     runs-on: ${{ matrix.os }}
@@ -65,7 +65,7 @@ jobs:
           path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests${{ env.APP_EXT }}
           retention-days: 7
 
-  Build-Web:
+  Web:
     name: "web x ubuntu-latest x ${{ matrix.build_type }}"
     if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip web]')"
     runs-on: ubuntu-latest
@@ -100,7 +100,7 @@ jobs:
         path: build-${{ matrix.build_type }}/tests/uint/unit_tests.js
         retention-days: 7
 
-  Build-android:
+  Android:
     name: "android x ubuntu-latest x ${{ matrix.build_type }}"
     if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip android]')"
     runs-on: ubuntu-latest
