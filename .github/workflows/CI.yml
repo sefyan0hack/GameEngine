@@ -46,7 +46,7 @@ jobs:
           retention-days: 7
 
   # Windows-11-arm  ######################################################################################################### 
-  Windows-11-arm:
+  Windows-arm:
     name: "windows-11-arm x ${{ matrix.compiler }} x ${{ matrix.build_type }}"
     if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip windows]')"
     runs-on: windows-11-arm
@@ -135,8 +135,8 @@ jobs:
           path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests
           retention-days: 7
 
-  # Windows-24.04-arm  ######################################################################################################### 
-  Ubuntu-24.04-arm:
+  # Windows-arm  ######################################################################################################### 
+  Ubuntu-arm:
     name: "ubuntu-24.04-arm x ${{ matrix.compiler }} x ${{ matrix.build_type }}"
     if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip ubuntu]')"
     runs-on: ubuntu-24.04-arm
