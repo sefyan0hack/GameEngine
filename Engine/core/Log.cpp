@@ -23,7 +23,7 @@ namespace debug {
         #   endif
         #else
             std::ofstream out(LOG_FILE, std::ios::app);
-            out << now << " : " << msg;
+            out << now << " : " << msg << '\n';
         #endif
     };
 
