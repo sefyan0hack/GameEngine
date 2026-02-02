@@ -15,6 +15,10 @@ inputs:
     description: 'Debug or Release'
     required: true
     default: 'Debug'
+  build_dir:
+    description: 'Build dir'
+    required: false
+    default: 'build'
   cmake_target:
     description: 'Cmake target'
     required: false
@@ -37,8 +41,8 @@ runs:
 
     - name: Configure
       shell: bash
-      run: emcmake cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=${{ inputs.build_type }} ${{ inputs.cmake_flags }}
+      run: emcmake cmake -S . -B ${{ inputs.build_dir }} -G Ninja -DCMAKE_BUILD_TYPE=${{ inputs.build_type }} ${{ inputs.cmake_flags }}
 
     - name: Build
       shell: bash
-      run: cmake --build build --target ${{ inputs.cmake_target }} --parallel
+      run: cmake --build ${{ inputs.build_dir }} --target ${{ inputs.cmake_target }} --parallel

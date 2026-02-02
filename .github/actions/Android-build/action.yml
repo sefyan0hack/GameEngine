@@ -7,6 +7,10 @@ inputs:
     description: 'Debug or Release'
     required: true
     default: 'Debug'
+  build_dir:
+    description: 'Build directory'
+    required: false
+    default: 'build'
   cmake_flags:
     description: 'Flags for CMake configuration'
     required: false
@@ -44,4 +48,4 @@ runs:
 
     - name: Build
       shell: bash
-      run: cmake --build build --target ${{ inputs.cmake_target }} --parallel
+      run: cmake --build ${{ inputs.build_dir }} --target ${{ inputs.cmake_target }} --parallel
