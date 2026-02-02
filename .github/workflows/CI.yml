@@ -2,10 +2,11 @@ name: CI
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  Desktop:
-    name: "${{ matrix.os }} x ${{ matrix.compiler }} x ${{ matrix.build_type }}"
-    if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip desk]')"
-    runs-on: ${{ matrix.os }}
+  # Windows-latest  ######################################################################################################### 
+  Windows-latest:
+    name: "windows-latest x ${{ matrix.compiler }} x ${{ matrix.build_type }}"
+    if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip windows]')"
+    runs-on: windows-latest
     permissions:
       actions: read
       contents: read
@@ -13,36 +14,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, windows-11-arm, ubuntu-latest,  ubuntu-24.04-arm]
         compiler: [llvm, gcc, msvc]
         build_type: [Debug, Release]
-        exclude:
-          - os: ubuntu-latest
-            compiler: msvc
-          - os: ubuntu-24.04-arm
-            compiler: msvc
-          - os: windows-11-arm
-            compiler: gcc
 
     env:
       TEST_TIMEOUT: 60
-      BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
-      APP_EXT: ${{ contains(matrix.os, 'windows' ) && '.exe' || '' }}
+      BUILD_DIR: build/windows-latest-${{ matrix.compiler }}-${{ matrix.build_type }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Dependencies
-        shell: bash
-        run: |
-          if [[ "${{ matrix.os }}" == *ubuntu* ]]; then
-            sudo apt-get install -y libx11-dev libgl-dev xvfb
-          fi
-
       - name: Build
         uses: ./.github/actions/Desktop-build
         with:
-          os: ${{ matrix.os }}
+          os: windows-latest
           compiler: ${{ matrix.compiler }}
           build_type: ${{ matrix.build_type }}
           build_dir: ${{ env.BUILD_DIR }}
@@ -50,25 +35,162 @@ jobs:
 
       - name: Test
         shell: bash
-        run: |
-          if [[ "${{ matrix.os }}" == *ubuntu* ]]; then
-            xvfb-run --auto-servernum ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
-          else
-            ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
-          fi
+        run: ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
 
       - name: Upload Test Executable on Failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: unit_tests-${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
+          name: unit_tests-windows-latest-${{ matrix.compiler }}-${{ matrix.build_type }}
+          path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests.exe
+          retention-days: 7
+
+  # Windows-11-arm  ######################################################################################################### 
+  Windows-11-arm:
+    name: "windows-11-arm x ${{ matrix.compiler }} x ${{ matrix.build_type }}"
+    if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip windows]')"
+    runs-on: windows-11-arm
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [llvm, msvc]
+        build_type: [Debug, Release]
+
+    env:
+      TEST_TIMEOUT: 60
+      BUILD_DIR: build/windows-11-arm-${{ matrix.compiler }}-${{ matrix.build_type }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        uses: ./.github/actions/Desktop-build
+        with:
+          os: windows-11-arm
+          compiler: ${{ matrix.compiler }}
+          build_type: ${{ matrix.build_type }}
+          build_dir: ${{ env.BUILD_DIR }}
+          cmake_flags: "-DWITH_TESTS=ON -DHARDEN=ON"
+
+      - name: Test
+        shell: bash
+        run: ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
+
+      - name: Upload Test Executable on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit_tests-windows-11-arm-${{ matrix.compiler }}-${{ matrix.build_type }}
+          path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests.exe
+          retention-days: 7
+
+  # Ubuntu-latest  ######################################################################################################### 
+  Ubuntu-latest:
+    name: "ubuntu-latest x ${{ matrix.compiler }} x ${{ matrix.build_type }}"
+    if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip ubuntu]')"
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [llvm, gcc]
+        build_type: [Debug, Release]
+
+    env:
+      TEST_TIMEOUT: 60
+      BUILD_DIR: build/ubuntu-latest-${{ matrix.compiler }}-${{ matrix.build_type }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        shell: bash
+        run: sudo apt-get install -y libx11-dev libgl-dev xvfb
+
+      - name: Build
+        uses: ./.github/actions/Desktop-build
+        with:
+          os: ubuntu-latest
+          compiler: ${{ matrix.compiler }}
+          build_type: ${{ matrix.build_type }}
+          build_dir: ${{ env.BUILD_DIR }}
+          cmake_flags: "-DWITH_TESTS=ON -DHARDEN=ON"
+
+      - name: Test
+        shell: bash
+        run: xvfb-run --auto-servernum ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
+
+      - name: Upload Test Executable on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit_tests-ubuntu-latest-${{ matrix.compiler }}-${{ matrix.build_type }}
+          path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests
+          retention-days: 7
+
+  # Windows-24.04-arm  ######################################################################################################### 
+  Ubuntu-24.04-arm:
+    name: "ubuntu-24.04-arm x ${{ matrix.compiler }} x ${{ matrix.build_type }}"
+    if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip ubuntu]')"
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [llvm, gcc]
+        build_type: [Debug, Release]
+
+    env:
+      TEST_TIMEOUT: 60
+      BUILD_DIR: build/ubuntu-24.04-arm-${{ matrix.compiler }}-${{ matrix.build_type }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        shell: bash
+        run: sudo apt-get install -y libx11-dev libgl-dev xvfb
+
+      - name: Build
+        uses: ./.github/actions/Desktop-build
+        with:
+          os: ubuntu-24.04-arm
+          compiler: ${{ matrix.compiler }}
+          build_type: ${{ matrix.build_type }}
+          build_dir: ${{ env.BUILD_DIR }}
+          cmake_flags: "-DWITH_TESTS=ON -DHARDEN=ON"
+
+      - name: Test
+        shell: bash
+        run: xvfb-run --auto-servernum ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
+
+      - name: Upload Test Executable on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit_tests-ubuntu-24.04-arm-${{ matrix.compiler }}-${{ matrix.build_type }}
           path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests${{ env.APP_EXT }}
           retention-days: 7
 
+  # Web ######################################################################################################### 
   Web:
     name: "web x ubuntu-latest x ${{ matrix.build_type }}"
     if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip web]')"
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
     strategy:
       fail-fast: false
       matrix:
@@ -100,10 +222,15 @@ jobs:
         path: build-${{ matrix.build_type }}/tests/uint/unit_tests.js
         retention-days: 7
 
+  # Android  ######################################################################################################### 
   Android:
     name: "android x ubuntu-latest x ${{ matrix.build_type }}"
     if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip android]')"
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
     strategy:
       fail-fast: false
       matrix:
