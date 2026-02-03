@@ -20,15 +20,14 @@
 namespace utils {
 
 /**
- * @brief Convert a std::variant type list to a compile-time array of TypeInfo.
+ * @brief Convert a std::variant type list to a compile-time array of Type.
  *
  * @tparam T A std::variant<...> type.
- * @return std::array<TypeInfo, N> where N == std::variant_size_v<T>
+ * @return std::array<Type, N> where N == std::variant_size_v<T>
  *
  * @details
  * This helper inspects the alternative types inside a std::variant and
- * constructs an array of TypeInfo structures (assumes ::type_hash<T>()
- * and ::type_name<T>() are available for each alternative type).
+ * constructs an array of Type structures.
  *
  * Example:
  * @code
@@ -41,13 +40,10 @@ constexpr auto variant_to_array() -> std::array<TypeInfo, std::variant_size_v<T>
 {
     return []<std::size_t... I>(std::index_sequence<I...>) {
         return std::array<TypeInfo, sizeof...(I)> {{
-            { ::type_hash<std::variant_alternative_t<I, T>>(),
-              ::type_name<std::variant_alternative_t<I, T>>()
-            }...
+            TypeInfo::make<std::variant_alternative_t<I, T>>()...
         }};
     }(std::make_index_sequence<std::variant_size_v<T>>{});
 }
-
 /**
  * @brief Extracts the directory portion of a file path at compile-time.
  *
@@ -363,7 +359,7 @@ auto pointer_to_string(Pointer auto ptr) -> std::string
     if (ptr == nullptr) return "null";
     else if constexpr (std::is_pointer_v<Pointee>) return pointer_to_string(*ptr);
     else if constexpr (std::is_same_v<Pointee, void>) return ::format(r, type, "??");
-    else if constexpr (formattable<Pointee>) return ::format(r, type, *ptr);
+    else if constexpr (std::formattable<Pointee, char>) return ::format(r, type, *ptr);
     else if constexpr (requires(std::ostream& os) { os << *ptr; }) {
         std::stringstream ss;
         ss << *ptr;

@@ -176,16 +176,16 @@ struct std::formatter<QueWrapper<Que>> {
     }
 };
 
-template<typename T>
-struct std::formatter<Type<T>> {
+template<>
+struct std::formatter<TypeInfo> {
     constexpr auto parse(std::format_parse_context& ctx) {
         return ctx.begin();
     }
 
-    auto format(const Type<T>&, std::format_context& ctx) const {
+    auto format(const TypeInfo& obj, std::format_context& ctx) const {
         return std::format_to(ctx.out(), 
             R"({{ Type: "{}", Parent: "{}", Kind: "{}", Hash: {}, Size: {}, Align: {}, Empty: {} }})",
-            Type<T>::name, Type<T>::parent, Type<T>::kind, Type<T>::hash, Type<T>::size, Type<T>::alignment, Type<T>::empty
+            obj.name, obj.parent, obj.kind, obj.hash, obj.size, obj.alignment, obj.empty
         );
     }
 };

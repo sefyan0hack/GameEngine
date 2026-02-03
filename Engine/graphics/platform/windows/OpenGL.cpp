@@ -50,10 +50,8 @@ auto OpenGL::create_opengl_context() -> GL_CTX
         throw Exception("Failed to activate dummy OpenGL rendering context. : {}", GetLastError());
     }
 
-    BEGIN_IGNORE_WARN_CALNG("-Wcast-function-type-mismatch")
     gl::GetExtensionsStringARB  = reinterpret_cast<decltype(gl::GetExtensionsStringARB)>(gl::GetProcAddress("wglGetExtensionsStringARB"));
     gl::CreateContextAttribsARB = reinterpret_cast<decltype(gl::CreateContextAttribsARB)>(gl::GetProcAddress("wglCreateContextAttribsARB"));
-    END_IGNORE_WARN_CALNG()
 
     if (!gl::GetExtensionsStringARB){
         throw Exception("Failed to load wglGetExtensionsStringARB. : {}", GetLastError());

@@ -16,7 +16,7 @@
 #include <graphics/OpenGLRenderer.hpp>
 
 #undef X
-#define X(name, r, args) extern "C" DECLARE_FUNCTION(name, r, args);
+#define X(name, r, args) extern "C" auto name args -> r;
 
 #if defined(GAME_HOT_RELOADABLE)
     #define GET_GAME_FUNCTION(name) lib.function<APP::name##_t>(#name)
