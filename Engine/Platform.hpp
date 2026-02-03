@@ -6,14 +6,11 @@
 
 #pragma once
 #include <version>
-#include <type_traits>
-#include <variant>
-#include <memory>
-#include <string_view>
-#include <utility>
-#include <cstdlib>
 #include <cstdint>
-#include <string>
+#include <variant>
+#include <string_view>
+#include <type_traits>
+#include <concepts>
 
 /**
  * @brief Custom constexpr hash function for string_view (FNV-1a algorithm)

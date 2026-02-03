@@ -1,9 +1,7 @@
 #pragma once
 #include <string>
 #include <array>
-#include <cstdint>
 #include <engine_export.h>
-
 
 #if __cpp_lib_stacktrace
 #include <stacktrace>

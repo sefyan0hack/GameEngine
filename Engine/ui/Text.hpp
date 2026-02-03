@@ -12,7 +12,9 @@
 #include <glm/gtx/hash.hpp>
 
 #include <vector>
+#include <memory>
 #include <unordered_map>
+#include <bit>
 
 struct AtlasGlyph {
     glm::ivec2 size;            // Size of glyph in pixels
