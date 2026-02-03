@@ -4,7 +4,7 @@
 namespace gl {
 
     auto get_proc_address(const char* name) -> void* {
-        void *address = reinterpret_cast<void*>(gl::GetProcAddress(name));
+        void *address = gl::GetProcAddress<void*>(name);
 
         if(address == nullptr){
             address = os::get_proc_address(OPENGL_MODULE_NAME, name);

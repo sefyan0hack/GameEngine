@@ -4,6 +4,7 @@
 #include <psapi.h>
 #include <tlhelp32.h>
 #include "Exception.hpp"
+#include <string>
 
 auto os::system() -> os::Target
 {

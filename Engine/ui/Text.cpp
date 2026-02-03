@@ -20,6 +20,7 @@
 #include FT_GLYPH_H
 
 #include <bit>
+#include <string>
 
 extern cmrc::embedded_filesystem embed_filesystem;
 

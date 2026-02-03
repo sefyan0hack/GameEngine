@@ -1,6 +1,7 @@
 #include "DynLib.hpp"
 #include "Exception.hpp"
 #include <chrono>
+#include <string>
 
 #if defined(WINDOWS_PLT)
     #include <windows.h>

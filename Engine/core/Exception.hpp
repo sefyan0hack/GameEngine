@@ -1,6 +1,7 @@
 #pragma once
 #include <exception>
 #include <source_location>
+#include <string>
 #include "format.hpp"
 #include <engine_export.h>
 #include "stacktrace.hpp"

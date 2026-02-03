@@ -1,7 +1,7 @@
 #pragma once
 
 #include <engine_export.h>
-
+#include <string>
 
 class ENGINE_EXPORT IRenderer
 {

@@ -50,8 +50,8 @@ auto OpenGL::create_opengl_context() -> GL_CTX
         throw Exception("Failed to activate dummy OpenGL rendering context. : {}", GetLastError());
     }
 
-    gl::GetExtensionsStringARB  = reinterpret_cast<decltype(gl::GetExtensionsStringARB)>(gl::GetProcAddress("wglGetExtensionsStringARB"));
-    gl::CreateContextAttribsARB = reinterpret_cast<decltype(gl::CreateContextAttribsARB)>(gl::GetProcAddress("wglCreateContextAttribsARB"));
+    gl::GetExtensionsStringARB  = gl::GetProcAddress<decltype(gl::GetExtensionsStringARB)>("wglGetExtensionsStringARB");
+    gl::CreateContextAttribsARB = gl::GetProcAddress<decltype(gl::CreateContextAttribsARB)>("wglCreateContextAttribsARB");
 
     if (!gl::GetExtensionsStringARB){
         throw Exception("Failed to load wglGetExtensionsStringARB. : {}", GetLastError());

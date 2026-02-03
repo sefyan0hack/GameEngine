@@ -290,7 +290,8 @@ auto CWindow::set_title(std::string  title) -> void
 
 auto CWindow::set_vsync(bool state) -> void
 {
-	if(!gl::SwapIntervalEXT) gl::SwapIntervalEXT = reinterpret_cast<decltype(gl::SwapIntervalEXT)>(gl::GetProcAddress("wglSwapIntervalEXT"));
+	//TODO: needs gl context
+	if(!gl::SwapIntervalEXT) gl::SwapIntervalEXT = gl::GetProcAddress<decltype(gl::SwapIntervalEXT)>("wglSwapIntervalEXT");
 	gl::SwapIntervalEXT(state);
 }
 

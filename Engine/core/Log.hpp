@@ -2,6 +2,7 @@
 
 #include "format.hpp"
 #include <source_location>
+#include <string>
 #include <engine_export.h>
 
 namespace debug {
