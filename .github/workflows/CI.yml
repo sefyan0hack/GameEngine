@@ -194,6 +194,9 @@ jobs:
       matrix:
         build_type: [Debug, Release]
 
+    env:
+      BUILD_DIR: build/${{ matrix.build_type }}
+
     steps:
     - uses: actions/checkout@v4
 
@@ -205,19 +208,19 @@ jobs:
       uses: ./.github/actions/Web-build
       with:
         build_type: ${{ matrix.build_type }}
-        build_dir: build-${{ matrix.build_type }}
+        build_dir: ${{ env.BUILD_DIR }}
         cmake_flags: "-DWITH_TESTS=ON -DCMAKE_CXX_LINK_FLAGS=\"-sSINGLE_FILE=1 -sENVIRONMENT=node\""
 
     - name: Test
       shell: bash
-      run: ctest --test-dir build-${{ matrix.build_type }} --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
+      run: ctest --test-dir ${{ env.BUILD_DIR }}--output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
 
     - name: Upload Test Executable on Failure
       if: failure()
       uses: actions/upload-artifact@v4
       with:
-        name: web-unit_tests-build-${{ matrix.build_type }}
-        path: build-${{ matrix.build_type }}/tests/unit/unit_tests.js
+        name: web-unit_tests-${{ matrix.build_type }}
+        path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests.js
         retention-days: 7
 
 # ======================================================================================================================
@@ -232,6 +235,9 @@ jobs:
       matrix:
         build_type: [Debug, Release]
 
+    env:
+      BUILD_DIR: build/${{ matrix.build_type }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -240,12 +246,28 @@ jobs:
         with:
           abi: "arm64-v8a"
           build_type: ${{ matrix.build_type }}
-          build_dir: build-${{ matrix.build_type }}
+          build_dir: ${{ env.BUILD_DIR }}
           cmake_flags: "-DWITH_TESTS=ON -DHARDEN=ON"
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Test
+        shell: bash
+        run: ctest --test-dir ${{ env.BUILD_DIR }} --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
+
+      - name: Upload Test Executable on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-unit_tests-${{ matrix.build_type }}
+          path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests
+          retention-days: 7
+
+      # upload apk
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: signed-${{ matrix.build_type }}-apk
-          path: build-${{ matrix.build_type }}/signed.apk
+          path: ${{ env.BUILD_DIR }}/signed.apk
           retention-days: 1
