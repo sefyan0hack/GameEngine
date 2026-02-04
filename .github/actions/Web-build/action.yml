@@ -34,6 +34,20 @@ runs:
         path: emsdk-cache
         key: ${{ inputs.emsdk_version }}-${{ runner.os }}
 
+    - name: Cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ${{ inputs.build_dir }}
+          ~/.cache/ccache
+          ~/.ccache
+          ~/.config/ccache
+          ~/Library/Caches/ccache
+          emsdk-cache
+        key: ${{ runner.os }}-${{ inputs.build_type }}-${{ hashFiles('**/CMakeLists.txt') }}-${{ inputs.build_dir }}
+        restore-keys: ${{ runner.os }}-${{ inputs.build_type }}-
+
+
     - uses: mymindstorm/setup-emsdk@v14
       with:
         version: ${{ inputs.emsdk_version }}

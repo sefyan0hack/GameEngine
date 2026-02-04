@@ -30,11 +30,11 @@ runs:
       uses: actions/cache@v3
       with:
         path: |
-          ./build/
+          ${{ inputs.build_dir }}
           ~/.cache/ccache
           ~/.ccache
           ~/.config/ccache
-        key: ${{ runner.os }}--${{ inputs.build_type }}-${{ hashFiles('**/CMakeLists.txt') }}
+        key: ${{ runner.os }}--${{ inputs.build_type }}-${{ hashFiles('**/CMakeLists.txt') }}-${{ inputs.build_dir }}
         restore-keys: ${{ runner.os }}-${{ inputs.build_type }}-
 
     - name: Configure
