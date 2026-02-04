@@ -14,13 +14,7 @@ if(COVERAGE)
         if(GCOVR_PATH)
             set(COMMEN_GCOVR_FLAGS
                 --root ${CMAKE_SOURCE_DIR}
-                --exclude '${CMAKE_SOURCE_DIR}/tests/.*'
-                --exclude '${CMAKE_SOURCE_DIR}/3party/.*'
-                --exclude '${CMAKE_BINARY_DIR}/.*'
-                --exclude '/usr/.*'
-                --exclude '[A-Z]:/msys64/.*'
-                --exclude '[A-Z]:/mingw64/.*'
-                --exclude '.*/include/c++/.*'
+                --filter ${CMAKE_SOURCE_DIR}/Engine/.*
                 --gcov-executable ${GCOV_PATH}
                 --delete
                 --exclude-function-lines
@@ -35,25 +29,20 @@ if(COVERAGE)
                 -s
             )
 
-            add_custom_target(pre_coverage
-                COMMAND ${CMAKE_COMMAND} $<TARGET_FILE:unit_tests>
-                WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                DEPENDS Engine unit_tests
-            )
-
             add_custom_target(coverage
+                COMMAND ${CMAKE_CTEST_COMMAND}
                 COMMAND ${GCOVR_PATH} ${COMMEN_GCOVR_FLAGS} --xml -o coverage
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                DEPENDS pre_coverage
                 COMMENT "Generating GCC xml coverage report with gcovr..."
             )
 
             add_custom_target(coverage_html
+                COMMAND ${CMAKE_CTEST_COMMAND}
                 COMMAND ${GCOVR_PATH} ${COMMEN_GCOVR_FLAGS} --html-details -o coverage.html
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                DEPENDS pre_coverage
                 COMMENT "Generating GCC html coverage report with gcovr..."
             )
+
         endif()
 
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
