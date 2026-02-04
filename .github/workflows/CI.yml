@@ -58,7 +58,7 @@ jobs:
 # Windows ARM
 # ======================================================================================================================
   Windows-arm:
-    name: "windows-11-arm • ${{ matrix.compiler }} • ${{ matrix.build_type }}"
+    name: "windows-arm • ${{ matrix.compiler }} • ${{ matrix.build_type }}"
     if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip windows]')"
     runs-on: windows-11-arm
     strategy:
@@ -142,7 +142,7 @@ jobs:
 # Ubuntu ARM
 # ======================================================================================================================
   Ubuntu-arm:
-    name: "ubuntu-24.04-arm • ${{ matrix.compiler }} • ${{ matrix.build_type }}"
+    name: "ubuntu-arm • ${{ matrix.compiler }} • ${{ matrix.build_type }}"
     if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip ubuntu]')"
     runs-on: ubuntu-24.04-arm
     strategy:
