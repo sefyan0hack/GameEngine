@@ -35,16 +35,13 @@ class ENGINE_EXPORT Shader
     auto compile()                           -> void;
     auto check_compile_status() -> void;
     auto get_shader_info(GLenum what) const-> GLint; //what : GL_SHADER_TYPE, GL_DELETE_STATUS, GL_COMPILE_STATUS, GL_INFO_LOG_LENGTH, GL_SHADER_SOURCE_LENGTH.
-    static auto new_vertex(either<std::string, cmrc::file> auto const & vert) -> std::shared_ptr<Shader>
-    {
-      return std::make_shared<Shader>(vert, GL_VERTEX_SHADER);
-    }
 
-    static auto new_fragment(either<std::string, cmrc::file> auto const & frag) -> std::shared_ptr<Shader>
-    {
-      return std::make_shared<Shader>(frag, GL_FRAGMENT_SHADER);
-    }
-
+    static auto new_vertex(const std::string& vert) -> std::shared_ptr<Shader>;
+    static auto new_vertex(const cmrc::file& vert) -> std::shared_ptr<Shader>;
+  
+    static auto new_fragment(const cmrc::file& frag) -> std::shared_ptr<Shader>;
+    static auto new_fragment(const std::string& frag) -> std::shared_ptr<Shader>;
+  
   private:
     GLuint m_Id;
     GLenum m_Type;

@@ -176,3 +176,23 @@ auto Shader::get_shader_info(GLenum what) const -> GLint
     else
         throw Exception("GetShaderiv Failed");
 }
+
+auto Shader::new_vertex(const std::string& vert) -> std::shared_ptr<Shader>
+{
+  return std::make_shared<Shader>(vert, GL_VERTEX_SHADER);
+}
+
+auto Shader::new_vertex(const cmrc::file& vert) -> std::shared_ptr<Shader>
+{
+  return std::make_shared<Shader>(vert, GL_VERTEX_SHADER);
+}
+
+auto Shader::new_fragment(const std::string& frag) -> std::shared_ptr<Shader>
+{
+  return std::make_shared<Shader>(frag, GL_FRAGMENT_SHADER);
+}
+
+auto Shader::new_fragment(const cmrc::file& frag) -> std::shared_ptr<Shader>
+{
+  return std::make_shared<Shader>(frag, GL_FRAGMENT_SHADER);
+}

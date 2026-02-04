@@ -7,10 +7,8 @@
 #pragma once
 #include <version>
 #include <cstdint>
-#include <variant>
 #include <string_view>
 #include <type_traits>
-#include <concepts>
 
 /**
  * @brief Custom constexpr hash function for string_view (FNV-1a algorithm)
@@ -120,58 +118,11 @@ struct TypeInfo {
         };
     }
 
-    std::string_view name;
-    std::string_view parent;
-    std::string_view kind;
-    std::size_t      hash;
-    std::size_t      size;
-    std::size_t      alignment;
-    bool             empty;
+    const std::string_view name;
+    const std::string_view parent;
+    const std::string_view kind;
+    const std::size_t      hash;
+    const std::size_t      size;
+    const std::size_t      alignment;
+    const bool             empty;
 };
-
-/**
- * @brief Concept that tests whether T is a Pointer
- *
- * @details
- * Example usage:
- * @code
- *
- * static_assert(Pointer<int*>);     // OK:
- * static_assert(Pointer<float*>); // OK:
- * @endcode
- */
-template <typename T>
-concept Pointer = std::is_pointer_v<T>;
-
-/**
- * @brief Concept that tests whether T is a Variant
- *
- * @details
- * Example usage:
- * @code
- *
- * static_assert(Variant<std::variant<int,char>>); // OK:
- * @endcode
- */
-template <typename T>
-concept Variant = requires {
-    typename std::variant_size<std::remove_cvref_t<T>>::type;
-};
-
-/**
- * @brief Concept that checks if T is equal to any of the listed types U...
- *
- * @tparam T The type to test
- * @tparam U Parameter pack of types to compare with T
- *
- * @returns true if T is the same as any type in U...
- *
- * @details
- * Useful in constrained templates or SFINAE situations where you want to
- * accept a set of specific types.
- */
-template <typename T, typename... Allowed>
-concept either = (std::convertible_to<std::remove_cvref_t<T>, Allowed> || ...);
-
-template<class... Ts>
-struct overloaded : Ts... { using Ts::operator()...; };

@@ -26,7 +26,7 @@ template <typename T>
 concept EventType = std::is_same_v<T, std::monostate> || ::type_name<T>().ends_with("Event");
 
 template <typename T>
-concept ISEvent = Variant<T> && [](){
+concept ISEvent = requires { typename std::variant_size<std::remove_cvref_t<T>>::type; }  && [](){
     using V = std::remove_cvref_t<T>;
     return []<std::size_t... I>(std::index_sequence<I...>) {
         return (EventType<std::variant_alternative_t<I, V>> && ...);

@@ -44,7 +44,8 @@ auto ENGINE_EXPORT to_string(const stacktrace_entry& ste ) -> std::string;
 auto ENGINE_EXPORT to_string(const stacktrace& st ) -> std::string;
 
 #ifdef __cpp_lib_formatters
-template<either<stacktrace_entry, stacktrace> T>
+template<class T>
+  requires std::is_same_v<T, stacktrace_entry> || std::is_same_v<T, stacktrace>
 struct std::formatter<T> {
   constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
   auto format(const T& obj, std::format_context& ctx) const {

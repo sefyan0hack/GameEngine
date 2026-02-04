@@ -15,7 +15,7 @@ public:
     Image();
     Image(const std::string& filename, bool flip = false);
     Image(const cmrc::file& src, bool flip = false);
-    Image(Pointer auto Data, uint32_t Width, uint32_t Height, uint32_t Channels);
+    Image(auto* Data, uint32_t Width, uint32_t Height, uint32_t Channels);
     ~Image();
 
     Image(const Image& other) = delete;

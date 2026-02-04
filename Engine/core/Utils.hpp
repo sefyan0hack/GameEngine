@@ -19,6 +19,9 @@
 
 namespace utils {
 
+template<class... Ts>
+struct overloaded : Ts... { using Ts::operator()...; };
+
 /**
  * @brief Convert a std::variant type list to a compile-time array of Type.
  *
@@ -349,7 +352,7 @@ inline auto to_hex(const T (&data)[N]) -> std::string
  * - Otherwise returns formatted `&lt;{:p}&gt; (size) : [ hex-dump ]`.
  *
  */
-auto pointer_to_string(Pointer auto ptr) -> std::string
+auto pointer_to_string(auto* ptr) -> std::string
 {
     using Pointee = std::remove_cv_t<std::remove_pointer_t<decltype(ptr)>>;
     constexpr const char* r = "*({}){}";
@@ -369,7 +372,7 @@ auto pointer_to_string(Pointer auto ptr) -> std::string
     else return ::format(r, type, to_hex(ptr));
 }
 
-template<Variant TVarinat, class... TMatchers>
+template<class TVarinat, class... TMatchers>
     requires(sizeof...(TMatchers) >= 1 )
 inline auto match(TVarinat&& v, TMatchers&&... m) -> decltype(auto)
 {

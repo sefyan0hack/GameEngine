@@ -3,6 +3,7 @@
 #include <string_view>
 #include <concepts>
 #include <tuple>
+#include <variant>
 #include <format>
 #include <utility>
 #include "Platform.hpp"

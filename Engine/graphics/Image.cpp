@@ -43,7 +43,7 @@ Image::Image()
 {
 }
 
-Image::Image(Pointer auto Data, uint32_t Width, uint32_t Height, uint32_t Channels)
+Image::Image(auto* Data, uint32_t Width, uint32_t Height, uint32_t Channels)
 {
     if(Data != nullptr && Width > 0 && Height > 0 && Channels > 0){
         m_Width = Width;
