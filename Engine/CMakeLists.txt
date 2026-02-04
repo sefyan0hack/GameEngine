@@ -63,9 +63,6 @@ target_link_libraries(Engine
         >
 )
 target_compile_definitions( Engine PUBLIC
-    $<$<CXX_COMPILER_ID:GNU>:GNU_CPL>
-    $<$<CXX_COMPILER_ID:Clang>:CLANG_CPL>
-    $<$<CXX_COMPILER_ID:MSVC>:MSVC_CPL>
 
     $<$<PLATFORM_ID:Windows>:WINDOWS_PLT>
     $<$<PLATFORM_ID:Unix>:UNIX_PLT>

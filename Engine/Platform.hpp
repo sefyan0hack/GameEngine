@@ -37,18 +37,18 @@ inline static constexpr std::size_t constexpr_hash(std::string_view str) noexcep
 template <typename T>
 inline static constexpr auto type_name() noexcept -> std::string_view
 {
-    #if defined(CLANG_CPL) || defined(GNU_CPL)
+    #if defined(__clang__) || defined(__GNUC__)
         constexpr std::string_view name = __PRETTY_FUNCTION__;
         constexpr auto start = name.find("T = ") + 4;
-    #   if defined(CLANG_CPL)
+    #   if defined(__clang__)
         constexpr auto end = name.find(']', start);
-    #   elif defined(GNU_CPL)
+    #   elif defined(__GNUC__) && !defined(__clang__)
         constexpr auto end = name.find(';', start);
     #   endif
 
         return name.substr(start, end - start);
 
-    #elif defined(MSVC_CPL)
+    #elif defined(_MSC_VER)
         constexpr std::string_view name = __FUNCSIG__;
         constexpr auto start = name.find("type_name<") + 10;
         constexpr auto end = name.find(">(void)", start);
