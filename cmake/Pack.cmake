@@ -44,7 +44,7 @@ function(target_pack target)
             COMMAND ${KEYTOOL} -genkeypair -keystore "debug.keystore"
                 -storepass android -keypass android -alias androiddebugkey
                 -dname "CN=Android Debug,O=Android,C=US" -storetype JKS
-                -keyalg RSA -keysize 2048 -validity 10000
+                -keyalg RSA -keysize 2048 -validity 10000 || ${CMAKE_COMMAND} -E echo "Keystore already exists, skipping"
 
             COMMAND ${CMAKE_COMMAND} -E echo "Running AAPT packaging. ndk-min: ${NDK_MIN_PLATFORM_LEVEL} ndk-max: ${NDK_MAX_PLATFORM_LEVEL}"
             COMMAND ${AAPT} package -f
