@@ -2,7 +2,6 @@
 
 [![CodeCov](https://codecov.io/github/sefyan0hack/GameEngine/graph/badge.svg?token=FXDLJT6XHA)](https://codecov.io/github/sefyan0hack/GameEngine) [![CI](https://github.com/sefyan0hack/GameEngine/actions/workflows/CI.yml/badge.svg)](https://github.com/sefyan0hack/GameEngine/actions/workflows/CI.yml) 
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Author](https://img.shields.io/badge/Sofyane%20Bentaleb-orange)]() 
 [![lang](https://img.shields.io/badge/language-c++-blue)]() 
 [![std](https://img.shields.io/badge/std-c++23-blue)]() 
 [![MSVC](https://img.shields.io/badge/MSVC-2022+-ff6417)]() 

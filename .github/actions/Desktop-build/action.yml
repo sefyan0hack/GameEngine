@@ -32,7 +32,7 @@ runs:
   using: composite
   steps:
     - name: Setup Cpp
-      uses: aminya/setup-cpp@v1.7.2
+      uses: aminya/setup-cpp@v1.8.0
       with:
         compiler: ${{ inputs.compiler }}
         vcvarsall: ${{ contains(inputs.os, 'windows' ) && !contains(inputs.os, 'arm' )}}
