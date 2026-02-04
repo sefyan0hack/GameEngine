@@ -40,17 +40,32 @@ runs:
         ninja: true
         vcpkg: false
 
-    - name: Cache
+    - name: Cache ccache
       uses: actions/cache@v3
       with:
         path: |
-          ${{ inputs.build_dir }}
           ~/.cache/ccache
           ~/.ccache
           ~/.config/ccache
           ~/Library/Caches/ccache
-        key: ${{ runner.os }}-${{ inputs.compiler }}-${{ inputs.build_type }}-${{ hashFiles('**/CMakeLists.txt') }}-${{ inputs.build_dir }}
-        restore-keys: ${{ runner.os }}-${{ inputs.build_type }}-
+        key: ${{ runner.os }}-ccache-${{ inputs.compiler }}-${{ inputs.build_type }}-${{ hashFiles('**/CMakeLists.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-ccache-${{ inputs.compiler }}-${{ inputs.build_type }}-
+          ${{ runner.os }}-ccache-${{ inputs.compiler }}-
+          ${{ runner.os }}-ccache-
+
+    - name: Cache CMake and related caches
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/cmake
+          ~/.cmake
+          ~/.local/share/cmake
+        key: ${{ runner.os }}-cmake-${{ inputs.compiler }}-${{ inputs.build_type }}-${{ hashFiles('**/CMakeLists.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-cmake-${{ inputs.compiler }}-${{ inputs.build_type }}-
+          ${{ runner.os }}-cmake-${{ inputs.compiler }}-
+          ${{ runner.os }}-cmake-
 
     - name: Configure CMake
       shell: bash

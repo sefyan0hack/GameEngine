@@ -10,17 +10,16 @@
 [![Calng](https://img.shields.io/badge/Clang-19+-ff6417)]() 
 [![Camke](https://img.shields.io/badge/CMake-3.28+-ff6417)]()
 
----
 
+> **GameEngine** — a modern, high-performance foundation for building games and interactive applications with C++23.
+
+---
 ## Screenshots
 
 <p align="center">
-  <img src="media/Game.png" width="85%" alt="View">
+  <img src="media/Game.png" width="100%" alt="View">
 </p>
-
 ---
-
-> **GameEngine** — a modern, high-performance foundation for building games and interactive applications with C++23.
 
 ## Platforms
 - **Windows** (MSVC/GCC/Clang)

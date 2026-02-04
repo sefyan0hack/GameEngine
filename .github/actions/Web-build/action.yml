@@ -27,26 +27,27 @@ runs:
   using: composite
   steps:
 
-    - name: Setup cache
-      id: cache-system-libraries
+    - name: Cache emsdk
       uses: actions/cache@v3
       with:
         path: emsdk-cache
-        key: ${{ inputs.emsdk_version }}-${{ runner.os }}
+        key: emsdk-${{ runner.os }}-${{ inputs.emsdk_version }}
+        restore-keys: |
+          emsdk-${{ runner.os }}-
 
-    - name: Cache
+    - name: Cache ccache
       uses: actions/cache@v3
       with:
         path: |
-          ${{ inputs.build_dir }}
           ~/.cache/ccache
           ~/.ccache
           ~/.config/ccache
           ~/Library/Caches/ccache
-          emsdk-cache
-        key: ${{ runner.os }}-${{ inputs.build_type }}-${{ hashFiles('**/CMakeLists.txt') }}-${{ inputs.build_dir }}
-        restore-keys: ${{ runner.os }}-${{ inputs.build_type }}-
-
+        key: ${{ runner.os }}-emscripten-ccache-${{ inputs.emsdk_version }}-${{ inputs.build_type }}-${{ hashFiles('**/CMakeLists.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-emscripten-ccache-${{ inputs.emsdk_version }}-${{ inputs.build_type }}-
+          ${{ runner.os }}-emscripten-ccache-${{ inputs.emsdk_version }}-
+          ${{ runner.os }}-emscripten-ccache-
 
     - uses: mymindstorm/setup-emsdk@v14
       with:

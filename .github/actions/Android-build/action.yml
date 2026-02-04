@@ -26,16 +26,31 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Cache
+    - name: Cache ccache
       uses: actions/cache@v3
       with:
         path: |
-          ${{ inputs.build_dir }}
           ~/.cache/ccache
           ~/.ccache
           ~/.config/ccache
-        key: ${{ runner.os }}--${{ inputs.build_type }}-${{ hashFiles('**/CMakeLists.txt') }}-${{ inputs.build_dir }}
-        restore-keys: ${{ runner.os }}-${{ inputs.build_type }}-
+        key: ${{ runner.os }}-android-ccache-${{ inputs.abi }}-${{ inputs.build_type }}-${{ hashFiles('**/CMakeLists.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-android-ccache-${{ inputs.abi }}-${{ inputs.build_type }}-
+          ${{ runner.os }}-android-ccache-${{ inputs.abi }}-
+          ${{ runner.os }}-android-ccache-
+
+    - name: Cache CMake & Android caches
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/cmake
+          ~/.cmake
+          ~/.android
+        key: ${{ runner.os }}-android-cmake-${{ inputs.abi }}-${{ inputs.build_type }}-${{ hashFiles('**/CMakeLists.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-android-cmake-${{ inputs.abi }}-${{ inputs.build_type }}-
+          ${{ runner.os }}-android-cmake-${{ inputs.abi }}-
+          ${{ runner.os }}-android-cmake-
 
     - name: Configure
       shell: bash
