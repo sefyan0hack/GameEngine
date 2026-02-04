@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <array>
+#include <format>
 #include <engine_export.h>
 
 #if __cpp_lib_stacktrace
