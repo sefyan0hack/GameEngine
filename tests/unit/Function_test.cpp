@@ -5,7 +5,7 @@
 
 using namespace std;
 
-TEST(FunctionTest, EmptytFunction) {
+TEST(Function, EmptytFunction) {
 
     auto add = Function<int32_t(*)(int32_t, int32_t)>();
 
@@ -18,7 +18,7 @@ TEST(FunctionTest, EmptytFunction) {
     ) << "name should be empty";
 }
 
-TEST(FunctionTest, TestFunctionParams) {
+TEST(Function, TestFunctionParams) {
 
     auto add = Function<int64_t(*)(int32_t, int32_t)>();
 
@@ -35,7 +35,7 @@ TEST(FunctionTest, TestFunctionParams) {
     ) << "return type match";
 }
 
-TEST(FunctionTest, ConstructFunction) {
+TEST(Function, ConstructFunction) {
 
     auto abs_f = +[](int32_t x) -> uint32_t { return x > 0 ? x : -x; };
 
@@ -61,7 +61,7 @@ TEST(FunctionTest, ConstructFunction) {
     ) << "return type match";
 }
 
-TEST(FunctionTest, FunctionCallsInc) {
+TEST(Function, FunctionCallsInc) {
 
     auto abs_f = +[](int32_t x) -> uint32_t { return x > 0 ? x : -x; };
 
