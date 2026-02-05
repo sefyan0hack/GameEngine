@@ -33,6 +33,7 @@ if(COVERAGE)
                 COMMAND ${CMAKE_CTEST_COMMAND}
                 COMMAND ${GCOVR_PATH} ${COMMEN_GCOVR_FLAGS} --xml -o coverage
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                DEPENDS unit_tests
                 COMMENT "Generating GCC xml coverage report with gcovr..."
             )
 
@@ -40,6 +41,7 @@ if(COVERAGE)
                 COMMAND ${CMAKE_CTEST_COMMAND}
                 COMMAND ${GCOVR_PATH} ${COMMEN_GCOVR_FLAGS} --html-details -o coverage.html
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                DEPENDS unit_tests
                 COMMENT "Generating GCC html coverage report with gcovr..."
             )
 
@@ -54,25 +56,26 @@ if(COVERAGE)
             -fno-inline
         )
 
-        find_program(LLVM_PROFDATA_PATH llvm-profdata REQUIRED)
-        find_program(LLVM_COV_PATH llvm-cov REQUIRED)
+        find_program(LLVM_PROFDATA llvm-profdata REQUIRED)
+        find_program(LLVM_COV llvm-cov REQUIRED)
 
-        add_custom_target(pre_coverage
-            COMMAND ${CMAKE_COMMAND} -E remove -f "default.profraw" "coverage.profdata"
-            COMMAND ${CMAKE_COMMAND} -E env "LLVM_PROFILE_FILE=default.profraw" "TESTING_ENABLED=1" $<TARGET_FILE:unit_tests>
-            COMMAND ${LLVM_PROFDATA_PATH} merge -sparse default.profraw -o coverage.profdata
-            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            DEPENDS Engine unit_tests
-        )
+        set(COVE_PROFRAW_FILE "coverage.profraw")
+        set(COVE_PROFDATA_FILE "coverage.profdata")
 
         add_custom_target(coverage
-            COMMAND ${LLVM_COV_PATH} export $<TARGET_FILE:unit_tests>
-                -instr-profile=coverage.profdata
+            COMMAND ${CMAKE_COMMAND} -E remove -f "${COVE_PROFRAW_FILE}" "${COVE_PROFDATA_FILE}"
+            COMMAND ${CMAKE_COMMAND} -E env "LLVM_PROFILE_FILE=${COVE_PROFRAW_FILE}" $<TARGET_FILE:unit_tests>
+
+            COMMAND ${LLVM_PROFDATA} merge -sparse ${COVE_PROFRAW_FILE} -o ${COVE_PROFDATA_FILE}
+
+            COMMAND ${LLVM_COV} export $<TARGET_FILE:unit_tests>
+                -instr-profile=${COVE_PROFDATA_FILE}
                 -format=lcov
-                -ignore-filename-regex='(tests/|3party/)'
-                -output-file=${CMAKE_BINARY_DIR}/coverage.lcov
+                -ignore-filename-regex='(tests|3party|Game)'
+                --output-file=${CMAKE_BINARY_DIR}/coverage.lcov
+
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            DEPENDS pre_coverage
+            DEPENDS unit_tests
         )
 
     endif()
