@@ -71,9 +71,8 @@ if(COVERAGE)
             COMMAND ${LLVM_COV} export $<TARGET_FILE:unit_tests>
                 -instr-profile=${COVE_PROFDATA_FILE}
                 -format=lcov
-                -ignore-filename-regex='(tests|3party|Game)'
-                --output-file=${CMAKE_BINARY_DIR}/coverage.lcov
-
+                ${CMAKE_SOURCE_DIR}/Engine
+                > "${CMAKE_BINARY_DIR}/coverage.lcov"
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
             DEPENDS unit_tests
         )
