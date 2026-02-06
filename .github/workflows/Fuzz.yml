@@ -20,4 +20,5 @@ jobs:
 
       - name: Fuzz
         shell: bash
-        run: ctest --test-dir build --output-on-failure
+        run: ./build/tests/fuzz/fuzz_tests -runs=1000 -max_total_time=30
+
