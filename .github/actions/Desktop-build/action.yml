@@ -3,10 +3,6 @@ name: 'Build'
 description: 'Building'
 
 inputs:
-  os:
-    description: 'os name'
-    required: true
-    default: 'windows-latest'
   compiler:
     description: 'compiler'
     required: true
@@ -35,7 +31,7 @@ runs:
       uses: aminya/setup-cpp@v1.8.0
       with:
         compiler: ${{ inputs.compiler }}
-        vcvarsall: ${{ contains(inputs.os, 'windows' ) && !contains(inputs.os, 'arm' )}}
+        vcvarsall: ${{ contains(runner.os, 'Windows') && !contains(runner.os, 'arm') }}
         cmake: true
         ninja: true
         vcpkg: false

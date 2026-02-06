@@ -24,7 +24,7 @@ jobs:
         shell: bash
         run: |
           if [[ "${{ matrix.os }}" == *ubuntu* ]]; then
-            sudo apt-get install -y libx11-dev libgl-dev xvfb
+            sudo apt-get install -y libx11-dev libgl-dev
           fi
   
       - name: Build Project
@@ -37,9 +37,4 @@ jobs:
 
       - name: Test
         shell: bash
-        run: |
-          if [[ "${{ matrix.os }}" == *ubuntu* ]]; then
-            xvfb-run --auto-servernum ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure 
-          else
-            ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure
-          fi
+        run: ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure
