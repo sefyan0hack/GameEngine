@@ -26,7 +26,9 @@ jobs:
             fuzz-corpus-${{ runner.os }}-
 
       - name: Fuzz
-        run: ./build/tests/fuzz/fuzz_tests corpus/utils -runs=1000 -max_total_time=60 -artifact_prefix=artifacts/
+        run: |
+            mkdir corpus
+            ./build/tests/fuzz/fuzz_tests corpus -runs=1000 -max_total_time=60 -artifact_prefix=artifacts/
 
       - name: Upload fuzz artifacts
         uses: actions/upload-artifact@v4
