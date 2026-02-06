@@ -12,6 +12,7 @@ jobs:
         uses: ./.github/actions/Desktop-build
         with:
           compiler: llvm
+          build__type: RelWithDebInfo
           cmake_flags: '-DCMAKE_CXX_FLAGS="-fsanitize=address" -DFUZZ_TEST=ON -DLINK_TIME_OPT=OFF'
 
 
