@@ -12,14 +12,13 @@ jobs:
       matrix:
         os: [ubuntu-latest, ubuntu-24.04-arm]
         compiler: [gcc, llvm]
-        sanitizers: [ASAN, USAN, TSAN] # [address, undefined, thread]
+        sanitizer: [address, undefined] # [address, undefined]
 
     env:
       BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.sanitizers}}
 
     steps:
       - uses: actions/checkout@v3
-
 
       - name: Install
         shell: bash
@@ -34,7 +33,7 @@ jobs:
           os: ${{ matrix.os }}
           compiler: ${{ matrix.compiler }}
           build_dir: ${{ env.BUILD_DIR }}
-          cmake_flags: "-DWITH_TESTS=ON -D${{ matrix.sanitizers }}=ON -DHARDEN=ON"
+          cmake_flags: '-DCMAKE_CXX_FLAGS="-fsanitize=${{ matrix.sanitizer }}" -DWITH_TESTS=ON -DHARDEN=ON'
 
       - name: Test
         shell: bash

@@ -37,7 +37,6 @@ target_link_libraries(Engine
 
         project_warnings_flags
         project_coverage_flags
-        project_sanitizer_flags
         project_hardening_flags
 )
 

@@ -26,7 +26,6 @@ include(Docs)
 include(Harden)
 include(StaticLink)
 include(Coverage)
-include(Sanitize)
 include(CompilerFlags)
 
 if(WIN32)
