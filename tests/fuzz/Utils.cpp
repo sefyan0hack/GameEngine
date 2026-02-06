@@ -1,15 +1,16 @@
+#include <fuzztest/fuzztest.h>
 #include <core/Utils.hpp>
 #include <string>
 #include <cmath>
 #include <print>
 
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
-    if (Size == 0) return 0;
+void SplitDoesNotCrash(std::string input, char delim) {
+    // Optional: restrict delimiter to printable chars
+    if (delim < 32 || delim > 126) return;
 
-    std::string string{reinterpret_cast<const char*>(Data), Size};
-    std::string delim = {(char)(32 + std::rand() % 127)};
+    std::string d(1, delim);
 
-    utils::split(string.c_str(), delim);
-
-    return 0;
+    utils::split(input.c_str(), d);
 }
+
+FUZZ_TEST(UtilsSplitFuzz, SplitDoesNotCrash);

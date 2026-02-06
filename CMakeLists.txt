@@ -113,7 +113,8 @@ if(WITH_TESTS)
     add_subdirectory(tests/unit)
 endif()
 
-if(FUZZ_TEST)
+if(FUZZ_TESTS)
+    enable_testing()
     add_subdirectory(tests/fuzz)
 endif()
 

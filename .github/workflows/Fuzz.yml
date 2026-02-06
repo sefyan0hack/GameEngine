@@ -12,7 +12,7 @@ jobs:
         uses: ./.github/actions/Desktop-build
         with:
           compiler: llvm
-          cmake_flags: '-DCMAKE_CXX_FLAGS="-fsanitize=address" -DFUZZ_TEST=ON -DLINK_TIME_OPT=OFF'
+          cmake_flags: '-DCMAKE_CXX_FLAGS="-fsanitize=address" -DFUZZ_TESTS=ON -DLINK_TIME_OPT=OFF'
 
       - name: Fuzz
-        run: .\build\tests\fuzz\fuzz_tests -runs=1000 -max_total_time=120
+        run: ./build/tests/fuzz/fuzz_tests -runs=1000 -max_total_time=120
