@@ -25,7 +25,7 @@ jobs:
         with:
           os: ${{ matrix.os }}
           compiler: llvm
-          cmake_flags: "-DDOCS=ON"
+          cmake_flags: "-DWITH_DOCS=ON"
           cmake_target: "docs"
 
       - name: Prepare Site Structure

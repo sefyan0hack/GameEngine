@@ -1,7 +1,7 @@
 include(CMakeDependentOption)
 
 option(WITH_TESTS           "Tests"                                   OFF)
-option(DOCS                 "Docs"                                    OFF)
+option(WITH_DOCS                 "Docs"                                    OFF)
 option(COVERAGE             "Code coverage"                           OFF)
 option(HARDEN               "Hardening"                               ON)
 option(LINK_TIME_OPT        "Link Time opt"                           ON)
@@ -15,7 +15,7 @@ cmake_dependent_option(CONSOLE_ATTACHED "Console Attached to Window" OFF [[ CMAK
 ####################################################################################################
 
 add_feature_info(WITH_TESTS             WITH_TESTS           "[Build the testing suite]")
-add_feature_info(DOCS                   DOCS                 "[Build documentation]")
+add_feature_info(WITH_DOCS              WITH_DOCS            "[Build documentation]")
 add_feature_info(COVERAGE               COVERAGE             "[Generate coverage reports]")
 add_feature_info(HARDEN                 HARDEN               "[Security hardening flags]")
 add_feature_info(LINK_TIME_OPT          LINK_TIME_OPT        "[Link Time optimization]")

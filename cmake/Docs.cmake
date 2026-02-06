@@ -1,5 +1,5 @@
 
-if(DOCS)
+if(WITH_DOCS)
     find_package(Doxygen REQUIRED)
 
     set(DOXY_IN    "${CMAKE_SOURCE_DIR}/Doxyfile.in")
