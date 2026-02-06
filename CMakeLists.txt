@@ -28,7 +28,6 @@ include(CompilerFlags)
 
 if(WIN32)
     add_compile_definitions(
-        _ITERATOR_DEBUG_LEVEL=0
         _CRT_SECURE_NO_WARNINGS
         WIN32_LEAN_AND_MEAN
         NOMINMAX
