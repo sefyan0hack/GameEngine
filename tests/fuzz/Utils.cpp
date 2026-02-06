@@ -18,7 +18,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
     std::println("delim: {}", delim);
     
     std::println("result: ");
-    for( auto e : utils::split(string, delim)){
+    for( auto e : utils::split(string.c_str(), delim)){
         std::println("{} |", e);
     }
 
