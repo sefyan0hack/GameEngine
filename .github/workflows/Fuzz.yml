@@ -7,12 +7,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Install Dependencies
+        shell: bash
+        run: sudo apt-get install -y libx11-dev libgl-dev
 
       - name: Build Project
         uses: ./.github/actions/Desktop-build
         with:
           compiler: llvm
-          cmake_flags: '-DCMAKE_CXX_FLAGS="-fsanitize=address" -DFUZZ_TESTS=ON -DLINK_TIME_OPT=OFF'
+          cmake_flags: '-DCMAKE_CXX_FLAGS="-fsanitize=address" -DFUZZ_TESTS=ON -DFUZZTEST_FUZZING_MODE=on -DLINK_TIME_OPT=OFF'
 
       - name: Fuzz
-        run: ./build/tests/fuzz/fuzz_tests -runs=1000 -max_total_time=120
+        run: ./build/tests/fuzz/fuzz_tests --fuzz=UtilsSplitFuzz.SplitFuzzer --fuzz_time=120s
