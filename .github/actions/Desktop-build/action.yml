@@ -27,11 +27,22 @@ inputs:
 runs:
   using: composite
   steps:
+
+    - name: Print runner info
+      run: |
+        echo "runner.os = ${{ runner.os }}"
+        echo "runner.arch = ${{ runner.arch }}"
+        echo "runner.temp = ${{ runner.temp }}"
+        echo "runner.tool_cache = ${{ runner.tool_cache }}"
+        echo "runner.workspace = ${{ runner.workspace }}"
+        echo "runner.name = ${{ runner.name }}"
+        echo "runner.debug = ${{ runner.debug }}"
+
     - name: Setup Cpp
       uses: aminya/setup-cpp@v1.8.0
       with:
         compiler: ${{ inputs.compiler }}
-        vcvarsall: ${{ contains(runner.os, 'Windows') && !contains(runner.os, 'arm') }}
+        vcvarsall: ${{ contains(runner.os, 'Windows') && runner.arch != 'arm64' }}
         cmake: true
         ninja: true
         vcpkg: false
