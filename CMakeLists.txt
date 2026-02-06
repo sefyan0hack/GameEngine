@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.28)
 
 project(
     GameEngine
+    DESCRIPTION "Cross Platform C++ Game Engine"
     LANGUAGES C CXX
     VERSION 0.0.0
 )
@@ -9,8 +10,6 @@ project(
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_VISIBILITY_PRESET "hidden")
-set(CMAKE_VISIBILITY_INLINES_HIDDEN TRUE)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
@@ -57,8 +56,8 @@ set(PLT_DIR_PATH_SUFFIX "platform/${DIR_PLT_NAME}")
 # Vsisibility
 ####################################################################################################
 
-set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
+set(CMAKE_CXX_VISIBILITY_PRESET "hidden")
+set(CMAKE_VISIBILITY_INLINES_HIDDEN TRUE)
 
 ####################################################################################################
 # Position Independent Code
