@@ -4,14 +4,10 @@ on:
 
 jobs:
   fuzzing:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install
-        shell: bash
-        run: sudo apt-get install -y libx11-dev libgl-dev
-  
       - name: Build Project
         uses: ./.github/actions/Desktop-build
         with:
@@ -19,27 +15,15 @@ jobs:
           cmake_flags: '-DCMAKE_CXX_FLAGS="-fsanitize=address" -DFUZZ_TEST=ON -DHARDEN=ON -DLINK_TIME_OPT=OFF'
 
       - name: Prepare directories
-        run: |
-          mkdir -p corpus artifacts
-
-      - uses: actions/cache@v4
-        with:
-          path: corpus/
-          key: fuzz-corpus-${{ runner.os }}-${{ github.ref }}
-          restore-keys: |
-            fuzz-corpus-${{ runner.os }}-
+        shell: bash
+        run: mkdir -p corpus
 
       - name: Fuzz
-        run: ./build/tests/fuzz/fuzz_tests corpus -runs=1000 -max_total_time=120 -artifact_prefix=artifacts/
+        run: .\build\tests\fuzz\fuzz_tests.exe corpus -runs=1000 -max_total_time=120
 
-      - name: Upload fuzz artifacts
+      - name: Upload Fuzz Executable
         uses: actions/upload-artifact@v4
         with:
-          name: fuzz-crashes-${{ github.run_id }}
-          path: artifacts/
-
-      - name: Upload Corpus
-        uses: actions/upload-artifact@v4
-        with:
-          name: fuzz-corpus-${{ github.run_id }}
-          path: corpus/
+          name: fuzz_tests
+          path: .\build\tests\fuzz\fuzz_tests.exe
+          retention-days: 1

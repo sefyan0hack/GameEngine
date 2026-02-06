@@ -88,7 +88,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: unit_tests--${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
+          name: unit_tests-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
           path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests.exe
           retention-days: 7
 
@@ -131,7 +131,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: unit_tests--${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
+          name: unit_tests-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
           path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests
           retention-days: 7
 
@@ -174,7 +174,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: unit_tests--${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
+          name: unit_tests-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
           path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests
           retention-days: 7
 
