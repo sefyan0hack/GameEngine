@@ -8,8 +8,6 @@ option(LINK_TIME_OPT        "Link Time opt"                           ON)
 option(GAME_HOT_RELOADABLE  "Build Game as Shared and hot reload it"  OFF)
 option(OBJ_LIFETIME_TRACE   "Object life time tracing"                ON)
 option(ROBUST_GL_CHECK      "Robust GL checks in Debug builds `slow`" OFF)
-option(STATIC_LINK          "Static link C++"                         OFF)
-# cmake_dependent_option(STATIC_LINK "Static link C++" ON "MINGW" OFF)
 cmake_dependent_option(CONSOLE_ATTACHED "Console Attached to Window" OFF [[ CMAKE_BUILD_TYPE STREQUAL "Release" ]] ON)
 
 ####################################################################################################
@@ -25,6 +23,5 @@ add_feature_info(GAME_HOT_RELOADABLE    GAME_HOT_RELOADABLE  "[Game hot reload s
 add_feature_info(ROBUST_GL_CHECK        ROBUST_GL_CHECK      "[Robust GL checks in Debug]")
 add_feature_info(CONSOLE_ATTACHED       CONSOLE_ATTACHED     "[Console Attached  to Window]")
 add_feature_info(OBJ_LIFETIME_TRACE     OBJ_LIFETIME_TRACE   "[Object life time tracing]")
-add_feature_info(STATIC_LINK            STATIC_LINK          "[Static link C++]")
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

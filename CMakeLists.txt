@@ -23,7 +23,6 @@ include(LinkTimeOpt)
 include(Emscripten)
 include(Docs)
 include(Harden)
-include(StaticLink)
 include(Coverage)
 include(CompilerFlags)
 
