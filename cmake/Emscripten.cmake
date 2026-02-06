@@ -21,8 +21,6 @@ if(EMSCRIPTEN)
 
         -sDISABLE_EXCEPTION_THROWING=0
         -sDISABLE_EXCEPTION_CATCHING=0
-
-        -sFILESYSTEM=1 # needed for DynLib 
     )
 
 endif()

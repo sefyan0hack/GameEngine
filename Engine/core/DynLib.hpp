@@ -1,6 +1,5 @@
 #pragma once
 
-#include <filesystem>
 #include <string>
 #include <engine_export.h>
 
@@ -28,11 +27,7 @@ public:
     }
 
     auto error() -> std::string;
-
-    auto last_write_time() -> std::filesystem::file_time_type;
-
     auto name() -> std::string;
-
     auto full_name() -> std::string;
     auto is_loaded() const -> bool;
 

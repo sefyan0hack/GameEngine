@@ -149,11 +149,6 @@ auto DynLib::error() -> std::string {
     #endif
 }
     
-auto DynLib::last_write_time() -> std::filesystem::file_time_type
-{
-    return std::filesystem::last_write_time(m_name);
-}
-    
 auto DynLib::name() -> std::string {
     return m_name;
 }
