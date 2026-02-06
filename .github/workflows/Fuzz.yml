@@ -15,12 +15,8 @@ jobs:
           build_type: RelWithDebInfo
           cmake_flags: '-DCMAKE_CXX_FLAGS="-fsanitize=address" -DFUZZ_TEST=ON -DLINK_TIME_OPT=OFF'
 
-      - name: Prepare directories
-        shell: bash
-        run: mkdir -p corpus
-
       - name: Fuzz
-        run: .\build\tests\fuzz\fuzz_tests.exe corpus -runs=1000 -max_total_time=120
+        run: .\build\tests\fuzz\fuzz_tests.exe -runs=1000 -max_total_time=120
 
       - name: Upload Fuzz Executable
         uses: actions/upload-artifact@v4
