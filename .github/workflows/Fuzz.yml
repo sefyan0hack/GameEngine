@@ -4,10 +4,16 @@ on:
 
 jobs:
   fuzzing:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     steps:
       - uses: actions/checkout@v3
+
       - name: Install Dependencies
+        if: ${{ runner.os == 'Linux' }}
         shell: bash
         run: sudo apt-get install -y libx11-dev libgl-dev
 
@@ -15,7 +21,14 @@ jobs:
         uses: ./.github/actions/Desktop-build
         with:
           compiler: llvm
+          build_dir: build-${{ matrix.os }}
           cmake_flags: '-DCMAKE_CXX_FLAGS="-fsanitize=address" -DFUZZ_TESTS=ON -DFUZZTEST_FUZZING_MODE=on -DLINK_TIME_OPT=OFF'
 
       - name: Fuzz
-        run: ./build/tests/fuzz/fuzz_tests
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            ./build-${{ matrix.os }}/tests/fuzz/fuzz_tests
+          else
+            .\build-${{ matrix.os }}\tests\fuzz\fuzz_tests.exe
+          fi
