@@ -114,6 +114,7 @@ if(WITH_TESTS)
 endif()
 
 if(FUZZ_TEST)
+    enable_testing()
     add_subdirectory(tests/fuzz)
 endif()
 
