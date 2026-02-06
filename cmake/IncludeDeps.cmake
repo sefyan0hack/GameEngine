@@ -1,5 +1,5 @@
 
-include_directories("${CMAKE_SOURCE_DIR}/3party")
+include_directories( SYSTEM "${CMAKE_SOURCE_DIR}/3party")
 
 # add glm 1.0.1
 add_subdirectory(3party/glm)

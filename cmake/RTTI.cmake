@@ -1,5 +1,4 @@
 
-
 if(RTTI)
     add_compile_options(
         "$<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:MSVC>>:/GR>"
