@@ -18,7 +18,19 @@ jobs:
           compiler: llvm
           cmake_flags: '-DCMAKE_CXX_FLAGS="-fsanitize=address" -DFUZZ_TEST=ON -DHARDEN=ON -DLINK_TIME_OPT=OFF'
 
-      - name: Fuzz
-        shell: bash
-        run: ./build/tests/fuzz/fuzz_tests -runs=1000 -max_total_time=30
+      - uses: actions/cache@v4
+        with:
+          key: fuzz-corpus-${{ runner.os }}-${{ github.ref }}
+          restore-keys: |
+            fuzz-corpus-${{ runner.os }}-
 
+
+      - name: Fuzz
+        run: ./build/tests/fuzz/fuzz_tests corpus/utils -runs=1000 -max_total_time=60 -artifact_prefix=artifacts/
+
+      - name: Upload fuzz artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuzz-crashes-${{ github.run_id }}
+          path: artifacts/

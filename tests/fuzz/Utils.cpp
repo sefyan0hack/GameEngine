@@ -4,23 +4,12 @@
 #include <print>
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
-    if (Size == 0)
-        return 0;
+    if (Size == 0) return 0;
 
-    std::string string{
-        reinterpret_cast<const char*>(Data),
-        Size
-    };
+    std::string string{reinterpret_cast<const char*>(Data), Size};
+    std::string delim = {(char)(32 + std::rand() % 127)};
 
-    std::string delim = {(char)(std::rand() % 127)};
-
-    std::println("sting: {}", string);
-    std::println("delim: {}", delim);
-    
-    std::println("result: ");
-    for( auto e : utils::split(string.c_str(), delim)){
-        std::println("{} |", e);
-    }
+    utils::split(string.c_str(), delim);
 
     return 0;
 }
