@@ -7,3 +7,5 @@ target_link_libraries(fuzz_tests PRIVATE Engine)
 
 target_compile_options(fuzz_tests PRIVATE -fsanitize=fuzzer)
 target_link_options(fuzz_tests PRIVATE -fsanitize=fuzzer)
+
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE STRING "" FORCE)
