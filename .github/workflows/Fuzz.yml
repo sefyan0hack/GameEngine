@@ -18,4 +18,4 @@ jobs:
           cmake_flags: '-DCMAKE_CXX_FLAGS="-fsanitize=address" -DFUZZ_TESTS=ON -DFUZZTEST_FUZZING_MODE=on -DLINK_TIME_OPT=OFF'
 
       - name: Fuzz
-        run: ./build/tests/fuzz/fuzz_tests --fuzz=UtilsSplitFuzz.SplitFuzzer --fuzz_time=120s
+        run: ./build/tests/fuzz/fuzz_tests --fuzz_time=120s
