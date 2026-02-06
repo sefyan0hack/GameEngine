@@ -8,7 +8,8 @@ option(LINK_TIME_OPT        "Link Time opt"                           ON)
 option(GAME_HOT_RELOADABLE  "Build Game as Shared and hot reload it"  OFF)
 option(OBJ_LIFETIME_TRACE   "Object life time tracing"                ON)
 option(ROBUST_GL_CHECK      "Robust GL checks in Debug builds `slow`" OFF)
-cmake_dependent_option(STATIC_LINK "Static link C++" ON "MINGW" OFF)
+option(STATIC_LINK          "Static link C++"                         OFF)
+# cmake_dependent_option(STATIC_LINK "Static link C++" ON "MINGW" OFF)
 cmake_dependent_option(CONSOLE_ATTACHED "Console Attached to Window" OFF [[ CMAKE_BUILD_TYPE STREQUAL "Release" ]] ON)
 
 ####################################################################################################

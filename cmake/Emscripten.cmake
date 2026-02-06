@@ -1,7 +1,6 @@
 
 if(EMSCRIPTEN)
     set(CORE_OPENGL_LIB "WebGL")
-    set(STATIC_LINK OFF)
 
     add_compile_options(
         -Wno-dollar-in-identifier-extension
