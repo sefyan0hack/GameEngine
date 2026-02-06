@@ -31,19 +31,20 @@ runs:
     - name: Print runner info
       shell: bash
       run: |
+        echo "================================================================="
         echo "runner.os = ${{ runner.os }}"
         echo "runner.arch = ${{ runner.arch }}"
         echo "runner.temp = ${{ runner.temp }}"
         echo "runner.tool_cache = ${{ runner.tool_cache }}"
         echo "runner.workspace = ${{ runner.workspace }}"
-        echo "runner.name = ${{ runner.name }}"
-        echo "runner.debug = ${{ runner.debug }}"
+        echo "runner.environment = ${{ runner.environment }}"
+        echo "================================================================="
 
     - name: Setup Cpp
       uses: aminya/setup-cpp@v1.8.0
       with:
         compiler: ${{ inputs.compiler }}
-        vcvarsall: ${{ contains(runner.os, 'Windows') && runner.arch != 'arm64' }}
+        vcvarsall: ${{ runner.os == 'Windows' && runner.arch != 'arm64' }}
         cmake: true
         ninja: true
         vcpkg: false
