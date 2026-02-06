@@ -1,4 +1,3 @@
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE STRING "" FORCE)
 
 add_executable(fuzz_tests 
     Utils.cpp
