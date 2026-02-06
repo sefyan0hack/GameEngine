@@ -29,6 +29,7 @@ runs:
   steps:
 
     - name: Print runner info
+      shell: bash
       run: |
         echo "runner.os = ${{ runner.os }}"
         echo "runner.arch = ${{ runner.arch }}"
