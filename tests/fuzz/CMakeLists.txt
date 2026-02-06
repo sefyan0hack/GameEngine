@@ -1,6 +1,10 @@
 
 if(ONLINE)
-    CPMAddPackage("gh:google/fuzztest@2025-07-28")
+    CPMAddPackage(
+        NAME fuzztest
+        GITHUB_REPOSITORY google/fuzztest
+        GIT_TAG 2025-07-28
+    )
 else()
     add_subdirectory(
         ${CMAKE_SOURCE_DIR}/3party/fuzztest-2025-07-28
