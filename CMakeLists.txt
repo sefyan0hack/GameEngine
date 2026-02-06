@@ -9,7 +9,6 @@ project(
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_USE_RELATIVE_PATHS true)
 set(CMAKE_CXX_VISIBILITY_PRESET "hidden")
 set(CMAKE_VISIBILITY_INLINES_HIDDEN TRUE)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -18,7 +17,6 @@ set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 include(CMakePrintSystemInformation)
-include(CTest)
 include(FeatureSummary)
 include(InstaledPackages)
 include(helpers)
@@ -115,6 +113,8 @@ add_subdirectory(Game)
 ####################################################################################################
 
 if(WITH_TESTS)
+    include(CTest)
+    enable_testing()
     add_subdirectory(tests/unit)
 endif()
 
