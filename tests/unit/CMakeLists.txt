@@ -17,8 +17,7 @@ else()
 endif()
 
 target_link_libraries(unit_tests 
-    PRIVATE 
-        project_warnings_flags project_coverage_flags
+    PRIVATE
         Engine
         glm::glm GTest::gtest GTest::gtest_main
 )

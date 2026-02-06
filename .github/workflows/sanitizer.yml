@@ -15,22 +15,18 @@ jobs:
         sanitizer: [address, undefined] # [address, undefined]
 
     env:
-      BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.sanitizers}}
+      BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.sanitizer}}
 
     steps:
       - uses: actions/checkout@v3
 
       - name: Install
         shell: bash
-        run: |
-          if [[ "${{ matrix.os }}" == *ubuntu* ]]; then
-            sudo apt-get install -y libx11-dev libgl-dev
-          fi
+        run: sudo apt-get install -y libx11-dev libgl-dev
   
       - name: Build Project
         uses: ./.github/actions/Desktop-build
         with:
-          os: ${{ matrix.os }}
           compiler: ${{ matrix.compiler }}
           build_dir: ${{ env.BUILD_DIR }}
           cmake_flags: '-DCMAKE_CXX_FLAGS="-fsanitize=${{ matrix.sanitizer }}" -DWITH_TESTS=ON -DHARDEN=ON'

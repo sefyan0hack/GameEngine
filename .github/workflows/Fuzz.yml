@@ -1,0 +1,23 @@
+name: Fuzzing
+on:
+  workflow_dispatch:
+
+jobs:
+  fuzzing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install
+        shell: bash
+        run: sudo apt-get install -y libx11-dev libgl-dev
+  
+      - name: Build Project
+        uses: ./.github/actions/Desktop-build
+        with:
+          compiler: llvm
+          cmake_flags: '-DCMAKE_CXX_FLAGS="-fsanitize=address,fuzzer" -DFUZZ_TEST=ON -DHARDEN=ON'
+
+      - name: Fuzz
+        shell: bash
+        run: ./build/tests/fuzz/fuzz_test

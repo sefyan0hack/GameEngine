@@ -113,3 +113,7 @@ if(WITH_TESTS)
     add_subdirectory(tests/unit)
 endif()
 
+if(FUZZ_TEST)
+    add_subdirectory(tests/fuzz)
+endif()
+
