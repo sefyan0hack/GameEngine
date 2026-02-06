@@ -10,8 +10,9 @@ target_sources( inputs
         ${CMAKE_CURRENT_SOURCE_DIR}/Keyboard.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Mouse.cpp
     PUBLIC
-    FILE_SET HEADERS
+    FILE_SET headers
       TYPE HEADERS
+      BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
       FILES
       Keyboard.hpp
       Mouse.hpp

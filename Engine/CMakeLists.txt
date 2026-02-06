@@ -24,7 +24,8 @@ target_sources( Engine
     FILE_SET generated_headers
       TYPE HEADERS
       BASE_DIRS $<TARGET_PROPERTY:Engine,BINARY_DIR>
-      FILES ${CMAKE_CURRENT_BINARY_DIR}/engine_export.h
+      FILES 
+        ${CMAKE_CURRENT_BINARY_DIR}/engine_export.h
 )
 
 target_link_libraries(Engine

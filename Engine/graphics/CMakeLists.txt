@@ -23,8 +23,9 @@ target_sources( graphics
         ${CMAKE_CURRENT_SOURCE_DIR}/OpenGLRenderer.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/gl.cpp
     PUBLIC
-    FILE_SET HEADERS
+    FILE_SET headers
       TYPE HEADERS
+      BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
       FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/gl.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Window.hpp

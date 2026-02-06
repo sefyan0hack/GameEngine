@@ -9,8 +9,9 @@ target_sources( ui
         ${PLT_SOURCE}
         ${CMAKE_CURRENT_SOURCE_DIR}/Text.cpp
     PUBLIC
-    FILE_SET HEADERS
+    FILE_SET headers
       TYPE HEADERS
+      BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
       FILES
         Text.hpp
 )
