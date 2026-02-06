@@ -20,17 +20,23 @@ jobs:
 
       - uses: actions/cache@v4
         with:
+          path: corpus/
           key: fuzz-corpus-${{ runner.os }}-${{ github.ref }}
           restore-keys: |
             fuzz-corpus-${{ runner.os }}-
-
 
       - name: Fuzz
         run: ./build/tests/fuzz/fuzz_tests corpus/utils -runs=1000 -max_total_time=60 -artifact_prefix=artifacts/
 
       - name: Upload fuzz artifacts
-        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: fuzz-crashes-${{ github.run_id }}
           path: artifacts/
+
+      - name: Upload Corpus on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuzz-corpus
+          path: corpus/
