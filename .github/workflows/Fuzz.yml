@@ -20,4 +20,4 @@ jobs:
 
       - name: Fuzz
         shell: bash
-        run: ctest --test-dir build
+        run: ctest --test-dir build --output-on-failure
