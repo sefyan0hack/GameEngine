@@ -18,6 +18,10 @@ jobs:
           compiler: llvm
           cmake_flags: '-DCMAKE_CXX_FLAGS="-fsanitize=address" -DFUZZ_TEST=ON -DHARDEN=ON -DLINK_TIME_OPT=OFF'
 
+      - name: Prepare directories
+        run: |
+          mkdir -p corpus artifacts
+
       - uses: actions/cache@v4
         with:
           path: corpus/
@@ -26,10 +30,7 @@ jobs:
             fuzz-corpus-${{ runner.os }}-
 
       - name: Fuzz
-        run: |
-          mkdir corpus
-          mkdir artifacts
-          ./build/tests/fuzz/fuzz_tests corpus -runs=1000 -max_total_time=60 -artifact_prefix=artifacts/
+        run: ./build/tests/fuzz/fuzz_tests corpus -runs=1000 -max_total_time=120 -artifact_prefix=artifacts/
 
       - name: Upload fuzz artifacts
         uses: actions/upload-artifact@v4
@@ -37,9 +38,8 @@ jobs:
           name: fuzz-crashes-${{ github.run_id }}
           path: artifacts/
 
-      - name: Upload Corpus on Failure
-        if: failure()
+      - name: Upload Corpus
         uses: actions/upload-artifact@v4
         with:
-          name: fuzz-corpus
+          name: fuzz-corpus-${{ github.run_id }}
           path: corpus/
