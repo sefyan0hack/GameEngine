@@ -16,7 +16,7 @@ jobs:
         uses: ./.github/actions/Desktop-build
         with:
           compiler: llvm
-          cmake_flags: '-DCMAKE_CXX_FLAGS="-fsanitize=address" -DFUZZ_TEST=ON -DHARDEN=ON'
+          cmake_flags: '-DCMAKE_CXX_FLAGS="-fsanitize=address" -DFUZZ_TEST=ON -DHARDEN=ON -DLINK_TIME_OPT=OFF'
 
       - name: Fuzz
         shell: bash
