@@ -21,17 +21,20 @@ jobs:
         run: sudo apt-get install -y libx11-dev libgl-dev doxygen
 
       - name: Build Project
-        uses: ./.github/actions/build
+        uses: ./.github/actions/Desktop-build
         with:
-          os: ${{ matrix.os }}
           compiler: llvm
-          cmake_flags: "-DWITH_DOCS=ON"
-          cmake_target: "docs"
+
+      - name: Generate Docs
+        shell: bash
+        run: |
+          mkdir docs
+          cmake -D OUT_DIR=docs -D DOXY_IN=Doxyfile.in -P cmake/GenDocs.cmake
 
       - name: Prepare Site Structure
         run: |
           mkdir -p site
-          cp -R build/docs/html site/docs
+          cp -R docs/html site/docs
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
