@@ -16,7 +16,6 @@ target_include_directories(Game PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(Game 
   PRIVATE
     project_warnings_flags
-    project_coverage_flags
     project_hardening_flags
     glm::glm
     Engine

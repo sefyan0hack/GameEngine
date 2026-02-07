@@ -1,13 +1,7 @@
+add_library(project_coverage_flags INTERFACE)
+
 if(COVERAGE)
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        # GCC Flags
-        set(GNU_COVERAGE_FLAGS
-            --coverage
-            -fno-inline
-            -fno-inline-small-functions
-            -fno-default-inline
-        )
-
         find_program(GCOVR_PATH gcovr REQUIRED)
         find_program(GCOV_PATH NAMES "gcov-${COMPILER_MAJOR_VERSION}" "gcov" REQUIRED)
 
@@ -48,13 +42,6 @@ if(COVERAGE)
         endif()
 
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-        # Clang Flags (Source-based coverage)
-        set(CLANG_COVERAGE_FLAGS
-            -fprofile-instr-generate
-            -fcoverage-mapping
-            -fcoverage-mcdc
-            -fno-inline
-        )
 
         find_program(LLVM_PROFDATA llvm-profdata REQUIRED)
         find_program(LLVM_COV llvm-cov REQUIRED)
@@ -78,16 +65,14 @@ if(COVERAGE)
         )
 
     endif()
-endif()
-
-add_library(project_coverage_flags INTERFACE)
 
 target_compile_options(project_coverage_flags INTERFACE
-    $<$<CXX_COMPILER_ID:GNU>:${GNU_COVERAGE_FLAGS}>
-    $<$<CXX_COMPILER_ID:Clang>:${CLANG_COVERAGE_FLAGS}>
+    $<$<CXX_COMPILER_ID:GNU>:--coverage -fprofile-abs-path>
+    $<$<CXX_COMPILER_ID:Clang>:--coverage -fprofile-instr-generate -fcoverage-mapping>
 )
 
 target_link_options(project_coverage_flags INTERFACE
-    $<$<CXX_COMPILER_ID:GNU>:--coverage>
-    $<$<CXX_COMPILER_ID:Clang>:-fprofile-instr-generate>
+    $<$<CXX_COMPILER_ID:GNU,Clang>:--coverage>
 )
+
+endif()
