@@ -68,8 +68,12 @@ namespace gl {
     auto export_opengl_functions() -> void**
     {
         #undef X
-        #define X(name) (void*)&name,
-        
+        #if ROBUST_GL_CHECK
+        #   define X(name) (void*)&name,
+        #else
+        #   define X(name) (void*)name,
+        #endif
+
         static void* funcs[OPENGL_FUNCTIONS_COUNT] = { GLFUNCS };
 
         return funcs;

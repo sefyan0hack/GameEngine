@@ -145,22 +145,18 @@ namespace gl {
     constexpr int32_t ChannelBits       = 8;
     constexpr int32_t AlphaBits         = 8;
 
-    extern "C" {
-        #undef X
-        #define X(name) using PFN_gl##name = decltype(&gl##name);
-        GLFUNCS
-    }
+    #undef X
+    #define X(name) using PFN_gl##name = decltype(&gl##name);
+    GLFUNCS
 
-    extern "C" {
-        #undef X
-        #ifdef ROBUST_GL_CHECK
-        #   define X(name) inline Function<PFN_gl##name> name;
-        #else
-        #   define X(name) inline PFN_gl##name name = Function<PFN_gl##name>::default_;
-        #endif
+    #undef X
+    #ifdef ROBUST_GL_CHECK
+    #   define X(name) inline Function<PFN_gl##name> name;
+    #else
+    #   define X(name) inline PFN_gl##name name = Function<PFN_gl##name>::default_;
+    #endif
 
-        GLFUNCS
-    }
+    GLFUNCS
 
     ENGINE_EXPORT auto get_proc_address(const char* name) -> void*;
     ENGINE_EXPORT auto get_integer(GLenum name) -> GLint;
