@@ -66,13 +66,12 @@ if(COVERAGE)
 
     endif()
 
-target_compile_options(project_coverage_flags INTERFACE
-    $<$<CXX_COMPILER_ID:GNU>:--coverage -fprofile-abs-path>
-    $<$<CXX_COMPILER_ID:Clang>:--coverage -fprofile-instr-generate -fcoverage-mapping>
-)
+    target_compile_options(project_coverage_flags INTERFACE
+        $<$<CXX_COMPILER_ID:GNU,Clang>:--coverage>
+    )
 
-target_link_options(project_coverage_flags INTERFACE
-    $<$<CXX_COMPILER_ID:GNU,Clang>:--coverage>
-)
+    target_link_options(project_coverage_flags INTERFACE
+        $<$<CXX_COMPILER_ID:GNU,Clang>:--coverage>
+    )
 
 endif()
