@@ -1,5 +1,8 @@
 # Usage:
-#   cmake -D OUT_DIR=build -D DOXY_IN=/path/to/Doxyfile.in -P GenDocs.cmake
+#   cmake -D OUT_DIR=docs -P cmake/GenDocs.cmake
+# !! run it where CMakeLists.txt and Doxyfile.in is
+
+get_filename_component(OUT_DIR "${OUT_DIR}" ABSOLUTE)
 
 if(NOT DEFINED DOXYGEN_EXECUTABLE)
   find_program(DOXYGEN_EXECUTABLE doxygen)
@@ -13,16 +16,12 @@ set(DOXY_OUT "${OUT_DIR}/Doxyfile")
 
 file(MAKE_DIRECTORY "${OUT_DIR}")
 
-if(NOT EXISTS "${DOXY_IN}")
-  message(FATAL_ERROR "Doxyfile.in not found: ${DOXY_IN}")
-endif()
-
-configure_file("${DOXY_IN}" "${DOXY_OUT}" @ONLY)
+configure_file("Doxyfile.in" "${DOXY_OUT}" @ONLY)
 
 message(STATUS "Running: ${DOXYGEN_EXECUTABLE} ${DOXY_OUT} (working dir: ${OUT_DIR})")
 
 execute_process(
-  COMMAND "${DOXYGEN_EXECUTABLE}" "${DOXY_OUT}"
+  COMMAND "${DOXYGEN_EXECUTABLE}" "Doxyfile"
   WORKING_DIRECTORY "${OUT_DIR}"
   RESULT_VARIABLE _doxygen_result
   OUTPUT_VARIABLE _doxygen_stdout

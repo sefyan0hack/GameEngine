@@ -16,25 +16,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Dependencies
+      - name: Install Doxygen
         shell: bash
-        run: sudo apt-get install -y libx11-dev libgl-dev doxygen
-
-      - name: Build Project
-        uses: ./.github/actions/Desktop-build
-        with:
-          compiler: llvm
+        run: sudo doxygen
 
       - name: Generate Docs
         shell: bash
         run: |
-          mkdir docs
-          cmake -D OUT_DIR=docs -D DOXY_IN=Doxyfile.in -P cmake/GenDocs.cmake
+          mkdir -p build
+          cmake -D OUT_DIR=build -P cmake/GenDocs.cmake
 
       - name: Prepare Site Structure
         run: |
           mkdir -p site
-          cp -R docs/html site/docs
+          cp -R build/html site/docs
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

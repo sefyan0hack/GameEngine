@@ -1,9 +1,8 @@
 # Doxyfile.in
-PROJECT_NAME           = "@PROJECT_NAME@"
-PROJECT_NUMBER         = "@PROJECT_VERSION@"
-OUTPUT_DIRECTORY       = "@CMAKE_BINARY_DIR@/docs"
-INPUT                  = @CMAKE_SOURCE_DIR@
-EXCLUDE_PATTERNS       = @CMAKE_SOURCE_DIR@/build/* @CMAKE_SOURCE_DIR@/tests/* @CMAKE_SOURCE_DIR@/3party/*
+PROJECT_NAME           = Game Engine
+PROJECT_NUMBER         = 0.0.0
+OUTPUT_DIRECTORY       = @OUT_DIR@
+INPUT                  = @CMAKE_CURRENT_LIST_DIR@/../Engine
 RECURSIVE              = YES
 EXTRACT_ALL            = YES
 EXTRACT_PRIVATE        = YES
