@@ -22,6 +22,9 @@ jobs:
         shell: bash
         run: apt-get install -y libx11-dev libgl-dev
 
+      - name: Set PATH for cmake-latest
+        run: echo /opt/cmake-latest/bin >> $GITHUB_PATH
+
       - name: Configure CMake
         shell: bash
         run: cmake -S . -B build -G Ninja -DCMAKE_TLS_VERIFY=0 -DWITH_TESTS=ON
