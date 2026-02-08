@@ -1,7 +1,9 @@
 
 # Find OpenGL package
 if(ANDROID)
-    set(CORE_OPENGL_LIB GLESv3)
+    set(OPENGL_gl_LIBRARY GLESv3)
+elseif(EMSCRIPTEN)
+    set(OPENGL_gl_LIBRARY "WebGL")
 else()
     find_package(OpenGL QUIET)
     set_package_properties(OpenGL PROPERTIES
@@ -10,9 +12,6 @@ else()
         TYPE REQUIRED
         PURPOSE "Crucial for the rendering engine to work."
     )
-
-    # Extract the core OpenGL library
-    list(GET OPENGL_LIBRARIES 0 CORE_OPENGL_LIB)
 endif()
 
 # Find X11 package

@@ -70,6 +70,7 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     debug::log("GL Vendor : {}", m_Vendor);
     debug::log("GL Renderer : {}", m_Renderer);
     debug::log("GL Exts : {}", m_Extensions);
+    debug::log("GL Function : {}", gl::OPENGL_FUNCTIONS_NAME);
     debug::log("Max Texture Units : {}", m_MaxTextureUnits);
     debug::log("Max Texture Size : {0} x {0}", m_MaxTextureSize);
     debug::log("Max Texture3D Size : {0} x {0} x {0}", m_MaxTexture3DSize);

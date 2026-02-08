@@ -48,12 +48,6 @@ public:
                 app->UiText.text(std::format("Memory: {}/{} MB", os::memory_usage(), os::memory_peak()), { 0, Text::FONT_SIZE });
             }
         );
-
-        // debug::log(gl::OPENGL_FUNCTIONS_NAME);
-
-        const char* word = "sofyane ben taleb";
-        debug::log("{}", std::string_view{word} | std::views::split(' ') | std::ranges::to<std::vector<std::string>>());
-
     }
 
     auto update(float delta) -> void
