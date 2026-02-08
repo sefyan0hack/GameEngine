@@ -2,6 +2,7 @@
 #include "OpenGL.hpp"
 #include <core/Log.hpp>
 #include <inputs/Mouse.hpp>
+#include <algorithm>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/fast_trigonometry.hpp>
