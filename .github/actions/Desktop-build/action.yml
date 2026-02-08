@@ -6,7 +6,7 @@ inputs:
   compiler:
     description: 'compiler'
     required: true
-    default: 'llvm-21'
+    default: 'llvm'
   build_type:
     description: 'Debug or Release'
     required: true

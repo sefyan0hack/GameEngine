@@ -18,7 +18,7 @@ jobs:
       uses: ./.github/actions/Desktop-build
       with:
         os: ${{ runner.os }}
-        compiler: llvm-21
+        compiler: llvm
         cmake_flags: "-DCMAKE_CXX_FLAGS=-ftime-trace"
 
     - name: Organize Traces

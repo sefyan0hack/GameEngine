@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, ubuntu-24.04-arm]
-        compiler: [gcc-15, llvm-21]
+        compiler: [gcc, llvm]
         sanitizer: [address, undefined] # [address, undefined]
 
     env:

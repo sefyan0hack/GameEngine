@@ -46,7 +46,7 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     m_Extensions = exts ? std::string_view{exts}
         | std::views::split(' ')
         | std::views::filter([](auto const &s) { return !s.empty(); })
-        | std::ranges::to<std::vector<std::string>>() : decltype(m_Extensions){} ;
+        | utils::to<std::vector<std::string>>() : decltype(m_Extensions){} ;
 
     gl::Enable(GL_DEPTH_TEST);
     gl::DepthFunc(GL_LESS);
@@ -69,8 +69,7 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     debug::log("GL Version : Wanted:({}.{}) -> Got:({}.{})", gl::OPENGL_MAJOR_VERSION, gl::OPENGL_MINOR_VERSION, m_Major, m_Minor);
     debug::log("GL Vendor : {}", m_Vendor);
     debug::log("GL Renderer : {}", m_Renderer);
-    debug::log("GL Exts : {}", m_Extensions);
-    debug::log("GL Function : {}", gl::OPENGL_FUNCTIONS_NAME);
+    // debug::log("GL Exts : {}", m_Extensions); // need support for range formatter not in gcc-14
     debug::log("Max Texture Units : {}", m_MaxTextureUnits);
     debug::log("Max Texture Size : {0} x {0}", m_MaxTextureSize);
     debug::log("Max Texture3D Size : {0} x {0} x {0}", m_MaxTexture3DSize);

@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: [llvm-21, gcc-15, msvc]
+        compiler: [llvm, gcc, msvc]
         build_type: [Debug, Release]
 
     env:
@@ -63,7 +63,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: [llvm-21, msvc]
+        compiler: [llvm, msvc]
         build_type: [Debug, Release]
 
     env:
@@ -102,7 +102,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: [llvm-21, gcc-15]
+        compiler: [llvm, gcc]
         build_type: [Debug, Release]
 
     env:
@@ -145,7 +145,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: [llvm-21, gcc-15]
+        compiler: [llvm, gcc]
         build_type: [Debug, Release]
 
     env:
