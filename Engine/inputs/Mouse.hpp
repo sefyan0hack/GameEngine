@@ -84,7 +84,7 @@ struct std::formatter<Mouse> {
   constexpr auto parse(std::format_parse_context& context) {
     return context.begin();
   }
-  auto format(const Mouse& obj, std::format_context& context) const {
+  auto format(const Mouse& obj, auto& context) const {
     return std::format_to(context.out(),
     R"({{ "x": {}, "y": {}, "dx": {}, "dy": {}, "isMouseIn": {}, "isLocked": {} }})"
     , obj.m_X, obj.m_Y, obj.m_Dx, obj.m_Dy, obj.isMouseIn, obj.isLocked

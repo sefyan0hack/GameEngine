@@ -68,7 +68,7 @@ struct std::formatter<ShaderProgram::GlslType> {
   constexpr auto parse(std::format_parse_context& context) {
     return context.begin();
   }
-  auto format(const ShaderProgram::GlslType& obj, std::format_context& context) const {
+  auto format(const ShaderProgram::GlslType& obj, auto& context) const {
     auto [loc, type, size] = obj;
     return std::format_to(context.out(),
     R"({{ "loc": {}, "type": {}, "size": {} }})",
@@ -82,10 +82,10 @@ struct std::formatter<ShaderProgram> {
   constexpr auto parse(std::format_parse_context& context) {
     return context.begin();
   }
-  auto format(const ShaderProgram& obj, std::format_context& context) const {
+  auto format(const ShaderProgram& obj, auto& context) const {
     return std::format_to(context.out(),
     R"({{ "id": {}, "attribs": {}, "uniforms": {} }})",
-    obj.m_Id, MapWrapper{obj.m_Attribs}, MapWrapper{obj.m_Uniforms});
+    obj.m_Id, obj.m_Attribs, obj.m_Uniforms);
   }
 };
 #endif

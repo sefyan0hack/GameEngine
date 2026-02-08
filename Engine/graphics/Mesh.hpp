@@ -79,7 +79,7 @@ struct std::formatter<Mesh> {
   constexpr auto parse(std::format_parse_context& context) {
     return context.begin();
   }
-  auto format(const Mesh& obj, std::format_context& context) const {
+  auto format(const Mesh& obj, auto& context) const {
     return std::format_to(context.out(),
     R"({{ "VAO": {}, "VBO": {}, "verticesSize": {} }})"
     , obj.VAO, obj.VBO, obj.vextex_size());

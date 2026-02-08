@@ -41,7 +41,7 @@ struct std::formatter<GameObject> {
   constexpr auto parse(std::format_parse_context& context) {
     return context.begin();
   }
-  auto format(const GameObject& obj, std::format_context& context) const {
+  auto format(const GameObject& obj, auto& context) const {
     return std::format_to(context.out(),
     R"({{ "transform": {} }})",
     obj.m_Transform);

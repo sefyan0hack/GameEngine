@@ -27,7 +27,7 @@
 ---
 
 ## Prerequisites
-- C++ compiler with C++23 support (MSVC 2022+, GCC 14+, Clang 19+)
+- C++ compiler with C++23 support (MSVC 19.44+, GCC 15+, Clang 20+)
 - [CMake](https://cmake.org/) ≥ 3.28
 - Optional for targets:
   - Emscripten SDK (for web builds)

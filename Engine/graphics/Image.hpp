@@ -53,7 +53,7 @@ struct std::formatter<Image> {
   constexpr auto parse(std::format_parse_context& context) {
     return context.begin();
   }
-  auto format(const Image& obj, std::format_context& context) const {
+  auto format(const Image& obj, auto& context) const {
     return std::format_to(context.out(),
     R"({{ "Width": {}, "Height": {}, "Channels": {}, "Data": {} }})"
     , obj.m_Width, obj.m_Height, obj.m_Channels, static_cast<const void*>(obj.m_Data));

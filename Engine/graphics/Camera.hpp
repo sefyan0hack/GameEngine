@@ -75,7 +75,7 @@ struct std::formatter<Camera> {
   constexpr auto parse(std::format_parse_context& context) {
     return context.begin();
   }
-  auto format(const Camera& obj, std::format_context& context) const {
+  auto format(const Camera& obj, auto& context) const {
     return std::format_to(context.out(),
     R"({{ "position": {}, "view": {} }})"
     , obj.m_Position, obj.view());

@@ -56,7 +56,7 @@ struct std::formatter<Shader> {
   constexpr auto parse(std::format_parse_context& context) {
     return context.begin();
   }
-  auto format(const Shader& obj, std::format_context& context) const {
+  auto format(const Shader& obj, auto& context) const {
     return std::format_to(context.out(),
     R"({{ "id": {}, "type": "{}" }})"
     , obj.m_Id, obj.type_name());

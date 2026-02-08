@@ -49,7 +49,7 @@ template<class T>
   requires std::is_same_v<T, stacktrace_entry> || std::is_same_v<T, stacktrace>
 struct std::formatter<T> {
   constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
-  auto format(const T& obj, std::format_context& ctx) const {
+  auto format(const T& obj, auto& ctx) const {
     return std::format_to(ctx.out(), "{}", to_string(obj));
   }
 };

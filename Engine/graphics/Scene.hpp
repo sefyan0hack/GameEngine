@@ -41,10 +41,10 @@ struct std::formatter<Scene> {
   constexpr auto parse(std::format_parse_context& context) {
     return context.begin();
   }
-  auto format(const Scene& obj, std::format_context& context) const {
+  auto format(const Scene& obj, auto& context) const {
     return std::format_to(context.out(),
     R"({{ "Entities": {} }})"
-    , VecWrapper{obj.m_Entities});
+    , obj.m_Entities);
   }
 };
 #endif

@@ -47,7 +47,7 @@ struct std::formatter<std::variant<Ts...>> {
   constexpr auto parse(std::format_parse_context& context) {
     return context.begin();
   }
-  auto format(const std::variant<Ts...>& obj, std::format_context& context) const {
+  auto format(const std::variant<Ts...>& obj, auto& context) const {
     return std::visit(
         [&context](const auto& i){ return std::format_to(context.out(), "{}", i); },
         obj
@@ -61,7 +61,7 @@ struct std::formatter<glm::vec2> {
   constexpr auto parse(std::format_parse_context& context) {
     return context.begin();
   }
-  auto format(const glm::vec2& obj, std::format_context& context) const {
+  auto format(const glm::vec2& obj, auto& context) const {
     return std::format_to(context.out(),
     R"({{ "x": {}, "y": {} }})"
     , obj.x, obj.y);
@@ -74,7 +74,7 @@ struct std::formatter<glm::vec3, char> {
   constexpr auto parse(std::format_parse_context& context) {
     return context.begin();
   }
-  auto format(const glm::vec3& obj, std::format_context& context) const {
+  auto format(const glm::vec3& obj, auto& context) const {
     return std::format_to(context.out(),
     R"({{ "x": {}, "y": {}, "z": {} }})"
     , obj.x, obj.y, obj.z);
@@ -87,7 +87,7 @@ struct std::formatter<glm::mat4> {
   constexpr auto parse(std::format_parse_context& context) {
     return context.begin();
   }
-  auto format(const glm::mat4& obj, std::format_context& context) const {
+  auto format(const glm::mat4& obj, auto& context) const {
     return std::format_to(context.out(),
   "[[ {}, {}, {}, {} ], [ {}, {}, {}, {} ], [ {}, {}, {}, {} ], [ {}, {}, {}, {} ]]"
     ,
@@ -98,93 +98,13 @@ struct std::formatter<glm::mat4> {
   }
 };
 
-template<typename Map>
-struct MapWrapper {
-    const Map& map;
-};
-
-template <typename Vec>
-struct VecWrapper {
-    const Vec& vec;
-};
-
-template <typename Que>
-struct QueWrapper {
-    const Que& que;
-};
-
-// Formatter for MapWrapper
-template<typename Map>
-struct std::formatter<MapWrapper<Map>> {
-    constexpr auto parse(std::format_parse_context& ctx) {
-        return ctx.begin();
-    }
-
-    auto format(const MapWrapper<Map>& wrapper, std::format_context& ctx) const {
-        auto out = ctx.out();
-        out = std::format_to(out, "{{ ");
-        bool first = true;
-        for (const auto& [key, value] : wrapper.map) {
-            if (first) first = false;
-            else out = std::format_to(out, ", ");
-            out = std::format_to(out, R"("{}": "{}")", key, value);
-        }
-        out = std::format_to(out, " }}");
-        return out;
-    }
-};
-
-// Formatter for VecWrapper
-template<typename Vec>
-struct std::formatter<VecWrapper<Vec>> {
-    constexpr auto parse(std::format_parse_context& ctx) {
-        return ctx.begin();
-    }
-
-    auto format(const VecWrapper<Vec>& wrapper, std::format_context& ctx) const {
-        auto out = ctx.out();
-        out = std::format_to(out, "[ ");
-        bool first = true;
-        for (const auto& elem : wrapper.vec) {
-            if (first) first = false;
-            else out = std::format_to(out, ", ");
-            out = std::format_to(out, "{}", elem);
-        }
-        out = std::format_to(out, " ]");
-        return out;
-    }
-};
-
-// Formatter for QueWrapper
-template<typename Que>
-struct std::formatter<QueWrapper<Que>> {
-    constexpr auto parse(std::format_parse_context& ctx) {
-        return ctx.begin();
-    }
-
-    auto format(const QueWrapper<Que>& wrapper, std::format_context& ctx) const {
-        auto out = ctx.out();
-        out = std::format_to(out, "[ ");
-        Que q = wrapper.que;
-        bool first = true;
-        while (!q.empty()) {
-          if (first) first = false;
-          else out = std::format_to(out, ", ");
-          out = std::format_to(out, "{}", q.front());
-          q.pop();
-        }
-        out = std::format_to(out, " ]");
-        return out;
-    }
-};
-
 template<>
 struct std::formatter<TypeInfo> {
     constexpr auto parse(std::format_parse_context& ctx) {
         return ctx.begin();
     }
 
-    auto format(const TypeInfo& obj, std::format_context& ctx) const {
+    auto format(const TypeInfo& obj, auto& ctx) const {
         return std::format_to(ctx.out(), 
             R"({{ Type: "{}", Parent: "{}", Kind: "{}", Hash: {}, Size: {}, Align: {}, Empty: {} }})",
             obj.name, obj.parent, obj.kind, obj.hash, obj.size, obj.alignment, obj.empty

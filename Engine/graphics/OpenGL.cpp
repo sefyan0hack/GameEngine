@@ -29,6 +29,7 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
 
     auto vendor = reinterpret_cast<const char*>(gl::GetString(GL_VENDOR));
     auto renderer = reinterpret_cast<const char*>(gl::GetString(GL_RENDERER));
+
     m_Vendor = vendor ? vendor : "unknown";
     m_Renderer = renderer ? renderer : "unknown";
 
@@ -42,8 +43,11 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     auto exts = eglQueryString(window.display(), EGL_EXTENSIONS);
     #endif
 
-    m_Extensions = exts ? utils::split(exts, " ") : decltype(m_Extensions){} ;
-    
+    m_Extensions = exts ? std::string_view{exts}
+        | std::views::split(' ')
+        | std::views::filter([](auto const &s) { return !s.empty(); })
+        | std::ranges::to<std::vector<std::string>>() : decltype(m_Extensions){} ;
+
     gl::Enable(GL_DEPTH_TEST);
     gl::DepthFunc(GL_LESS);
 
@@ -65,7 +69,7 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     debug::log("GL Version : Wanted:({}.{}) -> Got:({}.{})", gl::OPENGL_MAJOR_VERSION, gl::OPENGL_MINOR_VERSION, m_Major, m_Minor);
     debug::log("GL Vendor : {}", m_Vendor);
     debug::log("GL Renderer : {}", m_Renderer);
-    debug::log("GL Exts : {}", utils::to_string(m_Extensions));
+    debug::log("GL Exts : {}", m_Extensions);
     debug::log("Max Texture Units : {}", m_MaxTextureUnits);
     debug::log("Max Texture Size : {0} x {0}", m_MaxTextureSize);
     debug::log("Max Texture3D Size : {0} x {0} x {0}", m_MaxTexture3DSize);
@@ -97,7 +101,6 @@ auto OpenGL::is_valid() const -> bool
 {
     return m_Context != GL_CTX{};
 }
-
 
 auto OpenGL::set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void
 {
