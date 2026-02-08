@@ -43,10 +43,16 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     auto exts = eglQueryString(window.display(), EGL_EXTENSIONS);
     #endif
 
-    m_Extensions = exts ? std::string_view{exts}
-        | std::views::split(' ')
-        | std::views::filter([](auto const &s) { return !s.empty(); })
-        | utils::to<std::vector<std::string>>() : decltype(m_Extensions){} ;
+    if(exts) {
+        auto v = std::string_view{exts}
+            | std::views::split(' ')
+            | std::views::filter([](auto const &s) { return !s.empty(); })
+            | std::views::transform([](auto&& subrange) {
+                return std::string(subrange.begin(), subrange.end());
+            });
+        // m_Extensions.emplace_back(v.begin(), v.end());
+        std::ranges::copy(v, std::back_inserter(m_Extensions));
+    }
 
     gl::Enable(GL_DEPTH_TEST);
     gl::DepthFunc(GL_LESS);

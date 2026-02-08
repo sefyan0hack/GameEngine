@@ -22,61 +22,6 @@ namespace utils {
 template<class... Ts>
 struct overloaded : Ts... { using Ts::operator()...; };
 
-#if 0 //defined(__cpp_lib_ranges_to_container)
-template<template<class...> class Container>
-auto to() {
-    return std::ranges::to<Container>();
-}
-
-template<typename Container>
-auto to() {
-    return std::ranges::to<Container>();
-}
-
-#else
-    #include <iterator>
-    namespace detail {
-        template<template<class...> class Container>
-        struct my_to_closure {
-            template<std::ranges::range R>
-            auto operator()(R&& r) const {
-                using value_type = std::ranges::range_value_t<R>;
-                return Container<value_type>(std::ranges::begin(r), std::ranges::end(r));
-            }
-        };
-    }
-
-    template<template<class...> class Container>
-    auto to() {
-        return detail::my_to_closure<Container>{};
-    }
-    template<typename Container>
-    struct to_adaptor_concrete {
-        template<std::ranges::range R>
-        requires std::constructible_from<Container, 
-                  std::ranges::iterator_t<R>, 
-                  std::ranges::iterator_t<R>>
-        auto operator()(R&& r) const {
-            return Container(std::ranges::begin(r), std::ranges::end(r));
-        }
-        
-        template<std::ranges::range R>
-        friend auto operator|(R&& r, const to_adaptor_concrete& self) {
-            return self(std::forward<R>(r));
-        }
-    };
-    
-    // Helper to detect if something is a template template
-    template<typename T>
-    struct is_template_template : std::false_type {};
-    
-    template<template<class...> class Container, typename... Args>
-    struct is_template_template<Container<Args...>> : std::false_type {};
-    
-    template<template<class...> class Container>
-    struct is_template_template<Container> : std::true_type {};
-#endif
-
 /**
  * @brief Convert a std::variant type list to a compile-time array of Type.
  *
@@ -257,20 +202,12 @@ inline auto to_hex(T* data, std::size_t n) -> std::string
 {
     static_assert(std::is_trivially_copyable_v<T>, "to_hex requires trivially copyable types for safe byte access");
 
-    #if defined(__cpp_lib_ranges_join_with)
-    return std::as_bytes(std::span(data, n)) 
-        | std::views::transform([](auto b) { return ::format("0x{:02X}", static_cast<uint8_t>(b)); })
-        | std::views::join_with(' ')
-        | utils::to<std::string>();
-    #else
-        // Fallback for Android NDK / Older Libs
-        std::string res;
-        for (auto const& b : std::as_bytes(std::span(data, n)) ) {
-            if (!res.empty()) res += ' ';
-            res += ::format("0x{:02X}", static_cast<uint8_t>(b));
-        }
-        return res;
-    #endif
+    std::string res;
+    for (auto const& b : std::as_bytes(std::span(data, n)) ) {
+        if (!res.empty()) res += ' ';
+        res += ::format("0x{:02X}", static_cast<uint8_t>(b));
+    }
+    return res;
 }
 
 /**
