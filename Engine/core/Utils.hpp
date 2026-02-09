@@ -273,7 +273,7 @@ inline auto to_hex(const T (&data)[N]) -> std::string
  */
 auto pointer_to_string(auto* ptr) -> std::string
 {
-    using Pointee = std::decay_t<decltype(ptr)>>;
+    using Pointee = std::decay_t<decltype(ptr)>;
     constexpr const char* r = "*({}){}";
     constexpr auto type = meta::display_string_of(meta::decay(^^decltype(ptr)));
 
