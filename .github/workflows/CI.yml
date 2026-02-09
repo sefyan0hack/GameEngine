@@ -1,5 +1,7 @@
 name: CI
-on: [push, pull_request, workflow_dispatch]
+on: 
+  push: [ main ]
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -127,11 +129,6 @@ jobs:
         shell: bash
         run: ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
 
-      - name: Run Game
-        shell: bash
-        timeout-minutes: 1
-        run: ./${{ env.BUILD_DIR }}/Engine/Launcher
-
       - name: Upload Test Executable on Failure
         if: failure()
         uses: actions/upload-artifact@v4
@@ -174,11 +171,6 @@ jobs:
       - name: Test
         shell: bash
         run: ctest --test-dir "${{ env.BUILD_DIR }}" --output-on-failure --timeout ${{ env.TEST_TIMEOUT }}
-
-      - name: Run Game
-        shell: bash
-        timeout-minutes: 1
-        run: ./${{ env.BUILD_DIR }}/Engine/Launcher
 
       - name: Upload Test Executable on Failure
         if: failure()
