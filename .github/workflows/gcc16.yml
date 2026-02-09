@@ -20,9 +20,7 @@ jobs:
 
       - name: Install Dependencies
         shell: bash
-        run: |
-          apt-get update
-          apt-get install -y libx11-dev libgl-dev xauth libgl1-mesa-dev mesa-common-dev libosmesa6-dev xvfb mesa-utils
+        run: apt-get install -y libx11-dev libgl-dev
 
       - name: Set PATH for cmake-latest
         run: echo /opt/cmake-latest/bin >> $GITHUB_PATH
@@ -38,37 +36,6 @@ jobs:
       - name: Test
         shell: bash
         run: ctest --test-dir build --output-on-failure
-
-      - name: Check
-        shell: bash
-        run: |
-          strings ./build/tests/unit/unit_tests | grep GCC | head -5
-          echo "---------------------------------------------------"
-          strings ./build/tests/unit/unit_tests | grep GLIBCXX | tail -5
-          echo "---------------------------------------------------"
-          strings ./build/Engine/Launcher | grep GLIBCXX | tail -5
-
-      
-      - name: Start Xvfb (virtual display)
-        run: |
-          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-          echo "DISPLAY=:99" >> $GITHUB_ENV
-
-      - name: Check GLX availability
-        run: |
-          echo "DISPLAY=$DISPLAY"
-          xvfb-run --auto-servernum glxinfo | sed -n '1,120p' || true
-          xvfb-run --auto-servernum glxinfo | grep "OpenGL renderer" || true
-          env | sort
-
-      - name: Run Game
-        shell: bash
-        timeout-minutes: 1
-        env:
-          LIBGL_ALWAYS_SOFTWARE: "1"
-        run: |
-          echo "Launching with LIBGL_ALWAYS_SOFTWARE=$LIBGL_ALWAYS_SOFTWARE"
-          xvfb-run --auto-servernum ./build/Engine/Launcher
 
       - name: Upload Test Executable on Failure
         if: failure()

@@ -111,7 +111,7 @@ auto Texture::img2d_to_gpu(const auto *data, GLsizei width, GLsizei height, GLin
         >;
 
     if constexpr(!std::is_arithmetic_v<DataType>){
-        throw Exception("`{}` not allowd only primitives Types", meta::display_string_of(^^DataType));
+        throw Exception("`{}` not allowd only primitives Types", meta::display_string_of(meta::decay(^^decltype(*data))));
     }
 
     auto gl_type = []() -> GLenum {
