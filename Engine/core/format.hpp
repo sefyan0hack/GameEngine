@@ -98,21 +98,6 @@ struct std::formatter<glm::mat4> {
   }
 };
 
-template<>
-struct std::formatter<meta::info> {
-    constexpr auto parse(std::format_parse_context& ctx) {
-        return ctx.begin();
-    }
-
-    auto format(const meta::info& obj, auto& ctx) const {
-      using namespace meta;
-        return std::format_to(ctx.out(), 
-            R"({{ Type: "{}", Parent: "{}", Size: {}, Align: {}, Empty: {} }})",
-            display_string_of(type_of(obj)), display_string_of(parent_of(obj)), size_of(obj), meta::alignment_of(obj), is_empty_type(obj)
-        );
-    }
-};
-
 template <typename... Args>
 std::string format(std::format_string<Args...> fmt, Args&&... args) { return std::format(fmt, std::forward<Args>(args)...); }
 
