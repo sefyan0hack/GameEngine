@@ -51,7 +51,7 @@ jobs:
       - name: Run Game
         shell: bash
         timeout-minutes: 1
-        run:  xvfb-run --auto-servernum ./build/Engine/Launcher # <- this could run for ever 
+        run:  xvfb-run --auto-servernum --server-args="-screen 0 1280x800x24 +extension GLX +render -noreset" ./build/Engine/Launcher # <- this could run for ever 
 
       - name: Upload Test Executable on Failure
         if: failure()
