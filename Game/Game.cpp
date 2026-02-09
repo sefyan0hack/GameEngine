@@ -49,7 +49,6 @@ public:
             }
         );
 
-        std::log(meta::identifier_of(^^this));
     }
 
     auto update(float delta) -> void
