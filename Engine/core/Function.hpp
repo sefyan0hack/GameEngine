@@ -65,7 +65,7 @@ inline Function<R (*)(Args...)>::Function(FuncType fptr, std::string name, Befor
     , m_Befor(before)
     , m_After(after)
     , m_Name(name)
-    , m_ReturnType(:meta::display_string_of(^^R))
+    , m_ReturnType(meta::display_string_of(^^R))
     , m_ArgsTypes{meta::display_string_of(^^Args)...}
     , m_Calls(0)
     {}
