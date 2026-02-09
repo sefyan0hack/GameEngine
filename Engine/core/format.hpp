@@ -108,7 +108,7 @@ struct std::formatter<meta::info> {
       using namespace meta;
         return std::format_to(ctx.out(), 
             R"({{ Type: "{}", Parent: "{}", Size: {}, Align: {}, Empty: {} }})",
-            display_string_of(type_of(obj)), display_string_of(parent_of(obj)), size_of(obj), alignment_of(obj), is_empty_type(obj)
+            display_string_of(type_of(obj)), display_string_of(parent_of(obj)), size_of(obj), meta::alignment_of(obj), is_empty_type(obj)
         );
     }
 };
