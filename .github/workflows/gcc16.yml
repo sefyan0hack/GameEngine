@@ -54,6 +54,13 @@ jobs:
           Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
           echo "DISPLAY=:99" >> $GITHUB_ENV
 
+      - name: Check GLX availability
+        run: |
+          echo "DISPLAY=$DISPLAY"
+          xvfb-run --auto-servernum glxinfo | sed -n '1,120p' || true
+          xvfb-run --auto-servernum glxinfo | grep "OpenGL renderer" || true
+          env | sort
+
       - name: Run Game
         shell: bash
         timeout-minutes: 1
