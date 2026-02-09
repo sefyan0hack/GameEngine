@@ -1,7 +1,8 @@
 name: GCC 16
 
 on:
-  push: [ reflection ]
+  push:
+    branches: [ reflection ]
   workflow_dispatch:
 
 jobs:
