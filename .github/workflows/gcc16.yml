@@ -20,7 +20,9 @@ jobs:
 
       - name: Install Dependencies
         shell: bash
-        run: apt-get install -y libx11-dev libgl-dev xvfb
+        run: |
+          apt-get update
+          apt-get install -y libx11-dev libgl-dev xvfb
 
       - name: Set PATH for cmake-latest
         run: echo /opt/cmake-latest/bin >> $GITHUB_PATH
