@@ -10,7 +10,7 @@ class ENGINE_EXPORT Transform
 public:
     friend struct std::formatter<Transform>;
     Transform();
-    Transform(glm::vec3 position, glm::vec3 rotaion = {0.0f, 0.0f, 0.0f}, glm::vec3 scale = {1.0f, 1.0f, 1.0f});
+    Transform(glm::vec3 pos, glm::vec3 rot = {0.0f, 0.0f, 0.0f}, glm::vec3 s = {1.0f, 1.0f, 1.0f});
 
     auto operator=(const glm::mat4& M) -> Transform;
     operator glm::mat4 () const;

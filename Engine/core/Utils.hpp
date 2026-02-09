@@ -1,7 +1,6 @@
 #pragma once
 #include <version>
 #include <type_traits>
-#include <variant>
 #include <utility>
 #include <string>
 #include <cstring>
@@ -13,7 +12,6 @@
 #include <fstream>
 #include <thread>
 #include <functional>
-#include <ranges>
 
 #include "Exception.hpp"
 
@@ -22,31 +20,6 @@ namespace utils {
 template<class... Ts>
 struct overloaded : Ts... { using Ts::operator()...; };
 
-/**
- * @brief Convert a std::variant type list to a compile-time array of Type.
- *
- * @tparam T A std::variant<...> type.
- * @return std::array<Type, N> where N == std::variant_size_v<T>
- *
- * @details
- * This helper inspects the alternative types inside a std::variant and
- * constructs an array of Type structures.
- *
- * Example:
- * @code
- * using V = std::variant<int, std::string>;
- * constexpr auto arr = utils::variant_to_array<V>();
- * @endcode
- */
-template<class T>
-constexpr auto variant_to_array() -> std::array<TypeInfo, std::variant_size_v<T>>
-{
-    return []<std::size_t... I>(std::index_sequence<I...>) {
-        return std::array<TypeInfo, sizeof...(I)> {{
-            TypeInfo::make<std::variant_alternative_t<I, T>>()...
-        }};
-    }(std::make_index_sequence<std::variant_size_v<T>>{});
-}
 /**
  * @brief Extracts the directory portion of a file path at compile-time.
  *
@@ -276,7 +249,7 @@ auto pointer_to_string(auto* ptr) -> std::string
     using Pointee = std::remove_cv_t<std::remove_pointer_t<decltype(ptr)>>;
     constexpr const char* r = "*({}){}";
 
-    constexpr auto type = ::type_name<Pointee>();
+    constexpr auto type = typeid(Pointee).name();
 
     if (ptr == nullptr) return "null";
     else if constexpr (std::is_pointer_v<Pointee>) return pointer_to_string(*ptr);

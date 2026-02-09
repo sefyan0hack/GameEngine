@@ -7,7 +7,7 @@
 #include <variant>
 #include <format>
 #include <utility>
-#include "Platform.hpp"
+#include <cstdint>
 #include <glm/glm.hpp>
 
 #ifndef __cpp_lib_formatters
@@ -21,7 +21,7 @@ constexpr decltype(auto) make_safe_arg(T&& v) {
 template<typename T>
 requires (!std::formattable<T, char>)
 std::string make_safe_arg(T&&) {
-    return std::format("[Unformattable: {}]", ::type_name<std::decay_t<T>>());
+    return std::format("[Unformattable: {}]","typeid");
 }
 
 template <typename... Args>
@@ -96,20 +96,6 @@ struct std::formatter<glm::mat4> {
     obj[0][2], obj[1][2], obj[2][2], obj[3][2],
     obj[0][3], obj[1][3], obj[2][3], obj[3][3]);
   }
-};
-
-template<>
-struct std::formatter<TypeInfo> {
-    constexpr auto parse(std::format_parse_context& ctx) {
-        return ctx.begin();
-    }
-
-    auto format(const TypeInfo& obj, auto& ctx) const {
-        return std::format_to(ctx.out(), 
-            R"({{ Type: "{}", Parent: "{}", Kind: "{}", Hash: {}, Size: {}, Align: {}, Empty: {} }})",
-            obj.name, obj.parent, obj.kind, obj.hash, obj.size, obj.alignment, obj.empty
-        );
-    }
 };
 
 template <typename... Args>

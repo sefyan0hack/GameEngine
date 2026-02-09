@@ -58,10 +58,7 @@ auto OpenGLRenderer::draw(const Mesh& mesh) const -> void
     gl::DrawArrays(GL_TRIANGLES, 0, mesh.vextex_size());
 }
 
-auto OpenGLRenderer::graphic_api() const -> std::string_view
-{
-	return ::type_name<std::remove_const_t<decltype(m_GApi)>>();
-}
+
 
 auto OpenGLRenderer::set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void
 {

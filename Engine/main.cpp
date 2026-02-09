@@ -1,6 +1,6 @@
 #include <APP.hpp>
 
-int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
+int main(int, char**) {
     APP app;
     app.run();
 }

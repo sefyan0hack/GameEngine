@@ -4,6 +4,7 @@
 #include <core/SysInfo.hpp>
 #include <core/Utils.hpp>
 #include <algorithm>
+#include <ranges>
 
 OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     : m_Window(window)
@@ -127,7 +128,6 @@ auto OpenGL::renderer() -> std::string
 {
     return m_Renderer;
 }
-
 
 auto OpenGL::extensions() -> std::vector<std::string>
 {

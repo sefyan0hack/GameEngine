@@ -9,10 +9,7 @@ add_subdirectory(ui)
 
 add_library(Engine)
 
-target_precompile_headers(Engine PUBLIC "${CMAKE_SOURCE_DIR}/Engine/Platform.hpp")
-
 generate_export_header(Engine)
-target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_sources( Engine
     PRIVATE
@@ -20,12 +17,19 @@ target_sources( Engine
         $<TARGET_PROPERTY:inputs,SOURCES>
         $<TARGET_PROPERTY:graphics,SOURCES>
         $<TARGET_PROPERTY:ui,SOURCES>
+        $<$<PLATFORM_ID:Android>:${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c>
     PUBLIC
     FILE_SET generated_headers
       TYPE HEADERS
-      BASE_DIRS $<TARGET_PROPERTY:Engine,BINARY_DIR>
+      BASE_DIRS ${CMAKE_CURRENT_BINARY_DIR}
       FILES 
         ${CMAKE_CURRENT_BINARY_DIR}/engine_export.h
+    PUBLIC
+    FILE_SET headers
+      TYPE HEADERS
+      BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
+      FILES 
+        ${CMAKE_CURRENT_SOURCE_DIR}/Engine.hpp
 )
 
 target_link_libraries(Engine
@@ -40,10 +44,13 @@ target_link_libraries(Engine
         project_hardening_flags
 )
 
-if(ANDROID)
-    add_library(native_app_glue STATIC ${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c)
-    target_include_directories(native_app_glue PUBLIC ${ANDROID_NDK}/sources/android/native_app_glue)
-endif()
+target_include_directories(Engine 
+    PUBLIC 
+        ${CMAKE_CURRENT_SOURCE_DIR}
+    PRIVATE
+        $<$<PLATFORM_ID:Android>:${ANDROID_NDK}/sources/android/native_app_glue>
+)
+
 
 target_link_libraries(Engine
     PRIVATE
@@ -59,7 +66,6 @@ target_link_libraries(Engine
             EGL
             GLESv3
             log
-            native_app_glue
         >
 )
 target_compile_definitions( Engine PUBLIC
@@ -96,7 +102,6 @@ target_compile_definitions( Engine PRIVATE
     $<$<BOOL:${GAME_HOT_RELOADABLE}>:GAME_HOT_RELOADABLE>
     $<$<BOOL:${CONSOLE_ATTACHED}>:CONSOLE_ATTACHED>
     $<$<BOOL:${ROBUST_GL_CHECK}>:ROBUST_GL_CHECK>
-
 )
 
 ### Launcher
@@ -108,6 +113,5 @@ else()
 endif()
 
 target_link_libraries(Launcher PRIVATE Engine)
-
 
 target_pack(Launcher)

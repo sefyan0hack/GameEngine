@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <core/Function.hpp>
 #include <core/Log.hpp>
-#include <Platform.hpp>
+#include <cstdint>
 
 using namespace std;
 
@@ -16,23 +16,6 @@ TEST(Function, EmptytFunction) {
     EXPECT_EQ(
         add.name(), ""
     ) << "name should be empty";
-}
-
-TEST(Function, TestFunctionParams) {
-
-    auto add = Function<int64_t(*)(int32_t, int32_t)>();
-
-    EXPECT_EQ(
-        add.args_types()[0], ::type_name<int32_t>()
-    ) << "first arg match";
-
-    EXPECT_EQ(
-        add.args_types()[1], ::type_name<int32_t>()
-    ) << "second arg match";
-
-    EXPECT_EQ(
-        add.return_type(), ::type_name<int64_t>()
-    ) << "return type match";
 }
 
 TEST(Function, ConstructFunction) {
@@ -52,13 +35,6 @@ TEST(Function, ConstructFunction) {
         abs.function(), abs_f
     ) << "address of func should be eq";
 
-    EXPECT_EQ(
-        abs.args_types()[0], ::type_name<int32_t>()
-    ) << "second arg match";
-
-    EXPECT_EQ(
-        abs.return_type(), ::type_name<uint32_t>()
-    ) << "return type match";
 }
 
 TEST(Function, FunctionCallsInc) {

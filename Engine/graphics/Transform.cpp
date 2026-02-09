@@ -9,10 +9,10 @@ Transform::Transform()
     , rotation(0.0f)
     , scale(1.0f)
 { CTOR_LOG }
-Transform::Transform(glm::vec3 position, glm::vec3 rotaion, glm::vec3 scale)
-    : position(position)
-    , rotation(rotaion)
-    , scale(scale)
+Transform::Transform(glm::vec3 pos, glm::vec3 rot, glm::vec3 s)
+    : position(pos)
+    , rotation(rot)
+    , scale(s)
 { CTOR_LOG }
 
 auto Transform::operator=(const glm::mat4 &M) -> Transform

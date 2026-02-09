@@ -10,7 +10,6 @@ public:
 
     virtual auto render(const class Scene& scene) const -> void = 0;
 
-    virtual auto graphic_api() const -> std::string_view = 0;
     virtual auto viewport() const -> std::tuple<uint32_t, uint32_t, uint32_t, uint32_t> = 0;
     virtual auto set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void = 0;
     virtual auto normal_mode() -> void = 0;

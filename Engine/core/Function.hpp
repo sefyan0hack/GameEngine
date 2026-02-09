@@ -54,8 +54,8 @@ inline Function<R(*)(Args...)>::Function()
     , m_Befor(nullptr)
     , m_After(nullptr)
     , m_Name()
-    , m_ReturnType(::type_name<R>())
-    , m_ArgsTypes{::type_name<Args>()...}
+    , m_ReturnType(typeid(R).name())
+    , m_ArgsTypes{typeid(Args).name()...}
     , m_Calls(0)
     {}
 
@@ -65,8 +65,8 @@ inline Function<R (*)(Args...)>::Function(FuncType fptr, std::string name, Befor
     , m_Befor(before)
     , m_After(after)
     , m_Name(name)
-    , m_ReturnType(::type_name<R>())
-    , m_ArgsTypes{::type_name<Args>()...}
+    , m_ReturnType(typeid(R).name())
+    , m_ArgsTypes{typeid(Args).name()...}
     , m_Calls(0)
     {}
 

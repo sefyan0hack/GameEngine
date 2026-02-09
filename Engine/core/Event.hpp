@@ -1,7 +1,5 @@
 #pragma once
 #include <variant>
-#include <type_traits>
-#include <utility>
 #include <queue>
 #include "Utils.hpp"
 
@@ -19,19 +17,6 @@ using Event = std::variant<
     struct CWindow::SetFocusEvent,
     struct CWindow::QuitEvent
 >;
-
-constexpr auto Events = utils::variant_to_array<Event>();
-
-template <typename T>
-concept EventType = std::is_same_v<T, std::monostate> || ::type_name<T>().ends_with("Event");
-
-template <typename T>
-concept ISEvent = requires { typename std::variant_size<std::remove_cvref_t<T>>::type; }  && [](){
-    using V = std::remove_cvref_t<T>;
-    return []<std::size_t... I>(std::index_sequence<I...>) {
-        return (EventType<std::variant_alternative_t<I, V>> && ...);
-    }(std::make_index_sequence<std::variant_size_v<V>>{});
-}();
 
 class EventQ : public std::queue<Event> { //TODO: on push make sur that the pusher it holds the event type ??  some metaprograming time
 private: EventQ() = default;

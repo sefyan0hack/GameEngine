@@ -5,7 +5,7 @@
 #include <utility>
 #include <engine_export.h>
 
-enum class Key : uint32_t {
+enum class Key {
 
     // Alphanumeric keys (A-Z, 0-9)
     A, B, C, D, E, F, G, H, I, J, K, L, M,
