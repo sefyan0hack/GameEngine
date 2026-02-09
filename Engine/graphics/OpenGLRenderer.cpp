@@ -60,7 +60,7 @@ auto OpenGLRenderer::draw(const Mesh& mesh) const -> void
 
 auto OpenGLRenderer::graphic_api() const -> std::string_view
 {
-	return ::type_name<std::remove_const_t<decltype(m_GApi)>>();
+	return meta::display_string_of(^^std::decay_t<decltype(m_GApi)>);
 }
 
 auto OpenGLRenderer::set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void

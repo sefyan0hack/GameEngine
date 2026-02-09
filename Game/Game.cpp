@@ -48,6 +48,8 @@ public:
                 app->UiText.text(std::format("Memory: {}/{} MB", os::memory_usage(), os::memory_peak()), { 0, Text::FONT_SIZE });
             }
         );
+
+        std::log(meta::identifier_of(^^this));
     }
 
     auto update(float delta) -> void

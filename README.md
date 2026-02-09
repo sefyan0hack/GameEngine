@@ -7,7 +7,7 @@
 [![MSVC](https://img.shields.io/badge/MSVC-2022+-ff6417)]() 
 [![GCC](https://img.shields.io/badge/GCC-14+-ff6417)]() 
 [![Calng](https://img.shields.io/badge/Clang-19+-ff6417)]() 
-[![Camke](https://img.shields.io/badge/CMake-3.28+-ff6417)]()
+[![Camke](https://img.shields.io/badge/CMake-3.30+-ff6417)]()
 
 > **GameEngine** — a modern, high-performance foundation for building games and interactive applications with C++23.
 

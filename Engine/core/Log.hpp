@@ -29,8 +29,8 @@ namespace debug {
 } // namespace debug
 
 #if defined(OBJ_LIFETIME_TRACE)
-#   define CTOR_LOG debug::log("({:p})  {} {}", (const void*)this, ::type_name<std::remove_pointer_t<decltype(this)>>(), *this);
-#   define DTOR_LOG debug::log("({:p}) ~{}", (const void*)this, ::type_name<std::remove_pointer_t<decltype(this)>>());
+#   define CTOR_LOG debug::log("({:p})  {} {}", (const void*)this, meta::display_string_of(meta::decay(decltype(this))), *this);
+#   define DTOR_LOG debug::log("({:p}) ~{}", (const void*)this, meta::display_string_of(meta::decay(decltype(this)));
 #else
 #   define CTOR_LOG
 #   define DTOR_LOG

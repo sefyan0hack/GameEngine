@@ -23,7 +23,7 @@ using Event = std::variant<
 constexpr auto Events = utils::variant_to_array<Event>();
 
 template <typename T>
-concept EventType = std::is_same_v<T, std::monostate> || ::type_name<T>().ends_with("Event");
+concept EventType = std::is_same_v<T, std::monostate> || meta::display_string_of(^^T).ends_with("Event");
 
 template <typename T>
 concept ISEvent = requires { typename std::variant_size<std::remove_cvref_t<T>>::type; }  && [](){

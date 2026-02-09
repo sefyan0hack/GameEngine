@@ -39,11 +39,11 @@ struct overloaded : Ts... { using Ts::operator()...; };
  * @endcode
  */
 template<class T>
-constexpr auto variant_to_array() -> std::array<TypeInfo, std::variant_size_v<T>>
+constexpr auto variant_to_array() -> std::array<meta::info, std::variant_size_v<T>>
 {
     return []<std::size_t... I>(std::index_sequence<I...>) {
-        return std::array<TypeInfo, sizeof...(I)> {{
-            TypeInfo::make<std::variant_alternative_t<I, T>>()...
+        return std::array<meta::info, sizeof...(I)> {{
+            ^^std::variant_alternative_t<I, T>...
         }};
     }(std::make_index_sequence<std::variant_size_v<T>>{});
 }
@@ -273,10 +273,9 @@ inline auto to_hex(const T (&data)[N]) -> std::string
  */
 auto pointer_to_string(auto* ptr) -> std::string
 {
-    using Pointee = std::remove_cv_t<std::remove_pointer_t<decltype(ptr)>>;
+    using Pointee = std::decay_t<decltype(ptr)>>;
     constexpr const char* r = "*({}){}";
-
-    constexpr auto type = ::type_name<Pointee>();
+    constexpr auto type = meta::display_string_of(meta::decay(^^decltype(ptr)));
 
     if (ptr == nullptr) return "null";
     else if constexpr (std::is_pointer_v<Pointee>) return pointer_to_string(*ptr);

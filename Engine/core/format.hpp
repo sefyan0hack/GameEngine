@@ -21,7 +21,7 @@ constexpr decltype(auto) make_safe_arg(T&& v) {
 template<typename T>
 requires (!std::formattable<T, char>)
 std::string make_safe_arg(T&&) {
-    return std::format("[Unformattable: {}]", ::type_name<std::decay_t<T>>());
+    return std::format("[Unformattable: {}]", meta::display_string_of(meta::decay(^^T)));
 }
 
 template <typename... Args>
@@ -99,15 +99,16 @@ struct std::formatter<glm::mat4> {
 };
 
 template<>
-struct std::formatter<TypeInfo> {
+struct std::formatter<meta::info> {
     constexpr auto parse(std::format_parse_context& ctx) {
         return ctx.begin();
     }
 
-    auto format(const TypeInfo& obj, auto& ctx) const {
+    auto format(const meta::info& obj, auto& ctx) const {
+      using namespace meta;
         return std::format_to(ctx.out(), 
-            R"({{ Type: "{}", Parent: "{}", Kind: "{}", Hash: {}, Size: {}, Align: {}, Empty: {} }})",
-            obj.name, obj.parent, obj.kind, obj.hash, obj.size, obj.alignment, obj.empty
+            R"({{ Type: "{}", Parent: "{}", Size: {}, Align: {}, Empty: {} }})",
+            display_string_of(type_of(obj)), display_string_of(parent_of(obj)), size_of(obj), alignment_of(obj), is_empty_type(obj)
         );
     }
 };

@@ -98,7 +98,7 @@ cmrc_add_resource_library( resources
 ####################################################################################################
 # Sub Dirs
 ####################################################################################################
-
+add_compile_options(-freflection)
 add_subdirectory(Engine)
 add_subdirectory(Game)
 
