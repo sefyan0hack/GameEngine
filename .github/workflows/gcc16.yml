@@ -37,6 +37,11 @@ jobs:
         shell: bash
         run: ctest --test-dir build --output-on-failure
 
+      - name: Run Game
+        shell: bash
+        timeout-minutes: 1
+        run: ./build/Engine/Launcher # <- this could run for ever 
+
       - name: Upload Test Executable on Failure
         if: failure()
         uses: actions/upload-artifact@v4
