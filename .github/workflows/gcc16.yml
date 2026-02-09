@@ -22,7 +22,7 @@ jobs:
         shell: bash
         run: |
           apt-get update
-          apt-get install -y libx11-dev libgl-dev xvfb
+          apt-get install -y libx11-dev libgl-dev libglx-mesa0 xvfb
 
       - name: Set PATH for cmake-latest
         run: echo /opt/cmake-latest/bin >> $GITHUB_PATH
