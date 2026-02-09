@@ -3,7 +3,6 @@
 #include "OpenGL.hpp"
 #include <core/Log.hpp>
 
-
 ShaderProgram::ShaderProgram(std::shared_ptr<Shader> vertex, std::shared_ptr<Shader> fragment)
     : m_Id(gl::CreateProgram())
 {

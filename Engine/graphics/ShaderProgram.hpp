@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <format>
+#include <unordered_map>
 
 #include "gl.hpp"
 #include <glm/fwd.hpp>

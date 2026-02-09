@@ -7,12 +7,10 @@
 #include <string_view>
 #include <sstream>
 #include <chrono>
-#include <array>
 #include <vector>
 #include <fstream>
 #include <thread>
 #include <span>
-#include <functional>
 
 #include "Exception.hpp"
 
@@ -29,7 +27,7 @@ struct overloaded : Ts... { using Ts::operator()...; };
  *         or an empty std::string_view if no directory separator is found.
  *
  * @details
- * This is a consteval helper intended for compile-time extraction of the containing
+ * This is a constexpr helper intended for compile-time extraction of the containing
  * directory from a path literal. Works with both '/' and '\\' separators.
  *
  * Example:
@@ -38,76 +36,10 @@ struct overloaded : Ts... { using Ts::operator()...; };
  * // dir == "/path/to"
  * @endcode
  */
-consteval auto get_file_directory(const std::string_view file_path = __FILE__) -> std::string_view
+constexpr auto get_file_directory(const std::string_view file_path = __FILE__) -> std::string_view
 {
     const std::size_t last_slash = file_path.find_last_of("/\\");
     return (last_slash == std::string_view::npos) ? "" : file_path.substr(0, last_slash);
-}
-
-/**
- * @brief Simple compile-time fixed string wrapper usable as a NTTP.
- *
- * @tparam N Size of the stored char array (including terminating null).
- *
- * @details
- * Constructible from string literal arrays. Intended to be used with
- * compile-time string processing templates and concepts.
- */
-template <std::size_t N>
-struct FixedString {
-    constexpr FixedString(const char (&str)[N]) {
-        std::copy_n(str, N, value);
-    }
-    char value[N];
-};
-
-/**
- * @brief Compile-time transform that converts a FixedString to uppercase.
- *
- * @tparam Str A FixedString non-type template parameter.
- *
- * @details
- * This template computes an std::array<char, N> where each ASCII lowercase
- * letter is converted to uppercase. The last character remains the null
- * terminator. Use ToUpper<FixedString{"..."}>::value to access the array.
- */
-template <FixedString Str>
-struct ToUpper {
-    static constexpr auto compute() {
-        constexpr std::size_t N = sizeof(Str.value);
-        std::array<char, N> result{};
-        for (std::size_t i = 0; i < N - 1; ++i) {
-            char c = Str.value[i];
-            if (c >= 'a' && c <= 'z') {
-                result[i] = c - ('a' - 'A');
-            } else {
-                result[i] = c;
-            }
-        }
-        result[N - 1] = '\0';
-        return result;
-    }
-    static constexpr std::array<char, sizeof(Str.value)> value = compute();
-};
-
-template <FixedString Str>
-constexpr std::array<char, sizeof(Str.value)> ToUpper<Str>::value;
-
-/**
- * @brief Helper macro to produce a compile-time uppercase std::string_view.
- *
- * @param str Literal string to convert to uppercase at compile time.
- *
- * @details
- * Expands to a std::string_view referencing the compile-time uppercased data.
- * Example: to_upper("hello") yields "HELLO".
- */
-template <FixedString Str>
-constexpr std::string_view to_upper() {
-    return std::string_view{
-        ToUpper<Str>::value.data(),
-        ToUpper<Str>::value.size() - 1 // exclude null terminator
-    };
 }
 
 /**
@@ -247,7 +179,7 @@ inline auto to_hex(const T (&data)[N]) -> std::string
  */
 auto pointer_to_string(auto* ptr) -> std::string
 {
-    using Pointee = std::remove_cv_t<std::remove_pointer_t<decltype(ptr)>>;
+    using Pointee = std::decay_t<decltype(ptr)>;
     constexpr const char* r = "*({}){}";
 
     constexpr auto type = typeid(Pointee).name();
@@ -274,7 +206,6 @@ inline auto match(TVarinat&& v, TMatchers&&... m) -> decltype(auto)
         std::forward<TVarinat>(v)
     );
 }
-
 
 /**
  * @brief Repeatedly call a function at a fixed interval.
