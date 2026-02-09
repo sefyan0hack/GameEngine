@@ -41,8 +41,14 @@ jobs:
         shell: bash
         run: |
           strings ./build/tests/unit/unit_tests | grep GCC | head -5
+          echo "---------------------------------------------------"
           strings ./build/tests/unit/unit_tests | grep GLIBCXX | tail -5
+          echo "---------------------------------------------------"
           strings ./build/Engine/Launcher | grep GLIBCXX | tail -5
+          echo "---------------------------------------------------"
+          objdump -T ./build/Engine/Launcher | grep GLIBCXX_3.4.34
+          echo "---------------------------------------------------"
+          readelf -Ws ./build/Engine/Launcher | grep GLIBCXX_3.4.34
 
       - name: Run Game
         shell: bash

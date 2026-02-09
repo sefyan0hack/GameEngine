@@ -100,6 +100,11 @@ cmrc_add_resource_library( resources
 add_compile_options(-freflection)
 add_subdirectory(Engine)
 add_subdirectory(Game)
+target_link_libraries(Engine
+    PRIVATE
+        -static-libstdc++  # Static linking
+        -static-libgcc     # Also static link GCC runtime
+)
 
 ####################################################################################################
 # TEST
