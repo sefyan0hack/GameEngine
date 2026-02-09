@@ -9,6 +9,8 @@ add_subdirectory(ui)
 
 add_library(Engine)
 
+target_compile_features(Engine PUBLIC cxx_std_26)
+
 target_precompile_headers(Engine PUBLIC "${CMAKE_SOURCE_DIR}/Engine/Platform.hpp")
 
 generate_export_header(Engine)
