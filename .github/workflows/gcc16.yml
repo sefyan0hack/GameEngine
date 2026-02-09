@@ -37,6 +37,13 @@ jobs:
         shell: bash
         run: ctest --test-dir build --output-on-failure
 
+      - name: Check
+        shell: bash
+        run: |
+          strings ./build/unit/unit_tests | grep GCC | head -5
+          strings ./build/unit/unit_tests | grep GLIBCXX | tail -5
+          strings ./build/Engine/Launcher | grep GLIBCXX | tail -5
+
       - name: Run Game
         shell: bash
         timeout-minutes: 1
