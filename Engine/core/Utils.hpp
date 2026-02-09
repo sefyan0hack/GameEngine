@@ -11,6 +11,7 @@
 #include <vector>
 #include <fstream>
 #include <thread>
+#include <span>
 #include <functional>
 
 #include "Exception.hpp"
