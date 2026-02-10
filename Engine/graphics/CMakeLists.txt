@@ -1,8 +1,7 @@
 
 add_library(graphics INTERFACE)
 
-target_include_directories(graphics INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/${PLT_DIR_PATH_SUFFIX}") # platform folder
-aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/${PLT_DIR_PATH_SUFFIX}" PLT_SOURCE) # files in the platform folder
+collect_plt_sources(graphics)
 
 target_sources( graphics
     PRIVATE

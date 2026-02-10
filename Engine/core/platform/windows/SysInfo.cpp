@@ -36,26 +36,6 @@ auto os::arch() -> os::Arch
     }
 }
 
-auto os::arch_name() -> std::string
-{
-    switch (arch())
-    {
-        case Arch::x64:
-            return "x64";
-        case Arch::x86:
-            return "x86";
-        case Arch::arm :
-            return "arm";
-        case Arch::arm64:
-            return "arm64";
-        case Arch::wasm:
-        case Arch::wasm64:
-        case Arch::unknown:
-        default:
-            return "unknown";
-    }
-}
-
 auto os::proc_id() -> std::size_t
 {
     return static_cast<std::size_t>(GetCurrentProcessId());

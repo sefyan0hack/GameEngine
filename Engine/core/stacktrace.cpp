@@ -1,10 +1,5 @@
 #include "stacktrace.hpp"
-#include "Log.hpp"
-
-#if defined(WINDOWS_PLT)
-#include <windows.h>
-#endif
-
+#include "format.hpp"
 
 auto to_string(const stacktrace_entry& ste ) -> std::string
 {

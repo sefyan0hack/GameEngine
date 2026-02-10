@@ -3,16 +3,16 @@
 #include <string>
 #include <engine_export.h>
 
-
 class ENGINE_EXPORT DynLib {
 public:
     DynLib(const char* lib, bool now = true);
-    DynLib(const DynLib& other);
-    DynLib(DynLib&& other);
 
-    auto operator=(const DynLib& other) -> DynLib&;
-    auto operator=(DynLib&& other) -> DynLib&;
-    
+    DynLib(const DynLib& other) = delete;
+    auto operator=(const DynLib& other) -> DynLib& = delete;
+
+    DynLib(DynLib&& other) = delete;
+    auto operator=(DynLib&& other) -> DynLib& = delete;
+
     ~DynLib();
 
     auto load() -> void;

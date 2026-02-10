@@ -27,3 +27,14 @@ function(fetch_and_include_file name url)
 
     include_directories( SYSTEM "${INCLUDE_PATH_}")
 endfunction()
+
+macro(collect_plt_sources tgt)
+target_include_directories(${tgt} INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/${PLT_DIR_PATH_SUFFIX}") # platform folder
+aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/${PLT_DIR_PATH_SUFFIX}" PLT_SOURCE) # files in the platform folder
+
+if(UNIX)
+  target_include_directories(${tgt} INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/platform/unix")
+  aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/platform/unix" UNIX_SOURCE)
+  list(APPEND PLT_SOURCE UNIX_SOURCE)
+endif()
+endmacro()

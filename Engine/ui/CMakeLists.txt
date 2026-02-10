@@ -1,8 +1,7 @@
 
 add_library(ui INTERFACE)
 
-target_include_directories(ui INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/${PLT_DIR_PATH_SUFFIX}") # platform folder
-aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/${PLT_DIR_PATH_SUFFIX}" PLT_SOURCE) # files in the platform folder
+collect_plt_sources(ui)
 
 target_sources( ui
     PRIVATE
