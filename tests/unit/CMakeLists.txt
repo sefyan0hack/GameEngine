@@ -19,7 +19,7 @@ endif()
 target_link_libraries(unit_tests 
     PRIVATE
         Engine
-        glm::glm GTest::gtest GTest::gtest_main
+        GTest::gtest GTest::gtest_main
 )
 
 gtest_discover_tests(unit_tests DISCOVERY_MODE PRE_TEST)
