@@ -1,5 +1,7 @@
 #include "OpenGL.hpp"
 #include "Window.hpp"
+#include <core/Log.h>
+#include <cassert>
 
 OpenGL::~OpenGL()
 {
@@ -17,20 +19,24 @@ auto OpenGL::create_opengl_context() -> GL_CTX
 {
     auto surface = m_Window.surface();
     EmscriptenWebGLContextAttributes attrs;
-    emscripten_webgl_init_context_attributes(&attrs);
+    for(int depth = 0; depth <= 1; ++depth)
+    for(int stencil = 0; stencil <= 1; ++stencil)
+    for(int antialias = 0; antialias <= 1; ++antialias)
+    {
+        emscripten_webgl_init_context_attributes(&attrs);
 
-    attrs.alpha = EM_TRUE;
-    attrs.depth = EM_TRUE;
-    attrs.stencil = EM_TRUE;
-    attrs.antialias = EM_TRUE;
-    attrs.majorVersion = 2;
-    attrs.minorVersion = 0;
+        attrs.depth = depth;
+        attrs.stencil = stencil;
+        attrs.antialias = antialias;
 
-    auto context = emscripten_webgl_create_context(surface, &attrs);
+        debug::log("Requesting depth:{}, stencil: {}, antialias: {}", depth, stencil, antialias);
 
-    if (context <= 0) {
-        throw Exception("Failed to create WebGL context: GPU acceleration may be disabled.");
+        auto context = emscripten_webgl_create_context(surface, &attrs);
+
+        if (context <= 0) {
+            throw Exception("Failed to create WebGL context: GPU acceleration may be disabled.");
+        }
+
+        return context;
     }
-
-    return context;
 }
