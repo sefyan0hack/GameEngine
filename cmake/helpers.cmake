@@ -35,6 +35,6 @@ aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/${PLT_DIR_PATH_SUFFIX}" PLT_SO
 if(UNIX)
   target_include_directories(${tgt} INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/platform/unix")
   aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/platform/unix" UNIX_SOURCE)
-  list(APPEND PLT_SOURCE UNIX_SOURCE)
+  list(APPEND PLT_SOURCE ${UNIX_SOURCE})
 endif()
 endmacro()
