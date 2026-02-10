@@ -1,14 +1,6 @@
 #include "SysInfo.hpp"
-#include "Log.hpp"
-#include "Exception.hpp"
-#include <fstream>
 #include <string>
-#include <sstream>
-#include <cassert>
-#include <unistd.h>
-#include <dirent.h>
 #include <sys/system_properties.h>
-#include <dlfcn.h>
 
 auto os::system() -> os::Target
 {
