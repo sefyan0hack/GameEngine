@@ -56,7 +56,7 @@ runs:
 
     - name: Configure
       shell: bash
-      run: emcmake cmake -S . -B ${{ inputs.build_dir }} -G Ninja -DCMAKE_BUILD_TYPE=${{ inputs.build_type }} ${{ inputs.cmake_flags }}
+      run: emcmake cmake -S . -B ${{ inputs.build_dir }} -G Ninja -DCMAKE_BUILD_TYPE=${{ inputs.build_type }} "${{ inputs.cmake_flags }}"
 
     - name: Build
       shell: bash

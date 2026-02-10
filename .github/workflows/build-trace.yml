@@ -19,7 +19,7 @@ jobs:
       with:
         os: ${{ runner.os }}
         compiler: llvm
-        cmake_flags: "-DCMAKE_CXX_FLAGS=-ftime-trace"
+        cmake_flags: -DCMAKE_CXX_FLAGS="-ftime-trace"
 
     - name: Organize Traces
       shell: pwsh
