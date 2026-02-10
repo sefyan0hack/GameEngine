@@ -24,8 +24,7 @@ jobs:
           uses: ./.github/actions/Web-build
           with:
             build_type: "Release"
-            cmake_flags: |
-              -DCMAKE_EXE_LINKER_FLAGS="-sGL_DEBUG=1"
+            cmake_flags: -DCMAKE_EXE_LINKER_FLAGS="-sGL_DEBUG=1"
 
         - name: Setup Pages
           uses: actions/configure-pages@v5
