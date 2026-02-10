@@ -1,22 +1,9 @@
 
 if(EMSCRIPTEN)
 
-    add_compile_options(
-        -Wno-dollar-in-identifier-extension
-        -fexperimental-library
-        -pthread
-    )
-
     add_link_options(
-        -sUSE_PTHREADS=1
-        -sPTHREAD_POOL_SIZE=4
-
-        -sUSE_WEBGL2=1
+        -sMIN_WEBGL_VERSION=2
         -sFULL_ES3=1
-        -sMIN_WEBGL_VERSION=1
-        -sMAX_WEBGL_VERSION=2
-
-        -sINITIAL_MEMORY=268435456
 
         -sDISABLE_EXCEPTION_THROWING=0
         -sDISABLE_EXCEPTION_CATCHING=0
