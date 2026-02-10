@@ -1,6 +1,6 @@
 #include "OpenGL.hpp"
 #include "Window.hpp"
-#include <core/Log.h>
+#include <core/Log.hpp>
 #include <cassert>
 
 OpenGL::~OpenGL()
