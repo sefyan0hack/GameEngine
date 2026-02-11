@@ -73,6 +73,7 @@ if(COVERAGE)
 
     target_link_options(project_coverage_flags INTERFACE
         $<$<CXX_COMPILER_ID:GNU,Clang>:--coverage>
+        $<$<CXX_COMPILER_ID:Clang>:-fprofile-instr-generate -fcoverage-mapping>
     )
 
 endif()
