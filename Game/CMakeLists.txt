@@ -2,7 +2,7 @@
 include(Pack)
 
 if(ANDROID)
-  add_library(Game)
+  add_library(Game SHARED)
 else()
   add_executable(Game)
 endif()
