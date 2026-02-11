@@ -13,7 +13,7 @@ namespace debug {
         auto now = ::format("{}", std::chrono::system_clock::now());
 
         #if defined(CONSOLE_ATTACHED)
-            printf_("%s : %s", now.c_str(), msg.c_str());
+            printf_("%s : %s\n", now.c_str(), msg.c_str());
         #else
             std::ofstream out(LOG_FILE, std::ios::app);
             out << now << " : " << msg << '\n';
