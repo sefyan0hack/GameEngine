@@ -1,10 +1,9 @@
 
-include(GenerateExportHeader)
 include(Pack)
 
 add_executable(Game)
 
-generate_export_header(Game)
+set_target_properties(Game PROPERTIES ENABLE_EXPORTS ON)
 
 target_sources( Game PRIVATE Game.cpp )
 

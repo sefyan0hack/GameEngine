@@ -2,14 +2,13 @@
 #include <memory>
 #include <random>
 #include <Engine.hpp>
-#include <game_export.h>
 
 APP* app;
 extern cmrc::embedded_filesystem embed_filesystem;
 
 using namespace std;
 
-class GAME_EXPORT Game
+class Game
 {
 
 public:
@@ -77,27 +76,27 @@ public:
 // no toche code
 extern "C" {
 
-    GAME_EXPORT auto game_ctor() -> void*
+    auto game_ctor() -> void*
     {
         return new Game();
     }
 
-    GAME_EXPORT auto game_dtor(void* game) -> void
+    auto game_dtor(void* game) -> void
     {
         delete static_cast<Game*>(game);
     }
 
-    GAME_EXPORT auto game_set_app(APP* app_) -> void
+    auto game_set_app(APP* app_) -> void
     {
         ::app = app_;
     }
 
-    GAME_EXPORT auto game_update(void* game, float delta) -> void
+    auto game_update(void* game, float delta) -> void
     {
         static_cast<Game*>(game)->update(delta);
     }
 
-    GAME_EXPORT auto game_on_deltamouse(void* game, float dx, float dy) -> void
+    auto game_on_deltamouse(void* game, float dx, float dy) -> void
     {
         static_cast<Game*>(game)->on_deltamouse(dx, dy);
     }
