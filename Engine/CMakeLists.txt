@@ -50,7 +50,6 @@ target_include_directories(Engine
         $<$<PLATFORM_ID:Android>:${ANDROID_NDK}/sources/android/native_app_glue>
 )
 
-
 target_link_libraries(Engine
     PRIVATE
         ${OPENGL_LIBRARIES}
@@ -65,6 +64,15 @@ target_link_libraries(Engine
             EGL
             GLESv3
             log
+        >
+        $<$<PLATFORM_ID:Emscripten>:
+            -sMIN_WEBGL_VERSION=2
+            -sFULL_ES3=1
+
+            -sALLOW_MEMORY_GROWTH=1
+
+            -sDISABLE_EXCEPTION_THROWING=0
+            -sDISABLE_EXCEPTION_CATCHING=0
         >
 )
 
@@ -90,4 +98,5 @@ target_compile_definitions( Engine PRIVATE
 
     $<$<BOOL:${CONSOLE_ATTACHED}>:CONSOLE_ATTACHED>
     $<$<BOOL:${ROBUST_GL_CHECK}>:ROBUST_GL_CHECK>
+    $<$<BOOL:${OBJ_LIFETIME_TRACE}>:OBJ_LIFETIME_TRACE>
 )

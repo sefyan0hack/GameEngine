@@ -1,3 +1,4 @@
+include(FeatureSummary)
 
 # Find OpenGL package
 if(ANDROID)

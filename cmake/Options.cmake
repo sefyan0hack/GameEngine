@@ -1,4 +1,5 @@
 include(CMakeDependentOption)
+include(FeatureSummary)
 
 option(WITH_TESTS           "Tests"                                   OFF)
 option(COVERAGE             "Code coverage"                           OFF)
