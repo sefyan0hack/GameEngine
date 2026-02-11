@@ -91,7 +91,3 @@ target_compile_definitions( Engine PRIVATE
     $<$<BOOL:${CONSOLE_ATTACHED}>:CONSOLE_ATTACHED>
     $<$<BOOL:${ROBUST_GL_CHECK}>:ROBUST_GL_CHECK>
 )
-
-if(ANDROID)
-    target_link_options(Engine PRIVATE "-Wl,-u,ANativeActivity_onCreate")
-endif()
