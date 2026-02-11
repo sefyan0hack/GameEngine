@@ -17,6 +17,25 @@ namespace gl {
         return address;
     }
 
+    auto load_opengl_functions() -> void
+    {
+        #undef X
+        #ifdef ROBUST_GL_CHECK
+        #   define X(name)\
+            name = Function<decltype(&gl##name)>(\
+                reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name)),\
+                "gl"#name,\
+                nullptr,\
+                [](std::string info) { auto err = glGetError(); if (err != GL_NO_ERROR) [[unlikely]] if(!info.contains("glClear")) throw Exception("gl error id {} {}", err, info); }\
+            );
+        #else
+        #   define X(name)\
+            name = reinterpret_cast<decltype(&gl##name)>(gl::get_proc_address("gl"#name));
+        #endif
+
+        GLFUNCS
+    }
+
     auto get_integer(GLenum name) -> GLint
     {
         constexpr auto INVALID = std::numeric_limits<GLint>::max();
@@ -45,23 +64,4 @@ namespace gl {
             throw Exception("GetBooleanv Failed");
     }
 
-
-    auto load_opengl_functions() -> void
-    {
-        #undef X
-        #ifdef ROBUST_GL_CHECK
-        #   define X(name)\
-            name = Function<PFN_gl##name>(\
-                reinterpret_cast<PFN_gl##name>(gl::get_proc_address("gl"#name)),\
-                "gl"#name,\
-                nullptr,\
-                [](std::string info) { auto err = glGetError(); if(err != GL_NO_ERROR) if(!info.contains("glClear")) throw Exception("gl error id {} {}", err, info); }\
-            );
-        #else
-        #   define X(name)\
-            name = reinterpret_cast<PFN_gl##name>(gl::get_proc_address("gl"#name));
-        #endif
-
-        GLFUNCS
-    }
 }

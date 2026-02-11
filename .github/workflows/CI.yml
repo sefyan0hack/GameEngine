@@ -100,7 +100,7 @@ jobs:
 # ======================================================================================================================
   Ubuntu-latest:
     name: "ubuntu-latest • ${{ matrix.compiler }} • ${{ matrix.build_type }}"
-    if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip ubuntu]')"
+    if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip linux]')"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -143,7 +143,7 @@ jobs:
 # ======================================================================================================================
   Ubuntu-arm:
     name: "ubuntu-arm • ${{ matrix.compiler }} • ${{ matrix.build_type }}"
-    if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip ubuntu]')"
+    if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip linux]')"
     runs-on: ubuntu-24.04-arm
     strategy:
       fail-fast: false

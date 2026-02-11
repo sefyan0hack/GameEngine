@@ -101,7 +101,6 @@
     X(GetBooleanv)\
     X(Finish)
 
-
 #define GL_GLEXT_PROTOTYPES
 
 #include <core/Function.hpp>
@@ -140,28 +139,23 @@ namespace gl {
     #elif defined(ES_GL)
         constexpr int32_t OPENGL_MINOR_VERSION = 0;
     #endif
-    
+
     constexpr int32_t StencilBufferBits = 8;
     constexpr int32_t ChannelBits       = 8;
     constexpr int32_t AlphaBits         = 8;
 
     #undef X
-    #define X(name) using PFN_gl##name = decltype(&gl##name);
-    GLFUNCS
-
-    #undef X
     #ifdef ROBUST_GL_CHECK
-    #   define X(name) inline Function<PFN_gl##name> name;
+    #   define X(name) inline Function<decltype(&gl##name)> name;
     #else
-    #   define X(name) inline PFN_gl##name name = Function<PFN_gl##name>::default_;
+    #   define X(name) inline decltype(&gl##name) name = Function<decltype(&gl##name)>::default_;
     #endif
-
     GLFUNCS
 
     ENGINE_EXPORT auto get_proc_address(const char* name) -> void*;
+    ENGINE_EXPORT auto load_opengl_functions() -> void;
     ENGINE_EXPORT auto get_integer(GLenum name) -> GLint;
     ENGINE_EXPORT auto get_boolean(GLenum name) -> GLboolean;
-    ENGINE_EXPORT auto load_opengl_functions() -> void;
 } // namespace gl
 
 #undef GL_GLEXT_PROTOTYPES
