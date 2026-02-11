@@ -49,3 +49,10 @@ auto OpenGL::create_opengl_context() -> GL_CTX
 
     return context;
 }
+
+auto OpenGL::get_gl_extensions() const -> std::string_view
+{
+    auto ext = eglQueryString(m_Window.display(), EGL_EXTENSIONS);
+    if(ext) return ext;
+    else return {};
+}

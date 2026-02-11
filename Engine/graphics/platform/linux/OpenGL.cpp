@@ -60,3 +60,10 @@ auto OpenGL::create_opengl_context() -> GL_CTX
 
     return context;
 }
+
+auto OpenGL::get_gl_extensions() const -> std::string_view
+{
+    auto ext = glXQueryExtensionsString(m_Window.display(), DefaultScreen(m_Window.display()));
+    if(ext) return ext;
+    else return {};
+}

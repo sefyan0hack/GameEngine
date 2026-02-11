@@ -34,26 +34,14 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     m_Vendor = vendor ? vendor : "unknown";
     m_Renderer = renderer ? renderer : "unknown";
 
-    #if defined(WINDOWS_PLT)
-    auto exts = reinterpret_cast<const char*>(gl::GetExtensionsStringARB(window.surface()));
-    #elif defined(LINUX_PLT)
-    auto exts = reinterpret_cast<const char*>(glXQueryExtensionsString(window.display(), DefaultScreen(window.display())));
-    #elif defined(WEB_PLT)
-    auto exts = emscripten_webgl_get_supported_extensions();
-    #elif defined(ANDROID_PLT)
-    auto exts = eglQueryString(window.display(), EGL_EXTENSIONS);
-    #endif
+    auto v = get_gl_extensions()
+        | std::views::split(' ')
+        | std::views::filter([](auto const &s) { return !s.empty(); })
+        | std::views::transform([](auto&& subrange) {
+            return std::string(subrange.begin(), subrange.end());
+        });
 
-    if(exts) {
-        auto v = std::string_view{exts}
-            | std::views::split(' ')
-            | std::views::filter([](auto const &s) { return !s.empty(); })
-            | std::views::transform([](auto&& subrange) {
-                return std::string(subrange.begin(), subrange.end());
-            });
-        // m_Extensions.emplace_back(v.begin(), v.end());
-        std::ranges::copy(v, std::back_inserter(m_Extensions));
-    }
+    std::ranges::copy(v, std::back_inserter(m_Extensions));
 
     gl::Enable(GL_DEPTH_TEST);
     gl::DepthFunc(GL_LESS);

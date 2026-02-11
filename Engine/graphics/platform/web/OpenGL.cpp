@@ -35,3 +35,10 @@ auto OpenGL::create_opengl_context() -> GL_CTX
 
     return context;
 }
+
+auto OpenGL::get_gl_extensions() const -> std::string_view
+{
+    auto ext = emscripten_webgl_get_supported_extensions();// TODO: free
+    if(ext) return ext;
+    else return {};
+}

@@ -85,3 +85,10 @@ auto OpenGL::create_opengl_context() -> GL_CTX
  
     return opengl_context;
 }
+
+auto OpenGL::get_gl_extensions() const -> std::string_view
+{
+    auto ext = gl::GetExtensionsStringARB(m_Window.surface());
+    if(ext) return ext;
+    else return {};
+}

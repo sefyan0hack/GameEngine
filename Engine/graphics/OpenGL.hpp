@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include <string>
+#include <string_view>
 
 #include "gl.hpp"
 #include <engine_export.h>
@@ -35,6 +35,7 @@ class ENGINE_EXPORT OpenGL
     private:
         auto create_opengl_context() -> GL_CTX;
         auto make_current_opengl()  -> bool ;
+        auto get_gl_extensions() const -> std::string_view;
 
     private:
         const CWindow& m_Window;
