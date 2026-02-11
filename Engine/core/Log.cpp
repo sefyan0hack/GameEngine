@@ -4,10 +4,7 @@
 #include <fstream>
 #include <chrono>
 #include <cstdlib>
-
-#if defined(ANDROID_PLT)
-#include <android/log.h>
-#endif
+#include <Log.inl>
 
 [[maybe_unused]] constexpr auto LOG_FILE = "Engine.log";
 
@@ -16,11 +13,7 @@ namespace debug {
         auto now = ::format("{}", std::chrono::system_clock::now());
 
         #if defined(CONSOLE_ATTACHED)
-        #   if defined(ANDROID_PLT)
-            __android_log_print(ANDROID_LOG_INFO, "ENGINE", "%s : %s", now.c_str(), msg.c_str());
-        #   else
-            std::printf("%s : %s\n", now.c_str(), msg.c_str());
-        #   endif
+            print_("%s : %s", now.c_str(), msg.c_str());
         #else
             std::ofstream out(LOG_FILE, std::ios::app);
             out << now << " : " << msg << '\n';

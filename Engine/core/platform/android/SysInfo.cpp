@@ -6,7 +6,7 @@ auto os::system() -> os::Target
 {
     return os::Target::Android;
 }
-    
+ 
 auto os::system_name() -> std::string
 {
     return "Android";

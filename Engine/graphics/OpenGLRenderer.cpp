@@ -71,35 +71,16 @@ auto OpenGLRenderer::viewport() const -> std::tuple<uint32_t, uint32_t, uint32_t
     return {m_X, m_Y, m_Width, m_Height};
 }
 
-
 auto OpenGLRenderer::normal_mode() -> void
 {
-    #if defined(WEB_PLT)
-    static bool webPolyModeAvailable = has_extension("WEBGL_polygon_mode");
-    if (webPolyModeAvailable) {
-        EM_ASM({
-            const gl = Module.ctx;
-            const ext = gl.getExtension("WEBGL_polygon_mode");
-            ext.polygonModeWEBGL(gl.FRONT_AND_BACK, ext.FILL_WEBGL);
-        });
-    }
-    #elif defined(CORE_GL)
+    #if defined(CORE_GL)
     gl::PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     #endif
 }
 
 auto OpenGLRenderer::wireframe_mode() -> void
 {
-    #if defined(WEB_PLT)
-    static bool webPolyModeAvailable = has_extension("WEBGL_polygon_mode");
-    if (webPolyModeAvailable) {
-        EM_ASM({
-            const gl = Module.ctx;
-            const ext = gl.getExtension("WEBGL_polygon_mode");
-            ext.polygonModeWEBGL(gl.FRONT_AND_BACK, ext.LINE_WEBGL);
-        });
-    }
-    #elif defined(CORE_GL)
+    #if defined(CORE_GL)
     gl::PolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     #endif
 }

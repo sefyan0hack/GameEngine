@@ -68,15 +68,8 @@ target_link_libraries(Engine
             log
         >
 )
+
 target_compile_definitions( Engine PUBLIC
-
-    $<$<PLATFORM_ID:Windows>:WINDOWS_PLT>
-    $<$<PLATFORM_ID:Unix>:UNIX_PLT>
-    $<$<PLATFORM_ID:Linux>:LINUX_PLT>
-    $<$<PLATFORM_ID:Emscripten>:WEB_PLT>
-    $<$<PLATFORM_ID:Android>:ANDROID_PLT>
-
-    #this should be moved to Private
     $<$<OR:$<PLATFORM_ID:Windows>,$<PLATFORM_ID:Linux>>:CORE_GL>
     $<$<OR:$<PLATFORM_ID:Android>,$<PLATFORM_ID:Emscripten>>:ES_GL>
 )
