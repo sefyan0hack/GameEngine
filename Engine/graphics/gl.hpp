@@ -162,8 +162,6 @@ namespace gl {
     ENGINE_EXPORT auto get_integer(GLenum name) -> GLint;
     ENGINE_EXPORT auto get_boolean(GLenum name) -> GLboolean;
     ENGINE_EXPORT auto load_opengl_functions() -> void;
-    ENGINE_EXPORT auto export_opengl_functions() -> void**;
-    ENGINE_EXPORT auto import_opengl_functions(void** funcs) -> void;
 } // namespace gl
 
 #undef GL_GLEXT_PROTOTYPES

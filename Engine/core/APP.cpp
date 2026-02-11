@@ -2,7 +2,6 @@
 
 #include "APP.hpp"
 #include "Utils.hpp"
-#include "DynLib.hpp"
 #include "SysInfo.hpp"
 #include "Log.hpp"
 #include "Event.hpp"
@@ -15,25 +14,16 @@
 #include <graphics/ShaderProgram.hpp>
 #include <graphics/OpenGLRenderer.hpp>
 
-#undef X
-#define X(name, r, args) extern "C" auto name args -> r;
-
-#if defined(GAME_HOT_RELOADABLE)
-    #define GET_GAME_FUNCTION(name) lib.function<APP::name##_t>(#name)
-    #define GAME_LIB_NOW true
-#else
-    #define GET_GAME_FUNCTION(name) reinterpret_cast<APP::name##_t>(::name)
-    #define GAME_LIB_NOW false
-    GAME_API
-#endif
-
-#undef X
-#define X(name, r, args) , name(+[] args -> r { throw Exception(" `{} {}` is null ", #r, #name #args ); })
-
+extern "C" {
+    extern auto game_ctor() -> void*;
+    extern auto game_dtor(void*) -> void;
+    extern auto game_set_app(APP*) -> void;
+    extern auto game_update(void*, float) -> void;
+    extern auto game_on_deltamouse(void*, float, float) -> void;
+}
 
 [[maybe_unused]] constexpr auto WINDOW_WIDTH = 1180;
 [[maybe_unused]] constexpr auto WINDOW_HIEGHT = 640;
-
 
 APP::APP()
     : m_Running(true)
@@ -47,13 +37,8 @@ APP::APP()
     , Renderer(new OpenGLRenderer(m_GApi))
     , UiText(m_GApi)
     , MainScene()
-    , lib("Game", GAME_LIB_NOW)
     , Game()
-    GAME_API
 {
-    init_game_functions();
-
-    game_link(gl::export_opengl_functions());
     game_set_app(this);
     Game = game_ctor();
 
@@ -65,37 +50,6 @@ APP::~APP()
 {
     if(Game) game_dtor(Game);
     if(Renderer) delete Renderer;
-}
-
-auto APP::init_game_functions() -> void
-{
-    #undef X
-    #define X(name, r, args) name = GET_GAME_FUNCTION(name);
-    GAME_API
-}
-
-
-auto APP::hot_reload_game_library() -> bool
-{
-    try {
-        game_dtor(Game);
-
-        lib.unload();
-        lib.load();
-
-        init_game_functions();
-
-        game_link(gl::export_opengl_functions());
-        game_set_app(this);
-        Game = game_ctor();
-
-        debug::log("Game library hot-reloaded successfully");
-        return true;
-
-    } catch (const std::exception& e) {
-        debug::log("Hot reload failed: {}", e.what());
-        return false;
-    }
 }
 
 auto APP::frame() -> void
@@ -171,7 +125,7 @@ auto APP::loop_body(void* ctx) -> void
             [&app](const Mouse::MovementEvent& e) {
                 app->Mouse.rawdelta(e.dx, e.dy);
                 auto [dx, dy] = app->Mouse.get_rawdelta();
-                app->game_on_deltamouse(app->Game, dx, dy);
+                game_on_deltamouse(app->Game, dx, dy);
             },
             [](const auto& e) {
                 debug::log("Unhandeled Event: {}", typeid(e).name()); 
@@ -211,18 +165,6 @@ auto APP::loop_body(void* ctx) -> void
         }
     }
 
-    #if defined(GAME_HOT_RELOADABLE)
-    static bool r_key_was_pressed = false;
-    if (app->Keyboard.is_pressed(Key::R)) {
-        if (!r_key_was_pressed) {
-            app->hot_reload_game_library();
-            r_key_was_pressed = true;
-        }
-    } else {
-        r_key_was_pressed = false;
-    }
-
-    #endif
     app->frame();
 }
 

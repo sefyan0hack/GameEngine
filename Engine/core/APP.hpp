@@ -6,28 +6,11 @@
 #include <inputs/Keyboard.hpp>
 #include <inputs/Mouse.hpp>
 #include <ui/Text.hpp>
-#include "DynLib.hpp"
 #include "Scene.hpp"
 #include <engine_export.h>
 
-#define GAME_API \
-    X(game_ctor,            void*, ())\
-    X(game_dtor,            void, (void*))\
-    X(game_link,            void, (void**))\
-    X(game_set_app,         void, (APP*))\
-    X(game_update,          void, (void*,float))\
-    X(game_on_deltamouse,   void, (void*,float, float))
-
-
 class ENGINE_EXPORT APP
 {
-
-public:
-    #undef X
-    #define X(name, r, args) using name##_t = r(*)args;
-
-    GAME_API
-
 public:
     friend class Game;
 
@@ -41,9 +24,6 @@ public:
     static auto loop_body(void* ctx) -> void;
 
 private:
-    auto init_game_functions() -> void;
-    auto hot_reload_game_library() -> bool;
-
     auto frame() -> void;
 
 private:
@@ -61,11 +41,5 @@ private:
     Text UiText;
     Scene MainScene;
 
-    DynLib lib;
     void* Game;
-
-    #undef X
-    #define X(name, r, args) name##_t name;
-
-    GAME_API
 };

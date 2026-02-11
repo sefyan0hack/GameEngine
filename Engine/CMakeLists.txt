@@ -1,6 +1,5 @@
 
 include(GenerateExportHeader)
-include(Pack)
 
 add_subdirectory(core)
 add_subdirectory(graphics)
@@ -89,19 +88,10 @@ target_compile_definitions( Engine PRIVATE
     DYN_LIB_PREFIX="${CMAKE_SHARED_LIBRARY_PREFIX}"
     DYN_LIB_SUFFIX="${CMAKE_SHARED_LIBRARY_SUFFIX}"
 
-    $<$<BOOL:${GAME_HOT_RELOADABLE}>:GAME_HOT_RELOADABLE>
     $<$<BOOL:${CONSOLE_ATTACHED}>:CONSOLE_ATTACHED>
     $<$<BOOL:${ROBUST_GL_CHECK}>:ROBUST_GL_CHECK>
 )
 
-### Launcher
 if(ANDROID)
-    add_library(Launcher SHARED main.cpp)
     target_link_options(Engine PRIVATE "-Wl,-u,ANativeActivity_onCreate")
-else()
-    add_executable(Launcher main.cpp)
 endif()
-
-target_link_libraries(Launcher PRIVATE Engine)
-
-target_pack(Launcher)

@@ -87,11 +87,6 @@ extern "C" {
         delete static_cast<Game*>(game);
     }
 
-    GAME_EXPORT auto game_link(void** funcs) -> void
-    {
-        gl::import_opengl_functions(funcs);
-    }
-
     GAME_EXPORT auto game_set_app(APP* app_) -> void
     {
         ::app = app_;

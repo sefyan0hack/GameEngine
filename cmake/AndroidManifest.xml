@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.engine.Launcher"
+    package="com.engine.Game"
     android:versionCode="2"
     android:versionName="1.0.1">
 
@@ -13,7 +13,7 @@
                   android:configChanges="orientation|keyboardHidden|screenSize"
                   android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
                   android:exported="true">
-            <meta-data android:name="android.app.lib_name" android:value="Launcher" />
+            <meta-data android:name="android.app.lib_name" android:value="Game" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

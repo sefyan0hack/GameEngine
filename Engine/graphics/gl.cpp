@@ -1,8 +1,8 @@
 #include "gl.hpp"
 #include <core/Log.hpp>
 #include <core/SysInfo.hpp>
-namespace gl {
 
+namespace gl {
     auto get_proc_address(const char* name) -> void* {
         void *address = gl::GetProcAddress<void*>(name);
 
@@ -60,33 +60,6 @@ namespace gl {
         #else
         #   define X(name)\
             name = reinterpret_cast<PFN_gl##name>(gl::get_proc_address("gl"#name));
-        #endif
-
-        GLFUNCS
-    }
-
-    auto export_opengl_functions() -> void**
-    {
-        #undef X
-        #if ROBUST_GL_CHECK
-        #   define X(name) (void*)&name,
-        #else
-        #   define X(name) (void*)name,
-        #endif
-
-        static void* funcs[OPENGL_FUNCTIONS_COUNT] = { GLFUNCS };
-
-        return funcs;
-    }
-
-    auto import_opengl_functions(void **funcs) -> void
-    {
-        int index = 0;
-        #undef X
-        #if ROBUST_GL_CHECK
-        #   define X(name) name = *static_cast<Function<PFN_gl##name>*>(funcs[index++]);
-        #else
-        #   define X(name) name = reinterpret_cast<PFN_gl##name>(funcs[index++]);
         #endif
 
         GLFUNCS
