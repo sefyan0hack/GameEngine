@@ -1,12 +1,12 @@
 #pragma once
 
-#include <graphics/Window.hpp>
-#include <graphics/OpenGL.hpp>
-#include <graphics/Renderer.hpp>
+#include "Window.hpp"
+#include "OpenGL.hpp"
+#include "Renderer.hpp"
+#include "Scene.hpp"
 #include <inputs/Keyboard.hpp>
 #include <inputs/Mouse.hpp>
 #include <ui/Text.hpp>
-#include "Scene.hpp"
 #include <engine_export.h>
 
 class ENGINE_EXPORT APP

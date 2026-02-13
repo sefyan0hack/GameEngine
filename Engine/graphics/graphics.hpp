@@ -2,6 +2,7 @@
 
 #include "gl.hpp"
 #include "Window.hpp"
+#include "APP.hpp"
 #include "Renderer.hpp"
 #include "Shader.hpp"
 #include "Mesh.hpp"

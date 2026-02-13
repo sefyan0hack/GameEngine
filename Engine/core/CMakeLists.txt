@@ -6,7 +6,6 @@ collect_plt_sources(core)
 target_sources( core
   PRIVATE
     ${PLT_SOURCE}
-    ${CMAKE_CURRENT_SOURCE_DIR}/APP.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/SysInfo.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/DynLib.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Exception.cpp
@@ -25,7 +24,6 @@ target_sources( core
       ${CMAKE_CURRENT_SOURCE_DIR}/Utils.hpp
       ${CMAKE_CURRENT_SOURCE_DIR}/Event.hpp
       ${CMAKE_CURRENT_SOURCE_DIR}/Function.hpp
-      ${CMAKE_CURRENT_SOURCE_DIR}/APP.hpp
       ${CMAKE_CURRENT_SOURCE_DIR}/DynLib.hpp
       ${CMAKE_CURRENT_SOURCE_DIR}/SysInfo.hpp
       ${CMAKE_CURRENT_SOURCE_DIR}/res.hpp

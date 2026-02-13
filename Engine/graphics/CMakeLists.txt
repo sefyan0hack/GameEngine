@@ -6,7 +6,8 @@ collect_plt_sources(graphics)
 target_sources( graphics
     PRIVATE
         ${PLT_SOURCE}
-        ${CMAKE_CURRENT_SOURCE_DIR}/Window.cpp    
+        ${CMAKE_CURRENT_SOURCE_DIR}/Window.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/APP.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Shader.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/ShaderProgram.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Mesh.cpp
@@ -28,6 +29,7 @@ target_sources( graphics
       FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/gl.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Window.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/APP.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Renderer.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Shader.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/ShaderProgram.hpp
