@@ -14,13 +14,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
-include(InstaledPackages)
 include(helpers)
+include(InstaledPackages)
+include(CompilerFlags)
 include(Options)
-include(LinkTimeOpt)
+include(LTO)
 include(Harden)
 include(Coverage)
-include(CompilerFlags)
 
 if(WIN32)
     add_compile_definitions(
