@@ -56,7 +56,7 @@ target_link_libraries(Engine
         $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
         $<$<AND:$<CXX_COMPILER_ID:Clang>,$<PLATFORM_ID:Linux>>:stdc++exp>
 
-        $<$<PLATFORM_ID:Unix>:dl>
+        $<$<BOOL:${Unix}>:dl>
         $<$<PLATFORM_ID:Linux>:${X11_LIBRARIES}>
 
         $<$<PLATFORM_ID:Android>:
