@@ -225,7 +225,7 @@ jobs:
 # ======================================================================================================================
 # Android arm64-v8a
 # ======================================================================================================================
-  Android:
+  Android-arm64-v8a:
     name: "android • ubuntu-latest • ${{ matrix.build_type }}"
     if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip android]')"
     runs-on: ubuntu-24.04-arm
@@ -275,7 +275,7 @@ jobs:
 # ======================================================================================================================
 # Android x86_64
 # ======================================================================================================================
-  Android:
+  Android-x86_64:
     name: "android • ubuntu-latest • ${{ matrix.build_type }}"
     if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip android]')"
     runs-on: ubuntu-latest
