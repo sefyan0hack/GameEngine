@@ -228,7 +228,7 @@ jobs:
   Android:
     name: "android • ubuntu-latest • ${{ matrix.build_type }}"
     if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip android]')"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     strategy:
       fail-fast: false
       matrix:
@@ -260,6 +260,57 @@ jobs:
           emulator-boot-timeout: 600
           script: |
             adb wait-for-device
+            adb shell 'while [ "$(getprop sys.boot_completed)" != "1" ]; do sleep 1; done'
+            adb devices
+            adb install ${{ env.BUILD_DIR }}/signed.apk
+            adb shell am instrument -w com.Engine.Game/androidx.test.runner.AndroidJUnitRunner
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: signed-${{ matrix.build_type }}-apk
+          path: ${{ env.BUILD_DIR }}/signed.apk
+          retention-days: 1
+
+# ======================================================================================================================
+# Android x86_64
+# ======================================================================================================================
+  Android:
+    name: "android • ubuntu-latest • ${{ matrix.build_type }}"
+    if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip android]')"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Debug, Release]
+
+    env:
+      BUILD_DIR: build/${{ matrix.build_type }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        uses: ./.github/actions/Android-build
+        with:
+          abi: "x86_64"
+          build_type: ${{ matrix.build_type }}
+          build_dir: ${{ env.BUILD_DIR }}
+          cmake_flags: -DWITH_TESTS=ON -DHARDEN=ON
+
+      - name: Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 26
+          target: default
+          arch: x86_64
+          cores: 2
+          avd-name: test
+          force-avd-creation: true
+          emulator-boot-timeout: 600
+          script: |
+            adb wait-for-device
+            adb shell 'while [ "$(getprop sys.boot_completed)" != "1" ]; do sleep 1; done'
             adb devices
             adb install ${{ env.BUILD_DIR }}/signed.apk
             adb shell am instrument -w com.Engine.Game/androidx.test.runner.AndroidJUnitRunner
