@@ -261,7 +261,7 @@ jobs:
           emulator-options: -no-window swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           script: |
             adb devices
-            adb install ${{ env.BUILD_DIR }}/app-debug.apk
+            adb install ${{ env.BUILD_DIR }}/signed.apk
             adb shell am instrument -w com.Engine.Game/androidx.test.runner.AndroidJUnitRunner
 
       - name: Upload Artifact
