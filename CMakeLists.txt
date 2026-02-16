@@ -40,7 +40,7 @@ endif()
 include(CheckIPOSupported)
 check_ipo_supported(RESULT IPO_SUPPORTED OUTPUT output)
 
-if(IPO_SUPPORTED)
+if(IPO_SUPPORTED AND NOT MSVC)
     message(STATUS "IPO supported")
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 else()
