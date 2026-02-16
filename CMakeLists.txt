@@ -52,10 +52,8 @@ endif()
 ####################################################################################################
 
 add_link_options(
-    $<$<CXX_COMPILER_ID:GNU,Clang>:
-        -static-libstdc++
-        -static-libgcc
-    >
+    $<$<CXX_COMPILER_ID:GNU,Clang>:-static-libstdc++>
+    $<$<CXX_COMPILER_ID:GNU,Clang>:-static-libgcc>
 )
 
 ####################################################################################################
