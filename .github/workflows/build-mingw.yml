@@ -1,15 +1,10 @@
-name: Build MinGW-w64 GCC (fetch-only or full)
+name: Fetch MinGW-w64 sources (fetch-only)
 
 on:
   workflow_dispatch:
-    inputs:
-      full_build:
-        description: 'Set "true" to perform a full GCC build (very long). Default = false (fetch-only).'
-        required: false
-        default: 'false'
 
 jobs:
-  build-mingw:
+  fetch-mingw:
     runs-on: windows-latest
     defaults:
       run:
@@ -20,13 +15,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup MSYS2 (MINGW64)
-        id: msys
         uses: msys2/setup-msys2@v2
         with:
           msystem: MINGW64
           update: true
-          # install small helpers; adjust as needed
-          install: git wget tar make bzip2 xz unzip
+          install: git wget tar make bzip2 xz unzip zip
 
       - name: Clone mingw-builds
         run: |
@@ -38,25 +31,38 @@ jobs:
           chmod +x mingw-builds/scripts/gcc-trunk.sh
 
       - name: Fetch sources only (fast)
-        if: ${{ github.event.inputs.full_build != 'true' }}
         run: |
           cd mingw-builds
-          ./build --mode=gcc-trunk --arch=x86_64 --buildroot="$GITHUB_WORKSPACE/mingw_build" --fetch-only --update-sources
-
-      - name: Full build (VERY long; only on manual dispatch)
-        if: ${{ github.event.inputs.full_build == 'true' }}
-        run: |
-          cd mingw-builds
-          # example options — tune these for your needs (languages, exceptions, threads)
           ./build --mode=gcc-trunk --arch=x86_64 \
                   --buildroot="$GITHUB_WORKSPACE/mingw_build" \
-                  --enable-languages=c,c++ \
-                  --threads=posix \
-                  --exceptions=seh \
-                  --no-strip
+                  --fetch-only --update-sources
 
-      - name: Upload built compiler / prefix as artifact
+      - name: Inspect buildroot (debug)
+        run: |
+          echo "PWD: $(pwd)"
+          echo "List top-level:"
+          ls -la
+          echo "List mingw_build (if exists):"
+          ls -la mingw_build || true
+          echo
+          echo "Find any 'prefix' directories (maxdepth 6):"
+          find mingw_build -maxdepth 6 -type d -name prefix -print || true
+
+      - name: Package fetched sources
+        run: |
+          set -e
+          if [ -d mingw_build ]; then
+            echo "Packaging mingw_build -> mingw-buildroot.zip"
+            zip -r mingw-buildroot.zip mingw_build
+          else
+            echo "No mingw_build directory found; packaging mingw-builds repo instead"
+            zip -r mingw-builds.zip mingw-builds || true
+          fi
+
+      - name: Upload fetched sources artifact
         uses: actions/upload-artifact@v4
         with:
-          name: mingw-gcc
-          path: mingw_build/**/prefix/**
+          name: mingw-fetched-sources
+          path: |
+            mingw-buildroot.zip
+            mingw-builds.zip
