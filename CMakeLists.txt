@@ -15,12 +15,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 include(helpers)
-include(InstaledPackages)
-include(CompilerFlags)
 include(Options)
-include(LTO)
 include(Harden)
 include(Coverage)
+include(CompilerFlags)
 
 if(WIN32)
     add_compile_definitions(
@@ -33,6 +31,20 @@ if(WIN32)
     else()
         set(CMAKE_WIN32_EXECUTABLE ON)
     endif()
+endif()
+
+####################################################################################################
+# IPO/LTO
+####################################################################################################
+
+include(CheckIPOSupported)
+check_ipo_supported(RESULT IPO_SUPPORTED OUTPUT output)
+
+if(IPO_SUPPORTED)
+    message(STATUS "IPO supported")
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+else()
+    message(WARNING "IPO is not supported: ${output}")
 endif()
 
 ####################################################################################################
@@ -59,6 +71,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 ####################################################################################################
 # Check if We Want Fetch or include Deps
 ####################################################################################################
+include(InstaledPackages)
 
 if(EXISTS ${CMAKE_SOURCE_DIR}/3party)
     set(ONLINE FALSE)
