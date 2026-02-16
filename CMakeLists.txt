@@ -33,19 +33,6 @@ if(WIN32)
     endif()
 endif()
 
-####################################################################################################
-# IPO/LTO
-####################################################################################################
-
-include(CheckIPOSupported)
-check_ipo_supported(RESULT IPO_SUPPORTED OUTPUT output)
-
-if(IPO_SUPPORTED AND NOT MSVC)
-    message(STATUS "IPO supported")
-    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-else()
-    message(WARNING "IPO is not supported: ${output}")
-endif()
 
 ####################################################################################################
 # Static link std lib
@@ -62,6 +49,23 @@ add_link_options(
 
 set(CMAKE_CXX_VISIBILITY_PRESET "hidden")
 set(CMAKE_VISIBILITY_INLINES_HIDDEN TRUE)
+
+####################################################################################################
+# IPO/LTO
+####################################################################################################
+
+include(CheckIPOSupported)
+check_ipo_supported(RESULT IPO_SUPPORTED OUTPUT output)
+
+if(IPO_SUPPORTED AND NOT MSVC)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+    if(COVERAGE)
+    add_link_options(
+        $<$<CXX_COMPILER_ID:GNU>:-flto-partition=1to1>
+        $<$<CXX_COMPILER_ID:Clang>:-flto-partitions=1to1>
+    )
+    endif()
+endif()
 
 ####################################################################################################
 # Position Independent Code
