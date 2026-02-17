@@ -51,19 +51,37 @@ set(CMAKE_CXX_VISIBILITY_PRESET "hidden")
 set(CMAKE_VISIBILITY_INLINES_HIDDEN TRUE)
 
 ####################################################################################################
+# PGO
+####################################################################################################
+
+set(GEN_PROFILE
+    $<$<CXX_COMPILER_ID:GNU>:-fprofile-generate>
+    $<$<CXX_COMPILER_ID:Clang>:-fprofile-instr-generate>
+    $<$<CXX_COMPILER_ID:MSVC>:/GENPROFILE>
+)
+
+set(USE_PROFILE
+    $<$<CXX_COMPILER_ID:GNU>:-fprofile-use>
+    $<$<CXX_COMPILER_ID:Clang>:-fprofile-instr-use>
+    $<$<CXX_COMPILER_ID:MSVC>:/USEPROFILE>
+)
+
+if(PROFILING_MODE STREQUAL "GENERATE")
+    add_compile_options(${GEN_PROFILE})
+elseif(PROFILING_MODE STREQUAL "USE")
+    add_compile_options(${USE_PROFILE})
+endif()
+
+####################################################################################################
 # IPO/LTO
 ####################################################################################################
 
-include(CheckIPOSupported)
-check_ipo_supported(RESULT IPO_SUPPORTED OUTPUT output)
+if(NOT COVERAGE AND NOT MSVC AND NOT DEFINED PROFILING_MODE)
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT IPO_SUPPORTED OUTPUT output)
 
-if(IPO_SUPPORTED AND NOT MSVC)
-    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-    if(COVERAGE)
-    add_link_options(
-        $<$<CXX_COMPILER_ID:GNU>:-flto-partition=1to1>
-        $<$<CXX_COMPILER_ID:Clang>:-flto=auto>
-    )
+    if(IPO_SUPPORTED)
+        set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
     endif()
 endif()
 

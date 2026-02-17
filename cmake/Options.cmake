@@ -1,10 +1,10 @@
 include(CMakeDependentOption)
 include(FeatureSummary)
 
-option(WITH_TESTS           "Tests"                                   OFF)
+option(WITH_TESTS           "Unit Tests"                              OFF)
 option(COVERAGE             "Code coverage"                           OFF)
 option(HARDEN               "Hardening"                               OFF)
-option(OBJ_LIFETIME_TRACE   "Object life time tracing"                ON)
+option(OBJ_LIFETIME_TRACE   "Object life time tracing"                OFF)
 option(ROBUST_GL_CHECK      "Robust GL checks in Debug builds `slow`" OFF)
 cmake_dependent_option(CONSOLE_ATTACHED "Console Attached to Window"  OFF [[ CMAKE_BUILD_TYPE STREQUAL "Release" ]] ON)
 
@@ -12,7 +12,7 @@ cmake_dependent_option(CONSOLE_ATTACHED "Console Attached to Window"  OFF [[ CMA
 # Print Option Status
 ####################################################################################################
 
-add_feature_info(WITH_TESTS             WITH_TESTS           "[Build the testing suite]")
+add_feature_info(WITH_TESTS             WITH_TESTS           "[Build unit tests]")
 add_feature_info(COVERAGE               COVERAGE             "[Generate coverage reports]")
 add_feature_info(HARDEN                 HARDEN               "[Security hardening flags]")
 add_feature_info(ROBUST_GL_CHECK        ROBUST_GL_CHECK      "[Robust GL checks in Debug]")
