@@ -219,13 +219,11 @@ auto ShaderProgram::attribs() const noexcept -> const std::unordered_map<std::st
 
 auto ShaderProgram::get_program_info(GLenum what) const -> GLint
 {
-    constexpr auto INVALID = std::numeric_limits<GLint>::max();
-
-    GLint result = INVALID;
+    GLint result = -1;
 
     gl::GetProgramiv(m_Id, what, &result);
 
-    if(result != INVALID)
+    if(result != -1)
         return result;
     else
         throw Exception("gl error id {}", glGetError());
