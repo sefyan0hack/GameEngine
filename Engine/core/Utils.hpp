@@ -3,7 +3,6 @@
 #include <type_traits>
 #include <utility>
 #include <string>
-#include <cstring>
 #include <string_view>
 #include <sstream>
 #include <chrono>
@@ -54,8 +53,8 @@ inline auto file_to_str(const char* path) -> std::string
 {
     std::ifstream file(path, std::ios::binary | std::ios::ate);
     
-    if (!file) { 
-        throw Exception("Couldn't open file [{}] : {}", path, std::strerror(errno));
+    if (!file) {
+        throw Exception("Couldn't open file [{}] : errno {}", path, errno);
     }
     
     std::streamsize size = file.tellg();
