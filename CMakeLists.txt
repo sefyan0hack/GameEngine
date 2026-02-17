@@ -62,7 +62,7 @@ if(IPO_SUPPORTED AND NOT MSVC)
     if(COVERAGE)
     add_link_options(
         $<$<CXX_COMPILER_ID:GNU>:-flto-partition=1to1>
-        $<$<CXX_COMPILER_ID:Clang>:-flto-partitions=1to1>
+        $<$<CXX_COMPILER_ID:Clang>:-flto=auto>
     )
     endif()
 endif()
