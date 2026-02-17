@@ -16,7 +16,7 @@ add_feature_info(WITH_TESTS             WITH_TESTS           "[Build unit tests]
 add_feature_info(COVERAGE               COVERAGE             "[Generate coverage reports]")
 add_feature_info(HARDEN                 HARDEN               "[Security hardening flags]")
 add_feature_info(ROBUST_GL_CHECK        ROBUST_GL_CHECK      "[Robust GL checks in Debug]")
-add_feature_info(CONSOLE_ATTACHED       CONSOLE_ATTACHED     "[Console Attached  to Window]")
+add_feature_info(CONSOLE_ATTACHED       CONSOLE_ATTACHED     "[Console Attached to Window]")
 add_feature_info(OBJ_LIFETIME_TRACE     OBJ_LIFETIME_TRACE   "[Object life time tracing]")
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

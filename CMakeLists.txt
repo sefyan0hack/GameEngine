@@ -21,11 +21,6 @@ include(Coverage)
 include(CompilerFlags)
 
 if(WIN32)
-    add_compile_definitions(
-        _CRT_SECURE_NO_WARNINGS
-        WIN32_LEAN_AND_MEAN
-        NOMINMAX
-    )
     if(CONSOLE_ATTACHED)
         set(CMAKE_WIN32_EXECUTABLE OFF)
     else()
