@@ -45,7 +45,7 @@ endmacro()
 
 macro(target_link_staticly tgt scope)
 target_link_options( ${tgt} ${scope}
-    $<$<CXX_COMPILER_ID:GNU,Clang>:-static>
+    $<$<AND:$<CXX_COMPILER_ID:GNU>,$<PLATFORM_ID:Windows>>:-static>
     $<$<CXX_COMPILER_ID:GNU,Clang>:-static-libstdc++>
     $<$<CXX_COMPILER_ID:GNU,Clang>:-static-libgcc>
 )
