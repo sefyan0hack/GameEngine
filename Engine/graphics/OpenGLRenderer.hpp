@@ -2,6 +2,7 @@
 #include <memory>
 #include "Renderer.hpp"
 #include <engine_export.h>
+#include <cstdint>
 
 class ENGINE_EXPORT OpenGLRenderer final: public IRenderer
 {

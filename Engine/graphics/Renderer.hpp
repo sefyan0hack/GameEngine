@@ -2,6 +2,7 @@
 
 #include <engine_export.h>
 #include <string>
+#include <cstdint>
 
 class ENGINE_EXPORT IRenderer
 {
