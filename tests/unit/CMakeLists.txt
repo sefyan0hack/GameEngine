@@ -23,5 +23,5 @@ target_link_libraries(unit_tests
         GTest::gtest GTest::gtest_main
 )
 
-target_link_libstdxx_staticly(unit_tests PRIVATE)
+target_link_staticly(unit_tests PRIVATE)
 gtest_discover_tests(unit_tests DISCOVERY_MODE PRE_TEST)

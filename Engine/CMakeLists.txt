@@ -81,7 +81,6 @@ target_compile_definitions(Engine PUBLIC
     $<$<OR:$<PLATFORM_ID:Android>,$<PLATFORM_ID:Emscripten>>:ES_GL>
 )
 
-
 target_compile_definitions(Engine PRIVATE
     SYSTEM_HOST_NAME="${CMAKE_HOST_SYSTEM_NAME}"
     SYSTEM_HOST_VERSION="${CMAKE_HOST_SYSTEM_VERSION}"
