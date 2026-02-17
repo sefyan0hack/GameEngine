@@ -38,13 +38,11 @@ namespace gl {
 
     auto get_integer(GLenum name) -> GLint
     {
-        constexpr auto INVALID = std::numeric_limits<GLint>::max();
-
-        GLint maxTexSize = INVALID;
+        GLint maxTexSize = -1;
 
         gl::GetIntegerv(name, &maxTexSize);
 
-        if (maxTexSize != INVALID)
+        if (maxTexSize != -1)
             return maxTexSize;
         else
             throw Exception("GetIntegerv Failed");
@@ -52,13 +50,11 @@ namespace gl {
 
     auto get_boolean(GLenum name) -> GLboolean
     {
-        constexpr auto INVALID = std::numeric_limits<GLboolean>::max();
-
-        GLboolean maxTexSize = INVALID;
+        GLboolean maxTexSize = -1;
 
         gl::GetBooleanv(name, &maxTexSize);
 
-        if (maxTexSize != INVALID)
+        if (maxTexSize != -1)
             return maxTexSize;
         else
             throw Exception("GetBooleanv Failed");

@@ -165,13 +165,11 @@ auto Shader::type_name() const -> const char*
 
 auto Shader::get_shader_info(GLenum what) const -> GLint
 {
-    constexpr auto INVALID = std::numeric_limits<GLint>::max();
-
-    GLint result = INVALID;
+    GLint result = -1;
 
     gl::GetShaderiv(m_Id, what, &result);
 
-    if(result != INVALID)
+    if(result != -1)
         return result;
     else
         throw Exception("GetShaderiv Failed");
