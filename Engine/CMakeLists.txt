@@ -10,7 +10,7 @@ add_library(Engine)
 
 generate_export_header(Engine)
 
-target_sources( Engine
+target_sources(Engine
     PRIVATE
         $<TARGET_PROPERTY:core,SOURCES>
         $<TARGET_PROPERTY:inputs,SOURCES>
@@ -76,12 +76,13 @@ target_link_libraries(Engine
         >
 )
 
-target_compile_definitions( Engine PUBLIC
+target_compile_definitions(Engine PUBLIC
     $<$<OR:$<PLATFORM_ID:Windows>,$<PLATFORM_ID:Linux>>:CORE_GL>
     $<$<OR:$<PLATFORM_ID:Android>,$<PLATFORM_ID:Emscripten>>:ES_GL>
 )
 
-target_compile_definitions( Engine PRIVATE
+
+target_compile_definitions(Engine PRIVATE
     SYSTEM_HOST_NAME="${CMAKE_HOST_SYSTEM_NAME}"
     SYSTEM_HOST_VERSION="${CMAKE_HOST_SYSTEM_VERSION}"
     SYSTEM_HOST_ARCH="${CMAKE_HOST_SYSTEM_PROCESSOR}"

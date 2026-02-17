@@ -1,4 +1,5 @@
 include(GoogleTest)
+include(helpers)
 
 file(GLOB TEST_SOURCES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/" "*_test.cpp")
 
@@ -22,4 +23,5 @@ target_link_libraries(unit_tests
         GTest::gtest GTest::gtest_main
 )
 
+target_link_libstdxx_staticly(unit_tests PRIVATE)
 gtest_discover_tests(unit_tests DISCOVERY_MODE PRE_TEST)

@@ -38,3 +38,15 @@ if(UNIX)
   list(APPEND PLT_SOURCE ${UNIX_SOURCE})
 endif()
 endmacro()
+
+
+####################################################################################################
+# Static link std lib
+####################################################################################################
+
+macro(target_link_libstdxx_staticly tgt scope)
+target_link_options( ${tgt} ${scope}
+    $<$<CXX_COMPILER_ID:GNU,Clang>:-static-libstdc++>
+    $<$<CXX_COMPILER_ID:GNU,Clang>:-static-libgcc>
+)
+endmacro()
