@@ -50,14 +50,9 @@ namespace gl {
 
     auto get_boolean(GLenum name) -> GLboolean
     {
-        GLboolean maxTexSize = -1;
-
+        GLboolean maxTexSize = false;
         gl::GetBooleanv(name, &maxTexSize);
-
-        if (maxTexSize != -1)
-            return maxTexSize;
-        else
-            throw Exception("GetBooleanv Failed");
+        return maxTexSize;
     }
 
 }

@@ -8,6 +8,8 @@
 #include <core/Event.hpp>
 #include <X11/Xlib.h>
 
+#include <cstring>
+
 extern auto from_native(KeySym key) -> Key;
 
 CWindow::~CWindow()
