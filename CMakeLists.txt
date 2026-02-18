@@ -156,5 +156,4 @@ print_sys_info(OS_RELEASE)
 print_sys_info(OS_VERSION)
 print_sys_info(OS_PLATFORM)
 print_sys_info(DISTRIB_INFO)
-
 message(STATUS "--------------------------------------------------------------------------------")
