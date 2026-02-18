@@ -3,6 +3,7 @@
 #include <format>
 #include <string>
 #include <vector>
+#include <memory>
 #include <engine_export.h>
 #include <span>
 #include "gl.hpp"
