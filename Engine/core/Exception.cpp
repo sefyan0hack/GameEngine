@@ -13,5 +13,5 @@ auto Exception::where() const noexcept -> std::string {
 }
 
 auto Exception::location() const noexcept -> std::string {
-  return !m_Trace.empty() ? ::format("{}:{}", m_Trace.begin()->source_file(), m_Trace.begin()->source_line()) : "??:??";
+  return !m_Trace.empty() ? std::format("{}:{}", m_Trace.begin()->source_file(), m_Trace.begin()->source_line()) : "??:??";
 }

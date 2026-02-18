@@ -2,7 +2,7 @@
 #include <exception>
 #include <source_location>
 #include <string>
-#include "format.hpp"
+#include <format>
 #include <engine_export.h>
 #include "stacktrace.hpp"
 
@@ -16,9 +16,9 @@ public:
     Ts&&... args
   ) : m_Trace(stacktrace::current(1))
   {
-    std::string user_msg = ::format(fmt, std::forward<Ts>(args)...);
+    std::string user_msg = std::format(fmt, std::forward<Ts>(args)...);
      
-    m_FullMessage = ::format(
+    m_FullMessage = std::format(
         "(Exception) at [{}] in {}\n"
         "\t-> {}\n"
         "{}",
@@ -47,5 +47,5 @@ template<class... Args>
 inline auto Expect(bool cond, std::format_string<Args...> fmt, Args&&... args)
 {
   if (!cond) [[unlikely]]
-    throw Exception("Expectation Failed. {}", ::format(fmt, std::forward<Args>(args)...));
+    throw Exception("Expectation Failed. {}", std::format(fmt, std::forward<Args>(args)...));
 }

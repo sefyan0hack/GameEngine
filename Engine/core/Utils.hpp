@@ -2,43 +2,14 @@
 #include <version>
 #include <type_traits>
 #include <utility>
+#include <variant>
 #include <string>
-#include <string_view>
-#include <sstream>
-#include <chrono>
-#include <vector>
+#include <format>
 #include <fstream>
-#include <span>
 
 #include "Exception.hpp"
 
 namespace utils {
-
-template<class... Ts>
-struct overloaded : Ts... { using Ts::operator()...; };
-
-/**
- * @brief Extracts the directory portion of a file path at compile-time.
- *
- * @param file_path File path string. Defaults to the call-site __FILE__.
- * @return A std::string_view pointing to the directory portion (excluding trailing slash),
- *         or an empty std::string_view if no directory separator is found.
- *
- * @details
- * This is a constexpr helper intended for compile-time extraction of the containing
- * directory from a path literal. Works with both '/' and '\\' separators.
- *
- * Example:
- * @code
- * constexpr auto dir = utils::get_file_directory("/path/to/file.cpp");
- * // dir == "/path/to"
- * @endcode
- */
-constexpr auto get_file_directory(const std::string_view file_path = __FILE__) -> std::string_view
-{
-    const std::size_t last_slash = file_path.find_last_of("/\\");
-    return (last_slash == std::string_view::npos) ? "" : file_path.substr(0, last_slash);
-}
 
 /**
  * @brief Read an entire file into a std::string.
@@ -47,7 +18,6 @@ constexpr auto get_file_directory(const std::string_view file_path = __FILE__) -
  * @return std::string The file contents.
  *
  * @throws Exception If the file cannot be opened. The exception includes
- *                    strerror(errno) for diagnostic purposes.
  */
 inline auto file_to_str(const char* path) -> std::string
 {
@@ -74,92 +44,6 @@ inline auto file_to_str(const char* path) -> std::string
 }
 
 /**
- * @brief Read an entire file into a std::vector<std::byte>.
- *
- * @param path File system path to the file.
- * @return std::vector<std::byte> The file bytes.
- *
- * @details
- * Internally calls file_to_str and casts the underlying data to std::byte.
- */
-inline auto file_to_vec(const char* path) -> std::vector<std::byte>
-{
-    auto filestr = file_to_str(path);
-    const auto* data_start = reinterpret_cast<const std::byte*>(filestr.data());
-    return std::vector<std::byte>(data_start, data_start + filestr.size());
-}
-
-/**
- * @brief Format raw memory (pointer + count) as a hex string.
- *
- * @tparam T Element type.
- * @param data Pointer to the first element.
- * @param n Number of elements (not bytes) to format.
- * @return std::string Human-readable hex dump of the memory region.
- *
- * @details
- * The function treats the memory as a sequence of unsigned bytes and formats
- * each byte in hex. The total number of bytes processed is n * sizeof(T).
- */
-template <class T>
-inline auto to_hex(T* data, std::size_t n) -> std::string
-{
-    static_assert(std::is_trivially_copyable_v<T>, "to_hex requires trivially copyable types for safe byte access");
-
-    std::string res;
-    for (auto const& b : std::as_bytes(std::span(data, n)) ) {
-        if (!res.empty()) res += ' ';
-        res += ::format("0x{:02X}", static_cast<uint8_t>(b));
-    }
-    return res;
-}
-
-/**
- * @brief Format a pointer to a single object as a hex string.
- *
- * @tparam T Pointee type.
- * @param data Pointer to the object.
- * @return std::string Hex dump of the object bytes (size determined by sizeof(T)).
- */
-template <class T>
-inline auto to_hex(T* data) -> std::string
-{
-    return to_hex(data, 1);
-}
-
-/**
- * @brief Format arbitrary data as a hex string (single-byte granularity).
- *
- * @tparam T Data element type.
- * @param data Reference to the data element.
- * @return std::string Human-readable hex dump of the object bytes.
- *
- * @details
- * Equivalent to calling to_hex(&data, 1). Uses std::stringstream with
- * std::hex, std::setw(2) and std::setfill('0') to format bytes. Groups
- * bytes with two spaces after every 8 bytes for readability.
- */
-template <class T>
-inline auto to_hex(const T& data) -> std::string
-{
-    return to_hex(&data, 1);
-}
-
-/**
- * @brief Format a C-style array as a hex string.
- *
- * @tparam T Element type.
- * @tparam N Number of elements in the array.
- * @param data Reference to the array.
- * @return std::string Hex dump of the whole array (N * sizeof(T) bytes).
- */
-template <class T, std::size_t N>
-inline auto to_hex(const T (&data)[N]) -> std::string
-{
-    return to_hex(data, N);
-}
-
-/**
  * @brief Produce a human-friendly string description of a pointer.
  *
  * @tparam P A pointer type that satisfies the Pointer concept.
@@ -175,7 +59,7 @@ inline auto to_hex(const T (&data)[N]) -> std::string
  * - Otherwise returns formatted `&lt;{:p}&gt; (size) : [ hex-dump ]`.
  *
  */
-auto pointer_to_string(auto* ptr) -> std::string
+inline auto pointer_to_string(auto* ptr) -> std::string
 {
     using Pointee = std::decay_t<decltype(ptr)>;
     constexpr const char* r = "*({}){}";
@@ -184,16 +68,14 @@ auto pointer_to_string(auto* ptr) -> std::string
 
     if (ptr == nullptr) return "null";
     else if constexpr (std::is_pointer_v<Pointee>) return pointer_to_string(*ptr);
-    else if constexpr (std::is_same_v<Pointee, void>) return ::format(r, type, "??");
-    else if constexpr (std::formattable<Pointee, char>) return ::format(r, type, *ptr);
-    else if constexpr (requires(std::ostream& os) { os << *ptr; }) {
-        std::stringstream ss;
-        ss << *ptr;
-        return ::format(r, type, ss.str());
-    }
-    else if constexpr (std::is_function_v<Pointee>) return ::format(r, type, "");
-    else return ::format(r, type, to_hex(ptr));
+    else if constexpr (std::is_same_v<Pointee, void>) return std::format(r, type, "void??");
+    else if constexpr (std::formattable<Pointee, char>) return std::format(r, type, *ptr);
+    else if constexpr (std::is_function_v<Pointee>) return std::format(r, type, "");
+    else return std::format(r, type, "??");
 }
+
+template<class... Ts>
+struct overloaded : Ts... { using Ts::operator()...; };
 
 template<class TVarinat, class... TMatchers>
     requires(sizeof...(TMatchers) >= 1 )
@@ -204,76 +86,5 @@ inline auto match(TVarinat&& v, TMatchers&&... m) -> decltype(auto)
         std::forward<TVarinat>(v)
     );
 }
-
-
-// #include <thread>
-
-// /**
-//  * @brief Repeatedly call a function at a fixed interval.
-//  *
-//  * @tparam Function Callable type.
-//  * @tparam Args Types of arguments forwarded to the callable.
-//  * @param interval Interval in milliseconds between invocations.
-//  * @param func Callable to invoke repeatedly.
-//  * @param args Arguments to forward to func.
-//  *
-//  * @details
-//  * Launches a detached thread that calls the provided callable in an
-//  * infinite loop, sleeping for `interval` milliseconds between calls.
-//  * Use with caution — the loop is infinite and will run until the program exits.
-//  *
-//  * Example:
-//  * @code
-//  * utils::async_repeat_every(1000, [](){ puts("every second"); });
-//  * @endcode
-//  */
-
-// inline auto async_repeat_every(int64_t ms, std::invocable auto F, auto&&... args) -> void
-// {
-//     std::thread([=](){
-//         while(true){
-//             F(args...);
-//             std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-//         }
-//     }).detach();
-// }
-
-
-// /**
-//  * @brief Schedule a callable to run once after a delay (milliseconds).
-//  *
-//  * @tparam Function Callable type.
-//  * @tparam Args Types of arguments forwarded to the callable.
-//  * @param delay Delay in milliseconds before invocation.
-//  * @param func Callable to invoke.
-//  * @param args Arguments to forward to func.
-//  *
-//  * @details
-//  * This will launch a detached std::thread which sleeps for `delay`
-//  * milliseconds and then invokes the callable with the provided arguments.
-//  * The thread is detached; errors thrown inside the callable are not propagated.
-//  *
-//  * Example:
-//  * @code
-//  * utils::async_run_after(500, [](){ puts("hello after 500ms"); });
-//  * @endcode
-//  */
-
-// inline auto async_run_after(int64_t ms, std::invocable auto F, auto&&... args) -> void
-// {
-//     std::thread([ms, F = std::forward<decltype(F)>(F), ...args = std::forward<decltype(args)>(args)](){
-//         std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-//         F(args...);
-//     }).detach();
-// }
-
-// inline auto async_while(bool& cond, std::invocable auto F, auto&&... args) -> void
-// {
-//     std::thread([cond, F = std::forward<decltype(F)>(F), ...args = std::forward<decltype(args)>(args)](){
-//         while(cond){
-//             F(args...);
-//         }
-//     }).detach();
-// }
 
 }// namespace utils

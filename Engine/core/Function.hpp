@@ -6,6 +6,7 @@
 #include <utility>
 #include <sstream>
 #include <type_traits>
+#include <format>
 #include <engine_export.h>
 #include "Exception.hpp"
 #include "Utils.hpp"
@@ -126,7 +127,7 @@ inline auto Function<R(*)(Args...)>::calls() const -> std::size_t
 
 template <typename R, typename... Args>
 inline auto Function<R(*)(Args...)>::this_func_sig(Args... args) const -> std::string {
-    std::string result = ::format("{} {}(", m_ReturnType, m_Name);
+    std::string result = std::format("{} {}(", m_ReturnType, m_Name);
     std::size_t index = 0;
 
     [[maybe_unused]] auto format_arg = [&](const auto& val) {
@@ -149,7 +150,7 @@ inline auto Function<R(*)(Args...)>::this_func_sig(Args... args) const -> std::s
             v = "??";
         }
 
-        result += ::format("{} arg_{} = {}", m_ArgsTypes[index], index + 1, v);
+        result += std::format("{} arg_{} = {}", m_ArgsTypes[index], index + 1, v);
         index++;
     };
 
@@ -161,7 +162,7 @@ inline auto Function<R(*)(Args...)>::this_func_sig(Args... args) const -> std::s
 template <typename R, typename... Args>
 inline auto Function<R(*)(Args...)>::function_info(const std::source_location& loc, Args... args) -> std::string
 {
-    return ::format(
+    return std::format(
         "call Number: {} ; instrments(Befor: {}, After: {}) |>=> {} -> {}:{}\n",
         m_Calls,
         m_Befor ? "true" : "false", m_After ? "true" : "false",

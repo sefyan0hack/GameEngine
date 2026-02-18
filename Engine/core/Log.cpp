@@ -4,13 +4,14 @@
 #include <fstream>
 #include <chrono>
 #include <cstdlib>
+#include <format>
 #include <Log.inl>
 
 [[maybe_unused]] constexpr auto LOG_FILE = "Engine.log";
 
 namespace debug {
     auto default_logger(std::string msg ) -> void {
-        auto now = ::format("{}", std::chrono::system_clock::now());
+        auto now = std::format("{}", std::chrono::system_clock::now());
 
         #if defined(CONSOLE_ATTACHED)
             printf_("%s : %s\n", now.c_str(), msg.c_str());
