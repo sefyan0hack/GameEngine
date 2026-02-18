@@ -51,3 +51,12 @@ target_link_options( ${tgt} ${scope}
 )
 
 endmacro()
+
+####################################################################################################
+# Print host system info
+####################################################################################################
+
+function(print_sys_info key)
+    cmake_host_system_information(RESULT ${key} QUERY ${key})
+    message(STATUS "${key} : ${${key}}")
+endfunction()

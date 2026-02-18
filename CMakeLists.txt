@@ -71,12 +71,6 @@ if(NOT COVERAGE AND NOT MSVC AND NOT DEFINED PROFILING_MODE)
 endif()
 
 ####################################################################################################
-# Position Independent Code
-####################################################################################################
-
-set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
-
-####################################################################################################
 # Check if We Want Fetch or include Deps
 ####################################################################################################
 include(InstaledPackages)
@@ -134,11 +128,6 @@ if(FUZZ_TESTS)
 endif()
 
 message(STATUS "---------------------------[Host System Info]----------------------------------")
-function(print_sys_info key)
-    cmake_host_system_information(RESULT ${key} QUERY ${key})
-    message(STATUS "${key} : ${${key}}")
-endfunction()
-
 print_sys_info(NUMBER_OF_LOGICAL_CORES)
 print_sys_info(NUMBER_OF_PHYSICAL_CORES)
 print_sys_info(HOSTNAME)
