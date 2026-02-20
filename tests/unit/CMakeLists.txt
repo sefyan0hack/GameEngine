@@ -1,9 +1,13 @@
 include(GoogleTest)
 include(helpers)
 
-file(GLOB TEST_SOURCES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/" "*_test.cpp")
+add_executable(unit_tests)
 
-add_executable(unit_tests ${TEST_SOURCES})
+target_sources(unit_tests 
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/Function.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/Utils.cpp
+)
 
 if(ONLINE)
     CPMAddPackage(

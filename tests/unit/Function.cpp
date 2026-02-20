@@ -5,7 +5,7 @@
 
 using namespace std;
 
-TEST(Function, EmptytFunction) {
+TEST(Function, ConstructDefaultFunction) {
 
     auto add = Function<int32_t(*)(int32_t, int32_t)>();
 
@@ -16,6 +16,10 @@ TEST(Function, EmptytFunction) {
     EXPECT_EQ(
         add.name(), ""
     ) << "name should be empty";
+
+    EXPECT_EQ(
+        add.calls(), 0
+    ) << "calls should be 0";
 }
 
 TEST(Function, ConstructFunction) {
