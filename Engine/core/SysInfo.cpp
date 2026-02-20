@@ -4,12 +4,13 @@
 auto os::build_info() -> const char*
 {
     return "Build info: \n"
-    " - system_name: " SYSTEM_HOST_NAME "\n"
-    " - system_version: " SYSTEM_HOST_VERSION "\n"
-    " - system_arch: " SYSTEM_HOST_ARCH "\n"
-    " - compiler_name: " COMPILER_NAME "\n"
-    " - compiler_version: " COMPILER_VERSION "\n"
-    " - cxx_std: " CXX_STANDARD "\n"
+    " - os name: " SYSTEM_HOST_NAME "\n"
+    " - os version: " SYSTEM_HOST_VERSION "\n"
+    " - os arch: " SYSTEM_HOST_ARCH "\n"
+    " - compiler name: " COMPILER_NAME "\n"
+    " - compiler version: " COMPILER_VERSION "\n"
+    " - build config: " BUILD_CONFIG "\n"
+    " - std: c++" CXX_STANDARD "\n"
     " - timestamp: " __TIMESTAMP__ "\n";  
 }
 
@@ -18,7 +19,7 @@ auto os::arch_name() -> std::string
     switch (arch())
     {
         case Arch::x64:
-            return "6x4";
+            return "x64";
         case Arch::x86:
             return "x86";
         case Arch::arm :
