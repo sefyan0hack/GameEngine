@@ -52,7 +52,7 @@ target_include_directories(Engine
 
 target_link_libraries(Engine
     PRIVATE
-        ${OPENGL_LIBRARIES}
+        ${OPENGL_gl_LIBRARY}
         $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
         $<$<AND:$<CXX_COMPILER_ID:Clang>,$<PLATFORM_ID:Linux>>:stdc++exp>
 
@@ -62,7 +62,6 @@ target_link_libraries(Engine
         $<$<PLATFORM_ID:Android>:
             android
             EGL
-            GLESv3
             log
         >
         $<$<PLATFORM_ID:Emscripten>:

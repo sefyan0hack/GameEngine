@@ -3,8 +3,6 @@ include(FeatureSummary)
 # Find OpenGL package
 if(ANDROID)
     set(OPENGL_gl_LIBRARY GLESv3)
-elseif(EMSCRIPTEN)
-    set(OPENGL_gl_LIBRARY "WebGL")
 else()
     find_package(OpenGL QUIET)
     set_package_properties(OpenGL PROPERTIES
@@ -18,7 +16,7 @@ endif()
 # Find X11 package
 if(LINUX)
     find_package(X11 QUIET)
-    set_package_properties(XCB PROPERTIES
+    set_package_properties(X11 PROPERTIES
         DESCRIPTION "X11 Linux windowing lib"
         URL "https://x.org"
         TYPE REQUIRED
