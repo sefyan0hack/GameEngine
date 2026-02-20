@@ -3,10 +3,10 @@ include(FeatureSummary)
 
 option(UNIT_TESTS           "Build Unit Tests"                        OFF)
 option(FUZZ_TESTS           "Build Fuzz Tests"                        OFF)
-option(COVERAGE             "Code coverage"                           OFF)
 option(HARDEN               "Hardening"                               OFF)
 option(OBJ_LIFETIME_TRACE   "Object life time tracing"                OFF)
 option(ROBUST_GL_CHECK      "Robust GL checks in Debug builds `slow`" OFF)
+cmake_dependent_option(COVERAGE "Code coverage"  ON [[ UNIT_TESTS OR FUZZ_TESTS ]] OFF)
 cmake_dependent_option(CONSOLE_ATTACHED "Console Attached to Window"  OFF [[ CMAKE_BUILD_TYPE STREQUAL "Release" ]] ON)
 
 ####################################################################################################

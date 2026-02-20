@@ -50,28 +50,15 @@ inline auto file_to_str(const char* path) -> std::string
  * @param ptr The pointer to describe.
  * @return std::string String describing the pointer contents, nullness, or address.
  *
- * @details
- * - If `ptr` is `nullptr` -> returns `"null"`.
- * - If the pointer type is directly constructible into `std::string` -> returns that string.
- * - If the pointed-to type is a function -> returns the function type name.
- * - If the pointee is formattable -> returns `::format("{}", *ptr)`.
- * - If the pointee is `void` -> returns an address formatted as `&lt;{:p}&gt; : void*`.
- * - Otherwise returns formatted `&lt;{:p}&gt; (size) : [ hex-dump ]`.
- *
  */
-inline auto pointer_to_string(auto* ptr) -> std::string
+inline auto to_string(auto* ptr) -> std::string
 {
-    using Pointee = std::decay_t<decltype(ptr)>;
-    constexpr const char* r = "*({}){}";
-
-    constexpr auto type = typeid(Pointee).name();
+    using Pointee = std::remove_pointer_t<std::decay_t<decltype(ptr)>>;
 
     if (ptr == nullptr) return "null";
-    else if constexpr (std::is_pointer_v<Pointee>) return pointer_to_string(*ptr);
-    else if constexpr (std::is_same_v<Pointee, void>) return std::format(r, type, "void??");
-    else if constexpr (std::formattable<Pointee, char>) return std::format(r, type, *ptr);
-    else if constexpr (std::is_function_v<Pointee>) return std::format(r, type, "");
-    else return std::format(r, type, "??");
+    else if constexpr (std::is_pointer_v<Pointee> && !std::is_same_v<Pointee, char>) return to_string(*ptr);
+    else if constexpr (std::formattable<Pointee, char>) return std::format("{}", *ptr);
+    else return {};
 }
 
 template<class... Ts>

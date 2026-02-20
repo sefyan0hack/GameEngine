@@ -24,7 +24,7 @@ endif()
 target_link_libraries(unit_tests 
     PRIVATE
         Engine
-        GTest::gtest GTest::gtest_main
+        GTest::gtest GTest::gmock GTest::gtest_main
 )
 
 target_link_staticly(unit_tests PRIVATE)

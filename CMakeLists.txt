@@ -29,7 +29,7 @@ if(WIN32)
 endif()
 
 ####################################################################################################
-# Vsisibility
+# Visibility
 ####################################################################################################
 
 set(CMAKE_CXX_VISIBILITY_PRESET "hidden")
@@ -118,16 +118,13 @@ add_subdirectory(Game)
 
 if(UNIT_TESTS)
     include(CTest)
-    set(COVERAGE ON)
     add_subdirectory(tests/unit)
 endif()
 
 if(FUZZ_TESTS)
     include(CTest)
-    set(COVERAGE ON)
     add_subdirectory(tests/fuzz)
 endif()
-
 
 ####################################################################################################
 # Print Host Info

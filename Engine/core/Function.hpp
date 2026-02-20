@@ -137,7 +137,7 @@ inline auto Function<R(*)(Args...)>::this_func_sig(Args... args) const -> std::s
         using T = std::decay_t<decltype(val)>;
 
         if constexpr (std::is_pointer_v<T>) {
-            v = utils::pointer_to_string(val);
+            v = utils::to_string(val);
         } else if constexpr (std::is_arithmetic_v<T>) {
             v = std::to_string(val);
         } else if constexpr (std::is_convertible_v<T, std::string>) {
