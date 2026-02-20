@@ -38,7 +38,7 @@ jobs:
           compiler: ${{ matrix.compiler }}
           build_type: ${{ matrix.build_type }}
           build_dir: ${{ env.BUILD_DIR }}
-          cmake_flags: -DWITH_TESTS=ON -DHARDEN=ON
+          cmake_flags: -DUNIT_TESTS=ON -DHARDEN=ON
 
       - name: Test
         shell: bash
@@ -77,7 +77,7 @@ jobs:
           compiler: ${{ matrix.compiler }}
           build_type: ${{ matrix.build_type }}
           build_dir: ${{ env.BUILD_DIR }}
-          cmake_flags: -DWITH_TESTS=ON -DHARDEN=ON
+          cmake_flags: -DUNIT_TESTS=ON -DHARDEN=ON
 
       - name: Test
         shell: bash
@@ -120,7 +120,7 @@ jobs:
           compiler: ${{ matrix.compiler }}
           build_type: ${{ matrix.build_type }}
           build_dir: ${{ env.BUILD_DIR }}
-          cmake_flags: -DWITH_TESTS=ON -DHARDEN=ON
+          cmake_flags: -DUNIT_TESTS=ON -DHARDEN=ON
 
       - name: Test
         shell: bash
@@ -163,7 +163,7 @@ jobs:
           compiler: ${{ matrix.compiler }}
           build_type: ${{ matrix.build_type }}
           build_dir: ${{ env.BUILD_DIR }}
-          cmake_flags: -DWITH_TESTS=ON -DHARDEN=ON
+          cmake_flags: -DUNIT_TESTS=ON -DHARDEN=ON
 
       - name: Test
         shell: bash
@@ -204,7 +204,7 @@ jobs:
       with:
         build_type: ${{ matrix.build_type }}
         build_dir: ${{ env.BUILD_DIR }}
-        cmake_flags: -DWITH_TESTS=ON -DHARDEN=ON -DCMAKE_CXX_LINK_FLAGS="-sSINGLE_FILE=1 -sENVIRONMENT=node"
+        cmake_flags: -DUNIT_TESTS=ON -DHARDEN=ON -DCMAKE_CXX_LINK_FLAGS="-sSINGLE_FILE=1 -sENVIRONMENT=node"
 
     - name: Test
       shell: bash
@@ -242,4 +242,4 @@ jobs:
           abi: "arm64-v8a"
           build_type: ${{ matrix.build_type }}
           build_dir: ${{ env.BUILD_DIR }}
-          cmake_flags: -DWITH_TESTS=ON -DHARDEN=ON
+          cmake_flags: -DUNIT_TESTS=ON -DHARDEN=ON

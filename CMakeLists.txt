@@ -116,18 +116,24 @@ add_subdirectory(Game)
 # TEST
 ####################################################################################################
 
-if(WITH_TESTS)
+if(UNIT_TESTS)
     include(CTest)
-    enable_testing()
+    set(COVERAGE ON)
     add_subdirectory(tests/unit)
 endif()
 
 if(FUZZ_TESTS)
-    enable_testing()
+    include(CTest)
+    set(COVERAGE ON)
     add_subdirectory(tests/fuzz)
 endif()
 
-message(STATUS "---------------------------[Host System Info]----------------------------------")
+
+####################################################################################################
+# Print Host Info
+####################################################################################################
+
+message(STATUS "---------------------------[Host Info]----------------------------------")
 print_sys_info(NUMBER_OF_LOGICAL_CORES)
 print_sys_info(NUMBER_OF_PHYSICAL_CORES)
 print_sys_info(HOSTNAME)
