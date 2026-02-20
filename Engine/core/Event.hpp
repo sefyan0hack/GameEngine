@@ -1,7 +1,6 @@
 #pragma once
 #include <variant>
 #include <queue>
-#include "Utils.hpp"
 
 using Event = std::variant<
     struct Keyboard::KeyDownEvent,
@@ -18,23 +17,26 @@ using Event = std::variant<
     struct CWindow::QuitEvent
 >;
 
-class EventQ : public std::queue<Event> { //TODO: on push make sur that the pusher it holds the event type ??  some metaprograming time
-private: EventQ() = default;
+template<class T>
+class EQueue : public std::queue<T> { //TODO: on push make sur that the pusher it holds the event type ??  some metaprograming time
+private: EQueue() = default;
 public:
 
-    auto pull(Event& event) -> bool
+    auto pull(T& event) -> bool
     {
-        if (empty()) return false;
-        event = std::move(front());
-        pop();
+        if (this->empty()) return false;
+        event = std::move(this->front());
+        this->pop();
         return true;
     }
-    
-    auto clear() { while(!empty()) pop(); }
 
-    static auto self() -> EventQ&
+    auto clear() { while(!this->empty()) this->pop(); }
+
+    static auto self() -> EQueue&
     {
-        static EventQ eQ;
+        static EQueue eQ;
         return eQ;
     }
 };
+
+using EventQ = EQueue<Event>;

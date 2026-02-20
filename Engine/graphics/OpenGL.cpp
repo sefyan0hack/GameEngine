@@ -2,7 +2,6 @@
 #include "Window.hpp"
 #include <core/Log.hpp>
 #include <core/SysInfo.hpp>
-#include <core/Utils.hpp>
 #include <algorithm>
 #include <ranges>
 
