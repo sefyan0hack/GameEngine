@@ -43,8 +43,8 @@ if(COVERAGE)
 
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 
-        find_program(LLVM_PROFDATA llvm-profdata REQUIRED)
-        find_program(LLVM_COV llvm-cov REQUIRED)
+        find_program(LLVM_PROFDATA llvm-profdata)
+        find_program(LLVM_COV llvm-cov)
 
         set(COVE_PROFRAW_FILE "coverage.profraw")
         set(COVE_PROFDATA_FILE "coverage.profdata")
