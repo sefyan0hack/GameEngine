@@ -6,7 +6,7 @@ DynLib::DynLib(const char* lib, bool now) : m_handle(nullptr), m_name(lib) { if(
 DynLib::~DynLib(){ unload(); }
 
 auto DynLib::name() -> std::string { return m_name; }
-auto DynLib::full_name() -> std::string { return DYN_LIB_PREFIX + m_name + DYN_LIB_SUFFIX; }
+auto DynLib::full_name() -> std::string { return EG_DYN_LIB_PREFIX + m_name + EG_DYN_LIB_SUFFIX; }
 auto DynLib::is_loaded() const -> bool { return m_handle != nullptr; }
 
 auto DynLib::reload() -> void

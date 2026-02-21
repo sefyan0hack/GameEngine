@@ -7,11 +7,11 @@ namespace gl {
         void *address = gl::GetProcAddress<void*>(name);
 
         if(address == nullptr){
-            address = os::get_proc_address(OPENGL_MODULE_NAME, name);
+            address = os::get_proc_address(EG_OPENGL_MODULE_NAME, name);
         }
 
         if (address == nullptr) {
-            throw Exception("Couldn't load {} function `{}`", OPENGL_MODULE_NAME, name);
+            throw Exception("Couldn't load {} function `{}`", EG_OPENGL_MODULE_NAME, name);
         }
 
         return address;

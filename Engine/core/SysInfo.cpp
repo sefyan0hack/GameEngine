@@ -1,32 +1,34 @@
 #include "SysInfo.hpp"
-#include "format.hpp"
 
 auto os::build_info() -> const char*
 {
     return "Build info: \n"
-    " - host os name: " SYSTEM_HOST_NAME "\n"
-    " - host os version: " SYSTEM_HOST_VERSION "\n"
-    " - host os arch: " SYSTEM_HOST_ARCH "\n"
-    " - compiler name: " COMPILER_NAME "\n"
-    " - compiler version: " COMPILER_VERSION "\n"
-    " - build config: " BUILD_CONFIG "\n"
-    " - std: c++" CXX_STANDARD "\n"
+    " - host os name: " EG_SYSTEM_HOST_NAME "\n"
+    " - host os version: " EG_SYSTEM_HOST_VERSION "\n"
+    " - host os arch: " EG_SYSTEM_HOST_ARCH "\n"
+    " - compiler name: " EG_COMPILER_NAME "\n"
+    " - compiler version: " EG_COMPILER_VERSION "\n"
+    " - build config: " EG_BUILD_CONFIG "\n"
+    " - std: c++" EG_CXX_STANDARD "\n"
     " - timestamp: " __TIMESTAMP__ "\n";  
 }
 
-auto os::arch_name() -> std::string
+auto os::name() -> const char*
 {
-    switch (arch())
-    {
-        case Arch::x86_x64: return "x86_x64";
-        case Arch::arm :    return "arm";
-        case Arch::wasm:    return "wasm";
-        case Arch::unknown:
-        default: return "unknown";
-    }
+    return EG_SYSTEM_NAME;
 }
 
-auto os::arch_bits() -> std::size_t
+auto os::version() -> const char*
+{
+    return EG_SYSTEM_VERSION;
+}
+
+auto os::arch() -> const char*
+{
+    return EG_SYSTEM_ARCH;
+}
+
+auto os::bits() -> size_t
 {
     return sizeof(void*) * 8;
 }
