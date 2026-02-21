@@ -1,12 +1,11 @@
 #pragma once
 #include <string>
 #include <engine_export.h>
-#include "format.hpp"
 
 namespace os
 {
-     /// @brief enum of Target systems
-    enum class Target : uint8_t
+    /// @brief enum of Target systems
+    enum class Target
     {
         Windows,
         Linux,
@@ -15,14 +14,11 @@ namespace os
     };
 
     /// @brief enum of Arch systems
-    enum class Arch : uint8_t
+    enum class Arch
     {
-        x64,
-        x86,
+        x86_x64,
         arm,
-        arm64,
         wasm,
-        wasm64,
         unknown
     };
 
@@ -37,6 +33,6 @@ namespace os
     ENGINE_EXPORT auto memory_usage() -> std::size_t;
     ENGINE_EXPORT auto memory_peak() -> std::size_t;
     ENGINE_EXPORT auto thread_count() -> std::size_t;
-    
+
     ENGINE_EXPORT auto get_proc_address(const char* module, const char* sym) -> void*; 
 }

@@ -13,7 +13,7 @@ auto os::system() -> os::Target
 
 auto os::system_name() -> std::string
 {
-    return "windows";
+    return "Windows";
 }
 
 auto os::arch() -> os::Arch
@@ -24,13 +24,11 @@ auto os::arch() -> os::Arch
     switch (SYS_INFO.wProcessorArchitecture)
     {
         case PROCESSOR_ARCHITECTURE_AMD64:
-            return Arch::x64;
         case PROCESSOR_ARCHITECTURE_INTEL:
-            return Arch::x86;
+            return Arch::x86_x64;
         case PROCESSOR_ARCHITECTURE_ARM:
-            return Arch::arm;
         case PROCESSOR_ARCHITECTURE_ARM64:
-            return Arch::arm64;
+            return Arch::arm;
         default:
             return Arch::unknown;
     }

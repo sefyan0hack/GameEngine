@@ -18,7 +18,7 @@ auto os::system() -> os::Target
     
 auto os::system_name() -> std::string
 {
-    return "linux";
+    return "Linux";
 }
 
 auto os::arch() -> os::Arch
@@ -28,19 +28,10 @@ auto os::arch() -> os::Arch
 
     std::string machine = system_info.machine;
     
-    if (machine == "x86_64" || machine == "amd64") {
-        return Arch::x64;
-    } else if (machine == "i386" || machine == "i686" || machine == "x86") {
-        return Arch::x86;
+    if (machine == "x86_64" || machine == "amd64" || machine == "i386" || machine == "i686" || machine == "x86") {
+        return Arch::x86_x64;
     } else if (machine.find("arm") != std::string::npos) {
-        if (machine.find("arm64") != std::string::npos || 
-            machine.find("aarch64") != std::string::npos) {
-            return Arch::arm64;
-        } else {
-            return Arch::arm;
-        }
-    } else if (machine == "aarch64") {
-        return Arch::arm64;
+        return Arch::arm;
     } else {
         return Arch::unknown;
     }

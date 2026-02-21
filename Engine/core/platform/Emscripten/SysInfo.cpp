@@ -14,7 +14,7 @@ auto os::system() -> os::Target
 
 auto os::system_name() -> std::string
 {
-    return "web";
+    return "Web";
 }
 
 auto os::arch() -> os::Arch
