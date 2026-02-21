@@ -1,5 +1,6 @@
 include(GoogleTest)
 include(helpers)
+include(CPM)
 
 add_executable(unit_tests)
 
@@ -7,6 +8,7 @@ target_sources(unit_tests
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/Function.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Utils.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/Exception.cpp
 )
 
 if(ONLINE)

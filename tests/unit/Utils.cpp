@@ -59,3 +59,15 @@ TEST(Utils, MatchShouldGoToFloatLambda)
 
     EXPECT_STREQ(r, "float");
 }
+
+TEST(Utils, MatchShouldFallToGenericLambda)
+{
+    std::variant<char, int, float> t = float{1.5};
+    auto r = utils::match( t,
+        [](char){ return "char"; },
+        [](int){ return "int"; },
+        [](auto){ return "auto";}
+    );
+
+    EXPECT_STREQ(r, "auto");
+}

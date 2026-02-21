@@ -1,3 +1,4 @@
+include(CPM)
 
 CPMAddPackage(
     NAME fuzztest
