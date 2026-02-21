@@ -19,6 +19,5 @@ auto os::system_name() -> std::string
 
 auto os::arch() -> os::Arch
 {
-    if constexpr(sizeof(void*) == 8) return os::Arch::wasm64;
-    else return os::Arch::wasm;
+    return os::Arch::wasm;
 }
