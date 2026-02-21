@@ -12,13 +12,9 @@
 namespace debug {
     auto default_logger(std::string msg ) -> void {
         auto now = std::format("{}", std::chrono::system_clock::now());
-
-        #if defined(CONSOLE_ATTACHED)
-            printf_("%s : %s\n", now.c_str(), msg.c_str());
-        #else
-            std::ofstream out(LOG_FILE, std::ios::app);
-            out << now << " : " << msg << '\n';
-        #endif
+        printf_("%s : %s\n", now.c_str(), msg.c_str());
+        std::ofstream out(LOG_FILE, std::ios::app);
+        out << now << " : " << msg << '\n';
     };
 
     logger_handler_t* logger = default_logger;
