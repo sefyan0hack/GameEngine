@@ -105,7 +105,6 @@ auto Text::create_atlas() -> void {
     m_Ascent = face->size->metrics.ascender >> 6;
 
     // Create atlas texture
-    debug::log("Text Atlas {}x{}", ATLAS_WIDTH, ATLAS_HEIGHT);
     gl::GenTextures(1, &m_AtlasTexture);
     gl::BindTexture(GL_TEXTURE_2D, m_AtlasTexture);
     gl::TexImage2D(GL_TEXTURE_2D, 0, GL_R8, ATLAS_WIDTH, ATLAS_HEIGHT, 0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
