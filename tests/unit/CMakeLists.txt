@@ -9,6 +9,8 @@ target_sources(unit_tests
         ${CMAKE_CURRENT_SOURCE_DIR}/Function.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Utils.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Exception.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/Log.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/SysInfo.cpp
 )
 
 if(ONLINE)

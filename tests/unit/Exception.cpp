@@ -9,7 +9,7 @@ TEST(Exception, ThrowingException)
     EXPECT_THROW({throw Exception("error");}, Exception);
 }
 
-TEST(Exception, ExceptionHasErrorMessage)
+TEST(Exception, CatchingException)
 {
     try {
         throw Exception("error");
