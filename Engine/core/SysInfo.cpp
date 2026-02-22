@@ -18,11 +18,6 @@ auto os::name() -> const char*
     return EG_SYSTEM_NAME;
 }
 
-auto os::version() -> const char*
-{
-    return EG_SYSTEM_VERSION;
-}
-
 auto os::arch() -> const char*
 {
     return EG_SYSTEM_ARCH;

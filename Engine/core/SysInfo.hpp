@@ -8,7 +8,6 @@ namespace os
     ENGINE_EXPORT auto build_info() -> const char*;
 
     ENGINE_EXPORT auto name() -> const char*;
-    ENGINE_EXPORT auto version() -> const char*;
     ENGINE_EXPORT auto arch() -> const char*;
     ENGINE_EXPORT auto bits() -> size_t;
     ENGINE_EXPORT auto proc_id() -> size_t;
