@@ -89,9 +89,9 @@ Shader::Shader(const std::string& filename)
 }
 
 Shader::Shader(std::string Src, GLenum type)
+    : m_Id(gl::CreateShader(type))
+    , m_Type(type)
 {
-    m_Id = gl::CreateShader(type);
-    m_Type = type;
     auto srcs = {glsl_header.c_str(), glsl_lib, Src.c_str()};
 
     set_sources(srcs);
