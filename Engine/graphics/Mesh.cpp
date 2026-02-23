@@ -294,7 +294,7 @@ auto obj_to_mesh(const char* filename) -> std::vector<Vertex>
               // Extract vertex index part (ignore normals/textures after '/')
               size_t pos = token.find('/');
               if (pos != std::string::npos) {
-                  token = token.substr(0, pos);
+                  token = token.substr(0, pos); // performance: Ineffective call of function 'substr' because a prefix of the string is assigned to itself. Use resize() or pop_back() instead. [uselessCallsSubstr]
               }
               
               if (token.empty()) continue;
