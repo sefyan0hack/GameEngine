@@ -7,12 +7,12 @@
 #include <string>
 
 
-auto os::proc_id() -> size_t
+auto os::proc_id() -> std::size_t
 {
-    return static_cast<size_t>(GetCurrentProcessId());
+    return static_cast<std::size_t>(GetCurrentProcessId());
 }
 
-auto os::memory_usage() -> size_t
+auto os::memory_usage() -> std::size_t
 {
     PROCESS_MEMORY_COUNTERS_EX pmc;
     if (GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc)))
@@ -21,7 +21,7 @@ auto os::memory_usage() -> size_t
         return 0;
 }
 
-auto os::memory_peak() -> size_t
+auto os::memory_peak() -> std::size_t
 {
     PROCESS_MEMORY_COUNTERS_EX pmc;
     if (GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc)))

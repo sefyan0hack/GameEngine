@@ -7,12 +7,12 @@
 #include <dirent.h>
 #include <dlfcn.h>
 
-auto os::proc_id() -> size_t
+auto os::proc_id() -> std::size_t
 {
-    return static_cast<size_t>(getpid());
+    return static_cast<std::size_t>(getpid());
 }
 
-static size_t get_proc_value(const std::string& key)
+static std::size_t get_proc_value(const std::string& key)
 {
     std::ifstream stream("/proc/self/status");
     std::string line;
@@ -20,7 +20,7 @@ static size_t get_proc_value(const std::string& key)
         if (line.find(key) == 0) {
             std::stringstream ss(line);
             std::string label;
-            size_t value;
+            std::size_t value;
             ss >> label >> value;
             return value;
         }
@@ -28,12 +28,12 @@ static size_t get_proc_value(const std::string& key)
     return 0;
 }
 
-auto os::memory_usage() -> size_t
+auto os::memory_usage() -> std::size_t
 {
     return get_proc_value("VmRSS:") / 1024;
 }
 
-auto os::memory_peak() -> size_t
+auto os::memory_peak() -> std::size_t
 {
     return get_proc_value("VmHWM:") / 1024;
 }

@@ -22,7 +22,7 @@ auto os::arch() -> const char*
     return EG_SYSTEM_ARCH;
 }
 
-auto os::bits() -> size_t
+auto os::bits() -> std::size_t
 {
     return sizeof(void*) * 8;
 }
