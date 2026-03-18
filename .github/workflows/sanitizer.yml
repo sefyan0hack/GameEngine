@@ -24,6 +24,11 @@ jobs:
         shell: bash
         run: sudo apt-get install -y libx11-dev libgl-dev
   
+      - name: Test
+        if: ${{ matrix.compiler == 'gcc' }}
+        shell: bash
+        run: g++ -print-file-name=include/c++
+  
       - name: Build Project
         uses: ./.github/actions/Desktop-build
         with:
