@@ -100,8 +100,6 @@ Mesh::Mesh(const std::vector<Vertex> &vertices)
     updata();
     enable_attribs();
     prepare_attribs();
-
-    CTOR_LOG
 }
 
 Mesh::Mesh(Mesh &&other) noexcept
@@ -136,8 +134,6 @@ Mesh::~Mesh()
 {
     gl::DeleteBuffers(1, &VBO);
     gl::DeleteVertexArrays(1, &VAO);
-
-    DTOR_LOG
 }
 
 auto Mesh::clone_buffer(GLenum type, GLuint src) -> GLuint

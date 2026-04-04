@@ -25,8 +25,6 @@ Texture::Texture(GLenum texType)
 {
     gl::GenTextures(1, &m_Id);
     bind();
-
-    CTOR_LOG
 }
 
 Texture::Texture(Texture&& other) noexcept : m_Id(other.m_Id), m_Type(other.m_Type) {
@@ -45,8 +43,6 @@ Texture& Texture::operator=(Texture&& other) noexcept {
 
 Texture::~Texture() {
     gl::DeleteTextures(1, &m_Id);
-    
-    DTOR_LOG
 }
 
 auto Texture::id() const -> GLuint

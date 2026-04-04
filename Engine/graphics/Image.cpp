@@ -58,8 +58,6 @@ Image::Image(auto* Data, uint32_t Width, uint32_t Height, uint32_t Channels)
 
         debug::log("Can't load raw data");
     }
-
-    CTOR_LOG
 }
 
 Image::Image(const std::string& filename, bool flip)
@@ -79,8 +77,6 @@ Image::Image(const std::string& filename, bool flip)
 
         debug::log("Can't read {} . reason : {}", filename.c_str(), stbi_failure_reason());
     }
-
-    CTOR_LOG
 }
 
 Image::Image(const cmrc::file& src, bool flip)
@@ -101,14 +97,11 @@ Image::Image(const cmrc::file& src, bool flip)
 
         debug::log("Can't read file . reason : {}", stbi_failure_reason());
     }
-
-    CTOR_LOG
 }
 
 Image::~Image()
 {
     if(m_Data && m_Data != checkerboard.data()) stbi_image_free(const_cast<std::byte*>(m_Data));
-    DTOR_LOG
 }
 
 Image::Image(Image&& other)

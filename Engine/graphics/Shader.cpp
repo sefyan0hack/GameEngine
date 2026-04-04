@@ -32,9 +32,7 @@ vec3 saturate(vec3 rgb, float adjustment) {
 
 Shader::Shader()
     : m_Id(0), m_Type(0)
-{
-    CTOR_LOG
-}
+{}
 
 Shader::Shader(Shader&& other) noexcept : m_Id(other.m_Id), m_Type(other.m_Type) {
     other.m_Id = 0;
@@ -52,8 +50,6 @@ Shader& Shader::operator=(Shader&& other) noexcept {
 
 Shader::~Shader(){
     gl::DeleteShader(m_Id);
-
-    DTOR_LOG
 }
 
 
@@ -84,8 +80,6 @@ Shader::Shader(const std::string& filename)
         }
         debug::log("glsl Compile error ({}) : code :\n{}", e.what(), out);
     }
-
-    CTOR_LOG
 }
 
 Shader::Shader(std::string Src, GLenum type)
@@ -109,8 +103,6 @@ Shader::Shader(std::string Src, GLenum type)
         }
         debug::log("glsl Compile error ({}) : code :\n{}", e.what(), out);
     }
-
-    CTOR_LOG
 }
 
 Shader::Shader(const cmrc::file& Src, GLenum type)

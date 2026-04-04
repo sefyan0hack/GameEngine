@@ -27,11 +27,3 @@ namespace debug {
     }
 
 } // namespace debug
-
-#if defined(OBJ_LIFETIME_TRACE)
-#   define CTOR_LOG debug::log("start [{:p}] {}", (const void*)this, typeid(*this).name());
-#   define DTOR_LOG debug::log("end   [{:p}] {}", (const void*)this, typeid(*this).name());
-#else
-#   define CTOR_LOG
-#   define DTOR_LOG
-#endif

@@ -10,16 +10,16 @@ GameObject::GameObject(glm::vec3 position, std::shared_ptr<Material> matt, std::
     : m_Transform(Transform(position))
     , m_Material(matt)
     , m_Mesh(mesh)
-{CTOR_LOG}
+{}
 
 GameObject::GameObject(Transform transform, std::shared_ptr<Material> matt, std::shared_ptr<Mesh> mesh) noexcept
     : m_Transform(transform)
     , m_Material(matt)
     , m_Mesh(mesh)
-{CTOR_LOG}
+{}
 
 GameObject::~GameObject()
-{DTOR_LOG}
+{}
 
 
 GameObject::GameObject(GameObject&& other) noexcept

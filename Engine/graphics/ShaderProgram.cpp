@@ -22,8 +22,6 @@ ShaderProgram::ShaderProgram(std::shared_ptr<Shader> vertex, std::shared_ptr<Sha
 
     dump_attribs();
     dump_uniforms();
-
-    CTOR_LOG
 }
 
 
@@ -52,8 +50,6 @@ auto ShaderProgram::operator=(ShaderProgram&& other) noexcept -> ShaderProgram&
 ShaderProgram::~ShaderProgram()
 {
     gl::DeleteProgram(m_Id);
-
-    DTOR_LOG
 }
 
 auto ShaderProgram::id() const noexcept -> GLuint

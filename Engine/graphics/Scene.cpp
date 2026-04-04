@@ -12,7 +12,7 @@
 Scene::Scene()
     : m_Cameras({Camera()})
     , m_MainCamera(m_Cameras[0])
-{ CTOR_LOG }
+{}
 
 auto Scene::entities() const -> std::span<const GameObject>
 {
