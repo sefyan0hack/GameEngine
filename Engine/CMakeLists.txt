@@ -64,6 +64,8 @@ target_link_libraries(Engine
             EGL
             log
         >
+
+    PUBLIC
         $<$<PLATFORM_ID:Emscripten>:
             -sMIN_WEBGL_VERSION=2
             -sFULL_ES3=1
