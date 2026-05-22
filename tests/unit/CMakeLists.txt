@@ -1,6 +1,5 @@
 include(GoogleTest)
 include(helpers)
-include(CPM)
 
 add_executable(unit_tests)
 
@@ -12,17 +11,10 @@ target_sources(unit_tests
         ${CMAKE_CURRENT_SOURCE_DIR}/SysInfo.cpp
 )
 
-if(ONLINE)
-    CPMAddPackage(
-        URI "gh:google/googletest@1.17.0" 
-        OPTIONS "gtest_force_shared_crt OFF" "INSTALL_GTEST OFF" "gtest_hide_internal_symbols ON"
-    )
-else()
-    add_subdirectory(
-        ${CMAKE_SOURCE_DIR}/3party/googletest-1.16.0
-        ${CMAKE_CURRENT_BINARY_DIR}/googletest-1.16.0-build
-    )
-endif()
+add_subdirectory(
+    ${CMAKE_SOURCE_DIR}/3party/googletest-1.16.0
+    ${CMAKE_CURRENT_BINARY_DIR}/googletest-1.16.0-build
+)
 
 target_link_libraries(unit_tests 
     PRIVATE

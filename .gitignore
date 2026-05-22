@@ -38,5 +38,4 @@
 # Built Visual Studio Code Extensions
 *.vsix
 
-3party/
 .env
