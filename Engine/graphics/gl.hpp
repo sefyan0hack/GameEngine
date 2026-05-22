@@ -23,10 +23,6 @@ namespace gl {
         constexpr int32_t OPENGL_MINOR_VERSION = 0;
     #endif
 
-    constexpr int32_t StencilBufferBits = 8;
-    constexpr int32_t ChannelBits       = 8;
-    constexpr int32_t AlphaBits         = 8;
-
     inline decltype(&glClearColor) ClearColor;
     inline decltype(&glViewport) Viewport;
     inline decltype(&glGenVertexArrays) GenVertexArrays;

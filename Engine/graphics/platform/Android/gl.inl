@@ -14,5 +14,4 @@ namespace gl {
     template<class T>
     inline auto GetProcAddress(const char* name) -> T { return reinterpret_cast<T>(eglGetProcAddress(name)); }
     inline auto GetCurrentContext() -> GL_CTX { return eglGetCurrentContext(); }
-    constexpr int32_t DepthBufferBits = 16;
 }

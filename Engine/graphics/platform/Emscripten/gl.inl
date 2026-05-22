@@ -13,5 +13,4 @@ namespace gl {
     template <class T>
     inline auto GetProcAddress(const char* name) -> T { return reinterpret_cast<T>(emscripten_webgl_get_proc_address(name)); }
     inline auto GetCurrentContext() -> GL_CTX { return emscripten_webgl_get_current_context(); }
-    constexpr int32_t DepthBufferBits = 32;
 }

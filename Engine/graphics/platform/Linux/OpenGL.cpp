@@ -19,11 +19,12 @@ auto OpenGL::create_opengl_context() -> GL_CTX
     static int32_t visualAttribs[] = {
         GLX_X_RENDERABLE,  true,
         GLX_DOUBLEBUFFER,  true,
-        GLX_RED_SIZE,       gl::ChannelBits,
-        GLX_GREEN_SIZE,     gl::ChannelBits,
-        GLX_BLUE_SIZE,      gl::ChannelBits,
-        GLX_ALPHA_SIZE,     gl::AlphaBits,
-        GLX_DEPTH_SIZE,     gl::DepthBufferBits,
+        GLX_RED_SIZE,       8,
+        GLX_GREEN_SIZE,     8,
+        GLX_BLUE_SIZE,      8,
+        GLX_ALPHA_SIZE,     8,
+        GLX_STENCIL_SIZE,   8,
+        GLX_DEPTH_SIZE,     24,
         0
     };
     

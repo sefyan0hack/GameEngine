@@ -22,11 +22,11 @@ auto OpenGL::create_opengl_context() -> GL_CTX
         1,
         PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
         PFD_TYPE_RGBA,
-        static_cast<BYTE>(gl::ChannelBits * 3),  // RGB bits
-        static_cast<BYTE>(gl::AlphaBits),         // Alpha bits
+        static_cast<BYTE>(8 * 3),  // RGB bits
+        static_cast<BYTE>(8),         // Alpha bits
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        static_cast<BYTE>(gl::DepthBufferBits),   // Depth buffer
-        static_cast<BYTE>(gl::StencilBufferBits), // Stencil buffer
+        static_cast<BYTE>(24),   // Depth buffer
+        static_cast<BYTE>(8), // Stencil buffer
         0,
         PFD_MAIN_PLANE,
         0, 0, 0
