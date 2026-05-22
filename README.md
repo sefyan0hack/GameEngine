@@ -42,7 +42,7 @@
 Clone the repository and create an out-of-source build directory:
 
 ```bash
-git clone https://github.com/sefyan0hack/GameEngine.git
+git clone --recurse-submodules https://github.com/sefyan0hack/GameEngine.git
 cd GameEngine
 cmake -S . -B build
 cmake --build build --config Release
