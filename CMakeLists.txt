@@ -71,19 +71,9 @@ endif()
 ####################################################################################################
 # Check if We Want Fetch or include Deps
 ####################################################################################################
+
 include(InstaledPackages)
-
-if(EXISTS ${CMAKE_SOURCE_DIR}/3party)
-    set(ONLINE FALSE)
-else()
-    set(ONLINE TRUE)
-endif()
-
-if(ONLINE)
-    include(FetchDeps)
-else()
-    include(IncludeDeps)
-endif()
+include(Deps)
 
 ####################################################################################################
 # Resources

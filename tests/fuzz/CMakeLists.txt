@@ -1,9 +1,7 @@
-include(CPM)
 
-CPMAddPackage(
-    NAME fuzztest
-    GITHUB_REPOSITORY google/fuzztest
-    GIT_TAG 2025-07-28
+add_subdirectory(
+    ${CMAKE_SOURCE_DIR}/3party/fuzztest
+    ${CMAKE_CURRENT_BINARY_DIR}/fuzztest-build
 )
 
 if (FUZZTEST_FUZZING_MODE)
