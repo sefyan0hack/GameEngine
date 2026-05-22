@@ -18,7 +18,9 @@ jobs:
       BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.sanitizer}}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Install
         shell: bash

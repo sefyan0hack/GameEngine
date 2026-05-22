@@ -14,7 +14,9 @@ jobs:
         url: ${{ steps.deployment.outputs.page_url }}
 
       steps:
-        - uses: actions/checkout@v3
+        - uses: actions/checkout@v4
+          with:
+            submodules: true
 
         - name: Install Dependencies
           shell: bash
