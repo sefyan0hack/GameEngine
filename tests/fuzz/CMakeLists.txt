@@ -1,7 +1,7 @@
 
 add_subdirectory(
-    ${CMAKE_SOURCE_DIR}/3party/fuzztest-2025-07-28
-    ${CMAKE_CURRENT_BINARY_DIR}/fuzztest-2025-07-28-build
+    ${CMAKE_SOURCE_DIR}/3party/fuzztest
+    ${CMAKE_CURRENT_BINARY_DIR}/fuzztest-build
 )
 
 if (FUZZTEST_FUZZING_MODE)
