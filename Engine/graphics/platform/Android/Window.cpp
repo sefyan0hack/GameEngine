@@ -1,4 +1,5 @@
 #include "Window.hpp"
+#include "OpenGL.hpp"
 #include "gl.hpp"
 
 #include <inputs/Keyboard.hpp>
@@ -89,6 +90,7 @@ void android_main(android_app* app)
 }
 
 
+
 auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::tuple<H_DSP, H_WIN, H_SRF>
 {
     (void)Width;
@@ -111,8 +113,9 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
     eglBindAPI(EGL_OPENGL_ES_API);
 	debug::log("egl v{}.{}", egl_major, egl_minor);
 
+    auto config = OpenGL::find_config(*this);
     EGLint format;
-    eglGetConfigAttrib(display, OpenGL::find_config(*this), EGL_NATIVE_VISUAL_ID, &format);
+    eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
     ANativeWindow_setBuffersGeometry(window, 0, 0, format);
 
     auto surface = eglCreateWindowSurface(display, config, window, nullptr);
