@@ -9,6 +9,7 @@ using H_WIN     = ANativeWindow*;
 using H_SRF     = EGLSurface;
 using H_DSP     = EGLDisplay;
 using GL_CTX    = EGLContext;
+using GL_CFG    = EGLConfig;
 
 namespace gl {
     template<class T>

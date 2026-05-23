@@ -7,6 +7,7 @@ using H_WIN     = HWND;
 using H_SRF     = HDC;
 using H_DSP     = uint32_t;
 using GL_CTX    = HGLRC;
+using GL_CFG    = int;
 
 namespace gl {
     [[maybe_unused]] inline PFNWGLGETEXTENSIONSSTRINGARBPROC GetExtensionsStringARB = nullptr;

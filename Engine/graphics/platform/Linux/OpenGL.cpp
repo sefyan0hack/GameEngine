@@ -6,6 +6,8 @@ OpenGL::~OpenGL()
     if (m_Context != GL_CTX{}) {
         glXDestroyContext(m_Window.display(), m_Context);
     }
+
+    if(!m_Config) XFree(m_Config);
 }
 
 auto OpenGL::make_current_opengl()  -> bool
@@ -13,9 +15,8 @@ auto OpenGL::make_current_opengl()  -> bool
     return glXMakeCurrent(m_Window.display(), m_Window.handle(), m_Context);
 }
 
-auto OpenGL::create_opengl_context() -> GL_CTX
+auto OpenGL::find_config([[maybe_unused]] const CWindow& window) -> GL_CFG
 {
-    auto display = m_Window.display();
     static int32_t visualAttribs[] = {
         GLX_X_RENDERABLE,  true,
         GLX_DOUBLEBUFFER,  true,
@@ -29,16 +30,17 @@ auto OpenGL::create_opengl_context() -> GL_CTX
     };
     
     int32_t fbcount;
-    GLXFBConfig* fbc = glXChooseFBConfig(display, DefaultScreen(display), visualAttribs, &fbcount);
+    GLXFBConfig* fbc = glXChooseFBConfig(window.display(), DefaultScreen(window.display()), visualAttribs, &fbcount);
     if (!fbc || fbcount == 0) {
         throw Exception("Failed to get framebuffer config.");
     }
 
-    XVisualInfo* visInfo = glXGetVisualFromFBConfig(display, fbc[0]);
-    if (!visInfo) {
-        XFree(fbc);
-        throw Exception("Failed to get visual info.");
-    }
+    return fbc;
+}
+
+auto OpenGL::create_opengl_context() -> GL_CTX
+{
+    auto display = m_Window.display();
 
     int32_t contextAttribs[] = {
         GLX_CONTEXT_MAJOR_VERSION_ARB, gl::OPENGL_MAJOR_VERSION,
@@ -51,9 +53,7 @@ auto OpenGL::create_opengl_context() -> GL_CTX
 
     gl::CreateContextAttribsARB = gl::GetProcAddress<decltype(gl::CreateContextAttribsARB)>("glXCreateContextAttribsARB");
 
-    auto context = gl::CreateContextAttribsARB(display, fbc[0], nullptr, True, contextAttribs);
-    XFree(fbc);
-    XFree(visInfo);
+    auto context = gl::CreateContextAttribsARB(display, m_Config[0], nullptr, True, contextAttribs);
 
     if (!context) {
         throw Exception("Failed to create GLX context.");

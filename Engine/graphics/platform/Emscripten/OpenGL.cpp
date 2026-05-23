@@ -13,6 +13,11 @@ auto OpenGL::make_current_opengl()  -> bool
     return emscripten_webgl_make_context_current(m_Context) == EMSCRIPTEN_RESULT_SUCCESS;
 }
 
+auto OpenGL::find_config([[maybe_unused]] const CWindow& window) -> GL_CFG
+{
+    return 0; // config not used in web impl
+}
+
 auto OpenGL::create_opengl_context() -> GL_CTX
 {
     auto surface = m_Window.surface();

@@ -7,6 +7,7 @@
 
 OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     : m_Window(window)
+    , m_Config(find_config(m_Window))
     , m_Context(create_opengl_context())
     , m_Major(0)
     , m_Minor(0)
@@ -80,6 +81,11 @@ auto OpenGL::window() const -> const CWindow&
 auto OpenGL::context() const -> GL_CTX
 {
     return m_Context;
+}
+
+auto OpenGL::config() const -> GL_CFG
+{
+    return m_Config;
 }
 
 auto OpenGL::major_v() const -> GLint

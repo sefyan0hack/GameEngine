@@ -13,11 +13,8 @@ auto OpenGL::make_current_opengl()  -> bool
     return eglMakeCurrent(m_Window.display(), m_Window.surface(), m_Window.surface(), m_Context);
 }
 
-auto OpenGL::create_opengl_context() -> GL_CTX
+auto OpenGL::find_config([[maybe_unused]] const CWindow& window) -> GL_CFG
 {
-    auto display = m_Window.display();
-    auto surface = m_Window.surface();
-
     int32_t DepthBufferBits[] = { 24, 16 };
 
     EGLConfig config;
@@ -36,19 +33,27 @@ auto OpenGL::create_opengl_context() -> GL_CTX
             EGL_DEPTH_SIZE, DepthBufferBits[i],
             EGL_NONE
         };
-        
-        valid_config = eglChooseConfig(display, visualAttribs, &config, 1, &numConfigs);
+
+        valid_config = eglChooseConfig(window.display(), visualAttribs, &config, 1, &numConfigs);
         if (valid_config) break;
     }
 
     if(!valid_config) throw Exception("Failed to choose EGL config for Android");
+
+    return config;
+}
+
+auto OpenGL::create_opengl_context() -> GL_CTX
+{
+    auto display = m_Window.display();
+    auto surface = m_Window.surface();
 
     static const EGLint contextAttribs[] = {
         EGL_CONTEXT_CLIENT_VERSION, 3, 
         EGL_NONE
     };
 
-    auto context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttribs);
+    auto context = eglCreateContext(display, m_Config, EGL_NO_CONTEXT, contextAttribs);
 
     if (context == EGL_NO_CONTEXT) {
         throw Exception("Failed to create EGL context (Error: {})", eglGetError());

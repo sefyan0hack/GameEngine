@@ -7,16 +7,13 @@ OpenGL::~OpenGL()
     wglDeleteContext(m_Context);
 }
 
-
 auto OpenGL::make_current_opengl()  -> bool
 {
     return wglMakeCurrent(m_Window.surface(), m_Context);
 }
 
-auto OpenGL::create_opengl_context() -> GL_CTX
+auto OpenGL::find_config([[maybe_unused]] const CWindow& window) -> GL_CFG
 {
-    auto surface = m_Window.surface();
-
     PIXELFORMATDESCRIPTOR pfd = {
         sizeof(PIXELFORMATDESCRIPTOR),
         1,
@@ -31,11 +28,21 @@ auto OpenGL::create_opengl_context() -> GL_CTX
         PFD_MAIN_PLANE,
         0, 0, 0
     };
-    auto pixel_format = ChoosePixelFormat(surface, &pfd);
+
+    auto pixel_format = ChoosePixelFormat(window.surface(), &pfd);
+
     if (!pixel_format) {
         throw Exception("Failed to find a suitable pixel format. : {}", GetLastError());
     }
-    if (!SetPixelFormat(surface, pixel_format, &pfd)) {
+
+    return pixel_format;
+}
+
+auto OpenGL::create_opengl_context() -> GL_CTX
+{
+    auto surface = m_Window.surface();
+
+    if (!SetPixelFormat(surface, m_Config, nullptr)) { // TODO: nullptr in 3 arg may caus prblms
         throw Exception("Failed to set the pixel format. : {}", GetLastError());
     }
 
@@ -69,7 +76,6 @@ auto OpenGL::create_opengl_context() -> GL_CTX
     #endif
         0,
     };
-
 
     GL_CTX opengl_context = nullptr;
     if (nullptr == (opengl_context = gl::CreateContextAttribsARB(surface, nullptr, gl_attribs))) {

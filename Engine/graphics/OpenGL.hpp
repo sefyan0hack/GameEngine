@@ -16,8 +16,9 @@ class ENGINE_EXPORT OpenGL
         ~OpenGL();
 
     public:
-        auto context() const -> GL_CTX ;
         auto window() const -> const CWindow&;
+        auto config() const -> GL_CFG ;
+        auto context() const -> GL_CTX ;
         auto is_valid() const -> bool ;
         auto has_extension(const std::string& ext) const -> bool ;
         auto major_v() const -> GLint;
@@ -31,6 +32,7 @@ class ENGINE_EXPORT OpenGL
         static auto max_texture_size() -> GLint;
         static auto max_texture3d_size() -> GLint;
         static auto max_texturecubemap_size() -> GLint;
+        static auto find_config([[maybe_unused]] const CWindow& window) -> GL_CFG;
         
     private:
         auto create_opengl_context() -> GL_CTX;
@@ -39,6 +41,7 @@ class ENGINE_EXPORT OpenGL
 
     private:
         const CWindow& m_Window;
+        GL_CFG m_Config;
         GL_CTX m_Context;
         GLint m_Major;
         GLint m_Minor;

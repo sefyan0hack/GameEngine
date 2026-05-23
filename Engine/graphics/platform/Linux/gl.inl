@@ -10,6 +10,7 @@ using H_WIN     = Window;
 using H_SRF     = Window;
 using H_DSP     = Display*;
 using GL_CTX    = GLXContext;
+using GL_CFG    = GLXFBConfig*;
 
 namespace gl {
 
