@@ -51,20 +51,20 @@ auto OpenGL::create_opengl_context() -> GL_CTX
         0
     };
 
-    gl::CreateContextAttribsARB = gl::GetProcAddress<decltype(gl::CreateContextAttribsARB)>("glXCreateContextAttribsARB");
+    static auto CreateContextAttribsARB_ = [](){
+        auto r = gl::GetProcAddress<PFNGLXCREATECONTEXTATTRIBSARBPROC>("glXCreateContextAttribsARB");
+        if (r) {
+            return r;
+        } else {
+            throw Exception("Failed to load glXCreateContextAttribsARB. : {}", GetLastError());
+        }
+    }();
 
-    auto context = gl::CreateContextAttribsARB(display, m_Config[0], nullptr, True, contextAttribs);
+    auto context = CreateContextAttribsARB_(display, m_Config[0], nullptr, True, contextAttribs);
 
     if (!context) {
         throw Exception("Failed to create GLX context.");
     }
 
     return context;
-}
-
-auto OpenGL::get_gl_extensions() const -> std::string_view
-{
-    auto ext = glXQueryExtensionsString(m_Window.display(), DefaultScreen(m_Window.display()));
-    if(ext) return ext;
-    else return {};
 }

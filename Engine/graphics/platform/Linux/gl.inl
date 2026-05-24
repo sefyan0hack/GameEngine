@@ -13,11 +13,6 @@ using GL_CTX    = GLXContext;
 using GL_CFG    = GLXFBConfig*;
 
 namespace gl {
-
-    [[maybe_unused]] inline PFNGLXCREATECONTEXTATTRIBSARBPROC CreateContextAttribsARB = nullptr;
-    [[maybe_unused]] inline PFNGLXSWAPINTERVALEXTPROC SwapIntervalEXT = nullptr;
-
-    
     template <class T>
     inline auto GetProcAddress(const char* name) -> T { return reinterpret_cast<T>(glXGetProcAddress(reinterpret_cast<const GLubyte*>(name))); }
     inline auto GetCurrentContext() -> GL_CTX { return glXGetCurrentContext(); }

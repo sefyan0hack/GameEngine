@@ -124,24 +124,4 @@ namespace gl {
         gl::PointSize = reinterpret_cast<decltype(&glPointSize)>(gl::get_proc_address("glPointSize"));
 #endif
     }
-
-    auto get_integer(GLenum name) -> GLint
-    {
-        GLint maxTexSize = -1;
-
-        gl::GetIntegerv(name, &maxTexSize);
-
-        if (maxTexSize != -1)
-            return maxTexSize;
-        else
-            throw Exception("GetIntegerv Failed");
-    }
-
-    auto get_boolean(GLenum name) -> GLboolean
-    {
-        GLboolean maxTexSize = false;
-        gl::GetBooleanv(name, &maxTexSize);
-        return maxTexSize;
-    }
-
 }

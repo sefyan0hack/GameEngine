@@ -131,8 +131,6 @@ namespace gl {
 
     ENGINE_EXPORT auto get_proc_address(const char* name) -> void*;
     ENGINE_EXPORT auto load_opengl_functions() -> void;
-    ENGINE_EXPORT auto get_integer(GLenum name) -> GLint;
-    ENGINE_EXPORT auto get_boolean(GLenum name) -> GLboolean;
 } // namespace gl
 
 #undef GL_GLEXT_PROTOTYPES

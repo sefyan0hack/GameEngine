@@ -1,5 +1,6 @@
 #include "OpenGL.hpp"
 #include "Window.hpp"
+#include <core/Log.hpp>
 
 OpenGL::~OpenGL()
 {
@@ -53,48 +54,5 @@ auto OpenGL::create_opengl_context() -> GL_CTX
         throw Exception("Failed to create a dummy OpenGL rendering context. : {}", GetLastError());
     }
 
-    if (!wglMakeCurrent(surface, dummy_context)) {
-        throw Exception("Failed to activate dummy OpenGL rendering context. : {}", GetLastError());
-    }
-
-    gl::GetExtensionsStringARB  = gl::GetProcAddress<decltype(gl::GetExtensionsStringARB)>("wglGetExtensionsStringARB");
-    gl::CreateContextAttribsARB = gl::GetProcAddress<decltype(gl::CreateContextAttribsARB)>("wglCreateContextAttribsARB");
-
-    if (!gl::GetExtensionsStringARB){
-        throw Exception("Failed to load wglGetExtensionsStringARB. : {}", GetLastError());
-    }
-
-    if(!gl::CreateContextAttribsARB) {
-        throw Exception("Failed to load wglCreateContextAttribsARB. : {}", GetLastError());
-    }
-
-    int32_t gl_attribs[] = { 
-        WGL_CONTEXT_MAJOR_VERSION_ARB, gl::OPENGL_MAJOR_VERSION,
-        WGL_CONTEXT_MINOR_VERSION_ARB, gl::OPENGL_MINOR_VERSION,
-    #ifdef DEBUG
-        WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB | WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
-    #endif
-        0,
-    };
-
-    GL_CTX opengl_context = nullptr;
-    if (nullptr == (opengl_context = gl::CreateContextAttribsARB(surface, nullptr, gl_attribs))) {
-        m_Context = nullptr;
-
-        if (GetLastError() == ERROR_INVALID_VERSION_ARB){ // ?
-            throw Exception("Unsupported GL Version {}.{}", gl::OPENGL_MAJOR_VERSION, gl::OPENGL_MINOR_VERSION);
-        }
-        throw Exception("Failed to create the final rendering context!");
-    }
-
-    wglDeleteContext(dummy_context);
- 
-    return opengl_context;
-}
-
-auto OpenGL::get_gl_extensions() const -> std::string_view
-{
-    auto ext = gl::GetExtensionsStringARB(m_Window.surface());
-    if(ext) return ext;
-    else return {};
+    return dummy_context;
 }

@@ -15,33 +15,20 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     if (!make_current_opengl())
         throw Exception("Failed to make context current.");
     auto [w, h] = window.dims();
-    
+
     gl::load_opengl_functions();
-    
+
     set_viewport(0, 0, w, h);
 
-    m_Major = gl::get_integer(GL_MAJOR_VERSION);
-    m_Minor = gl::get_integer(GL_MINOR_VERSION);
-
-    m_MaxTextureUnits       = gl::get_integer(GL_MAX_TEXTURE_IMAGE_UNITS);
-    m_MaxTextureSize        = gl::get_integer(GL_MAX_TEXTURE_SIZE);
-    m_MaxTexture3DSize      = gl::get_integer(GL_MAX_3D_TEXTURE_SIZE);
-    m_MaxTextureCubeMapSize = gl::get_integer(GL_MAX_CUBE_MAP_TEXTURE_SIZE);
+    gl::GetIntegerv(GL_MAJOR_VERSION, &m_Major);
+    gl::GetIntegerv(GL_MINOR_VERSION, &m_Minor);
 
     auto vendor = reinterpret_cast<const char*>(gl::GetString(GL_VENDOR));
     auto renderer = reinterpret_cast<const char*>(gl::GetString(GL_RENDERER));
 
     m_Vendor = vendor ? vendor : "unknown";
     m_Renderer = renderer ? renderer : "unknown";
-
-    auto v = get_gl_extensions()
-        | std::views::split(' ')
-        | std::views::filter([](auto const &s) { return !s.empty(); })
-        | std::views::transform([](auto&& subrange) {
-            return std::string(subrange.begin(), subrange.end());
-        });
-
-    std::ranges::copy(v, std::back_inserter(m_Extensions));
+    m_Extensions = query_gl_extensions();
 
     gl::Enable(GL_DEPTH_TEST);
     gl::DepthFunc(GL_LESS);
@@ -64,13 +51,12 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     debug::log("GL Version : Wanted:({}.{}) -> Got:({}.{})", gl::OPENGL_MAJOR_VERSION, gl::OPENGL_MINOR_VERSION, m_Major, m_Minor);
     debug::log("GL Vendor : {}", m_Vendor);
     debug::log("GL Renderer : {}", m_Renderer);
-    // debug::log("GL Exts : {}", m_Extensions); // need support for range formatter not in gcc-14
-    debug::log("Max Texture Units : {}", m_MaxTextureUnits);
-    debug::log("Max Texture Size : {0} x {0}", m_MaxTextureSize);
-    debug::log("Max Texture3D Size : {0} x {0} x {0}", m_MaxTexture3DSize);
-    debug::log("Max TextureCubeMap Size : {0} x {0}", m_MaxTextureCubeMapSize);
+    debug::log("GL Exts : {} Extention", m_Extensions.size());
+    debug::log("Max Texture Units : {}", max_texture_units());
+    debug::log("Max Texture Size : {0} x {0}", max_texture_size());
+    debug::log("Max Texture3D Size : {0} x {0} x {0}", max_texture3d_size());
+    debug::log("Max TextureCubeMap Size : {0} x {0}", max_texturecubemap_size());
     debug::log("=================================================================================");
-
 }
 
 auto OpenGL::window() const -> const CWindow&
@@ -129,20 +115,42 @@ auto OpenGL::extensions() -> std::vector<std::string>
 
 auto OpenGL::max_texture_units() -> GLint
 {
-    return m_MaxTextureUnits;
+    GLint r = 0;
+    gl::GetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &r);
+    return r;
 }
 
 auto OpenGL::max_texture_size() -> GLint
 {
-    return m_MaxTextureSize;
+    GLint r = 0;
+    gl::GetIntegerv(GL_MAX_TEXTURE_SIZE, &r);
+    return r;
 }
 
 auto OpenGL::max_texture3d_size() -> GLint
 {
-    return m_MaxTexture3DSize;
+    GLint r = 0;
+    gl::GetIntegerv(GL_MAX_3D_TEXTURE_SIZE, &r);
+    return r;
 }
 
 auto OpenGL::max_texturecubemap_size() -> GLint
 {
-    return m_MaxTextureCubeMapSize;
+    GLint r = 0;
+    gl::GetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE, &r);
+    return r;
+}
+
+auto OpenGL::query_gl_extensions() const -> std::vector<std::string> 
+{
+    int numExtensions = 0;
+    gl::GetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+
+    std::vector<std::string> exts;
+
+    for (int i = 0; i < numExtensions; ++i) {
+        exts.push_back((const char*)gl::GetStringi(GL_EXTENSIONS, i));
+    }
+
+    return exts;
 }

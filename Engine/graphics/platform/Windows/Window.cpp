@@ -289,8 +289,15 @@ auto CWindow::set_title(std::string  title) -> void
 auto CWindow::set_vsync(bool state) -> void
 {
 	//TODO: needs gl context
-	if(!gl::SwapIntervalEXT) gl::SwapIntervalEXT = gl::GetProcAddress<decltype(gl::SwapIntervalEXT)>("wglSwapIntervalEXT");
-	gl::SwapIntervalEXT(state);
+	static auto SwapIntervalEXT_ = [](){
+        auto r = gl::GetProcAddress<PFNWGLSWAPINTERVALEXTPROC>("wglSwapIntervalEXT");
+        if (r) {
+            return r;
+        } else {
+            throw Exception("Failed to load wglSwapIntervalEXT. : {}", GetLastError());
+        }
+    }();
+	SwapIntervalEXT_(state);
 }
 
 auto CWindow::message_box(const char* title, const char* body) -> bool
