@@ -1,7 +1,6 @@
 
 #include <memory>
 #include <random>
-#include <thread>
 #include <Engine.hpp>
 
 extern cmrc::embedded_filesystem embed_filesystem;
@@ -10,7 +9,7 @@ using namespace std;
 
 class Game : IGame
 {
-    APP& app = APP::self();
+    APP& app = APP::self(this);
 
 public:
     Game()
