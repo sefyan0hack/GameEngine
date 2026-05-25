@@ -45,7 +45,7 @@ auto OpenGL::create_opengl_context() -> GL_CTX
 
     XVisualInfo* vi = glXChooseVisual(display, DefaultScreen(display), visualAttribs);
 
-    context = glXCreateContext(display, vi, nullptr, True);
+    auto context = glXCreateContext(display, vi, nullptr, True);
 
     if (!context) {
         throw Exception("Failed to create GLX context.");

@@ -209,7 +209,7 @@ auto CWindow::set_vsync(bool state) -> void
         if (r) {
             return r;
         } else {
-            throw Exception("Failed to load glXSwapIntervalEXT. : {}", GetLastError());
+            throw Exception("Failed to load glXSwapIntervalEXT. : {}", strerror(errno));
         }
     }();
 
