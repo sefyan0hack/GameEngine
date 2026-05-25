@@ -11,17 +11,18 @@
 
 class ENGINE_EXPORT APP
 {
-public:
-    friend class Game;
-
     APP();
     ~APP();
-
+public:
+    friend class Game;
+    
+    auto init() -> void;
     auto run() -> void ;
     auto fps() const -> float;
     auto deltatime() const -> float;
 
     static auto loop_body(void* ctx) -> void;
+    static auto self() -> APP&;
 
 private:
     auto frame() -> void;

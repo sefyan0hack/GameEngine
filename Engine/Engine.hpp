@@ -6,6 +6,7 @@
 #include "core/core.hpp"
 
 int main(int, char**) {
-    APP app;
+    auto& app = APP::self();
+    app.init();
     app.run();
 }

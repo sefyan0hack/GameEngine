@@ -4,13 +4,13 @@
 #include <thread>
 #include <Engine.hpp>
 
-APP* app;
 extern cmrc::embedded_filesystem embed_filesystem;
 
 using namespace std;
 
 class Game
 {
+    APP& app = APP::self();
 
 public:
     Game()
@@ -36,39 +36,39 @@ public:
                 auto meshRes = cubeMesh;
                 auto t = Transform({i, 0, j}, {0, 0, 0}, { 0.5f, 0.5f, 0.5f});
             
-                app->MainScene << GameObject(t, m, meshRes);
+                app.MainScene << GameObject(t, m, meshRes);
             }
         }
-        app->MainScene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattSand, manMesh);
-        app->MainScene << GameObject(Transform({2, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattkimberley, manMesh);
+        app.MainScene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattSand, manMesh);
+        app.MainScene << GameObject(Transform({2, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattkimberley, manMesh);
 
     }
 
     auto update(float delta) -> void
     {
-        app->UiText.text(std::format("FPS: {:.2f}", app->fps()), { 0, 0 });
-        app->UiText.text(std::format("Memory: {}/{} MB", os::memory_usage(), os::memory_peak()), { 0, Text::FONT_SIZE });
-        app->UiText.text(std::format("Threads: {}", std::thread::hardware_concurrency()), { 0, Text::FONT_SIZE * 2 });
+        app.UiText.text(std::format("FPS: {:.2f}", app.fps()), { 0, 0 });
+        app.UiText.text(std::format("Memory: {}/{} MB", os::memory_usage(), os::memory_peak()), { 0, Text::FONT_SIZE });
+        app.UiText.text(std::format("Threads: {}", std::thread::hardware_concurrency()), { 0, Text::FONT_SIZE * 2 });
 
         camera_mouvment(delta);
     } 
 
     auto on_deltamouse(float dx, float dy) -> void
     {
-        app->MainScene.main_camera().process_mouse_movement(dx, -dy);
+        app.MainScene.main_camera().process_mouse_movement(dx, -dy);
     }
 
     auto camera_mouvment(float delta) -> void
     {
-        float speed = app->Keyboard.is_down(Key::LeftShift)? 10.0f : 5.0f;
+        float speed = app.Keyboard.is_down(Key::LeftShift)? 10.0f : 5.0f;
 
-        auto Hori = app->Keyboard.is_down(Key::W) ? 1.0f : app->Keyboard.is_down(Key::S) ? -1.0f : 0.0f;
-        auto Vert = app->Keyboard.is_down(Key::D) ? 1.0f : app->Keyboard.is_down(Key::A) ? -1.0f : 0.0f;
-        auto Up   = app->Keyboard.is_down(Key::M) ? 1.0f : app->Keyboard.is_down(Key::N) ? -1.0f : 0.0f;
+        auto Hori = app.Keyboard.is_down(Key::W) ? 1.0f : app.Keyboard.is_down(Key::S) ? -1.0f : 0.0f;
+        auto Vert = app.Keyboard.is_down(Key::D) ? 1.0f : app.Keyboard.is_down(Key::A) ? -1.0f : 0.0f;
+        auto Up   = app.Keyboard.is_down(Key::M) ? 1.0f : app.Keyboard.is_down(Key::N) ? -1.0f : 0.0f;
 
         auto by = speed * delta;
 
-        app->MainScene.main_camera().move({ Vert * by, Up * by, Hori * by });
+        app.MainScene.main_camera().move({ Vert * by, Up * by, Hori * by });
     }
 };
 
@@ -86,11 +86,6 @@ extern "C" {
     auto game_dtor(void* game) -> void
     {
         delete static_cast<Game*>(game);
-    }
-
-    auto game_set_app(APP* app_) -> void
-    {
-        ::app = app_;
     }
 
     auto game_update(void* game, float delta) -> void

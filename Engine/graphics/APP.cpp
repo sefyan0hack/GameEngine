@@ -19,7 +19,6 @@
 extern "C" {
     extern auto game_ctor() -> void*;
     extern auto game_dtor(void*) -> void;
-    extern auto game_set_app(APP*) -> void;
     extern auto game_update(void*, float) -> void;
     extern auto game_on_deltamouse(void*, float, float) -> void;
 }
@@ -41,9 +40,6 @@ APP::APP()
     , MainScene()
     , Game()
 {
-    game_set_app(this);
-    Game = game_ctor();
-
     Window.show();
     Window.set_vsync(true);
 }
@@ -54,12 +50,18 @@ APP::~APP()
     if(Renderer) delete Renderer;
 }
 
+auto APP::init() -> void
+{
+    Game = game_ctor();
+}
+
 auto APP::frame() -> void
 {
     auto begin = std::chrono::steady_clock::now();
 
     Renderer->clear_screen(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    game_update(Game, 1.0f/m_Fps);
+    if(Game) [[likely]] game_update(Game, 1.0f/m_Fps);
+    else debug::log("Game not init");
     Renderer->render(MainScene);
     UiText.render();
     Window.swap_buffers();
@@ -127,7 +129,9 @@ auto APP::loop_body(void* ctx) -> void
             [&app](const Mouse::MovementEvent& e) {
                 app->Mouse.rawdelta(e.dx, e.dy);
                 auto [dx, dy] = app->Mouse.get_rawdelta();
-                game_on_deltamouse(app->Game, dx, dy);
+                if(app->Game) [[likely]] game_on_deltamouse(app->Game, dx, dy);
+                else debug::log("Game not init");
+                
             },
             [](const auto& e) {
                 debug::log("Unhandeled Event: {}", typeid(e).name()); 
@@ -178,4 +182,10 @@ auto APP::fps() const -> float
 auto APP::deltatime() const -> float
 {
     return 1.0f/m_Fps;
+}
+
+auto APP::self() -> APP &
+{
+    static APP ins;
+    return ins;
 }
