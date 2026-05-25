@@ -173,14 +173,9 @@ auto APP::deltatime() const -> float
     return 1.0f/m_Fps;
 }
 
-auto APP::self(IGame* g ) -> APP &
+auto APP::self(IGame* g) -> APP &
 {
-    debug::log("APP::self called");
     static APP ins;
-
-    if(g){
-        ins.Game = g;
-        debug::log("setting Game");
-    }
+    if(g) ins.Game = g;
     return ins;
 }
