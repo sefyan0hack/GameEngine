@@ -9,6 +9,13 @@
 #include <ui/Text.hpp>
 #include <engine_export.h>
 
+class ENGINE_EXPORT IGame {
+public:
+    virtual ~IGame() = default;
+    virtual auto update(float dt) -> void = 0;
+    virtual auto on_deltamouse(float, float) -> void = 0;
+};
+
 class ENGINE_EXPORT APP
 {
     APP();
@@ -16,13 +23,12 @@ class ENGINE_EXPORT APP
 public:
     friend class Game;
     
-    auto init() -> void;
     auto run() -> void ;
     auto fps() const -> float;
     auto deltatime() const -> float;
 
     static auto loop_body(void* ctx) -> void;
-    static auto self() -> APP&;
+    static auto self(IGame* g = nullptr) -> APP&;
 
 private:
     auto frame() -> void;
@@ -42,5 +48,5 @@ private:
     Text UiText;
     Scene MainScene;
 
-    void* Game;
+    IGame* Game;
 };

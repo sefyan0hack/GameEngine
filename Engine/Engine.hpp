@@ -7,6 +7,5 @@
 
 int main(int, char**) {
     auto& app = APP::self();
-    app.init();
     app.run();
 }

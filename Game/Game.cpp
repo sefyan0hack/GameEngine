@@ -8,9 +8,9 @@ extern cmrc::embedded_filesystem embed_filesystem;
 
 using namespace std;
 
-class Game
+class Game : IGame
 {
-    APP& app = APP::self();
+    APP& app = APP::self(this);
 
 public:
     Game()
@@ -44,7 +44,7 @@ public:
 
     }
 
-    auto update(float delta) -> void
+    auto update(float delta) -> void override
     {
         app.UiText.text(std::format("FPS: {:.2f}", app.fps()), { 0, 0 });
         app.UiText.text(std::format("Memory: {}/{} MB", os::memory_usage(), os::memory_peak()), { 0, Text::FONT_SIZE });
@@ -53,7 +53,7 @@ public:
         camera_mouvment(delta);
     } 
 
-    auto on_deltamouse(float dx, float dy) -> void
+    auto on_deltamouse(float dx, float dy) -> void override
     {
         app.MainScene.main_camera().process_mouse_movement(dx, -dy);
     }
@@ -70,32 +70,4 @@ public:
 
         app.MainScene.main_camera().move({ Vert * by, Up * by, Hori * by });
     }
-};
-
-
-
-
-// no toche code
-extern "C" {
-
-    auto game_ctor() -> void*
-    {
-        return new Game();
-    }
-
-    auto game_dtor(void* game) -> void
-    {
-        delete static_cast<Game*>(game);
-    }
-
-    auto game_update(void* game, float delta) -> void
-    {
-        static_cast<Game*>(game)->update(delta);
-    }
-
-    auto game_on_deltamouse(void* game, float dx, float dy) -> void
-    {
-        static_cast<Game*>(game)->on_deltamouse(dx, dy);
-    }
-
-}
+}_;// note `_` at the end of Game class is an instance of Game

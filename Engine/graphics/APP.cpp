@@ -15,13 +15,10 @@
 #include <inputs/Keyboard.hpp>
 #include <inputs/Mouse.hpp>
 
-
-extern "C" {
-    extern auto game_ctor() -> void*;
-    extern auto game_dtor(void*) -> void;
-    extern auto game_update(void*, float) -> void;
-    extern auto game_on_deltamouse(void*, float, float) -> void;
-}
+struct GamePre : IGame {
+    auto update(float dt) -> void override { (void)dt; }
+    auto on_deltamouse(float dx, float dy) -> void override { (void)dx, (void)dy; }
+};
 
 [[maybe_unused]] constexpr auto WINDOW_WIDTH = 1180;
 [[maybe_unused]] constexpr auto WINDOW_HIEGHT = 640;
@@ -38,7 +35,7 @@ APP::APP()
     , Renderer(new OpenGLRenderer(m_GApi))
     , UiText(m_GApi)
     , MainScene()
-    , Game()
+    , Game(new GamePre())
 {
     Window.show();
     Window.set_vsync(true);
@@ -46,13 +43,8 @@ APP::APP()
 
 APP::~APP()
 {
-    if(Game) game_dtor(Game);
+    if(Game) delete Game;
     if(Renderer) delete Renderer;
-}
-
-auto APP::init() -> void
-{
-    Game = game_ctor();
 }
 
 auto APP::frame() -> void
@@ -60,8 +52,7 @@ auto APP::frame() -> void
     auto begin = std::chrono::steady_clock::now();
 
     Renderer->clear_screen(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    if(Game) [[likely]] game_update(Game, 1.0f/m_Fps);
-    else debug::log("Game not init");
+    Game->update(1.0f/m_Fps);
     Renderer->render(MainScene);
     UiText.render();
     Window.swap_buffers();
@@ -129,9 +120,7 @@ auto APP::loop_body(void* ctx) -> void
             [&app](const Mouse::MovementEvent& e) {
                 app->Mouse.rawdelta(e.dx, e.dy);
                 auto [dx, dy] = app->Mouse.get_rawdelta();
-                if(app->Game) [[likely]] game_on_deltamouse(app->Game, dx, dy);
-                else debug::log("Game not init");
-                
+                app->Game->on_deltamouse(dx, dy);                
             },
             [](const auto& e) {
                 debug::log("Unhandeled Event: {}", typeid(e).name()); 
@@ -184,8 +173,14 @@ auto APP::deltatime() const -> float
     return 1.0f/m_Fps;
 }
 
-auto APP::self() -> APP &
+auto APP::self(IGame* g ) -> APP &
 {
+    debug::log("APP::self called");
     static APP ins;
+
+    if(g){
+        ins.Game = g;
+        debug::log("setting Game");
+    }
     return ins;
 }
