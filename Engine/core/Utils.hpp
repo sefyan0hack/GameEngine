@@ -53,7 +53,7 @@ inline auto file_to_str(const char* path) -> std::string
  */
 inline auto to_string(auto* ptr) -> std::string
 {
-    using Pointee = std::remove_pointer_t<std::decay_t<decltype(ptr)>>;
+    using Pointee = std::remove_pointer_t<decltype(auto(ptr))>;
 
     if (ptr == nullptr) return "null";
     else if constexpr (std::is_pointer_v<Pointee> && !std::is_same_v<Pointee, char>) return to_string(*ptr);

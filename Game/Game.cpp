@@ -1,6 +1,7 @@
 
 #include <memory>
 #include <random>
+#include <thread>
 #include <Engine.hpp>
 
 APP* app;
@@ -47,6 +48,7 @@ public:
     {
         app->UiText.text(std::format("FPS: {:.2f}", app->fps()), { 0, 0 });
         app->UiText.text(std::format("Memory: {}/{} MB", os::memory_usage(), os::memory_peak()), { 0, Text::FONT_SIZE });
+        app->UiText.text(std::format("Threads: {}", std::thread::hardware_concurrency()), { 0, Text::FONT_SIZE * 2 });
 
         camera_mouvment(delta);
     } 

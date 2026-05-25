@@ -134,7 +134,7 @@ inline auto Function<R(*)(Args...)>::this_func_sig(Args... args) const -> std::s
         if (index > 0) result += ", ";
         std::string v;
 
-        using T = std::decay_t<decltype(val)>;
+        using T = decltype(auto(val));
 
         if constexpr (std::is_pointer_v<T>) {
             v = utils::to_string(val);
