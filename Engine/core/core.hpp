@@ -8,3 +8,4 @@
 #include "SysInfo.hpp"
 #include "res.hpp"
 #include "format.hpp"
+#include "DynLib.hpp"

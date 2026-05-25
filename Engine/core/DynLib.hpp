@@ -5,7 +5,7 @@
 
 class ENGINE_EXPORT DynLib {
 public:
-    DynLib(const char* lib, bool now = true);
+    DynLib(std::string name, bool now = true);
 
     DynLib(const DynLib& other) = delete;
     auto operator=(const DynLib& other) -> DynLib& = delete;
@@ -18,16 +18,16 @@ public:
     auto load() -> void;
     auto unload() -> void;
     auto reload() -> void;
-    auto function(const char* name) -> void*;
+    auto symbole(const char* name) -> void*;
 
-    template <class FuncPtr>
-    auto function(const char* name) -> FuncPtr
+    template <class T>
+    auto symbole(const char* name) -> T
     {
-        return reinterpret_cast<FuncPtr>(function(name));
+        return reinterpret_cast<T>(symbole(name));
     }
 
-    auto error() -> std::string;
     auto name() -> std::string;
+    auto error() -> std::string;
     auto full_name() -> std::string;
     auto is_loaded() const -> bool;
 

@@ -7,7 +7,8 @@
 auto DynLib::load() -> void
 { 
     if(m_handle) throw Exception("Can't load lib `{}` before unloding prev lib", m_name);
-    m_handle = (void*) LoadLibraryA(full_name().c_str());
+    if(m_name.empty()) m_handle = (void*) GetModuleHandle(nullptr);
+    else m_handle = (void*) LoadLibraryA(full_name().c_str());
     if (!m_handle) throw Exception("Can't open lib `{}`: {}", full_name().c_str(), error());
 }
 
@@ -24,9 +25,9 @@ auto DynLib::unload() -> void
     m_handle = nullptr;
 }
 
-auto DynLib::function(const char* name) -> void*
+auto DynLib::symbole(const char* name) -> void*
 {
-    if (!is_loaded()) throw Exception("Library not loaded, cannot get function `{}`", name);
+    if (!is_loaded()) throw Exception("Library not loaded, cannot get symbole `{}`", name);
     auto f = reinterpret_cast<void*>(GetProcAddress((HMODULE) m_handle, name));
     if (f == nullptr) throw Exception("Can't load symbol `{}`: {}", name, error());
     return f;

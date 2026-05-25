@@ -2,7 +2,10 @@
 #include "Exception.hpp"
 #include <string>
 
-DynLib::DynLib(const char* lib, bool now) : m_handle(nullptr), m_name(lib) { if(now) load(); }
+DynLib::DynLib(std::string name, bool now) : m_handle(nullptr), m_name(name)
+{
+    if(now) load();
+}
 DynLib::~DynLib(){ unload(); }
 
 auto DynLib::name() -> std::string { return m_name; }
