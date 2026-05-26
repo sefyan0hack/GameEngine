@@ -2,6 +2,7 @@
 #include <format>
 #include <string>
 #include <vector>
+#include <span>
 
 #include "gl.hpp"
 #include <glm/vec2.hpp>
@@ -69,8 +70,8 @@ public:
     static std::vector<Vertex> CUBE;
 };
 
-auto ENGINE_EXPORT obj_to_mesh(const char* filename) -> std::vector<Vertex>;
-auto ENGINE_EXPORT obj_to_mesh(std::span<const char> src) -> std::vector<Vertex>;
+auto obj_to_mesh(const char* filename) -> std::vector<Vertex>;
+auto obj_to_mesh(std::span<const char> src) -> std::vector<Vertex>;
 
 #ifdef __cpp_lib_formatters
 // custom Mesh Format
