@@ -32,18 +32,13 @@ APP::APP()
     , Keyboard()
     , Mouse()
     , m_GApi(Window)
-    , Renderer(new OpenGLRenderer(m_GApi))
+    , Renderer(std::make_unique<OpenGLRenderer>(m_GApi))
     , UiText(m_GApi)
     , MainScene()
     , Game(&defaultGame)
 {
     Window.show();
     Window.set_vsync(true);
-}
-
-APP::~APP()
-{
-    if(Renderer) delete Renderer;
 }
 
 auto APP::self(IGame* g) -> APP &

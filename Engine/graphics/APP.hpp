@@ -9,6 +9,8 @@
 #include <ui/Text.hpp>
 #include <engine_export.h>
 
+#include <memory>
+
 class ENGINE_EXPORT IGame {
 public:
     virtual ~IGame() = default;
@@ -19,7 +21,6 @@ public:
 class ENGINE_EXPORT APP
 {
     APP();
-    ~APP();
 public:
     friend class Game;
     
@@ -44,7 +45,7 @@ private:
     ::Mouse Mouse;
 
     OpenGL m_GApi;
-    IRenderer* Renderer;
+    std::unique_ptr<IRenderer> Renderer;
     Text UiText;
     Scene MainScene;
 
