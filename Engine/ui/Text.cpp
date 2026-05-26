@@ -92,7 +92,7 @@ auto Text::create_atlas() -> void {
 
     auto font_data = res::get(FONT_NAME);
 
-    if (FT_New_Memory_Face(ft, std::bit_cast<FT_Byte const*>(font_data.begin()), static_cast<FT_Long>(font_data.size()), 0, &face)) {
+    if (FT_New_Memory_Face(ft, std::bit_cast<FT_Byte const*>(font_data.data()), static_cast<FT_Long>(font_data.size()), 0, &face)) {
         FT_Done_FreeType(ft);
         throw Exception("ERROR::FREETYPE: Failed to load font");
     }
