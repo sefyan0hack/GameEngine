@@ -1,2 +1,7 @@
 #pragma once
-#include <cmrc/cmrc.hpp>
+#include <span>
+
+namespace res
+{
+    auto get(const char* res_name) -> std::span<const char>;
+}

@@ -79,12 +79,11 @@ Image::Image(const std::string& filename, bool flip)
     }
 }
 
-Image::Image(const cmrc::file& src, bool flip)
+Image::Image(std::span<const char> src, bool flip)
 {
     stbi_set_flip_vertically_on_load(flip);
-    auto size = std::distance(src.begin(), src.end());
 
-    auto data = stbi_load_from_memory(std::bit_cast<const unsigned char*>(src.begin()), static_cast<int>(size), &m_Width, &m_Height, &m_Channels, 0);
+    auto data = stbi_load_from_memory(std::bit_cast<const unsigned char*>(src.data()), static_cast<int>(src.size()), &m_Width, &m_Height, &m_Channels, 0);
 
     if(data){
         m_Data = std::bit_cast<const std::byte*>(data);

@@ -15,15 +15,13 @@
 #include "Material.hpp"
 #include "Texture.hpp"
 
-extern cmrc::embedded_filesystem embed_filesystem;
-
 
 OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx)
     : m_GApi(ctx)
     , m_X(0), m_Y(0)
     , m_Width(ctx.window().dims().first), m_Height(ctx.window().dims().second)
-    , m_Vert(std::make_shared<Shader>(embed_filesystem.open("res/Shaders/main.vert"), GL_VERTEX_SHADER))
-    , m_Frag(std::make_shared<Shader>(embed_filesystem.open("res/Shaders/main.frag"), GL_FRAGMENT_SHADER))
+    , m_Vert(std::make_shared<Shader>(res::get("res/Shaders/main.vert"), GL_VERTEX_SHADER))
+    , m_Frag(std::make_shared<Shader>(res::get("res/Shaders/main.frag"), GL_FRAGMENT_SHADER))
     , m_Program(std::make_shared<ShaderProgram>(m_Vert, m_Frag))
 {}
 

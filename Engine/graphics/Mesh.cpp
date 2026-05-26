@@ -337,12 +337,9 @@ auto obj_to_mesh(const char* filename) -> std::vector<Vertex>
 }
 
 
-auto obj_to_mesh( cmrc::file src) -> std::vector<Vertex>
+auto obj_to_mesh(std::span<const char> src) -> std::vector<Vertex>
 {
-  auto begin = src.begin();
-  auto end = src.end();
-
-  std::string_view sv(begin, static_cast<size_t>(end - begin));
+  std::string_view sv(src.data(), src.size());
   std::vector<glm::vec3> positions;
   std::vector<Vertex> vertices_output;
 

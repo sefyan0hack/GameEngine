@@ -4,8 +4,6 @@
 #include <thread>
 #include <Engine.hpp>
 
-extern cmrc::embedded_filesystem embed_filesystem;
-
 using namespace std;
 
 class Game : IGame
@@ -17,13 +15,13 @@ public:
     {
         Material::set_skybox(std::make_shared<TextureCubeMap>(TextureCubeMap::base_to_6facesfiles("res/forest.jpg")));
 
-        auto kimberley_jpg     = std::make_shared<Texture2D>(embed_filesystem.open("res/kimberley.jpg"));
-        auto sand_png          = std::make_shared<Texture2D>(embed_filesystem.open("res/gravelly_sand_diff_4k.png"));
+        auto kimberley_jpg     = std::make_shared<Texture2D>(res::get("res/kimberley.jpg"));
+        auto sand_png          = std::make_shared<Texture2D>(res::get("res/gravelly_sand_diff_4k.png"));
 
         auto CubeMattkimberley = std::make_shared<Material>(kimberley_jpg);
         auto CubeMattSand  = std::make_shared<Material>(sand_png);
         auto cubeMesh      = std::make_shared<Mesh>(Mesh::CUBE);
-        auto manMesh       = std::make_shared<Mesh>(obj_to_mesh(embed_filesystem.open("res/FinalBaseMesh.obj")));
+        auto manMesh       = std::make_shared<Mesh>(obj_to_mesh(res::get("res/FinalBaseMesh.obj")));
 
         constexpr int32_t Grids = 5;
 

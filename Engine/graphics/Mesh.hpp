@@ -70,7 +70,7 @@ public:
 };
 
 auto ENGINE_EXPORT obj_to_mesh(const char* filename) -> std::vector<Vertex>;
-auto ENGINE_EXPORT obj_to_mesh(cmrc::file src) -> std::vector<Vertex>;
+auto ENGINE_EXPORT obj_to_mesh(std::span<const char> src) -> std::vector<Vertex>;
 
 #ifdef __cpp_lib_formatters
 // custom Mesh Format

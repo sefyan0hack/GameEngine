@@ -22,12 +22,10 @@
 #include <bit>
 #include <string>
 
-extern cmrc::embedded_filesystem embed_filesystem;
-
 Text::Text(const OpenGL& ctx)
     : m_GApi(ctx)
-    , m_Vert(std::make_shared<Shader>(embed_filesystem.open("res/Shaders/text.vert"), GL_VERTEX_SHADER))
-    , m_Frag(std::make_shared<Shader>(embed_filesystem.open("res/Shaders/text.frag"), GL_FRAGMENT_SHADER))
+    , m_Vert(std::make_shared<Shader>(res::get("res/Shaders/text.vert"), GL_VERTEX_SHADER))
+    , m_Frag(std::make_shared<Shader>(res::get("res/Shaders/text.frag"), GL_FRAGMENT_SHADER))
     , m_Program(std::make_shared<ShaderProgram>(m_Vert, m_Frag))
 {
     // Create initial atlas
@@ -92,7 +90,7 @@ auto Text::create_atlas() -> void {
         throw Exception("ERROR::FREETYPE: Could not init FreeType Library");
     }
 
-    auto font_data = embed_filesystem.open(FONT_NAME);
+    auto font_data = res::get(FONT_NAME);
 
     if (FT_New_Memory_Face(ft, std::bit_cast<FT_Byte const*>(font_data.begin()), static_cast<FT_Long>(font_data.size()), 0, &face)) {
         FT_Done_FreeType(ft);

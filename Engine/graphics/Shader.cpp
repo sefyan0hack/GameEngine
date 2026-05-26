@@ -105,8 +105,8 @@ Shader::Shader(std::string Src, GLenum type)
     }
 }
 
-Shader::Shader(const cmrc::file& Src, GLenum type)
-    : Shader(std::string(Src.begin(), Src.end()), type)
+Shader::Shader(std::span<const char> src, GLenum type)
+    : Shader(std::string(src.begin(), src.end()), type)
 {}
 
 auto Shader::set_sources(const std::span<const char* const> srcs) const -> void
@@ -172,7 +172,7 @@ auto Shader::new_vertex(const std::string& vert) -> std::shared_ptr<Shader>
   return std::make_shared<Shader>(vert, GL_VERTEX_SHADER);
 }
 
-auto Shader::new_vertex(const cmrc::file& vert) -> std::shared_ptr<Shader>
+auto Shader::new_vertex(std::span<const char> vert) -> std::shared_ptr<Shader>
 {
   return std::make_shared<Shader>(vert, GL_VERTEX_SHADER);
 }
@@ -182,7 +182,7 @@ auto Shader::new_fragment(const std::string& frag) -> std::shared_ptr<Shader>
   return std::make_shared<Shader>(frag, GL_FRAGMENT_SHADER);
 }
 
-auto Shader::new_fragment(const cmrc::file& frag) -> std::shared_ptr<Shader>
+auto Shader::new_fragment(std::span<const char> frag) -> std::shared_ptr<Shader>
 {
   return std::make_shared<Shader>(frag, GL_FRAGMENT_SHADER);
 }

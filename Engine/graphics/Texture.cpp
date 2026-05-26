@@ -3,8 +3,6 @@
 #include "Texture.hpp"
 #include "OpenGL.hpp"
 
-extern cmrc::embedded_filesystem embed_filesystem;
-
 namespace {
 constexpr auto to_string(GLenum type) -> const char*
 {
@@ -83,7 +81,7 @@ Texture2D::Texture2D(const std::string &name)
     gl::GenerateMipmap(m_Type);
 }
 
-Texture2D::Texture2D(const cmrc::file &src)
+Texture2D::Texture2D(std::span<const char> src)
     : Texture(GL_TEXTURE_2D), m_Img(src)
 {
     // Ensure GLubyte and std::byte are the same size at compile time
@@ -175,7 +173,7 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
 }
 
 
-TextureCubeMap::TextureCubeMap(const std::vector<cmrc::file>& faces)
+TextureCubeMap::TextureCubeMap(const std::vector<std::span<const char>>& faces)
     : TextureCubeMap()
 {
     m_Imgs = std::array<Image, 6>{
@@ -211,9 +209,9 @@ auto TextureCubeMap::base_to_6faces(const std::string& path) -> std::vector<std:
 
     return result;
 }
-auto TextureCubeMap::base_to_6facesfiles(const std::string& path) -> std::vector<cmrc::file>
+auto TextureCubeMap::base_to_6facesfiles(const std::string& path) -> std::vector<std::span<const char>>
 {
-    std::vector<cmrc::file> files;
+    std::vector<std::span<const char>> files;
     std::array<std::string, 6> directions = {"posx", "negx", "posy", "negy", "posz", "negz"};
     auto dot = path.find_last_of(".");
     auto ext = path.substr(dot, path.size());
@@ -221,7 +219,7 @@ auto TextureCubeMap::base_to_6facesfiles(const std::string& path) -> std::vector
     for (const auto &dir : directions) {
         auto newPath = path.substr(0, dot);
         newPath += "_" + dir + ext;
-        files.push_back(embed_filesystem.open(newPath));
+        files.push_back(res::get(newPath.c_str()));
     }
 
     return files;
