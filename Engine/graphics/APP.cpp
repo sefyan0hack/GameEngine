@@ -15,10 +15,10 @@
 #include <inputs/Keyboard.hpp>
 #include <inputs/Mouse.hpp>
 
-struct EmptyGame : IGame {
+static struct : IGame {
     auto update(float dt) -> void override { debug::log("update({})", dt); }
     auto on_deltamouse(float dx, float dy) -> void override { debug::log("on_deltamouse({},{})", dx, dy); }
-};
+} defaultGame;
 
 [[maybe_unused]] constexpr auto WINDOW_WIDTH = 1180;
 [[maybe_unused]] constexpr auto WINDOW_HIEGHT = 640;
@@ -35,7 +35,7 @@ APP::APP()
     , Renderer(new OpenGLRenderer(m_GApi))
     , UiText(m_GApi)
     , MainScene()
-    , Game(new EmptyGame())
+    , Game(&defaultGame)
 {
     Window.show();
     Window.set_vsync(true);
@@ -43,8 +43,14 @@ APP::APP()
 
 APP::~APP()
 {
-    if(Game) delete Game;
     if(Renderer) delete Renderer;
+}
+
+auto APP::self(IGame* g) -> APP &
+{
+    static APP ins;
+    if(g) ins.Game = g;
+    return ins;
 }
 
 auto APP::frame() -> void
@@ -171,14 +177,4 @@ auto APP::fps() const -> float
 auto APP::deltatime() const -> float
 {
     return 1.0f/m_Fps;
-}
-
-auto APP::self(IGame* g) -> APP &
-{
-    static APP ins;
-    if(g){
-        if(ins.Game) delete ins.Game;
-        ins.Game = g;
-    }
-    return ins;
 }
