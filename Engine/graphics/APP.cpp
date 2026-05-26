@@ -15,11 +15,6 @@
 #include <inputs/Keyboard.hpp>
 #include <inputs/Mouse.hpp>
 
-static struct : IGame {
-    auto update(float dt) -> void override { debug::log("update({})", dt); }
-    auto on_deltamouse(float dx, float dy) -> void override { debug::log("on_deltamouse({},{})", dx, dy); }
-} defaultGame;
-
 [[maybe_unused]] constexpr auto WINDOW_WIDTH = 1180;
 [[maybe_unused]] constexpr auto WINDOW_HIEGHT = 640;
 

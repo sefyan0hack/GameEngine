@@ -4,6 +4,7 @@
 #include "OpenGL.hpp"
 #include "Renderer.hpp"
 #include "Scene.hpp"
+#include <core/Log.hpp>
 #include <inputs/Keyboard.hpp>
 #include <inputs/Mouse.hpp>
 #include <ui/Text.hpp>
@@ -14,8 +15,8 @@
 class ENGINE_EXPORT IGame {
 public:
     virtual ~IGame() = default;
-    virtual auto update(float dt) -> void = 0;
-    virtual auto on_deltamouse(float, float) -> void = 0;
+    virtual auto update(float dt) -> void { debug::log("update({})", dt); }
+    virtual auto on_deltamouse(float dx, float dy) -> void { debug::log("on_deltamouse({},{})", dx, dy); }
 };
 
 class ENGINE_EXPORT APP
@@ -49,5 +50,6 @@ private:
     Text UiText;
     Scene MainScene;
 
+    inline static IGame defaultGame;
     IGame* Game;
 };
