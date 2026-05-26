@@ -9,7 +9,8 @@ auto os::build_info() -> const char*
     " - compiler name: " EG_COMPILER_NAME "\n"
     " - compiler version: " EG_COMPILER_VERSION "\n"
     " - build config: " EG_BUILD_CONFIG "\n"
-    " - std: c++" EG_CXX_STANDARD "\n";
+    " - std: c++" EG_CXX_STANDARD "\n"
+    " - commit: " EG_GIT_HASH "\n";
 }
 
 auto os::name() -> const char*

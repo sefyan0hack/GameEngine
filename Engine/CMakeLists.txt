@@ -82,6 +82,13 @@ target_compile_definitions(Engine PUBLIC
     $<$<OR:$<PLATFORM_ID:Android>,$<PLATFORM_ID:Emscripten>>:ES_GL>
 )
 
+execute_process(
+    COMMAND gi rev-parse HEAD
+    OUTPUT_VARIABLE GIT_HASH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_QUIET
+)
+
 target_compile_definitions(Engine PRIVATE
     EG_SYSTEM_HOST_NAME="${CMAKE_HOST_SYSTEM_NAME}"
     EG_SYSTEM_HOST_VERSION="${CMAKE_HOST_SYSTEM_VERSION}"
@@ -100,4 +107,6 @@ target_compile_definitions(Engine PRIVATE
 
     EG_DYN_LIB_PREFIX="${CMAKE_SHARED_LIBRARY_PREFIX}"
     EG_DYN_LIB_SUFFIX="${CMAKE_SHARED_LIBRARY_SUFFIX}"
+
+    EG_GIT_HASH="${GIT_HASH}"
 )
