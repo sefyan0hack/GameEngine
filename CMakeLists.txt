@@ -69,6 +69,18 @@ if(NOT COVERAGE AND NOT MSVC AND NOT DEFINED PROFILING_MODE)
 endif()
 
 ####################################################################################################
+# PIC/PIE
+####################################################################################################
+include(CheckPIESupported)
+check_pie_supported()
+cmake_policy(SET CMP0083 NEW)
+
+if(COVERAGE)
+    set(CMAKE_POSITION_INDEPENDENT_CODE FALSE)
+else()
+    set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+endif()
+####################################################################################################
 # Check if We Want Fetch or include Deps
 ####################################################################################################
 
