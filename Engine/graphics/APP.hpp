@@ -15,15 +15,16 @@
 class ENGINE_EXPORT IGame {
 public:
     virtual ~IGame() = default;
-    virtual auto update(float dt) -> void { debug::log("update({})", dt); }
-    virtual auto on_deltamouse(float dx, float dy) -> void { debug::log("on_deltamouse({},{})", dx, dy); }
+    virtual auto update(float dt) -> void { debug::log("update(delta: {})", dt); }
+    virtual auto on_deltamouse(float dx, float dy) -> void { debug::log("on_deltamouse(dx: {}, dy:{})", dx, dy); }
+
+    ::Scene Scene;
 };
 
 class ENGINE_EXPORT APP
 {
     APP();
 public:
-    friend class Game;
     
     auto run() -> void ;
     auto fps() const -> float;
@@ -41,15 +42,17 @@ private:
     uint32_t m_FrameCount;
     float m_AccumulatedTime;
 
+public:
     ::CWindow Window;
     ::Keyboard Keyboard;
     ::Mouse Mouse;
 
+private:
     OpenGL m_GApi;
     std::unique_ptr<IRenderer> Renderer;
-    Text UiText;
-    Scene MainScene;
 
-    inline static IGame defaultGame;
+public:
+    Text UiText;
+private:
     IGame* Game;
 };

@@ -34,11 +34,11 @@ public:
                 auto meshRes = cubeMesh;
                 auto t = Transform({i, 0, j}, {0, 0, 0}, { 0.5f, 0.5f, 0.5f});
             
-                app.MainScene << GameObject(t, m, meshRes);
+                Scene << GameObject(t, m, meshRes);
             }
         }
-        app.MainScene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattSand, manMesh);
-        app.MainScene << GameObject(Transform({2, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattkimberley, manMesh);
+        Scene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattSand, manMesh);
+        Scene << GameObject(Transform({2, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattkimberley, manMesh);
 
     }
 
@@ -53,7 +53,7 @@ public:
 
     auto on_deltamouse(float dx, float dy) -> void override
     {
-        app.MainScene.main_camera().process_mouse_movement(dx, -dy);
+        Scene.main_camera().process_mouse_movement(dx, -dy);
     }
 
     auto camera_mouvment(float delta) -> void
@@ -66,6 +66,6 @@ public:
 
         auto by = speed * delta;
 
-        app.MainScene.main_camera().move({ Vert * by, Up * by, Hori * by });
+        Scene.main_camera().move({ Vert * by, Up * by, Hori * by });
     }
 }_;// note `_` at the end of Game class is an instance of Game

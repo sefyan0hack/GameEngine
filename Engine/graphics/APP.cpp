@@ -15,6 +15,8 @@
 #include <inputs/Keyboard.hpp>
 #include <inputs/Mouse.hpp>
 
+static IGame defaultGame;
+
 [[maybe_unused]] constexpr auto WINDOW_WIDTH = 1180;
 [[maybe_unused]] constexpr auto WINDOW_HIEGHT = 640;
 
@@ -29,14 +31,13 @@ APP::APP()
     , m_GApi(Window)
     , Renderer(std::make_unique<OpenGLRenderer>(m_GApi))
     , UiText(m_GApi)
-    , MainScene()
     , Game(&defaultGame)
 {
     Window.show();
     Window.set_vsync(true);
 }
 
-auto APP::self(IGame* g) -> APP &
+auto APP::self(IGame* g) -> APP&
 {
     static APP ins;
     if(g) ins.Game = g;
@@ -49,7 +50,7 @@ auto APP::frame() -> void
 
     Renderer->clear_screen(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     Game->update(1.0f/m_Fps);
-    Renderer->render(MainScene);
+    Renderer->render(Game->Scene);
     UiText.render();
     Window.swap_buffers();
     Keyboard.save_prev_state();

@@ -83,7 +83,7 @@ target_compile_definitions(Engine PUBLIC
 )
 
 execute_process(
-    COMMAND gi rev-parse HEAD
+    COMMAND git rev-parse HEAD
     OUTPUT_VARIABLE GIT_HASH
     OUTPUT_STRIP_TRAILING_WHITESPACE
     ERROR_QUIET
