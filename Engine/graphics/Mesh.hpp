@@ -7,7 +7,6 @@
 #include "gl.hpp"
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
-#include <cmrc/cmrc.hpp>
 #include <engine_export.h>
 
 struct ENGINE_EXPORT Vertex

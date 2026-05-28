@@ -51,5 +51,8 @@ target_include_directories(graphics
         $<$<PLATFORM_ID:Linux>:${X11_INCLUDE_DIR}>
 )
 
-target_link_libraries(graphics INTERFACE res)
 target_link_libraries(graphics INTERFACE glm::glm)
+
+if(EMBED_RES)
+target_link_libraries(graphics INTERFACE res)
+endif()

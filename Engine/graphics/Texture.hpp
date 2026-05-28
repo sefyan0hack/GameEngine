@@ -8,8 +8,6 @@
 #include "Image.hpp"
 #include "gl.hpp"
 
-#include <cmrc/cmrc.hpp>
-
 class ENGINE_EXPORT Texture
 {
 public:

@@ -91,6 +91,7 @@ include(Deps)
 # Resources
 ####################################################################################################
 
+if(EMBED_RES)
 include(CMakeRC)
 
 file(GLOB_RECURSE RES_FILES
@@ -104,6 +105,7 @@ cmrc_add_resource_library( resources
 
     ${RES_FILES}
 )
+endif()
 
 ####################################################################################################
 # Sub Dirs

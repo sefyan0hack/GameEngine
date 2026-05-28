@@ -15,6 +15,8 @@ target_sources( ui
         Text.hpp
 )
 
-target_link_libraries(ui INTERFACE res)
 target_link_libraries(ui INTERFACE glm::glm)
 target_link_libraries(ui INTERFACE freetype)
+if(EMBED_RES)
+target_link_libraries(ui INTERFACE res)
+endif()

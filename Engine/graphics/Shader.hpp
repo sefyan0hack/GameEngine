@@ -8,8 +8,6 @@
 #include <span>
 #include "gl.hpp"
 
-#include <cmrc/cmrc.hpp>
-
 class ENGINE_EXPORT Shader
 {
   public:
