@@ -18,7 +18,9 @@ public:
     friend struct std::formatter<Scene>;
     Scene();    
 
+    auto entities() -> std::span<GameObject>;
     auto entities() const -> std::span<const GameObject>;
+
     auto clear() -> void;
     auto main_camera() -> Camera&;
     auto main_camera() const -> Camera&;

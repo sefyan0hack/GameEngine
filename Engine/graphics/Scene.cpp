@@ -14,6 +14,11 @@ Scene::Scene()
     , m_MainCamera(m_Cameras[0])
 {}
 
+auto Scene::entities() -> std::span<GameObject>
+{
+    return m_Entities;
+}
+
 auto Scene::entities() const -> std::span<const GameObject>
 {
     return m_Entities;
