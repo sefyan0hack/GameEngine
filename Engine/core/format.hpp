@@ -3,11 +3,12 @@
 #include <variant>
 #include <format>
 #include <utility>
-#include <glm/glm.hpp>
+
+#include <emath/emath.hpp>
 
 #ifdef __cpp_lib_formatters
 
-// custom glm::vec2 Format
+// custom emath::vec2 Format
 template<class... Ts>
 struct std::formatter<std::variant<Ts...>> {
   constexpr auto parse(std::format_parse_context& context) {
@@ -21,39 +22,39 @@ struct std::formatter<std::variant<Ts...>> {
   }
 };
 
-// custom glm::vec2 Format
+// custom emath::vec2 Format
 template<>
-struct std::formatter<glm::vec2> {
+struct std::formatter<emath::vec2> {
   constexpr auto parse(std::format_parse_context& context) {
     return context.begin();
   }
-  auto format(const glm::vec2& obj, auto& context) const {
+  auto format(const emath::vec2& obj, auto& context) const {
     return std::format_to(context.out(),
     R"({{ "x": {}, "y": {} }})"
     , obj.x, obj.y);
   }
 };
 
-// custom glm::vec3 Format
+// custom emath::vec3 Format
 template<>
-struct std::formatter<glm::vec3, char> {
+struct std::formatter<emath::vec3, char> {
   constexpr auto parse(std::format_parse_context& context) {
     return context.begin();
   }
-  auto format(const glm::vec3& obj, auto& context) const {
+  auto format(const emath::vec3& obj, auto& context) const {
     return std::format_to(context.out(),
     R"({{ "x": {}, "y": {}, "z": {} }})"
     , obj.x, obj.y, obj.z);
   }
 };
 
-// custom glm::mat4 Format
+// custom emath::mat4 Format
 template<>
-struct std::formatter<glm::mat4> {
+struct std::formatter<emath::mat4> {
   constexpr auto parse(std::format_parse_context& context) {
     return context.begin();
   }
-  auto format(const glm::mat4& obj, auto& context) const {
+  auto format(const emath::mat4& obj, auto& context) const {
     return std::format_to(context.out(),
   "[[ {}, {}, {}, {} ], [ {}, {}, {}, {} ], [ {}, {}, {}, {} ], [ {}, {}, {}, {} ]]"
     ,

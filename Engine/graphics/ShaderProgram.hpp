@@ -8,7 +8,7 @@
 #include <unordered_map>
 
 #include "gl.hpp"
-#include <glm/fwd.hpp>
+#include <emath/emath.hpp>
 #include <core/format.hpp>
 #include <engine_export.h>
 
@@ -40,12 +40,12 @@ public:
     auto set_uniform(const std::string &name, const GLuint &value) const -> void;
     auto set_uniform(const std::string &name, const GLfloat &value) const -> void;
     auto set_uniform(const std::string &name, const GLint &value) const -> void;
-    auto set_uniform(const std::string &name, const glm::vec2 &value) const -> void;
-    auto set_uniform(const std::string &name, const glm::vec3 &value) const -> void;
-    auto set_uniform(const std::string &name, const glm::vec4 &value) const -> void;
-    auto set_uniform(const std::string &name, const glm::mat2 &value) const -> void;
-    auto set_uniform(const std::string &name, const glm::mat3 &value) const -> void;
-    auto set_uniform(const std::string &name, const glm::mat4 &value) const -> void;
+    auto set_uniform(const std::string &name, const emath::vec2 &value) const -> void;
+    auto set_uniform(const std::string &name, const emath::vec3 &value) const -> void;
+    auto set_uniform(const std::string &name, const emath::vec4 &value) const -> void;
+    auto set_uniform(const std::string &name, const emath::mat2 &value) const -> void;
+    auto set_uniform(const std::string &name, const emath::mat3 &value) const -> void;
+    auto set_uniform(const std::string &name, const emath::mat4 &value) const -> void;
 
 private:
     auto get_program_info(GLenum what) const -> GLint;

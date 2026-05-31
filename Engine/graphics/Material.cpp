@@ -4,7 +4,7 @@
 #include "Camera.hpp"
 #include "SkyBox.hpp"
 
-#include <glm/matrix.hpp>
+#include <emath/emath.hpp>
 
 constexpr int32_t Diffuse_SLOT = 0;
 constexpr int32_t SkyBox_SLOT = 1;
@@ -51,7 +51,7 @@ auto Material::render_sky(const Camera& cam) -> void{
     gl::DepthFunc(GL_LEQUAL);
 
     sk.m_Program.use();
-    sk.m_Program.set_uniform("View", glm::mat4(glm::mat3(cam.view())));
+    sk.m_Program.set_uniform("View", emath::mat4(emath::mat3(cam.view())));
     sk.m_Program.set_uniform("Projection", cam.perspective());
     gl::ActiveTexture(GL_TEXTURE0 + SkyBox_SLOT);
     sk.m_Texture->bind();

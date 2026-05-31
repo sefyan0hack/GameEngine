@@ -3,14 +3,15 @@
 #include <string>
 #include <format>
 
-#include <glm/fwd.hpp>
+#include <emath/emath.hpp>
+
 #include "Transform.hpp"
 #include <engine_export.h>
 
 class ENGINE_EXPORT GameObject {
 public:
     friend struct std::formatter<GameObject>;
-    GameObject(glm::vec3 position, std::shared_ptr<class Material> matt, std::shared_ptr<class Mesh> mesh) noexcept;
+    GameObject(emath::vec3 position, std::shared_ptr<class Material> matt, std::shared_ptr<class Mesh> mesh) noexcept;
     GameObject(Transform transform, std::shared_ptr<class Material> matt, std::shared_ptr<class Mesh> mesh) noexcept;
     ~GameObject();
 
@@ -20,11 +21,11 @@ public:
     GameObject(GameObject&& other) noexcept;
     auto operator=(GameObject&& other) noexcept -> GameObject&;
 
-    auto set_position(const glm::vec3 &pos)                   -> void ;
-    auto set_scale(const glm::vec3 &Scale)                    -> void ;
-    auto rotate(float angle, glm::vec3 axis)                 -> void ;
+    auto set_position(const emath::vec3 &pos)                   -> void ;
+    auto set_scale(const emath::vec3 &Scale)                    -> void ;
+    auto rotate(float angle, emath::vec3 axis)                 -> void ;
     auto transform() const                                   -> Transform ;
-    auto model() const                                       -> glm::mat4 ;
+    auto model() const                                       -> emath::mat4 ;
     auto mesh() const                                        -> std::shared_ptr<class Mesh> ;
     auto material() const                                    -> std::shared_ptr<class Material> ;
 
