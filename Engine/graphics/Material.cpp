@@ -4,7 +4,8 @@
 #include "Camera.hpp"
 #include "SkyBox.hpp"
 
-#include <emath/emath.hpp>
+#include <emath/mat3.hpp>
+#include <emath/mat4.hpp>
 
 constexpr int32_t Diffuse_SLOT = 0;
 constexpr int32_t SkyBox_SLOT = 1;

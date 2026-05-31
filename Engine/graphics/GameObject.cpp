@@ -3,8 +3,6 @@
 #include "Material.hpp"
 #include "Mesh.hpp"
 
-#include <emath/emath.hpp>
-
 GameObject::GameObject(emath::vec3 position, std::shared_ptr<Material> matt, std::shared_ptr<Mesh> mesh) noexcept
     : m_Transform(Transform(position))
     , m_Material(matt)

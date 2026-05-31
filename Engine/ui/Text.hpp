@@ -4,7 +4,9 @@
 #include <unordered_map>
 #include <engine_export.h>
 
-#include <emath/emath.hpp>
+#include <emath/vec2.hpp>
+#include <emath/ivec2.hpp>
+#include <emath/hash.hpp>
 
 #include <vector>
 #include <memory>

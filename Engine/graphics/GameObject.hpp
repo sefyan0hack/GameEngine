@@ -3,7 +3,8 @@
 #include <string>
 #include <format>
 
-#include <emath/emath.hpp>
+#include <emath/vec3.hpp>
+#include <emath/mat4.hpp>
 
 #include "Transform.hpp"
 #include <engine_export.h>

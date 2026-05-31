@@ -8,8 +8,14 @@
 #include <unordered_map>
 
 #include "gl.hpp"
-#include <emath/emath.hpp>
-#include <core/format.hpp>
+
+#include <emath/vec2.hpp>
+#include <emath/vec3.hpp>
+#include <emath/vec4.hpp>
+#include <emath/mat2.hpp>
+#include <emath/mat3.hpp>
+#include <emath/mat4.hpp>
+
 #include <engine_export.h>
 
 

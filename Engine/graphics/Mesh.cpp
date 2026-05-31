@@ -1,8 +1,6 @@
 #include <core/Log.hpp>
 #include "Mesh.hpp"
 #include "OpenGL.hpp"
-#include <emath/emath.hpp>
-
 
 std::vector<Vertex> Mesh::CUBE {
       // Front

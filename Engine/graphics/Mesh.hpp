@@ -5,7 +5,10 @@
 #include <span>
 
 #include "gl.hpp"
-#include <emath/emath.hpp>
+
+#include <emath/vec2.hpp>
+#include <emath/vec3.hpp>
+
 #include <cmrc/cmrc.hpp>
 #include <engine_export.h>
 
