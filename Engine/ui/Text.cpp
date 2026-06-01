@@ -9,11 +9,7 @@
 #include "Shader.hpp"
 #include "ShaderProgram.hpp"
 
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/fast_trigonometry.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/string_cast.hpp>
+#include <emath/emath.hpp>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -154,10 +150,10 @@ auto Text::create_atlas() -> void {
 
         // Store glyph
         m_Glyphs[charcode] = AtlasGlyph{
-            glm::ivec2(bitmap->width, bitmap->rows),
-            glm::ivec2(glyph->bitmap_left, glyph->bitmap_top),
-            glm::vec2(tx_min, ty_min),
-            glm::vec2(tx_max, ty_max),
+            emath::ivec2(bitmap->width, bitmap->rows),
+            emath::ivec2(glyph->bitmap_left, glyph->bitmap_top),
+            emath::vec2(tx_min, ty_min),
+            emath::vec2(tx_max, ty_max),
             static_cast<uint32_t>(glyph->advance.x)
         };
 
@@ -177,7 +173,7 @@ auto Text::render() -> void {
     if (m_Batches.empty()) return;
 
     auto [width, height] = m_GApi.window().dims();
-    auto projection = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
+    auto projection = emath::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
 
     gl::DepthMask(GL_FALSE);
     gl::DepthFunc(GL_ALWAYS);
@@ -251,24 +247,24 @@ auto Text::flush_batch() -> void {
 
 }
 
-auto Text::push_quad(const glm::vec2& position, const glm::vec2& size, const glm::vec2& texMin, const glm::vec2& texMax) -> void {
+auto Text::push_quad(const emath::vec2& position, const emath::vec2& size, const emath::vec2& texMin, const emath::vec2& texMax) -> void {
     Vertex vertices[4] = {
-        {glm::vec2(position.x, position.y),                 glm::vec2(texMin.x, texMax.y)},
-        {glm::vec2(position.x + size.x, position.y),        glm::vec2(texMax.x, texMax.y)},
-        {glm::vec2(position.x + size.x, position.y + size.y), glm::vec2(texMax.x, texMin.y)},
-        {glm::vec2(position.x, position.y + size.y),        glm::vec2(texMin.x, texMin.y)}
+        {emath::vec2(position.x, position.y),                 emath::vec2(texMin.x, texMax.y)},
+        {emath::vec2(position.x + size.x, position.y),        emath::vec2(texMax.x, texMax.y)},
+        {emath::vec2(position.x + size.x, position.y + size.y), emath::vec2(texMax.x, texMin.y)},
+        {emath::vec2(position.x, position.y + size.y),        emath::vec2(texMin.x, texMin.y)}
     };
 
     m_Vertices.insert(m_Vertices.end(), vertices, vertices + 4);
     m_IndexCount += INDICES_PER_QUAD;
 }
 
-auto Text::text(std::string text, glm::vec2 pos) -> void {
+auto Text::text(std::string text, emath::vec2 pos) -> void {
     m_Batches[pos] = text;
 }
 
 auto Text::print(std::string text) -> void {
-    static glm::vec2 currs = {0, 0};
+    static emath::vec2 currs = {0, 0};
     m_Batches[currs] = text;
-    currs += glm::vec2{0, FONT_SIZE};
+    currs += emath::vec2{0, FONT_SIZE};
 }

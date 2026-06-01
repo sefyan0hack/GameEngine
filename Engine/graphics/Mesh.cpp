@@ -1,8 +1,6 @@
 #include <core/Log.hpp>
 #include "Mesh.hpp"
 #include "OpenGL.hpp"
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
 
 std::vector<Vertex> Mesh::CUBE {
       // Front
@@ -268,7 +266,7 @@ auto obj_to_mesh(const char* filename) -> std::vector<Vertex>
   std::ifstream file(filename);
 
   if(!file) throw Exception("Error: Unable to open {}", filename);
-  std::vector<glm::vec3> positions;      // Store raw vertex positions
+  std::vector<emath::vec3> positions;      // Store raw vertex positions
   std::vector<Vertex> vertices_output;    // Final vertex output
 
   std::string line;
@@ -280,7 +278,7 @@ auto obj_to_mesh(const char* filename) -> std::vector<Vertex>
       if (type == "v") {  // Vertex position
           float x, y, z;
           iss >> x >> y >> z;
-          positions.push_back(glm::vec3(x, y, z));
+          positions.push_back(emath::vec3(x, y, z));
       }
       else if (type == "f") {  // Face definition
           std::vector<size_t> faceIndices;
@@ -322,8 +320,8 @@ auto obj_to_mesh(const char* filename) -> std::vector<Vertex>
               v3.Position = positions[faceIndices[i + 1]];
               
               // Set normals and texcoords to zero
-              v1.Normal = v2.Normal = v3.Normal = glm::vec3(0.0f);
-              v1.TexCoords = v2.TexCoords = v3.TexCoords = glm::vec2(0.0f);
+              v1.Normal = v2.Normal = v3.Normal = emath::vec3(0.0f);
+              v1.TexCoords = v2.TexCoords = v3.TexCoords = emath::vec2(0.0f);
               
               // Add to output
               vertices_output.push_back(v1);
@@ -340,7 +338,7 @@ auto obj_to_mesh(const char* filename) -> std::vector<Vertex>
 auto obj_to_mesh(std::span<const char> src) -> std::vector<Vertex>
 {
   std::string_view sv(src.data(), src.size());
-  std::vector<glm::vec3> positions;
+  std::vector<emath::vec3> positions;
   std::vector<Vertex> vertices_output;
 
   auto trim = [](std::string_view s) -> std::string_view {
@@ -411,8 +409,8 @@ auto obj_to_mesh(std::span<const char> src) -> std::vector<Vertex>
         v2.Position = positions[faceIndices[k]];
         v3.Position = positions[faceIndices[k + 1]];
 
-        v1.Normal = v2.Normal = v3.Normal = glm::vec3(0.0f);
-        v1.TexCoords = v2.TexCoords = v3.TexCoords = glm::vec2(0.0f);
+        v1.Normal = v2.Normal = v3.Normal = emath::vec3(0.0f);
+        v1.TexCoords = v2.TexCoords = v3.TexCoords = emath::vec2(0.0f);
 
         vertices_output.push_back(v1);
         vertices_output.push_back(v2);

@@ -5,15 +5,18 @@
 #include <span>
 
 #include "gl.hpp"
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
+
+#include <emath/vec2.hpp>
+#include <emath/vec3.hpp>
+
+#include <cmrc/cmrc.hpp>
 #include <engine_export.h>
 
 struct ENGINE_EXPORT Vertex
 {
-  glm::vec3 Position;
-  glm::vec3 Normal;
-  glm::vec2 TexCoords;
+  emath::vec3 Position;
+  emath::vec3 Normal;
+  emath::vec2 TexCoords;
 };
 
 struct ENGINE_EXPORT AttributeInfo {

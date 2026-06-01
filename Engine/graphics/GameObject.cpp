@@ -3,10 +3,7 @@
 #include "Material.hpp"
 #include "Mesh.hpp"
 
-#include <glm/vec3.hpp>
-#include <glm/matrix.hpp>
-
-GameObject::GameObject(glm::vec3 position, std::shared_ptr<Material> matt, std::shared_ptr<Mesh> mesh) noexcept
+GameObject::GameObject(emath::vec3 position, std::shared_ptr<Material> matt, std::shared_ptr<Mesh> mesh) noexcept
     : m_Transform(Transform(position))
     , m_Material(matt)
     , m_Mesh(mesh)
@@ -46,22 +43,22 @@ auto GameObject::transform() const -> Transform
     return m_Transform;
 }
 
-auto GameObject::model() const -> glm::mat4
+auto GameObject::model() const -> emath::mat4
 {
     return m_Transform;
 }
 
-auto GameObject::set_position(const glm::vec3 &pos) -> void
+auto GameObject::set_position(const emath::vec3 &pos) -> void
 {
     m_Transform.position = pos;
 }
 
-auto GameObject::set_scale(const glm::vec3 &Scale) -> void
+auto GameObject::set_scale(const emath::vec3 &Scale) -> void
 {
     m_Transform.scale = Scale;
 }
 
-auto GameObject::rotate(float angle, glm::vec3 axis) -> void
+auto GameObject::rotate(float angle, emath::vec3 axis) -> void
 {
     m_Transform.rotation += axis * angle;
 }

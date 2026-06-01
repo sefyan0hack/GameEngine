@@ -261,7 +261,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const GLuint &value) co
     }
 }
 
-auto ShaderProgram::set_uniform(const std::string& name, const glm::vec2 &value) const -> void
+auto ShaderProgram::set_uniform(const std::string& name, const emath::vec2 &value) const -> void
 {
     try {
         auto [loc, type, size] = m_Uniforms.at(name);
@@ -273,7 +273,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const glm::vec2 &value)
     }
 }
 
-auto ShaderProgram::set_uniform(const std::string& name, const glm::vec3 &value) const -> void
+auto ShaderProgram::set_uniform(const std::string& name, const emath::vec3 &value) const -> void
 {
     try {
         auto [loc, type, size] = m_Uniforms.at(name);
@@ -285,7 +285,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const glm::vec3 &value)
     }
 }
 
-auto ShaderProgram::set_uniform(const std::string& name, const glm::vec4 &value) const -> void
+auto ShaderProgram::set_uniform(const std::string& name, const emath::vec4 &value) const -> void
 {
     try {
         auto [loc, type, size] = m_Uniforms.at(name);
@@ -297,7 +297,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const glm::vec4 &value)
     }
 }
 
-auto ShaderProgram::set_uniform(const std::string& name, const glm::mat2 &value) const -> void
+auto ShaderProgram::set_uniform(const std::string& name, const emath::mat2 &value) const -> void
 {
     try {
         auto [loc, type, size] = m_Uniforms.at(name);
@@ -309,7 +309,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const glm::mat2 &value)
     }
 }
 
-auto ShaderProgram::set_uniform(const std::string& name, const glm::mat3 &value) const -> void
+auto ShaderProgram::set_uniform(const std::string& name, const emath::mat3 &value) const -> void
 {
     try {
         auto [loc, type, size] = m_Uniforms.at(name);
@@ -321,7 +321,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const glm::mat3 &value)
     }
 }
 
-auto ShaderProgram::set_uniform(const std::string& name, const glm::mat4 &value) const -> void
+auto ShaderProgram::set_uniform(const std::string& name, const emath::mat4 &value) const -> void
 {
     try {
         auto [loc, type, size] = m_Uniforms.at(name);

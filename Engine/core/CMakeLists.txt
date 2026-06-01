@@ -27,5 +27,4 @@ target_sources( core
       ${CMAKE_CURRENT_SOURCE_DIR}/DynLib.hpp
       ${CMAKE_CURRENT_SOURCE_DIR}/SysInfo.hpp
       ${CMAKE_CURRENT_SOURCE_DIR}/res.hpp
-      ${CMAKE_CURRENT_SOURCE_DIR}/format.hpp
 )

@@ -4,23 +4,21 @@
 #include <unordered_map>
 #include <engine_export.h>
 
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
-
-#include <glm/vec4.hpp>
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/hash.hpp>
+#include <emath/vec2.hpp>
+#include <emath/ivec2.hpp>
+#include <emath/hash.hpp>
 
 #include <vector>
 #include <memory>
 #include <unordered_map>
+#include <cstdint>
 #include <bit>
 
 struct AtlasGlyph {
-    glm::ivec2 size;            // Size of glyph in pixels
-    glm::ivec2 bearing;         // Offset from baseline to left/top of glyph
-    glm::vec2 topleft;      // Top-left texture coordinates in atlas
-    glm::vec2 botright;      // Bottom-right texture coordinates in atlas
+    emath::ivec2 size;            // Size of glyph in pixels
+    emath::ivec2 bearing;         // Offset from baseline to left/top of glyph
+    emath::vec2 topleft;      // Top-left texture coordinates in atlas
+    emath::vec2 botright;      // Bottom-right texture coordinates in atlas
     uint32_t advance;           // Offset to advance to next glyph (in 1/64 pixels)
 };
 
@@ -30,13 +28,13 @@ public:
     ~Text();
     
     auto render() -> void;
-    auto text(std::string text, glm::vec2 pos) -> void;
+    auto text(std::string text, emath::vec2 pos) -> void;
     auto print(std::string text) -> void;
     
 
 public:
     constexpr static const char* FONT_NAME = "res/JetBrainsMonoNL-BoldItalic.ttf";
-    constexpr static glm::vec3 FONT_COLOR = {0.1f, 0.85f, 0.1f};
+    inline    static emath::vec3 FONT_COLOR = {0.1f, 0.85f, 0.1f};
     constexpr static uint32_t FONT_SIZE = 24;
 
     constexpr static uint32_t GLYPH_PADDING = 1;
@@ -63,16 +61,16 @@ public:
 
 private:
     struct Vertex {
-        glm::vec2 position;
-        glm::vec2 texCoord;
+        emath::vec2 position;
+        emath::vec2 texCoord;
     };
     
     auto create_atlas() -> void;
     auto init_buffers() -> void;
     auto flush_batch() -> void;
 
-    auto push_quad(const glm::vec2& position, const glm::vec2& size, 
-                   const glm::vec2& texMin, const glm::vec2& texMax) -> void;
+    auto push_quad(const emath::vec2& position, const emath::vec2& size, 
+                   const emath::vec2& texMin, const emath::vec2& texMax) -> void;
     
 private:
     const class OpenGL& m_GApi;
@@ -82,7 +80,7 @@ private:
     // Glyph storage
     std::unordered_map<uint32_t, AtlasGlyph> m_Glyphs;  // char32_t to glyph
     // Batch rendering
-    std::unordered_map<glm::vec2, std::string> m_Batches;
+    std::unordered_map<emath::vec2, std::string> m_Batches;
 
     // Buffers
     uint32_t VAO, VBO, EBO;
