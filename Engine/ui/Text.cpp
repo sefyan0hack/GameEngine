@@ -11,9 +11,11 @@
 
 #include <emath/emath.hpp>
 
+#if 0 // TODO: replace freetype with stb_truetyp
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
+#endif
 
 #include <bit>
 #include <string>
@@ -78,7 +80,12 @@ auto Text::init_buffers() -> void {
     gl::BindVertexArray(0);
 }
 
+#if 0 // TODO: replace freetype with stb_truetyp
+// Glyph storage
+static std::unordered_map<uint32_t, AtlasGlyph> m_Glyphs;  // char32_t to glyph
+#endif
 auto Text::create_atlas() -> void {
+    #if 0 // TODO: replace freetype with stb_truetyp
     FT_Library ft;
     FT_Face face;
 
@@ -167,6 +174,7 @@ auto Text::create_atlas() -> void {
     // Clanup
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
+    #endif
 }
 
 auto Text::render() -> void {
@@ -194,6 +202,7 @@ auto Text::render() -> void {
     // Begin batch
     m_Vertices.clear();
     m_IndexCount = 0;
+    #if 0 // TODO: replace freetype with stb_truetyp
     for (const auto& [pos, text] : m_Batches) {
         float startX = pos.x;
         float x = startX;
@@ -225,6 +234,7 @@ auto Text::render() -> void {
             }
         }
     }
+    #endif
 
     // Flush remaining vertices
     if (m_IndexCount > 0) {
