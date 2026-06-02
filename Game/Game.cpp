@@ -32,7 +32,7 @@ public:
             for(int32_t j = -Grids; j < Grids; j ++){
                 auto m = coin(rng) ? CubeMattkimberley : CubeMattSand;
                 auto meshRes = cubeMesh;
-                auto t = Transform({i, 0, j}, {0, 0, 0}, { 0.5f, 0.5f, 0.5f});
+                auto t = Transform({float(i), 0, float(j)}, {0, 0, 0}, { 0.5f, 0.5f, 0.5f});
             
                 Scene << GameObject(t, m, meshRes);
             }

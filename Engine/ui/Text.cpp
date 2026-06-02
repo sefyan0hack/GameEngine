@@ -197,7 +197,7 @@ auto Text::render() -> void {
     for (const auto& [pos, text] : m_Batches) {
         float startX = pos.x;
         float x = startX;
-        float y = height - pos.y - static_cast<float>(m_Ascent);
+        float y = static_cast<float>(height) - pos.y - static_cast<float>(m_Ascent);
 
         for (auto c : text) {
             auto glyph = m_Glyphs.at('?');
@@ -206,7 +206,7 @@ auto Text::render() -> void {
             float w = static_cast<float>(glyph.size.x);
             float h = static_cast<float>(glyph.size.y);
 
-            if (x + w >= width) {
+            if (x + w >= static_cast<float>(width)) {
                 x = startX;
                 y -= FONT_SIZE;
             }
