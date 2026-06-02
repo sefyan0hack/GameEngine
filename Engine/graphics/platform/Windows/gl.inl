@@ -11,6 +11,13 @@ using GL_CFG    = int;
 
 namespace gl {
     template <class T>
-    inline auto GetProcAddress(const char* name) -> T { return reinterpret_cast<T>(wglGetProcAddress(name)); }
+    inline auto GetProcAddress(const char* name) -> T {
+        union {
+            PROC proc;
+            T func;
+        } u{ wglGetProcAddress(name) };
+
+        return u.func;
+    }
     inline auto GetCurrentContext() -> GL_CTX { return wglGetCurrentContext(); }
 }
