@@ -59,7 +59,7 @@ endif()
 # IPO/LTO
 ####################################################################################################
 
-if(NOT COVERAGE AND NOT MSVC AND NOT DEFINED PROFILING_MODE)
+if(NOT COVERAGE AND NOT MSVC AND NOT PROFILING_MODE)
     include(CheckIPOSupported)
     check_ipo_supported(RESULT IPO_SUPPORTED OUTPUT output)
 
@@ -71,15 +71,20 @@ endif()
 ####################################################################################################
 # PIC/PIE
 ####################################################################################################
-include(CheckPIESupported)
-check_pie_supported()
 cmake_policy(SET CMP0083 NEW)
+include(CheckPIESupported)
 
-if(COVERAGE)
-    set(CMAKE_POSITION_INDEPENDENT_CODE FALSE)
-else()
-    set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+check_pie_supported(OUTPUT_VARIABLE PIE_ERROR LANGUAGES C CXX)
+if(PIE_ERROR)
+    message(WARNING "PIE not supported: ${PIE_ERROR}")
 endif()
+
+if(COVERAGE OR PROFILING_MODE)
+    set(CMAKE_POSITION_INDEPENDENT_CODE OFF)
+else()
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+endif()
+
 ####################################################################################################
 # Check if We Want Fetch or include Deps
 ####################################################################################################
