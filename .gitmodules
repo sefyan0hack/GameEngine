@@ -1,7 +1,3 @@
-[submodule "3party/freetype"]
-	path = 3party/freetype
-	url = https://github.com/freetype/freetype.git
-
 [submodule "3party/googletest"]
 	path = 3party/googletest
 	url = https://github.com/google/googletest.git
