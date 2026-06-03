@@ -51,7 +51,7 @@ auto APP::frame() -> void
     Renderer->clear_screen(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     Game->update(1.0f/m_Fps);
     Renderer->render(Game->Scene);
-    // UiText.render();
+    UiText.render();
     Window.swap_buffers();
     Keyboard.save_prev_state();
     Mouse.save_prev_state();
