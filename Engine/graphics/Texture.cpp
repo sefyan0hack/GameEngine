@@ -1,4 +1,5 @@
 #include <core/Log.hpp>
+#include <core/Exception.hpp>
 #include <core/res.hpp>
 #include "Texture.hpp"
 #include "OpenGL.hpp"

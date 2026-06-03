@@ -1,7 +1,5 @@
 #pragma once
 
-
-#include <core/Function.hpp>
 #include <engine_export.h>
 #define GL_GLEXT_PROTOTYPES
 #include "gl.inl"

@@ -1,5 +1,6 @@
 #include "gl.hpp"
 #include <core/Log.hpp>
+#include <core/Exception.hpp>
 #include <core/SysInfo.hpp>
 
 namespace gl {

@@ -69,7 +69,7 @@ if(NOT COVERAGE AND NOT MSVC AND NOT PROFILING_MODE)
 endif()
 
 ####################################################################################################
-# Check if We Want Fetch or include Deps
+# Deps
 ####################################################################################################
 
 include(InstaledPackages)

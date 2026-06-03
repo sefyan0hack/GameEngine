@@ -1,5 +1,6 @@
 #include "OpenGL.hpp"
 #include "Window.hpp"
+#include <core/Exception.hpp>
 
 static int32_t visualAttribs[] = {
     GLX_X_RENDERABLE,  true,

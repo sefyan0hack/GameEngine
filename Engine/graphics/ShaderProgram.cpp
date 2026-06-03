@@ -2,6 +2,8 @@
 #include "Shader.hpp"
 #include "OpenGL.hpp"
 #include <core/Log.hpp>
+#include <core/Exception.hpp>
+#include <utility>
 
 ShaderProgram::ShaderProgram(std::shared_ptr<Shader> vertex, std::shared_ptr<Shader> fragment)
     : m_Id(gl::CreateProgram())

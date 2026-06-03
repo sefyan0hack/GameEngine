@@ -2,7 +2,9 @@
 
 #include "Image.hpp"
 #include <core/Log.hpp>
+#include <core/Exception.hpp>
 #include <bit>
+#include <utility>
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_NO_THREAD_LOCALS

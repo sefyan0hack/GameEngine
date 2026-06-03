@@ -1,6 +1,8 @@
 #include "OpenGL.hpp"
 #include "Window.hpp"
 
+#include <core/Exception.hpp>
+
 OpenGL::~OpenGL()
 {
     if (m_Context != GL_CTX{}) {

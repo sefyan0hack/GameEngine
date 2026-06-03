@@ -1,5 +1,7 @@
 #include <core/Log.hpp>
 #include <core/SysInfo.hpp>
+#include <core/Exception.hpp>
+#include <core/Utils.hpp>
 #include "OpenGL.hpp"
 #include "Shader.hpp"
 #include <ranges>

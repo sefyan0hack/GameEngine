@@ -23,7 +23,7 @@ target_sources( core
       ${CMAKE_CURRENT_SOURCE_DIR}/Log.hpp
       ${CMAKE_CURRENT_SOURCE_DIR}/Utils.hpp
       ${CMAKE_CURRENT_SOURCE_DIR}/Event.hpp
-      ${CMAKE_CURRENT_SOURCE_DIR}/Function.hpp
+      # ${CMAKE_CURRENT_SOURCE_DIR}/Function.hpp #not used for now
       ${CMAKE_CURRENT_SOURCE_DIR}/DynLib.hpp
       ${CMAKE_CURRENT_SOURCE_DIR}/SysInfo.hpp
       ${CMAKE_CURRENT_SOURCE_DIR}/res.hpp
