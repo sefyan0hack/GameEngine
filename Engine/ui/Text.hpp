@@ -77,8 +77,6 @@ private:
     std::shared_ptr<class Shader> m_Vert, m_Frag;
     std::shared_ptr<class ShaderProgram> m_Program;
 
-    // Glyph storage
-    std::unordered_map<uint32_t, AtlasGlyph> m_Glyphs;  // char32_t to glyph
     // Batch rendering
     std::unordered_map<emath::vec2, std::string> m_Batches;
 
