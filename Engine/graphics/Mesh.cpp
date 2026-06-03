@@ -4,6 +4,7 @@
 #include <core/Exception.hpp>
 
 #include <fstream>
+#include <sstream>
 
 std::vector<Vertex> Mesh::CUBE {
       // Front
