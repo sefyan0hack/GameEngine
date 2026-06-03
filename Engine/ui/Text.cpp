@@ -11,14 +11,16 @@
 
 #include <emath/emath.hpp>
 
-#if 0 // TODO: replace freetype with stb_truetyp
-#include <ft2build.h>
-#include FT_FREETYPE_H
-#include FT_GLYPH_H
-#endif
+#define STB_TRUETYPE_IMPLEMENTATION
+#include <stb/stb_truetype.h>
 
 #include <bit>
 #include <string>
+#include <vector>
+
+namespace {
+    std::unordered_map<uint32_t, AtlasGlyph> g_Glyphs;
+}
 
 Text::Text(const OpenGL& ctx)
     : m_GApi(ctx)
@@ -80,101 +82,62 @@ auto Text::init_buffers() -> void {
     gl::BindVertexArray(0);
 }
 
-#if 0 // TODO: replace freetype with stb_truetyp
-// Glyph storage
-static std::unordered_map<uint32_t, AtlasGlyph> m_Glyphs;  // char32_t to glyph
-#endif
 auto Text::create_atlas() -> void {
-    #if 0 // TODO: replace freetype with stb_truetyp
-    FT_Library ft;
-    FT_Face face;
-
-    if (FT_Init_FreeType(&ft)) {
-        throw Exception("ERROR::FREETYPE: Could not init FreeType Library");
-    }
-
     auto font_data = res::get(FONT_NAME);
 
-    if (FT_New_Memory_Face(ft, std::bit_cast<FT_Byte const*>(font_data.data()), static_cast<FT_Long>(font_data.size()), 0, &face)) {
-        FT_Done_FreeType(ft);
-        throw Exception("ERROR::FREETYPE: Failed to load font");
+    stbtt_fontinfo info;
+    if (!stbtt_InitFont(&info, reinterpret_cast<const unsigned char*>(font_data.data()), 0)) {
+        throw Exception("ERROR::STB_TRUETYPE: Failed to load font");
     }
 
-    FT_Set_Pixel_Sizes(face, 0, FONT_SIZE);
+    float scale = stbtt_ScaleForPixelHeight(&info, FONT_SIZE);
 
-    // Get font metrics
-    m_Ascent = face->size->metrics.ascender >> 6;
+    int ascent, descent, lineGap;
+    stbtt_GetFontVMetrics(&info, &ascent, &descent, &lineGap);
+    m_Ascent = static_cast<int32_t>(ascent * scale);
 
-    // Create atlas texture
+    std::vector<unsigned char> bitmap(ATLAS_WIDTH * ATLAS_HEIGHT, 0);
+
+    std::vector<stbtt_bakedchar> bakedChars(CHAR_COUNT);
+
+    int result = stbtt_BakeFontBitmap(
+        reinterpret_cast<const unsigned char*>(font_data.data()), 0,
+        FONT_SIZE,
+        bitmap.data(), ATLAS_WIDTH, ATLAS_HEIGHT,
+        FIRST_GLYPH, CHAR_COUNT,
+        bakedChars.data()
+    );
+
+    if (result <= 0) {
+        throw Exception("ERROR::STB_TRUETYPE: Failed to bake font bitmap");
+    }
+
     gl::GenTextures(1, &m_AtlasTexture);
     gl::BindTexture(GL_TEXTURE_2D, m_AtlasTexture);
-    gl::TexImage2D(GL_TEXTURE_2D, 0, GL_R8, ATLAS_WIDTH, ATLAS_HEIGHT, 0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
+    gl::TexImage2D(GL_TEXTURE_2D, 0, GL_R8, ATLAS_WIDTH, ATLAS_HEIGHT, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap.data());
 
-    // Set texture parameters for better rendering
+    // Set texture parameters
     gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    // Set unpack alignment for 1-byte bitmaps
     gl::PixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    // Initialize packing
-    uint32_t currentX = 0;
-    uint32_t currentY = 0;
-    uint32_t maxHeightInRow = 0; // Track the tallest glyph in this specific row
+    for (int i = 0; i < CHAR_COUNT; ++i) {
+        const auto& bc = bakedChars[i];
+        int charcode = FIRST_GLYPH + i;
 
-    //ASCII
-    for (auto charcode = FIRST_GLYPH; charcode <= LAST_GLYPH; ++charcode) {
-        if (FT_Load_Char(face, charcode, FT_LOAD_RENDER)) continue;
+        int width = bc.x1 - bc.x0;
+        int height = bc.y1 - bc.y0;
 
-        FT_GlyphSlot glyph = face->glyph;
-        FT_Bitmap* bitmap = &glyph->bitmap;
-
-        // If we exceed width, move to the next row
-        if (currentX + bitmap->width + GLYPH_PADDING > ATLAS_WIDTH) {
-            currentX = 0;
-            currentY += maxHeightInRow + GLYPH_PADDING;
-            maxHeightInRow = 0; // Reset for the new row
-        }
-
-        // Check atlas bounds
-        if (currentY + bitmap->rows + GLYPH_PADDING > ATLAS_HEIGHT) {
-            debug::log("WARNING: Atlas texture too small for font size {}\n", FONT_SIZE);
-            break;
-        }
-
-        // Upload glyph to atlas
-        if (bitmap->width > 0 && bitmap->rows > 0) {
-            gl::TexSubImage2D(GL_TEXTURE_2D, 0, currentX, currentY, bitmap->width, bitmap->rows, GL_RED, GL_UNSIGNED_BYTE, bitmap->buffer);
-        }
-
-        // Calculate texture coordinates
-        float tx_min = static_cast<float>(currentX) / ATLAS_WIDTH;
-        float ty_min = static_cast<float>(currentY) / ATLAS_HEIGHT;
-        float tx_max = static_cast<float>(currentX + bitmap->width) / ATLAS_WIDTH;
-        float ty_max = static_cast<float>(currentY + bitmap->rows) / ATLAS_HEIGHT;
-
-        // Store glyph
-        m_Glyphs[charcode] = AtlasGlyph{
-            emath::ivec2(bitmap->width, bitmap->rows),
-            emath::ivec2(glyph->bitmap_left, glyph->bitmap_top),
-            emath::vec2(tx_min, ty_min),
-            emath::vec2(tx_max, ty_max),
-            static_cast<uint32_t>(glyph->advance.x)
+        g_Glyphs[charcode] = AtlasGlyph{
+            emath::ivec2(width, height),
+            emath::ivec2(static_cast<int>(bc.xoff + 0.5f), static_cast<int>(bc.yoff + 0.5f)),
+            emath::vec2(bc.x0 / static_cast<float>(ATLAS_WIDTH), bc.y0 / static_cast<float>(ATLAS_HEIGHT)),
+            emath::vec2(bc.x1 / static_cast<float>(ATLAS_WIDTH), bc.y1 / static_cast<float>(ATLAS_HEIGHT)),
+            static_cast<uint32_t>(bc.xadvance * 64.0f)
         };
-
-        // Update X position and keep track of the tallest glyph in this row
-        currentX += bitmap->width + GLYPH_PADDING;
-        if (bitmap->rows > maxHeightInRow) {
-            maxHeightInRow = bitmap->rows;
-        }
     }
-
-    // Clanup
-    FT_Done_Face(face);
-    FT_Done_FreeType(ft);
-    #endif
 }
 
 auto Text::render() -> void {
@@ -186,31 +149,26 @@ auto Text::render() -> void {
     gl::DepthMask(GL_FALSE);
     gl::DepthFunc(GL_ALWAYS);
 
-    // Bind shader and set uniforms
     m_Program->use();
     m_Program->set_uniform("u_Projection", projection);
     m_Program->set_uniform("u_Color", FONT_COLOR);
     m_Program->set_uniform("u_Texture", 0);
 
-    // Bind atlas texture
     gl::ActiveTexture(GL_TEXTURE0);
     gl::BindTexture(GL_TEXTURE_2D, m_AtlasTexture);
 
-    // Bind VAO
     gl::BindVertexArray(VAO);
 
-    // Begin batch
     m_Vertices.clear();
     m_IndexCount = 0;
-    #if 0 // TODO: replace freetype with stb_truetyp
     for (const auto& [pos, text] : m_Batches) {
         float startX = pos.x;
         float x = startX;
         float y = height - pos.y - static_cast<float>(m_Ascent);
 
         for (auto c : text) {
-            auto glyph = m_Glyphs.at('?');
-            try{ glyph = m_Glyphs.at(c); }catch(...){}
+            auto glyph = g_Glyphs.at('?');
+            try { glyph = g_Glyphs.at(c); } catch (...) {}
 
             float w = static_cast<float>(glyph.size.x);
             float h = static_cast<float>(glyph.size.y);
@@ -221,7 +179,7 @@ auto Text::render() -> void {
             }
 
             float xpos = x + static_cast<float>(glyph.bearing.x);
-            float ypos = y - static_cast<float>(glyph.size.y - glyph.bearing.y);
+            float ypos = y - h - static_cast<float>(glyph.bearing.y);
 
             push_quad({xpos, ypos}, {w, h}, glyph.topleft, glyph.botright);
 
@@ -229,12 +187,11 @@ auto Text::render() -> void {
 
             if (m_IndexCount >= MAX_INDICES) {
                 flush_batch();
-                m_Vertices.clear(); 
+                m_Vertices.clear();
                 m_IndexCount = 0;
             }
         }
     }
-    #endif
 
     // Flush remaining vertices
     if (m_IndexCount > 0) {
