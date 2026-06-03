@@ -5,6 +5,7 @@
 [submodule "3party/fuzztest"]
 	path = 3party/fuzztest
 	url = https://github.com/google/fuzztest.git
+
 [submodule "3party/emath"]
 	path = 3party/emath
 	url = https://github.com/sefyan0hack/emath.git
