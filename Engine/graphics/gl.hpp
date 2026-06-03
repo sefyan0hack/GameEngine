@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstddef>
+#include <cstdint>
 #include <engine_export.h>
 #define GL_GLEXT_PROTOTYPES
 #include "gl.inl"
