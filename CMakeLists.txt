@@ -85,7 +85,7 @@ file(GLOB_RECURSE RES_FILES
     RELATIVE "${CMAKE_SOURCE_DIR}"
     CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/res/*"
 )
-
+message(STATUS "embeded resources: ${RES_FILES}")
 cmrc_add_resource_library( resources
     ALIAS res
     NAMESPACE res
