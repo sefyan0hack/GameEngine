@@ -41,6 +41,9 @@ target_link_libraries(Engine
         project_warnings_flags
         project_coverage_flags
         project_hardening_flags
+    PRIVATE
+        res
+        emath
 )
 
 target_include_directories(Engine 

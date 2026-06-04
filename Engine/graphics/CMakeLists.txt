@@ -50,6 +50,3 @@ target_include_directories(graphics
     INTERFACE
         $<$<PLATFORM_ID:Linux>:${X11_INCLUDE_DIR}>
 )
-
-target_link_libraries(graphics INTERFACE res)
-target_link_libraries(graphics INTERFACE emath)
