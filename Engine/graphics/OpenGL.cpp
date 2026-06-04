@@ -28,14 +28,14 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     (m_Major == gl::OPENGL_MIN_REQUIRED_MAJOR_VERSION &&
      m_Minor < gl::OPENGL_MIN_REQUIRED_MINOR_VERSION))
     {
-    throw Exception(
-        "Min required OpenGL version is {}.{} but got {}.{}",
-        gl::OPENGL_MIN_REQUIRED_MAJOR_VERSION,
-        gl::OPENGL_MIN_REQUIRED_MINOR_VERSION,
-        m_Major,
-        m_Minor
-    );
-
+        throw Exception(
+            "Min required OpenGL version is {}.{} but got {}.{}",
+            gl::OPENGL_MIN_REQUIRED_MAJOR_VERSION,
+            gl::OPENGL_MIN_REQUIRED_MINOR_VERSION,
+            m_Major,
+            m_Minor
+        );
+    }
     auto vendor = reinterpret_cast<const char*>(gl::GetString(GL_VENDOR));
     auto renderer = reinterpret_cast<const char*>(gl::GetString(GL_RENDERER));
 
