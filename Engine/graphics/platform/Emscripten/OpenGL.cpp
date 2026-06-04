@@ -25,6 +25,9 @@ auto OpenGL::create_opengl_context() -> GL_CTX
     EmscriptenWebGLContextAttributes attrs;
     emscripten_webgl_init_context_attributes(&attrs);
 
+    attrs.majorVersion = 2;
+    attrs.minorVersion = 0;
+
     attrs.depth = 1;
     attrs.stencil = 1;
     attrs.antialias = 1;
