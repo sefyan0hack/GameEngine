@@ -24,6 +24,18 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     gl::GetIntegerv(GL_MAJOR_VERSION, &m_Major);
     gl::GetIntegerv(GL_MINOR_VERSION, &m_Minor);
 
+    if (m_Major < gl::OPENGL_MIN_REQUIRED_MAJOR_VERSION ||
+    (m_Major == gl::OPENGL_MIN_REQUIRED_MAJOR_VERSION &&
+     m_Minor < gl::OPENGL_MIN_REQUIRED_MINOR_VERSION))
+    {
+    throw Exception(
+        "Min required OpenGL version is {}.{} but got {}.{}",
+        gl::OPENGL_MIN_REQUIRED_MAJOR_VERSION,
+        gl::OPENGL_MIN_REQUIRED_MINOR_VERSION,
+        m_Major,
+        m_Minor
+    );
+
     auto vendor = reinterpret_cast<const char*>(gl::GetString(GL_VENDOR));
     auto renderer = reinterpret_cast<const char*>(gl::GetString(GL_RENDERER));
 
@@ -49,7 +61,7 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     debug::log(os::build_info());
     debug::log("=================================================================================");
     debug::log("Platform : {}, Arch : {} ({}) bit", os::name(), os::arch(), os::bits());
-    debug::log("GL Version : Wanted:({}.{}) -> Got:({}.{})", gl::OPENGL_MAJOR_VERSION, gl::OPENGL_MINOR_VERSION, m_Major, m_Minor);
+    debug::log("GL Version : {}.{}", m_Major, m_Minor);
     debug::log("GL Vendor : {}", m_Vendor);
     debug::log("GL Renderer : {}", m_Renderer);
     debug::log("GL Exts : {} Extention", m_Extensions.size());

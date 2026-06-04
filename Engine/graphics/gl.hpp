@@ -15,11 +15,12 @@ namespace gl {
         API::ES;
     #endif
 
-    constexpr int32_t OPENGL_MAJOR_VERSION = 3;
     #if defined(CORE_GL)
-        constexpr int32_t OPENGL_MINOR_VERSION = 3;
+        constexpr int32_t OPENGL_MIN_REQUIRED_MAJOR_VERSION = 3;
+        constexpr int32_t OPENGL_MIN_REQUIRED_MINOR_VERSION = 3;
     #elif defined(ES_GL)
-        constexpr int32_t OPENGL_MINOR_VERSION = 0;
+        constexpr int32_t OPENGL_MIN_REQUIRED_MAJOR_VERSION = 3;
+        constexpr int32_t OPENGL_MIN_REQUIRED_MINOR_VERSION = 0;
     #endif
 
     inline decltype(&glClearColor) ClearColor;

@@ -10,7 +10,7 @@
 std::string Shader::glsl_header = std::format(
     "#version {}{}0 {}\n"
     "precision {} float;\n",
-    gl::OPENGL_MAJOR_VERSION, gl::OPENGL_MINOR_VERSION, 
+    gl::OPENGL_MIN_REQUIRED_MAJOR_VERSION, gl::OPENGL_MIN_REQUIRED_MINOR_VERSION, 
     gl::api == gl::API::ES ? "es" : "core",
     gl::api == gl::API::ES ? "mediump" : "highp"
 );
