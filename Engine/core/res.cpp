@@ -11,7 +11,7 @@ auto res::get(const char* res_name) -> std::span<const char>
 {
     std::string path = "res";
     auto dir_iter = embed_filesystem.iterate_directory(path);
-    for (auto& entry : dir_iter) {
+    for (const auto& entry : dir_iter) {
         std::string full = path.empty() ? entry.filename() : path + "/" + entry.filename();
         if (entry.is_file()) {
             std::printf("[FILE] %s\n", full.c_str());
