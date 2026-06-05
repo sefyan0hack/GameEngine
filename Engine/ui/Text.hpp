@@ -79,6 +79,7 @@ private:
 
     // Batch rendering
     std::unordered_map<emath::vec2, std::string> m_Batches;
+    std::unordered_map<uint32_t, AtlasGlyph> m_Glyphs; // TODO: maybe static
 
     // Buffers
     uint32_t VAO, VBO, EBO;

@@ -18,10 +18,6 @@
 #include <string>
 #include <vector>
 
-namespace {
-    std::unordered_map<uint32_t, AtlasGlyph> g_Glyphs;
-}
-
 Text::Text(const OpenGL& ctx)
     : m_GApi(ctx)
     , m_Vert(std::make_shared<Shader>(res::get("res/Shaders/text.vert"), GL_VERTEX_SHADER))
@@ -130,7 +126,7 @@ auto Text::create_atlas() -> void {
         int width = bc.x1 - bc.x0;
         int height = bc.y1 - bc.y0;
 
-        g_Glyphs[charcode] = AtlasGlyph{
+        m_Glyphs[charcode] = AtlasGlyph{
             emath::ivec2(width, height),
             emath::ivec2(static_cast<int>(bc.xoff + 0.5f), static_cast<int>(bc.yoff + 0.5f)),
             emath::vec2(bc.x0 / static_cast<float>(ATLAS_WIDTH), bc.y0 / static_cast<float>(ATLAS_HEIGHT)),
@@ -167,8 +163,8 @@ auto Text::render() -> void {
         float y = static_cast<float>(height) - pos.y - static_cast<float>(m_Ascent);
 
         for (auto c : text) {
-            auto glyph = g_Glyphs.at('?');
-            try { glyph = g_Glyphs.at(c); } catch (...) {}
+            auto glyph = m_Glyphs.at('?');
+            try { glyph = m_Glyphs.at(c); } catch (...) {}
 
             float w = static_cast<float>(glyph.size.x);
             float h = static_cast<float>(glyph.size.y);
