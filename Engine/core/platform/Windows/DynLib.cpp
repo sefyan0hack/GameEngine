@@ -6,10 +6,13 @@
 
 auto DynLib::load() -> void
 { 
-    if(m_handle) throw Exception("Can't load lib `{}` before unloding prev lib", m_name);
+    auto f_name = full_name();
+    if(m_handle) throw Exception("Can't load lib `{}` before unloding prev lib", f_name);
+
     if(m_name.empty()) m_handle = (void*) GetModuleHandle(nullptr);
-    else m_handle = (void*) LoadLibraryA(full_name().c_str());
-    if (!m_handle) throw Exception("Can't open lib `{}`: {}", full_name().c_str(), error());
+    else m_handle = (void*) LoadLibraryA(f_name.c_str());
+
+    if (!m_handle) throw Exception("Can't open lib `{}`: {}", f_name, error());
 }
 
 auto DynLib::unload() -> void

@@ -64,7 +64,7 @@ Image::Image(auto* Data, uint32_t Width, uint32_t Height, uint32_t Channels)
 
 Image::Image(const std::string& filename, bool flip)
 {
-    stbi_set_flip_vertically_on_load(flip);
+    stbi_set_flip_vertically_on_load(flip); //TODO: revisite .c_str() on const std::string& ?
     auto data = stbi_load(filename.c_str(), &m_Width, &m_Height, &m_Channels, 0);
 
     if(data){

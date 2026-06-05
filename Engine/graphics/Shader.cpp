@@ -42,7 +42,12 @@ Shader::Shader(const std::string& filename)
     }
 
     m_Id = gl::CreateShader(m_Type);
-    auto srcs = {glsl_header().c_str(), glsl_lib().c_str(), utils::file_to_str(filename.c_str()).c_str()};
+
+    auto glsl_h = glsl_header();
+    auto glsl_l = glsl_lib();
+    auto src = utils::file_to_str(filename.c_str());
+
+    auto srcs = {glsl_h.c_str(), glsl_l.c_str(), src.c_str()};
     
     set_sources(srcs);
     compile();
@@ -64,7 +69,9 @@ Shader::Shader(std::string Src, GLenum type)
     : m_Id(gl::CreateShader(type))
     , m_Type(type)
 {
-    auto srcs = {glsl_header().c_str(), glsl_lib().c_str(), Src.c_str()};
+    auto glsl_h = glsl_header();
+    auto glsl_l = glsl_lib();
+    auto srcs = {glsl_h.c_str(), glsl_l.c_str(), Src.c_str()};
 
     set_sources(srcs);
     compile();
