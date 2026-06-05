@@ -76,6 +76,8 @@ target_link_libraries(Engine
             -sDISABLE_EXCEPTION_CATCHING=0
 
             -sEXCEPTION_STACK_TRACES=1
+
+	        -sSINGLE_FILE=1
         >
 )
 
