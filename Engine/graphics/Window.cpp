@@ -10,11 +10,10 @@ CWindow::CWindow(
 	std::tie(m_Display, m_Handle, m_Surface) = new_window(Width, Height, Title);
 }
 
-auto CWindow::display() const        -> H_DSP
+auto CWindow::display() const -> H_DSP
 {
 	return m_Display;
 }
-
 
 auto CWindow::handle() const -> H_WIN
 {

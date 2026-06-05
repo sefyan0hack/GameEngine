@@ -7,30 +7,6 @@
 #include <ranges>
 
 
-std::string Shader::glsl_header = std::format(
-    "#version {}{}0 {}\n"
-    "precision {} float;\n",
-    gl::OPENGL_MIN_REQUIRED_MAJOR_VERSION, gl::OPENGL_MIN_REQUIRED_MINOR_VERSION, 
-    gl::api == gl::API::ES ? "es" : "core",
-    gl::api == gl::API::ES ? "mediump" : "highp"
-);
-
-constexpr auto glsl_lib = R"(
-//Luminance (Grayscale conversion)
-float luminance(vec3 color) {
-    return dot(color, vec3(0.2126, 0.7152, 0.0722));
-}
-// UV Tiling and Offset
-vec2 scaleOffset(vec2 uv, vec2 scale, vec2 offset) {
-    return uv * scale + offset;
-}
-// Saturation
-vec3 saturate(vec3 rgb, float adjustment) {
-    const vec3 W = vec3(0.2125, 0.7154, 0.0721);
-    vec3 intensity = vec3(dot(rgb, W));
-    return mix(intensity, rgb, adjustment);
-}
-)";
 
 Shader::Shader()
     : m_Id(0), m_Type(0)
@@ -66,7 +42,7 @@ Shader::Shader(const std::string& filename)
     }
 
     m_Id = gl::CreateShader(m_Type);
-    auto srcs = {glsl_header.c_str(), glsl_lib, utils::file_to_str(filename.c_str()).c_str()};
+    auto srcs = {glsl_header().c_str(), glsl_lib().c_str(), utils::file_to_str(filename.c_str()).c_str()};
     
     set_sources(srcs);
     compile();
@@ -88,7 +64,7 @@ Shader::Shader(std::string Src, GLenum type)
     : m_Id(gl::CreateShader(type))
     , m_Type(type)
 {
-    auto srcs = {glsl_header.c_str(), glsl_lib, Src.c_str()};
+    auto srcs = {glsl_header().c_str(), glsl_lib().c_str(), Src.c_str()};
 
     set_sources(srcs);
     compile();
@@ -187,4 +163,35 @@ auto Shader::new_fragment(const std::string& frag) -> std::shared_ptr<Shader>
 auto Shader::new_fragment(std::span<const char> frag) -> std::shared_ptr<Shader>
 {
   return std::make_shared<Shader>(frag, GL_FRAGMENT_SHADER);
+}
+
+auto Shader::glsl_header() -> std::string
+{
+    return std::format(
+        "#version {}{}0 {}\n"
+        "precision {} float;\n",
+        gl::OPENGL_MIN_REQUIRED_MAJOR_VERSION, gl::OPENGL_MIN_REQUIRED_MINOR_VERSION, 
+        gl::api == gl::API::ES ? "es" : "core",
+        gl::api == gl::API::ES ? "mediump" : "highp"
+    );
+}
+
+auto Shader::glsl_lib() -> std::string
+{
+    return R"(
+//Luminance (Grayscale conversion)
+float luminance(vec3 color) {
+    return dot(color, vec3(0.2126, 0.7152, 0.0722));
+}
+// UV Tiling and Offset
+vec2 scaleOffset(vec2 uv, vec2 scale, vec2 offset) {
+    return uv * scale + offset;
+}
+// Saturation
+vec3 saturate(vec3 rgb, float adjustment) {
+    const vec3 W = vec3(0.2125, 0.7154, 0.0721);
+    vec3 intensity = vec3(dot(rgb, W));
+    return mix(intensity, rgb, adjustment);
+}
+)";
 }

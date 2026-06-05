@@ -77,9 +77,6 @@ target_link_libraries(Engine
 
             -sDISABLE_EXCEPTION_THROWING=0
             -sDISABLE_EXCEPTION_CATCHING=0
-
-            -sASSERTIONS=2
-            -sSTACK_OVERFLOW_CHECK=2
         >
 )
 

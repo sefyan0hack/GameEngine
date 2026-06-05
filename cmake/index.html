@@ -5,32 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
     * { touch-action: manipulation }
-    #canvas {
-      display: block;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
+    body {
+      margin: 0;
+      height: 100vh;           /* or min-height: 100vh */
+      display: flex;           /* actually not needed if you remove flex? Wait — */
     }
   </style>
   <script src="coi-serviceworker.js"></script>
 </head>
 <body>
-  <canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex="0"></canvas>
-  <script>
-    const canvas = document.getElementById("canvas");
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-
-    window.addEventListener('resize', resizeCanvas);
-    window.addEventListener('orientationchange', resizeCanvas);
-
-    resizeCanvas();
-  </script>
+  <canvas id="canvas" style="display: block;margin: auto;" oncontextmenu="event.preventDefault()" tabindex="0" autofocus></canvas>
   <script async type="text/javascript" src="Game.js"></script>
 </body>
 </html>

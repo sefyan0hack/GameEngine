@@ -42,12 +42,12 @@ class ENGINE_EXPORT Shader
   
     static auto new_fragment(std::span<const char> frag) -> std::shared_ptr<Shader>;
     static auto new_fragment(const std::string& frag) -> std::shared_ptr<Shader>;
-  
+    static auto glsl_header() -> std::string;
+    static auto glsl_lib() -> std::string;
+
   private:
     GLuint m_Id;
     GLenum m_Type;
-
-    static std::string glsl_header;
 };
 
 #ifdef __cpp_lib_formatters
