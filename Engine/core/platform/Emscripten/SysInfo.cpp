@@ -1,4 +1,5 @@
 #include "../Unix/SysInfo.cpp"
+#include <emscripten/heap.h>
 
 auto os::memory_usage() -> std::size_t
 {
