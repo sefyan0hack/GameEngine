@@ -2,7 +2,6 @@
 #include <inputs/Keyboard.hpp>
 #include <inputs/Mouse.hpp>
 #include <core/Event.hpp>
-#include <core/Log.hpp>
 #include <core/Exception.hpp>
 #include <bit>
 
@@ -202,10 +201,12 @@ auto CWindow::toggle_fullscreen() -> void
 {
 
 	DWORD style{}, exStyle{};
-	int32_t width{}, height{};
+	int32_t x{}, y{}, width{}, height{};
 
 	constexpr auto style_prp_name = TEXT("Winstyle");
 	constexpr auto exStyle_prp_name = TEXT("WinexStyle");
+	constexpr auto x_prp_name = TEXT("Winx");
+	constexpr auto y_prp_name = TEXT("Winy");
 	constexpr auto width_prp_name = TEXT("Winwidth");
 	constexpr auto height_prp_name = TEXT("Winheight");
 
@@ -214,6 +215,8 @@ auto CWindow::toggle_fullscreen() -> void
 		// TODO: check if RemoveProp != null
 		style = reinterpret_cast<DWORD>(RemoveProp(m_Handle, style_prp_name));
 		exStyle = reinterpret_cast<DWORD>(RemoveProp(m_Handle, exStyle_prp_name));
+		x = reinterpret_cast<int32_t>(RemoveProp(m_Handle, x_prp_name));
+		y = reinterpret_cast<int32_t>(RemoveProp(m_Handle, y_prp_name));
 		width = reinterpret_cast<int32_t>(RemoveProp(m_Handle, width_prp_name));
 		height = reinterpret_cast<int32_t>(RemoveProp(m_Handle, height_prp_name));
 
@@ -222,7 +225,7 @@ auto CWindow::toggle_fullscreen() -> void
 
 		SetWindowPos(
 			m_Handle, nullptr,
-			0, 0,
+			x, y,
 			width,
 			height,
 			SWP_FRAMECHANGED | SWP_NOZORDER
@@ -235,7 +238,8 @@ auto CWindow::toggle_fullscreen() -> void
 		style = GetWindowLongPtr(m_Handle, GWL_STYLE);
 		exStyle = GetWindowLongPtr(m_Handle, GWL_EXSTYLE);
 
-		auto [w, h] = dims();
+		RECT rect{};
+		GetWindowRect(m_Handle, &rect);
 
 		HMONITOR hmon = MonitorFromWindow(m_Handle, MONITOR_DEFAULTTONEAREST);
 
@@ -260,10 +264,16 @@ auto CWindow::toggle_fullscreen() -> void
 		ret = SetProp(m_Handle, exStyle_prp_name, std::bit_cast<HANDLE>(exStyle));
 		if(ret == 0) throw Exception("SetProp failed: {}", GetLastError());
 
-		ret = SetProp(m_Handle, width_prp_name, std::bit_cast<HANDLE>(w));
+		ret = SetProp(m_Handle, x_prp_name, std::bit_cast<HANDLE>(rect.left));
 		if(ret == 0) throw Exception("SetProp failed: {}", GetLastError());
 
-		ret = SetProp(m_Handle, height_prp_name, std::bit_cast<HANDLE>(h));
+		ret = SetProp(m_Handle, y_prp_name, std::bit_cast<HANDLE>(rect.top));
+		if(ret == 0) throw Exception("SetProp failed: {}", GetLastError());
+
+		ret = SetProp(m_Handle, width_prp_name, std::bit_cast<HANDLE>(rect.right - rect.left));
+		if(ret == 0) throw Exception("SetProp failed: {}", GetLastError());
+
+		ret = SetProp(m_Handle, height_prp_name, std::bit_cast<HANDLE>(rect.bottom - rect.top));
 		if(ret == 0) throw Exception("SetProp failed: {}", GetLastError());
 
 		m_FullScreen = true;
