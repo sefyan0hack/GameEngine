@@ -224,9 +224,9 @@ auto CWindow::toggle_fullscreen() -> void
 
 		SetWindowPos(
 			m_Handle, nullptr,
-			x, y,
-			width,
-			height,
+			static_cast<int32_t>(x), static_cast<int32_t>(y),
+			static_cast<int32_t>(width),
+			static_cast<int32_t>(height),
 			SWP_FRAMECHANGED | SWP_NOZORDER
 		);
 
