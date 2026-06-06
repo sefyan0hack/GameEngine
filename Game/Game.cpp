@@ -21,7 +21,7 @@ public:
 
         auto CubeMattkimberley = std::make_shared<Material>(kimberley_jpg);
         auto CubeMattSand  = std::make_shared<Material>(sand_png);
-        auto cubeMesh      = std::make_shared<Mesh>(Mesh::CUBE);
+        auto cubeMesh      = std::make_shared<Mesh>(Mesh::CUBE());
         auto manMesh       = std::make_shared<Mesh>(obj_to_mesh(res::get("res/FinalBaseMesh.obj")));
 
         constexpr int32_t Grids = 5;
@@ -38,6 +38,7 @@ public:
                 Scene << GameObject(t, m, meshRes);
             }
         }
+
         Scene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattSand, manMesh);
         Scene << GameObject(Transform({2, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattkimberley, manMesh);
 

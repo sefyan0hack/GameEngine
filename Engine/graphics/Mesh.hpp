@@ -54,6 +54,8 @@ public:
     static auto current_vao() -> GLuint;
     static auto current_vbo() -> GLuint;
     static auto flip_faces(std::vector<Vertex> verts) -> std::vector<Vertex>;
+    static auto CUBE() -> std::vector<Vertex>;
+
     private:
         auto clone_buffer(GLenum type, GLuint src) -> GLuint;
         auto clone_vbo(GLuint src) -> GLuint;
@@ -69,7 +71,6 @@ public:
     std::vector<VetexData> m_Vertices;
     std::vector<AttributeInfo> m_Attribs;
     GLuint VBO, VAO;
-    static std::vector<Vertex> CUBE;
 };
 
 ENGINE_EXPORT auto obj_to_mesh(const char* filename) -> std::vector<Vertex>;
