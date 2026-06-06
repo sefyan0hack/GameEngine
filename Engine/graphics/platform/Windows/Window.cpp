@@ -200,7 +200,7 @@ auto CWindow::toggle_fullscreen() -> void
 {
 
 	uintptr_t style{}, exStyle{};
-	int32_t x{}, y{}, width{}, height{};
+	int64_t x{}, y{}, width{}, height{};
 
 	constexpr auto style_prp_name = TEXT("Winstyle");
 	constexpr auto exStyle_prp_name = TEXT("WinexStyle");
@@ -214,10 +214,10 @@ auto CWindow::toggle_fullscreen() -> void
 		// TODO: check if RemoveProp != null
 		style = reinterpret_cast<uintptr_t>(RemoveProp(m_Handle, style_prp_name));
 		exStyle = reinterpret_cast<uintptr_t>(RemoveProp(m_Handle, exStyle_prp_name));
-		x = reinterpret_cast<int32_t>(RemoveProp(m_Handle, x_prp_name));
-		y = reinterpret_cast<int32_t>(RemoveProp(m_Handle, y_prp_name));
-		width = reinterpret_cast<int32_t>(RemoveProp(m_Handle, width_prp_name));
-		height = reinterpret_cast<int32_t>(RemoveProp(m_Handle, height_prp_name));
+		x = reinterpret_cast<int64_t>(RemoveProp(m_Handle, x_prp_name));
+		y = reinterpret_cast<int64_t>(RemoveProp(m_Handle, y_prp_name));
+		width = reinterpret_cast<int64_t>(RemoveProp(m_Handle, width_prp_name));
+		height = reinterpret_cast<int64_t>(RemoveProp(m_Handle, height_prp_name));
 
 		SetWindowLongPtr(m_Handle, GWL_STYLE, style);
 		SetWindowLongPtr(m_Handle, GWL_EXSTYLE, exStyle);
