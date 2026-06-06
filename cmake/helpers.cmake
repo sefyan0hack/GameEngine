@@ -3,12 +3,6 @@
 macro(collect_plt_sources tgt)
 target_include_directories(${tgt} INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/platform/${CMAKE_SYSTEM_NAME}") # platform folder
 aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/platform/${CMAKE_SYSTEM_NAME}" PLT_SOURCE) # files in the platform folder
-
-if(UNIX)
-  target_include_directories(${tgt} INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/platform/Unix")
-  aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/platform/Unix" UNIX_SOURCE)
-  list(APPEND PLT_SOURCE ${UNIX_SOURCE})
-endif()
 endmacro()
 
 ####################################################################################################

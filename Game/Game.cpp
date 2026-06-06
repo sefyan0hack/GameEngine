@@ -2,6 +2,7 @@
 #include <memory>
 #include <random>
 #include <thread>
+
 #include <Engine.hpp>
 
 using namespace std;
@@ -49,7 +50,7 @@ public:
         app.UiText.text(std::format("Threads: {}", std::thread::hardware_concurrency()), { 0, Text::FONT_SIZE * 2 });
 
         camera_mouvment(delta);
-    } 
+    }
 
     auto on_deltamouse(float dx, float dy) -> void override
     {

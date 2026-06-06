@@ -28,16 +28,6 @@ static std::size_t get_proc_value(const std::string& key)
     return 0;
 }
 
-auto os::memory_usage() -> std::size_t
-{
-    return get_proc_value("VmRSS:") / 1024;
-}
-
-auto os::memory_peak() -> std::size_t
-{
-    return get_proc_value("VmHWM:") / 1024;
-}
-
 auto os::get_proc_address(const char* module, const char* sym) -> void* {
 
     void* lib = nullptr;
