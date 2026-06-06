@@ -3,7 +3,6 @@
 #include <inputs/Mouse.hpp>
 #include <core/Event.hpp>
 #include <core/Exception.hpp>
-#include <bit>
 
 #include <windows.h>
 
@@ -258,22 +257,22 @@ auto CWindow::toggle_fullscreen() -> void
 			SWP_FRAMECHANGED | SWP_NOZORDER
 		);
 	
-		auto ret = SetProp(m_Handle, style_prp_name, std::bit_cast<HANDLE>(style));
+		auto ret = SetProp(m_Handle, style_prp_name, reinterpret_cast<HANDLE>(style));
 		if(ret == 0) throw Exception("SetProp failed: {}", GetLastError());
 
-		ret = SetProp(m_Handle, exStyle_prp_name, std::bit_cast<HANDLE>(exStyle));
+		ret = SetProp(m_Handle, exStyle_prp_name, reinterpret_cast<HANDLE>(exStyle));
 		if(ret == 0) throw Exception("SetProp failed: {}", GetLastError());
 
-		ret = SetProp(m_Handle, x_prp_name, std::bit_cast<HANDLE>(rect.left));
+		ret = SetProp(m_Handle, x_prp_name, reinterpret_cast<HANDLE>(rect.left));
 		if(ret == 0) throw Exception("SetProp failed: {}", GetLastError());
 
-		ret = SetProp(m_Handle, y_prp_name, std::bit_cast<HANDLE>(rect.top));
+		ret = SetProp(m_Handle, y_prp_name, reinterpret_cast<HANDLE>(rect.top));
 		if(ret == 0) throw Exception("SetProp failed: {}", GetLastError());
 
-		ret = SetProp(m_Handle, width_prp_name, std::bit_cast<HANDLE>(rect.right - rect.left));
+		ret = SetProp(m_Handle, width_prp_name, reinterpret_cast<HANDLE>(rect.right - rect.left));
 		if(ret == 0) throw Exception("SetProp failed: {}", GetLastError());
 
-		ret = SetProp(m_Handle, height_prp_name, std::bit_cast<HANDLE>(rect.bottom - rect.top));
+		ret = SetProp(m_Handle, height_prp_name, reinterpret_cast<HANDLE>(rect.bottom - rect.top));
 		if(ret == 0) throw Exception("SetProp failed: {}", GetLastError());
 
 		m_FullScreen = true;
