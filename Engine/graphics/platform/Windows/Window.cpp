@@ -2,6 +2,7 @@
 #include <inputs/Keyboard.hpp>
 #include <inputs/Mouse.hpp>
 #include <core/Event.hpp>
+#include <core/Log.hpp>
 #include <core/Exception.hpp>
 #include <bit>
 
@@ -199,53 +200,51 @@ auto CWindow::hide() -> void
 
 auto CWindow::toggle_fullscreen() -> void
 {
-	struct WindowedState
-	{
-		RECT rect;
-		DWORD style, exStyle;
-	};
 
-	static const TCHAR* FULLSCREEN_STATE_PROP = TEXT("FullscreenStateData");
+	DWORD style{}, exStyle{};
+	int32_t width{}, height{};
+
+	constexpr auto style_prp_name = TEXT("Winstyle");
+	constexpr auto exStyle_prp_name = TEXT("WinexStyle");
+	constexpr auto width_prp_name = TEXT("Winwidth");
+	constexpr auto height_prp_name = TEXT("Winheight");
 
 	if (m_FullScreen)
 	{
-		WindowedState state;
-		UINT_PTR stored = reinterpret_cast<UINT_PTR>(RemoveProp(m_Handle, FULLSCREEN_STATE_PROP));
-		if (stored) {
-			state.style = static_cast<DWORD>(stored & 0xFFFFFFFF);
-			state.exStyle = static_cast<DWORD>(stored >> 32);
-	
-			RECT currentRect;
-			GetWindowRect(m_Handle, &currentRect);
-	
-			SetWindowLongPtr(m_Handle, GWL_STYLE, state.style);
-			SetWindowLongPtr(m_Handle, GWL_EXSTYLE, state.exStyle);
-			
-			SetWindowPos(
-				m_Handle, nullptr,
-				currentRect.left, currentRect.top,
-				currentRect.right - currentRect.left,
-				currentRect.bottom - currentRect.top,
-				SWP_FRAMECHANGED | SWP_NOZORDER
-			);
-		}
+		// TODO: check if RemoveProp != null
+		style = reinterpret_cast<DWORD>(RemoveProp(m_Handle, style_prp_name));
+		exStyle = reinterpret_cast<DWORD>(RemoveProp(m_Handle, exStyle_prp_name));
+		width = reinterpret_cast<int32_t>(RemoveProp(m_Handle, width_prp_name));
+		height = reinterpret_cast<int32_t>(RemoveProp(m_Handle, height_prp_name));
+
+		SetWindowLongPtr(m_Handle, GWL_STYLE, style);
+		SetWindowLongPtr(m_Handle, GWL_EXSTYLE, exStyle);
+
+		SetWindowPos(
+			m_Handle, nullptr,
+			0, 0,
+			width,
+			height,
+			SWP_FRAMECHANGED | SWP_NOZORDER
+		);
+
 		m_FullScreen = false;
-	}
-	else
-	{
-		WindowedState state;
-		state.style = static_cast<DWORD>(GetWindowLongPtr(m_Handle, GWL_STYLE));
-		state.exStyle = static_cast<DWORD>(GetWindowLongPtr(m_Handle, GWL_EXSTYLE));
-		
-		UINT_PTR storedState = (static_cast<UINT_PTR>(state.exStyle) << 32) | state.style;
-	
+
+	} else {
+
+		style = GetWindowLongPtr(m_Handle, GWL_STYLE);
+		exStyle = GetWindowLongPtr(m_Handle, GWL_EXSTYLE);
+
+		auto [w, h] = dims();
+
 		HMONITOR hmon = MonitorFromWindow(m_Handle, MONITOR_DEFAULTTONEAREST);
+
 		MONITORINFO mi {};
 		mi.cbSize = sizeof(mi);
 		GetMonitorInfo(hmon, &mi);
 	
-		SetWindowLongPtr(m_Handle, GWL_STYLE, state.style & ~(WS_CAPTION | WS_THICKFRAME));
-		SetWindowLongPtr(m_Handle, GWL_EXSTYLE, state.exStyle & ~(WS_EX_DLGMODALFRAME | WS_EX_WINDOWEDGE));
+		SetWindowLongPtr(m_Handle, GWL_STYLE, style & ~(WS_CAPTION | WS_THICKFRAME));
+		SetWindowLongPtr(m_Handle, GWL_EXSTYLE, exStyle & ~(WS_EX_DLGMODALFRAME | WS_EX_WINDOWEDGE));
 	
 		SetWindowPos(
 			m_Handle, HWND_TOP,
@@ -255,7 +254,18 @@ auto CWindow::toggle_fullscreen() -> void
 			SWP_FRAMECHANGED | SWP_NOZORDER
 		);
 	
-		SetProp(m_Handle, FULLSCREEN_STATE_PROP, std::bit_cast<HANDLE>(storedState));
+		auto ret = SetProp(m_Handle, style_prp_name, std::bit_cast<HANDLE>(style));
+		if(ret == 0) throw Exception("SetProp failed: {}", GetLastError());
+
+		ret = SetProp(m_Handle, exStyle_prp_name, std::bit_cast<HANDLE>(exStyle));
+		if(ret == 0) throw Exception("SetProp failed: {}", GetLastError());
+
+		ret = SetProp(m_Handle, width_prp_name, std::bit_cast<HANDLE>(w));
+		if(ret == 0) throw Exception("SetProp failed: {}", GetLastError());
+
+		ret = SetProp(m_Handle, height_prp_name, std::bit_cast<HANDLE>(h));
+		if(ret == 0) throw Exception("SetProp failed: {}", GetLastError());
+
 		m_FullScreen = true;
 	}
 }
