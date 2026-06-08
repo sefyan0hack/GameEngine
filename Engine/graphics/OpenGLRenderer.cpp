@@ -57,13 +57,13 @@ auto OpenGLRenderer::draw(const Mesh& mesh) const -> void
     switch(m_DrawMode)
     {
         case DrawMode::Triangles:
-            gl::DrawArrays(GL_TRIANGLES, 0, mesh.vextex_size());
+            gl::DrawArrays(GL_TRIANGLES, 0, mesh.vertex_size());
             break;
         case DrawMode::Line:
-            gl::DrawArrays(GL_LINES, 0, (mesh.vextex_size() / 3) * 6);
+            gl::DrawArrays(GL_LINES, 0, (mesh.vertex_size() / 3) * 6);
         break;
         case DrawMode::Point:
-            gl::DrawArrays(GL_POINTS, 0, mesh.vextex_size());
+            gl::DrawArrays(GL_POINTS, 0, mesh.vertex_size());
             break;
         default: std::unreachable();
     }
