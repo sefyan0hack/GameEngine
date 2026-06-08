@@ -6,22 +6,16 @@
 #include "gl.inl"
 
 namespace gl {
-    enum class API { CORE, ES };
 
-    constexpr API api = 
+    constexpr enum class API { CORE, ES } api =
     #if defined(CORE_GL)
         API::CORE;
     #elif defined(ES_GL)
         API::ES;
     #endif
 
-    #if defined(CORE_GL)
-        constexpr int32_t OPENGL_MIN_REQUIRED_MAJOR_VERSION = 3;
-        constexpr int32_t OPENGL_MIN_REQUIRED_MINOR_VERSION = 3;
-    #elif defined(ES_GL)
-        constexpr int32_t OPENGL_MIN_REQUIRED_MAJOR_VERSION = 3;
-        constexpr int32_t OPENGL_MIN_REQUIRED_MINOR_VERSION = 0;
-    #endif
+    constexpr int32_t OPENGL_MIN_REQUIRED_MAJOR_VERSION = 3;
+    constexpr int32_t OPENGL_MIN_REQUIRED_MINOR_VERSION = api == API::CORE ? 3 : 0;
 
     inline decltype(&glClearColor) ClearColor;
     inline decltype(&glViewport) Viewport;
@@ -122,12 +116,6 @@ namespace gl {
     inline decltype(&glUniformBlockBinding) UniformBlockBinding;
     inline decltype(&glGetBooleanv) GetBooleanv;
     inline decltype(&glFinish) Finish;
-
-    //TODO: remove this and make some sort of extention system
-#if defined(CORE_GL)
-    inline decltype(&glPolygonMode) PolygonMode;
-    inline decltype(&glPointSize) PointSize;
-#endif
 
     ENGINE_EXPORT auto get_proc_address(const char* name) -> void*;
     ENGINE_EXPORT auto load_opengl_functions() -> void;

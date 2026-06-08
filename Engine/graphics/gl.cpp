@@ -119,10 +119,5 @@ namespace gl {
         gl::UniformBlockBinding = reinterpret_cast<decltype(&glUniformBlockBinding)>(gl::get_proc_address("glUniformBlockBinding"));
         gl::GetBooleanv = reinterpret_cast<decltype(&glGetBooleanv)>(gl::get_proc_address("glGetBooleanv"));
         gl::Finish = reinterpret_cast<decltype(&glFinish)>(gl::get_proc_address("glFinish"));
-        //TODO: remove this and make some sort of extention system
-#if defined(CORE_GL)
-        gl::PolygonMode = reinterpret_cast<decltype(&glPolygonMode)>(gl::get_proc_address("glPolygonMode"));
-        gl::PointSize = reinterpret_cast<decltype(&glPointSize)>(gl::get_proc_address("glPointSize"));
-#endif
     }
 }

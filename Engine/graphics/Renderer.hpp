@@ -4,6 +4,12 @@
 #include <string>
 #include <cstdint>
 
+enum class DrawMode {
+    Triangles = 0,
+    Line,
+    Point,
+};
+
 class ENGINE_EXPORT IRenderer
 {
 public:
@@ -13,9 +19,7 @@ public:
 
     virtual auto viewport() const -> std::tuple<uint32_t, uint32_t, uint32_t, uint32_t> = 0;
     virtual auto set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void = 0;
-    virtual auto normal_mode() -> void = 0;
-    virtual auto wireframe_mode() -> void = 0;
-    virtual auto points_mode() -> void = 0;
+    virtual auto set_mode(DrawMode mode) -> void = 0;
     virtual auto clear_screen(uint32_t buffersmask)  -> void  = 0;
     virtual auto has_extension(const std::string& ext) -> bool = 0;
     

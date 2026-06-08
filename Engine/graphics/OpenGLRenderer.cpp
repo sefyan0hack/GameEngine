@@ -2,6 +2,8 @@
 
 #include <algorithm>
 #include <span>
+#include <utility>
+
 #include "Window.hpp"
 #include "Camera.hpp"
 #include "GameObject.hpp"
@@ -15,7 +17,6 @@
 #include "Material.hpp"
 #include "Texture.hpp"
 
-
 OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx)
     : m_GApi(ctx)
     , m_X(0), m_Y(0)
@@ -23,6 +24,7 @@ OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx)
     , m_Vert(std::make_shared<Shader>(res::get("res/Shaders/main.vert"), GL_VERTEX_SHADER))
     , m_Frag(std::make_shared<Shader>(res::get("res/Shaders/main.frag"), GL_FRAGMENT_SHADER))
     , m_Program(std::make_shared<ShaderProgram>(m_Vert, m_Frag))
+    , m_DrawMode(DrawMode::Triangles)
 {}
 
 auto OpenGLRenderer::render(const Scene& scene) const -> void
@@ -46,17 +48,26 @@ auto OpenGLRenderer::render(const Scene& scene) const -> void
             draw(*obj.mesh());
         }
     );
-
 }
-
 
 auto OpenGLRenderer::draw(const Mesh& mesh) const -> void
 {
     gl::BindVertexArray(mesh.VAO);
-    gl::DrawArrays(GL_TRIANGLES, 0, mesh.vextex_size());
+
+    switch(m_DrawMode)
+    {
+        case DrawMode::Triangles:
+            gl::DrawArrays(GL_TRIANGLES, 0, mesh.vextex_size());
+            break;
+        case DrawMode::Line:
+            gl::DrawArrays(GL_LINES, 0, (mesh.vextex_size() / 3) * 6);
+        break;
+        case DrawMode::Point:
+            gl::DrawArrays(GL_POINTS, 0, mesh.vextex_size());
+            break;
+        default: std::unreachable();
+    }
 }
-
-
 
 auto OpenGLRenderer::set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void
 {
@@ -69,25 +80,9 @@ auto OpenGLRenderer::viewport() const -> std::tuple<uint32_t, uint32_t, uint32_t
     return {m_X, m_Y, m_Width, m_Height};
 }
 
-auto OpenGLRenderer::normal_mode() -> void
+auto OpenGLRenderer::set_mode(DrawMode mode) -> void
 {
-    #if defined(CORE_GL)
-    gl::PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    #endif
-}
-
-auto OpenGLRenderer::wireframe_mode() -> void
-{
-    #if defined(CORE_GL)
-    gl::PolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    #endif
-}
-
-auto OpenGLRenderer::points_mode() -> void
-{
-    #if defined(CORE_GL)
-    gl::PolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-    #endif
+    m_DrawMode = mode;
 }
 
 auto OpenGLRenderer::clear_screen(uint32_t buffersmask)  -> void

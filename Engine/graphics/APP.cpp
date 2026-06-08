@@ -127,17 +127,17 @@ auto APP::loop_body(void* ctx) -> void
 
     // normal Mode
     if (app->Keyboard.is_pressed(Key::Space)) {        
-        app->Renderer->normal_mode();
+        app->Renderer->set_mode(DrawMode::Triangles);
     }
 
     // Wireframe Mode
     if (app->Keyboard.is_pressed(Key::H)) {        
-        app->Renderer->wireframe_mode();
+        app->Renderer->set_mode(DrawMode::Line);
     }
 
     // Points Mode
     if (app->Keyboard.is_pressed(Key::P)) {        
-        app->Renderer->points_mode();
+        app->Renderer->set_mode(DrawMode::Point);
     }
 
     // Fullscreen 
