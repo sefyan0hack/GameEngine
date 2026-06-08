@@ -119,5 +119,6 @@ namespace gl {
         gl::UniformBlockBinding = reinterpret_cast<decltype(&glUniformBlockBinding)>(gl::get_proc_address("glUniformBlockBinding"));
         gl::GetBooleanv = reinterpret_cast<decltype(&glGetBooleanv)>(gl::get_proc_address("glGetBooleanv"));
         gl::Finish = reinterpret_cast<decltype(&glFinish)>(gl::get_proc_address("glFinish"));
+        gl::DrawArraysIndirect = reinterpret_cast<decltype(&glDrawArraysIndirect)>(gl::get_proc_address("glDrawArraysIndirect"));
     }
 }

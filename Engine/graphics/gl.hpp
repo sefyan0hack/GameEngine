@@ -116,6 +116,7 @@ namespace gl {
     inline decltype(&glUniformBlockBinding) UniformBlockBinding;
     inline decltype(&glGetBooleanv) GetBooleanv;
     inline decltype(&glFinish) Finish;
+    inline decltype(&glDrawArraysIndirect) DrawArraysIndirect;
 
     ENGINE_EXPORT auto get_proc_address(const char* name) -> void*;
     ENGINE_EXPORT auto load_opengl_functions() -> void;
