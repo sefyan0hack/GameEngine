@@ -256,7 +256,7 @@ auto Mesh::bind_vbo() -> void
 //     bind_buffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 // }
 
-auto Mesh::vextex_size() const noexcept -> GLsizei
+auto Mesh::vertex_size() const noexcept -> GLsizei
 {
     return static_cast<GLsizei>(m_Vertices.size());
 }

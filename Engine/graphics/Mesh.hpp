@@ -49,7 +49,7 @@ public:
 
     auto set_attribute(GLuint index, AttributeInfo att) -> void;
     auto enable_attribs() const -> void;
-    auto vextex_size() const noexcept -> GLsizei;
+    auto vertex_size() const noexcept -> GLsizei;
 
     static auto current_vao() -> GLuint;
     static auto current_vbo() -> GLuint;
@@ -86,7 +86,7 @@ struct std::formatter<Mesh> {
   auto format(const Mesh& obj, auto& context) const {
     return std::format_to(context.out(),
     R"({{ "VAO": {}, "VBO": {}, "verticesSize": {} }})"
-    , obj.VAO, obj.VBO, obj.vextex_size());
+    , obj.VAO, obj.VBO, obj.vertex_size());
   }
 };
 #endif
