@@ -6,7 +6,7 @@
 #include <engine_export.h>
 
 namespace logg {
-    constexpr enum class LogLvl { None, Error, Info, Warn, Trace } lvl = LogLvl::Warn;
+    constexpr enum class LogLvl { NoLog, Error, Info, Warn, Trace } lvl = LogLvl::Warn;
 
     using logger_handler_t = void(LogLvl l, std::string msg);
 
