@@ -45,7 +45,7 @@ Shader::Shader(const std::string& filename)
 
     auto glsl_h = glsl_header();
     auto glsl_l = glsl_lib();
-    auto src = utils::file_to_str(filename.c_str());
+    auto src = utils::read_file(filename);
 
     auto srcs = {glsl_h.c_str(), glsl_l.c_str(), src.c_str()};
     

@@ -1,4 +1,5 @@
 #include <chrono>
+#include <variant>
 
 #include "APP.hpp"
 #include "Window.hpp"
@@ -7,7 +8,6 @@
 #include "ShaderProgram.hpp"
 #include "OpenGLRenderer.hpp"
 
-#include <core/Utils.hpp>
 #include <core/SysInfo.hpp>
 #include <core/Log.hpp>
 #include <core/Event.hpp>
@@ -69,6 +69,9 @@ auto APP::frame() -> void
     }
 }
 
+template<class... Ts>
+struct overloaded : Ts... { using Ts::operator()...; };
+
 auto APP::loop_body(void* ctx) -> void
 {
     auto app = static_cast<APP*>(ctx);
@@ -76,7 +79,7 @@ auto APP::loop_body(void* ctx) -> void
 
     Event event;
     while (EventQ::self().pull(event)) {
-        utils::match(event,
+        std::visit( overloaded {
             [&app](const CWindow::QuitEvent&) {
 
                 auto ret = app->Window.message_box("Exit", "Are You Sure !");
@@ -122,6 +125,7 @@ auto APP::loop_body(void* ctx) -> void
             [](const auto& e) {
                 debug::log("Unhandeled Event: {}", typeid(e).name()); 
             }
+        }, event
         );
     }
 

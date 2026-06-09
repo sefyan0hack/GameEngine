@@ -9,7 +9,6 @@
 #include <format>
 #include <engine_export.h>
 #include "Exception.hpp"
-#include "Utils.hpp"
 
 template <typename T>
 class ENGINE_EXPORT Function;
@@ -135,9 +134,12 @@ inline auto Function<R(*)(Args...)>::this_func_sig(Args... args) const -> std::s
         std::string v;
 
         using T = std::decay_t<decltype(val)>;
-
+        
         if constexpr (std::is_pointer_v<T>) {
-            v = utils::to_string(val);
+            using PT = std::decay_t<T>;
+            if (val == nullptr) v = "null";
+            if constexpr (std::is_same_v<PT, char>) v = val;
+            else v = "$0xX";
         } else if constexpr (std::is_arithmetic_v<T>) {
             v = std::to_string(val);
         } else if constexpr (std::is_convertible_v<T, std::string>) {
