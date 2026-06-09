@@ -27,7 +27,7 @@ inline auto file_to_str(const char* path) -> std::string
         throw Exception("Couldn't open file [{}] : errno {}", path, errno);
     }
     
-    std::streamsize size = file.tellg();
+    auto size = file.tellg();
     if (size <= 0) {
         return "";
     }
@@ -36,7 +36,7 @@ inline auto file_to_str(const char* path) -> std::string
     std::string content;
     content.resize(static_cast<size_t>(size));
     
-    if (!file.read(content.data(), size)) {
+    if (!file.read(content.data(), static_cast<std::streamsize>(size))) {
         throw Exception("Failed to read file [{}]", path);
     }
     
