@@ -187,6 +187,14 @@ static auto register_event_callbacks() -> void
 			EventQ::self().push(CWindow::ResizeEvent{ e->elementWidth, e->elementHeight});
 			return EM_TRUE;
 	});
+
+    emscripten_set_beforeunload_callback(
+        nullptr,
+        [](int32_t eventType, const void*, void*) -> const char* {
+            EventQ::self().push(CWindow::QuitEvent{});
+            return "";
+        }
+    );
 }
 
 auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::tuple<H_DSP, H_WIN, H_SRF>
@@ -263,8 +271,9 @@ auto CWindow::set_vsync(bool state) -> void
 
 auto CWindow::message_box(const char* title, const char* body) -> bool
 {
-	return true;
-	//use alert maybe
+    return EM_ASM_INT({
+        return confirm(UTF8ToString($0) + "\n\n" + UTF8ToString($1));
+    }, title, body);
 }
 
 auto CWindow::dims() const	-> std::pair<int32_t, int32_t>
