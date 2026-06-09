@@ -7,9 +7,8 @@ function(target_pack target)
             POST_BUILD
 
             COMMAND ${CMAKE_COMMAND} -E make_directory "${SITE_DIR}"
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/cmake/index.html" "${SITE_DIR}/index.html"
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/cmake/coi-serviceworker.js"  "${SITE_DIR}/coi-serviceworker.js"
-            COMMAND ${CMAKE_COMMAND} -E copy_directory "$<TARGET_FILE_DIR:${target}>" "${SITE_DIR}"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/cmake/index.html" "${SITE_DIR}"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:${target}>" "${SITE_DIR}"
             COMMENT "Assembling web site artifacts"
         )
     elseif(ANDROID)
