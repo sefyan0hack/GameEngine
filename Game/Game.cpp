@@ -7,7 +7,7 @@
 
 using namespace std;
 
-class Game : IGame
+class Game final : IGame
 {
     APP& app = APP::self(this); // APP::self obten the app only instance and regester the game
 

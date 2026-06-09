@@ -52,19 +52,19 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     gl::Enable(GL_CULL_FACE);
     gl::CullFace(GL_BACK);
 
-    debug::log(os::build_info());
-    debug::log("=================================================================================");
-    debug::log("Platform Name: {}", os::name());
-    debug::log("Platform Arch: {} ({}) bit", os::arch(), os::bits());
-    debug::log("GL Version : {}.{}", m_Major, m_Minor);
-    debug::log("GL Vendor : {}", m_Vendor);
-    debug::log("GL Renderer : {}", m_Renderer);
-    debug::log("GL Exts : {} Extention", m_Extensions.size());
-    debug::log("GL Texture Units : {}", max_texture_units());
-    debug::log("GL Texture Size : {0} x {0}", max_texture_size());
-    debug::log("GL Texture3D Size : {0} x {0} x {0}", max_texture3d_size());
-    debug::log("GL TextureCubeMap Size : {0} x {0}", max_texturecubemap_size());
-    debug::log("=================================================================================");
+    logg::info(os::build_info());
+    logg::info("=================================================================================");
+    logg::info("Platform Name: {}", os::name());
+    logg::info("Platform Arch: {} ({}) bit", os::arch(), os::bits());
+    logg::info("GL Version : {}.{}", m_Major, m_Minor);
+    logg::info("GL Vendor : {}", m_Vendor);
+    logg::info("GL Renderer : {}", m_Renderer);
+    logg::info("GL Exts : {} Extention", m_Extensions.size());
+    logg::info("GL Texture Units : {}", max_texture_units());
+    logg::info("GL Texture Size : {0} x {0}", max_texture_size());
+    logg::info("GL Texture3D Size : {0} x {0} x {0}", max_texture3d_size());
+    logg::info("GL TextureCubeMap Size : {0} x {0}", max_texturecubemap_size());
+    logg::info("=================================================================================");
 }
 
 auto OpenGL::window() const -> const CWindow&

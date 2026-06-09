@@ -166,7 +166,7 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
 
         gl::TexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, img.gpu_format(), img.width(), img.height(), 0, img.cpu_format(), GL_UNSIGNED_BYTE, img.data().data());
 
-        debug::log("Loding {} ", faces[i]);
+        logg::trace("Loding {} ", faces[i]);
     }
 
     gl::GenerateMipmap(m_Type);

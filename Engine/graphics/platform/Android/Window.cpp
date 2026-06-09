@@ -111,7 +111,6 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
     }
 
     eglBindAPI(EGL_OPENGL_ES_API);
-	debug::log("egl v{}.{}", egl_major, egl_minor);
 
     auto config = OpenGL::find_config(*this);
     EGLint format;

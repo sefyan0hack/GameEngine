@@ -123,7 +123,7 @@ auto APP::loop_body(void* ctx) -> void
                 app->Game->on_deltamouse(dx, dy);                
             },
             [](const auto& e) {
-                debug::log("Unhandeled Event: {}", typeid(e).name()); 
+                logg::warn("Unhandeled Event: {}", typeid(e).name()); 
             }
         }, event
         );

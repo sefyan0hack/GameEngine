@@ -182,8 +182,8 @@ static auto register_event_callbacks() -> void
 
 	emscripten_set_fullscreenchange_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, nullptr, EM_FALSE, 
 		[](int32_t, const EmscriptenFullscreenChangeEvent* e, void*) -> EM_BOOL {
-			if (e->isFullscreen) debug::log("Enable FullScreen");
-            else debug::log("Exited fullscreen");
+			if (e->isFullscreen) logg::tace("Enable FullScreen");
+            else logg::trace("Exited fullscreen");
 			EventQ::self().push(CWindow::ResizeEvent{ e->elementWidth, e->elementHeight});
 			return EM_TRUE;
 	});
@@ -235,15 +235,15 @@ auto CWindow::toggle_fullscreen() -> void
     if (res == EMSCRIPTEN_RESULT_SUCCESS && status.isFullscreen) {
         res = emscripten_exit_fullscreen();
         if (res != EMSCRIPTEN_RESULT_SUCCESS) {
-            debug::log("Failed to exit fullscreen");
+            logg::trace("Failed to exit fullscreen");
         }
     } else {
         res = emscripten_request_fullscreen(m_Surface, EM_FALSE);
         if (res != EMSCRIPTEN_RESULT_SUCCESS) {
             if (res == EMSCRIPTEN_RESULT_DEFERRED) {
-                debug::log("Fullscreen request deferred (should not happen with EM_FALSE)");
+                logg::trace("Fullscreen request deferred (should not happen with EM_FALSE)");
             } else {
-                debug::log("Failed to request fullscreen, error code: ", (int)res);
+                logg::trace("Failed to request fullscreen, error code: ", (int)res);
             }
         }
     }
@@ -266,7 +266,7 @@ auto CWindow::set_title(std::string  title) -> void
 auto CWindow::set_vsync(bool state) -> void
 {
 	(void)state;
-	debug::log("vSync is always enabled in web and no vSync off ");
+	logg::warn("vSync is always enabled in web and no vSync off ");
 }
 
 auto CWindow::message_box(const char* title, const char* body) -> bool

@@ -15,8 +15,8 @@
 class ENGINE_EXPORT IGame {
 public:
     virtual ~IGame() = default;
-    virtual auto update(float dt) -> void { debug::log("update(delta: {})", dt); }
-    virtual auto on_deltamouse(float dx, float dy) -> void { debug::log("on_deltamouse(dx: {}, dy:{})", dx, dy); }
+    virtual auto update(float dt) -> void { logg::trace("update(delta: {})", dt); }
+    virtual auto on_deltamouse(float dx, float dy) -> void { logg::trace("on_deltamouse(dx: {}, dy:{})", dx, dy); }
 
     ::Scene Scene;
 };

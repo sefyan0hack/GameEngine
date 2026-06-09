@@ -61,7 +61,7 @@ Shader::Shader(const std::string& filename)
         {
             out.append(sv);
         }
-        debug::log("glsl Compile error ({}) : code :\n{}", e.what(), out);
+        logg::error("glsl Compile error ({}) : code :\n{}", e.what(), out);
     }
 }
 
@@ -86,7 +86,7 @@ Shader::Shader(std::string Src, GLenum type)
         {
             out.append(sv);
         }
-        debug::log("glsl Compile error ({}) : code :\n{}", e.what(), out);
+        logg::error("glsl Compile error ({}) : code :\n{}", e.what(), out);
     }
 }
 

@@ -58,7 +58,7 @@ Image::Image(auto* Data, uint32_t Width, uint32_t Height, uint32_t Channels)
         m_Channels = checkerboard_bytes_per_pixel;
         m_Data = checkerboard.data();
 
-        debug::log("Can't load raw data");
+        logg::warn("Can't load raw data");
     }
 }
 
@@ -77,7 +77,7 @@ Image::Image(const std::string& filename, bool flip)
         m_Channels = checkerboard_bytes_per_pixel;
         m_Data = checkerboard.data();
 
-        debug::log("Can't read {} . reason : {}", filename.c_str(), stbi_failure_reason());
+        logg::warn("Can't read {} . reason : {}", filename.c_str(), stbi_failure_reason());
     }
 }
 
@@ -96,7 +96,7 @@ Image::Image(std::span<const char> src, bool flip)
         m_Channels = checkerboard_bytes_per_pixel;
         m_Data = checkerboard.data();
 
-        debug::log("Can't read file . reason : {}", stbi_failure_reason());
+        logg::warn("Can't read file . reason : {}", stbi_failure_reason());
     }
 }
 
