@@ -22,10 +22,24 @@ function(target_pack target)
         list(GET BUILD_TOOLS_VERSIONS 0 BUILD_TOOLS_LATEST)
         set(BUILD_TOOLS_DIR "${ANDROID_SDK_ROOT}/build-tools/${BUILD_TOOLS_LATEST}")
 
-        find_program(KEYTOOL keytool REQUIRED)
+        # always use highest SDK installed
+        file(GLOB ANDROID_PLATFORMS "${ANDROID_SDK_ROOT}/platforms/android-*")
+
+        foreach(p ${ANDROID_PLATFORMS})
+            string(REGEX MATCH "android-([0-9]+)" _ ${p})
+            set(API ${CMAKE_MATCH_1})
+
+            if(NOT HIGHEST_API OR API GREATER HIGHEST_API)
+                set(HIGHEST_API ${API})
+            endif()
+        endforeach()
+
+        set(ANDROID_PLATFORM_LEVEL ${HIGHEST_API})
+
+        find_program(KEYTOOL keytool)
         find_program(AAPT aapt PATHS "${BUILD_TOOLS_DIR}" REQUIRED)
-        find_program(ZIPALIGN zipalign PATHS "${BUILD_TOOLS_DIR}" REQUIRED)
-        find_program(APKSIGNER apksigner PATHS "${BUILD_TOOLS_DIR}" REQUIRED)
+        find_program(ZIPALIGN NAMES zipalign zipalign.bat PATHS "${BUILD_TOOLS_DIR}" REQUIRED)
+        find_program(APKSIGNER NAMES apksigner apksigner.bat PATHS "${BUILD_TOOLS_DIR}" REQUIRED)
 
         add_custom_command(
             TARGET ${target}
@@ -47,9 +61,9 @@ function(target_pack target)
 
             COMMAND ${CMAKE_COMMAND} -E echo "Running AAPT packaging. ndk-min: ${NDK_MIN_PLATFORM_LEVEL} ndk-max: ${NDK_MAX_PLATFORM_LEVEL}"
             COMMAND ${AAPT} package -f
-                -I "${ANDROID_SDK_ROOT}/platforms/android-${NDK_MAX_PLATFORM_LEVEL}/android.jar"
+                -I "${ANDROID_SDK_ROOT}/platforms/android-${ANDROID_PLATFORM_LEVEL}/android.jar"
                 -M "${CMAKE_SOURCE_DIR}/cmake/AndroidManifest.xml"
-                --min-sdk-version ${NDK_MIN_PLATFORM_LEVEL} --target-sdk-version ${NDK_MAX_PLATFORM_LEVEL}
+                --min-sdk-version ${NDK_MIN_PLATFORM_LEVEL} --target-sdk-version ${ANDROID_PLATFORM_LEVEL}
                 -F base.apk ${CMAKE_BINARY_DIR}/apk
 
             COMMAND ${CMAKE_COMMAND} -E echo "Aligning APK"
@@ -63,7 +77,7 @@ function(target_pack target)
                 --ks-key-alias androiddebugkey
                 --out signed.apk aligned.apk
 
-            COMMENT "Packaging & Signing APK. ndk: ${CMAKE_ANDROID_NDK_VERSION} abi: ${ANDROID_ABI} min-sdk: ${NDK_MIN_PLATFORM_LEVEL} target-sdk: ${NDK_MAX_PLATFORM_LEVEL}"
+            COMMENT "Packaging & Signing APK. ndk: ${CMAKE_ANDROID_NDK_VERSION} sdk: ${ANDROID_PLATFORM_LEVEL} abi: ${ANDROID_ABI}"
         )
         endif()
 endfunction()
