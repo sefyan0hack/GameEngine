@@ -255,9 +255,3 @@ jobs:
           build_type: ${{ matrix.build_type }}
           build_dir: ${{ env.BUILD_DIR }}
           cmake_flags: -DUNIT_TESTS=ON -DHARDEN=ON
-
-      - name: Upload
-        uses: actions/upload-artifact@v4
-        with:
-          name: Game-${{ matrix.build_type }}
-          path: ${{ env.BUILD_DIR }}/
