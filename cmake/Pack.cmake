@@ -22,17 +22,19 @@ function(target_pack target)
         list(GET BUILD_TOOLS_VERSIONS 0 BUILD_TOOLS_LATEST)
         set(BUILD_TOOLS_DIR "${ANDROID_SDK_ROOT}/build-tools/${BUILD_TOOLS_LATEST}")
 
-        # always use highest SDK installed
-        file(GLOB ANDROID_PLATFORMS "${ANDROID_SDK_ROOT}/platforms/android-*")
-        set(HIGHEST_API 0)
-        foreach(p ${ANDROID_PLATFORMS})
-            if(p MATCHES "android-([0-9]+)")
-                if(CMAKE_MATCH_1 GREATER HIGHEST_API)
-                    set(HIGHEST_API ${CMAKE_MATCH_1})
-                endif()
+        # highest available Android platform
+        set(ANDROID_PLATFORM_LEVEL "")
+
+        foreach(API RANGE 50 21 -1)
+            if(EXISTS "${ANDROID_SDK_ROOT}/platforms/android-${API}/android.jar")
+                set(ANDROID_PLATFORM_LEVEL ${API})
+                break()
             endif()
         endforeach()
-        set(ANDROID_PLATFORM_LEVEL ${HIGHEST_API})
+
+        if(NOT ANDROID_PLATFORM_LEVEL)
+            message(FATAL_ERROR "No Android platform found in SDK")
+        endif()
 
         find_program(KEYTOOL keytool)
         find_program(AAPT aapt PATHS "${BUILD_TOOLS_DIR}" REQUIRED)
