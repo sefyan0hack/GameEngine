@@ -182,7 +182,7 @@ static auto register_event_callbacks() -> void
 
 	emscripten_set_fullscreenchange_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, nullptr, EM_FALSE, 
 		[](int32_t, const EmscriptenFullscreenChangeEvent* e, void*) -> EM_BOOL {
-			if (e->isFullscreen) logg::tace("Enable FullScreen");
+			if (e->isFullscreen) logg::trace("Enable FullScreen");
             else logg::trace("Exited fullscreen");
 			EventQ::self().push(CWindow::ResizeEvent{ e->elementWidth, e->elementHeight});
 			return EM_TRUE;
