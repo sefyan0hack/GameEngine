@@ -36,7 +36,6 @@ function(target_pack target)
             message(FATAL_ERROR "No Android platform found in SDK")
         endif()
 
-        find_program(KEYTOOL keytool)
         find_program(AAPT aapt PATHS "${BUILD_TOOLS_DIR}" REQUIRED)
         find_program(ZIPALIGN NAMES zipalign zipalign.bat PATHS "${BUILD_TOOLS_DIR}" REQUIRED)
         find_program(APKSIGNER NAMES apksigner apksigner.bat PATHS "${BUILD_TOOLS_DIR}" REQUIRED)
@@ -53,12 +52,6 @@ function(target_pack target)
             COMMAND ${CMAKE_COMMAND} -E echo "Copying ${target} executable"
             COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${target}> "${APK_LIB_DIR}"
 
-            COMMAND ${CMAKE_COMMAND} -E echo "Generating debug keystore"
-            COMMAND ${KEYTOOL} -genkeypair -keystore "debug.keystore"
-                -storepass android -keypass android -alias androiddebugkey
-                -dname "CN=Android Debug,O=Android,C=US" -storetype JKS
-                -keyalg RSA -keysize 2048 -validity 10000 || ${CMAKE_COMMAND} -E echo "Keystore already exists, skipping"
-
             COMMAND ${CMAKE_COMMAND} -E echo "Running AAPT packaging. ndk-min: ${NDK_MIN_PLATFORM_LEVEL} ndk-max: ${NDK_MAX_PLATFORM_LEVEL}"
             COMMAND ${AAPT} package -f
                 -I "${ANDROID_SDK_ROOT}/platforms/android-${ANDROID_PLATFORM_LEVEL}/android.jar"
@@ -71,7 +64,7 @@ function(target_pack target)
 
             COMMAND ${CMAKE_COMMAND} -E echo "Signing APK"
             COMMAND ${APKSIGNER} sign
-                --ks debug.keystore
+                --ks ${CMAKE_SOURCE_DIR}/cmake/debug.keystore
                 --ks-pass pass:android
                 --key-pass pass:android
                 --ks-key-alias androiddebugkey
