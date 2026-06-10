@@ -36,13 +36,51 @@
 - Ninja or Make (recommended: Ninja)
 
 ---
-
 ## Getting started
 
-Clone the repository and create an out-of-source build directory:
+1. Clone the repository
 
-```bash
-git clone --recurse-submodules https://github.com/sefyan0hack/GameEngine.git
-cd GameEngine
-cmake -S . -B build
-cmake --build build --config Release
+  ```bash
+  git clone --recurse-submodules https://github.com/sefyan0hack/GameEngine.git
+  cd GameEngine
+  ```
+
+2. Configure Project
+
+  2.1 Windows & Linux :
+
+  ```bash
+  cmake -S . -B build
+  ```
+
+  2.2 Android :
+
+  ```bash
+  #Windows
+  set ANDROID_NDK_LATEST_HOME=C:/path/to/android_ndk_rXX
+  set ANDROID_SDK_ROOT=C:/path/to/android_sdk
+  ```
+
+  ```bash
+  #Linux
+  export ANDROID_NDK_LATEST_HOME=/path/to/android_ndk_rXX
+  export ANDROID_SDK_ROOT=/path/to/android_sdk
+  ```
+
+  - Configure
+
+  ```bash
+  cmake -S . -B build
+  ```
+
+  2.3 Web :
+
+  ```bash
+  emcmake cmake -S . -B build
+  ```
+
+3. Build Project
+
+  ```bash
+  cmake --build build --config Release
+  ```
