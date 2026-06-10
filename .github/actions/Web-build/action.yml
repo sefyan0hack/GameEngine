@@ -26,33 +26,11 @@ inputs:
 runs:
   using: composite
   steps:
-
-    - name: Cache emsdk
-      uses: actions/cache@v3
-      with:
-        path: emsdk-cache
-        key: emsdk-${{ runner.os }}-${{ inputs.emsdk_version }}
-        restore-keys: |
-          emsdk-${{ runner.os }}-
-
-    - name: Cache ccache
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.cache/ccache
-          ~/.ccache
-          ~/.config/ccache
-          ~/Library/Caches/ccache
-        key: ${{ runner.os }}-emscripten-ccache-${{ inputs.emsdk_version }}-${{ inputs.build_type }}-${{ hashFiles('**/CMakeLists.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-emscripten-ccache-${{ inputs.emsdk_version }}-${{ inputs.build_type }}-
-          ${{ runner.os }}-emscripten-ccache-${{ inputs.emsdk_version }}-
-          ${{ runner.os }}-emscripten-ccache-
-
-    - uses: mymindstorm/setup-emsdk@v14
+    - name: Setup emsdk
+      uses: emscripten-core/setup-emsdk@v16
       with:
         version: ${{ inputs.emsdk_version }}
-        actions-cache-folder: emsdk-cache
+        actions-cache-folder: 'emsdk-cache'
 
     - name: Configure
       shell: bash
