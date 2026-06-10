@@ -24,16 +24,14 @@ function(target_pack target)
 
         # always use highest SDK installed
         file(GLOB ANDROID_PLATFORMS "${ANDROID_SDK_ROOT}/platforms/android-*")
-
+        set(HIGHEST_API 0)
         foreach(p ${ANDROID_PLATFORMS})
-            string(REGEX MATCH "android-([0-9]+)" _ ${p})
-            set(API ${CMAKE_MATCH_1})
-
-            if(NOT HIGHEST_API OR API GREATER HIGHEST_API)
-                set(HIGHEST_API ${API})
+            if(p MATCHES "android-([0-9]+)")
+                if(CMAKE_MATCH_1 GREATER HIGHEST_API)
+                    set(HIGHEST_API ${CMAKE_MATCH_1})
+                endif()
             endif()
         endforeach()
-
         set(ANDROID_PLATFORM_LEVEL ${HIGHEST_API})
 
         find_program(KEYTOOL keytool)
