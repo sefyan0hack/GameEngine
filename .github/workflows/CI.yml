@@ -231,7 +231,7 @@ jobs:
 # ======================================================================================================================
 # Android Linux arm64-v8a
 # ======================================================================================================================
-  Android:
+  Android-Linux:
     name: "android • linux • ${{ matrix.build_type }}"
     if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip android]')"
     runs-on: ubuntu-latest
@@ -259,7 +259,7 @@ jobs:
 # ======================================================================================================================
 # Android Windows arm64-v8a
 # ======================================================================================================================
-  Android:
+  Android-Windows:
     name: "android • windows • ${{ matrix.build_type }}"
     if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip android]')"
     runs-on: windows-latest
