@@ -186,10 +186,10 @@ jobs:
           retention-days: 7
 
 # ======================================================================================================================
-# Web wasm
+# Web Linux
 # ======================================================================================================================
-  Web:
-    name: "web • ${{ matrix.build_type }}"
+  Web-Linux:
+    name: "web • linux • ${{ matrix.build_type }}"
     if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip web]')"
     runs-on: ubuntu-latest
     strategy:
@@ -214,7 +214,46 @@ jobs:
       with:
         build_type: ${{ matrix.build_type }}
         build_dir: ${{ env.BUILD_DIR }}
-        cmake_flags: -DUNIT_TESTS=ON -DHARDEN=ON -DCMAKE_CXX_LINK_FLAGS="-sSINGLE_FILE=1 -sENVIRONMENT=node"
+        cmake_flags: -DUNIT_TESTS=ON -DHARDEN=ON -DCMAKE_CXX_LINK_FLAGS="-sENVIRONMENT=node"
+
+    - name: Test
+      shell: bash
+      run: ctest --test-dir ${{ env.BUILD_DIR }} --output-on-failure
+
+    - name: Upload Test Executable on Failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: web-unit_tests-${{ matrix.build_type }}
+        path: ${{ env.BUILD_DIR }}/tests/unit/unit_tests.js
+        retention-days: 7
+
+# ======================================================================================================================
+# Web Windows
+# ======================================================================================================================
+  Web-Windows:
+    name: "web • windows • ${{ matrix.build_type }}"
+    if: "!contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip web]')"
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Debug, Release]
+
+    env:
+      BUILD_DIR: build-${{ matrix.build_type }}
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+
+    - name: Build
+      uses: ./.github/actions/Web-build
+      with:
+        build_type: ${{ matrix.build_type }}
+        build_dir: ${{ env.BUILD_DIR }}
+        cmake_flags: -DUNIT_TESTS=ON -DHARDEN=ON -DCMAKE_CXX_LINK_FLAGS="-sENVIRONMENT=node"
 
     - name: Test
       shell: bash
