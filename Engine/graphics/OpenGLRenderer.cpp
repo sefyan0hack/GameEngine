@@ -69,13 +69,13 @@ auto OpenGLRenderer::draw(const Mesh& mesh) const -> void
     }
 }
 
-auto OpenGLRenderer::set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void
+auto OpenGLRenderer::set_viewport(int32_t x, int32_t y, int32_t width, int32_t height) -> void
 {
     std::tie(m_X, m_Y, m_Width, m_Height) = {x, y, width, height};
     gl::Viewport(m_X, m_Y, m_Width, m_Height);
 }
 
-auto OpenGLRenderer::viewport() const -> std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
+auto OpenGLRenderer::viewport() const -> std::tuple<int32_t, int32_t, int32_t, int32_t>
 {
     return {m_X, m_Y, m_Width, m_Height};
 }

@@ -96,7 +96,7 @@ auto OpenGL::is_valid() const -> bool
     return m_Context != GL_CTX{};
 }
 
-auto OpenGL::set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void
+auto OpenGL::set_viewport(int32_t x, int32_t y, int32_t width, int32_t height) -> void
 {
     gl::Viewport(x, y, width, height);
 }

@@ -3,5 +3,5 @@
 
 inline auto printf_(const char* fmt, auto... args) -> int
 {
-    return printf(fmt, args...);
+    return ::printf(fmt, args...);
 }

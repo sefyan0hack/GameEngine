@@ -11,8 +11,8 @@ public:
     
     auto render(const class Scene& scene) const -> void override;
 
-    auto viewport() const -> std::tuple<uint32_t, uint32_t, uint32_t, uint32_t> override;
-    auto set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) -> void override;
+    auto viewport() const -> std::tuple<int32_t, int32_t, int32_t, int32_t> override;
+    auto set_viewport(int32_t x, int32_t y, int32_t width, int32_t height) -> void override;
     auto set_mode(DrawMode mode) -> void override;
     auto clear_screen(uint32_t buffersmask)  -> void  override;
     auto has_extension(const std::string& ext) -> bool override;
@@ -22,7 +22,7 @@ protected:
 
 private:
     const class OpenGL& m_GApi;
-    uint32_t m_X, m_Y, m_Width, m_Height;
+    int32_t m_X, m_Y, m_Width, m_Height;
     std::shared_ptr<class Shader> m_Vert, m_Frag;
     std::shared_ptr<class ShaderProgram> m_Program;
     DrawMode m_DrawMode;

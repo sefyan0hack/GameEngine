@@ -109,7 +109,7 @@ auto Shader::check_compile_status() -> void
     auto success = get_shader_info(GL_COMPILE_STATUS);
 
     if (!success) {
-        auto infologlength = get_shader_info(GL_INFO_LOG_LENGTH);
+        auto infologlength = static_cast<size_t>(get_shader_info(GL_INFO_LOG_LENGTH));
 
         if(infologlength > 0){
             std::string infoLog(infologlength, '\0');

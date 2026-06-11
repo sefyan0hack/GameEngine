@@ -19,7 +19,7 @@ static auto resize_callback(int32_t eventType, const EmscriptenUiEvent* e, void*
 {
     if(eventType != EMSCRIPTEN_EVENT_RESIZE) EM_FALSE;
 
-    int w{}, h{};
+    int32_t w{}, h{};
     emscripten_get_canvas_element_size("#canvas", &w, &h);
 
     emscripten_set_canvas_element_size("#canvas", w, h);
