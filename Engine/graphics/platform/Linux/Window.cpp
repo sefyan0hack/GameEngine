@@ -22,31 +22,31 @@ CWindow::~CWindow()
 
 auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> std::tuple<H_DSP, H_WIN, H_SRF>
 {
-	auto Display = XOpenDisplay(nullptr);
+	auto display = XOpenDisplay(nullptr);
 
-    if (!Display) {
+    if (!display) {
 		throw Exception("Failed to open X display connection.");
 	}
-    int32_t screen = DefaultScreen(Display);
+    int32_t screen = DefaultScreen(display);
 
     /* Create a window */
-    auto window_handle = XCreateSimpleWindow(Display, RootWindow(Display, screen), 
+    auto window_handle = XCreateSimpleWindow(display, RootWindow(display, screen), 
                                  10, 10, static_cast<uint32_t>(Width), static_cast<uint32_t>(Height), 1, 
-                                 BlackPixel(Display, screen), WhitePixel(Display, screen));
+                                 BlackPixel(display, screen), WhitePixel(display, screen));
     Expect(window_handle != 0, "window_handle are null ???");
-    XStoreName(Display, window_handle, Title);
+    XStoreName(display, window_handle, Title);
 
-	// XkbSetDetectableAutoRepeat(Display, true, NULL);
+	// XkbSetDetectableAutoRepeat(display, true, NULL);
 
     /* Select input events */
-    XSelectInput(Display, window_handle,
+    XSelectInput(display, window_handle,
 		KeyPressMask | KeyReleaseMask | ExposureMask |
 		ResizeRedirectMask | FocusChangeMask | StructureNotifyMask | ButtonPress |
         ButtonReleaseMask | EnterWindowMask | LeaveWindowMask |
 		PointerMotionMask | Button1MotionMask | VisibilityChangeMask
 		);
 
-	return {Display, window_handle, window_handle};
+	return {display, window_handle, window_handle};
 }
 
 auto CWindow::process_messages() -> void
@@ -71,7 +71,7 @@ auto CWindow::process_messages() -> void
 
 			case KeyPress:
 			case KeyRelease: {
-				KeySym keysym = XkbKeycodeToKeysym(m_Display, event.xkey.keycode, 0, 0); // US layout
+				KeySym keysym = XkbKeycodeToKeysym(m_Display, static_cast<KeyCode>(event.xkey.keycode), 0, 0); // US layout
 
 				if (event.type == KeyPress) {
 					EventQ::self().push(Keyboard::KeyDownEvent{ from_native(keysym)});
@@ -218,6 +218,8 @@ auto CWindow::set_vsync(bool state) -> void
 
 auto CWindow::message_box(const char* title, const char* body) -> bool
 {
+	(void)title;
+	(void)body;
 	return true;
 	// TODO: use x11
 }

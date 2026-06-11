@@ -13,14 +13,15 @@ namespace logg {
 
     auto default_logger(LogLvl l, std::string msg) -> void {
         if(l > lvl) return;
-        auto level_to_string = [](LogLvl l) {
-            switch (l) {
+        auto level_to_string = [](LogLvl ll) {
+            switch (ll) {
                 case LogLvl::Info:  return "INFO";
                 case LogLvl::Warn:  return "WARN";
                 case LogLvl::Error: return "ERROR";
                 case LogLvl::Trace: return "TRACE";
+                case LogLvl::NoLog:  return "NONE";
             }
-            return "NONE";
+            return "unrechable";
         };
 
         std::string final_msg = std::format("[{}] [{:<5}] : {}", std::chrono::system_clock::now(), level_to_string(l), msg);

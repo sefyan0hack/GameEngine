@@ -88,9 +88,9 @@ auto Text::create_atlas() -> void {
 
     float scale = stbtt_ScaleForPixelHeight(&info, FONT_SIZE);
 
-    int ascent, descent, lineGap;
+    int32_t ascent, descent, lineGap;
     stbtt_GetFontVMetrics(&info, &ascent, &descent, &lineGap);
-    m_Ascent = static_cast<int32_t>(ascent * scale);
+    m_Ascent = static_cast<int32_t>(static_cast<float>(ascent) * scale);
 
     std::vector<unsigned char> bitmap(ATLAS_WIDTH * ATLAS_HEIGHT, 0);
 
@@ -119,7 +119,7 @@ auto Text::create_atlas() -> void {
     gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     gl::PixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    for (int i = 0; i < CHAR_COUNT; ++i) {
+    for (uint32_t  i = 0; i < CHAR_COUNT; ++i) {
         const auto& bc = bakedChars[i];
         int charcode = FIRST_GLYPH + i;
 
