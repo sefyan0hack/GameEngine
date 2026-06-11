@@ -18,7 +18,7 @@ jobs:
       BUILD_DIR: build/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.sanitizer}}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
 

@@ -30,7 +30,7 @@ jobs:
       BUILD_DIR: build-${{ matrix.compiler }}-${{ matrix.build_type }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
 
@@ -71,7 +71,7 @@ jobs:
       BUILD_DIR: build-${{ matrix.compiler }}-${{ matrix.build_type }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
 
@@ -112,7 +112,7 @@ jobs:
       BUILD_DIR: build-${{ matrix.compiler }}-${{ matrix.build_type }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
 
@@ -157,7 +157,7 @@ jobs:
       BUILD_DIR: build-${{ matrix.compiler }}-${{ matrix.build_type }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
 
@@ -201,7 +201,7 @@ jobs:
       BUILD_DIR: build-${{ matrix.build_type }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         submodules: true
 
@@ -244,7 +244,7 @@ jobs:
       BUILD_DIR: build-${{ matrix.build_type }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         submodules: true
 
@@ -283,7 +283,7 @@ jobs:
       BUILD_DIR: build-${{ matrix.build_type }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
 
@@ -311,7 +311,7 @@ jobs:
       BUILD_DIR: build-${{ matrix.build_type }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
 
