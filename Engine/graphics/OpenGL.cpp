@@ -151,13 +151,13 @@ auto OpenGL::max_texturecubemap_size() -> GLint
 
 auto OpenGL::query_gl_extensions() const -> std::vector<std::string> 
 {
-    int numExtensions = 0;
+    int32_t numExtensions = 0;
     gl::GetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
 
     std::vector<std::string> exts;
 
-    for (uint32_t i = 0; i < numExtensions; ++i) {
-        exts.push_back((const char*)gl::GetStringi(GL_EXTENSIONS, i));
+    for (int32_t i = 0; i < numExtensions; ++i) {
+        exts.push_back((const char*)gl::GetStringi(GL_EXTENSIONS, static_cast<uint32_t>(i)));
     }
 
     return exts;

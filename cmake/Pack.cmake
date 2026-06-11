@@ -5,6 +5,8 @@ function(target_pack target)
         add_custom_command(
             TARGET ${target}
             POST_BUILD
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+            VERBATIM
 
             COMMAND ${CMAKE_COMMAND} -E make_directory "${SITE_DIR}"
             COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/cmake/index.html" "${SITE_DIR}"
@@ -52,7 +54,7 @@ function(target_pack target)
             COMMAND ${CMAKE_COMMAND} -E echo "Copying ${target} executable"
             COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${target}> "${APK_LIB_DIR}"
 
-            COMMAND ${CMAKE_COMMAND} -E echo "Running AAPT packaging. ndk-min: ${NDK_MIN_PLATFORM_LEVEL} ndk-max: ${NDK_MAX_PLATFORM_LEVEL}"
+            COMMAND ${CMAKE_COMMAND} -E echo "Running AAPT packaging"
             COMMAND ${AAPT} package -f
                 -I "${ANDROID_SDK_ROOT}/platforms/android-${ANDROID_PLATFORM_LEVEL}/android.jar"
                 -M "${CMAKE_SOURCE_DIR}/cmake/AndroidManifest.xml"
