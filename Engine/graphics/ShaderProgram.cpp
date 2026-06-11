@@ -71,7 +71,7 @@ auto ShaderProgram::link() const -> void
     GLint success = get_program_info(GL_LINK_STATUS);
 
     if (!success) {
-        GLsizei  infologlength = get_program_info(GL_INFO_LOG_LENGTH);
+        GLsizei  infologlength = static_cast<size_t>(get_program_info(GL_INFO_LOG_LENGTH));
         if(infologlength > 0){
             std::string infoLog(infologlength, '\0');
             gl::GetProgramInfoLog(m_Id, infologlength, nullptr, infoLog.data());

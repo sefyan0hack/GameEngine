@@ -156,7 +156,7 @@ auto OpenGL::query_gl_extensions() const -> std::vector<std::string>
 
     std::vector<std::string> exts;
 
-    for (int i = 0; i < numExtensions; ++i) {
+    for (uint32_t i = 0; i < numExtensions; ++i) {
         exts.push_back((const char*)gl::GetStringi(GL_EXTENSIONS, i));
     }
 

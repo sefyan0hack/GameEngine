@@ -8,6 +8,7 @@
 #include <core/Event.hpp>
 #include <X11/Xlib.h>
 
+#include <string>
 #include <cstring>
 
 extern auto from_native(KeySym key) -> Key;
@@ -31,7 +32,7 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
 
     /* Create a window */
     auto window_handle = XCreateSimpleWindow(display, RootWindow(display, screen), 
-                                 10, 10, static_cast<uint32_t>(Width), static_cast<uint32_t>(Height), 1, 
+                                 10, 10, static_cast<uint32_t>(Width), static_cast<uint32_t>(Height), 1u, 
                                  BlackPixel(display, screen), WhitePixel(display, screen));
     Expect(window_handle != 0, "window_handle are null ???");
     XStoreName(display, window_handle, Title);
@@ -190,7 +191,7 @@ auto CWindow::get_title() -> std::string
 	// brocken
 	char* name = nullptr;
     if (XFetchName(m_Display, m_Handle, &name) && name) {
-		title.resize(std::strlen(name) + 1);
+		title.resize(std::char_traits<char>::length(name)+ 1);
         XFree(name);
 	}
 
@@ -237,8 +238,8 @@ auto CWindow::resize(int32_t width, int32_t height)	-> void
 	XResizeWindow(
 		m_Display,
 		m_Handle,
-		width,
-		height
+		static_cast<uint32_t>(width),
+		static_cast<uint32_t>(height)
 	);
 
 	XFlush(m_Display);

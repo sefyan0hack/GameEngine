@@ -114,7 +114,7 @@ auto Shader::check_compile_status() -> void
         if(infologlength > 0){
             std::string infoLog(infologlength, '\0');
 
-            gl::GetShaderInfoLog(m_Id, infologlength, nullptr, infoLog.data());
+            gl::GetShaderInfoLog(m_Id, static_cast<GLsizei>(infologlength), nullptr, infoLog.data());
             gl::DeleteShader(m_Id);
             throw Exception("{}", infoLog);
         }
