@@ -1,26 +1,17 @@
 #pragma once
 
-#include <string>
-#include <unordered_map>
 #include <engine_export.h>
 
 #include <emath/vec2.hpp>
 #include <emath/ivec2.hpp>
 #include <emath/hash.hpp>
 
-#include <vector>
+#include <string>
 #include <memory>
 #include <unordered_map>
+#include <array>
 #include <cstdint>
 #include <bit>
-
-struct AtlasGlyph {
-    emath::ivec2 size;            // Size of glyph in pixels
-    emath::ivec2 bearing;         // Offset from baseline to left/top of glyph
-    emath::vec2 topleft;      // Top-left texture coordinates in atlas
-    emath::vec2 botright;      // Bottom-right texture coordinates in atlas
-    uint32_t advance;           // Offset to advance to next glyph (in 1/64 pixels)
-};
 
 class ENGINE_EXPORT Text {
 public:
@@ -28,9 +19,7 @@ public:
     ~Text();
     
     auto render() -> void;
-    auto text(std::string text, emath::vec2 pos) -> void;
-    auto print(std::string text) -> void;
-    
+    auto text(std::string text, emath::vec2 pos) -> void;    
 
 public:
     constexpr static const char* FONT_NAME = "res/JetBrainsMonoNL-BoldItalic.ttf";
@@ -51,45 +40,35 @@ public:
     constexpr static uint32_t ATLAS_WIDTH  = std::bit_ceil(ATLAS_COLS * CELL_SIZE);
     constexpr static uint32_t ATLAS_HEIGHT = std::bit_ceil(ATLAS_ROWS * CELL_SIZE);
 
-    constexpr static uint32_t MAX_QUADS = 10000;
-
-    constexpr static uint32_t VERTICES_PER_QUAD = 4;
-    static constexpr uint32_t MAX_VERTICES = MAX_QUADS * VERTICES_PER_QUAD;
-
-    constexpr static uint32_t INDICES_PER_QUAD = 6;
-    static constexpr uint32_t MAX_INDICES = MAX_QUADS * INDICES_PER_QUAD;
+    static constexpr uint32_t MAX_INSTANCES = 4096;
 
 private:
-    struct Vertex {
-        emath::vec2 position;
-        emath::vec2 texCoord;
-    };
-    
-    auto create_atlas() -> void;
-    auto init_buffers() -> void;
-    auto flush_batch() -> void;
 
-    auto push_quad(const emath::vec2& position, const emath::vec2& size, 
-                   const emath::vec2& texMin, const emath::vec2& texMax) -> void;
-    
+    struct GlyphInstance {
+        emath::vec2 offset;   // world position of the bottom‑left of the glyph
+        emath::vec2 size;     // width, height of the glyph
+        emath::vec4 texRect;  // (uMin, vMin, uMax, vMax) in atlas
+    };
+
+    struct AtlasGlyph {
+        emath::ivec2 offset;        // Offset from baseline to left/top of glyph
+        emath::ivec2 size;          // Size of glyph in pixels
+        emath::vec4 textRec;        // texture coordinates (Top-left , Bottom-right) in atlas
+        uint32_t advance;           // Offset to advance to next glyph (in 1/64 pixels)
+    };
+
+    auto prepare_buffers() -> void;
+    auto create_atlas() -> void;
+
+    static auto glyphs() -> std::array<AtlasGlyph, CHAR_COUNT>&;
+
 private:
     const class OpenGL& m_GApi;
     std::shared_ptr<class Shader> m_Vert, m_Frag;
     std::shared_ptr<class ShaderProgram> m_Program;
 
-    // Batch rendering
-    std::unordered_map<emath::vec2, std::string> m_Batches;
-    std::unordered_map<uint32_t, AtlasGlyph> m_Glyphs; // TODO: maybe static
-
-    // Buffers
-    uint32_t VAO, VBO, EBO;
-    std::vector<Vertex> m_Vertices;
-    std::vector<uint32_t> m_Indices;
-    uint32_t m_IndexCount = 0;
-
-    // Rendering state
+    uint32_t VAO, VBO;
     uint32_t m_AtlasTexture;
 
-    // Font metrics
-    int32_t m_Ascent = 0;
+    std::unordered_map<emath::vec2, std::string> m_Text;
 };

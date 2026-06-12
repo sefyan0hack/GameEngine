@@ -41,7 +41,7 @@ runs:
         echo "================================================================="
 
     - name: Setup Cpp
-      uses: aminya/setup-cpp@v1.8.0
+      uses: aminya/setup-cpp@v1.8.0  # TODO: checkout github.com/alandefreitas/cpp-actions
       with:
         compiler: ${{ inputs.compiler }}
         vcvarsall: ${{ runner.os == 'Windows' && runner.arch != 'arm64' }}
