@@ -24,14 +24,14 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     gl::GetIntegerv(GL_MAJOR_VERSION, &m_Major);
     gl::GetIntegerv(GL_MINOR_VERSION, &m_Minor);
 
-    if (m_Major < gl::OPENGL_MIN_REQUIRED_MAJOR_VERSION ||
-    (m_Major == gl::OPENGL_MIN_REQUIRED_MAJOR_VERSION &&
-     m_Minor < gl::OPENGL_MIN_REQUIRED_MINOR_VERSION))
+    if (m_Major < gl::MIN_REQUIRED_MAJOR_VERSION ||
+    (m_Major == gl::MIN_REQUIRED_MAJOR_VERSION &&
+     m_Minor < gl::MIN_REQUIRED_MINOR_VERSION))
     {
         throw Exception(
             "Min required OpenGL version is {}.{} but got {}.{}",
-            gl::OPENGL_MIN_REQUIRED_MAJOR_VERSION,
-            gl::OPENGL_MIN_REQUIRED_MINOR_VERSION,
+            gl::MIN_REQUIRED_MAJOR_VERSION,
+            gl::MIN_REQUIRED_MINOR_VERSION,
             m_Major,
             m_Minor
         );

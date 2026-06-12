@@ -14,8 +14,8 @@ namespace gl {
         API::ES;
     #endif
 
-    constexpr int32_t OPENGL_MIN_REQUIRED_MAJOR_VERSION = 3;
-    constexpr int32_t OPENGL_MIN_REQUIRED_MINOR_VERSION = api == API::CORE ? 3 : 0;
+    constexpr int32_t MIN_REQUIRED_MAJOR_VERSION = 3;
+    constexpr int32_t MIN_REQUIRED_MINOR_VERSION = api == API::CORE ? 3 : 0;
 
     inline decltype(&glClearColor) ClearColor;
     inline decltype(&glViewport) Viewport;
