@@ -15,6 +15,7 @@
 #include <stb/stb_truetype.h>
 
 #include <bit>
+#include <cmath>
 #include <string>
 #include <vector>
 
@@ -78,9 +79,9 @@ auto Text::create_atlas() -> void {
 
     float scale = stbtt_ScaleForPixelHeight(&info, FONT_SIZE);
 
-    int32_t ascent, descent, lineGap;
+    int32_t ascent{}, descent{}, lineGap{};
     stbtt_GetFontVMetrics(&info, &ascent, &descent, &lineGap);
-    ascent *= scale;
+    int32_t pixel_ascent = static_cast<int32_t>(std::round(ascent * scale));
 
     std::vector<unsigned char> bitmap(ATLAS_WIDTH * ATLAS_HEIGHT, 0);
 
@@ -113,7 +114,7 @@ auto Text::create_atlas() -> void {
         int height = bc.y1 - bc.y0;
 
         glyphs()[i] = AtlasGlyph {
-            .offset = emath::ivec2(static_cast<int>(bc.xoff + 0.5f), static_cast<int>(bc.yoff + 0.5f) + ascent), // remeber adding accennt to (y) so i dont keep it as member var
+            .offset = emath::ivec2(static_cast<int>(bc.xoff + 0.5f), static_cast<int>(bc.yoff + 0.5f) + pixel_ascent), // remeber adding accennt to (y) so i dont keep it as member var
             .size = emath::ivec2(width, height),
             .textRec = emath::vec4(
                 bc.x0 / static_cast<float>(ATLAS_WIDTH), bc.y0 / static_cast<float>(ATLAS_HEIGHT),
