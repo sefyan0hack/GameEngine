@@ -6,24 +6,18 @@ out vec2 v_TexCoord;
 
 uniform mat4 u_Projection;
 
-const vec2 positions[6] = vec2[](
-    vec2(0.0, 0.0),
-    vec2(1.0, 0.0),
-    vec2(1.0, 1.0),
-
-    vec2(0.0, 0.0),
-    vec2(1.0, 1.0),
-    vec2(0.0, 1.0)
+const vec2 positions[4] = vec2[](
+    vec2(0.0, 0.0), // bottom-left
+    vec2(1.0, 0.0), // bottom-right
+    vec2(1.0, 1.0), // top-right
+    vec2(0.0, 1.0)  // top-left
 );
 
-const vec2 uvs[6] = vec2[](
-    vec2(0.0, 1.0),
-    vec2(1.0, 1.0),
-    vec2(1.0, 0.0),
-
-    vec2(0.0, 1.0),
-    vec2(1.0, 0.0),
-    vec2(0.0, 0.0)
+const vec2 uvs[4] = vec2[](
+    vec2(0.0, 1.0), // bottom-left
+    vec2(1.0, 1.0), // bottom-right
+    vec2(1.0, 0.0), // top-right
+    vec2(0.0, 0.0)  // top-left
 );
 
 void main() {

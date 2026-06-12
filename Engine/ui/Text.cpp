@@ -188,7 +188,7 @@ auto Text::render() -> void {
 
     gl::BindVertexArray(VAO);
 
-    gl::DrawArraysInstanced(GL_TRIANGLES, 0, 6, instances.size());
+    gl::DrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, static_cast<GLsizei>(instances.size()));
 
     gl::DepthFunc(GL_LEQUAL);
     gl::DepthMask(GL_TRUE);
