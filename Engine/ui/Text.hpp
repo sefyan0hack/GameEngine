@@ -46,14 +46,12 @@ private:
 
     struct GlyphInstance {
         emath::vec2 offset;   // world position of the bottom‑left of the glyph
-        emath::vec2 size;     // width, height of the glyph
         emath::vec4 texRect;  // (uMin, vMin, uMax, vMax) in atlas
     };
 
     struct AtlasGlyph {
         emath::vec2 offset;        // Offset from baseline to left/top of glyph
-        emath::vec2 size;          // Size of glyph in pixels
-        emath::vec4 textRec;        // texture coordinates (Top-left , Bottom-right) in atlas
+        emath::vec4 textRect;        // texture coordinates (Top-left , Bottom-right) in atlas
         uint32_t advance;           // Offset to advance to next glyph (in 1/64 pixels)
     };
 

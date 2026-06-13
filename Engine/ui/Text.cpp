@@ -56,15 +56,10 @@ auto Text::prepare_buffers() -> void {
     gl::VertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GlyphInstance), (void*)offsetof(GlyphInstance, offset));
     gl::VertexAttribDivisor(0, 1);
 
-    // Size
-    gl::EnableVertexAttribArray(1);
-    gl::VertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(GlyphInstance), (void*)offsetof(GlyphInstance, size));
-    gl::VertexAttribDivisor(1, 1);
-
     // TexRect
-    gl::EnableVertexAttribArray(2);
-    gl::VertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(GlyphInstance), (void*)offsetof(GlyphInstance, texRect));
-    gl::VertexAttribDivisor(2, 1);
+    gl::EnableVertexAttribArray(1);
+    gl::VertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(GlyphInstance), (void*)offsetof(GlyphInstance, texRect));
+    gl::VertexAttribDivisor(1, 1);
 
     gl::BindVertexArray(0);
 }
@@ -82,16 +77,16 @@ auto Text::create_atlas() -> void {
     int32_t ascent{}, descent{}, lineGap{};
     stbtt_GetFontVMetrics(&info, &ascent, &descent, &lineGap);
 
-    std::vector<unsigned char> bitmap(ATLAS_WIDTH * ATLAS_HEIGHT, 0);
+    unsigned char bitmap[ATLAS_WIDTH * ATLAS_HEIGHT];
 
-    std::vector<stbtt_bakedchar> bakedChars(CHAR_COUNT);
+    stbtt_bakedchar bakedChars[CHAR_COUNT];
 
     int result = stbtt_BakeFontBitmap(
         reinterpret_cast<const unsigned char*>(font_data.data()), 0,
         FONT_SIZE,
-        bitmap.data(), ATLAS_WIDTH, ATLAS_HEIGHT,
+        bitmap, ATLAS_WIDTH, ATLAS_HEIGHT,
         FIRST_GLYPH, CHAR_COUNT,
-        bakedChars.data()
+        bakedChars
     );
 
     if (result <= 0) {
@@ -100,7 +95,7 @@ auto Text::create_atlas() -> void {
 
     gl::GenTextures(1, &m_AtlasTexture);
     gl::BindTexture(GL_TEXTURE_2D, m_AtlasTexture);
-    gl::TexImage2D(GL_TEXTURE_2D, 0, GL_R8, ATLAS_WIDTH, ATLAS_HEIGHT, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap.data());
+    gl::TexImage2D(GL_TEXTURE_2D, 0, GL_R8, ATLAS_WIDTH, ATLAS_HEIGHT, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap);
 
     // Set texture parameters
     gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -109,15 +104,11 @@ auto Text::create_atlas() -> void {
     for (uint32_t  i = 0; i < CHAR_COUNT; ++i) {
         const auto& bc = bakedChars[i];
 
-        auto width = float(bc.x1 - bc.x0);
-        auto height = float(bc.y1 - bc.y0);
-
         glyphs()[i] = AtlasGlyph {
             .offset = emath::vec2(bc.xoff, bc.yoff + (ascent * scale)), // remeber adding accennt to (y) so i dont keep it as member var
-            .size = emath::vec2(width, height),
-            .textRec = emath::vec4(
-                bc.x0 / static_cast<float>(ATLAS_WIDTH), bc.y0 / static_cast<float>(ATLAS_HEIGHT),
-                bc.x1 / static_cast<float>(ATLAS_WIDTH), bc.y1 / static_cast<float>(ATLAS_HEIGHT)
+            .textRect = emath::vec4(
+                bc.x0, bc.y0,
+                bc.x1, bc.y1
             ),
             .advance = static_cast<uint32_t>(bc.xadvance * 64.0f)
         };
@@ -146,8 +137,8 @@ auto Text::render() -> void {
                     ? glyphs()[ch - FIRST_GLYPH]
                     : glyphs()['?' - FIRST_GLYPH];
 
-            float w = glyph.size.x;
-            float h = glyph.size.y;
+            float w = glyph.textRect.z - glyph.textRect.x;
+            float h = glyph.textRect.w - glyph.textRect.y;
 
             if (x + w >= static_cast<float>(width)) {
                 x = startX;
@@ -159,8 +150,7 @@ auto Text::render() -> void {
 
             instances.push_back( GlyphInstance {
                 .offset = {xpos, ypos},
-                .size = {w, h},
-                .texRect = glyph.textRec
+                .texRect = glyph.textRect
             });
 
             x += static_cast<float>(glyph.advance >> 6);
