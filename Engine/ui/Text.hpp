@@ -51,8 +51,8 @@ private:
     };
 
     struct AtlasGlyph {
-        emath::ivec2 offset;        // Offset from baseline to left/top of glyph
-        emath::ivec2 size;          // Size of glyph in pixels
+        emath::vec2 offset;        // Offset from baseline to left/top of glyph
+        emath::vec2 size;          // Size of glyph in pixels
         emath::vec4 textRec;        // texture coordinates (Top-left , Bottom-right) in atlas
         uint32_t advance;           // Offset to advance to next glyph (in 1/64 pixels)
     };

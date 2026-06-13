@@ -26,8 +26,12 @@ void main() {
 
     // Scale the local quad to the glyph size, then translate
     vec2 worldPos = a_Offset + pos * a_Size;
+    
     gl_Position = u_Projection * vec4(worldPos, 0.0, 1.0);
 
     // Remap local tex coord (0..1) to the glyph’s rectangle in the atlas
-    v_TexCoord = vec2(mix(a_TexRect.x, a_TexRect.z, uv.x), mix(a_TexRect.y, a_TexRect.w, uv.y));
+    v_TexCoord = vec2(
+        mix(a_TexRect.x, a_TexRect.z, uv.x),
+        mix(a_TexRect.y, a_TexRect.w, uv.y)
+    );
 }

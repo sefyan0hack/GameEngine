@@ -81,7 +81,6 @@ auto Text::create_atlas() -> void {
 
     int32_t ascent{}, descent{}, lineGap{};
     stbtt_GetFontVMetrics(&info, &ascent, &descent, &lineGap);
-    int32_t pixel_ascent = static_cast<int32_t>(std::round(ascent * scale));
 
     std::vector<unsigned char> bitmap(ATLAS_WIDTH * ATLAS_HEIGHT, 0);
 
@@ -110,12 +109,12 @@ auto Text::create_atlas() -> void {
     for (uint32_t  i = 0; i < CHAR_COUNT; ++i) {
         const auto& bc = bakedChars[i];
 
-        int width = bc.x1 - bc.x0;
-        int height = bc.y1 - bc.y0;
+        auto width = float(bc.x1 - bc.x0);
+        auto height = float(bc.y1 - bc.y0);
 
         glyphs()[i] = AtlasGlyph {
-            .offset = emath::ivec2(static_cast<int>(bc.xoff + 0.5f), static_cast<int>(bc.yoff + 0.5f) + pixel_ascent), // remeber adding accennt to (y) so i dont keep it as member var
-            .size = emath::ivec2(width, height),
+            .offset = emath::vec2(bc.xoff, bc.yoff + (ascent * scale)), // remeber adding accennt to (y) so i dont keep it as member var
+            .size = emath::vec2(width, height),
             .textRec = emath::vec4(
                 bc.x0 / static_cast<float>(ATLAS_WIDTH), bc.y0 / static_cast<float>(ATLAS_HEIGHT),
                 bc.x1 / static_cast<float>(ATLAS_WIDTH), bc.y1 / static_cast<float>(ATLAS_HEIGHT)
@@ -147,16 +146,16 @@ auto Text::render() -> void {
                     ? glyphs()[ch - FIRST_GLYPH]
                     : glyphs()['?' - FIRST_GLYPH];
 
-            float w = static_cast<float>(glyph.size.x);
-            float h = static_cast<float>(glyph.size.y);
+            float w = glyph.size.x;
+            float h = glyph.size.y;
 
             if (x + w >= static_cast<float>(width)) {
                 x = startX;
                 y -= FONT_SIZE;
             }
 
-            float xpos = x + static_cast<float>(glyph.offset.x);
-            float ypos = y - h - static_cast<float>(glyph.offset.y);
+            float xpos = x + glyph.offset.x;
+            float ypos = y - h - glyph.offset.y;
 
             instances.push_back( GlyphInstance {
                 .offset = {xpos, ypos},
