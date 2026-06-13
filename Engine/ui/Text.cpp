@@ -19,6 +19,12 @@
 #include <string>
 #include <vector>
 
+static auto glyphs() -> std::array<stbtt_bakedchar, Text::CHAR_COUNT>&
+{
+    static std::array<stbtt_bakedchar, Text::CHAR_COUNT> _;
+    return _;
+}
+
 Text::Text(const OpenGL& ctx)
     : m_GApi(ctx)
     , m_Vert(std::make_shared<Shader>(res::get("res/Shaders/text.vert"), GL_VERTEX_SHADER))
@@ -72,21 +78,18 @@ auto Text::create_atlas() -> void {
         throw Exception("ERROR::STB_TRUETYPE: Failed to load font");
     }
 
-    float scale = stbtt_ScaleForPixelHeight(&info, FONT_SIZE);
+    m_Scale = stbtt_ScaleForPixelHeight(&info, FONT_SIZE);
 
-    int32_t ascent{}, descent{}, lineGap{};
-    stbtt_GetFontVMetrics(&info, &ascent, &descent, &lineGap);
+    stbtt_GetFontVMetrics(&info, &m_Ascent, &m_Descent, &m_LineGap);
 
     unsigned char bitmap[ATLAS_WIDTH * ATLAS_HEIGHT];
-
-    stbtt_bakedchar bakedChars[CHAR_COUNT];
 
     int result = stbtt_BakeFontBitmap(
         reinterpret_cast<const unsigned char*>(font_data.data()), 0,
         FONT_SIZE,
         bitmap, ATLAS_WIDTH, ATLAS_HEIGHT,
         FIRST_GLYPH, CHAR_COUNT,
-        bakedChars
+        glyphs().data()
     );
 
     if (result <= 0) {
@@ -100,19 +103,6 @@ auto Text::create_atlas() -> void {
     // Set texture parameters
     gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    for (uint32_t  i = 0; i < CHAR_COUNT; ++i) {
-        const auto& bc = bakedChars[i];
-
-        glyphs()[i] = AtlasGlyph {
-            .offset = emath::vec2(bc.xoff, bc.yoff + (ascent * scale)), // remeber adding accennt to (y) so i dont keep it as member var
-            .textRect = emath::vec4(
-                bc.x0, bc.y0,
-                bc.x1, bc.y1
-            ),
-            .advance = static_cast<uint32_t>(bc.xadvance * 64.0f)
-        };
-    }
 }
 
 auto Text::render() -> void {
@@ -124,10 +114,13 @@ auto Text::render() -> void {
     std::vector<GlyphInstance> instances;
     instances.reserve(256);
 
+    float scaledAscent = m_Ascent * m_Scale;
+    float lineHeight = (m_Ascent - m_Descent + m_LineGap) * m_Scale;
+
     for (const auto& [pos, text] : m_Text) {
         float startX = pos.x;
         float x = startX;
-        float y = static_cast<float>(height) - pos.y;
+        float y = static_cast<float>(height) - pos.y - scaledAscent;
 
         for (auto c : text) {
             uint8_t ch = static_cast<uint8_t>(c);
@@ -137,24 +130,26 @@ auto Text::render() -> void {
                     ? glyphs()[ch - FIRST_GLYPH]
                     : glyphs()['?' - FIRST_GLYPH];
 
-            float w = glyph.textRect.z - glyph.textRect.x;
-            float h = glyph.textRect.w - glyph.textRect.y;
+            float w = static_cast<float>(glyph.x1 - glyph.x0);
+            float h = static_cast<float>(glyph.y1 - glyph.y0);
 
-            if (x + w >= static_cast<float>(width)) {
+            if ((x + w) >= static_cast<float>(width)) {
                 x = startX;
-                y -= FONT_SIZE;
+                y -= lineHeight;
             }
 
-            float xpos = x + glyph.offset.x;
-            float ypos = y - h - glyph.offset.y;
+            float xpos = x + glyph.xoff;
+            float ypos = y - glyph.yoff - h;
 
             instances.push_back( GlyphInstance {
                 .offset = {xpos, ypos},
-                .texRect = glyph.textRect
+                .texRect = emath::vec4(
+                    glyph.x0, glyph.y0,
+                    glyph.x1, glyph.y1
+                ),
             });
 
-            x += static_cast<float>(glyph.advance >> 6);
-
+            x += glyph.xadvance;
         }
     }
 
@@ -185,10 +180,4 @@ auto Text::render() -> void {
 
 auto Text::text(std::string text, emath::vec2 pos) -> void {
     m_Text[pos] = std::move(text);
-}
-
-auto Text::glyphs() -> std::array<AtlasGlyph, CHAR_COUNT>&
-{
-    static std::array<AtlasGlyph, CHAR_COUNT> _;
-    return _;
 }

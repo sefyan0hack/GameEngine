@@ -49,16 +49,8 @@ private:
         emath::vec4 texRect;  // (uMin, vMin, uMax, vMax) in atlas
     };
 
-    struct AtlasGlyph {
-        emath::vec2 offset;        // Offset from baseline to left/top of glyph
-        emath::vec4 textRect;        // texture coordinates (Top-left , Bottom-right) in atlas
-        uint32_t advance;           // Offset to advance to next glyph (in 1/64 pixels)
-    };
-
     auto prepare_buffers() -> void;
     auto create_atlas() -> void;
-
-    static auto glyphs() -> std::array<AtlasGlyph, CHAR_COUNT>&;
 
 private:
     const class OpenGL& m_GApi;
@@ -67,6 +59,9 @@ private:
 
     uint32_t VAO, VBO;
     uint32_t m_AtlasTexture;
+
+    int32_t m_Ascent, m_Descent, m_LineGap;
+    float m_Scale;
 
     std::unordered_map<emath::vec2, std::string> m_Text;
 };
