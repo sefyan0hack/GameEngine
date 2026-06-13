@@ -23,7 +23,7 @@ public:
 
 public:
     constexpr static const char* FONT_NAME = "res/JetBrainsMonoNL-BoldItalic.ttf";
-    inline    static emath::vec3 FONT_COLOR = {0.1f, 0.85f, 0.1f};
+    inline    static emath::vec3 FONT_COLOR = {139.0f, 0.0f, 0.0f};
     constexpr static uint32_t FONT_SIZE = 24;
 
     constexpr static uint32_t GLYPH_PADDING = 1;
@@ -44,9 +44,9 @@ public:
 
 private:
 
-    struct GlyphInstance {
+    struct Glyph {
         emath::vec2 offset;   // world position of the bottom‑left of the glyph
-        emath::vec4 texRect;  // (uMin, vMin, uMax, vMax) in atlas
+        uint16_t texRect[4];  // (uMin, vMin, uMax, vMax) in atlas
     };
 
     auto prepare_buffers() -> void;

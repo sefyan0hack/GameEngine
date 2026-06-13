@@ -118,6 +118,7 @@ namespace gl {
         gl::GetUniformBlockIndex = reinterpret_cast<decltype(&glGetUniformBlockIndex)>(gl::get_proc_address("glGetUniformBlockIndex"));
         gl::UniformBlockBinding = reinterpret_cast<decltype(&glUniformBlockBinding)>(gl::get_proc_address("glUniformBlockBinding"));
         gl::GetBooleanv = reinterpret_cast<decltype(&glGetBooleanv)>(gl::get_proc_address("glGetBooleanv"));
+        gl::VertexAttribIPointer = reinterpret_cast<decltype(&glVertexAttribIPointer)>(gl::get_proc_address("glVertexAttribIPointer"));
         gl::Finish = reinterpret_cast<decltype(&glFinish)>(gl::get_proc_address("glFinish"));
     }
 }

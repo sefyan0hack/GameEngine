@@ -55,16 +55,16 @@ auto Text::prepare_buffers() -> void {
     gl::GenBuffers(1, &VBO);
 
     gl::BindBuffer(GL_ARRAY_BUFFER, VBO);
-    gl::BufferData(GL_ARRAY_BUFFER, MAX_INSTANCES * sizeof(GlyphInstance), nullptr, GL_DYNAMIC_DRAW);
+    gl::BufferData(GL_ARRAY_BUFFER, MAX_INSTANCES * sizeof(Glyph), nullptr, GL_DYNAMIC_DRAW);
 
-    // Offset
+    // Offset (2 * 4 byte)
     gl::EnableVertexAttribArray(0);
-    gl::VertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GlyphInstance), (void*)offsetof(GlyphInstance, offset));
+    gl::VertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Glyph), (void*)offsetof(Glyph, offset));
     gl::VertexAttribDivisor(0, 1);
 
-    // TexRect
+    // TexRect (4 * 2 byte )
     gl::EnableVertexAttribArray(1);
-    gl::VertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(GlyphInstance), (void*)offsetof(GlyphInstance, texRect));
+    gl::VertexAttribIPointer(1, 4, GL_UNSIGNED_SHORT, sizeof(Glyph), (void*)offsetof(Glyph, texRect));
     gl::VertexAttribDivisor(1, 1);
 
     gl::BindVertexArray(0);
@@ -111,7 +111,7 @@ auto Text::render() -> void {
     auto [width, height] = m_GApi.window().dims();
     auto projection = emath::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
 
-    std::vector<GlyphInstance> instances;
+    std::vector<Glyph> instances;
     instances.reserve(256);
 
     float scaledAscent = m_Ascent * m_Scale;
@@ -141,13 +141,9 @@ auto Text::render() -> void {
             float xpos = x + glyph.xoff;
             float ypos = y - glyph.yoff - h;
 
-            instances.push_back( GlyphInstance {
-                .offset = {xpos, ypos},
-                .texRect = emath::vec4(
-                    glyph.x0, glyph.y0,
-                    glyph.x1, glyph.y1
-                ),
-            });
+            Glyph ins { .offset = {xpos, ypos} };
+            std::memcpy(&ins.texRect, &glyph.x0, 4 *sizeof(uint16_t));
+            instances.push_back(ins);
 
             x += glyph.xadvance;
         }
@@ -157,7 +153,7 @@ auto Text::render() -> void {
 
     // Upload instance data
     gl::BindBuffer(GL_ARRAY_BUFFER, VBO);
-    gl::BufferSubData(GL_ARRAY_BUFFER, 0, instances.size() * sizeof(GlyphInstance), instances.data());
+    gl::BufferSubData(GL_ARRAY_BUFFER, 0, instances.size() * sizeof(Glyph), instances.data());
 
     gl::DepthMask(GL_FALSE);
     gl::DepthFunc(GL_ALWAYS);
@@ -165,7 +161,7 @@ auto Text::render() -> void {
     m_Program->use();
     m_Program->set_uniform("u_Projection", projection);
     m_Program->set_uniform("u_Color", FONT_COLOR);
-    m_Program->set_uniform("u_Texture", 0);
+    // m_Program->set_uniform("u_Texture", 0);
 
     gl::ActiveTexture(GL_TEXTURE0);
     gl::BindTexture(GL_TEXTURE_2D, m_AtlasTexture);

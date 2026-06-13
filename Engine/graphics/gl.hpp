@@ -115,6 +115,7 @@ namespace gl {
     inline decltype(&glGetUniformBlockIndex) GetUniformBlockIndex;
     inline decltype(&glUniformBlockBinding) UniformBlockBinding;
     inline decltype(&glGetBooleanv) GetBooleanv;
+    inline decltype(&glVertexAttribIPointer) VertexAttribIPointer;
     inline decltype(&glFinish) Finish;
 
     ENGINE_EXPORT auto get_proc_address(const char* name) -> void*;
