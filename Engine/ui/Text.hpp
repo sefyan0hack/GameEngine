@@ -8,7 +8,7 @@
 #include <string>
 #include <memory>
 #include <unordered_map>
-#include <array>
+#include <vector>
 #include <cstdint>
 #include <bit>
 
@@ -26,8 +26,7 @@ public:
 public:
     constexpr static const char* DEFAULT_FONT_NAME = "res/JetBrainsMonoNL-BoldItalic.ttf";
     inline    static emath::vec3 FONT_COLOR = {139.0f, 0.0f, 0.0f};
-
-    static constexpr uint32_t MAX_INSTANCES = 4096;
+    constexpr static size_t BATCH_SIZE = 4096;
 
 private:
     auto prepare_buffers() -> void;
@@ -43,4 +42,5 @@ private:
     uint32_t VAO, VBO;
 
     std::unordered_map<emath::vec2, std::string> m_Text;
+    std::vector<Font::Glyph> m_Instances;
 };

@@ -12,8 +12,17 @@
 
 #include <emath/emath.hpp>
 
+#include <algorithm>
 #include <string>
 #include <vector>
+
+
+#ifdef max
+#undef max
+#endif
+#ifdef min
+#undef min
+#endif
 
 Text::Text(const OpenGL& ctx)
     : m_GApi(ctx)
@@ -42,7 +51,7 @@ auto Text::prepare_buffers() -> void {
     gl::GenBuffers(1, &VBO);
 
     gl::BindBuffer(GL_ARRAY_BUFFER, VBO);
-    gl::BufferData(GL_ARRAY_BUFFER, MAX_INSTANCES * sizeof(Font::Glyph), nullptr, GL_DYNAMIC_DRAW);
+    gl::BufferData(GL_ARRAY_BUFFER, BATCH_SIZE * sizeof(Font::Glyph), nullptr, GL_DYNAMIC_DRAW);
 
     // Offset (2 * 4 byte)
     gl::EnableVertexAttribArray(0);
@@ -64,15 +73,12 @@ auto Text::render() -> void {
     auto [width, height] = m_GApi.window().dims();
     auto projection = emath::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
 
-    std::vector<Font::Glyph> instances;
-    instances.reserve(256);
-
     auto scale = m_Font.scale();
     auto ascent = m_Font.ascent();
     auto descent = m_Font.descent();
     auto linegap = m_Font.linegap();
 
-    float scaledlineHeight = (scale - descent + linegap) * scale;
+    float scaledlineHeight = (ascent - descent + linegap) * scale;
 
     m_Cursor = emath::vec2(0.0f);
     for (const auto& [pos, text] : m_Text) {
@@ -101,20 +107,13 @@ auto Text::render() -> void {
 
             Font::Glyph ins { .offset = {xpos, ypos} };
             std::memcpy(&ins.texRect, &glyph.x0, 4 * sizeof(uint16_t));
-            instances.push_back(ins);
+            m_Instances.push_back(ins);
 
             x += glyph.xadvance;
         }
     }
 
-    if (instances.empty()) return;
-
-    // Upload instance data
-    gl::BindBuffer(GL_ARRAY_BUFFER, VBO);
-    gl::BufferSubData(GL_ARRAY_BUFFER, 0, instances.size() * sizeof(Font::Glyph), instances.data());
-
-    gl::DepthMask(GL_FALSE);
-    gl::DepthFunc(GL_ALWAYS);
+    if (m_Instances.empty()) return;
 
     m_Program->use();
     m_Program->set_uniform("u_Projection", projection);
@@ -124,11 +123,22 @@ auto Text::render() -> void {
     gl::BindTexture(GL_TEXTURE_2D, m_Font.atlas_id());
 
     gl::BindVertexArray(VAO);
+    gl::BindBuffer(GL_ARRAY_BUFFER, VBO);
 
-    gl::DrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, static_cast<GLsizei>(instances.size()));
+    gl::DepthMask(GL_FALSE);
+    gl::DepthFunc(GL_ALWAYS);
+
+    for (size_t offset = 0; offset < m_Instances.size(); offset += BATCH_SIZE)
+    {
+        auto batchCount = std::min(BATCH_SIZE, m_Instances.size() - offset);
+        gl::BufferSubData(GL_ARRAY_BUFFER, 0, batchCount * sizeof(Font::Glyph), m_Instances.data() + offset);
+        gl::DrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, static_cast<GLsizei>(batchCount));
+    }
 
     gl::DepthFunc(GL_LEQUAL);
     gl::DepthMask(GL_TRUE);
+
+    m_Instances.clear();
 }
 
 auto Text::text(std::string text, emath::vec2 pos) -> void {
