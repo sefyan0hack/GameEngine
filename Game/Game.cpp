@@ -46,9 +46,9 @@ public:
 
     auto update(float delta) -> void override
     {
-        app.UiText.text(std::format("FPS: {:.2f}", app.fps()), { 0, 0 });
-        app.UiText.text(std::format("Memory: {}/{} MB", os::memory_usage(), os::memory_peak()), { 0, Text::FONT_SIZE });
-        app.UiText.text(std::format("Threads: {}", std::thread::hardware_concurrency()), { 0, Text::FONT_SIZE * 2 });
+        app.UiText.draw(std::format("FPS: {:.2f}", app.fps()));
+        app.UiText.draw(std::format("Memory: {}/{} MB", os::memory_usage(), os::memory_peak()));
+        app.UiText.draw(std::format("Threads: {}", std::thread::hardware_concurrency()));
 
         camera_mouvment(delta);
     }
