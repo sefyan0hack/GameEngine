@@ -73,6 +73,12 @@ namespace gl {
         gl::Uniform2fv = reinterpret_cast<decltype(&glUniform2fv)>(gl::get_proc_address("glUniform2fv"));
         gl::Uniform3fv = reinterpret_cast<decltype(&glUniform3fv)>(gl::get_proc_address("glUniform3fv"));
         gl::Uniform4fv = reinterpret_cast<decltype(&glUniform4fv)>(gl::get_proc_address("glUniform4fv"));
+        gl::Uniform2iv = reinterpret_cast<decltype(&glUniform2iv)>(gl::get_proc_address("glUniform2iv"));
+        gl::Uniform3iv = reinterpret_cast<decltype(&glUniform3iv)>(gl::get_proc_address("glUniform3iv"));
+        gl::Uniform4iv = reinterpret_cast<decltype(&glUniform4iv)>(gl::get_proc_address("glUniform4iv"));
+        gl::Uniform2uiv = reinterpret_cast<decltype(&glUniform2uiv)>(gl::get_proc_address("glUniform2uiv"));
+        gl::Uniform3uiv = reinterpret_cast<decltype(&glUniform3uiv)>(gl::get_proc_address("glUniform3uiv"));
+        gl::Uniform4uiv = reinterpret_cast<decltype(&glUniform4uiv)>(gl::get_proc_address("glUniform4uiv"));
         gl::UniformMatrix2fv = reinterpret_cast<decltype(&glUniformMatrix2fv)>(gl::get_proc_address("glUniformMatrix2fv"));
         gl::UniformMatrix3fv = reinterpret_cast<decltype(&glUniformMatrix3fv)>(gl::get_proc_address("glUniformMatrix3fv"));
         gl::UniformMatrix4fv = reinterpret_cast<decltype(&glUniformMatrix4fv)>(gl::get_proc_address("glUniformMatrix4fv"));

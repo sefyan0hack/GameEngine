@@ -70,6 +70,12 @@ namespace gl {
     inline decltype(&glUniform2fv) Uniform2fv;
     inline decltype(&glUniform3fv) Uniform3fv;
     inline decltype(&glUniform4fv) Uniform4fv;
+    inline decltype(&glUniform2iv) Uniform2iv;
+    inline decltype(&glUniform3iv) Uniform3iv;
+    inline decltype(&glUniform4iv) Uniform4iv;
+    inline decltype(&glUniform2uiv) Uniform2uiv;
+    inline decltype(&glUniform3uiv) Uniform3uiv;
+    inline decltype(&glUniform4uiv) Uniform4uiv;
     inline decltype(&glUniformMatrix2fv) UniformMatrix2fv;
     inline decltype(&glUniformMatrix3fv) UniformMatrix3fv;
     inline decltype(&glUniformMatrix4fv) UniformMatrix4fv;
