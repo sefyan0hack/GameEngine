@@ -299,6 +299,78 @@ auto ShaderProgram::set_uniform(const std::string& name, const emath::vec4 &valu
     }
 }
 
+auto ShaderProgram::set_uniform(const std::string& name, const emath::ivec2 &value) const -> void
+{
+    try {
+        auto [loc, type, size] = m_Uniforms.at(name);
+        Expect(size == 1, "GLSL Uniform size:{} > 1", size);
+
+        gl::Uniform2iv(static_cast<GLint>(loc), 1, &value[0]);
+    } catch(const std::exception& e) {
+        throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
+    }
+}
+
+auto ShaderProgram::set_uniform(const std::string& name, const emath::ivec3 &value) const -> void
+{
+    try {
+        auto [loc, type, size] = m_Uniforms.at(name);
+        Expect(size == 1, "GLSL Uniform size:{} > 1", size);
+
+        gl::Uniform3iv(static_cast<GLint>(loc), 1, &value[0]);
+    } catch(const std::exception& e) {
+        throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
+    }
+}
+
+auto ShaderProgram::set_uniform(const std::string& name, const emath::ivec4 &value) const -> void
+{
+    try {
+        auto [loc, type, size] = m_Uniforms.at(name);
+        Expect(size == 1, "GLSL Uniform size:{} > 1", size);
+
+        gl::Uniform4iv(static_cast<GLint>(loc), 1, &value[0]);
+    } catch(const std::exception& e) {
+        throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
+    }
+}
+
+auto ShaderProgram::set_uniform(const std::string& name, const emath::uvec2 &value) const -> void
+{
+    try {
+        auto [loc, type, size] = m_Uniforms.at(name);
+        Expect(size == 1, "GLSL Uniform size:{} > 1", size);
+
+        gl::Uniform2uiv(static_cast<GLint>(loc), 1, &value[0]);
+    } catch(const std::exception& e) {
+        throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
+    }
+}
+
+auto ShaderProgram::set_uniform(const std::string& name, const emath::uvec3 &value) const -> void
+{
+    try {
+        auto [loc, type, size] = m_Uniforms.at(name);
+        Expect(size == 1, "GLSL Uniform size:{} > 1", size);
+
+        gl::Uniform3uiv(static_cast<GLint>(loc), 1, &value[0]);
+    } catch(const std::exception& e) {
+        throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
+    }
+}
+
+auto ShaderProgram::set_uniform(const std::string& name, const emath::uvec4 &value) const -> void
+{
+    try {
+        auto [loc, type, size] = m_Uniforms.at(name);
+        Expect(size == 1, "GLSL Uniform size:{} > 1", size);
+
+        gl::Uniform4uiv(static_cast<GLint>(loc), 1, &value[0]);
+    } catch(const std::exception& e) {
+        throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
+    }
+}
+
 auto ShaderProgram::set_uniform(const std::string& name, const emath::mat2 &value) const -> void
 {
     try {

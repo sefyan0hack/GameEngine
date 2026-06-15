@@ -9,13 +9,7 @@
 
 #include "gl.hpp"
 
-#include <emath/vec2.hpp>
-#include <emath/vec3.hpp>
-#include <emath/vec4.hpp>
-#include <emath/mat2.hpp>
-#include <emath/mat3.hpp>
-#include <emath/mat4.hpp>
-
+#include <emath/emath.hpp>
 #include <engine_export.h>
 
 
@@ -49,6 +43,12 @@ public:
     auto set_uniform(const std::string &name, const emath::vec2 &value) const -> void;
     auto set_uniform(const std::string &name, const emath::vec3 &value) const -> void;
     auto set_uniform(const std::string &name, const emath::vec4 &value) const -> void;
+    auto set_uniform(const std::string &name, const emath::ivec2 &value) const -> void;
+    auto set_uniform(const std::string &name, const emath::ivec3 &value) const -> void;
+    auto set_uniform(const std::string &name, const emath::ivec4 &value) const -> void;
+    auto set_uniform(const std::string &name, const emath::uvec2 &value) const -> void;
+    auto set_uniform(const std::string &name, const emath::uvec3 &value) const -> void;
+    auto set_uniform(const std::string &name, const emath::uvec4 &value) const -> void;
     auto set_uniform(const std::string &name, const emath::mat2 &value) const -> void;
     auto set_uniform(const std::string &name, const emath::mat3 &value) const -> void;
     auto set_uniform(const std::string &name, const emath::mat4 &value) const -> void;
