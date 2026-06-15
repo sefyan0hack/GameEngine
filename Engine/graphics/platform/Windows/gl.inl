@@ -1,6 +1,4 @@
-#include <windows.h>
-#include <GL/gl.h>
-#include <GL/glext.h>
+#include <GL/glcorearb.h>
 #include <GL/wglext.h>
 
 using H_WIN     = HWND;

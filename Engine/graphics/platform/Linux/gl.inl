@@ -1,10 +1,8 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/XKBlib.h>
-#include <GL/gl.h>
+#include <GL/glcorearb.h>
 #include <GL/glx.h>
-#include <GL/glext.h>
-#include <GL/glxext.h>
 
 using H_WIN     = Window;
 using H_SRF     = Window;
