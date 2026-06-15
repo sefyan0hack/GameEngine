@@ -69,7 +69,6 @@ auto Text::render() -> void {
     if (m_Text.empty()) return;
 
     auto [width, height] = m_GApi.window().dims();
-    auto projection = emath::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
 
     auto scale = m_Font.scale();
     auto ascent = m_Font.ascent();
@@ -112,10 +111,22 @@ auto Text::render() -> void {
     }
 
     if (m_Instances.empty()) return;
-
+    
     m_Program->use();
-    m_Program->set_uniform("u_Projection", projection);
-    m_Program->set_uniform("u_Color", FONT_COLOR);
+
+    auto u_dims = emath::uvec2(width, height);
+    m_Program->set_uniform("u_Dims", u_dims);
+
+    auto r = uint8_t(std::clamp(FONT_COLOR.x, 0.0f, 1.0f) * 255.0f + 0.5f);
+    auto g = uint8_t(std::clamp(FONT_COLOR.y, 0.0f, 1.0f) * 255.0f + 0.5f);
+    auto b = uint8_t(std::clamp(FONT_COLOR.z, 0.0f, 1.0f) * 255.0f + 0.5f);
+
+    auto color =(uint32_t(r)      ) |
+                (uint32_t(g) << 8 ) |
+                (uint32_t(b) << 16) |
+                (uint32_t(255) << 24);
+
+    m_Program->set_uniform("u_Color", color);
 
     gl::ActiveTexture(GL_TEXTURE0);
     gl::BindTexture(GL_TEXTURE_2D, m_Font.atlas_id());
