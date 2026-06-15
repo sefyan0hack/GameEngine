@@ -1,5 +1,6 @@
 function(target_pack target)
     if(EMSCRIPTEN)
+        set_target_properties(${target} PROPERTIES SUFFIX ".html")
         set(SITE_DIR "${CMAKE_BINARY_DIR}/site")
 
         add_custom_command(
@@ -9,8 +10,7 @@ function(target_pack target)
             VERBATIM
 
             COMMAND ${CMAKE_COMMAND} -E make_directory "${SITE_DIR}"
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/cmake/index.html" "${SITE_DIR}"
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:${target}>" "${SITE_DIR}"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:${target}>" "${SITE_DIR}/index.html"
             COMMENT "Assembling web site artifacts"
         )
     elseif(ANDROID)

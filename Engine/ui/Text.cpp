@@ -99,14 +99,14 @@ auto Text::render() -> void {
                 y -= scaledlineHeight;
             }
 
-            float xpos = x + glyph.xoff;
-            float ypos = y - glyph.yoff - h;
+            float xpos = std::round(x + glyph.xoff);
+            float ypos = std::round(y - glyph.yoff - h);
 
             UiFont::Glyph ins { .offset = {xpos, ypos} };
             std::memcpy(&ins.texRect, &glyph.x0, 4 * sizeof(uint16_t));
             m_Instances.push_back(ins);
 
-            x += glyph.xadvance;
+            x += std::round(glyph.xadvance);
         }
     }
 

@@ -4,16 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
-    * { touch-action: manipulation }
-    body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-    }
+    #canvas { padding-right: 0; margin-left: auto; margin-right: auto; display: block; border: 0px none; background-color: black;}
   </style>
 </head>
 <body>
-  <canvas id="canvas" style="display: block;margin: auto;" oncontextmenu="event.preventDefault()" tabindex="0" autofocus></canvas>
-  <script async type="text/javascript" src="Game.js"></script>
+  <canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
+  {{{ SCRIPT }}}
 </body>
 </html>

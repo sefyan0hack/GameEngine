@@ -67,6 +67,7 @@ target_link_libraries(Engine
 
     PUBLIC
         $<$<PLATFORM_ID:Emscripten>:
+            --shell-file ${CMAKE_SOURCE_DIR}/cmake/index.html
             -sMIN_WEBGL_VERSION=2
             -sFULL_ES3=1
 
