@@ -34,5 +34,8 @@ void main() {
         1.0
     );
 
-    v_TexCoord = mix(a_TexRect.xy, a_TexRect.zw, uv);
+    vec2 texMin = vec2(a_TexRect.xy);
+    vec2 texMax = vec2(a_TexRect.zw);
+
+    v_TexCoord = texMin + uv * (texMax - texMin);
 }
