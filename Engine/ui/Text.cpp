@@ -114,7 +114,7 @@ auto Text::render() -> void {
     
     m_Program->use();
 
-    auto u_dims = emath::uvec2(width, height);
+    auto u_dims = emath::vec2(static_cast<float>(width), static_cast<float>(height));
     m_Program->set_uniform("u_Dims", u_dims);
 
     auto r = uint8_t(std::clamp(FONT_COLOR.x, 0.0f, 1.0f) * 255.0f + 0.5f);
