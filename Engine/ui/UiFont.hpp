@@ -6,10 +6,10 @@
 #include <emath/vec2.hpp>
 #include <stb/stb_truetype.h>
 
-class Font {
+class UiFont {
 public:
-    Font(const char* name, float size = 24.0f);
-    ~Font();
+    UiFont(const char* name, float size = 24.0f);
+    ~UiFont();
 
     auto name() const -> const char*;
     auto size() const -> float;
@@ -29,7 +29,7 @@ public:
         uint16_t texRect[4];  // (uMin, vMin, uMax, vMax) in atlas
     };
 
-    static auto glyphs() -> std::array<stbtt_bakedchar, Font::GLYPH_COUNT>&;
+    static auto glyphs() -> std::array<stbtt_bakedchar, UiFont::GLYPH_COUNT>&;
 
 private:
     const char* m_Name;

@@ -12,7 +12,7 @@
 #include <cstdint>
 #include <bit>
 
-#include "Font.hpp"
+#include "UiFont.hpp"
 
 class ENGINE_EXPORT Text {
 public:
@@ -36,11 +36,11 @@ private:
     std::shared_ptr<class Shader> m_Vert, m_Frag;
     std::shared_ptr<class ShaderProgram> m_Program;
 
-    Font m_Font;
+    UiFont m_Font;
     emath::vec2 m_Cursor;
 
     uint32_t VAO, VBO;
 
     std::unordered_map<emath::vec2, std::string> m_Text;
-    std::vector<Font::Glyph> m_Instances;
+    std::vector<UiFont::Glyph> m_Instances;
 };

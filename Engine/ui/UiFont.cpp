@@ -1,4 +1,4 @@
-#include "Font.hpp"
+#include "UiFont.hpp"
 
 #include <graphics/gl.hpp>
 
@@ -12,15 +12,12 @@
 #include <cmath>
 #include <bit>
 
-#ifdef max
+#if defined(min) || defined(max)
+#undef min
 #undef max
 #endif
-#ifdef min
-#undef min
-#endif
 
-
-Font::Font(const char *name, float size)
+UiFont::UiFont(const char *name, float size)
     : m_Name(name)
     , m_Size(size)
     , m_Handle(new stbtt_fontinfo())
@@ -60,47 +57,47 @@ Font::Font(const char *name, float size)
     delete[] bitmap;
 }
 
-Font::~Font(){
+UiFont::~UiFont(){
     if(m_Handle) delete m_Handle;
 }
 
-auto Font::name() const -> const char *
+auto UiFont::name() const -> const char *
 {
     return m_Name;
 }
 
-auto Font::size() const -> float
+auto UiFont::size() const -> float
 {
     return m_Size;
 }
 
-auto Font::ascent() const -> int32_t
+auto UiFont::ascent() const -> int32_t
 {
     int32_t a{};
     stbtt_GetFontVMetrics(m_Handle, &a, nullptr, nullptr);
     return a;
 }
 
-auto Font::descent() const -> int32_t
+auto UiFont::descent() const -> int32_t
 {
     int32_t d{};
     stbtt_GetFontVMetrics(m_Handle, nullptr, &d, nullptr);
     return d;
 }
 
-auto Font::linegap() const -> int32_t
+auto UiFont::linegap() const -> int32_t
 {
     int32_t l{};
     stbtt_GetFontVMetrics(m_Handle, nullptr, nullptr, &l);
     return l;
 }
 
-auto Font::scale() const -> float
+auto UiFont::scale() const -> float
 {
     return stbtt_ScaleForPixelHeight(m_Handle, m_Size);
 }
 
-auto Font::atlas_dims() const -> std::pair<int32_t, int32_t>
+auto UiFont::atlas_dims() const -> std::pair<int32_t, int32_t>
 {
     int32_t maxW = 0;
     int32_t maxH = 0;
@@ -141,13 +138,13 @@ auto Font::atlas_dims() const -> std::pair<int32_t, int32_t>
     return {atlas_width, atlas_height};
 }
 
-auto Font::atlas_id() const -> uint32_t
+auto UiFont::atlas_id() const -> uint32_t
 {
     return m_AtlasId;
 }
 
-auto Font::glyphs() -> std::array<stbtt_bakedchar, Font::GLYPH_COUNT>&
+auto UiFont::glyphs() -> std::array<stbtt_bakedchar, UiFont::GLYPH_COUNT>&
 {
-    static std::array<stbtt_bakedchar, Font::GLYPH_COUNT> _;
+    static std::array<stbtt_bakedchar, UiFont::GLYPH_COUNT> _;
     return _;
 }

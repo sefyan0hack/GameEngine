@@ -6,14 +6,14 @@ collect_plt_sources(ui)
 target_sources( ui
     PRIVATE
         ${PLT_SOURCE}
-        ${CMAKE_CURRENT_SOURCE_DIR}/Font.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/UiFont.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Text.cpp
     PUBLIC
     FILE_SET headers
       TYPE HEADERS
       BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
       FILES
-        ${CMAKE_CURRENT_SOURCE_DIR}/Font.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/UiFont.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Text.hpp
 )
 

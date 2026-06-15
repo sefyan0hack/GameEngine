@@ -1,5 +1,5 @@
 #include "Text.hpp"
-#include "Font.hpp"
+#include "UiFont.hpp"
 #include "gl.hpp"
 
 #include <core/Exception.hpp>
@@ -17,12 +17,9 @@
 #include <vector>
 #include <cstring>
 
-
-#ifdef max
-#undef max
-#endif
-#ifdef min
+#if defined(min) || defined(max)
 #undef min
+#undef max
 #endif
 
 Text::Text(const OpenGL& ctx)
@@ -52,16 +49,16 @@ auto Text::prepare_buffers() -> void {
     gl::GenBuffers(1, &VBO);
 
     gl::BindBuffer(GL_ARRAY_BUFFER, VBO);
-    gl::BufferData(GL_ARRAY_BUFFER, BATCH_SIZE * sizeof(Font::Glyph), nullptr, GL_DYNAMIC_DRAW);
+    gl::BufferData(GL_ARRAY_BUFFER, BATCH_SIZE * sizeof(UiFont::Glyph), nullptr, GL_DYNAMIC_DRAW);
 
     // Offset (2 * 4 byte)
     gl::EnableVertexAttribArray(0);
-    gl::VertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Font::Glyph), (void*)offsetof(Font::Glyph, offset));
+    gl::VertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(UiFont::Glyph), (void*)offsetof(UiFont::Glyph, offset));
     gl::VertexAttribDivisor(0, 1);
 
     // TexRect (4 * 2 byte)
     gl::EnableVertexAttribArray(1);
-    gl::VertexAttribIPointer(1, 4, GL_UNSIGNED_SHORT, sizeof(Font::Glyph), (void*)offsetof(Font::Glyph, texRect));
+    gl::VertexAttribIPointer(1, 4, GL_UNSIGNED_SHORT, sizeof(UiFont::Glyph), (void*)offsetof(UiFont::Glyph, texRect));
     gl::VertexAttribDivisor(1, 1);
 
     gl::BindVertexArray(0);
@@ -91,9 +88,9 @@ auto Text::render() -> void {
             uint8_t ch = static_cast<uint8_t>(c);
 
             const auto& glyph =
-                (ch >= Font::FIRST_GLYPH && ch <= Font::LAST_GLYPH)
-                    ? Font::glyphs()[ch - Font::FIRST_GLYPH]
-                    : Font::glyphs()['?' - Font::FIRST_GLYPH];
+                (ch >= UiFont::FIRST_GLYPH && ch <= UiFont::LAST_GLYPH)
+                    ? UiFont::glyphs()[ch - UiFont::FIRST_GLYPH]
+                    : UiFont::glyphs()['?' - UiFont::FIRST_GLYPH];
 
             float w = static_cast<float>(glyph.x1 - glyph.x0);
             float h = static_cast<float>(glyph.y1 - glyph.y0);
@@ -106,7 +103,7 @@ auto Text::render() -> void {
             float xpos = x + glyph.xoff;
             float ypos = y - glyph.yoff - h;
 
-            Font::Glyph ins { .offset = {xpos, ypos} };
+            UiFont::Glyph ins { .offset = {xpos, ypos} };
             std::memcpy(&ins.texRect, &glyph.x0, 4 * sizeof(uint16_t));
             m_Instances.push_back(ins);
 
@@ -132,7 +129,7 @@ auto Text::render() -> void {
     for (size_t offset = 0; offset < m_Instances.size(); offset += BATCH_SIZE)
     {
         auto batchCount = std::min(BATCH_SIZE, m_Instances.size() - offset);
-        gl::BufferSubData(GL_ARRAY_BUFFER, 0, batchCount * sizeof(Font::Glyph), m_Instances.data() + offset);
+        gl::BufferSubData(GL_ARRAY_BUFFER, 0, batchCount * sizeof(UiFont::Glyph), m_Instances.data() + offset);
         gl::DrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, static_cast<GLsizei>(batchCount));
     }
 
