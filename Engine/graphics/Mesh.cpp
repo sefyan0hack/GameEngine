@@ -67,7 +67,7 @@ auto Mesh::CUBE() -> std::vector<Vertex>{
 }
 
 namespace {
-    constinit static AttributeInfo position {
+    constinit static Attribute position {
         .size = 3,//decltype(Mesh::VetexData::Position)::length(),
         .type = GL_FLOAT,
         .normalized = GL_FALSE,
@@ -76,7 +76,7 @@ namespace {
         .divisor = 0,
     };
     
-    constinit static AttributeInfo normals {
+    constinit static Attribute normals {
         .size = 3,//decltype(Mesh::VetexData::Normal)::length(),
         .type = GL_FLOAT,
         .normalized = GL_FALSE,
@@ -85,7 +85,7 @@ namespace {
         .divisor = 0,
     };
 
-    constinit static AttributeInfo texCoords {
+    constinit static Attribute texCoords {
         .size = 2,//decltype(Mesh::VetexData::TexCoords)::length(),
         .type = GL_FLOAT,
         .normalized = GL_FALSE,
@@ -98,24 +98,31 @@ namespace {
 Mesh::Mesh(const std::vector<Vertex> &vertices)
     : m_Vertices(vertices)
     , m_Attribs({position, normals, texCoords})
-    , VBO(gen_buffer())
-    , VAO(gen_vertexarray())
+    , VAO(0)
+    , VBO(0)
 {
-    bind_vao();
-    bind_vbo();
-    updata();
-    enable_attribs();
-    prepare_attribs();
+    gl::GenVertexArrays(1, &VAO);
+    gl::GenBuffers(1, &VBO);
+
+    gl::BindVertexArray(VAO);
+    gl::BindBuffer(GL_ARRAY_BUFFER, VBO);
+    
+    gl::BufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(m_Vertices.size() * sizeof(Mesh::VetexData)), m_Vertices.data(), GL_STATIC_DRAW);
+
+    GLuint index = 0;
+    for(const auto& attrib : m_Attribs){
+        set_attribute(index++, attrib);
+    }
 }
 
 Mesh::Mesh(Mesh &&other) noexcept
     : m_Vertices(std::move(other.m_Vertices))
     , m_Attribs(std::move(other.m_Attribs))
-    , VBO(other.VBO)
     , VAO(other.VAO)
+    , VBO(other.VBO)
 {
-    other.VBO = 0;
     other.VAO = 0;
+    other.VBO = 0;
 }
 
 auto Mesh::operator=(Mesh &&other) noexcept -> Mesh &
@@ -127,11 +134,11 @@ auto Mesh::operator=(Mesh &&other) noexcept -> Mesh &
         m_Vertices = std::move(other.m_Vertices);
         m_Attribs = std::move(other.m_Attribs);
 
-        VBO = other.VBO;
         VAO = other.VAO;
+        VBO = other.VBO;
 
-        other.VBO = 0;
         other.VAO = 0;
+        other.VBO = 0;
     }
     return *this;
 }
@@ -142,35 +149,7 @@ Mesh::~Mesh()
     gl::DeleteVertexArrays(1, &VAO);
 }
 
-auto Mesh::clone_buffer(GLenum type, GLuint src) -> GLuint
-{
-    GLuint clone = gen_buffer();
-    if(clone == 0) throw Exception("VBO clone is 0");
-
-    bind_buffer(type, src);
-    
-    GLint bufferSize = 0, usage = 0;
-    gl::GetBufferParameteriv(type, GL_BUFFER_SIZE, &bufferSize);
-    gl::GetBufferParameteriv(type, GL_BUFFER_USAGE, &usage);
-    
-    if (bufferSize > 0) {
-        bind_buffer(GL_COPY_WRITE_BUFFER, clone);
-        gl::BufferData(GL_COPY_WRITE_BUFFER, bufferSize, nullptr, static_cast<GLenum>(usage));
-        gl::CopyBufferSubData(type, GL_COPY_WRITE_BUFFER, 0, 0, bufferSize);
-    } else {
-        gl::DeleteBuffers(1, &clone);
-        throw Exception("VBO bufferSize is 0");
-    }
-
-    return clone;
-}
-
-auto Mesh::clone_vbo(GLuint src) -> GLuint
-{
-    return clone_buffer(GL_ARRAY_BUFFER, src);
-}
-
-auto Mesh::set_attribute(GLuint index, AttributeInfo att) -> void
+auto Mesh::set_attribute(GLuint index, Attribute att) -> void
 {
     Expect(att.size > 0 && att.size <= 4, "position.size : 0<{}<4 wrong", att.size);
 
@@ -182,79 +161,9 @@ auto Mesh::set_attribute(GLuint index, AttributeInfo att) -> void
         att.stride,
         reinterpret_cast<void*>(static_cast<uintptr_t>(att.offset))
     );
-
+    gl::EnableVertexAttribArray(index);
     gl::VertexAttribDivisor(index, static_cast<GLuint>(att.divisor));
 }
-
-auto Mesh::prepare_attribs() -> void
-{
-    GLuint index = 0;
-    for(const auto& attrib : m_Attribs){
-        set_attribute(index++, attrib);
-    }
-}
-
-auto Mesh::enable_attribs() const -> void
-{
-    for(GLuint i = 0; i < m_Attribs.size(); i++){
-        gl::EnableVertexAttribArray(i);
-    }
-}
-
-
-auto Mesh::current_vao() -> GLuint
-{
-    GLint currentVAO = 0;
-    gl::GetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
-    return static_cast<GLuint>(currentVAO);
-}
-
-auto Mesh::current_vbo() -> GLuint
-{
-    GLint currentVBO = 0;
-    gl::GetIntegerv(GL_ARRAY_BUFFER_BINDING, &currentVBO);
-    return static_cast<GLuint>(currentVBO);
-}
-
-auto Mesh::updata() -> void
-{
-    gl::BufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(m_Vertices.size() * sizeof(Mesh::VetexData)), m_Vertices.data(), GL_STATIC_DRAW);
-}
-
-auto Mesh::gen_vertexarray() -> GLuint
-{
-    GLuint result = 0;
-    gl::GenVertexArrays(1, &result);
-    return result;
-}
-
-auto Mesh::gen_buffer() -> GLuint
-{
-    GLuint result = 0;
-    gl::GenBuffers(1, &result);
-    return result;
-}
-
-
-auto Mesh::bind_buffer(GLenum type, GLuint buffer) -> void
-{
-    gl::BindBuffer(type, buffer);
-}
-
-auto Mesh::bind_vao() -> void
-{
-    gl::BindVertexArray(VAO);
-}
-
-auto Mesh::bind_vbo() -> void
-{
-    bind_buffer(GL_ARRAY_BUFFER, VBO);
-}
-
-// auto Mesh::bind_IBO() -> void
-// {
-//     bind_buffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-// }
 
 auto Mesh::vertex_size() const noexcept -> GLsizei
 {

@@ -19,7 +19,7 @@ struct ENGINE_EXPORT Vertex
   emath::vec2 TexCoords;
 };
 
-struct ENGINE_EXPORT AttributeInfo {
+struct ENGINE_EXPORT Attribute {
   GLint size;
   GLenum type;
   GLboolean normalized;
@@ -47,30 +47,16 @@ public:
     
     ~Mesh();
 
-    auto set_attribute(GLuint index, AttributeInfo att) -> void;
-    auto enable_attribs() const -> void;
+    auto set_attribute(GLuint index, Attribute att) -> void;
     auto vertex_size() const noexcept -> GLsizei;
 
-    static auto current_vao() -> GLuint;
-    static auto current_vbo() -> GLuint;
     static auto flip_faces(std::vector<Vertex> verts) -> std::vector<Vertex>;
     static auto CUBE() -> std::vector<Vertex>;
 
-    private:
-        auto clone_buffer(GLenum type, GLuint src) -> GLuint;
-        auto clone_vbo(GLuint src) -> GLuint;
-        auto prepare_attribs() ->void;
-        auto updata() -> void;
-        static auto gen_vertexarray() -> GLuint;
-        static auto gen_buffer() -> GLuint;
-        static auto bind_buffer(GLenum type, GLuint buffer) -> void;
-        auto bind_vao() -> void;
-        auto bind_vbo() -> void;
-        // auto bind_ibo() -> void;
   public:
     std::vector<VetexData> m_Vertices;
-    std::vector<AttributeInfo> m_Attribs;
-    GLuint VBO, VAO;
+    std::vector<Attribute> m_Attribs;
+    GLuint VAO, VBO;
 };
 
 ENGINE_EXPORT auto obj_to_mesh(const char* filename) -> std::vector<Vertex>;
