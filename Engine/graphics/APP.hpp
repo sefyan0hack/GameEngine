@@ -4,10 +4,15 @@
 #include "OpenGL.hpp"
 #include "Renderer.hpp"
 #include "Scene.hpp"
+#include "SkyBox.hpp"
+
 #include <core/Log.hpp>
+
 #include <inputs/Keyboard.hpp>
 #include <inputs/Mouse.hpp>
+
 #include <ui/Text.hpp>
+
 #include <engine_export.h>
 
 #include <memory>
@@ -53,6 +58,7 @@ private:
 
 public:
     Text UiText;
+    SkyBox sKybOx;
 private:
     IGame* Game;
 };

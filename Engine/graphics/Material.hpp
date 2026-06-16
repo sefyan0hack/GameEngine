@@ -8,6 +8,9 @@
 #include "ShaderProgram.hpp"
 #include <engine_export.h>
 
+constexpr int32_t Diffuse_SLOT = 0;
+constexpr int32_t SkyBox_SLOT = 1;
+
 class ENGINE_EXPORT Material
 {
 public:
@@ -21,11 +24,6 @@ public:
     auto diffuse() const noexcept -> std::shared_ptr<class Texture>;
     auto set_diffuse(std::shared_ptr<class Texture> texture) -> void;
 
-    static auto set_skybox(const std::string& BasePathName) -> void;
-    static auto set_skybox(std::shared_ptr<class TextureCubeMap> texture) -> void;
-    static auto render_sky(const class Camera& cam) -> void;
-
-    static auto skybox() -> class SkyBox&;
 private:
     std::shared_ptr<class Texture> m_Diffuse;
 };
