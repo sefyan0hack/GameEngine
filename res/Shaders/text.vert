@@ -3,7 +3,7 @@ layout(location = 1) in uvec4 a_TexRect;    // instance (uMin, vMin, uMax, vMax)
 
 out vec2 v_TexCoord;
 
-uniform vec2 u_Dims;
+uniform uint u_ScreenSize;
 
 const vec2 positions[4] = vec2[](
     vec2(0.0, 0.0), // bottom-left
@@ -19,17 +19,21 @@ const vec2 uvs[4] = vec2[](
     vec2(0.0, 0.0)  // top-left
 );
 
+uint width  = (u_ScreenSize >> 0u)  & 65535u;
+uint height = (u_ScreenSize >> 16u) & 65535u;
+
 void main() {
     vec2 pos = positions[gl_VertexID];
     vec2 uv  = uvs[gl_VertexID];
+
 
     vec2 glyphSize = vec2(a_TexRect.zw) - vec2(a_TexRect.xy);
 
     vec2 worldPos = a_Offset + pos * glyphSize ;
     
     gl_Position = vec4(
-        (worldPos.x / u_Dims.x) * 2.0 - 1.0,
-        (worldPos.y / u_Dims.y) * 2.0 - 1.0,
+        (worldPos.x / width) * 2.0 - 1.0,
+        (worldPos.y / height) * 2.0 - 1.0,
         0.0,
         1.0
     );

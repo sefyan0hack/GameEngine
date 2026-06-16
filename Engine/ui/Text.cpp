@@ -114,8 +114,8 @@ auto Text::render() -> void {
     
     m_Program->use();
 
-    auto u_dims = emath::vec2(static_cast<float>(width), static_cast<float>(height));
-    m_Program->set_uniform("u_Dims", u_dims);
+    uint32_t u_ScreenSize = uint32_t(width) | (uint32_t(height) << 16);
+    m_Program->set_uniform("u_ScreenSize", u_ScreenSize);
 
     auto r = uint8_t(std::clamp(FONT_COLOR.x, 0.0f, 1.0f) * 255.0f + 0.5f);
     auto g = uint8_t(std::clamp(FONT_COLOR.y, 0.0f, 1.0f) * 255.0f + 0.5f);
