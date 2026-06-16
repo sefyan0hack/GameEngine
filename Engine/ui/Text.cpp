@@ -36,8 +36,8 @@ Text::Text(const OpenGL& ctx)
 }
 
 Text::~Text() {
-    gl::DeleteVertexArrays(1, &VAO);
     gl::DeleteBuffers(1, &VBO);
+    gl::DeleteVertexArrays(1, &VAO);
 }
 
 auto Text::prepare_buffers() -> void {
@@ -45,7 +45,7 @@ auto Text::prepare_buffers() -> void {
     gl::GenVertexArrays(1, &VAO);
     gl::BindVertexArray(VAO);
 
-    // --- Dynamic instance VBO (attribute 2..5) ---
+    // Dynamic instance VBO
     gl::GenBuffers(1, &VBO);
 
     gl::BindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -60,10 +60,7 @@ auto Text::prepare_buffers() -> void {
     gl::EnableVertexAttribArray(1);
     gl::VertexAttribIPointer(1, 4, GL_UNSIGNED_SHORT, sizeof(UiFont::Glyph), (void*)offsetof(UiFont::Glyph, texRect));
     gl::VertexAttribDivisor(1, 1);
-
-    gl::BindVertexArray(0);
 }
-
 
 auto Text::render() -> void {
     if (m_Text.empty()) return;
@@ -75,43 +72,49 @@ auto Text::render() -> void {
     auto descent = m_Font.descent();
     auto linegap = m_Font.linegap();
 
-    float scaledlineHeight = (ascent - descent + linegap) * scale;
-
     m_Cursor = emath::vec2(0.0f);
     for (const auto& [pos, text] : m_Text) {
-        float startX = pos.x;
-        float x = startX;
+        float start_x = pos.x;
+        float x = start_x;
         float y = static_cast<float>(height) - pos.y - (ascent * scale);
 
         for (auto c : text) {
-            uint8_t ch = static_cast<uint8_t>(c);
 
+            uint8_t ch = static_cast<uint8_t>(c);
             const auto& glyph =
                 (ch >= UiFont::FIRST_GLYPH && ch <= UiFont::LAST_GLYPH)
                     ? UiFont::glyphs()[ch - UiFont::FIRST_GLYPH]
                     : UiFont::glyphs()['?' - UiFont::FIRST_GLYPH];
 
+            auto line_advance = [&](){ x = start_x; y -= (ascent - descent + linegap) * scale; };
+            auto glyph_advance = [&](int n = 1){  x += glyph.xadvance *  n; };
+
+            switch(c)
+            {
+                case '\n': line_advance(); continue;
+                case '\t': glyph_advance(4); continue;
+                case ' ' : glyph_advance(); continue;
+            }
+
             float w = static_cast<float>(glyph.x1 - glyph.x0);
             float h = static_cast<float>(glyph.y1 - glyph.y0);
 
-            if ((x + w) >= static_cast<float>(width)) {
-                x = startX;
-                y -= scaledlineHeight;
-            }
+            if (int32_t(x + w) >= width) line_advance();
 
-            float xpos = std::round(x + glyph.xoff);
-            float ypos = std::round(y - glyph.yoff - h);
+            float xpos = x + glyph.xoff;
+            float ypos = y - glyph.yoff - h;
 
-            UiFont::Glyph ins { .offset = {xpos, ypos} };
-            std::memcpy(&ins.texRect, &glyph.x0, 4 * sizeof(uint16_t));
-            m_Instances.push_back(ins);
+            m_Instances.push_back(UiFont::Glyph {
+                .offset = {xpos, ypos},
+                .texRect = {glyph.x0, glyph.y0, glyph.x1, glyph.y1}
+            });
 
-            x += std::round(glyph.xadvance);
+            glyph_advance();
         }
     }
 
     if (m_Instances.empty()) return;
-    
+
     m_Program->use();
 
     uint32_t u_ScreenSize = uint32_t(width) | (uint32_t(height) << 16);
@@ -141,7 +144,7 @@ auto Text::render() -> void {
     {
         auto batchCount = std::min(BATCH_SIZE, m_Instances.size() - offset);
         gl::BufferSubData(GL_ARRAY_BUFFER, 0, batchCount * sizeof(UiFont::Glyph), m_Instances.data() + offset);
-        gl::DrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, static_cast<GLsizei>(batchCount));
+        gl::DrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, static_cast<GLsizei>(batchCount));
     }
 
     gl::DepthFunc(GL_LEQUAL);

@@ -5,18 +5,18 @@ out vec2 v_TexCoord;
 
 uniform uint u_ScreenSize;
 
-const vec2 positions[4] = vec2[](
-    vec2(0.0, 0.0), // bottom-left
-    vec2(1.0, 0.0), // bottom-right
-    vec2(1.0, 1.0), // top-right
-    vec2(0.0, 1.0)  // top-left
+vec2 positions[4] = vec2[](
+    vec2(0.0, 0.0), // BL
+    vec2(1.0, 0.0), // BR
+    vec2(0.0, 1.0), // TL
+    vec2(1.0, 1.0)  // TR
 );
 
 const vec2 uvs[4] = vec2[](
-    vec2(0.0, 1.0), // bottom-left
-    vec2(1.0, 1.0), // bottom-right
-    vec2(1.0, 0.0), // top-right
-    vec2(0.0, 0.0)  // top-left
+    vec2(0.0, 1.0), // BL
+    vec2(1.0, 1.0), // BR
+    vec2(0.0, 0.0), // TL
+    vec2(1.0, 0.0)  // TR
 );
 
 uint width  = (u_ScreenSize >> 0u)  & 65535u;

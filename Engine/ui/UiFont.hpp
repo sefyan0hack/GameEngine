@@ -4,6 +4,7 @@
 #include <array>
 
 #include <emath/vec2.hpp>
+#include <emath/u16vec4.hpp>
 #include <stb/stb_truetype.h>
 
 class UiFont {
@@ -26,7 +27,7 @@ public:
 
     struct Glyph {
         emath::vec2 offset;   // world position of the bottom‑left of the glyph
-        uint16_t texRect[4];  // (uMin, vMin, uMax, vMax) in atlas
+        emath::u16vec4 texRect;  // (uMin, vMin, uMax, vMax) in atlas
     };
 
     static auto glyphs() -> std::array<stbtt_bakedchar, UiFont::GLYPH_COUNT>&;
