@@ -3,7 +3,6 @@
 #include "gl.hpp"
 
 #include <core/Exception.hpp>
-#include <core/res.hpp>
 
 #include <graphics/Window.hpp>
 #include <graphics/OpenGL.hpp>
@@ -24,8 +23,8 @@
 
 Text::Text(const OpenGL& ctx)
     : m_GApi(ctx)
-    , m_Vert(std::make_shared<Shader>(res::get("res/Shaders/text.vert"), GL_VERTEX_SHADER))
-    , m_Frag(std::make_shared<Shader>(res::get("res/Shaders/text.frag"), GL_FRAGMENT_SHADER))
+    , m_Vert(std::make_shared<Shader>("res/Shaders/text.vert", GL_VERTEX_SHADER))
+    , m_Frag(std::make_shared<Shader>("res/Shaders/text.frag", GL_FRAGMENT_SHADER))
     , m_Program(std::make_shared<ShaderProgram>(m_Vert, m_Frag))
     , m_Font(DEFAULT_FONT_NAME)
     , m_Cursor(emath::vec2(0.0f))
@@ -137,7 +136,8 @@ auto Text::render() -> void {
     gl::BindVertexArray(VAO);
     gl::BindBuffer(GL_ARRAY_BUFFER, VBO);
 
-    gl::DepthMask(GL_FALSE);
+    GLint old_depth{};
+    gl::GetIntegerv(GL_DEPTH_FUNC, &old_depth);
     gl::DepthFunc(GL_ALWAYS);
 
     for (size_t offset = 0; offset < m_Instances.size(); offset += BATCH_SIZE)
@@ -147,8 +147,7 @@ auto Text::render() -> void {
         gl::DrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, static_cast<GLsizei>(batchCount));
     }
 
-    gl::DepthFunc(GL_LEQUAL);
-    gl::DepthMask(GL_TRUE);
+    gl::DepthFunc(old_depth);
 
     m_Instances.clear();
 }
