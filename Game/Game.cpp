@@ -14,8 +14,6 @@ class Game final : IGame
 public:
     Game()
     {
-        Material::set_skybox(std::make_shared<TextureCubeMap>(TextureCubeMap::base_to_6facesfiles("res/forest.jpg")));
-
         auto kimberley_jpg     = std::make_shared<Texture2D>(res::get("res/kimberley.jpg"));
         auto sand_png          = std::make_shared<Texture2D>(res::get("res/gravelly_sand_diff_4k.png"));
 

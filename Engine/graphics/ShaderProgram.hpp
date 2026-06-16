@@ -56,6 +56,7 @@ public:
 private:
     auto get_program_info(GLenum what) const -> GLint;
     auto link() const -> void;
+    auto check_link_status() -> std::string;
     auto uniform_location_prv(const char* name) const -> GLuint;
     auto attrib_location_prv(const char* name) const -> GLuint;
     auto dump_uniforms()                   -> void ;

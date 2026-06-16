@@ -3,7 +3,9 @@
 #include "OpenGL.hpp"
 #include <core/Log.hpp>
 #include <core/Exception.hpp>
+
 #include <utility>
+#include <ranges>
 
 ShaderProgram::ShaderProgram(std::shared_ptr<Shader> vertex, std::shared_ptr<Shader> fragment)
     : m_Id(gl::CreateProgram())
@@ -18,6 +20,12 @@ ShaderProgram::ShaderProgram(std::shared_ptr<Shader> vertex, std::shared_ptr<Sha
 
     link();
 
+    auto link_stat = check_link_status();
+
+    if (!link_stat.empty())
+        logg::error("\n\t-> glsl link : {}", link_stat);
+
+
     for(const auto &shader : m_Shaders ){
         gl::DetachShader(m_Id, shader->id());
     }
@@ -25,8 +33,6 @@ ShaderProgram::ShaderProgram(std::shared_ptr<Shader> vertex, std::shared_ptr<Sha
     dump_attribs();
     dump_uniforms();
 }
-
-
 
 ShaderProgram::ShaderProgram(ShaderProgram&& other) noexcept
     : m_Id(std::exchange(other.m_Id, 0))
@@ -67,17 +73,6 @@ auto ShaderProgram::use() const -> void
 auto ShaderProgram::link() const -> void
 {
     gl::LinkProgram(m_Id);
-
-    GLint success = get_program_info(GL_LINK_STATUS);
-
-    if (!success) {
-        GLsizei  infologlength = static_cast<size_t>(get_program_info(GL_INFO_LOG_LENGTH));
-        if(infologlength > 0){
-            std::string infoLog(infologlength, '\0');
-            gl::GetProgramInfoLog(m_Id, infologlength, nullptr, infoLog.data());
-            throw Exception("{}", infoLog);
-        }
-    }
 }
 
 auto ShaderProgram::uniform_location(const char *name) const -> GLuint
@@ -225,6 +220,25 @@ auto ShaderProgram::get_program_info(GLenum what) const -> GLint
         return result;
     else
         throw Exception("gl error id {}", glGetError());
+}
+
+auto ShaderProgram::check_link_status() -> std::string
+{
+    GLint success = get_program_info(GL_LINK_STATUS);
+    GLchar* buffer = nullptr;
+
+    if (!success) {
+        auto infologlength = static_cast<GLsizei>(get_program_info(GL_INFO_LOG_LENGTH));
+    
+        if(infologlength > 0){
+            buffer = new GLchar[infologlength];
+            gl::GetProgramInfoLog(m_Id, infologlength, nullptr, buffer);
+        }
+    }
+
+    auto r = buffer ? std::string{buffer}: std::string{};
+    if(!r.empty()) delete[] buffer;
+    return r;
 }
 
 ///////

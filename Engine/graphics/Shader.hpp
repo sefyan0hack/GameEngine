@@ -1,23 +1,22 @@
 #pragma once
 
+#include "gl.hpp"
+#include <engine_export.h>
+
 #include <format>
 #include <string>
 #include <vector>
 #include <memory>
-#include <engine_export.h>
 #include <span>
-#include "gl.hpp"
 
-#include <cmrc/cmrc.hpp>
 
 class ENGINE_EXPORT Shader
 {
   public:
     friend struct std::formatter<Shader>;
-    Shader();
-    Shader(const std::string& filename);
-    Shader(std::string Src, GLenum type);
-    Shader(std::span<const char> src, GLenum type);
+
+    Shader(const char* shader, GLenum type);
+    Shader(const std::string& shader, GLenum type);
 
     Shader(const Shader&) = delete;
     Shader& operator=(const Shader&) = delete;
@@ -34,14 +33,12 @@ class ENGINE_EXPORT Shader
 
     auto set_sources(const std::span<const char* const> srcs) const -> void;
     auto compile()                           -> void;
-    auto check_compile_status() -> void;
+    auto check_compile_status() -> std::string;
     auto get_shader_info(GLenum what) const-> GLint; //what : GL_SHADER_TYPE, GL_DELETE_STATUS, GL_COMPILE_STATUS, GL_INFO_LOG_LENGTH, GL_SHADER_SOURCE_LENGTH.
 
     static auto new_vertex(const std::string& vert) -> std::shared_ptr<Shader>;
-    static auto new_vertex(std::span<const char> vert) -> std::shared_ptr<Shader>;
-  
-    static auto new_fragment(std::span<const char> frag) -> std::shared_ptr<Shader>;
     static auto new_fragment(const std::string& frag) -> std::shared_ptr<Shader>;
+
     static auto glsl_header() -> std::string;
     static auto glsl_lib() -> std::string;
 

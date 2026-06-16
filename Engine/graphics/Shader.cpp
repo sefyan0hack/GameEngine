@@ -1,19 +1,55 @@
 #include <core/Log.hpp>
 #include <core/SysInfo.hpp>
 #include <core/Exception.hpp>
+#include <core/res.hpp>
 #include <core/Utils.hpp>
+
 #include "OpenGL.hpp"
 #include "Shader.hpp"
+
 #include <ranges>
 
+Shader::Shader(const char* shader, GLenum type)
+{
+    m_Id = gl::CreateShader(type);
+    m_Type = type;
 
+    auto glsl_h = glsl_header();
+    auto glsl_l = glsl_lib();
+    auto src = res::get(shader);
 
-Shader::Shader()
-    : m_Id(0), m_Type(0)
-{}
+    auto srcs = {glsl_h.c_str(), glsl_l.c_str(), src.data()};
+    
+    set_sources(srcs);
+    compile();
 
-Shader::Shader(Shader&& other) noexcept : m_Id(other.m_Id), m_Type(other.m_Type) {
-    other.m_Id = 0;
+    auto comp_stat = check_compile_status();
+    if (!comp_stat.empty()) {
+        std::string line = "0";
+        std::string msg;
+        auto lines = comp_stat | std::views::split('\n') | std::ranges::to<std::vector<std::string>>();
+        for(auto l : lines){
+            if(l.starts_with("ERROR:")){ // probably intel
+                auto p1 = l.find(':');          // ERROR:
+                auto p2 = l.find(':', p1 + 1);  // source id
+                auto p3 = l.find(':', p2 + 1);  // line number
+                
+                line = l.substr(p2 + 1, p3 - p2 - 1);
+                msg  = l.substr(p3 + 1);
+            }
+            if(!msg.empty())
+                logg::error("\n\t-> glsl compile : {}:{} {}", shader, line, msg);
+
+            line = "0";
+            msg.clear();
+        }
+    }
+}
+
+Shader::Shader(const std::string& shader, GLenum type) : Shader(shader.c_str(), type) {}
+
+Shader::~Shader(){
+    gl::DeleteShader(m_Id);
 }
 
 Shader& Shader::operator=(Shader&& other) noexcept {
@@ -26,73 +62,9 @@ Shader& Shader::operator=(Shader&& other) noexcept {
     return *this;
 }
 
-Shader::~Shader(){
-    gl::DeleteShader(m_Id);
+Shader::Shader(Shader&& other) noexcept : m_Id(other.m_Id), m_Type(other.m_Type) {
+    other.m_Id = 0;
 }
-
-
-Shader::Shader(const std::string& filename)
-{
-    if(filename.ends_with(".vert")){
-        m_Type = GL_VERTEX_SHADER;
-    } else if(filename.ends_with(".frag")){
-        m_Type = GL_FRAGMENT_SHADER;
-    } else {
-        throw Exception("filename `{}` must be one of [.vert, .frag]", filename);
-    }
-
-    m_Id = gl::CreateShader(m_Type);
-
-    auto glsl_h = glsl_header();
-    auto glsl_l = glsl_lib();
-    auto src = utils::read_file(filename);
-
-    auto srcs = {glsl_h.c_str(), glsl_l.c_str(), src.c_str()};
-    
-    set_sources(srcs);
-    compile();
-    try {
-        check_compile_status();
-    }catch(const Exception& e){
-        std::string out;
-        for (std::string_view sv : srcs | std::views::transform([](const char* s){
-                return std::string_view{s};
-            }))
-        {
-            out.append(sv);
-        }
-        logg::error("glsl Compile error ({}) : code :\n{}", e.what(), out);
-    }
-}
-
-Shader::Shader(std::string Src, GLenum type)
-    : m_Id(gl::CreateShader(type))
-    , m_Type(type)
-{
-    auto glsl_h = glsl_header();
-    auto glsl_l = glsl_lib();
-    auto srcs = {glsl_h.c_str(), glsl_l.c_str(), Src.c_str()};
-
-    set_sources(srcs);
-    compile();
-
-    try {
-        check_compile_status();
-    }catch(const Exception& e){
-        std::string out;
-        for (std::string_view sv : srcs | std::views::transform([](const char* s){
-                return std::string_view{s};
-            }))
-        {
-            out.append(sv);
-        }
-        logg::error("glsl Compile error ({}) : code :\n{}", e.what(), out);
-    }
-}
-
-Shader::Shader(std::span<const char> src, GLenum type)
-    : Shader(std::string(src.begin(), src.end()), type)
-{}
 
 auto Shader::set_sources(const std::span<const char* const> srcs) const -> void
 {
@@ -104,21 +76,25 @@ auto Shader::compile() -> void
     gl::CompileShader(m_Id);
 }
 
-auto Shader::check_compile_status() -> void
+auto Shader::check_compile_status() -> std::string
 {
     auto success = get_shader_info(GL_COMPILE_STATUS);
+    GLchar* buffer = nullptr;
 
     if (!success) {
-        auto infologlength = static_cast<size_t>(get_shader_info(GL_INFO_LOG_LENGTH));
+        auto infologlength = static_cast<GLsizei>(get_shader_info(GL_INFO_LOG_LENGTH));
 
         if(infologlength > 0){
-            std::string infoLog(infologlength, '\0');
+            buffer = new GLchar[infologlength];
 
-            gl::GetShaderInfoLog(m_Id, static_cast<GLsizei>(infologlength), nullptr, infoLog.data());
+            gl::GetShaderInfoLog(m_Id, infologlength, nullptr, buffer);
             gl::DeleteShader(m_Id);
-            throw Exception("{}", infoLog);
         }
     }
+
+    auto r = buffer ? std::string{buffer}: std::string{};
+    if(!r.empty()) delete[] buffer;
+    return r;
 }
 
 auto Shader::id() const -> GLuint
@@ -157,17 +133,7 @@ auto Shader::new_vertex(const std::string& vert) -> std::shared_ptr<Shader>
   return std::make_shared<Shader>(vert, GL_VERTEX_SHADER);
 }
 
-auto Shader::new_vertex(std::span<const char> vert) -> std::shared_ptr<Shader>
-{
-  return std::make_shared<Shader>(vert, GL_VERTEX_SHADER);
-}
-
 auto Shader::new_fragment(const std::string& frag) -> std::shared_ptr<Shader>
-{
-  return std::make_shared<Shader>(frag, GL_FRAGMENT_SHADER);
-}
-
-auto Shader::new_fragment(std::span<const char> frag) -> std::shared_ptr<Shader>
 {
   return std::make_shared<Shader>(frag, GL_FRAGMENT_SHADER);
 }
@@ -185,7 +151,8 @@ auto Shader::glsl_header() -> std::string
 
 auto Shader::glsl_lib() -> std::string
 {
-    return R"(
+    return
+R"(
 //Luminance (Grayscale conversion)
 float luminance(vec3 color) {
     return dot(color, vec3(0.2126, 0.7152, 0.0722));
@@ -200,5 +167,6 @@ vec3 saturate(vec3 rgb, float adjustment) {
     vec3 intensity = vec3(dot(rgb, W));
     return mix(intensity, rgb, adjustment);
 }
+#line 1 // The #line statement is there so that compiler error messages give the correct line numbers
 )";
 }
