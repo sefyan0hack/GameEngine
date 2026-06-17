@@ -265,8 +265,10 @@ auto CWindow::set_title(std::string  title) -> void
 
 auto CWindow::set_vsync(bool state) -> void
 {
-	(void)state;
-	logg::warn("vSync is always enabled in web and no vSync off ");
+    if(state)
+        emscripten_set_main_loop_timing(EM_TIMING_RAF, 1);
+    else
+        emscripten_set_main_loop_timing(EM_TIMING_SETTIMEOUT, 1);
 }
 
 auto CWindow::message_box(const char* title, const char* body) -> bool

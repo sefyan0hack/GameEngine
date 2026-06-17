@@ -173,9 +173,8 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
     gl::PixelStorei(GL_UNPACK_ALIGNMENT, 4);
 }
 
-
 TextureCubeMap::TextureCubeMap(const std::vector<std::span<const char>>& faces)
-    : TextureCubeMap()
+    : Texture(GL_TEXTURE_CUBE_MAP)
 {
     m_Imgs = std::array<Image, 6>{
             Image(faces[0], false), Image(faces[1], false), Image(faces[2], false),
