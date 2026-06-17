@@ -124,7 +124,7 @@ auto OpenGL::extensions() -> std::vector<std::string>
 auto OpenGL::max_texture_units() -> GLint
 {
     GLint r = 0;
-    gl::GetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &r);
+    gl::GetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &r); // fragment shader limit
     return r;
 }
 

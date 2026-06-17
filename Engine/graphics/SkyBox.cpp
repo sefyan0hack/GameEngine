@@ -34,9 +34,11 @@ auto SkyBox::render(const Camera& cam) -> void
   m_Program.use();
   m_Program.set_uniform("View", emath::mat4(emath::mat3(cam.view())));
   m_Program.set_uniform("Projection", cam.perspective());
-  gl::ActiveTexture(GL_TEXTURE0 + SkyBox_SLOT);
+
+  int skybox = 0;
+  gl::ActiveTexture(GL_TEXTURE0 + skybox);
   m_Texture->bind();
-  m_Program.set_uniform("uDiffuseMap", SkyBox_SLOT);
+  m_Program.set_uniform("uDiffuseMap", skybox);
 
   gl::BindVertexArray(VAO);
   gl::DrawArrays(GL_TRIANGLES, 0, 3);

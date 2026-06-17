@@ -19,12 +19,14 @@ Material::Material(std::shared_ptr<Texture> diffuse)
 
 auto Material::bind(std::shared_ptr<ShaderProgram> program) -> void
 {
-    gl::ActiveTexture(GL_TEXTURE0 + Diffuse_SLOT);
-    m_Diffuse->bind();
-    program->set_uniform("uDiffuseMap", Diffuse_SLOT);
+    int skybox = 0, diffuse = 1;
 
-    gl::ActiveTexture(GL_TEXTURE0 + SkyBox_SLOT);
-    program->set_uniform("uSkyboxMap", SkyBox_SLOT);
+    gl::ActiveTexture(GL_TEXTURE0 + skybox);
+    gl::ActiveTexture(GL_TEXTURE0 + diffuse);
+
+    m_Diffuse->bind();
+    program->set_uniform("uSkyboxMap", skybox);
+    program->set_uniform("uDiffuseMap", diffuse);
 }
 
 auto Material::diffuse() const noexcept-> std::shared_ptr<Texture>

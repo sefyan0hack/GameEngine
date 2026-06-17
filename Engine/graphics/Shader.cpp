@@ -167,6 +167,13 @@ vec3 saturate(vec3 rgb, float adjustment) {
     vec3 intensity = vec3(dot(rgb, W));
     return mix(intensity, rgb, adjustment);
 }
+// checker board pattren
+vec3 checkerboard(vec2 u)
+{
+    vec2 f = u - floor(u);
+    return ((f.x < 0.5)) ^^ (f.y < 0.5) ? vec3(1, 0, 0) : vec3(0, 0, 1);
+}
+
 #line 1 // The #line statement is there so that compiler error messages give the correct line numbers
 )";
 }

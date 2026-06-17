@@ -130,8 +130,10 @@ auto Text::render() -> void {
 
     m_Program->set_uniform("u_Color", color);
 
-    gl::ActiveTexture(GL_TEXTURE0);
+    int text = 0;
+    gl::ActiveTexture(GL_TEXTURE0 + text);
     gl::BindTexture(GL_TEXTURE_2D, m_Font.atlas_id());
+    m_Program->set_uniform("u_Texture", text);
 
     gl::BindVertexArray(VAO);
     gl::BindBuffer(GL_ARRAY_BUFFER, VBO);

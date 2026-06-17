@@ -8,9 +8,6 @@
 #include "ShaderProgram.hpp"
 #include <engine_export.h>
 
-constexpr int32_t Diffuse_SLOT = 0;
-constexpr int32_t SkyBox_SLOT = 1;
-
 class ENGINE_EXPORT Material
 {
 public:
