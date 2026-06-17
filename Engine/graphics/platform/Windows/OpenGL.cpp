@@ -65,22 +65,27 @@ auto OpenGL::create_opengl_context() -> GL_CTX
     wglMakeCurrent(surface, dummy_context);
 
     {
+    // extension_supported shuld work caus gl ctx it valid here
+        bool is_WGL_ARB_framebuffer_sRGB = extension_supported("WGL_ARB_framebuffer_sRGB");
+        bool is_WGL_ARB_multisample = extension_supported("WGL_ARB_multisample");
+
         int attribs[] =
         {
             WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
             WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
             WGL_DOUBLE_BUFFER_ARB,  GL_TRUE,
             WGL_PIXEL_TYPE_ARB,     WGL_TYPE_RGBA_ARB,
+            WGL_ACCELERATION_ARB,   WGL_FULL_ACCELERATION_ARB,
             WGL_COLOR_BITS_ARB,     24,
             WGL_DEPTH_BITS_ARB,     24,
             WGL_STENCIL_BITS_ARB,   8,
 
             //WGL_ARB_framebuffer_sRGB extension
-            //WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB, GL_TRUE,
+            WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB, (is_WGL_ARB_framebuffer_sRGB ? GL_TRUE : FALSE),
 
-            //WGL_ARB_multisample extension
-            //WGL_SAMPLE_BUFFERS_ARB, 1,
-            //WGL_SAMPLES_ARB,        4,
+            // WGL_ARB_multisample extension
+            WGL_SAMPLE_BUFFERS_ARB, (is_WGL_ARB_multisample ? 1 : 0),
+            WGL_SAMPLES_ARB,        (is_WGL_ARB_multisample ? 4 : 0),
 
             0,
         };
