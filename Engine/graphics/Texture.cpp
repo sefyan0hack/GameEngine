@@ -66,8 +66,8 @@ auto Texture::type_name() const -> std::string
 Texture2D::Texture2D()
     : Texture(GL_TEXTURE_2D)
 {
-    // Ensure GLubyte and std::byte are the same size at compile time
-    static_assert(sizeof(GLubyte) == sizeof(std::byte), "GLubyte and std::byte size mismatch!");
+    // Ensure GLubyte and uint8_t are the same size at compile time
+    static_assert(sizeof(GLubyte) == sizeof(uint8_t), "GLubyte and uint8_t size mismatch!");
     img2d_to_gpu(std::bit_cast<const GLubyte*>(m_Img.data().data()), m_Img.width(), m_Img.height(), m_Img.gpu_format(), m_Img.cpu_format());
     gl::GenerateMipmap(m_Type);
 }
@@ -76,8 +76,8 @@ Texture2D::Texture2D()
 Texture2D::Texture2D(const std::string &name)
     : Texture(GL_TEXTURE_2D), m_Img(name)
 {
-    // Ensure GLubyte and std::byte are the same size at compile time
-    static_assert(sizeof(GLubyte) == sizeof(std::byte), "GLubyte and std::byte size mismatch!");
+    // Ensure GLubyte and uint8_t are the same size at compile time
+    static_assert(sizeof(GLubyte) == sizeof(uint8_t), "GLubyte and uint8_t size mismatch!");
     img2d_to_gpu(std::bit_cast<const GLubyte*>(m_Img.data().data()), m_Img.width(), m_Img.height(), m_Img.gpu_format(), m_Img.cpu_format());
     gl::GenerateMipmap(m_Type);
 }
@@ -85,8 +85,8 @@ Texture2D::Texture2D(const std::string &name)
 Texture2D::Texture2D(std::span<const char> src)
     : Texture(GL_TEXTURE_2D), m_Img(src)
 {
-    // Ensure GLubyte and std::byte are the same size at compile time
-    static_assert(sizeof(GLubyte) == sizeof(std::byte), "GLubyte and std::byte size mismatch!");
+    // Ensure GLubyte and uint8_t are the same size at compile time
+    static_assert(sizeof(GLubyte) == sizeof(uint8_t), "GLubyte and uint8_t size mismatch!");
     img2d_to_gpu(std::bit_cast<const GLubyte*>(m_Img.data().data()), m_Img.width(), m_Img.height(), m_Img.gpu_format(), m_Img.cpu_format());
     gl::GenerateMipmap(m_Type);
 }

@@ -2,6 +2,7 @@
 
 #include <string>
 #include <format>
+#include <cstdint>
 #include <span>
 
 #include "gl.hpp"
@@ -37,13 +38,13 @@ public:
     static auto channel_from_cpu_format(GLenum format) -> std::int32_t;
     static auto channel_from_gpu_format(GLint format) -> std::int32_t;
 
-    auto data() const -> std::span<const std::byte>;
+    auto data() const -> std::span<const uint8_t>;
     auto size() const -> std::size_t;
     auto valid() const -> bool;
 
 private:
     int32_t m_Width, m_Height, m_Channels;
-    const std::byte* m_Data;
+    const uint8_t* m_Data;
 };
 
 #ifdef __cpp_lib_formatters

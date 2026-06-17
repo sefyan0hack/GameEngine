@@ -10,38 +10,65 @@
 #define STBI_NO_THREAD_LOCALS
 #include <stb/stb_image.h>
 
-constexpr std::size_t checkerboard_size = 64;
-constexpr std::size_t checkerboard_bytes_per_pixel = 3;
+namespace eg_detail {
+    constexpr auto floorf(float x) -> float
+    {
+        int i = static_cast<int>(x);
+        // if x is negative and not already an integer → step down
+        if (x < 0.0f && x != static_cast<float>(i))
+        return static_cast<float>(i - 1);
+        return static_cast<float>(i);
+    };
+    constexpr auto fmodf(float x, float y) -> float
+    {
+        // assume y != 0
+        float n = x / y;
+        int i = static_cast<int>(n);
+        float r = x - static_cast<float>(i) * y;
+        return r;
+    };
+}
 
-constexpr auto checkerboard = [](){
-    constexpr std::size_t total_bytes = checkerboard_size * checkerboard_size * checkerboard_bytes_per_pixel;
-    constexpr uint32_t color1 = 0xFFFF00FF;
-    constexpr uint32_t color2 = 0x00000000;
+constexpr std::size_t procedural_texture_width  = 64;
+constexpr std::size_t procedural_texture_height = 64;
+constexpr std::size_t procedural_texture_channels = sizeof(uint32_t);
 
-    std::array<std::byte, total_bytes> data;
+constexpr auto procedural_texture_checkerboard = [] {
+    std::array<uint8_t, procedural_texture_width * procedural_texture_height * procedural_texture_channels > data{};
 
-    for (std::size_t y = 0; y < checkerboard_size; ++y) {
-        for (std::size_t x = 0; x < checkerboard_size; ++x) {
+    for (uint8_t y = 0; y < procedural_texture_height; ++y) {
+        for (uint8_t x = 0; x < procedural_texture_width; ++x) {
 
-            const bool use_first = ((x / 5 + y / 5) % 2) == 0;
-            const uint32_t c = use_first ? color1 : color2;
+            float s = static_cast<float>(x) / (procedural_texture_width - 1);
+            float t = static_cast<float>(y) / (procedural_texture_height - 1);
 
-            const std::size_t idx = (y * checkerboard_size + x) * checkerboard_bytes_per_pixel;
+            float pattren = eg_detail::fmodf(
+                eg_detail::floorf(10.0f * s) + eg_detail::floorf(10.0f * t),
+                2.0f
+            );
 
-            for (std::size_t b = 0; b < checkerboard_bytes_per_pixel; ++b) {
-                data[idx + b] = static_cast<std::byte>((c >> (8 * b)) & 0xFFu);
-            }
+            size_t offset = (y * procedural_texture_width + x) * procedural_texture_channels;
+
+            uint32_t color = pattren ? 0xFFFF00FF : 0x00000000;
+
+            data[offset]     = static_cast<uint8_t>(color & 0xFF);
+            data[offset + 1] = static_cast<uint8_t>((color >> 8) & 0xFF);
+            data[offset + 2] = static_cast<uint8_t>((color >> 16) & 0xFF);
+            data[offset + 3] = static_cast<uint8_t>((color >> 24) & 0xFF);
         }
     }
+
     return data;
 }();
 
+//default pattren
+constexpr auto procedural_texture_func = procedural_texture_checkerboard;
 
 Image::Image()
-    : m_Width(checkerboard_size)
-    , m_Height(checkerboard_size)
-    , m_Channels(checkerboard_bytes_per_pixel)
-    , m_Data(checkerboard.data())
+    : m_Width(procedural_texture_width)
+    , m_Height(procedural_texture_height)
+    , m_Channels(procedural_texture_channels)
+    , m_Data(procedural_texture_func.data())
 {
 }
 
@@ -51,12 +78,12 @@ Image::Image(auto* Data, uint32_t Width, uint32_t Height, uint32_t Channels)
         m_Width = Width;
         m_Height = Height;
         m_Channels = Channels;
-        m_Data = std::bit_cast<const std::byte*>(Data);
+        m_Data = std::bit_cast<const uint8_t*>(Data);
     }else{
-        m_Width = checkerboard_size;
-        m_Height = checkerboard_size;
-        m_Channels = checkerboard_bytes_per_pixel;
-        m_Data = checkerboard.data();
+        m_Width = procedural_texture_width;
+        m_Height = procedural_texture_height;
+        m_Channels = procedural_texture_channels;
+        m_Data = procedural_texture_func.data();
 
         logg::warn("Can't load raw data");
     }
@@ -68,14 +95,14 @@ Image::Image(const std::string& filename, bool flip)
     auto data = stbi_load(filename.c_str(), &m_Width, &m_Height, &m_Channels, 0);
 
     if(data){
-        m_Data = std::bit_cast<const std::byte*>(data);
+        m_Data = std::bit_cast<const uint8_t*>(data);
     }
     else
     {
-        m_Width = checkerboard_size;
-        m_Height = checkerboard_size;
-        m_Channels = checkerboard_bytes_per_pixel;
-        m_Data = checkerboard.data();
+        m_Width = procedural_texture_width;
+        m_Height = procedural_texture_height;
+        m_Channels = procedural_texture_channels;
+        m_Data = procedural_texture_func.data();
 
         logg::warn("Can't read {} . reason : {}", filename.c_str(), stbi_failure_reason());
     }
@@ -88,13 +115,13 @@ Image::Image(std::span<const char> src, bool flip)
     auto data = stbi_load_from_memory(std::bit_cast<const unsigned char*>(src.data()), static_cast<int>(src.size()), &m_Width, &m_Height, &m_Channels, 0);
 
     if(data){
-        m_Data = std::bit_cast<const std::byte*>(data);
+        m_Data = std::bit_cast<const uint8_t*>(data);
     }
     else{
-        m_Width = checkerboard_size;
-        m_Height = checkerboard_size;
-        m_Channels = checkerboard_bytes_per_pixel;
-        m_Data = checkerboard.data();
+        m_Width = procedural_texture_width;
+        m_Height = procedural_texture_height;
+        m_Channels = procedural_texture_channels;
+        m_Data = procedural_texture_func.data();
 
         logg::warn("Can't read file . reason : {}", stbi_failure_reason());
     }
@@ -102,7 +129,7 @@ Image::Image(std::span<const char> src, bool flip)
 
 Image::~Image()
 {
-    if(m_Data && m_Data != checkerboard.data()) stbi_image_free(const_cast<std::byte*>(m_Data));
+    if(m_Data && m_Data != procedural_texture_func.data()) stbi_image_free(const_cast<uint8_t*>(m_Data));
 }
 
 Image::Image(Image&& other)
@@ -152,7 +179,7 @@ auto Image::valid() const ->bool
 }
 
 
-auto Image::data() const -> std::span<const std::byte>
+auto Image::data() const -> std::span<const uint8_t>
 {
     Expect(valid(), " Image not Valid {:p}", (const void*)this);
 
