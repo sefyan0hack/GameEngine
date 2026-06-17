@@ -27,8 +27,9 @@ Shader::Shader(const char* shader, GLenum type)
     if (!comp_stat.empty()) {
         std::string line = "0";
         std::string msg;
-        auto lines = comp_stat | std::views::split('\n') | std::ranges::to<std::vector<std::string>>();
-        for(auto l : lines){
+
+        for(auto r : comp_stat | std::views::split('\n')){
+            std::string l(r.begin(), r.end());
             if(l.starts_with("ERROR:")){ // probably intel
                 auto p1 = l.find(':');          // ERROR:
                 auto p2 = l.find(':', p1 + 1);  // source id
