@@ -189,13 +189,13 @@ auto OpenGL::regester_debug_func() const -> void
         static auto glDebugMessageCallback_ = [](){
             auto r = gl::GetProcAddress<PFNGLDEBUGMESSAGECALLBACKPROC>("glDebugMessageCallback");
             if (r) return r;
-            else throw Exception("Failed to load glDebugMessageCallback. (maybe not supported): {}", GetLastError());
+            else throw Exception("Failed to load glDebugMessageCallback. (maybe not supported)");
         }();
 
         static auto glDebugMessageControl_ = [](){
             auto r = gl::GetProcAddress<PFNGLDEBUGMESSAGECONTROLPROC>("glDebugMessageControl");
             if (r) return r;
-            else throw Exception("Failed to load glDebugMessageControl. (maybe not supported): {}", GetLastError());
+            else throw Exception("Failed to load glDebugMessageControl. (maybe not supported)");
         }();
 
         gl::Enable(GL_DEBUG_OUTPUT);
@@ -215,13 +215,13 @@ auto OpenGL::regester_debug_func() const -> void
         static auto glDebugMessageCallbackARB_ = [](){
             auto r = gl::GetProcAddress<PFNGLDEBUGMESSAGECALLBACKARBPROC>("glDebugMessageCallbackARB");
             if (r) return r;
-            else throw Exception("Failed to load glDebugMessageCallbackARB. (maybe not supported): {}", GetLastError());
+            else throw Exception("Failed to load glDebugMessageCallbackARB. (maybe not supported)");
         }();
 
         static auto glDebugMessageControlARB_ = [](){
             auto r = gl::GetProcAddress<PFNGLDEBUGMESSAGECONTROLARBPROC>("glDebugMessageControlARB");
             if (r) return r;
-            else throw Exception("Failed to load glDebugMessageControlARB. (maybe not supported): {}", GetLastError());
+            else throw Exception("Failed to load glDebugMessageControlARB. (maybe not supported)");
         }();
 
         gl::Enable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
