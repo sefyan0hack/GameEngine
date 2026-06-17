@@ -17,15 +17,13 @@
 
 static IGame defaultGame;
 
-[[maybe_unused]] constexpr auto WINDOW_WIDTH = 1180;
-[[maybe_unused]] constexpr auto WINDOW_HIEGHT = 640;
+constexpr auto WINDOW_WIDTH = 1180;
+constexpr auto WINDOW_HEIGHT = 640;
 
 APP::APP()
     : m_Running(true)
-    , m_Fps(60.0f)
-    , m_FrameCount(0)
-    , m_AccumulatedTime(0.0f)
-    , Window(WINDOW_WIDTH, WINDOW_HIEGHT, "")
+    , m_Fps(0.0f)
+    , Window(WINDOW_WIDTH, WINDOW_HEIGHT, "")
     , Keyboard()
     , Mouse()
     , m_GApi(Window)
@@ -47,9 +45,25 @@ auto APP::self(IGame* g) -> APP&
 
 auto APP::frame() -> void
 {
-    auto begin = std::chrono::steady_clock::now();
+    static auto lastTime = std::chrono::steady_clock::now();
+    auto now = std::chrono::steady_clock::now();
+    float dt = std::chrono::duration<float>(now - lastTime).count();
+    lastTime = now;
 
-    Game->update(1.0f/m_Fps);
+    float game_dt = (dt > 0.1f) ? 0.1f : dt; // cap
+
+    Game->update(game_dt);
+
+    static float accumulated = 0.0f;
+    static int   frameCount = 0;
+    ++frameCount;
+    accumulated += dt;
+    if (accumulated >= 1.0f) {
+        m_Fps = static_cast<float>(frameCount) / accumulated;
+        accumulated = 0.0f;
+        frameCount = 0;
+    }
+
     Renderer->clear_screen(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     Renderer->render(Game->Scene);
     sKybOx.render(Game->Scene.main_camera());
@@ -57,18 +71,6 @@ auto APP::frame() -> void
     Window.swap_buffers();
     Keyboard.save_prev_state();
     Mouse.save_prev_state();
-
-    auto elapsed = std::chrono::steady_clock::now() - begin;
-    float deltaTime = std::chrono::duration<float>(elapsed).count();
-
-    m_AccumulatedTime += deltaTime;
-    ++m_FrameCount;
-
-    if (m_AccumulatedTime >= 1.0f) {
-        m_Fps = static_cast<float>(m_FrameCount) / m_AccumulatedTime; // Average FPS over the last second
-        m_AccumulatedTime = 0.0f;
-        m_FrameCount = 0;
-    }
 }
 
 template<class... Ts>
@@ -86,7 +88,6 @@ auto APP::loop_body(void* ctx) -> void
 
                 auto ret = app->Window.message_box("Exit", "Are You Sure !");
                 if(ret) {
-                    app->Window.close();
                     app->m_Running = false;
                 }
             },
@@ -131,6 +132,8 @@ auto APP::loop_body(void* ctx) -> void
         );
     }
 
+
+    //TODO move to the visit
     // normal Mode
     if (app->Keyboard.is_pressed(Key::Space)) {        
         app->Renderer->set_mode(DrawMode::Triangles);
@@ -169,9 +172,4 @@ auto APP::loop_body(void* ctx) -> void
 auto APP::fps() const -> float
 {
     return m_Fps;
-}
-
-auto APP::deltatime() const -> float
-{
-    return 1.0f/m_Fps;
 }

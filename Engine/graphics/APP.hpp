@@ -33,7 +33,6 @@ public:
     
     auto run() -> void ;
     auto fps() const -> float;
-    auto deltatime() const -> float;
 
     static auto loop_body(void* ctx) -> void;
     static auto self(IGame* g = nullptr) -> APP&;
@@ -44,8 +43,6 @@ private:
 private:
     bool m_Running;
     float m_Fps;
-    uint32_t m_FrameCount;
-    float m_AccumulatedTime;
 
 public:
     ::CWindow Window;
