@@ -43,29 +43,26 @@ auto OpenGLRenderer::render(const Scene& scene) const -> void
             m_Program->set_uniform("Model", obj.model());
 
             obj.material()->bind(m_Program);
+            auto mesh = obj.mesh();
+            auto v_count = mesh->vertex_size();
 
-            draw(*obj.mesh());
+            gl::BindVertexArray(mesh->VAO);
+
+            switch(m_DrawMode)
+            {
+                case DrawMode::Triangles:
+                    gl::DrawArrays(GL_TRIANGLES, 0, v_count);
+                    break;
+                case DrawMode::Line:
+                    gl::DrawArrays(GL_LINES, 0, (v_count / 3) * 6);
+                break;
+                case DrawMode::Point:
+                    gl::DrawArrays(GL_POINTS, 0, v_count);
+                    break;
+                default: std::unreachable();
+            }
         }
     );
-}
-
-auto OpenGLRenderer::draw(const Mesh& mesh) const -> void
-{
-    gl::BindVertexArray(mesh.VAO);
-
-    switch(m_DrawMode)
-    {
-        case DrawMode::Triangles:
-            gl::DrawArrays(GL_TRIANGLES, 0, mesh.vertex_size());
-            break;
-        case DrawMode::Line:
-            gl::DrawArrays(GL_LINES, 0, (mesh.vertex_size() / 3) * 6);
-        break;
-        case DrawMode::Point:
-            gl::DrawArrays(GL_POINTS, 0, mesh.vertex_size());
-            break;
-        default: std::unreachable();
-    }
 }
 
 auto OpenGLRenderer::set_viewport(int32_t x, int32_t y, int32_t width, int32_t height) -> void

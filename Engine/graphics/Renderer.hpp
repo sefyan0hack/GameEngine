@@ -22,8 +22,5 @@ public:
     virtual auto set_mode(DrawMode mode) -> void = 0;
     virtual auto clear_screen(uint32_t buffersmask)  -> void  = 0;
     virtual auto has_extension(const std::string& ext) -> bool = 0;
-    
 
-protected:
-    virtual auto draw(const class Mesh& mesh) const -> void = 0;
 };

@@ -17,9 +17,6 @@ public:
     auto clear_screen(uint32_t buffersmask)  -> void  override;
     auto has_extension(const std::string& ext) -> bool override;
 
-protected:
-    auto draw(const class Mesh& mesh) const -> void override;
-
 private:
     const class OpenGL& m_GApi;
     int32_t m_X, m_Y, m_Width, m_Height;
