@@ -15,7 +15,7 @@ public:
     auto set_viewport(int32_t x, int32_t y, int32_t width, int32_t height) -> void override;
     auto set_mode(DrawMode mode) -> void override;
     auto clear_screen(uint32_t buffersmask)  -> void  override;
-    auto has_extension(const std::string& ext) -> bool override;
+    auto extension_supported(const std::string& ext) -> bool override;
 
 private:
     const class OpenGL& m_GApi;

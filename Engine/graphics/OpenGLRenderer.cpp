@@ -86,7 +86,7 @@ auto OpenGLRenderer::clear_screen(uint32_t buffersmask)  -> void
     gl::Clear((GLenum)buffersmask);
 }
 
-auto OpenGLRenderer::has_extension(const std::string &ext) -> bool
+auto OpenGLRenderer::extension_supported(const std::string &ext) -> bool
 {
-    return m_GApi.has_extension(ext);
+    return m_GApi.extension_supported(ext);
 }

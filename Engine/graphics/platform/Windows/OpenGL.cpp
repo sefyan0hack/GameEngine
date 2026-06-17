@@ -113,7 +113,8 @@ auto OpenGL::create_opengl_context() -> GL_CTX
             WGL_CONTEXT_MAJOR_VERSION_ARB, gl::MIN_REQUIRED_MAJOR_VERSION,
             WGL_CONTEXT_MINOR_VERSION_ARB, gl::MIN_REQUIRED_MINOR_VERSION,
             WGL_CONTEXT_PROFILE_MASK_ARB,  WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
-            0,
+            WGL_CONTEXT_FLAGS_ARB,         m_Debug ? WGL_CONTEXT_DEBUG_BIT_ARB : 0,
+            0, 0
         };
 
         static auto wglCreateContextAttribsARB_ = [](){

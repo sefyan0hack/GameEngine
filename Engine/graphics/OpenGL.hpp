@@ -20,14 +20,14 @@ class ENGINE_EXPORT OpenGL
         auto config() const -> GL_CFG ;
         auto context() const -> GL_CTX ;
         auto is_valid() const -> bool ;
-        auto has_extension(const std::string& ext) const -> bool ;
+        auto extension_supported(const std::string& ext) const -> bool ;
         auto major_v() const -> GLint;
         auto minor_v() const -> GLint;
         auto set_viewport(int32_t x, int32_t y, int32_t width, int32_t height) -> void;
 
         auto vendor() -> std::string;
         auto renderer() -> std::string;
-        auto extensions() -> std::vector<std::string>;
+        auto extensions() -> std::string;
         static auto max_texture_units() -> GLint;
         static auto max_texture_size() -> GLint;
         static auto max_texture3d_size() -> GLint;
@@ -37,7 +37,8 @@ class ENGINE_EXPORT OpenGL
     private:
         auto create_opengl_context() -> GL_CTX;
         auto make_current_opengl()  -> bool ;
-        auto query_gl_extensions() const -> std::vector<std::string>;
+        auto query_gl_extensions() const -> std::string;
+        auto regester_debug_func() const -> void;
 
     private:
         const CWindow& m_Window;
@@ -45,8 +46,9 @@ class ENGINE_EXPORT OpenGL
         GL_CTX m_Context;
         GLint m_Major;
         GLint m_Minor;
+        bool m_Debug;
 
         std::string m_Vendor;
         std::string m_Renderer;
-        std::vector<std::string> m_Extensions;
+        std::string m_Extensions;
 };

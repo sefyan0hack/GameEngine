@@ -6,18 +6,20 @@
 #include <algorithm>
 #include <ranges>
 
+#define PACK(x, y) ((uint32_t(x) << 16) | (uint32_t(y) & 0xFFFF))
+
 OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     : m_Window(window)
     , m_Config(find_config(m_Window))
     , m_Context(create_opengl_context())
     , m_Major(0)
     , m_Minor(0)
+    , m_Debug(true)
 {
-    if (!make_current_opengl())
-        throw Exception("Failed to make context current.");
-    auto [w, h] = window.dims();
-
+    if (!make_current_opengl()) throw Exception("Failed to make context current.");
+    
     gl::load_opengl_functions();
+    auto [w, h] = window.dims();
 
     set_viewport(0, 0, w, h);
 
@@ -52,19 +54,27 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     gl::Enable(GL_CULL_FACE);
     gl::CullFace(GL_BACK);
 
+    #if defined(CORE_GL)
+    gl::Enable(GL_MULTISAMPLE);
+    #endif
+
+    regester_debug_func();
+
     logg::info(os::build_info());
-    logg::info("=================================================================================");
+    logg::info("===================================[GL Info]=========================================");
     logg::info("Platform Name: {}", os::name());
     logg::info("Platform Arch: {} ({}) bit", os::arch(), os::bits());
     logg::info("GL Version : {}.{}", m_Major, m_Minor);
     logg::info("GL Vendor : {}", m_Vendor);
     logg::info("GL Renderer : {}", m_Renderer);
-    logg::info("GL Exts : {} Extention", m_Extensions.size());
-    logg::info("GL Texture Units : {}", max_texture_units());
-    logg::info("GL Texture Size : {0} x {0}", max_texture_size());
-    logg::info("GL Texture3D Size : {0} x {0} x {0}", max_texture3d_size());
-    logg::info("GL TextureCubeMap Size : {0} x {0}", max_texturecubemap_size());
-    logg::info("=================================================================================");
+    logg::info("GL Debug : {}", m_Debug ? "true" : "false");
+    logg::info("===================================[GL Extention]=========================================");
+    logg::info(m_Extensions);
+    logg::info("===================================[Metrics]==========================================");
+    logg::info("Max Texture Units : {}", max_texture_units());
+    logg::info("Max Texture Size : {0} x {0}", max_texture_size());
+    logg::info("Max Texture3D Size : {0} x {0} x {0}", max_texture3d_size());
+    logg::info("Max TextureCubeMap Size : {0} x {0}", max_texturecubemap_size());
 }
 
 auto OpenGL::window() const -> const CWindow&
@@ -101,9 +111,9 @@ auto OpenGL::set_viewport(int32_t x, int32_t y, int32_t width, int32_t height) -
     gl::Viewport(x, y, width, height);
 }
 
-auto OpenGL::has_extension(const std::string &ext) const -> bool
+auto OpenGL::extension_supported(const std::string &ext) const -> bool
 {
-    return std::ranges::contains(m_Extensions, ext);
+    return m_Extensions.contains(ext);
 }
 
 auto OpenGL::vendor() -> std::string
@@ -116,7 +126,7 @@ auto OpenGL::renderer() -> std::string
     return m_Renderer;
 }
 
-auto OpenGL::extensions() -> std::vector<std::string>
+auto OpenGL::extensions() -> std::string
 {
     return m_Extensions;
 }
@@ -149,16 +159,81 @@ auto OpenGL::max_texturecubemap_size() -> GLint
     return r;
 }
 
-auto OpenGL::query_gl_extensions() const -> std::vector<std::string> 
+auto OpenGL::query_gl_extensions() const -> std::string
 {
     int32_t numExtensions = 0;
     gl::GetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
 
-    std::vector<std::string> exts;
+    std::string exts;
 
     for (int32_t i = 0; i < numExtensions; ++i) {
-        exts.push_back((const char*)gl::GetStringi(GL_EXTENSIONS, static_cast<uint32_t>(i)));
+        exts += std::format("{} ", (const char*)gl::GetStringi(GL_EXTENSIONS, i));
     }
 
+    exts.pop_back();
     return exts;
+}
+
+auto OpenGL::regester_debug_func() const -> void
+{
+    auto messgae_callback_func = +[](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei, const GLchar *message, const void *) -> void
+    {
+        //TODO : more robost handling of all possible source/type/severity (print name insted of ids)
+        logg::error("{} {} {} {} {}", source, type, id, severity, message);
+    };
+
+    // Enable Opengl debug
+    #if defined(CORE_GL)
+    if (PACK(m_Major, m_Minor) >= PACK(4,3) || extension_supported("GL_KHR_debug")) {
+
+        static auto glDebugMessageCallback_ = [](){
+            auto r = gl::GetProcAddress<PFNGLDEBUGMESSAGECALLBACKPROC>("glDebugMessageCallback");
+            if (r) return r;
+            else throw Exception("Failed to load glDebugMessageCallback. (maybe not supported): {}", GetLastError());
+        }();
+
+        static auto glDebugMessageControl_ = [](){
+            auto r = gl::GetProcAddress<PFNGLDEBUGMESSAGECONTROLPROC>("glDebugMessageControl");
+            if (r) return r;
+            else throw Exception("Failed to load glDebugMessageControl. (maybe not supported): {}", GetLastError());
+        }();
+
+        gl::Enable(GL_DEBUG_OUTPUT);
+        gl::Enable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+
+        glDebugMessageCallback_(messgae_callback_func, nullptr);
+        glDebugMessageControl_(
+            GL_DONT_CARE,
+            GL_DONT_CARE,
+            GL_DONT_CARE,
+            0, nullptr,
+            GL_TRUE
+        );
+
+    } else if(extension_supported("GL_ARB_debug_output")) {
+
+        static auto glDebugMessageCallbackARB_ = [](){
+            auto r = gl::GetProcAddress<PFNGLDEBUGMESSAGECALLBACKARBPROC>("glDebugMessageCallbackARB");
+            if (r) return r;
+            else throw Exception("Failed to load glDebugMessageCallbackARB. (maybe not supported): {}", GetLastError());
+        }();
+
+        static auto glDebugMessageControlARB_ = [](){
+            auto r = gl::GetProcAddress<PFNGLDEBUGMESSAGECONTROLARBPROC>("glDebugMessageControlARB");
+            if (r) return r;
+            else throw Exception("Failed to load glDebugMessageControlARB. (maybe not supported): {}", GetLastError());
+        }();
+
+        gl::Enable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
+        glDebugMessageCallbackARB_(messgae_callback_func, nullptr);
+
+        glDebugMessageControlARB_(
+            GL_DONT_CARE,
+            GL_DONT_CARE,
+            GL_DONT_CARE,
+            0, nullptr,
+            GL_TRUE
+        );
+    }
+    #endif
 }
