@@ -52,6 +52,7 @@ public:
     auto set_uniform(const std::string &name, const emath::mat2 &value) const -> void;
     auto set_uniform(const std::string &name, const emath::mat3 &value) const -> void;
     auto set_uniform(const std::string &name, const emath::mat4 &value) const -> void;
+    auto set_uniform(const std::string& name, const emath::mat4* value, size_t count) const -> void;
 
 private:
     auto get_program_info(GLenum what) const -> GLint;

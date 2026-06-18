@@ -421,6 +421,18 @@ auto ShaderProgram::set_uniform(const std::string& name, const emath::mat4 &valu
     }
 }
 
+auto ShaderProgram::set_uniform(const std::string& name, const emath::mat4* value, size_t count) const -> void
+{
+    try {
+        auto [loc, type, size] = m_Uniforms.at(name);
+        Expect(size >= count, "GLSL Uniform size:{} < count", size);
+
+        gl::UniformMatrix4fv(static_cast<GLint>(loc), count, GL_FALSE, &value[0][0][0]);
+    } catch(const std::exception& e) {
+        throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
+    }
+}
+
 auto ShaderProgram::glsl_type_to_string(GLenum type) -> const char*
 {
     switch (type)
