@@ -6,16 +6,16 @@
 
 #include "Window.hpp"
 #include "Camera.hpp"
-#include "GameObject.hpp"
-#include "SkyBox.hpp"
 #include "OpenGL.hpp"
 #include "Renderer.hpp"
 #include "Scene.hpp"
 #include "Shader.hpp"
-#include "ShaderProgram.hpp"
-#include "Mesh.hpp"
 #include "Material.hpp"
-#include "Texture.hpp"
+#include "Mesh.hpp"
+#include "ShaderProgram.hpp"
+
+#include <core/Log.hpp>
+
 
 OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx)
     : m_GApi(ctx)
@@ -32,6 +32,7 @@ auto OpenGLRenderer::render(const Scene& scene) const -> void
     auto camera = scene.main_camera();
 
     m_Program->use();
+    m_Stats.shaderBinds++;
     m_Program->set_uniform("View", camera.view());
     m_Program->set_uniform("Projection", camera.projection());
     m_Program->set_uniform("Eye", camera.position());
@@ -43,7 +44,9 @@ auto OpenGLRenderer::render(const Scene& scene) const -> void
             m_Program->set_uniform("Model", obj.model());
 
             obj.material()->bind(m_Program);
-            auto mesh = obj.mesh();
+
+            auto mesh = obj.mesh().get();
+            auto material = obj.material().get();
             auto v_count = mesh->vertex_size();
 
             gl::BindVertexArray(mesh->VAO);

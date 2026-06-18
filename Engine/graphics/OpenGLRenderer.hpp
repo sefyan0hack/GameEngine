@@ -16,6 +16,7 @@ public:
     auto set_mode(DrawMode mode) -> void override;
     auto clear_screen(uint32_t buffersmask)  -> void  override;
     auto extension_supported(const std::string& ext) -> bool override;
+    auto render_stats() const -> RenderStats override;
 
 private:
     const class OpenGL& m_GApi;

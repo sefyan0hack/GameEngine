@@ -173,3 +173,8 @@ auto APP::fps() const -> float
 {
     return m_Fps;
 }
+
+auto APP::render_stats() const -> RenderStats
+{
+    return Renderer->render_stats();
+}

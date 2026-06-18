@@ -33,6 +33,7 @@ public:
     
     auto run() -> void ;
     auto fps() const -> float;
+    auto render_stats() const -> RenderStats;
 
     static auto loop_body(void* ctx) -> void;
     static auto self(IGame* g = nullptr) -> APP&;
