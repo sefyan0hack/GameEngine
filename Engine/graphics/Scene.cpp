@@ -12,12 +12,12 @@ Scene::Scene()
     , m_MainCamera(m_Cameras[0])
 {}
 
-auto Scene::entities() -> std::span<GameObject>
+auto Scene::entities() -> EntitiesVector&
 {
     return m_Entities;
 }
 
-auto Scene::entities() const -> std::span<const GameObject>
+auto Scene::entities() const -> const EntitiesVector&
 {
     return m_Entities;
 }
@@ -29,15 +29,13 @@ auto Scene::clear() -> void
 
 auto Scene::operator<<(GameObject entity)-> Scene&
 {
-    m_Entities.emplace_back(std::move(entity));
-    sort();
+    m_Entities.emplace(std::move(entity));
     return *this;
 }
 
 auto Scene::operator<<(Camera cam)-> Scene&
 {
     m_Cameras.emplace_back(std::move(cam));
-    sort();
     return *this;
 }
 
@@ -49,16 +47,4 @@ auto Scene::main_camera() -> Camera&
 auto Scene::main_camera() const -> Camera&
 {
     return m_MainCamera;
-}
-
-auto Scene::sort() -> void
-{
-    std::ranges::sort(m_Entities,
-        [](const GameObject& a, const GameObject& b)
-        {
-            if (a.mesh() != b.mesh())
-                return a.mesh() < b.mesh();
-            return a.material() < b.material();
-        }
-);
 }

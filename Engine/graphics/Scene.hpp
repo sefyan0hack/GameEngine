@@ -3,11 +3,23 @@
 #include <span>
 
 #include <vector>
+#include <set>
 #include <format>
 
 #include "GameObject.hpp"
 #include "Camera.hpp"
 #include <engine_export.h>
+
+struct GameObjectCompare
+{
+  bool operator()(const GameObject& a, const GameObject& b) const noexcept
+  {
+    if (a.mesh() != b.mesh())
+      return a.mesh() < b.mesh();
+    return a.material() < b.material();
+  }
+};
+using EntitiesVector = std::multiset<GameObject, GameObjectCompare>;
 
 /// @brief  Scene has all the Entities to Render
 class ENGINE_EXPORT Scene
@@ -16,11 +28,10 @@ public:
     friend struct std::formatter<Scene>;
     Scene();    
 
-    auto entities() -> std::span<GameObject>;
-    auto entities() const -> std::span<const GameObject>;
+    auto entities() -> EntitiesVector&;
+    auto entities() const -> const EntitiesVector&;
 
     auto clear() -> void;
-    auto sort() -> void;
     auto main_camera() -> Camera&;
     auto main_camera() const -> Camera&;
 
@@ -31,7 +42,7 @@ auto operator<<(Camera entity) -> Scene&;
 private:
     std::vector<Camera> m_Cameras;
     class Camera& m_MainCamera;
-    std::vector<GameObject> m_Entities;
+    EntitiesVector m_Entities;
 };
 
 #ifdef __cpp_lib_formatters
