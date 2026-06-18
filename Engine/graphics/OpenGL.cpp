@@ -114,17 +114,17 @@ auto OpenGL::extension_supported(const std::string &ext) const -> bool
     return m_Extensions.contains(ext);
 }
 
-auto OpenGL::vendor() -> std::string
+auto OpenGL::vendor() const-> std::string
 {
     return m_Vendor;
 }
 
-auto OpenGL::renderer() -> std::string
+auto OpenGL::renderer() const-> std::string
 {
     return m_Renderer;
 }
 
-auto OpenGL::extensions() -> std::string
+auto OpenGL::extensions() const-> std::string
 {
     return m_Extensions;
 }

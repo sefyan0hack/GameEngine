@@ -1,4 +1,5 @@
 #pragma once
+#include <unordered_map>
 #include <vector>
 #include <string>
 
@@ -25,9 +26,9 @@ class ENGINE_EXPORT OpenGL
         auto minor_v() const -> GLint;
         auto set_viewport(int32_t x, int32_t y, int32_t width, int32_t height) -> void;
 
-        auto vendor() -> std::string;
-        auto renderer() -> std::string;
-        auto extensions() -> std::string;
+        auto vendor() const -> std::string;
+        auto renderer() const -> std::string;
+        auto extensions() const -> std::string;
         static auto max_texture_units() -> GLint;
         static auto max_texture_size() -> GLint;
         static auto max_texture3d_size() -> GLint;
