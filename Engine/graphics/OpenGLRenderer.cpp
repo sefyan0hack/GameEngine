@@ -53,14 +53,7 @@ auto OpenGLRenderer::render(const Scene& scene) const -> void
             auto v_count = mesh->vertex_size();
             m_Stats.vertex_cout += v_count;
 
-            
-            // Bind mesh only when it changes
-            if (currentMesh != mesh)
-            {
-                currentMesh = mesh;
-                gl::BindVertexArray(mesh->VAO);
-                m_Stats.vaoBinds++;
-            }
+            m_Program->set_uniform("Model", obj.model());
 
             // Bind material only when it changes
             if (currentMaterial != material)
@@ -70,7 +63,14 @@ auto OpenGLRenderer::render(const Scene& scene) const -> void
                 m_Stats.materialBinds++;
             }
 
-            m_Program->set_uniform("Model", obj.model());
+            // Bind mesh only when it changes
+            if (currentMesh != mesh)
+            {
+                currentMesh = mesh;
+                gl::BindVertexArray(currentMesh->VAO);
+                m_Stats.vaoBinds++;
+            }
+
 
             switch(m_DrawMode)
             {
