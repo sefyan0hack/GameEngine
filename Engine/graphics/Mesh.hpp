@@ -55,7 +55,6 @@ public:
 
   public:
     std::vector<VetexData> m_Vertices;
-    std::vector<Attribute> m_Attribs;
     GLuint VAO, VBO;
 };
 

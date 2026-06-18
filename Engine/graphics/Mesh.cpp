@@ -97,7 +97,6 @@ namespace {
 
 Mesh::Mesh(const std::vector<Vertex> &vertices)
     : m_Vertices(vertices)
-    , m_Attribs({position, normals, texCoords})
     , VAO(0)
     , VBO(0)
 {
@@ -110,14 +109,13 @@ Mesh::Mesh(const std::vector<Vertex> &vertices)
     gl::BufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(m_Vertices.size() * sizeof(Mesh::VetexData)), m_Vertices.data(), GL_STATIC_DRAW);
 
     GLuint index = 0;
-    for(const auto& attrib : m_Attribs){
-        set_attribute(index++, attrib);
+    for(auto a : {position, normals, texCoords}){
+        set_attribute(index++, a);
     }
 }
 
 Mesh::Mesh(Mesh &&other) noexcept
     : m_Vertices(std::move(other.m_Vertices))
-    , m_Attribs(std::move(other.m_Attribs))
     , VAO(other.VAO)
     , VBO(other.VBO)
 {
@@ -132,7 +130,6 @@ auto Mesh::operator=(Mesh &&other) noexcept -> Mesh &
         gl::DeleteVertexArrays(1, &VAO);
 
         m_Vertices = std::move(other.m_Vertices);
-        m_Attribs = std::move(other.m_Attribs);
 
         VAO = other.VAO;
         VBO = other.VBO;
