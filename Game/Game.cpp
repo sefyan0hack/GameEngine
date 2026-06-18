@@ -47,6 +47,11 @@ public:
         app.UiText.draw(std::format("FPS: {:.2f}", app.fps()));
         app.UiText.draw(std::format("Memory: {}/{} MB", os::memory_usage(), os::memory_peak()));
         app.UiText.draw(std::format("Threads: {}", std::thread::hardware_concurrency()));
+        app.UiText.draw(std::format("Progame Binds  : {}", app.render_stats().shaderBinds));
+        app.UiText.draw(std::format("Material Binds : {}", app.render_stats().materialBinds));
+        app.UiText.draw(std::format("VAO Binds      : {}", app.render_stats().vaoBinds));
+        app.UiText.draw(std::format("Draw Calls     : {}", app.render_stats().drawCalls));
+        app.UiText.draw(std::format("Vertices       : {}", app.render_stats().vertex_cout));
 
         camera_mouvment(delta);
     }

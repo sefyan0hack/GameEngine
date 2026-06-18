@@ -3,8 +3,6 @@
 #include <core/Log.hpp>
 #include <core/SysInfo.hpp>
 #include <core/Exception.hpp>
-#include <algorithm>
-#include <ranges>
 
 #define PACK(x, y) ((uint32_t(x) << 16) | (uint32_t(y) & 0xFFFF))
 
@@ -14,10 +12,10 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     , m_Context(create_opengl_context())
     , m_Major(0)
     , m_Minor(0)
-    , m_Debug(true)
+    , m_Debug(false)
 {
     if (!make_current_opengl()) throw Exception("Failed to make context current.");
-    
+
     gl::load_opengl_functions();
     auto [w, h] = window.dims();
 
@@ -176,14 +174,15 @@ auto OpenGL::query_gl_extensions() const -> std::string
 
 auto OpenGL::regester_debug_func() const -> void
 {
+    
+    // Enable Opengl debug
+    #if defined(CORE_GL)
+
     auto messgae_callback_func = +[](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei, const GLchar *message, const void *) -> void
     {
-        //TODO : more robost handling of all possible source/type/severity (print name insted of ids)
         logg::error("{} {} {} {} {}", source, type, id, severity, message);
     };
 
-    // Enable Opengl debug
-    #if defined(CORE_GL)
     if (PACK(m_Major, m_Minor) >= PACK(4,3) || extension_supported("GL_KHR_debug")) {
 
         static auto glDebugMessageCallback_ = [](){
@@ -192,23 +191,10 @@ auto OpenGL::regester_debug_func() const -> void
             else throw Exception("Failed to load glDebugMessageCallback. (maybe not supported)");
         }();
 
-        static auto glDebugMessageControl_ = [](){
-            auto r = gl::GetProcAddress<PFNGLDEBUGMESSAGECONTROLPROC>("glDebugMessageControl");
-            if (r) return r;
-            else throw Exception("Failed to load glDebugMessageControl. (maybe not supported)");
-        }();
-
         gl::Enable(GL_DEBUG_OUTPUT);
         gl::Enable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
         glDebugMessageCallback_(messgae_callback_func, nullptr);
-        glDebugMessageControl_(
-            GL_DONT_CARE,
-            GL_DONT_CARE,
-            GL_DONT_CARE,
-            0, nullptr,
-            GL_TRUE
-        );
 
     } else if(extension_supported("GL_ARB_debug_output")) {
 
@@ -218,22 +204,9 @@ auto OpenGL::regester_debug_func() const -> void
             else throw Exception("Failed to load glDebugMessageCallbackARB. (maybe not supported)");
         }();
 
-        static auto glDebugMessageControlARB_ = [](){
-            auto r = gl::GetProcAddress<PFNGLDEBUGMESSAGECONTROLARBPROC>("glDebugMessageControlARB");
-            if (r) return r;
-            else throw Exception("Failed to load glDebugMessageControlARB. (maybe not supported)");
-        }();
-
         gl::Enable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
         glDebugMessageCallbackARB_(messgae_callback_func, nullptr);
 
-        glDebugMessageControlARB_(
-            GL_DONT_CARE,
-            GL_DONT_CARE,
-            GL_DONT_CARE,
-            0, nullptr,
-            GL_TRUE
-        );
     }
     #endif
 }

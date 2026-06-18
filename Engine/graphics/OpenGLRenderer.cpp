@@ -29,6 +29,8 @@ OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx)
 
 auto OpenGLRenderer::render(const Scene& scene) const -> void
 {
+    m_Stats.reset();
+
     auto camera = scene.main_camera();
 
     m_Program->use();
@@ -38,31 +40,52 @@ auto OpenGLRenderer::render(const Scene& scene) const -> void
     m_Program->set_uniform("Eye", camera.position());
 
     //Drwaing
+    Mesh* currentMesh = nullptr;
+    Material* currentMaterial = nullptr;
+
     std::for_each(
         scene.entities().begin(), scene.entities().end(),
         [&](const auto& obj){
-            m_Program->set_uniform("Model", obj.model());
-
-            obj.material()->bind(m_Program);
 
             auto mesh = obj.mesh().get();
             auto material = obj.material().get();
-            auto v_count = mesh->vertex_size();
 
-            gl::BindVertexArray(mesh->VAO);
+            auto v_count = mesh->vertex_size();
+            m_Stats.vertex_cout += v_count;
+
+            
+            // Bind mesh only when it changes
+            if (currentMesh != mesh)
+            {
+                currentMesh = mesh;
+                gl::BindVertexArray(mesh->VAO);
+                m_Stats.vaoBinds++;
+            }
+
+            // Bind material only when it changes
+            if (currentMaterial != material)
+            {
+                currentMaterial = material;
+                currentMaterial->bind(m_Program);
+                m_Stats.materialBinds++;
+            }
+
+            m_Program->set_uniform("Model", obj.model());
 
             switch(m_DrawMode)
             {
                 case DrawMode::Triangles:
                     gl::DrawArrays(GL_TRIANGLES, 0, v_count);
+                    m_Stats.drawCalls++;
                     break;
                 case DrawMode::Line:
                     gl::DrawArrays(GL_LINES, 0, (v_count / 3) * 6);
-                break;
+                    m_Stats.drawCalls++;
+                    break;
                 case DrawMode::Point:
                     gl::DrawArrays(GL_POINTS, 0, v_count);
+                    m_Stats.drawCalls++;
                     break;
-                default: std::unreachable();
             }
         }
     );
@@ -92,4 +115,9 @@ auto OpenGLRenderer::clear_screen(uint32_t buffersmask)  -> void
 auto OpenGLRenderer::extension_supported(const std::string &ext) -> bool
 {
     return m_GApi.extension_supported(ext);
+}
+
+auto OpenGLRenderer::render_stats() const -> RenderStats
+{
+    return m_Stats;
 }

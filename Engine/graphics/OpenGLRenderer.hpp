@@ -24,4 +24,5 @@ private:
     std::shared_ptr<class Shader> m_Vert, m_Frag;
     std::shared_ptr<class ShaderProgram> m_Program;
     DrawMode m_DrawMode;
+    mutable RenderStats m_Stats;
 };

@@ -1,8 +1,7 @@
 #pragma once
 
-#include <memory>
 #include <span>
-#include <string>
+
 #include <vector>
 #include <format>
 
@@ -21,6 +20,7 @@ public:
     auto entities() const -> std::span<const GameObject>;
 
     auto clear() -> void;
+    auto sort() -> void;
     auto main_camera() -> Camera&;
     auto main_camera() const -> Camera&;
 
@@ -32,7 +32,6 @@ private:
     std::vector<Camera> m_Cameras;
     class Camera& m_MainCamera;
     std::vector<GameObject> m_Entities;
-
 };
 
 #ifdef __cpp_lib_formatters
