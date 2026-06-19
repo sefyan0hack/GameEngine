@@ -4,7 +4,6 @@
 #include <core/res.hpp>
 #include <core/Utils.hpp>
 
-#include "OpenGL.hpp"
 #include "Shader.hpp"
 
 #include <ranges>
@@ -14,11 +13,18 @@ Shader::Shader(const char* shader, GLenum type)
     m_Id = gl::CreateShader(type);
     m_Type = type;
 
-    auto glsl_h = glsl_header();
-    auto glsl_l = glsl_lib();
-    auto src = res::get(shader);
+    auto glsl_header = std::format(
+        "#version {}{}0 {}\n"
+        "precision {} float;\n",
+        gl::MIN_REQUIRED_MAJOR_VERSION, gl::MIN_REQUIRED_MINOR_VERSION, 
+        gl::api == gl::API::ES ? "es" : "core",
+        gl::api == gl::API::ES ? "mediump" : "highp"
+    );
 
-    auto srcs = {glsl_h.c_str(), glsl_l.c_str(), src.data()};
+    auto glsl_l = res::get("res/Shaders/common.glsl");
+    auto glsl_src = res::get(shader);
+
+    auto srcs = {glsl_header.c_str(), glsl_l.data(), glsl_src.data()};
     
     set_sources(srcs);
     compile();
@@ -137,44 +143,4 @@ auto Shader::new_vertex(const std::string& vert) -> std::shared_ptr<Shader>
 auto Shader::new_fragment(const std::string& frag) -> std::shared_ptr<Shader>
 {
   return std::make_shared<Shader>(frag, GL_FRAGMENT_SHADER);
-}
-
-auto Shader::glsl_header() -> std::string
-{
-    return std::format(
-        "#version {}{}0 {}\n"
-        "precision {} float;\n",
-        gl::MIN_REQUIRED_MAJOR_VERSION, gl::MIN_REQUIRED_MINOR_VERSION, 
-        gl::api == gl::API::ES ? "es" : "core",
-        gl::api == gl::API::ES ? "mediump" : "highp"
-    );
-}
-
-auto Shader::glsl_lib() -> std::string
-{
-    return
-R"(
-//Luminance (Grayscale conversion)
-float luminance(vec3 color) {
-    return dot(color, vec3(0.2126, 0.7152, 0.0722));
-}
-// UV Tiling and Offset
-vec2 scaleOffset(vec2 uv, vec2 scale, vec2 offset) {
-    return uv * scale + offset;
-}
-// Saturation
-vec3 saturate(vec3 rgb, float adjustment) {
-    const vec3 W = vec3(0.2125, 0.7154, 0.0721);
-    vec3 intensity = vec3(dot(rgb, W));
-    return mix(intensity, rgb, adjustment);
-}
-// checker board pattren
-vec3 checkerboard(vec2 u)
-{
-    vec2 f = u - floor(u);
-    return ((f.x < 0.5)) ^^ (f.y < 0.5) ? vec3(1, 0, 0) : vec3(0, 0, 1);
-}
-
-#line 1 // The #line statement is there so that compiler error messages give the correct line numbers
-)";
 }

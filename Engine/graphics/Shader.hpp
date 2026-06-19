@@ -5,7 +5,6 @@
 
 #include <format>
 #include <string>
-#include <vector>
 #include <memory>
 #include <span>
 
@@ -29,7 +28,7 @@ class ENGINE_EXPORT Shader
   public:
     auto id() const                -> GLuint ;
     auto type() const              -> GLenum ;
-    auto type_name() const          -> const char* ;
+    auto type_name() const         -> const char* ;
 
     auto set_sources(const std::span<const char* const> srcs) const -> void;
     auto compile()                           -> void;
@@ -38,9 +37,6 @@ class ENGINE_EXPORT Shader
 
     static auto new_vertex(const std::string& vert) -> std::shared_ptr<Shader>;
     static auto new_fragment(const std::string& frag) -> std::shared_ptr<Shader>;
-
-    static auto glsl_header() -> std::string;
-    static auto glsl_lib() -> std::string;
 
   private:
     GLuint m_Id;
