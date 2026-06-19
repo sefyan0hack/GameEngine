@@ -92,14 +92,10 @@ auto OpenGL::create_opengl_context() -> GL_CTX
 
         int format{};
         UINT formats{};
-
-        static auto wglChoosePixelFormatARB_ = [](){
-            auto r = reinterpret_cast<PFNWGLCHOOSEPIXELFORMATARBPROC>(wglGetProcAddress("wglChoosePixelFormatARB"));
-            if (r) return r;
-            else throw Exception("Failed to load wglChoosePixelFormatARB. (maybe not supported): {}", GetLastError());
-        }();
-
-        if (!wglChoosePixelFormatARB_(surface, attribs, nullptr, 1, &format, &formats) || formats == 0)
+        
+        BRING_GL_EXT_FUNCTION(wglChoosePixelFormatARB);
+    
+        if (!wglChoosePixelFormatARB_ext(surface, attribs, nullptr, 1, &format, &formats) || formats == 0)
             throw Exception("OpenGL does not support required pixel format.");
 
         PIXELFORMATDESCRIPTOR desc2 = { .nSize = sizeof(desc2) };
@@ -122,13 +118,9 @@ auto OpenGL::create_opengl_context() -> GL_CTX
             0, 0
         };
 
-        static auto wglCreateContextAttribsARB_ = [](){
-            auto r = reinterpret_cast<PFNWGLCREATECONTEXTATTRIBSARBPROC>(wglGetProcAddress("wglCreateContextAttribsARB"));
-            if (r) return r;
-            else throw Exception("Failed to load wglCreateContextAttribsARB. (maybe not supported): {}", GetLastError());
-        }();
+        BRING_GL_EXT_FUNCTION(wglCreateContextAttribsARB);
 
-        auto modern_context = wglCreateContextAttribsARB_(surface, nullptr, attribs);
+        auto modern_context = wglCreateContextAttribsARB_ext(surface, nullptr, attribs);
 
         if(!modern_context){
             throw Exception("Cannot create OpenGL {}.{} not supported?", gl::MIN_REQUIRED_MAJOR_VERSION, gl::MIN_REQUIRED_MINOR_VERSION);

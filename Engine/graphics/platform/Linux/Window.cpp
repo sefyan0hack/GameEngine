@@ -205,16 +205,8 @@ auto CWindow::set_title(std::string  title) -> void
 
 auto CWindow::set_vsync(bool state) -> void
 {
-	static auto SwapIntervalEXT_ = [](){
-        auto r = gl::GetProcAddress<PFNGLXSWAPINTERVALEXTPROC>("glXSwapIntervalEXT");
-        if (r) {
-            return r;
-        } else {
-            throw Exception("Failed to load glXSwapIntervalEXT. : {}", strerror(errno));
-        }
-    }();
-
-	SwapIntervalEXT_(m_Display, m_Handle, state);
+	BRING_GL_EXT_FUNCTION(SwapIntervalEXT);
+	SwapIntervalEXT_ext(m_Display, m_Handle, state);
 }
 
 auto CWindow::message_box(const char* title, const char* body) -> bool

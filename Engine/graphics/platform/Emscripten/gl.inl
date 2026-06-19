@@ -1,3 +1,4 @@
+#define GL_GLES_PROTOTYPES
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
 #include <emscripten/html5_webgl.h>
@@ -6,7 +7,7 @@
 
 using H_WIN     = const char*;
 using H_SRF     = const char*;
-using H_DSP     = uint32_t;
+using H_DSP     = int;
 using GL_CTX    = EMSCRIPTEN_WEBGL_CONTEXT_HANDLE;
 using GL_CFG    = int;
 

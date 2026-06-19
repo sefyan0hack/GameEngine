@@ -1,9 +1,10 @@
+#define WGL_WGLEXT_PROTOTYPES
 #include <GL/glcorearb.h>
 #include <GL/wglext.h>
 
 using H_WIN     = HWND;
 using H_SRF     = HDC;
-using H_DSP     = uint32_t;
+using H_DSP     = int;
 using GL_CTX    = HGLRC;
 using GL_CFG    = int;
 

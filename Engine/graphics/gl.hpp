@@ -1,9 +1,16 @@
 #pragma once
+#define GL_GLEXT_PROTOTYPES
 
 #include <cstdint>
 #include <engine_export.h>
-#define GL_GLEXT_PROTOTYPES
 #include "gl.inl"
+
+#define BRING_GL_EXT_FUNCTION(func)\
+static auto func##_ext = [](){\
+    auto r = gl::GetProcAddress<decltype(&func)>(#func);\
+    if (r) return r;\
+    else throw Exception("Failed to load "#func". (maybe not supported)");\
+}()
 
 namespace gl {
 
@@ -127,5 +134,3 @@ namespace gl {
     ENGINE_EXPORT auto get_proc_address(const char* name) -> void*;
     ENGINE_EXPORT auto load_opengl_functions() -> void;
 } // namespace gl
-
-#undef GL_GLEXT_PROTOTYPES
