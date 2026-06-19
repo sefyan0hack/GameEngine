@@ -4,29 +4,20 @@ in vec2 Uv;
 
 out vec4 FragColor;
 
-uniform vec3 Eye;
 uniform sampler2D uDiffuseMap;
-uniform samplerCube uSkyboxMap;
 
-void main() {
-    float reflectivity = 0.4;
-    float ratio = 1.00 / 1.46;
+const vec3 AmbientColor = vec3(0.2);
+const vec3 LightDir =  normalize(vec3(0.0, -0.5, 0.0)); // normalized, points FROM light
 
+void main()
+{
     vec4 baseColor = texture(uDiffuseMap, Uv);
 
-    vec3 viewDir = normalize(WorldPos - Eye);
+    vec3 N = normalize(Normal);
 
-    vec3 reflVec = reflect(viewDir, normalize(Normal));
-    vec4 envReflectColor = texture(uSkyboxMap, reflVec);
+    float diff = max(dot(N, -LightDir), 0.0);
 
-    vec3 refrVec = refract(viewDir, normalize(Normal), ratio);
-    vec4 envRefractColor = texture(uSkyboxMap, refrVec);
+    vec3 lighting = AmbientColor + vec3(diff);
 
-    float cosTheta = clamp(dot(-viewDir, normalize(Normal)), 0.0, 1.0);
-
-    float fresnel = reflectivity + (1.0 - reflectivity) * pow(1.0 - cosTheta, 5.0);
-
-    vec4 envColor = mix(envRefractColor, envReflectColor, fresnel);
-
-    FragColor = mix(baseColor, envColor, reflectivity);
+    FragColor = vec4(baseColor.rgb * lighting, baseColor.a);
 }

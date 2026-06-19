@@ -19,13 +19,11 @@ Material::Material(std::shared_ptr<Texture> diffuse)
 
 auto Material::bind(std::shared_ptr<ShaderProgram> program) -> void
 {
-    int skybox = 0, diffuse = 1;
+    int diffuse = 0;
 
-    gl::ActiveTexture(GL_TEXTURE0 + skybox);
     gl::ActiveTexture(GL_TEXTURE0 + diffuse);
 
     m_Diffuse->bind();
-    program->set_uniform("uSkyboxMap", skybox);
     program->set_uniform("uDiffuseMap", diffuse);
 }
 

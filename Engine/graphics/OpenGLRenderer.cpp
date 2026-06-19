@@ -37,7 +37,6 @@ auto OpenGLRenderer::render(const Scene& scene) const -> void
     m_Stats.shaderBinds++;
     m_Program->set_uniform("View", camera.view());
     m_Program->set_uniform("Projection", camera.projection());
-    m_Program->set_uniform("Eye", camera.position());
 
     //Drwaing
     Mesh* currentMesh = nullptr;
