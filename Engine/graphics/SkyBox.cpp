@@ -31,7 +31,6 @@ auto SkyBox::render(const Camera& cam) -> void
   GLboolean old_depth_mask{};
   gl::GetBooleanv(GL_DEPTH_WRITEMASK, &old_depth_mask);
 
-
   gl::DepthFunc(GL_LEQUAL);
   gl::DepthMask(GL_FALSE);
 

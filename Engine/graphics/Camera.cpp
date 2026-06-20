@@ -10,7 +10,7 @@
 Camera::Camera() noexcept
     : m_Yaw(-90.0f), m_Pitch(0.0f)
     , m_FOV(emath::to_rad(45.0f))
-    , m_Near(0.1f), m_Far(1000.0f)
+    , m_Near(0.1f), m_Far(100.0f)
     , m_AspectRatio(16.0f / 9.0f)
     , m_Forward(0.0f, 0.0f, -1.0f)
     , m_Up(WORLD_UP)
