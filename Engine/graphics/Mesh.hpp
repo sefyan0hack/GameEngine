@@ -58,8 +58,7 @@ public:
     GLuint VAO, VBO;
 };
 
-ENGINE_EXPORT auto obj_to_mesh(const char* filename) -> std::vector<Vertex>;
-ENGINE_EXPORT auto obj_to_mesh(std::span<const char> src) -> std::vector<Vertex>;
+ENGINE_EXPORT auto obj_to_mesh(const char* res_name) -> std::vector<Vertex>;
 
 #ifdef __cpp_lib_formatters
 // custom Mesh Format
