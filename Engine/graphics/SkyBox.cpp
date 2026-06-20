@@ -26,14 +26,19 @@ auto SkyBox::set_texture(std::shared_ptr<TextureCubeMap> texture) -> void
 
 auto SkyBox::render(const Camera& cam) -> void
 {
-  GLint old_depth{};
-  gl::GetIntegerv(GL_DEPTH_FUNC, &old_depth);
+  GLint old_depth_func{};
+  gl::GetIntegerv(GL_DEPTH_FUNC, &old_depth_func);
+  GLboolean old_depth_mask{};
+  gl::GetBooleanv(GL_DEPTH_WRITEMASK, &old_depth_mask);
+
 
   gl::DepthFunc(GL_LEQUAL);
+  gl::DepthMask(GL_FALSE);
 
   m_Program.use();
-  m_Program.set_uniform("View", emath::mat4(emath::mat3(cam.view())));
-  m_Program.set_uniform("Projection", cam.perspective());
+
+  m_Program.set_uniform("u_InvProjection", cam.perspective().inverse());
+  m_Program.set_uniform("u_InvViewRot", emath::mat3(cam.view()).transpose());
 
   int skybox = 0;
   gl::ActiveTexture(GL_TEXTURE0 + skybox);
@@ -43,5 +48,6 @@ auto SkyBox::render(const Camera& cam) -> void
   gl::BindVertexArray(VAO);
   gl::DrawArrays(GL_TRIANGLES, 0, 3);
 
-  gl::DepthFunc(old_depth);
+  gl::DepthFunc(old_depth_func);
+  gl::DepthMask(old_depth_mask);
 }
