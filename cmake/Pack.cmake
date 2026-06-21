@@ -1,7 +1,7 @@
 function(target_pack target)
     if(EMSCRIPTEN)
         set_target_properties(${target} PROPERTIES SUFFIX ".html")
-        set(SITE_DIR "${CMAKE_BINARY_DIR}/site")
+        set(SITE_DIR "${CMAKE_BINARY_DIR}/site/${CMAKE_BUILD_TYPE}")
 
         add_custom_command(
             TARGET ${target}
