@@ -76,9 +76,17 @@ target_link_libraries(Engine
             -sDISABLE_EXCEPTION_THROWING=0
             -sDISABLE_EXCEPTION_CATCHING=0
 
-            -sEXCEPTION_STACK_TRACES=1
-
 	        -sSINGLE_FILE=1
+
+            $<$<CONFIG:Debug>:
+                -sEXCEPTION_STACK_TRACES=1
+                -sSTACK_OVERFLOW_CHECK=2
+                -sASSERTIONS=2
+                -sSAFE_HEAP=1
+                -sGL_ASSERTIONS=1
+                -sGL_DEBUG=1
+                -gsource-map
+            >
         >
 )
 
