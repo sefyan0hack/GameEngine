@@ -1,8 +1,8 @@
+#include "Texture.hpp"
+
 #include <core/Log.hpp>
 #include <core/Exception.hpp>
 #include <core/res.hpp>
-#include "Texture.hpp"
-#include "OpenGL.hpp"
 
 namespace {
 constexpr auto to_string(GLenum type) -> const char*

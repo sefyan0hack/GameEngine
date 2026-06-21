@@ -1,14 +1,14 @@
 #pragma once
-#include <string>
-#include <format>
-#include <vector>
-#include <array>
-#include <engine_export.h>
 
 #include "Image.hpp"
 #include "gl.hpp"
 
-#include <cmrc/cmrc.hpp>
+#include <string>
+#include <format>
+#include <vector>
+#include <array>
+
+#include <engine_export.h>
 
 class ENGINE_EXPORT Texture
 {
