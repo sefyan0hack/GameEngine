@@ -1,4 +1,4 @@
-#define GL_GLES_PROTOTYPES
+#define GL_GLES_PROTOTYPES 1
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
 #include <emscripten/html5_webgl.h>
