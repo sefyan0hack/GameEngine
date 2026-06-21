@@ -19,10 +19,10 @@ const vec2 uvs[4] = vec2[](
     vec2(1.0, 0.0)  // TR
 );
 
-uint width  = (u_ScreenSize >> 0u)  & 65535u;
-uint height = (u_ScreenSize >> 16u) & 65535u;
-
 void main() {
+    float width  = float((u_ScreenSize >> 0u)  & 65535u);
+    float height = float((u_ScreenSize >> 16u) & 65535u);
+
     vec2 pos = positions[gl_VertexID];
     vec2 uv  = uvs[gl_VertexID];
 
