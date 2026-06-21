@@ -22,19 +22,30 @@ jobs:
           shell: bash
           run: sudo apt-get install -y libx11-dev libgl-dev
 
-        - name: Build
+        - name: Setup Pages
+          uses: actions/configure-pages@v5
+
+          # Build Release in site/Release
+        - name: Build Release
           uses: ./.github/actions/Web-build
           with:
             build_type: "Release"
-            cmake_flags: -DCMAKE_EXE_LINKER_FLAGS="-sGL_DEBUG=1"
-
-        - name: Setup Pages
-          uses: actions/configure-pages@v5
 
         - name: Upload to Pages
           uses: actions/upload-pages-artifact@v3
           with:
-            path: build/site
+            path: build/site/Release
+
+          # Build Debug in site/Debug
+        - name: Build
+          uses: ./.github/actions/Web-build
+          with:
+            build_type: "Debug"
+
+        - name: Upload to Pages
+          uses: actions/upload-pages-artifact@v3
+          with:
+            path: build/site/Debug
 
         - name: Deploy to GitHub Pages
           id: deployment
