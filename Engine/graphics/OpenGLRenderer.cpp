@@ -1,8 +1,7 @@
 #include "OpenGLRenderer.hpp"
 
 #include <algorithm>
-#include <span>
-#include <utility>
+#include <ctime>
 
 #include "Window.hpp"
 #include "Camera.hpp"

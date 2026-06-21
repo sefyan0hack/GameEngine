@@ -49,7 +49,7 @@ public:
         app.UiText.draw(std::format("Material Binds : {}", app.render_stats().materialBinds));
         app.UiText.draw(std::format("VAO Binds      : {}", app.render_stats().vaoBinds));
         app.UiText.draw(std::format("Draw Calls     : {}", app.render_stats().drawCalls));
-        app.UiText.draw(std::format("Vertices       : {}", app.render_stats().vertex_cout));
+        app.UiText.draw(std::format("Vertices       : {} ({} tri)", app.render_stats().vertex_cout, app.render_stats().vertex_cout/3));
 
         camera_mouvment(delta);
     }

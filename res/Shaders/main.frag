@@ -11,9 +11,12 @@ const vec3 LightDir =  normalize(vec3(0.0, -0.5, 0.0)); // normalized, points FR
 
 void main()
 {
-    vec4 baseColor = texture(uDiffuseMap, Uv);
+    vec3 dx = dFdx(WorldPos);
+    vec3 dy = dFdy(WorldPos);
+    vec3 normal = normalize(cross(dx, dy));
+    vec3 N = normalize(normal);
 
-    vec3 N = normalize(Normal);
+    vec4 baseColor = texture(uDiffuseMap, Uv);
 
     float diff = max(dot(N, -LightDir), 0.0);
 
