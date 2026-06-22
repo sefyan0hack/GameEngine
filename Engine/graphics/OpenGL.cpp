@@ -54,6 +54,7 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
 
     #if defined(CORE_GL)
     gl::Enable(GL_MULTISAMPLE);
+    gl::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     #endif
 
     if(m_Debug) regester_debug_func();
