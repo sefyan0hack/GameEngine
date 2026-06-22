@@ -77,6 +77,7 @@ target_link_libraries(Engine
             -sDISABLE_EXCEPTION_CATCHING=0
 
 	        -sSINGLE_FILE=1
+            -sSINGLE_FILE_BINARY_ENCODE=0
 
             $<$<CONFIG:Debug>:
                 -sEXCEPTION_STACK_TRACES=1
