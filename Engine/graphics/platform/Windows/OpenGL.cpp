@@ -20,7 +20,7 @@ auto OpenGL::make_current_opengl()  -> bool
 {
     GET_GLEXT_FUNCTION_NO_THROW(wglMakeContextCurrentARB);
     if(extension_supported("WGL_ARB_make_current_read") && wglMakeContextCurrentARB_ext){
-        wglMakeContextCurrentARB_ext(m_Window.surface(), m_Window.surface(), m_Context);
+        return wglMakeContextCurrentARB_ext(m_Window.surface(), m_Window.surface(), m_Context);
     } else {
         return wglMakeCurrent(m_Window.surface(), m_Context);
     }
