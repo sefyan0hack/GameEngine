@@ -1,10 +1,14 @@
 #include "OpenGL.hpp"
 #include "Window.hpp"
+#include "gl.hpp"
 
 #include <core/Log.hpp>
 #include <core/Exception.hpp>
 
-#include <cstring>
+#undef min
+#undef max
+
+extern const TCHAR* window_class_name();
 
 OpenGL::~OpenGL()
 {
@@ -14,11 +18,34 @@ OpenGL::~OpenGL()
 
 auto OpenGL::make_current_opengl()  -> bool
 {
-    return wglMakeCurrent(m_Window.surface(), m_Context);
+    GET_GLEXT_FUNCTION_NO_THROW(wglMakeContextCurrentARB);
+    if(extension_supported("WGL_ARB_make_current_read") && wglMakeContextCurrentARB_ext){
+        wglMakeContextCurrentARB_ext(m_Window.surface(), m_Window.surface(), m_Context);
+    } else {
+        return wglMakeCurrent(m_Window.surface(), m_Context);
+    }
 }
 
 auto OpenGL::find_config([[maybe_unused]] const CWindow& window) -> GL_CFG
 {
+    return 0;
+}
+
+auto OpenGL::create_opengl_context() -> GL_CTX
+{
+    //TODO: destroy dummy window + cleanups
+    auto dummy_window = CreateWindow(
+        window_class_name(),
+        "dummy",
+        WS_OVERLAPPEDWINDOW,
+        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+        nullptr, nullptr,
+        GetModuleHandleA( nullptr ),
+        nullptr
+    );
+
+    auto dummy_surface = GetDC(dummy_window);
+
     PIXELFORMATDESCRIPTOR pfd = {
         sizeof(PIXELFORMATDESCRIPTOR),
         1,
@@ -26,109 +53,138 @@ auto OpenGL::find_config([[maybe_unused]] const CWindow& window) -> GL_CFG
         PFD_TYPE_RGBA,
         static_cast<BYTE>(8 * 3),  // RGB bits
         static_cast<BYTE>(8),         // Alpha bits
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        static_cast<BYTE>(24),   // Depth buffer
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        static_cast<BYTE>(24),// Depth buffer
         static_cast<BYTE>(8), // Stencil buffer
         0,
         PFD_MAIN_PLANE,
         0, 0, 0
     };
 
-    auto pixel_format = ChoosePixelFormat(window.surface(), &pfd);
+    auto pixel_format = ChoosePixelFormat(dummy_surface, &pfd);
 
-    if (!pixel_format) {
+    if (!pixel_format)
         throw Exception("Failed to find a suitable pixel format. : {}", GetLastError());
-    }
 
-    return pixel_format;
-}
-
-auto OpenGL::create_opengl_context() -> GL_CTX
-{
-    auto surface = m_Window.surface();
-
-    PIXELFORMATDESCRIPTOR desc = { .nSize = sizeof(desc) };
-
-    if(!DescribePixelFormat(surface, m_Config, sizeof(desc), &desc))
+    if(!DescribePixelFormat(dummy_surface, pixel_format, sizeof(pfd), &pfd))
         throw Exception("Failed Describe pixel format. : {}", GetLastError());
 
-    if (!SetPixelFormat(surface, m_Config, &desc))
+    if (!SetPixelFormat(dummy_surface, pixel_format, &pfd))
         throw Exception("Failed to set the pixel format. : {}", GetLastError());
 
     GL_CTX dummy_context = nullptr;
 
-    dummy_context = wglCreateContext(surface);
+    dummy_context = wglCreateContext(dummy_surface);
     if (!dummy_context) {
         throw Exception("Failed to create a dummy OpenGL rendering context. : {}", GetLastError());
     }
 
-    wglMakeCurrent(surface, dummy_context);
+    wglMakeCurrent(dummy_surface, dummy_context);
 
+    std::string extensions;
     {
-    // extension_supported shuld work caus gl ctx it valid here
-        bool is_WGL_ARB_framebuffer_sRGB = extension_supported("WGL_ARB_framebuffer_sRGB");
-        bool is_WGL_ARB_multisample = extension_supported("WGL_ARB_multisample");
+        auto glGetIntegerv_ext = reinterpret_cast<decltype(&glGetIntegerv)>(gl::get_proc_address("glGetIntegerv"));
+        auto glGetStringi_ext  = reinterpret_cast<decltype(&glGetStringi)>(gl::get_proc_address("glGetStringi"));
 
-        int attribs[] =
-        {
-            WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
-            WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
-            WGL_DOUBLE_BUFFER_ARB,  GL_TRUE,
-            WGL_PIXEL_TYPE_ARB,     WGL_TYPE_RGBA_ARB,
-            WGL_ACCELERATION_ARB,   WGL_FULL_ACCELERATION_ARB,
-            WGL_COLOR_BITS_ARB,     24,
-            WGL_DEPTH_BITS_ARB,     24,
-            WGL_STENCIL_BITS_ARB,   8,
+        int32_t numExtensions = 0;
+        glGetIntegerv_ext(GL_NUM_EXTENSIONS, &numExtensions);
 
-            //WGL_ARB_framebuffer_sRGB extension
-            WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB, (is_WGL_ARB_framebuffer_sRGB ? GL_TRUE : FALSE),
+        for (int32_t i = 0; i < numExtensions; ++i) {
+            extensions += std::format("{} ", (const char*)glGetStringi_ext(GL_EXTENSIONS, i));
+        }
+    }
 
-            // WGL_ARB_multisample extension
-            WGL_SAMPLE_BUFFERS_ARB, (is_WGL_ARB_multisample ? 1 : 0),
-            WGL_SAMPLES_ARB,        (is_WGL_ARB_multisample ? 4 : 0),
+    GET_GLEXT_FUNCTION_NO_THROW(wglGetExtensionsStringARB);
+    if(wglGetExtensionsStringARB_ext)
+        extensions += wglGetExtensionsStringARB_ext(dummy_surface);
 
-            0,
-        };
+    ////////////////////////////////////////////////////////
+
+    auto surface = m_Window.surface();
+
+    if (extensions.contains("WGL_ARB_pixel_format"))
+    {
+        GET_GLEXT_FUNCTION_THROW(wglChoosePixelFormatARB);
+
+        // extension_supported shuld work caus gl ctx it valid here
+        bool is_WGL_ARB_framebuffer_sRGB = extensions.contains("WGL_ARB_framebuffer_sRGB");
+        bool is_WGL_ARB_multisample = extensions.contains("WGL_ARB_multisample");
+
+        std::vector<int> attribs;
+
+        attribs.push_back(WGL_DRAW_TO_WINDOW_ARB); attribs.push_back(GL_TRUE);
+        attribs.push_back(WGL_SUPPORT_OPENGL_ARB); attribs.push_back(GL_TRUE);
+        attribs.push_back(WGL_DOUBLE_BUFFER_ARB);  attribs.push_back(GL_TRUE);
+        attribs.push_back(WGL_ACCELERATION_ARB);   attribs.push_back(WGL_FULL_ACCELERATION_ARB);
+        attribs.push_back(WGL_DEPTH_BITS_ARB);     attribs.push_back(24);
+        attribs.push_back(WGL_RED_BITS_ARB);       attribs.push_back(8);
+        attribs.push_back(WGL_GREEN_BITS_ARB);     attribs.push_back(8);
+        attribs.push_back(WGL_BLUE_BITS_ARB);      attribs.push_back(8);
+        attribs.push_back(WGL_ALPHA_BITS_ARB);     attribs.push_back(8);
+
+        attribs.push_back(WGL_PIXEL_TYPE_ARB);     attribs.push_back(WGL_TYPE_RGBA_ARB);
+
+        if(is_WGL_ARB_framebuffer_sRGB){
+            attribs.push_back(WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB); attribs.push_back(GL_TRUE);
+        }
+
+        if(is_WGL_ARB_multisample){
+            attribs.push_back(WGL_SAMPLE_BUFFERS_ARB);   attribs.push_back(1);
+            attribs.push_back(WGL_SAMPLES_ARB);   attribs.push_back(MSAA);
+        }
+
+        attribs.push_back(0);
 
         int format{};
         UINT formats{};
-        
-        BRING_GL_EXT_FUNCTION(wglChoosePixelFormatARB);
-    
-        if (!wglChoosePixelFormatARB_ext(surface, attribs, nullptr, 1, &format, &formats) || formats == 0)
+
+        if (!wglChoosePixelFormatARB_ext(surface, attribs.data(), nullptr, 1, &format, &formats) || formats == 0)
             throw Exception("OpenGL does not support required pixel format.");
 
-        PIXELFORMATDESCRIPTOR desc2 = { .nSize = sizeof(desc2) };
-
-        if(!DescribePixelFormat(surface, format, sizeof(desc2), &desc2))
-            throw Exception("Failed Describe pixel format. : {}", GetLastError());
-
-        if (!SetPixelFormat(surface, format, &desc2))
-            throw Exception("Failed to set the pixel format. : {}", GetLastError());
+        pixel_format = format;
     }
 
+    if(!DescribePixelFormat(surface, pixel_format, sizeof(pfd), &pfd))
+        throw Exception("Failed Describe pixel format. : {}", GetLastError());
+
+    if (!SetPixelFormat(surface, pixel_format, &pfd))
+        throw Exception("Failed to set the pixel format. : {}", GetLastError());
+
     // modern OpenGL context
-    {
-        int attribs[] =
-        {
-            WGL_CONTEXT_MAJOR_VERSION_ARB, gl::MIN_REQUIRED_MAJOR_VERSION,
-            WGL_CONTEXT_MINOR_VERSION_ARB, gl::MIN_REQUIRED_MINOR_VERSION,
-            WGL_CONTEXT_PROFILE_MASK_ARB,  WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
-            WGL_CONTEXT_FLAGS_ARB,         m_Debug ? WGL_CONTEXT_DEBUG_BIT_ARB : 0,
-            0, 0
-        };
+    if (extensions.contains("WGL_ARB_create_context")){
+        bool is_WGL_ARB_create_context_profile = extensions.contains("WGL_ARB_create_context_profile");
 
-        BRING_GL_EXT_FUNCTION(wglCreateContextAttribsARB);
+        int flags = WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB;
+        if(m_Debug) flags |= WGL_CONTEXT_DEBUG_BIT_ARB;
+    
+        std::vector<int> attribs;
 
-        auto modern_context = wglCreateContextAttribsARB_ext(surface, nullptr, attribs);
+        attribs.push_back(WGL_CONTEXT_MAJOR_VERSION_ARB); attribs.push_back(gl::MIN_REQUIRED_MAJOR_VERSION);
+        attribs.push_back(WGL_CONTEXT_MINOR_VERSION_ARB); attribs.push_back(gl::MIN_REQUIRED_MINOR_VERSION);
+        attribs.push_back(WGL_CONTEXT_FLAGS_ARB); attribs.push_back(flags);
+        if(is_WGL_ARB_create_context_profile)
+            attribs.push_back(WGL_CONTEXT_PROFILE_MASK_ARB); attribs.push_back(WGL_CONTEXT_CORE_PROFILE_BIT_ARB);
+        attribs.push_back(0);
+
+        GET_GLEXT_FUNCTION_THROW(wglCreateContextAttribsARB);
+
+        auto modern_context = wglCreateContextAttribsARB_ext(surface, nullptr, attribs.data());
 
         if(!modern_context){
             throw Exception("Cannot create OpenGL {}.{} not supported?", gl::MIN_REQUIRED_MAJOR_VERSION, gl::MIN_REQUIRED_MINOR_VERSION);
         } else {
+            wglMakeCurrent(nullptr, nullptr);
             wglDeleteContext(dummy_context);
             dummy_context = modern_context;
         }
+    } else {
+        wglMakeCurrent(nullptr, nullptr);
+        wglDeleteContext(dummy_context);
+        dummy_context = wglCreateContext(surface);
     }
 
+    DestroyWindow(dummy_window);
     return dummy_context;
 }
