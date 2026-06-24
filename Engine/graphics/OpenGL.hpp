@@ -35,6 +35,7 @@ class ENGINE_EXPORT OpenGL
         static auto max_texturecubemap_size() -> GLint;
         static auto find_config([[maybe_unused]] const CWindow& window) -> GL_CFG;
 
+        constexpr static size_t MSAA = 4;
     private:
         auto create_opengl_context() -> GL_CTX;
         auto make_current_opengl()  -> bool ;

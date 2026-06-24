@@ -70,6 +70,7 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     logg::info("===================================[GL Extention]=========================================");
     logg::info(m_Extensions);
     logg::info("===================================[Metrics]==========================================");
+    logg::info("MSAA Level: {}", MSAA);
     logg::info("Max Texture Units : {}", max_texture_units());
     logg::info("Max Texture Size : {0} x {0}", max_texture_size());
     logg::info("Max Texture3D Size : {0} x {0} x {0}", max_texture3d_size());
@@ -160,17 +161,21 @@ auto OpenGL::max_texturecubemap_size() -> GLint
 
 auto OpenGL::query_gl_extensions() const -> std::string
 {
-    int32_t numExtensions = 0;
-    gl::GetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+    int32_t count{};
+    gl::GetIntegerv(GL_NUM_EXTENSIONS, &count);
 
-    std::string exts;
+    std::string extensions;
 
-    for (int32_t i = 0; i < numExtensions; ++i) {
-        exts += std::format("{} ", (const char*)gl::GetStringi(GL_EXTENSIONS, i));
+    for (int32_t i = 0; i < count; ++i) {
+        extensions += std::format("{} ", (const char*)gl::GetStringi(GL_EXTENSIONS, i));
     }
 
-    exts.pop_back();
-    return exts;
+    #if defined(CORE_GL)
+    GET_GLEXT_FUNCTION_NO_THROW(wglGetExtensionsStringARB);
+    if(wglGetExtensionsStringARB_ext)
+        extensions += wglGetExtensionsStringARB_ext(m_Window.surface());
+    #endif
+    return extensions;
 }
 
 auto OpenGL::regester_debug_func() const -> void
@@ -185,14 +190,14 @@ auto OpenGL::regester_debug_func() const -> void
 
     if (PACK(m_Major, m_Minor) >= PACK(4,3) || extension_supported("GL_KHR_debug")) {
 
-        BRING_GL_EXT_FUNCTION(glDebugMessageCallback);
+        GET_GLEXT_FUNCTION_THROW(glDebugMessageCallback);
         gl::Enable(GL_DEBUG_OUTPUT);
         gl::Enable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
         glDebugMessageCallback_ext(messgae_callback_func, nullptr);
 
     } else if(extension_supported("GL_ARB_debug_output")) {
-        BRING_GL_EXT_FUNCTION(glDebugMessageCallbackARB);
+        GET_GLEXT_FUNCTION_THROW(glDebugMessageCallbackARB);
         gl::Enable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
 
         glDebugMessageCallbackARB_ext(messgae_callback_func, nullptr);

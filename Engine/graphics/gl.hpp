@@ -5,12 +5,14 @@
 #include <engine_export.h>
 #include "gl.inl"
 
-#define BRING_GL_EXT_FUNCTION(func)\
+#define GET_GLEXT_FUNCTION_THROW(func)\
 static auto func##_ext = [](){\
     auto r = gl::GetProcAddress<decltype(&func)>(#func);\
     if (r) return r;\
     else throw Exception("Failed to load "#func". (maybe not supported)");\
 }()
+
+#define GET_GLEXT_FUNCTION_NO_THROW(func) static auto func##_ext = gl::GetProcAddress<decltype(&func)>(#func)
 
 namespace gl {
 

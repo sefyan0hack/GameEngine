@@ -205,7 +205,7 @@ auto CWindow::set_title(std::string  title) -> void
 
 auto CWindow::set_vsync(bool state) -> void
 {
-	BRING_GL_EXT_FUNCTION(glXSwapIntervalEXT);
+	GET_GLEXT_FUNCTION_THROW(glXSwapIntervalEXT);
 	glXSwapIntervalEXT_ext(m_Display, m_Handle, state);
 }
 
