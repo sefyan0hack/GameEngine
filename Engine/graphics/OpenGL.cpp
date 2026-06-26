@@ -12,7 +12,6 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     , m_Context(create_opengl_context())
     , m_Major(0)
     , m_Minor(0)
-    , m_Debug(false)
 {
     if (!make_current_opengl()) throw Exception("Failed to make context current.");
 
@@ -57,7 +56,7 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     gl::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     #endif
 
-    if(m_Debug) regester_debug_func();
+    if constexpr (DEBUG) regester_debug_func();
 
     logg::info(os::build_info());
     logg::info("===================================[GL Info]=========================================");
@@ -66,7 +65,7 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     logg::info("GL Version : {}.{}", m_Major, m_Minor);
     logg::info("GL Vendor : {}", m_Vendor);
     logg::info("GL Renderer : {}", m_Renderer);
-    logg::info("GL Debug : {}", m_Debug ? "true" : "false");
+    logg::info("GL Debug : {}", DEBUG ? "true" : "false");
     logg::info("===================================[GL Extention]=========================================");
     logg::info(m_Extensions);
     logg::info("===================================[Metrics]==========================================");

@@ -158,7 +158,7 @@ auto OpenGL::create_opengl_context() -> GL_CTX
         bool is_WGL_ARB_create_context_profile = extensions.contains("WGL_ARB_create_context_profile");
 
         int flags = WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB;
-        if(m_Debug) flags |= WGL_CONTEXT_DEBUG_BIT_ARB;
+        if constexpr (DEBUG) flags |= WGL_CONTEXT_DEBUG_BIT_ARB;
     
         std::vector<int> attribs;
 
