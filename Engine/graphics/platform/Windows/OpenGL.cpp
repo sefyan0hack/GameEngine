@@ -117,6 +117,7 @@ auto OpenGL::create_opengl_context() -> GL_CTX
         attribs.push_back(WGL_DRAW_TO_WINDOW_ARB); attribs.push_back(GL_TRUE);
         attribs.push_back(WGL_SUPPORT_OPENGL_ARB); attribs.push_back(GL_TRUE);
         attribs.push_back(WGL_DOUBLE_BUFFER_ARB);  attribs.push_back(GL_TRUE);
+        attribs.push_back(WGL_SWAP_METHOD_ARB);  attribs.push_back(WGL_SWAP_EXCHANGE_ARB);
         attribs.push_back(WGL_ACCELERATION_ARB);   attribs.push_back(WGL_FULL_ACCELERATION_ARB);
         attribs.push_back(WGL_DEPTH_BITS_ARB);     attribs.push_back(24);
         attribs.push_back(WGL_RED_BITS_ARB);       attribs.push_back(8);
@@ -130,7 +131,7 @@ auto OpenGL::create_opengl_context() -> GL_CTX
             attribs.push_back(WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB); attribs.push_back(GL_TRUE);
         }
 
-        if(is_WGL_ARB_multisample){
+        if(is_WGL_ARB_multisample && MSAA != 0){
             attribs.push_back(WGL_SAMPLE_BUFFERS_ARB);   attribs.push_back(1);
             attribs.push_back(WGL_SAMPLES_ARB);   attribs.push_back(MSAA);
         }
