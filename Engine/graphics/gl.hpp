@@ -26,125 +26,133 @@ namespace gl {
     constexpr int32_t MIN_REQUIRED_MAJOR_VERSION = 3;
     constexpr int32_t MIN_REQUIRED_MINOR_VERSION = api == API::CORE ? 3 : 0;
 
-    inline decltype(&glClearColor) ClearColor;
-    inline decltype(&glViewport) Viewport;
-    inline decltype(&glGenVertexArrays) GenVertexArrays;
-    inline decltype(&glGenBuffers) GenBuffers;
-    inline decltype(&glBindVertexArray) BindVertexArray;
-    inline decltype(&glBindBuffer) BindBuffer;
-    inline decltype(&glBufferData) BufferData;
-    inline decltype(&glEnableVertexAttribArray) EnableVertexAttribArray;
-    inline decltype(&glVertexAttribPointer) VertexAttribPointer;
-    inline decltype(&glCreateShader) CreateShader;
-    inline decltype(&glDeleteShader) DeleteShader;
-    inline decltype(&glShaderSource) ShaderSource;
-    inline decltype(&glCompileShader) CompileShader;
-    inline decltype(&glGetShaderiv) GetShaderiv;
-    inline decltype(&glGetShaderInfoLog) GetShaderInfoLog;
-    inline decltype(&glDrawArraysInstanced) DrawArraysInstanced;
-    inline decltype(&glDrawArrays) DrawArrays;
-    inline decltype(&glEnable) Enable;
-    inline decltype(&glGetIntegerv) GetIntegerv;
-    inline decltype(&glGetString) GetString;
-    inline decltype(&glClear) Clear;
-    inline decltype(&glVertexAttribDivisor) VertexAttribDivisor;
-    inline decltype(&glGenTextures) GenTextures;
-    inline decltype(&glTexParameteri) TexParameteri;
-    inline decltype(&glPixelStorei) PixelStorei;
-    inline decltype(&glTexImage2D) TexImage2D;
-    inline decltype(&glActiveTexture) ActiveTexture;
-    inline decltype(&glBindTexture) BindTexture;
-    inline decltype(&glGenerateMipmap) GenerateMipmap;
-    inline decltype(&glCreateProgram) CreateProgram;
-    inline decltype(&glAttachShader) AttachShader;
-    inline decltype(&glUseProgram) UseProgram;
-    inline decltype(&glDeleteProgram) DeleteProgram;
-    inline decltype(&glLinkProgram) LinkProgram;
-    inline decltype(&glGetUniformLocation) GetUniformLocation;
-    inline decltype(&glGetProgramiv) GetProgramiv;
-    inline decltype(&glGetProgramInfoLog) GetProgramInfoLog;
-    inline decltype(&glGetActiveUniform) GetActiveUniform;
-    inline decltype(&glUniform1i) Uniform1i;
-    inline decltype(&glUniform2i) Uniform2i;
-    inline decltype(&glUniform3i) Uniform3i;
-    inline decltype(&glUniform4i) Uniform4i;
-    inline decltype(&glUniform1ui) Uniform1ui;
-    inline decltype(&glUniform2ui) Uniform2ui;
-    inline decltype(&glUniform3ui) Uniform3ui;
-    inline decltype(&glUniform4ui) Uniform4ui;
-    inline decltype(&glUniform1f) Uniform1f;
-    inline decltype(&glUniform2f) Uniform2f;
-    inline decltype(&glUniform3f) Uniform3f;
-    inline decltype(&glUniform4f) Uniform4f;
-    inline decltype(&glUniform2fv) Uniform2fv;
-    inline decltype(&glUniform3fv) Uniform3fv;
-    inline decltype(&glUniform4fv) Uniform4fv;
-    inline decltype(&glUniform2iv) Uniform2iv;
-    inline decltype(&glUniform3iv) Uniform3iv;
-    inline decltype(&glUniform4iv) Uniform4iv;
-    inline decltype(&glUniform2uiv) Uniform2uiv;
-    inline decltype(&glUniform3uiv) Uniform3uiv;
-    inline decltype(&glUniform4uiv) Uniform4uiv;
-    inline decltype(&glUniformMatrix2fv) UniformMatrix2fv;
-    inline decltype(&glUniformMatrix3fv) UniformMatrix3fv;
-    inline decltype(&glUniformMatrix4fv) UniformMatrix4fv;
-    inline decltype(&glGetStringi) GetStringi;
-    inline decltype(&glDrawElementsInstanced) DrawElementsInstanced;
-    inline decltype(&glDrawElements) DrawElements;
-    inline decltype(&glStencilFunc) StencilFunc;
-    inline decltype(&glStencilOp) StencilOp;
-    inline decltype(&glStencilMask) StencilMask;
-    inline decltype(&glDepthMask) DepthMask;
-    inline decltype(&glDepthFunc) DepthFunc;
-    inline decltype(&glDisableVertexAttribArray) DisableVertexAttribArray;
-    inline decltype(&glGetAttribLocation) GetAttribLocation;
-    inline decltype(&glGetActiveAttrib) GetActiveAttrib;
-    inline decltype(&glGetAttachedShaders) GetAttachedShaders;
-    inline decltype(&glBlendEquation) BlendEquation;
-    inline decltype(&glBlendFunc) BlendFunc;
-    inline decltype(&glCullFace) CullFace;
-    inline decltype(&glDeleteTextures) DeleteTextures;
-    inline decltype(&glDeleteVertexArrays) DeleteVertexArrays;
-    inline decltype(&glDeleteBuffers) DeleteBuffers;
-    inline decltype(&glGetVertexAttribiv) GetVertexAttribiv;
-    inline decltype(&glGetVertexAttribPointerv) GetVertexAttribPointerv;
-    inline decltype(&glGetBufferParameteriv) GetBufferParameteriv;
-    inline decltype(&glCopyBufferSubData) CopyBufferSubData;
-    inline decltype(&glIsProgram) IsProgram;
-    inline decltype(&glIsBuffer) IsBuffer;
-    inline decltype(&glIsVertexArray) IsVertexArray;
-    inline decltype(&glIsTexture) IsTexture;
-    inline decltype(&glIsShader) IsShader;
-    inline decltype(&glFrontFace) FrontFace;
-    inline decltype(&glDisable) Disable;
-    inline decltype(&glValidateProgram) ValidateProgram;
-    inline decltype(&glDetachShader) DetachShader;
-    inline decltype(&glIsEnabled) IsEnabled;
-    inline decltype(&glGetFloatv) GetFloatv;
-    inline decltype(&glTexSubImage2D) TexSubImage2D;
-    inline decltype(&glLineWidth) LineWidth;
-    inline decltype(&glHint) Hint;
-    inline decltype(&glPolygonOffset) PolygonOffset;
-    inline decltype(&glBindBufferBase) BindBufferBase;
-    inline decltype(&glBufferSubData) BufferSubData;
-    inline decltype(&glGetUniformBlockIndex) GetUniformBlockIndex;
-    inline decltype(&glUniformBlockBinding) UniformBlockBinding;
-    inline decltype(&glGetBooleanv) GetBooleanv;
-    inline decltype(&glVertexAttribIPointer) VertexAttribIPointer;
-    inline decltype(&glFinish) Finish;
-    inline decltype(&glGenFramebuffers) GenFramebuffers;
-    inline decltype(&glBindFramebuffer) BindFramebuffer;
-    inline decltype(&glFramebufferTexture2D) FramebufferTexture2D;
-    inline decltype(&glGenRenderbuffers) GenRenderbuffers;
-    inline decltype(&glBindRenderbuffer) BindRenderbuffer;
-    inline decltype(&glRenderbufferStorage) RenderbufferStorage;
-    inline decltype(&glFramebufferRenderbuffer) FramebufferRenderbuffer;
-    inline decltype(&glCheckFramebufferStatus) CheckFramebufferStatus;
-    inline decltype(&glDrawBuffers) DrawBuffers;
-    inline decltype(&glReadBuffer) ReadBuffer;
-    inline decltype(&glGetBooleani_v) GetBooleani_v;
-    inline decltype(&glGetIntegeri_v) GetIntegeri_v;
-
+    
     ENGINE_EXPORT auto get_proc_address(const char* name) -> void*;
     ENGINE_EXPORT auto load_opengl_functions() -> void;
+
+// gl functions i need
+#define FUNCTIONS_GL_LIST\
+    FUNC_GL_X(ClearColor)\
+    FUNC_GL_X(Viewport)\
+    FUNC_GL_X(GenVertexArrays)\
+    FUNC_GL_X(GenBuffers)\
+    FUNC_GL_X(BindVertexArray)\
+    FUNC_GL_X(BindBuffer)\
+    FUNC_GL_X(BufferData)\
+    FUNC_GL_X(EnableVertexAttribArray)\
+    FUNC_GL_X(VertexAttribPointer)\
+    FUNC_GL_X(CreateShader)\
+    FUNC_GL_X(DeleteShader)\
+    FUNC_GL_X(ShaderSource)\
+    FUNC_GL_X(CompileShader)\
+    FUNC_GL_X(GetShaderiv)\
+    FUNC_GL_X(GetShaderInfoLog)\
+    FUNC_GL_X(DrawArraysInstanced)\
+    FUNC_GL_X(DrawArrays)\
+    FUNC_GL_X(Enable)\
+    FUNC_GL_X(GetIntegerv)\
+    FUNC_GL_X(GetString)\
+    FUNC_GL_X(Clear)\
+    FUNC_GL_X(VertexAttribDivisor)\
+    FUNC_GL_X(GenTextures)\
+    FUNC_GL_X(TexParameteri)\
+    FUNC_GL_X(PixelStorei)\
+    FUNC_GL_X(TexImage2D)\
+    FUNC_GL_X(ActiveTexture)\
+    FUNC_GL_X(BindTexture)\
+    FUNC_GL_X(GenerateMipmap)\
+    FUNC_GL_X(CreateProgram)\
+    FUNC_GL_X(AttachShader)\
+    FUNC_GL_X(UseProgram)\
+    FUNC_GL_X(DeleteProgram)\
+    FUNC_GL_X(LinkProgram)\
+    FUNC_GL_X(GetUniformLocation)\
+    FUNC_GL_X(GetProgramiv)\
+    FUNC_GL_X(GetProgramInfoLog)\
+    FUNC_GL_X(GetActiveUniform)\
+    FUNC_GL_X(Uniform1i)\
+    FUNC_GL_X(Uniform2i)\
+    FUNC_GL_X(Uniform3i)\
+    FUNC_GL_X(Uniform4i)\
+    FUNC_GL_X(Uniform1ui)\
+    FUNC_GL_X(Uniform2ui)\
+    FUNC_GL_X(Uniform3ui)\
+    FUNC_GL_X(Uniform4ui)\
+    FUNC_GL_X(Uniform1f)\
+    FUNC_GL_X(Uniform2f)\
+    FUNC_GL_X(Uniform3f)\
+    FUNC_GL_X(Uniform4f)\
+    FUNC_GL_X(Uniform2fv)\
+    FUNC_GL_X(Uniform3fv)\
+    FUNC_GL_X(Uniform4fv)\
+    FUNC_GL_X(Uniform2iv)\
+    FUNC_GL_X(Uniform3iv)\
+    FUNC_GL_X(Uniform4iv)\
+    FUNC_GL_X(Uniform2uiv)\
+    FUNC_GL_X(Uniform3uiv)\
+    FUNC_GL_X(Uniform4uiv)\
+    FUNC_GL_X(UniformMatrix2fv)\
+    FUNC_GL_X(UniformMatrix3fv)\
+    FUNC_GL_X(UniformMatrix4fv)\
+    FUNC_GL_X(GetStringi)\
+    FUNC_GL_X(DrawElementsInstanced)\
+    FUNC_GL_X(DrawElements)\
+    FUNC_GL_X(StencilFunc)\
+    FUNC_GL_X(StencilOp)\
+    FUNC_GL_X(StencilMask)\
+    FUNC_GL_X(DepthMask)\
+    FUNC_GL_X(DepthFunc)\
+    FUNC_GL_X(DisableVertexAttribArray)\
+    FUNC_GL_X(GetAttribLocation)\
+    FUNC_GL_X(GetActiveAttrib)\
+    FUNC_GL_X(GetAttachedShaders)\
+    FUNC_GL_X(BlendEquation)\
+    FUNC_GL_X(BlendFunc)\
+    FUNC_GL_X(CullFace)\
+    FUNC_GL_X(DeleteTextures)\
+    FUNC_GL_X(DeleteVertexArrays)\
+    FUNC_GL_X(DeleteBuffers)\
+    FUNC_GL_X(GetVertexAttribiv)\
+    FUNC_GL_X(GetVertexAttribPointerv)\
+    FUNC_GL_X(GetBufferParameteriv)\
+    FUNC_GL_X(CopyBufferSubData)\
+    FUNC_GL_X(IsProgram)\
+    FUNC_GL_X(IsBuffer)\
+    FUNC_GL_X(IsVertexArray)\
+    FUNC_GL_X(IsTexture)\
+    FUNC_GL_X(IsShader)\
+    FUNC_GL_X(FrontFace)\
+    FUNC_GL_X(Disable)\
+    FUNC_GL_X(ValidateProgram)\
+    FUNC_GL_X(DetachShader)\
+    FUNC_GL_X(IsEnabled)\
+    FUNC_GL_X(GetFloatv)\
+    FUNC_GL_X(TexSubImage2D)\
+    FUNC_GL_X(LineWidth)\
+    FUNC_GL_X(Hint)\
+    FUNC_GL_X(PolygonOffset)\
+    FUNC_GL_X(BindBufferBase)\
+    FUNC_GL_X(BufferSubData)\
+    FUNC_GL_X(GetUniformBlockIndex)\
+    FUNC_GL_X(UniformBlockBinding)\
+    FUNC_GL_X(GetBooleanv)\
+    FUNC_GL_X(VertexAttribIPointer)\
+    FUNC_GL_X(Finish)\
+    FUNC_GL_X(GenFramebuffers)\
+    FUNC_GL_X(BindFramebuffer)\
+    FUNC_GL_X(FramebufferTexture2D)\
+    FUNC_GL_X(GenRenderbuffers)\
+    FUNC_GL_X(BindRenderbuffer)\
+    FUNC_GL_X(RenderbufferStorage)\
+    FUNC_GL_X(FramebufferRenderbuffer)\
+    FUNC_GL_X(CheckFramebufferStatus)\
+    FUNC_GL_X(DrawBuffers)\
+    FUNC_GL_X(ReadBuffer)\
+    FUNC_GL_X(GetBooleani_v)\
+    FUNC_GL_X(GetIntegeri_v)
+
+#define FUNC_GL_X(name) inline decltype(&gl##name) name;
+    FUNCTIONS_GL_LIST
+#undef FUNC_GL_X
+
 } // namespace gl
