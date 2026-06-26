@@ -126,5 +126,17 @@ namespace gl {
         gl::GetBooleanv = reinterpret_cast<decltype(&glGetBooleanv)>(gl::get_proc_address("glGetBooleanv"));
         gl::VertexAttribIPointer = reinterpret_cast<decltype(&glVertexAttribIPointer)>(gl::get_proc_address("glVertexAttribIPointer"));
         gl::Finish = reinterpret_cast<decltype(&glFinish)>(gl::get_proc_address("glFinish"));
+        gl::GenFramebuffers = reinterpret_cast<decltype(&glGenFramebuffers)>(gl::get_proc_address("glGenFramebuffers"));
+        gl::BindFramebuffer = reinterpret_cast<decltype(&glBindFramebuffer)>(gl::get_proc_address("glBindFramebuffer"));
+        gl::FramebufferTexture2D = reinterpret_cast<decltype(&glFramebufferTexture2D)>(gl::get_proc_address("glFramebufferTexture2D"));
+        gl::GenRenderbuffers = reinterpret_cast<decltype(&glGenRenderbuffers)>(gl::get_proc_address("glGenRenderbuffers"));
+        gl::BindRenderbuffer = reinterpret_cast<decltype(&glBindRenderbuffer)>(gl::get_proc_address("glBindRenderbuffer"));
+        gl::RenderbufferStorage = reinterpret_cast<decltype(&glRenderbufferStorage)>(gl::get_proc_address("glRenderbufferStorage"));
+        gl::FramebufferRenderbuffer = reinterpret_cast<decltype(&glFramebufferRenderbuffer)>(gl::get_proc_address("glFramebufferRenderbuffer"));
+        gl::CheckFramebufferStatus = reinterpret_cast<decltype(&glCheckFramebufferStatus)>(gl::get_proc_address("glCheckFramebufferStatus"));
+        gl::DrawBuffers = reinterpret_cast<decltype(&glDrawBuffers)>(gl::get_proc_address("glDrawBuffers"));
+        gl::ReadBuffer = reinterpret_cast<decltype(&glReadBuffer)>(gl::get_proc_address("glReadBuffer"));
+        gl::GetBooleani_v = reinterpret_cast<decltype(&glGetBooleani_v)>(gl::get_proc_address("glGetBooleani_v"));
+        gl::GetIntegeri_v = reinterpret_cast<decltype(&glGetIntegeri_v)>(gl::get_proc_address("glGetIntegeri_v"));
     }
 }

@@ -132,6 +132,18 @@ namespace gl {
     inline decltype(&glGetBooleanv) GetBooleanv;
     inline decltype(&glVertexAttribIPointer) VertexAttribIPointer;
     inline decltype(&glFinish) Finish;
+    inline decltype(&glGenFramebuffers) GenFramebuffers;
+    inline decltype(&glBindFramebuffer) BindFramebuffer;
+    inline decltype(&glFramebufferTexture2D) FramebufferTexture2D;
+    inline decltype(&glGenRenderbuffers) GenRenderbuffers;
+    inline decltype(&glBindRenderbuffer) BindRenderbuffer;
+    inline decltype(&glRenderbufferStorage) RenderbufferStorage;
+    inline decltype(&glFramebufferRenderbuffer) FramebufferRenderbuffer;
+    inline decltype(&glCheckFramebufferStatus) CheckFramebufferStatus;
+    inline decltype(&glDrawBuffers) DrawBuffers;
+    inline decltype(&glReadBuffer) ReadBuffer;
+    inline decltype(&glGetBooleani_v) GetBooleani_v;
+    inline decltype(&glGetIntegeri_v) GetIntegeri_v;
 
     ENGINE_EXPORT auto get_proc_address(const char* name) -> void*;
     ENGINE_EXPORT auto load_opengl_functions() -> void;

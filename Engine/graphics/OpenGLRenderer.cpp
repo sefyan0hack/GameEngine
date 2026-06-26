@@ -105,7 +105,7 @@ auto OpenGLRenderer::set_mode(DrawMode mode) -> void
     m_DrawMode = mode;
 }
 
-auto OpenGLRenderer::clear_screen(uint32_t buffersmask)  -> void
+auto OpenGLRenderer::clear_screen(uint32_t buffersmask) const -> void
 {
     gl::Clear((GLenum)buffersmask);
 }

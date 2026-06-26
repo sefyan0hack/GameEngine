@@ -14,7 +14,7 @@ public:
     auto viewport() const -> std::tuple<int32_t, int32_t, int32_t, int32_t> override;
     auto set_viewport(int32_t x, int32_t y, int32_t width, int32_t height) -> void override;
     auto set_mode(DrawMode mode) -> void override;
-    auto clear_screen(uint32_t buffersmask)  -> void  override;
+    auto clear_screen(uint32_t buffersmask) const -> void  override;
     auto extension_supported(const std::string& ext) -> bool override;
     auto render_stats() const -> RenderStats override;
 
