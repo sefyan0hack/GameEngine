@@ -98,12 +98,9 @@ auto OpenGL::create_context() -> GL_CTX
         }
     }
 
-    //TODO: make it platform egnostic
-    #ifdef _WIN32
     GET_GLEXT_FUNCTION_NO_THROW(wglGetExtensionsStringARB);
     if(wglGetExtensionsStringARB_ext)
         extensions += wglGetExtensionsStringARB_ext(dummy_surface);
-    #endif
 
     ////////////////////////////////////////////////////////
 

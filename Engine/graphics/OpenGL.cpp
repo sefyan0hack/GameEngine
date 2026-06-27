@@ -133,7 +133,8 @@ auto OpenGL::extensions() const-> std::string
             exts += std::format("{} ", (const char*)gl::GetStringi(GL_EXTENSIONS, i));
         }
         
-        #if defined(CORE_GL)
+        //TODO: make it platform egnostic
+        #if defined(CORE_GL) && defined(_WIN32)
         GET_GLEXT_FUNCTION_NO_THROW(wglGetExtensionsStringARB);
         if(wglGetExtensionsStringARB_ext)
         exts += wglGetExtensionsStringARB_ext(m_Window.surface());
