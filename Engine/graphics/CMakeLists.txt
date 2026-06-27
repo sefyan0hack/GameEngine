@@ -21,7 +21,6 @@ target_sources( graphics
         ${CMAKE_CURRENT_SOURCE_DIR}/Camera.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/GameObject.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/OpenGLRenderer.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gl.cpp
     PUBLIC
     FILE_SET headers
       TYPE HEADERS

@@ -1,7 +1,6 @@
 #pragma once
 #define GL_GLEXT_PROTOTYPES
 
-#include <cstdint>
 #include <engine_export.h>
 #include "gl.inl"
 
@@ -14,23 +13,6 @@ static auto func##_ext = [](){\
 
 #define GET_GLEXT_FUNCTION_NO_THROW(func) static auto func##_ext = gl::GetProcAddress<decltype(&func)>(#func)
 
-namespace gl {
-
-    constexpr enum class API { CORE, ES } api =
-    #if defined(CORE_GL)
-        API::CORE;
-    #elif defined(ES_GL)
-        API::ES;
-    #endif
-
-    constexpr int32_t MIN_REQUIRED_MAJOR_VERSION = 3;
-    constexpr int32_t MIN_REQUIRED_MINOR_VERSION = api == API::CORE ? 3 : 0;
-
-    
-    ENGINE_EXPORT auto get_proc_address(const char* name) -> void*;
-    ENGINE_EXPORT auto load_opengl_functions() -> void;
-
-// gl functions i need
 #define FUNCTIONS_GL_LIST\
     FUNC_GL_X(ClearColor)\
     FUNC_GL_X(Viewport)\
@@ -150,6 +132,8 @@ namespace gl {
     FUNC_GL_X(ReadBuffer)\
     FUNC_GL_X(GetBooleani_v)\
     FUNC_GL_X(GetIntegeri_v)
+
+namespace gl {
 
 #define FUNC_GL_X(name) inline decltype(&gl##name) name;
     FUNCTIONS_GL_LIST

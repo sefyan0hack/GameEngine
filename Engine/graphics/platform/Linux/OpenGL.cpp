@@ -23,7 +23,7 @@ OpenGL::~OpenGL()
     if(!m_Config) XFree(m_Config);
 }
 
-auto OpenGL::make_current_opengl()  -> bool
+auto OpenGL::make_current()  -> bool
 {
     return glXMakeCurrent(m_Window.display(), m_Window.handle(), m_Context);
 }
@@ -40,7 +40,7 @@ auto OpenGL::find_config([[maybe_unused]] const CWindow& window) -> GL_CFG
     return fbc;
 }
 
-auto OpenGL::create_opengl_context() -> GL_CTX
+auto OpenGL::create_context() -> GL_CTX
 {
     auto display = m_Window.display();
 

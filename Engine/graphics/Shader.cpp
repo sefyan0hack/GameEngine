@@ -5,6 +5,7 @@
 #include <core/Utils.hpp>
 
 #include "Shader.hpp"
+#include "OpenGL.hpp"
 
 #include <ranges>
 
@@ -15,10 +16,9 @@ Shader::Shader(const char* shader, GLenum type)
 
     auto glsl_header = std::format(
         "#version {}{}0 {}\n"
-        "precision {} float;\n",
-        gl::MIN_REQUIRED_MAJOR_VERSION, gl::MIN_REQUIRED_MINOR_VERSION, 
-        gl::api == gl::API::ES ? "es" : "core",
-        gl::api == gl::API::ES ? "mediump" : "highp"
+        "precision mediump float;\n",
+        OpenGL::MIN_REQUIRED_MAJOR_VERSION, OpenGL::MIN_REQUIRED_MINOR_VERSION, 
+        OpenGL::api == OpenGL::API::ES ? "es" : "core"
     );
 
     auto glsl_l = res::get("res/Shaders/common.glsl");

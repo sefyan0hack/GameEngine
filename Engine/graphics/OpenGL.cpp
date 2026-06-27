@@ -6,41 +6,52 @@
 
 #define PACK(x, y) ((uint32_t(x) << 16) | (uint32_t(y) & 0xFFFF))
 
+auto get_info(GLenum name) -> GLint
+{
+    GLint r = 0;
+    gl::GetIntegerv(name, &r);
+    return r;
+}
+
+#define gl_info(name) logg::info(#name" : {}", get_info(name))
+
 OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     : m_Window(window)
     , m_Config(find_config(m_Window))
-    , m_Context(create_opengl_context())
+    , m_Context(create_context())
     , m_Major(0)
     , m_Minor(0)
 {
-    if (!make_current_opengl()) throw Exception("Failed to make context current.");
+    if (make_current()) load_functions();
+    else throw Exception("Failed to make context current.");
 
-    gl::load_opengl_functions();
     auto [w, h] = window.dims();
 
-    set_viewport(0, 0, w, h);
+    gl::Viewport(0, 0, w, h);
 
     gl::GetIntegerv(GL_MAJOR_VERSION, &m_Major);
     gl::GetIntegerv(GL_MINOR_VERSION, &m_Minor);
 
-    if (m_Major < gl::MIN_REQUIRED_MAJOR_VERSION ||
-    (m_Major == gl::MIN_REQUIRED_MAJOR_VERSION &&
-     m_Minor < gl::MIN_REQUIRED_MINOR_VERSION))
+    if (PACK(m_Major, m_Minor) < PACK(MIN_REQUIRED_MAJOR_VERSION, MIN_REQUIRED_MINOR_VERSION))
     {
         throw Exception(
             "Min required OpenGL version is {}.{} but got {}.{}",
-            gl::MIN_REQUIRED_MAJOR_VERSION,
-            gl::MIN_REQUIRED_MINOR_VERSION,
+            MIN_REQUIRED_MAJOR_VERSION,
+            MIN_REQUIRED_MINOR_VERSION,
             m_Major,
             m_Minor
         );
     }
+
     auto vendor = reinterpret_cast<const char*>(gl::GetString(GL_VENDOR));
     auto renderer = reinterpret_cast<const char*>(gl::GetString(GL_RENDERER));
+    auto version = reinterpret_cast<const char*>(gl::GetString(GL_VERSION));
+    auto glsl_version = reinterpret_cast<const char*>(gl::GetString(GL_SHADING_LANGUAGE_VERSION));
 
-    m_Vendor = vendor ? vendor : "unknown";
-    m_Renderer = renderer ? renderer : "unknown";
-    m_Extensions = query_gl_extensions();
+    auto Vendor = vendor ? vendor : "unknown";
+    auto Renderer = renderer ? renderer : "unknown";
+    auto Version = version ? version : "unknown";
+    auto GlslVersion = glsl_version ? glsl_version : "unknown";
 
     gl::Enable(GL_DEPTH_TEST);
     gl::DepthFunc(GL_LESS);
@@ -56,24 +67,28 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     gl::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     #endif
 
-    if constexpr (DEBUG) regester_debug_func();
+    if constexpr (DEBUG) enable_debug();
 
     logg::info(os::build_info());
     logg::info("===================================[GL Info]=========================================");
     logg::info("Platform Name: {}", os::name());
     logg::info("Platform Arch: {} ({}) bit", os::arch(), os::bits());
-    logg::info("GL Version : {}.{}", m_Major, m_Minor);
-    logg::info("GL Vendor : {}", m_Vendor);
-    logg::info("GL Renderer : {}", m_Renderer);
+    logg::info("GL Version : {}", Version);
+    logg::info("GL Shading Version : {}", GlslVersion);
+    logg::info("GL Vendor : {}", Vendor);
+    logg::info("GL Renderer : {}", Renderer);
     logg::info("GL Debug : {}", DEBUG ? "true" : "false");
     logg::info("===================================[GL Extention]=========================================");
-    logg::info(m_Extensions);
+    logg::info(extensions());
     logg::info("===================================[Metrics]==========================================");
-    logg::info("MSAA Level: {}", MSAA);
-    logg::info("Max Texture Units : {}", max_texture_units());
-    logg::info("Max Texture Size : {0} x {0}", max_texture_size());
-    logg::info("Max Texture3D Size : {0} x {0} x {0}", max_texture3d_size());
-    logg::info("Max TextureCubeMap Size : {0} x {0}", max_texturecubemap_size());
+    gl_info(GL_MAX_TEXTURE_SIZE);
+    gl_info(GL_MAX_3D_TEXTURE_SIZE);
+    gl_info(GL_MAX_CUBE_MAP_TEXTURE_SIZE);
+    gl_info(GL_MAX_TEXTURE_IMAGE_UNITS);
+    gl_info(GL_MAX_RENDERBUFFER_SIZE);
+    gl_info(GL_SAMPLES);
+    gl_info(GL_MAX_SAMPLES);
+    gl_info(GL_MAX_COLOR_ATTACHMENTS);
 }
 
 auto OpenGL::window() const -> const CWindow&
@@ -91,93 +106,46 @@ auto OpenGL::config() const -> GL_CFG
     return m_Config;
 }
 
-auto OpenGL::major_v() const -> GLint
+auto OpenGL::version() const -> std::pair<int32_t, int32_t>
 {
-    return m_Major;
-}
-auto OpenGL::minor_v() const -> GLint
-{
-    return m_Minor;
+ return {m_Major, m_Minor};
 }
 
-auto OpenGL::is_valid() const -> bool
+auto OpenGL::is_current() const -> bool
 {
-    return m_Context != GL_CTX{};
-}
-
-auto OpenGL::set_viewport(int32_t x, int32_t y, int32_t width, int32_t height) -> void
-{
-    gl::Viewport(x, y, width, height);
+    return gl::GetCurrentContext() == m_Context;
 }
 
 auto OpenGL::extension_supported(const std::string &ext) const -> bool
 {
-    return m_Extensions.contains(ext);
-}
-
-auto OpenGL::vendor() const-> std::string
-{
-    return m_Vendor;
-}
-
-auto OpenGL::renderer() const-> std::string
-{
-    return m_Renderer;
+    return extensions().contains(ext);
 }
 
 auto OpenGL::extensions() const-> std::string
 {
-    return m_Extensions;
-}
+    static std::string extensions = [this]()
+    {
+        int32_t count{};
+        gl::GetIntegerv(GL_NUM_EXTENSIONS, &count);
+        std::string exts;
 
-auto OpenGL::max_texture_units() -> GLint
-{
-    GLint r = 0;
-    gl::GetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &r); // fragment shader limit
-    return r;
-}
+        for (int32_t i = 0; i < count; ++i) {
+            exts += std::format("{} ", (const char*)gl::GetStringi(GL_EXTENSIONS, i));
+        }
+        
+        #if defined(CORE_GL)
+        GET_GLEXT_FUNCTION_NO_THROW(wglGetExtensionsStringARB);
+        if(wglGetExtensionsStringARB_ext)
+        exts += wglGetExtensionsStringARB_ext(m_Window.surface());
+        #endif
 
-auto OpenGL::max_texture_size() -> GLint
-{
-    GLint r = 0;
-    gl::GetIntegerv(GL_MAX_TEXTURE_SIZE, &r);
-    return r;
-}
-
-auto OpenGL::max_texture3d_size() -> GLint
-{
-    GLint r = 0;
-    gl::GetIntegerv(GL_MAX_3D_TEXTURE_SIZE, &r);
-    return r;
-}
-
-auto OpenGL::max_texturecubemap_size() -> GLint
-{
-    GLint r = 0;
-    gl::GetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE, &r);
-    return r;
-}
-
-auto OpenGL::query_gl_extensions() const -> std::string
-{
-    int32_t count{};
-    gl::GetIntegerv(GL_NUM_EXTENSIONS, &count);
-
-    std::string extensions;
-
-    for (int32_t i = 0; i < count; ++i) {
-        extensions += std::format("{} ", (const char*)gl::GetStringi(GL_EXTENSIONS, i));
-    }
-
-    #if defined(CORE_GL)
-    GET_GLEXT_FUNCTION_NO_THROW(wglGetExtensionsStringARB);
-    if(wglGetExtensionsStringARB_ext)
-        extensions += wglGetExtensionsStringARB_ext(m_Window.surface());
-    #endif
+        return exts;
+    }();
     return extensions;
 }
 
-auto OpenGL::regester_debug_func() const -> void
+
+auto OpenGL::enable_debug() const -> void
 {
     // Enable Opengl debug
     #if defined(CORE_GL)
@@ -202,4 +170,25 @@ auto OpenGL::regester_debug_func() const -> void
         glDebugMessageCallbackARB_ext(messgae_callback_func, nullptr);
     }
     #endif
+}
+
+auto OpenGL::resolve_function(const char* name) -> void* {
+    void *address = gl::GetProcAddress<void*>(name);
+
+    if(address == nullptr){
+        address = os::get_proc_address(EG_OPENGL_MODULE_NAME, name);
+    }
+
+    if (address == nullptr) {
+        throw Exception("Couldn't load {} function `{}`", EG_OPENGL_MODULE_NAME, name);
+    }
+
+    return address;
+}
+
+auto OpenGL::load_functions() -> void
+{
+    #define FUNC_GL_X(name) gl::name = reinterpret_cast<decltype(&gl##name)>(resolve_function("gl"#name));
+    FUNCTIONS_GL_LIST
+    #undef FUNC_GL_X
 }

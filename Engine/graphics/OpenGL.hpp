@@ -1,7 +1,6 @@
 #pragma once
-#include <unordered_map>
-#include <vector>
 #include <string>
+#include <utility>
 
 #include "gl.hpp"
 #include <engine_export.h>
@@ -20,37 +19,38 @@ class ENGINE_EXPORT OpenGL
         auto window() const -> const CWindow&;
         auto config() const -> GL_CFG ;
         auto context() const -> GL_CTX ;
-        auto is_valid() const -> bool ;
-        auto extension_supported(const std::string& ext) const -> bool ;
-        auto major_v() const -> GLint;
-        auto minor_v() const -> GLint;
-        auto set_viewport(int32_t x, int32_t y, int32_t width, int32_t height) -> void;
-
-        auto vendor() const -> std::string;
-        auto renderer() const -> std::string;
+        auto version() const -> std::pair<int32_t, int32_t>;
         auto extensions() const -> std::string;
-        static auto max_texture_units() -> GLint;
-        static auto max_texture_size() -> GLint;
-        static auto max_texture3d_size() -> GLint;
-        static auto max_texturecubemap_size() -> GLint;
+        auto extension_supported(const std::string& ext) const -> bool;
+        auto is_current() const -> bool;
+        auto make_current()  -> bool;
+
         static auto find_config([[maybe_unused]] const CWindow& window) -> GL_CFG;
+
+        
+        constexpr static enum class API { CORE, ES } api =
+        #if defined(CORE_GL)
+            API::CORE;
+        #elif defined(ES_GL)
+            API::ES;
+        #endif
+
+        constexpr static int32_t MIN_REQUIRED_MAJOR_VERSION = 3;
+        constexpr static int32_t MIN_REQUIRED_MINOR_VERSION = api == API::CORE ? 3 : 0;
 
         constexpr static bool   DEBUG = false;
         constexpr static size_t MSAA  = 2;
+
     private:
-        auto create_opengl_context() -> GL_CTX;
-        auto make_current_opengl()  -> bool ;
-        auto query_gl_extensions() const -> std::string;
-        auto regester_debug_func() const -> void;
+        auto create_context() -> GL_CTX;
+        auto enable_debug() const -> void;
+        auto resolve_function(const char* name) -> void*;
+        auto load_functions() -> void;
 
     private:
         const CWindow& m_Window;
         GL_CFG m_Config;
         GL_CTX m_Context;
-        GLint m_Major;
-        GLint m_Minor;
-
-        std::string m_Vendor;
-        std::string m_Renderer;
-        std::string m_Extensions;
+        int32_t m_Major;
+        int32_t m_Minor;
 };

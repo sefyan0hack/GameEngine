@@ -10,7 +10,7 @@ OpenGL::~OpenGL()
     }
 }
 
-auto OpenGL::make_current_opengl()  -> bool
+auto OpenGL::make_current()  -> bool
 {
     return eglMakeCurrent(m_Window.display(), m_Window.surface(), m_Window.surface(), m_Context);
 }
@@ -45,7 +45,7 @@ auto OpenGL::find_config([[maybe_unused]] const CWindow& window) -> GL_CFG
     return config;
 }
 
-auto OpenGL::create_opengl_context() -> GL_CTX
+auto OpenGL::create_context() -> GL_CTX
 {
     auto display = m_Window.display();
     auto surface = m_Window.surface();

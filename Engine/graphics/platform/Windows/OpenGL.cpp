@@ -16,10 +16,10 @@ OpenGL::~OpenGL()
     wglDeleteContext(m_Context);
 }
 
-auto OpenGL::make_current_opengl()  -> bool
+auto OpenGL::make_current()  -> bool
 {
     GET_GLEXT_FUNCTION_NO_THROW(wglMakeContextCurrentARB);
-    if(extension_supported("WGL_ARB_make_current_read") && wglMakeContextCurrentARB_ext){
+    if(wglMakeContextCurrentARB_ext){
         return wglMakeContextCurrentARB_ext(m_Window.surface(), m_Window.surface(), m_Context);
     } else {
         return wglMakeCurrent(m_Window.surface(), m_Context);
@@ -31,7 +31,7 @@ auto OpenGL::find_config([[maybe_unused]] const CWindow& window) -> GL_CFG
     return 0;
 }
 
-auto OpenGL::create_opengl_context() -> GL_CTX
+auto OpenGL::create_context() -> GL_CTX
 {
     //TODO: destroy dummy window + cleanups
     auto dummy_window = CreateWindow(
@@ -85,8 +85,8 @@ auto OpenGL::create_opengl_context() -> GL_CTX
 
     std::string extensions;
     {
-        auto glGetIntegerv_ext = reinterpret_cast<decltype(&glGetIntegerv)>(gl::get_proc_address("glGetIntegerv"));
-        auto glGetStringi_ext  = reinterpret_cast<decltype(&glGetStringi)>(gl::get_proc_address("glGetStringi"));
+        auto glGetIntegerv_ext = reinterpret_cast<decltype(&glGetIntegerv)>(resolve_function("glGetIntegerv"));
+        auto glGetStringi_ext  = reinterpret_cast<decltype(&glGetStringi)>(resolve_function("glGetStringi"));
 
         int32_t numExtensions = 0;
         glGetIntegerv_ext(GL_NUM_EXTENSIONS, &numExtensions);
@@ -162,11 +162,14 @@ auto OpenGL::create_opengl_context() -> GL_CTX
     
         std::vector<int> attribs;
 
-        attribs.push_back(WGL_CONTEXT_MAJOR_VERSION_ARB); attribs.push_back(gl::MIN_REQUIRED_MAJOR_VERSION);
-        attribs.push_back(WGL_CONTEXT_MINOR_VERSION_ARB); attribs.push_back(gl::MIN_REQUIRED_MINOR_VERSION);
+        attribs.push_back(WGL_CONTEXT_MAJOR_VERSION_ARB); attribs.push_back(MIN_REQUIRED_MAJOR_VERSION);
+        attribs.push_back(WGL_CONTEXT_MINOR_VERSION_ARB); attribs.push_back(MIN_REQUIRED_MINOR_VERSION);
         attribs.push_back(WGL_CONTEXT_FLAGS_ARB); attribs.push_back(flags);
-        if(is_WGL_ARB_create_context_profile)
+
+        if(is_WGL_ARB_create_context_profile){
             attribs.push_back(WGL_CONTEXT_PROFILE_MASK_ARB); attribs.push_back(WGL_CONTEXT_CORE_PROFILE_BIT_ARB);
+        }
+
         attribs.push_back(0);
 
         GET_GLEXT_FUNCTION_THROW(wglCreateContextAttribsARB);
@@ -174,7 +177,7 @@ auto OpenGL::create_opengl_context() -> GL_CTX
         auto modern_context = wglCreateContextAttribsARB_ext(surface, nullptr, attribs.data());
 
         if(!modern_context){
-            throw Exception("Cannot create OpenGL {}.{} not supported?", gl::MIN_REQUIRED_MAJOR_VERSION, gl::MIN_REQUIRED_MINOR_VERSION);
+            throw Exception("Cannot create OpenGL {}.{} not supported?", MIN_REQUIRED_MAJOR_VERSION, MIN_REQUIRED_MINOR_VERSION);
         } else {
             wglMakeCurrent(nullptr, nullptr);
             wglDeleteContext(dummy_context);
