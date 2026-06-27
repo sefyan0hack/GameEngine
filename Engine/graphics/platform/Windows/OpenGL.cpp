@@ -5,6 +5,8 @@
 #include <core/Log.hpp>
 #include <core/Exception.hpp>
 
+#include <vector>
+
 #undef min
 #undef max
 
