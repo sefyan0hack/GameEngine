@@ -84,3 +84,24 @@
   ```bash
   cmake --build build --config Release
   ```
+
+
+## TODO (implement some useful widely supported OpenGL extensions)
+
+|     | OpenGL Extension                    |   %   | Info |
+|-----|-------------------------------------|-------|------|
+| [ ] | GL_ARB_direct_state_access          | 69.0% | Direct State Access |
+| [ ] | GL_ARB_buffer_storage               | 74.2% | Buffer streaming / high-performance GPU memory |
+| [ ] | GL_ARB_map_buffer_range             | 78.8% | Partial buffer mapping control / avoid full buffer stalls |
+| [ ] | GL_ARB_draw_indirect                | 73.9% | Indirect rendering |
+| [ ] | GL_ARB_multi_draw_indirect          | 72.9% | Multiple draw calls in one GPU command |
+| [ ] | GL_ARB_shader_storage_buffer_object | 73.2% | SSBO (GPU read/write buffers in shaders) |
+| [ ] | GL_ARB_compute_shader               | 71.9% | Compute shaders |
+| [ ] | GL_ARB_texture_storage              | 77.1% | Immutable textures (performance + correctness) |
+| [ ] | GL_ARB_texture_filter_anisotropic   | 58.7% | Better texture filtering quality |
+| [ ] | GL_ARB_texture_swizzle              | 76.7% | Reorder RGBA channels in hardware |
+| [ ] | GL_ARB_base_instance                | 75.4% | Offset instancing per draw call |
+| [ ] | GL_ARB_explicit_uniform_location    | 75.2% | Manually assign uniform locations in GLSL |
+| [ ] | GL_ARB_explicit_attrib_location     | 78.3% | Control vertex layout locations cleanly |
+| [ ] | GL_ARB_sync                         | 78.6% | GPU fences (`glFenceSync`) |
+| [ ] | GL_ARB_bindless_texture             | 53.1% | Textures as GPU handles instead of binding slots |
