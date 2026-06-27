@@ -98,8 +98,6 @@
 | [ ] | GL_ARB_shader_storage_buffer_object | 73.2% | SSBO (GPU read/write buffers in shaders) |
 | [ ] | GL_ARB_compute_shader               | 71.9% | Compute shaders |
 | [ ] | GL_ARB_texture_storage              | 77.1% | Immutable textures (performance + correctness) |
-| [ ] | GL_ARB_texture_filter_anisotropic   | 58.7% | Better texture filtering quality |
-| [ ] | GL_ARB_texture_swizzle              | 76.7% | Reorder RGBA channels in hardware |
 | [ ] | GL_ARB_base_instance                | 75.4% | Offset instancing per draw call |
 | [ ] | GL_ARB_explicit_uniform_location    | 75.2% | Manually assign uniform locations in GLSL |
 | [ ] | GL_ARB_explicit_attrib_location     | 78.3% | Control vertex layout locations cleanly |

@@ -130,8 +130,9 @@ static auto func##_ext = [](){\
     FUNC_GL_X(CheckFramebufferStatus)\
     FUNC_GL_X(DrawBuffers)\
     FUNC_GL_X(ReadBuffer)\
-    FUNC_GL_X(GetBooleani_v)\
-    FUNC_GL_X(GetIntegeri_v)
+    FUNC_GL_X(GetIntegeri_v)\
+    FUNC_GL_X(TexParameterf)\
+    FUNC_GL_X(TexParameterfv)
 
 namespace gl {
 
