@@ -9,6 +9,7 @@ using namespace std;
 
 class Game final : IGame
 {
+public:
     Game()
     {
         auto kimberley_jpg     = std::make_shared<Texture2D>(res::get("res/kimberley.jpg"));
