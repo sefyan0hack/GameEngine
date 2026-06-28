@@ -54,3 +54,8 @@ auto OpenGL::create_context() -> GL_CTX
 
     return context;
 }
+
+auto OpenGL::platform_extensions() const -> std::string
+{
+    return glXQueryExtensionsString(m_Window.display(), DefaultScreen(m_Window.display()));
+}

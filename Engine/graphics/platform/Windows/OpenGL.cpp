@@ -85,22 +85,7 @@ auto OpenGL::create_context() -> GL_CTX
 
     wglMakeCurrent(dummy_surface, dummy_context);
 
-    std::string extensions;
-    {
-        auto glGetIntegerv_ext = reinterpret_cast<decltype(&glGetIntegerv)>(resolve_function("glGetIntegerv"));
-        auto glGetStringi_ext  = reinterpret_cast<decltype(&glGetStringi)>(resolve_function("glGetStringi"));
-
-        int32_t numExtensions = 0;
-        glGetIntegerv_ext(GL_NUM_EXTENSIONS, &numExtensions);
-
-        for (int32_t i = 0; i < numExtensions; ++i) {
-            extensions += std::format("{} ", (const char*)glGetStringi_ext(GL_EXTENSIONS, i));
-        }
-    }
-
-    GET_GLEXT_FUNCTION_NO_THROW(wglGetExtensionsStringARB);
-    if(wglGetExtensionsStringARB_ext)
-        extensions += wglGetExtensionsStringARB_ext(dummy_surface);
+    std::string extensions = platform_extensions();
 
     ////////////////////////////////////////////////////////
 
@@ -193,4 +178,14 @@ auto OpenGL::create_context() -> GL_CTX
 
     DestroyWindow(dummy_window);
     return dummy_context;
+}
+
+auto OpenGL::platform_extensions() const -> std::string
+{
+    GET_GLEXT_FUNCTION_NO_THROW(wglGetExtensionsStringARB);
+
+    if(wglGetExtensionsStringARB_ext)
+        return wglGetExtensionsStringARB_ext(m_Window.surface());
+    else 
+        return "";
 }

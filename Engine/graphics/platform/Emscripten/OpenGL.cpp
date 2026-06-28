@@ -40,3 +40,11 @@ auto OpenGL::create_context() -> GL_CTX
 
     return context;
 }
+
+auto OpenGL::platform_extensions() const -> std::string
+{
+    auto exts = emscripten_webgl_get_supported_extensions();
+    std::string exts_str = exts;
+    std::free(exts);
+    return exts_str;
+}
