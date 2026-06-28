@@ -30,7 +30,9 @@ auto OpenGL::create_context() -> GL_CTX
 
     attrs.depth = 1;
     attrs.stencil = 1;
-    attrs.antialias = 1;
+
+    if(MSAA == 0) attrs.antialias = 0;
+    else attrs.antialias = 1;
 
     auto context = emscripten_webgl_create_context(surface, &attrs);
 
