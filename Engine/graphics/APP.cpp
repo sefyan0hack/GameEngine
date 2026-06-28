@@ -19,6 +19,9 @@ constexpr auto WINDOW_WIDTH = 1180;
 constexpr auto WINDOW_HEIGHT = 640;
 
 IGame::IGame() : app(APP::self(this)){}
+IGame::~IGame() = default;
+auto IGame::update(float dt) -> void { logg::trace("update(delta: {})", dt); }
+auto IGame::on_deltamouse(float dx, float dy) -> void { logg::trace("on_deltamouse(dx: {}, dy:{})", dx, dy); }
 
 APP::APP()
     : m_Running(true)
