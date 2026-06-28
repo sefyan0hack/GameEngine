@@ -19,11 +19,13 @@
 
 class ENGINE_EXPORT IGame {
 public:
+    IGame();
     virtual ~IGame() = default;
     virtual auto update(float dt) -> void { logg::trace("update(delta: {})", dt); }
     virtual auto on_deltamouse(float dx, float dy) -> void { logg::trace("on_deltamouse(dx: {}, dy:{})", dx, dy); }
 
     ::Scene Scene;
+    class APP& app;
 };
 
 class ENGINE_EXPORT APP

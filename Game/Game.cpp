@@ -9,9 +9,6 @@ using namespace std;
 
 class Game final : IGame
 {
-    APP& app = APP::self(this); // APP::self obten the app only instance and regester the game
-
-public:
     Game()
     {
         auto kimberley_jpg     = std::make_shared<Texture2D>(res::get("res/kimberley.jpg"));

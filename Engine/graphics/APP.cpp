@@ -15,10 +15,10 @@
 #include <inputs/Keyboard.hpp>
 #include <inputs/Mouse.hpp>
 
-static IGame defaultGame;
-
 constexpr auto WINDOW_WIDTH = 1180;
 constexpr auto WINDOW_HEIGHT = 640;
+
+IGame::IGame() : app(APP::self(this)){}
 
 APP::APP()
     : m_Running(true)
@@ -30,7 +30,7 @@ APP::APP()
     , Renderer(std::make_unique<OpenGLRenderer>(m_GApi))
     , UiText(m_GApi)
     , sKybOx()
-    , Game(&defaultGame)
+    , Game()
 {
     Window.show();
     Window.set_vsync(false);
