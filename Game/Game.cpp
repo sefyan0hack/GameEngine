@@ -43,6 +43,7 @@ public:
     auto update(float delta) -> void override
     {
         app.UiText.draw(std::format("FPS: {:.2f}", app.fps()));
+        app.UiText.draw(std::format("Resolution: {}", app.Window.dims()));
         app.UiText.draw(std::format("Memory: {}/{} MB", os::memory_usage(), os::memory_peak()));
         app.UiText.draw(std::format("Threads: {}", std::thread::hardware_concurrency()));
         app.UiText.draw(std::format("Progame Binds  : {}", app.render_stats().shaderBinds));
