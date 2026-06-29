@@ -23,9 +23,7 @@
 
 Text::Text(const OpenGL& ctx)
     : m_GApi(ctx)
-    , m_Vert(std::make_shared<Shader>("res/Shaders/text.vert", GL_VERTEX_SHADER))
-    , m_Frag(std::make_shared<Shader>("res/Shaders/text.frag", GL_FRAGMENT_SHADER))
-    , m_Program(std::make_shared<ShaderProgram>(m_Vert, m_Frag))
+    , m_Program(std::make_shared<ShaderProgram>("res/Shaders/text.vert", "res/Shaders/text.frag"))
     , m_Font(DEFAULT_FONT_NAME)
     , m_Cursor(emath::vec2(0.0f))
     , VAO(0), VBO(0)

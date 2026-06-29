@@ -1,7 +1,6 @@
 #pragma once
 #include <tuple>
 #include <memory>
-#include <map>
 #include <string>
 #include <vector>
 #include <format>
@@ -19,6 +18,7 @@ public:
 
     friend struct std::formatter<ShaderProgram>;
     ShaderProgram(std::shared_ptr<class Shader> vertex, std::shared_ptr<class Shader> fragment);
+    ShaderProgram(const char* vertex, const char* fragment);
     
     // ShaderProgram(const ShaderProgram& other);
     ShaderProgram(ShaderProgram&& other) noexcept;

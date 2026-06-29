@@ -32,7 +32,6 @@ APP::APP()
     , m_GApi(Window)
     , Renderer(std::make_unique<OpenGLRenderer>(m_GApi))
     , UiText(m_GApi)
-    , sKybOx()
     , Game()
 {
     Window.show();
@@ -69,7 +68,6 @@ auto APP::frame() -> void
 
     Renderer->clear_screen(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     Renderer->render(Game->Scene);
-    sKybOx.render(Game->Scene.main_camera());
     UiText.render();
     Window.swap_buffers();
     Keyboard.save_prev_state();

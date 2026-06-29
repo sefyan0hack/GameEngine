@@ -2,7 +2,6 @@
 #include "Texture.hpp"
 #include "ShaderProgram.hpp"
 #include "Camera.hpp"
-#include "SkyBox.hpp"
 
 #include <emath/mat3.hpp>
 #include <emath/mat4.hpp>

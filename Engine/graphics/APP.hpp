@@ -4,7 +4,6 @@
 #include "OpenGL.hpp"
 #include "Renderer.hpp"
 #include "Scene.hpp"
-#include "SkyBox.hpp"
 
 #include <core/Log.hpp>
 
@@ -58,7 +57,6 @@ private:
 
 public:
     Text UiText;
-    SkyBox sKybOx;
 private:
     IGame* Game;
 };

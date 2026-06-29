@@ -33,7 +33,6 @@ private:
 
 private:
     const class OpenGL& m_GApi;
-    std::shared_ptr<class Shader> m_Vert, m_Frag;
     std::shared_ptr<class ShaderProgram> m_Program;
 
     UiFont m_Font;

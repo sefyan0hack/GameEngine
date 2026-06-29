@@ -15,7 +15,6 @@ target_sources( graphics
         ${CMAKE_CURRENT_SOURCE_DIR}/Texture.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Scene.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Material.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/SkyBox.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Image.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Transform.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Camera.cpp
@@ -38,7 +37,6 @@ target_sources( graphics
         ${CMAKE_CURRENT_SOURCE_DIR}/Scene.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Material.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Image.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/SkyBox.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Transform.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Camera.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/GameObject.hpp

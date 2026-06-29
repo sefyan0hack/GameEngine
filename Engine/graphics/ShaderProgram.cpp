@@ -2,6 +2,7 @@
 #include "Shader.hpp"
 #include "OpenGL.hpp"
 #include <core/Log.hpp>
+#include <core/res.hpp>
 #include <core/Exception.hpp>
 
 #include <utility>
@@ -33,6 +34,10 @@ ShaderProgram::ShaderProgram(std::shared_ptr<Shader> vertex, std::shared_ptr<Sha
     dump_attribs();
     dump_uniforms();
 }
+
+ShaderProgram::ShaderProgram(const char* vertex, const char* fragment)
+: ShaderProgram(Shader::new_vertex(vertex), Shader::new_fragment(fragment)) 
+{}
 
 ShaderProgram::ShaderProgram(ShaderProgram&& other) noexcept
     : m_Id(std::exchange(other.m_Id, 0))

@@ -11,7 +11,6 @@
 #include "Scene.hpp"
 #include "Material.hpp"
 #include "Image.hpp"
-#include "SkyBox.hpp"
 #include "Transform.hpp"
 #include "GameObject.hpp"
 #include "Camera.hpp"
