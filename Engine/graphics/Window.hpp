@@ -42,7 +42,7 @@ class ENGINE_EXPORT CWindow
         auto is_fullscreen() -> bool;
         auto resize(int32_t width, int32_t height) -> void;
 
-        auto process_messages()   -> void ;
+        auto poll_events()   -> void ;
         auto message_box(const char* title, const char* body) -> bool;
 
     private:

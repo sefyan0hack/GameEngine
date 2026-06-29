@@ -127,7 +127,7 @@ static auto CALLBACK win_proc_thunk(HWND Winhandle, UINT msg, WPARAM Wpr, LPARAM
 		// 	break;
 
     }
-    return DefWindowProcA(Winhandle, msg, Wpr, Lpr);
+    return DefWindowProc(Winhandle, msg, Wpr, Lpr);
 }
 
 
@@ -164,7 +164,7 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, Width, Height,
         nullptr, nullptr,
-        GetModuleHandleA( nullptr ),
+        GetModuleHandle( nullptr ),
         this
     );
 
@@ -175,14 +175,14 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
 	return {0 /*display*/, window_handle, GetDC(window_handle)};
 }
 
-auto CWindow::process_messages() -> void
+auto CWindow::poll_events() -> void
 {
     MSG Msg = {};
-    while (PeekMessageA(&Msg, nullptr, 0u, 0u, PM_REMOVE))
+    while (PeekMessage(&Msg, nullptr, 0u, 0u, PM_REMOVE))
     {
         TranslateMessage(&Msg);
-        DispatchMessageA(&Msg);
-    }	
+        DispatchMessage(&Msg);
+    }
 }
 
 auto CWindow::show() -> void

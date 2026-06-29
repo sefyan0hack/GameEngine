@@ -42,7 +42,7 @@ auto OpenGL::create_context() -> GL_CTX
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
         nullptr, nullptr,
-        GetModuleHandleA( nullptr ),
+        GetModuleHandle( nullptr ),
         nullptr
     );
 

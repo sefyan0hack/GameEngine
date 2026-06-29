@@ -211,7 +211,7 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
 	return {0 /* display */, window_handle, Surface};
 }
 
-auto CWindow::process_messages() -> void
+auto CWindow::poll_events() -> void
 {
 }
 

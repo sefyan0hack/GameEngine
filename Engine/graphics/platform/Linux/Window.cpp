@@ -50,7 +50,7 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
 	return {display, window_handle, window_handle};
 }
 
-auto CWindow::process_messages() -> void
+auto CWindow::poll_events() -> void
 {
 	[[maybe_unused]] int32_t screen = DefaultScreen(m_Display);
 	Atom wmDeleteMessage = XInternAtom(m_Display, "WM_DELETE_WINDOW", false);

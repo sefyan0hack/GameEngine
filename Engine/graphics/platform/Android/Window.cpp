@@ -133,7 +133,7 @@ CWindow::~CWindow()
 }
 
 
-auto CWindow::process_messages() -> void
+auto CWindow::poll_events() -> void
 {
 }
 

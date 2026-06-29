@@ -10,7 +10,7 @@ auto DynLib::load() -> void
     if(m_handle) throw Exception("Can't load lib `{}` before unloding prev lib", f_name);
 
     if(m_name.empty()) m_handle = (void*) GetModuleHandle(nullptr);
-    else m_handle = (void*) LoadLibraryA(f_name.c_str());
+    else m_handle = (void*) LoadLibrary(f_name.c_str());
 
     if (!m_handle) throw Exception("Can't open lib `{}`: {}", f_name, error());
 }
@@ -43,7 +43,7 @@ auto DynLib::error() -> std::string {
     if(errorMessageID == 0) return "No error";
 
     LPSTR messageBuffer = nullptr;
-    size_t size = FormatMessageA(
+    size_t size = FormatMessage(
         FORMAT_MESSAGE_ALLOCATE_BUFFER | 
         FORMAT_MESSAGE_FROM_SYSTEM | 
         FORMAT_MESSAGE_IGNORE_INSERTS,

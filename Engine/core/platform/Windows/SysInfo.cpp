@@ -37,8 +37,8 @@ auto os::get_proc_address(const char* module, const char* sym) -> void* {
     std::string failreson;
 
     lib = [&module](){
-        void* handle = GetModuleHandleA(module);
-        return handle ? handle : LoadLibraryA(module);
+        void* handle = GetModuleHandle(module);
+        return handle ? handle : LoadLibrary(module);
     }();
 
     failreson = lib ? "" : std::to_string(GetLastError());

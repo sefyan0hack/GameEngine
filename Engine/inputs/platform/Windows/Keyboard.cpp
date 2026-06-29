@@ -96,7 +96,7 @@ ENGINE_EXPORT auto from_native(WPARAM key, LPARAM Lpr) -> Key
 
         // Modifiers
         
-        case VK_SHIFT: return (MapVirtualKeyA(scancode, MAPVK_VSC_TO_VK_EX) == VK_RSHIFT) ? Key::RightShift : Key::LeftShift;
+        case VK_SHIFT: return (MapVirtualKey(scancode, MAPVK_VSC_TO_VK_EX) == VK_RSHIFT) ? Key::RightShift : Key::LeftShift;
 		case VK_CONTROL: return extended ? Key::RightControl : Key::LeftControl;
 		case VK_MENU: return extended ? Key::RightAlt : Key::LeftAlt;
 

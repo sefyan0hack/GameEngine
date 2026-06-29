@@ -82,7 +82,7 @@ struct overloaded : Ts... { using Ts::operator()...; };
 auto APP::loop_body(void* ctx) -> void
 {
     auto app = static_cast<APP*>(ctx);
-    app->Window.process_messages();
+    app->Window.poll_events();
 
     Event event;
     while (EventQ::self().pull(event)) {
