@@ -75,7 +75,7 @@ auto Text::prepare_buffers() -> void {
     gl::GenBuffers(1, &VBO);
 
     gl::BindBuffer(GL_ARRAY_BUFFER, VBO);
-    gl::BufferData(GL_ARRAY_BUFFER, BATCH_SIZE * sizeof(Glyph), nullptr, GL_DYNAMIC_DRAW);
+    gl::BufferData(GL_ARRAY_BUFFER, BATCH_SIZE * sizeof(Glyph), nullptr, GL_STREAM_DRAW);
 
     // Offset (2 * 4 byte)
     gl::EnableVertexAttribArray(0);
@@ -164,18 +164,26 @@ auto Text::render() -> void {
     gl::BindVertexArray(VAO);
     gl::BindBuffer(GL_ARRAY_BUFFER, VBO);
 
-    gl::DepthFunc(GL_ALWAYS);
+    // gl::DepthFunc(GL_ALWAYS);
 
     for (size_t offset = 0; offset < m_Instances.size(); offset += BATCH_SIZE)
     {
         auto batchCount = std::min(BATCH_SIZE, m_Instances.size() - offset);
-        gl::BufferSubData(GL_ARRAY_BUFFER, 0, batchCount * sizeof(Glyph), m_Instances.data() + offset);
-        gl::DrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, static_cast<GLsizei>(batchCount));
+        GLsizeiptr bytesToCopy = batchCount * sizeof(Glyph);
+
+        void* mappedMemory = gl::MapBufferRange(GL_ARRAY_BUFFER, 0, bytesToCopy, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+
+        if (mappedMemory) {
+            std::memcpy(mappedMemory, m_Instances.data() + offset, bytesToCopy);
+            gl::UnmapBuffer(GL_ARRAY_BUFFER);
+            gl::DrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, static_cast<GLsizei>(batchCount));
+        }
     }
 
-    gl::DepthFunc(GL_LESS);
+    // gl::DepthFunc(GL_LESS);
 
     m_Instances.clear();
+    m_Text.clear();
 }
 
 auto Text::text(std::string text, emath::vec2 pos) -> void {

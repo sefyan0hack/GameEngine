@@ -11,6 +11,7 @@ public:
 
     auto render(const class Scene& scene) const -> void override;
 
+    auto depth_prepass(const class Scene& scene) const -> void;
     auto render_scene(const class Scene& scene) const -> void;
     auto render_skybox(const class Camera& cam) const -> void;
 
@@ -24,6 +25,7 @@ public:
 private:
     const class OpenGL& m_GApi;
     int32_t m_X, m_Y, m_Width, m_Height;
+    std::shared_ptr<class ShaderProgram> m_ProgramDepth;
     std::shared_ptr<class ShaderProgram> m_ProgramScene;
     std::shared_ptr<class ShaderProgram> m_ProgramSkyBox;
     std::shared_ptr<class TextureCubeMap> m_SkyBoxTexture;

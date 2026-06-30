@@ -132,7 +132,10 @@ static auto func##_ext = [](){\
     FUNC_GL_X(ReadBuffer)\
     FUNC_GL_X(GetIntegeri_v)\
     FUNC_GL_X(TexParameterf)\
-    FUNC_GL_X(TexParameterfv)
+    FUNC_GL_X(TexParameterfv)\
+    FUNC_GL_X(ColorMask)\
+    FUNC_GL_X(UnmapBuffer)\
+    FUNC_GL_X(MapBufferRange)
 
 namespace gl {
 

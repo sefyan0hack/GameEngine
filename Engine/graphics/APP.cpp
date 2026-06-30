@@ -66,7 +66,6 @@ auto APP::frame() -> void
         frameCount = 0;
     }
 
-    Renderer->clear_screen(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     Renderer->render(Game->Scene);
     UiText.render();
     Window.swap_buffers();

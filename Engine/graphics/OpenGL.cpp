@@ -54,7 +54,6 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     auto GlslVersion = glsl_version ? glsl_version : "unknown";
 
     gl::Enable(GL_DEPTH_TEST);
-    gl::DepthFunc(GL_LESS);
 
     gl::Enable(GL_BLEND);
     gl::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

@@ -18,6 +18,7 @@ OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx)
     : m_GApi(ctx)
     , m_X(0), m_Y(0)
     , m_Width(ctx.window().dims().first), m_Height(ctx.window().dims().second)
+    , m_ProgramDepth(std::make_shared<ShaderProgram>("res/Shaders/depth.vert", "res/Shaders/depth.frag"))
     , m_ProgramScene(std::make_shared<ShaderProgram>("res/Shaders/main.vert", "res/Shaders/main.frag"))
     , m_ProgramSkyBox(std::make_shared<ShaderProgram>("res/Shaders/skybox.vert", "res/Shaders/skybox.frag"))
     , m_SkyBoxTexture(std::make_shared<TextureCubeMap>(TextureCubeMap::base_to_6facesfiles("res/forest.jpg")))
@@ -26,8 +27,49 @@ OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx)
 
 auto OpenGLRenderer::render(const Scene& scene) const -> void
 {
+    gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    gl::DepthMask(GL_TRUE);
+    gl::DepthFunc(GL_LESS);
+    depth_prepass(scene);
+    gl::DepthMask(GL_FALSE);
+    gl::DepthFunc(GL_LEQUAL);
     render_scene(scene);
+    gl::DepthMask(GL_FALSE);
+    gl::DepthFunc(GL_LEQUAL);
     render_skybox(scene.main_camera());
+    gl::DepthMask(GL_TRUE);
+    gl::DepthFunc(GL_LESS);
+}
+
+auto OpenGLRenderer::depth_prepass(const Scene& scene) const -> void
+{
+    auto camera = scene.main_camera();
+
+    gl::ColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+    m_ProgramDepth->use();
+
+    m_ProgramDepth->set_uniform("View", camera.view());
+    m_ProgramDepth->set_uniform("Projection", camera.projection());
+
+    Mesh* currentMesh = nullptr;
+
+    for (const auto& obj : scene.entities())
+    {
+        auto mesh = obj.mesh().get();
+
+        m_ProgramDepth->set_uniform("Model", obj.model());
+
+        if (currentMesh != mesh)
+        {
+            currentMesh = mesh;
+            gl::BindVertexArray(mesh->VAO);
+        }
+
+        gl::DrawArrays(GL_TRIANGLES, 0, mesh->vertex_size());
+    }
+
+    gl::ColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 }
 
 auto OpenGLRenderer::render_scene(const Scene& scene) const -> void
@@ -95,14 +137,6 @@ auto OpenGLRenderer::render_scene(const Scene& scene) const -> void
 
 auto OpenGLRenderer::render_skybox(const Camera& cam) const -> void
 {
-    GLint old_depth_func{};
-    gl::GetIntegerv(GL_DEPTH_FUNC, &old_depth_func);
-    GLboolean old_depth_mask{};
-    gl::GetBooleanv(GL_DEPTH_WRITEMASK, &old_depth_mask);
-
-    gl::DepthFunc(GL_LEQUAL);
-    gl::DepthMask(GL_FALSE);
-
     m_ProgramSkyBox->use();
 
     m_ProgramSkyBox->set_uniform("u_InvProjection", cam.perspective().inverse());
@@ -114,9 +148,6 @@ auto OpenGLRenderer::render_skybox(const Camera& cam) const -> void
 
     // gl::BindVertexArray(VAO);
     gl::DrawArrays(GL_TRIANGLES, 0, 3);
-
-    gl::DepthFunc(old_depth_func);
-    gl::DepthMask(old_depth_mask);
 }
 
 
