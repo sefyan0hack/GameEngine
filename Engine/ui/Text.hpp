@@ -9,8 +9,8 @@
 #include <memory>
 #include <unordered_map>
 #include <vector>
+#include <array>
 #include <cstdint>
-#include <bit>
 
 #include "UiFont.hpp"
 
@@ -53,4 +53,5 @@ private:
 
     std::unordered_map<emath::vec2, std::string> m_Text;
     std::vector<Glyph> m_Instances;
+    std::array<UiFont::bakedchar, GLYPH_COUNT> m_Glyphs;
 };

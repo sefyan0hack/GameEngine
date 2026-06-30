@@ -23,11 +23,6 @@
 #undef max
 #endif
 
-auto glyphs() -> std::array<UiFont::bakedchar, Text::GLYPH_COUNT>&
-{
-    static std::array<UiFont::bakedchar, Text::GLYPH_COUNT> _;
-    return _;
-}
 
 Text::Text(const OpenGL& ctx)
     : m_GApi(ctx)
@@ -36,6 +31,7 @@ Text::Text(const OpenGL& ctx)
     , m_Cursor(emath::vec2(0.0f))
     , VAO(0), VBO(0), m_Atlas(0)
 {
+    m_Instances.reserve(BATCH_SIZE);
     // Initialize buffers
     prepare_buffers();
 
@@ -50,7 +46,7 @@ Text::Text(const OpenGL& ctx)
         DEFAULT_FONT_SIZE,
         bitmap.data(), w, h,
         FIRST_GLYPH, GLYPH_COUNT,
-        glyphs().data()
+        m_Glyphs.data()
     );
 
     if (result <= 0) {
@@ -65,6 +61,7 @@ Text::Text(const OpenGL& ctx)
 }
 
 Text::~Text() {
+    gl::DeleteTextures(1, &m_Atlas);
     gl::DeleteBuffers(1, &VBO);
     gl::DeleteVertexArrays(1, &VAO);
 }
@@ -112,8 +109,8 @@ auto Text::render() -> void {
             uint8_t ch = static_cast<uint8_t>(c);
             const auto& glyph =
                 (ch >= FIRST_GLYPH && ch <= LAST_GLYPH)
-                    ? glyphs()[ch - FIRST_GLYPH]
-                    : glyphs()['?' - FIRST_GLYPH];
+                    ? m_Glyphs[ch - FIRST_GLYPH]
+                    : m_Glyphs['?' - FIRST_GLYPH];
 
             auto line_advance = [&](){ x = start_x; y -= (ascent - descent + linegap) * scale; };
             auto glyph_advance = [&](int n = 1){  x += glyph.xadvance *  n; };
@@ -167,8 +164,6 @@ auto Text::render() -> void {
     gl::BindVertexArray(VAO);
     gl::BindBuffer(GL_ARRAY_BUFFER, VBO);
 
-    GLint old_depth{};
-    gl::GetIntegerv(GL_DEPTH_FUNC, &old_depth);
     gl::DepthFunc(GL_ALWAYS);
 
     for (size_t offset = 0; offset < m_Instances.size(); offset += BATCH_SIZE)
@@ -178,7 +173,7 @@ auto Text::render() -> void {
         gl::DrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, static_cast<GLsizei>(batchCount));
     }
 
-    gl::DepthFunc(old_depth);
+    gl::DepthFunc(GL_LESS);
 
     m_Instances.clear();
 }
