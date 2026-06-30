@@ -1,49 +1,34 @@
 #include "Text.hpp"
 #include "UiFont.hpp"
-#include "gl.hpp"
 
 #include <core/Exception.hpp>
-#include <core/res.hpp>
 
-#include <graphics/Window.hpp>
-#include <graphics/OpenGL.hpp>
-#include <graphics/Shader.hpp>
-#include <graphics/ShaderProgram.hpp>
-
-#include <emath/emath.hpp>
-
-#include <algorithm>
 #include <string>
-#include <cstring>
-#include <cmath>
-#include <bit>
 
-#if defined(min) || defined(max)
-#undef min
-#undef max
-#endif
-
-
-Text::Text(const OpenGL& ctx)
-    : m_GApi(ctx)
-    , m_Program(std::make_shared<ShaderProgram>("res/Shaders/text.vert", "res/Shaders/text.frag"))
-    , m_Font(DEFAULT_FONT_NAME)
+Text::Text()
+    : m_Font(DEFAULT_FONT_NAME)
     , m_Cursor(emath::vec2(0.0f))
-    , VAO(0), VBO(0), m_Atlas(0)
 {
-    m_Instances.reserve(BATCH_SIZE);
-    // Initialize buffers
-    prepare_buffers();
+}
 
-    gl::GenTextures(1, &m_Atlas);
-    gl::BindTexture(GL_TEXTURE_2D, m_Atlas);
+auto Text::text(std::string text, emath::vec2 pos) -> void {
+    m_Text[pos] = std::move(text);
+}
 
-    auto [w, h] = atlas_dims();
+auto Text::draw(std::string text) -> void {
+    this->text(std::move(text), m_Cursor);
+
+    m_Cursor.x = 0.0f;
+    m_Cursor.y += DEFAULT_FONT_SIZE;
+}
+
+auto Text::bitmap(int32_t w, int32_t h) -> std::vector<uint8_t>
+{
     std::vector<uint8_t> bitmap(w*h, 0);
 
     auto result = m_Font.bake_font_bitmap(
         0,
-        DEFAULT_FONT_SIZE,
+        Text::DEFAULT_FONT_SIZE,
         bitmap.data(), w, h,
         FIRST_GLYPH, GLYPH_COUNT,
         m_Glyphs.data()
@@ -53,45 +38,12 @@ Text::Text(const OpenGL& ctx)
         throw Exception("Failed to bake font bitmap");
     }
 
-    gl::TexImage2D(GL_TEXTURE_2D, 0, GL_R8, w, h, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap.data());
-
-    // Set texture parameters
-    gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    return bitmap;
 }
 
-Text::~Text() {
-    gl::DeleteTextures(1, &m_Atlas);
-    gl::DeleteBuffers(1, &VBO);
-    gl::DeleteVertexArrays(1, &VAO);
-}
-
-auto Text::prepare_buffers() -> void {
-    // Generate and bind VAO
-    gl::GenVertexArrays(1, &VAO);
-    gl::BindVertexArray(VAO);
-
-    // Dynamic instance VBO
-    gl::GenBuffers(1, &VBO);
-
-    gl::BindBuffer(GL_ARRAY_BUFFER, VBO);
-    gl::BufferData(GL_ARRAY_BUFFER, BATCH_SIZE * sizeof(Glyph), nullptr, GL_STREAM_DRAW);
-
-    // Offset (2 * 4 byte)
-    gl::EnableVertexAttribArray(0);
-    gl::VertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Glyph), (void*)offsetof(Glyph, offset));
-    gl::VertexAttribDivisor(0, 1);
-
-    // TexRect (4 * 2 byte)
-    gl::EnableVertexAttribArray(1);
-    gl::VertexAttribIPointer(1, 4, GL_UNSIGNED_SHORT, sizeof(Glyph), (void*)offsetof(Glyph, texRect));
-    gl::VertexAttribDivisor(1, 1);
-}
-
-auto Text::render() -> void {
+auto Text::fill_text_buffer(int32_t width, int32_t height) -> void
+{
     if (m_Text.empty()) return;
-
-    auto [width, height] = m_GApi.window().dims();
 
     auto scale = m_Font.pixel_scale(DEFAULT_FONT_SIZE);
     auto ascent = m_Font.ascent();
@@ -130,7 +82,7 @@ auto Text::render() -> void {
             float xpos = x + glyph.xoff;
             float ypos = y - glyph.yoff - h;
 
-            m_Instances.push_back(Glyph {
+            m_TextGlyphs.push_back(Glyph {
                 .offset = {xpos, ypos},
                 .texRect = {glyph.x0, glyph.y0, glyph.x1, glyph.y1}
             });
@@ -139,63 +91,24 @@ auto Text::render() -> void {
         }
     }
 
-    if (m_Instances.empty()) return;
+    if (m_TextGlyphs.empty()) return;
+}
 
-    m_Program->use();
+auto Text::glyphs() const -> const std::vector<Glyph>&
+{
+    return m_TextGlyphs;
+}
 
-    uint32_t u_ScreenSize = uint32_t(width) | (uint32_t(height) << 16);
-    m_Program->set_uniform("u_ScreenSize", u_ScreenSize);
+auto Text::clear_glyphs() -> void
+{
+    m_TextGlyphs.clear();
+}
 
-    auto r = uint8_t(std::clamp(DEFAULT_FONT_COLOR.x, 0.0f, 1.0f) * 255.0f + 0.5f);
-    auto g = uint8_t(std::clamp(DEFAULT_FONT_COLOR.y, 0.0f, 1.0f) * 255.0f + 0.5f);
-    auto b = uint8_t(std::clamp(DEFAULT_FONT_COLOR.z, 0.0f, 1.0f) * 255.0f + 0.5f);
-
-    auto color =(uint32_t(r)      ) |
-                (uint32_t(g) << 8 ) |
-                (uint32_t(b) << 16) |
-                (uint32_t(255) << 24);
-
-    m_Program->set_uniform("u_Color", color);
-
-    gl::ActiveTexture(GL_TEXTURE0);
-    gl::BindTexture(GL_TEXTURE_2D, m_Atlas);
-    m_Program->set_uniform("u_Texture", 0);
-
-    gl::BindVertexArray(VAO);
-    gl::BindBuffer(GL_ARRAY_BUFFER, VBO);
-
-    // gl::DepthFunc(GL_ALWAYS);
-
-    for (size_t offset = 0; offset < m_Instances.size(); offset += BATCH_SIZE)
-    {
-        auto batchCount = std::min(BATCH_SIZE, m_Instances.size() - offset);
-        GLsizeiptr bytesToCopy = batchCount * sizeof(Glyph);
-
-        void* mappedMemory = gl::MapBufferRange(GL_ARRAY_BUFFER, 0, bytesToCopy, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-
-        if (mappedMemory) {
-            std::memcpy(mappedMemory, m_Instances.data() + offset, bytesToCopy);
-            gl::UnmapBuffer(GL_ARRAY_BUFFER);
-            gl::DrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, static_cast<GLsizei>(batchCount));
-        }
-    }
-
-    // gl::DepthFunc(GL_LESS);
-
-    m_Instances.clear();
+auto Text::clear() -> void
+{
     m_Text.clear();
 }
 
-auto Text::text(std::string text, emath::vec2 pos) -> void {
-    m_Text[pos] = std::move(text);
-}
-
-auto Text::draw(std::string text) -> void {
-    this->text(std::move(text), m_Cursor);
-
-    m_Cursor.x = 0.0f;
-    m_Cursor.y += DEFAULT_FONT_SIZE;
-}
 
 auto Text::atlas_dims() const -> std::pair<int32_t, int32_t>
 {

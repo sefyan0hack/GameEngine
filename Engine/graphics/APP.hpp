@@ -50,13 +50,12 @@ public:
     ::CWindow Window;
     ::Keyboard Keyboard;
     ::Mouse Mouse;
+    ::Text UiText;
 
 private:
     OpenGL m_GApi;
     std::unique_ptr<IRenderer> Renderer;
 
-public:
-    Text UiText;
 private:
     IGame* Game;
 };

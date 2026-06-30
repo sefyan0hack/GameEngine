@@ -4,8 +4,6 @@
 #include "APP.hpp"
 #include "Window.hpp"
 #include "OpenGL.hpp"
-#include "Scene.hpp"
-#include "ShaderProgram.hpp"
 #include "OpenGLRenderer.hpp"
 
 #include <core/SysInfo.hpp>
@@ -29,9 +27,9 @@ APP::APP()
     , Window(WINDOW_WIDTH, WINDOW_HEIGHT, "")
     , Keyboard()
     , Mouse()
+    , UiText()
     , m_GApi(Window)
-    , Renderer(std::make_unique<OpenGLRenderer>(m_GApi))
-    , UiText(m_GApi)
+    , Renderer(std::make_unique<OpenGLRenderer>(m_GApi, UiText))
     , Game()
 {
     Window.show();
@@ -67,7 +65,6 @@ auto APP::frame() -> void
     }
 
     Renderer->render(Game->Scene);
-    UiText.render();
     Window.swap_buffers();
     Keyboard.save_prev_state();
     Mouse.save_prev_state();
