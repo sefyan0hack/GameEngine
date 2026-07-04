@@ -53,7 +53,7 @@ OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
 
 auto OpenGLRenderer::render(const Scene& scene) const -> void
 {
-    gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     // TODO: enable when im fragment-bound
     // gl::DepthMask(GL_TRUE);
     // gl::DepthFunc(GL_LESS);

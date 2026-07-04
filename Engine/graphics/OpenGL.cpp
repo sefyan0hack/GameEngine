@@ -55,6 +55,9 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
 
     gl::Enable(GL_DEPTH_TEST);
 
+    gl::Enable(GL_STENCIL_TEST);
+    gl::StencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
     gl::Enable(GL_BLEND);
     gl::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
