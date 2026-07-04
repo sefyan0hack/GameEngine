@@ -31,14 +31,26 @@ private:
     auto prepare_text_buffers() -> void;
 private:
     const class OpenGL& m_GApi;
-    class Text& m_Text;
     int32_t m_X, m_Y, m_Width, m_Height;
-    std::shared_ptr<class ShaderProgram> m_ProgramDepth;
-    std::shared_ptr<class ShaderProgram> m_ProgramScene;
-    std::shared_ptr<class ShaderProgram> m_ProgramSkyBox;
-    std::shared_ptr<class ShaderProgram> m_ProgramText;
-    std::shared_ptr<class TextureCubeMap> m_SkyBoxTexture;
-    uint32_t VAO, VBO, m_TextAtlas;
     DrawMode m_DrawMode;
     mutable RenderStats m_Stats;
+
+    struct {
+        std::shared_ptr<class ShaderProgram> Program;
+    } m_Depth;
+
+    struct {
+        std::shared_ptr<class ShaderProgram> Program;
+    } m_Scene;
+
+    struct {
+        std::shared_ptr<class ShaderProgram> Program;
+        std::shared_ptr<class TextureCubeMap> Texture;
+    } m_SkyBox;
+
+    struct {
+        class ::Text& Text;
+        std::shared_ptr<class ShaderProgram> Program;
+        uint32_t VAO, VBO, Atlas;
+    } m_Text;
 };

@@ -24,25 +24,33 @@
 
 OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
     : m_GApi(ctx)
-    , m_Text(text)
     , m_X(0), m_Y(0)
     , m_Width(ctx.window().dims().first), m_Height(ctx.window().dims().second)
-    , m_ProgramDepth(std::make_shared<ShaderProgram>("res/Shaders/depth.vert", "res/Shaders/depth.frag"))
-    , m_ProgramScene(std::make_shared<ShaderProgram>("res/Shaders/scene.vert", "res/Shaders/scene.frag"))
-    , m_ProgramSkyBox(std::make_shared<ShaderProgram>("res/Shaders/skybox.vert", "res/Shaders/skybox.frag"))
-    , m_ProgramText(std::make_shared<ShaderProgram>("res/Shaders/text.vert", "res/Shaders/text.frag"))
-    , m_SkyBoxTexture(std::make_shared<TextureCubeMap>(TextureCubeMap::base_to_6facesfiles("res/forest.jpg")))
-    , VAO(0), VBO(0), m_TextAtlas(0)
     , m_DrawMode(DrawMode::Triangles)
+    , m_Depth {
+        std::make_shared<ShaderProgram>("res/Shaders/depth.vert", "res/Shaders/depth.frag")
+    }
+    , m_Scene {
+        std::make_shared<ShaderProgram>("res/Shaders/scene.vert", "res/Shaders/scene.frag")
+    }
+    , m_SkyBox {
+        std::make_shared<ShaderProgram>("res/Shaders/skybox.vert", "res/Shaders/skybox.frag"),
+        std::make_shared<TextureCubeMap>(TextureCubeMap::base_to_6facesfiles("res/forest.jpg"))
+    }
+    , m_Text {
+        text,
+        std::make_shared<ShaderProgram>("res/Shaders/text.vert", "res/Shaders/text.frag"),
+        0, 0, 0
+    }
 {
     // Initialize buffers
     prepare_text_buffers();
 
-    gl::GenTextures(1, &m_TextAtlas);
-    gl::BindTexture(GL_TEXTURE_2D, m_TextAtlas);
+    gl::GenTextures(1, &m_Text.Atlas);
+    gl::BindTexture(GL_TEXTURE_2D, m_Text.Atlas);
 
-    auto [w, h] = m_Text.atlas_dims();
-    std::vector<uint8_t> bitmap = m_Text.bitmap(w,h);
+    auto [w, h] = m_Text.Text.atlas_dims();
+    std::vector<uint8_t> bitmap = m_Text.Text.bitmap(w,h);
 
     gl::TexImage2D(GL_TEXTURE_2D, 0, GL_R8, w, h, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap.data());
 
@@ -77,10 +85,10 @@ auto OpenGLRenderer::depthpre_pass(const Scene& scene) const -> void
 
     gl::ColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
-    m_ProgramDepth->use();
+    m_Depth.Program->use();
 
-    m_ProgramDepth->set_uniform("View", camera.view());
-    m_ProgramDepth->set_uniform("Projection", camera.projection());
+    m_Depth.Program->set_uniform("View", camera.view());
+    m_Depth.Program->set_uniform("Projection", camera.projection());
 
     Mesh* currentMesh = nullptr;
 
@@ -88,7 +96,7 @@ auto OpenGLRenderer::depthpre_pass(const Scene& scene) const -> void
     {
         auto mesh = obj.mesh().get();
 
-        m_ProgramDepth->set_uniform("Model", obj.model());
+        m_Depth.Program->set_uniform("Model", obj.model());
 
         if (currentMesh != mesh)
         {
@@ -108,9 +116,9 @@ auto OpenGLRenderer::scene_pass(const Scene& scene) const -> void
 
     auto camera = scene.main_camera();
 
-    m_ProgramScene->use();
-    m_ProgramScene->set_uniform("View", camera.view());
-    m_ProgramScene->set_uniform("Projection", camera.projection());
+    m_Scene.Program->use();
+    m_Scene.Program->set_uniform("View", camera.view());
+    m_Scene.Program->set_uniform("Projection", camera.projection());
     m_Stats.shaderBinds++;
 
     //Drwaing
@@ -127,13 +135,13 @@ auto OpenGLRenderer::scene_pass(const Scene& scene) const -> void
             auto v_count = mesh->vertex_size();
             m_Stats.vertex_cout += v_count;
 
-            m_ProgramScene->set_uniform("Model", obj.model());
+            m_Scene.Program->set_uniform("Model", obj.model());
 
             // Bind material only when it changes
             if (currentMaterial != material)
             {
                 currentMaterial = material;
-                currentMaterial->bind(m_ProgramScene);
+                currentMaterial->bind(m_Scene.Program);
                 m_Stats.materialBinds++;
             }
 
@@ -166,26 +174,26 @@ auto OpenGLRenderer::scene_pass(const Scene& scene) const -> void
 
 auto OpenGLRenderer::skybox_pass(const Camera& cam) const -> void
 {
-    m_ProgramSkyBox->use();
+    m_SkyBox.Program->use();
 
-    m_ProgramSkyBox->set_uniform("u_InvProjection", cam.perspective().inverse());
-    m_ProgramSkyBox->set_uniform("u_InvViewRot", emath::mat3(cam.view()).transpose());
+    m_SkyBox.Program->set_uniform("u_InvProjection", cam.perspective().inverse());
+    m_SkyBox.Program->set_uniform("u_InvViewRot", emath::mat3(cam.view()).transpose());
 
     gl::ActiveTexture(GL_TEXTURE0);
-    m_SkyBoxTexture->bind();
-    m_ProgramSkyBox->set_uniform("uDiffuseMap", 0);
+    m_SkyBox.Texture->bind();
+    m_SkyBox.Program->set_uniform("uDiffuseMap", 0);
 
     // gl::BindVertexArray(VAO);
     gl::DrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 auto OpenGLRenderer::text_pass() const -> void {
-    m_Text.fill_text_buffer(m_Width, m_Height);
+    m_Text.Text.fill_text_buffer(m_Width, m_Height);
 
-    m_ProgramText->use();
+    m_Text.Program->use();
 
     uint32_t u_ScreenSize = uint32_t(m_Width) | (uint32_t(m_Height) << 16);
-    m_ProgramText->set_uniform("u_ScreenSize", u_ScreenSize);
+    m_Text.Program->set_uniform("u_ScreenSize", u_ScreenSize);
 
     auto r = uint8_t(std::clamp(Text::DEFAULT_FONT_COLOR.x, 0.0f, 1.0f) * 255.0f + 0.5f);
     auto g = uint8_t(std::clamp(Text::DEFAULT_FONT_COLOR.y, 0.0f, 1.0f) * 255.0f + 0.5f);
@@ -196,16 +204,16 @@ auto OpenGLRenderer::text_pass() const -> void {
                 (uint32_t(b) << 16) |
                 (uint32_t(255) << 24);
 
-    m_ProgramText->set_uniform("u_Color", color);
+    m_Text.Program->set_uniform("u_Color", color);
 
     gl::ActiveTexture(GL_TEXTURE0);
-    gl::BindTexture(GL_TEXTURE_2D, m_TextAtlas);
-    m_ProgramText->set_uniform("u_Texture", 0);
+    gl::BindTexture(GL_TEXTURE_2D, m_Text.Atlas);
+    m_Text.Program->set_uniform("u_Texture", 0);
 
-    gl::BindVertexArray(VAO);
-    gl::BindBuffer(GL_ARRAY_BUFFER, VBO);
+    gl::BindVertexArray(m_Text.VAO);
+    gl::BindBuffer(GL_ARRAY_BUFFER, m_Text.VBO);
 
-    auto text_glyphs = m_Text.glyphs();
+    auto text_glyphs = m_Text.Text.glyphs();
 
     for (size_t offset = 0; offset < text_glyphs.size(); offset += TEXT_BATCH_SIZE)
     {
@@ -221,8 +229,8 @@ auto OpenGLRenderer::text_pass() const -> void {
         }
     }
 
-    m_Text.clear_glyphs();
-    m_Text.clear();
+    m_Text.Text.clear_glyphs();
+    m_Text.Text.clear();
 }
 
 auto OpenGLRenderer::set_viewport(int32_t x, int32_t y, int32_t width, int32_t height) -> void
@@ -258,13 +266,13 @@ auto OpenGLRenderer::render_stats() const -> RenderStats
 
 auto OpenGLRenderer::prepare_text_buffers() -> void {
     // Generate and bind VAO
-    gl::GenVertexArrays(1, &VAO);
-    gl::BindVertexArray(VAO);
+    gl::GenVertexArrays(1, &m_Text.VAO);
+    gl::BindVertexArray(m_Text.VAO);
 
     // Dynamic instance VBO
-    gl::GenBuffers(1, &VBO);
+    gl::GenBuffers(1, &m_Text.VBO);
 
-    gl::BindBuffer(GL_ARRAY_BUFFER, VBO);
+    gl::BindBuffer(GL_ARRAY_BUFFER, m_Text.VBO);
     gl::BufferData(GL_ARRAY_BUFFER, TEXT_BATCH_SIZE * sizeof(Text::Glyph), nullptr, GL_STREAM_DRAW);
 
     // Offset (2 * 4 byte)
