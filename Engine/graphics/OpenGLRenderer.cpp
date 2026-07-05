@@ -24,8 +24,6 @@
 
 OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
     : m_GApi(ctx)
-    , m_X(0), m_Y(0)
-    , m_Width(ctx.window().dims().first), m_Height(ctx.window().dims().second)
     , m_DrawMode(DrawMode::Triangles)
     , m_Depth {
         std::make_shared<ShaderProgram>("res/Shaders/depth.vert", "res/Shaders/depth.frag")
@@ -188,21 +186,23 @@ auto OpenGLRenderer::skybox_pass(const Camera& cam) const -> void
 }
 
 auto OpenGLRenderer::text_pass() const -> void {
-    m_Text.Text.fill_text_buffer(m_Width, m_Height);
+    auto [width, height] = m_GApi.window().dims();
+    m_Text.Text.fill_text_buffer(width, height);
 
     m_Text.Program->use();
 
-    uint32_t u_ScreenSize = uint32_t(m_Width) | (uint32_t(m_Height) << 16);
+    uint32_t u_ScreenSize = uint32_t(width) | (uint32_t(height) << 16);
     m_Text.Program->set_uniform("u_ScreenSize", u_ScreenSize);
 
     auto r = uint8_t(std::clamp(Text::DEFAULT_FONT_COLOR.x, 0.0f, 1.0f) * 255.0f + 0.5f);
     auto g = uint8_t(std::clamp(Text::DEFAULT_FONT_COLOR.y, 0.0f, 1.0f) * 255.0f + 0.5f);
     auto b = uint8_t(std::clamp(Text::DEFAULT_FONT_COLOR.z, 0.0f, 1.0f) * 255.0f + 0.5f);
 
-    auto color =(uint32_t(r)      ) |
-                (uint32_t(g) << 8 ) |
-                (uint32_t(b) << 16) |
-                (uint32_t(255) << 24);
+    auto color =
+        (uint32_t(r)      ) |
+        (uint32_t(g) << 8 ) |
+        (uint32_t(b) << 16) |
+        (uint32_t(255) << 24);
 
     m_Text.Program->set_uniform("u_Color", color);
 
@@ -235,13 +235,7 @@ auto OpenGLRenderer::text_pass() const -> void {
 
 auto OpenGLRenderer::set_viewport(int32_t x, int32_t y, int32_t width, int32_t height) -> void
 {
-    std::tie(m_X, m_Y, m_Width, m_Height) = {x, y, width, height};
-    gl::Viewport(m_X, m_Y, m_Width, m_Height);
-}
-
-auto OpenGLRenderer::viewport() const -> std::tuple<int32_t, int32_t, int32_t, int32_t>
-{
-    return {m_X, m_Y, m_Width, m_Height};
+    gl::Viewport(x, y, width, height);
 }
 
 auto OpenGLRenderer::set_mode(DrawMode mode) -> void

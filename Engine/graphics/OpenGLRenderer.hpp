@@ -18,7 +18,6 @@ public:
     auto skybox_pass(const class Camera& cam) const -> void;
     auto text_pass() const -> void;
 
-    auto viewport() const -> std::tuple<int32_t, int32_t, int32_t, int32_t> override;
     auto set_viewport(int32_t x, int32_t y, int32_t width, int32_t height) -> void override;
     auto set_mode(DrawMode mode) -> void override;
     auto clear_screen(uint32_t buffersmask) const -> void  override;
@@ -31,7 +30,6 @@ private:
     auto prepare_text_buffers() -> void;
 private:
     const class OpenGL& m_GApi;
-    int32_t m_X, m_Y, m_Width, m_Height;
     DrawMode m_DrawMode;
     mutable RenderStats m_Stats;
 
