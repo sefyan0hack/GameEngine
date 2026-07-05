@@ -9,6 +9,7 @@
 #include "Material.hpp"
 #include "Mesh.hpp"
 #include "ShaderProgram.hpp"
+#include "gl.hpp"
 
 #include <core/Log.hpp>
 #include <core/Exception.hpp>
@@ -41,6 +42,11 @@ OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
         0, 0, 0
     }
 {
+    set_depth(true);
+    set_stencil(true);
+    set_blend(true);
+    set_face_cull(true);
+
     // Initialize buffers
     prepare_text_buffers();
 
@@ -279,3 +285,41 @@ auto OpenGLRenderer::prepare_text_buffers() -> void {
     gl::VertexAttribIPointer(1, 4, GL_UNSIGNED_SHORT, sizeof(Text::Glyph), (void*)offsetof(Text::Glyph, texRect));
     gl::VertexAttribDivisor(1, 1);
 }
+
+auto  OpenGLRenderer::set_depth(bool v) const -> void
+{
+    if (v) {
+        gl::Enable(GL_DEPTH_TEST);
+    } else gl::Disable(GL_DEPTH_TEST);
+}
+
+auto  OpenGLRenderer::set_stencil(bool v) const -> void
+{
+    if (v) {
+        gl::Enable(GL_STENCIL_TEST);
+        gl::StencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    } else gl::Disable(GL_STENCIL_TEST);
+}
+
+auto  OpenGLRenderer::set_blend(bool v) const -> void
+{
+    if (v) {
+        gl::Enable(GL_BLEND);
+        gl::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    } else gl::Disable(GL_BLEND);
+
+}
+
+auto  OpenGLRenderer::set_face_cull(bool v) const -> void
+{
+    if (v){ 
+        gl::Enable(GL_CULL_FACE);
+        gl::CullFace(GL_BACK);
+    }  else gl::Disable(GL_CULL_FACE);
+}
+
+
+    
+
+
+    

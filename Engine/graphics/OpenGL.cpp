@@ -53,17 +53,6 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     auto Version = version ? version : "unknown";
     auto GlslVersion = glsl_version ? glsl_version : "unknown";
 
-    gl::Enable(GL_DEPTH_TEST);
-
-    gl::Enable(GL_STENCIL_TEST);
-    gl::StencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-
-    gl::Enable(GL_BLEND);
-    gl::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    gl::Enable(GL_CULL_FACE);
-    gl::CullFace(GL_BACK);
-
     if constexpr (DEBUG) enable_debug();
 
     logg::info(os::build_info());
@@ -78,6 +67,7 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     logg::info("===================================[GL Extention]=========================================");
     logg::info(extensions());
     logg::info("===================================[Metrics]==========================================");
+    
     gl_info(GL_MAX_TEXTURE_SIZE);
     gl_info(GL_MAX_3D_TEXTURE_SIZE);
     gl_info(GL_MAX_CUBE_MAP_TEXTURE_SIZE);

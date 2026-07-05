@@ -28,6 +28,12 @@ public:
 
 private:
     auto prepare_text_buffers() -> void;
+
+    auto set_depth(bool v) const -> void;
+    auto set_stencil(bool v) const -> void;
+    auto set_blend(bool v) const -> void;
+    auto set_face_cull(bool v) const -> void;
+
 private:
     const class OpenGL& m_GApi;
     DrawMode m_DrawMode;
