@@ -39,5 +39,5 @@ public:
     virtual auto set_mode(DrawMode mode) -> void = 0;
     virtual auto clear_screen(uint32_t buffersmask) const -> void  = 0;
     virtual auto extension_supported(const std::string& ext) -> bool = 0;
-    virtual auto render_stats() const -> RenderStats = 0;
+    virtual auto stats() const -> RenderStats = 0;
 };

@@ -253,7 +253,7 @@ auto OpenGLRenderer::extension_supported(const std::string &ext) -> bool
     return m_GApi.extension_supported(ext);
 }
 
-auto OpenGLRenderer::render_stats() const -> RenderStats
+auto OpenGLRenderer::stats() const -> RenderStats
 {
     return m_Stats;
 }

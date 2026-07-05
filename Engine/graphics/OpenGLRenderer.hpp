@@ -22,7 +22,7 @@ public:
     auto set_mode(DrawMode mode) -> void override;
     auto clear_screen(uint32_t buffersmask) const -> void  override;
     auto extension_supported(const std::string& ext) -> bool override;
-    auto render_stats() const -> RenderStats override;
+    auto stats() const -> RenderStats override;
 
     constexpr static size_t TEXT_BATCH_SIZE = 4096;
 

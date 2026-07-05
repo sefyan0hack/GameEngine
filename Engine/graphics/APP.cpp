@@ -64,11 +64,11 @@ auto APP::frame() -> void
         UiText.draw(std::format("Resolution: {}x{}", Window.dims().first, Window.dims().second));
         UiText.draw(std::format("Memory: {}/{} MB", os::memory_usage(), os::memory_peak()));
         UiText.draw(std::format("Threads: {}", std::thread::hardware_concurrency()));
-        UiText.draw(std::format("Progame Binds  : {}", render_stats().shaderBinds));
-        UiText.draw(std::format("Material Binds : {}", render_stats().materialBinds));
-        UiText.draw(std::format("VAO Binds      : {}", render_stats().vaoBinds));
-        UiText.draw(std::format("Draw Calls     : {}", render_stats().drawCalls));
-        UiText.draw(std::format("Vertices       : {} ({} tri)", render_stats().vertex_cout, render_stats().vertex_cout/3));
+        UiText.draw(std::format("Progame Binds  : {}", Renderer->stats().shaderBinds));
+        UiText.draw(std::format("Material Binds : {}", Renderer->stats().materialBinds));
+        UiText.draw(std::format("VAO Binds      : {}", Renderer->stats().vaoBinds));
+        UiText.draw(std::format("Draw Calls     : {}", Renderer->stats().drawCalls));
+        UiText.draw(std::format("Vertices       : {} ({} tri)", Renderer->stats().vertex_cout, Renderer->stats().vertex_cout/3));
     }
 
     Game->update(game_dt);
@@ -187,9 +187,4 @@ auto APP::loop_body(void* ctx) -> void
 auto APP::fps() const -> float
 {
     return m_Fps;
-}
-
-auto APP::render_stats() const -> RenderStats
-{
-    return Renderer->render_stats();
 }
