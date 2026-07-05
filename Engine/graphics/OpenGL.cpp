@@ -64,11 +64,6 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     gl::Enable(GL_CULL_FACE);
     gl::CullFace(GL_BACK);
 
-    #if defined(CORE_GL)
-    gl::Enable(GL_MULTISAMPLE);
-    gl::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-    #endif
-
     if constexpr (DEBUG) enable_debug();
 
     logg::info(os::build_info());
@@ -88,6 +83,7 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     gl_info(GL_MAX_CUBE_MAP_TEXTURE_SIZE);
     gl_info(GL_MAX_ARRAY_TEXTURE_LAYERS);
     gl_info(GL_MAX_TEXTURE_IMAGE_UNITS);
+    gl_info(GL_MAX_TEXTURE_BUFFER_SIZE);
     gl_info(GL_MAX_RENDERBUFFER_SIZE);
     gl_info(GL_SAMPLES);
     gl_info(GL_MAX_SAMPLES);
