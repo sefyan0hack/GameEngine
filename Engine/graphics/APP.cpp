@@ -1,5 +1,6 @@
 #include <chrono>
 #include <variant>
+#include <thread>
 
 #include "APP.hpp"
 #include "Window.hpp"
@@ -16,7 +17,13 @@
 constexpr auto WINDOW_WIDTH = 1180;
 constexpr auto WINDOW_HEIGHT = 640;
 
-IGame::IGame() : app(APP::self(this)){}
+IGame::IGame() 
+    : Window(APP::self(this).Window)
+    , Keyboard(APP::self(this).Keyboard)
+    , Mouse(APP::self(this).Mouse)
+    , UiText(APP::self(this).UiText)
+{}
+
 IGame::~IGame() = default;
 auto IGame::update(float dt) -> void { logg::trace("update(delta: {})", dt); }
 auto IGame::on_deltamouse(float dx, float dy) -> void { logg::trace("on_deltamouse(dx: {}, dy:{})", dx, dy); }
@@ -51,6 +58,18 @@ auto APP::frame() -> void
     lastTime = now;
 
     float game_dt = (dt > 0.1f) ? 0.1f : dt; // cap
+
+    {
+        UiText.draw(std::format("FPS: {:.2f}", fps()));
+        UiText.draw(std::format("Resolution: {}x{}", Window.dims().first, Window.dims().second));
+        UiText.draw(std::format("Memory: {}/{} MB", os::memory_usage(), os::memory_peak()));
+        UiText.draw(std::format("Threads: {}", std::thread::hardware_concurrency()));
+        UiText.draw(std::format("Progame Binds  : {}", render_stats().shaderBinds));
+        UiText.draw(std::format("Material Binds : {}", render_stats().materialBinds));
+        UiText.draw(std::format("VAO Binds      : {}", render_stats().vaoBinds));
+        UiText.draw(std::format("Draw Calls     : {}", render_stats().drawCalls));
+        UiText.draw(std::format("Vertices       : {} ({} tri)", render_stats().vertex_cout, render_stats().vertex_cout/3));
+    }
 
     Game->update(game_dt);
 
@@ -128,7 +147,6 @@ auto APP::loop_body(void* ctx) -> void
         }, event
         );
     }
-
 
     //TODO move to the visit
     // normal Mode

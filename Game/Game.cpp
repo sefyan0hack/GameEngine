@@ -1,7 +1,6 @@
 
 #include <memory>
 #include <random>
-#include <thread>
 
 #include <Engine.hpp>
 
@@ -40,16 +39,6 @@ public:
 
     auto update(float delta) -> void override
     {
-        app.UiText.draw(std::format("FPS: {:.2f}", app.fps()));
-        app.UiText.draw(std::format("Resolution: {}x{}", app.Window.dims().first, app.Window.dims().second));
-        app.UiText.draw(std::format("Memory: {}/{} MB", os::memory_usage(), os::memory_peak()));
-        app.UiText.draw(std::format("Threads: {}", std::thread::hardware_concurrency()));
-        app.UiText.draw(std::format("Progame Binds  : {}", app.render_stats().shaderBinds));
-        app.UiText.draw(std::format("Material Binds : {}", app.render_stats().materialBinds));
-        app.UiText.draw(std::format("VAO Binds      : {}", app.render_stats().vaoBinds));
-        app.UiText.draw(std::format("Draw Calls     : {}", app.render_stats().drawCalls));
-        app.UiText.draw(std::format("Vertices       : {} ({} tri)", app.render_stats().vertex_cout, app.render_stats().vertex_cout/3));
-
         camera_mouvment(delta);
     }
 
@@ -60,11 +49,11 @@ public:
 
     auto camera_mouvment(float delta) -> void
     {
-        float speed = app.Keyboard.is_down(Key::LeftShift)? 10.0f : 5.0f;
+        float speed = Keyboard.is_down(Key::LeftShift)? 10.0f : 5.0f;
 
-        auto Hori = app.Keyboard.is_down(Key::W) ? 1.0f : app.Keyboard.is_down(Key::S) ? -1.0f : 0.0f;
-        auto Vert = app.Keyboard.is_down(Key::D) ? 1.0f : app.Keyboard.is_down(Key::A) ? -1.0f : 0.0f;
-        auto Up   = app.Keyboard.is_down(Key::M) ? 1.0f : app.Keyboard.is_down(Key::N) ? -1.0f : 0.0f;
+        auto Hori = Keyboard.is_down(Key::W) ? 1.0f : Keyboard.is_down(Key::S) ? -1.0f : 0.0f;
+        auto Vert = Keyboard.is_down(Key::D) ? 1.0f : Keyboard.is_down(Key::A) ? -1.0f : 0.0f;
+        auto Up   = Keyboard.is_down(Key::M) ? 1.0f : Keyboard.is_down(Key::N) ? -1.0f : 0.0f;
 
         auto by = speed * delta;
 

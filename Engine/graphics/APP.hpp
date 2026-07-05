@@ -23,7 +23,10 @@ public:
     virtual auto update(float dt) -> void;
     virtual auto on_deltamouse(float dx, float dy) -> void;
 
-    class APP& app;
+    ::CWindow& Window;
+    ::Keyboard& Keyboard;
+    ::Mouse& Mouse;
+    ::Text& UiText;
     ::Scene Scene;
 };
 
@@ -31,7 +34,6 @@ class ENGINE_EXPORT APP
 {
     APP();
 public:
-    
     auto run() -> void ;
     auto fps() const -> float;
     auto render_stats() const -> RenderStats;
@@ -56,6 +58,5 @@ private:
     OpenGL m_GApi;
     std::unique_ptr<IRenderer> Renderer;
 
-private:
     IGame* Game;
 };
