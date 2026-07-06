@@ -144,9 +144,11 @@ auto OpenGLRenderer::depthpre_pass(const Scene& scene) const -> void
         {
             currentMesh = mesh;
             gl::BindVertexArray(mesh->VAO);
+            m_Stats.vaoBinds++;
         }
 
         gl::DrawArrays(GL_TRIANGLES, 0, mesh->vertex_size());
+        m_Stats.drawCalls++;
     }
 
     gl::ColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -191,21 +193,8 @@ auto OpenGLRenderer::scene_pass(const Scene& scene) const -> void
                 m_Stats.vaoBinds++;
             }
 
-            switch(m_DrawMode)
-            {
-                case DrawMode::Triangles:
-                    gl::DrawArrays(GL_TRIANGLES, 0, v_count);
-                    m_Stats.drawCalls++;
-                    break;
-                case DrawMode::Line:
-                    gl::DrawArrays(GL_LINES, 0, (v_count / 3) * 6);
-                    m_Stats.drawCalls++;
-                    break;
-                case DrawMode::Point:
-                    gl::DrawArrays(GL_POINTS, 0, v_count);
-                    m_Stats.drawCalls++;
-                    break;
-            }
+            gl::DrawArrays(GL_TRIANGLES, 0, v_count);
+            m_Stats.drawCalls++;
         }
     );
 }
@@ -218,9 +207,11 @@ auto OpenGLRenderer::skybox_pass() const -> void
     gl::ActiveTexture(GL_TEXTURE0);
     m_SkyBox.Texture->bind();
     m_SkyBox.Program->set_uniform("uDiffuseMap", 0);
+    m_Stats.materialBinds++;
 
     // gl::BindVertexArray(VAO);
     gl::DrawArrays(GL_TRIANGLES, 0, 3);
+    m_Stats.drawCalls++;
 }
 
 auto OpenGLRenderer::text_pass() const -> void {
@@ -251,6 +242,7 @@ auto OpenGLRenderer::text_pass() const -> void {
 
     gl::BindVertexArray(m_Text.VAO);
     gl::BindBuffer(GL_ARRAY_BUFFER, m_Text.VBO);
+    m_Stats.materialBinds++;
 
     auto text_glyphs = m_Text.Text.glyphs();
 
@@ -265,6 +257,7 @@ auto OpenGLRenderer::text_pass() const -> void {
             std::memcpy(mappedMemory, text_glyphs.data() + offset, bytesToCopy);
             gl::UnmapBuffer(GL_ARRAY_BUFFER);
             gl::DrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, static_cast<GLsizei>(batchCount));
+            m_Stats.drawCalls++;
         }
     }
 
