@@ -151,13 +151,29 @@ auto ShaderProgram::dump_uniforms() -> void
     if(count > 0){
 
         GLsizei len = 0;
-        [[maybe_unused]] GLsizei size;
-        [[maybe_unused]] GLenum type;
+        GLsizei size;
+        GLenum type;
 
         for(GLint i = 0; i < count; i++){
             std::string Uniform_name(static_cast<std::size_t>(max_len), '\0');
             gl::GetActiveUniform(m_Id, static_cast<GLuint>(i), static_cast<GLsizei>(max_len), &len, &size, &type, Uniform_name.data());
             if(len > 0) Uniform_name.resize(static_cast<std::size_t>(len));
+
+            // check if uniform belongs to a UBO
+            GLuint index = i;
+            GLint blockIndex = -1;
+
+            gl::GetActiveUniformsiv(
+                m_Id,
+                1,
+                &index,
+                GL_UNIFORM_BLOCK_INDEX,
+                &blockIndex
+            );
+
+            // skip UBO members
+            if (blockIndex != -1)
+                continue;
 
             m_Uniforms[Uniform_name] = std::make_tuple(
                 static_cast<GLuint>(uniform_location_prv(Uniform_name.c_str())),

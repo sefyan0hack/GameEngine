@@ -15,7 +15,7 @@ public:
 
     auto depthpre_pass(const class Scene& scene) const -> void;
     auto scene_pass(const class Scene& scene) const -> void;
-    auto skybox_pass(const class Camera& cam) const -> void;
+    auto skybox_pass() const -> void;
     auto text_pass() const -> void;
 
     auto set_viewport(int32_t x, int32_t y, int32_t width, int32_t height) -> void override;
@@ -57,4 +57,6 @@ private:
         std::shared_ptr<class ShaderProgram> Program;
         uint32_t VAO, VBO, Atlas;
     } m_Text;
+
+    uint32_t m_CameraUBO;
 };

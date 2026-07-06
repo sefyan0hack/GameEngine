@@ -23,6 +23,13 @@
 #undef max
 #endif
 
+struct CameraUBO
+{
+    constexpr static int32_t BINDING_POINT = 0;
+    emath::mat4 Projection;
+    emath::mat4 View;
+};
+
 OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
     : m_GApi(ctx)
     , m_DrawMode(DrawMode::Triangles)
@@ -41,6 +48,7 @@ OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
         std::make_shared<ShaderProgram>("res/Shaders/text.vert", "res/Shaders/text.frag"),
         0, 0, 0
     }
+    , m_CameraUBO(0)
 {
     set_depth(true);
     set_stencil(true);
@@ -61,10 +69,43 @@ OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
     // Set texture parameters
     gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+    // Prepeare Camera UBO --------------------------------------------------------------------------
+    gl::GenBuffers(1, &m_CameraUBO);
+    gl::BindBuffer(GL_UNIFORM_BUFFER, m_CameraUBO);
+
+    // 2 mat4 = 128 bytes
+    gl::BufferData(GL_UNIFORM_BUFFER, sizeof(CameraUBO), nullptr, GL_DYNAMIC_DRAW);
+
+    // Binding point 0
+    gl::BindBufferBase(GL_UNIFORM_BUFFER, 0, m_CameraUBO);
+
+    // Link shaders uniform block to binding point
+    {
+        GLuint DepthblockIndex = gl::GetUniformBlockIndex(m_Depth.Program->id(), "Camera");
+        gl::UniformBlockBinding(m_Depth.Program->id(), DepthblockIndex, CameraUBO::BINDING_POINT);
+
+        GLuint SceneblockIndex = gl::GetUniformBlockIndex(m_Scene.Program->id(), "Camera");
+        gl::UniformBlockBinding(m_Scene.Program->id(), SceneblockIndex, CameraUBO::BINDING_POINT);
+
+        GLuint SkyBoxblockIndex = gl::GetUniformBlockIndex(m_SkyBox.Program->id(), "Camera");
+        gl::UniformBlockBinding(m_SkyBox.Program->id(), SkyBoxblockIndex, CameraUBO::BINDING_POINT);
+    }
 }
 
 auto OpenGLRenderer::render(const Scene& scene) const -> void
 {
+    { // Uploading Camera UBO
+        CameraUBO data {
+            scene.main_camera().projection(),
+            scene.main_camera().view()
+        };
+        
+        gl::BindBuffer(GL_UNIFORM_BUFFER, m_CameraUBO);
+        gl::BufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(data), &data);
+    }
+
     gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     // TODO: enable when im fragment-bound
     // gl::DepthMask(GL_TRUE);
@@ -75,7 +116,7 @@ auto OpenGLRenderer::render(const Scene& scene) const -> void
     scene_pass(scene);
     gl::DepthMask(GL_FALSE);
     gl::DepthFunc(GL_LEQUAL);
-    skybox_pass(scene.main_camera());
+    skybox_pass();
     gl::DepthMask(GL_FALSE);
     gl::DepthFunc(GL_ALWAYS);
     text_pass();
@@ -85,14 +126,11 @@ auto OpenGLRenderer::render(const Scene& scene) const -> void
 
 auto OpenGLRenderer::depthpre_pass(const Scene& scene) const -> void
 {
-    auto camera = scene.main_camera();
 
     gl::ColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
     m_Depth.Program->use();
-
-    m_Depth.Program->set_uniform("View", camera.view());
-    m_Depth.Program->set_uniform("Projection", camera.projection());
+    m_Stats.shaderBinds++;
 
     Mesh* currentMesh = nullptr;
 
@@ -118,11 +156,7 @@ auto OpenGLRenderer::scene_pass(const Scene& scene) const -> void
 {
     m_Stats.reset();
 
-    auto camera = scene.main_camera();
-
     m_Scene.Program->use();
-    m_Scene.Program->set_uniform("View", camera.view());
-    m_Scene.Program->set_uniform("Projection", camera.projection());
     m_Stats.shaderBinds++;
 
     //Drwaing
@@ -176,12 +210,10 @@ auto OpenGLRenderer::scene_pass(const Scene& scene) const -> void
     );
 }
 
-auto OpenGLRenderer::skybox_pass(const Camera& cam) const -> void
+auto OpenGLRenderer::skybox_pass() const -> void
 {
     m_SkyBox.Program->use();
-
-    m_SkyBox.Program->set_uniform("u_InvProjection", cam.perspective().inverse());
-    m_SkyBox.Program->set_uniform("u_InvViewRot", emath::mat3(cam.view()).transpose());
+    m_Stats.shaderBinds++;
 
     gl::ActiveTexture(GL_TEXTURE0);
     m_SkyBox.Texture->bind();
@@ -196,6 +228,7 @@ auto OpenGLRenderer::text_pass() const -> void {
     m_Text.Text.fill_text_buffer(width, height);
 
     m_Text.Program->use();
+    m_Stats.shaderBinds++;
 
     uint32_t u_ScreenSize = uint32_t(width) | (uint32_t(height) << 16);
     m_Text.Program->set_uniform("u_ScreenSize", u_ScreenSize);
