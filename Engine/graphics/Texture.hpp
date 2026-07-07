@@ -45,8 +45,8 @@ class ENGINE_EXPORT Texture2D final : public Texture
     Texture2D();
     Texture2D(const Texture2D&) = delete;
     auto operator=(const Texture2D&) -> Texture2D& = delete;
-    Texture2D(const std::string &name);
-    Texture2D(std::span<const char> src);
+
+    Texture2D(const char* name);
     Texture2D(auto* data, GLint width, GLint height, Image::Format fmt);
 
   private:
@@ -59,8 +59,8 @@ class ENGINE_EXPORT TextureCubeMap final : public Texture
     TextureCubeMap();
     TextureCubeMap(const TextureCubeMap&) = delete;
     auto operator=(const TextureCubeMap&) -> TextureCubeMap& = delete;
+
     TextureCubeMap(const std::vector<std::string> faces);
-    TextureCubeMap(const std::vector<std::span<const char>>& faces);
 
     static auto base_to_6faces(const std::string& path) -> std::vector<std::string>;
     static auto base_to_6facesfiles(const std::string& path) -> std::vector<std::span<const char>>;

@@ -20,16 +20,11 @@ class ENGINE_EXPORT OpenGL
         auto config() const -> GL_CFG ;
         auto context() const -> GL_CTX ;
         auto version() const -> std::pair<int32_t, int32_t>;
-        auto extensions() const -> std::string;
-        auto extension_supported(const std::string& ext) const -> bool;
         auto is_current() const -> bool;
         auto make_current()  -> bool;
-        auto push_debug_group(const char* name) const -> void;
-        auto pop_debug_group() const -> void;
-
+    
         static auto find_config([[maybe_unused]] const CWindow& window) -> GL_CFG;
 
-        
         constexpr static enum class API { CORE, ES } api =
         #if defined(CORE_GL)
             API::CORE;

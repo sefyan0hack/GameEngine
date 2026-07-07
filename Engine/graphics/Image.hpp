@@ -21,8 +21,7 @@ public:
     friend struct std::formatter<Image>;
 
     Image();
-    Image(const std::string& filename, bool flip = false);
-    Image(std::span<const char> src, bool flip = false);
+    Image(const char* filename, bool flip = false);
     Image(auto* Data, uint32_t Width, uint32_t Height, uint32_t Channels);
     Image(auto* Data, uint32_t Width, uint32_t Height, Format format);
     ~Image();

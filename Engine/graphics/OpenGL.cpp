@@ -65,7 +65,7 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     logg::info("GL Renderer : {}", Renderer);
     logg::info("GL Debug : {}", DEBUG ? "true" : "false");
     logg::info("===================================[GL Extention]=========================================");
-    logg::info(extensions());
+    logg::info(gl::extensions());
     logg::info("===================================[Metrics]==========================================");
     
     gl_info(GL_MAX_TEXTURE_SIZE);
@@ -109,29 +109,6 @@ auto OpenGL::is_current() const -> bool
     return gl::GetCurrentContext() == m_Context;
 }
 
-auto OpenGL::extension_supported(const std::string &ext) const -> bool
-{
-    return extensions().contains(ext);
-}
-
-auto OpenGL::extensions() const-> std::string
-{
-    static std::string extensions = [this]()
-    {
-        int32_t count{};
-        gl::GetIntegerv(GL_NUM_EXTENSIONS, &count);
-        std::string exts;
-
-        for (int32_t i = 0; i < count; ++i) {
-            exts += std::format("{} ", (const char*)gl::GetStringi(GL_EXTENSIONS, i));
-        }
-
-        exts += platform_extensions();
-        return exts;
-    }();
-    return extensions;
-}
-
 
 auto OpenGL::enable_debug() const -> void
 {
@@ -143,7 +120,7 @@ auto OpenGL::enable_debug() const -> void
         logg::error("{} {} {} {} {}", source, type, id, severity, message);
     };
 
-    if (PACK(m_Major, m_Minor) >= PACK(4,3) || extension_supported("GL_KHR_debug")) {
+    if (PACK(m_Major, m_Minor) >= PACK(4,3) || gl::extensions().contains("GL_KHR_debug")) {
 
         GET_GLEXT_FUNCTION_THROW(glDebugMessageCallback);
         gl::Enable(GL_DEBUG_OUTPUT);
@@ -151,7 +128,7 @@ auto OpenGL::enable_debug() const -> void
 
         glDebugMessageCallback_ext(messgae_callback_func, nullptr);
 
-    } else if(extension_supported("GL_ARB_debug_output")) {
+    } else if(gl::extensions().contains("GL_ARB_debug_output")) {
         GET_GLEXT_FUNCTION_THROW(glDebugMessageCallbackARB);
         gl::Enable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
 
@@ -180,20 +157,99 @@ auto OpenGL::load_functions() -> void
     FUNCTIONS_GL_LIST
     #undef FUNC_GL_X
 }
+///////////////////////////////////////////////////////////////////////////////////////////
 
-auto  OpenGL::push_debug_group(const char* name) const -> void
+auto gl::extensions() -> std::string
 {
-    if (PACK(m_Major, m_Minor) >= PACK(4,3) || extension_supported("GL_KHR_debug")) {
+    static std::string extensions = []()
+    {
+        int32_t count{};
+        gl::GetIntegerv(GL_NUM_EXTENSIONS, &count);
+        std::string exts;
+
+        for (int32_t i = 0; i < count; ++i) {
+            exts += std::format("{} ", (const char*)gl::GetStringi(GL_EXTENSIONS, i));
+        }
+
+        return exts;
+    }();
+    return extensions;
+}
+
+auto gl::push_debug_group(const char* name) -> void
+{
+    if (PACK(OpenGL::MIN_REQUIRED_MAJOR_VERSION, OpenGL::MIN_REQUIRED_MINOR_VERSION) >= PACK(4,3) || gl::extensions().contains("GL_KHR_debug")) {
         static uint32_t id{};
         GET_GLEXT_FUNCTION_THROW(glPushDebugGroup);
         glPushDebugGroup_ext(GL_DEBUG_SOURCE_APPLICATION, id++, -1, name);
     }
 }
 
-auto  OpenGL::pop_debug_group() const -> void
+auto gl::pop_debug_group() -> void
 {
-    if (PACK(m_Major, m_Minor) >= PACK(4,3) || extension_supported("GL_KHR_debug")) {
+    if (PACK(OpenGL::MIN_REQUIRED_MAJOR_VERSION, OpenGL::MIN_REQUIRED_MINOR_VERSION) >= PACK(4,3) || gl::extensions().contains("GL_KHR_debug")) {
         GET_GLEXT_FUNCTION_THROW(glPopDebugGroup);
         glPopDebugGroup_ext();
     }
 }
+
+auto gl::label_texture(GLuint id, const char* name) -> void
+{
+    #ifndef GL_TEXTURE
+    #define GL_TEXTURE
+    #endif
+
+    if (PACK(OpenGL::MIN_REQUIRED_MAJOR_VERSION, OpenGL::MIN_REQUIRED_MINOR_VERSION) >= PACK(4,3) || gl::extensions().contains("GL_KHR_debug")) {
+        GET_GLEXT_FUNCTION_THROW(glObjectLabel);
+        glObjectLabel_ext(GL_TEXTURE, id, -1, name);
+    }
+}
+
+auto gl::label_vertex_array(GLuint id, const char* name) -> void
+{
+    #ifndef GL_VERTEX_ARRAY
+    #define GL_VERTEX_ARRAY
+    #endif
+
+    if (PACK(OpenGL::MIN_REQUIRED_MAJOR_VERSION, OpenGL::MIN_REQUIRED_MINOR_VERSION) >= PACK(4,3) || gl::extensions().contains("GL_KHR_debug")) {
+        GET_GLEXT_FUNCTION_THROW(glObjectLabel);
+        glObjectLabel_ext(GL_VERTEX_ARRAY, id, -1, name);
+    }
+}
+
+auto gl::label_buffer(GLuint id, const char* name) -> void
+{
+    #ifndef GL_BUFFER
+    #define GL_BUFFER
+    #endif
+
+    if (PACK(OpenGL::MIN_REQUIRED_MAJOR_VERSION, OpenGL::MIN_REQUIRED_MINOR_VERSION) >= PACK(4,3) || gl::extensions().contains("GL_KHR_debug")) {
+        GET_GLEXT_FUNCTION_THROW(glObjectLabel);
+        glObjectLabel_ext(GL_BUFFER, id, -1, name);
+    }
+}
+
+auto gl::label_shader(GLuint id, const char* name) -> void
+{
+    #ifndef GL_SHADER
+    #define GL_SHADER
+    #endif
+
+    if (PACK(OpenGL::MIN_REQUIRED_MAJOR_VERSION, OpenGL::MIN_REQUIRED_MINOR_VERSION) >= PACK(4,3) || gl::extensions().contains("GL_KHR_debug")) {
+        GET_GLEXT_FUNCTION_THROW(glObjectLabel);
+        glObjectLabel_ext(GL_SHADER, id, -1, name);
+    }
+}
+
+auto gl::label_program(GLuint id, const char* name) -> void
+{
+    #ifndef GL_PROGRAM
+    #define GL_PROGRAM
+    #endif
+
+    if (PACK(OpenGL::MIN_REQUIRED_MAJOR_VERSION, OpenGL::MIN_REQUIRED_MINOR_VERSION) >= PACK(4,3) || gl::extensions().contains("GL_KHR_debug")) {
+        GET_GLEXT_FUNCTION_THROW(glObjectLabel);
+        glObjectLabel_ext(GL_PROGRAM, id, -1, name);
+    }
+}
+

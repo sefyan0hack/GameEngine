@@ -11,8 +11,8 @@ class Game final : IGame
 public:
     Game()
     {
-        auto kimberley_jpg     = std::make_shared<Texture2D>(res::get("res/kimberley.jpg"));
-        auto sand_png          = std::make_shared<Texture2D>(res::get("res/gravelly_sand_diff_4k.png"));
+        auto kimberley_jpg     = std::make_shared<Texture2D>("res/kimberley.jpg");
+        auto sand_png          = std::make_shared<Texture2D>("res/gravelly_sand_diff_4k.png");
 
         auto CubeMattkimberley = std::make_shared<Material>(kimberley_jpg);
         auto CubeMattSand  = std::make_shared<Material>(sand_png);

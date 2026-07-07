@@ -3,6 +3,8 @@
 #include "Image.hpp"
 #include <core/Log.hpp>
 #include <core/Exception.hpp>
+#include <core/res.hpp>
+
 #include <bit>
 #include <utility>
 
@@ -108,27 +110,9 @@ Image::Image(auto* Data, uint32_t Width, uint32_t Height, Format format)
     }
 }
 
-Image::Image(const std::string& filename, bool flip)
+Image::Image(const char* name, bool flip)
 {
-    stbi_set_flip_vertically_on_load(flip); //TODO: revisite .c_str() on const std::string& ?
-    auto data = stbi_load(filename.c_str(), &m_Width, &m_Height, &m_Channels, 0);
-
-    if(data){
-        m_Data = std::bit_cast<const uint8_t*>(data);
-    }
-    else
-    {
-        m_Width = procedural_texture_width;
-        m_Height = procedural_texture_height;
-        m_Channels = procedural_texture_channels;
-        m_Data = procedural_texture_func.data();
-
-        logg::warn("Can't read {} . reason : {}", filename.c_str(), stbi_failure_reason());
-    }
-}
-
-Image::Image(std::span<const char> src, bool flip)
-{
+    auto src = res::get(name);
     stbi_set_flip_vertically_on_load(flip);
 
     auto data = stbi_load_from_memory(std::bit_cast<const unsigned char*>(src.data()), static_cast<int>(src.size()), &m_Width, &m_Height, &m_Channels, 0);
@@ -196,7 +180,6 @@ auto Image::valid() const ->bool
         && m_Height > 0
         && m_Channels > 0;
 }
-
 
 auto Image::data() const -> std::span<const uint8_t>
 {

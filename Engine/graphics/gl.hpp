@@ -1,6 +1,7 @@
 #pragma once
 #define GL_GLEXT_PROTOTYPES
 
+#include <string>
 #include <engine_export.h>
 #include "gl.inl"
 
@@ -144,5 +145,14 @@ namespace gl {
 #define FUNC_GL_X(name) inline decltype(&gl##name) name;
     FUNCTIONS_GL_LIST
 #undef FUNC_GL_X
+
+    auto extensions() -> std::string;
+    auto push_debug_group(const char* name) -> void;
+    auto pop_debug_group() -> void;
+    auto label_texture(GLuint id, const char* name) -> void;
+    auto label_vertex_array(GLuint id, const char* name) -> void;
+    auto label_buffer(GLuint id, const char* name) -> void;
+    auto label_shader(GLuint id, const char* name) -> void;
+    auto label_program(GLuint id, const char* name) -> void;
 
 } // namespace gl

@@ -1,10 +1,8 @@
 #include "Mesh.hpp"
-#include "OpenGL.hpp"
 #include <core/Log.hpp>
 #include <core/Exception.hpp>
 #include <core/res.hpp>
 
-#include <fstream>
 #include <sstream>
 
 auto Mesh::CUBE() -> std::vector<Vertex>{

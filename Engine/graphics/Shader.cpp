@@ -6,6 +6,7 @@
 
 #include "Shader.hpp"
 #include "OpenGL.hpp"
+#include "gl.hpp"
 
 #include <ranges>
 
@@ -51,9 +52,11 @@ Shader::Shader(const char* shader, GLenum type)
             msg.clear();
         }
     }
+
+    gl::label_shader(m_Id, shader);
 }
 
-Shader::Shader(const std::string& shader, GLenum type) : Shader(shader.c_str(), type) {}
+Shader::Shader(const std::string& shader, GLenum type) : Shader(shader.c_str(), type) { gl::label_shader(m_Id, shader.c_str()); }
 
 Shader::~Shader(){
     gl::DeleteShader(m_Id);

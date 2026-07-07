@@ -41,7 +41,7 @@ OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
     }
     , m_SkyBox {
         std::make_shared<ShaderProgram>("res/Shaders/skybox.vert", "res/Shaders/skybox.frag"),
-        std::make_shared<TextureCubeMap>(TextureCubeMap::base_to_6facesfiles("res/forest.jpg"))
+        std::make_shared<TextureCubeMap>(TextureCubeMap::base_to_6faces("res/forest.jpg"))
     }
     , m_Text {
         text,
@@ -50,6 +50,13 @@ OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
     }
     , m_CameraUBO(0)
 {
+    {
+        gl::label_program(m_Depth.Program->id(), "Depth pre-pass");
+        gl::label_program(m_Scene.Program->id(), "Scene");
+        gl::label_program(m_SkyBox.Program->id(), "SkyBox");
+        gl::label_program(m_Text.Program->id(), "Text");
+    }
+
     set_depth(true);
     set_stencil(true);
     set_blend(true);
@@ -59,6 +66,8 @@ OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
     prepare_text_buffers();
 
     gl::GenTextures(1, &m_Text.Atlas);
+    gl::label_texture(m_Text.Atlas, "Text Atlas");
+
     gl::BindTexture(GL_TEXTURE_2D, m_Text.Atlas);
 
     auto [w, h] = m_Text.Text.atlas_dims();
@@ -73,6 +82,8 @@ OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
 
     // Prepeare Camera UBO --------------------------------------------------------------------------
     gl::GenBuffers(1, &m_CameraUBO);
+    gl::label_buffer(m_CameraUBO, "Camera UBO");
+
     gl::BindBuffer(GL_UNIFORM_BUFFER, m_CameraUBO);
 
     // 2 mat4 = 128 bytes
@@ -126,7 +137,7 @@ auto OpenGLRenderer::render(const Scene& scene) const -> void
 
 auto OpenGLRenderer::depthpre_pass(const Scene& scene) const -> void
 {
-    m_GApi.push_debug_group("depthpre_pass");
+    gl::push_debug_group("depthpre_pass");
 
     gl::ColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
@@ -154,12 +165,12 @@ auto OpenGLRenderer::depthpre_pass(const Scene& scene) const -> void
 
     gl::ColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
-    m_GApi.pop_debug_group();
+    gl::pop_debug_group();
 }
 
 auto OpenGLRenderer::scene_pass(const Scene& scene) const -> void
 {
-    m_GApi.push_debug_group("scene_pass");
+    gl::push_debug_group("scene_pass");
 
     m_Stats.reset();
 
@@ -203,12 +214,12 @@ auto OpenGLRenderer::scene_pass(const Scene& scene) const -> void
         }
     );
 
-    m_GApi.pop_debug_group();
+    gl::pop_debug_group();
 }
 
 auto OpenGLRenderer::skybox_pass() const -> void
 {
-    m_GApi.push_debug_group("skybox_pass");
+    gl::push_debug_group("skybox_pass");
 
     m_SkyBox.Program->use();
     m_Stats.shaderBinds++;
@@ -222,11 +233,11 @@ auto OpenGLRenderer::skybox_pass() const -> void
     gl::DrawArrays(GL_TRIANGLES, 0, 3);
     m_Stats.drawCalls++;
 
-    m_GApi.pop_debug_group();
+    gl::pop_debug_group();
 }
 
 auto OpenGLRenderer::text_pass() const -> void {
-    m_GApi.push_debug_group("text_pass");
+    gl::push_debug_group("text_pass");
 
     auto [width, height] = m_GApi.window().dims();
     m_Text.Text.fill_text_buffer(width, height);
@@ -277,7 +288,7 @@ auto OpenGLRenderer::text_pass() const -> void {
     m_Text.Text.clear_glyphs();
     m_Text.Text.clear();
 
-    m_GApi.pop_debug_group();
+    gl::pop_debug_group();
 }
 
 auto OpenGLRenderer::set_viewport(int32_t x, int32_t y, int32_t width, int32_t height) -> void
@@ -295,11 +306,6 @@ auto OpenGLRenderer::clear_screen(uint32_t buffersmask) const -> void
     gl::Clear((GLenum)buffersmask);
 }
 
-auto OpenGLRenderer::extension_supported(const std::string &ext) -> bool
-{
-    return m_GApi.extension_supported(ext);
-}
-
 auto OpenGLRenderer::stats() const -> RenderStats
 {
     return m_Stats;
@@ -308,10 +314,13 @@ auto OpenGLRenderer::stats() const -> RenderStats
 auto OpenGLRenderer::prepare_text_buffers() -> void {
     // Generate and bind VAO
     gl::GenVertexArrays(1, &m_Text.VAO);
+    gl::label_vertex_array(m_Text.VAO, "Text VAO");
+
     gl::BindVertexArray(m_Text.VAO);
 
     // Dynamic instance VBO
     gl::GenBuffers(1, &m_Text.VBO);
+    gl::label_buffer(m_Text.VBO, "Text VBO");
 
     gl::BindBuffer(GL_ARRAY_BUFFER, m_Text.VBO);
     gl::BufferData(GL_ARRAY_BUFFER, TEXT_BATCH_SIZE * sizeof(Text::Glyph), nullptr, GL_STREAM_DRAW);
