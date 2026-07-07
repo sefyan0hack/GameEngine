@@ -24,6 +24,8 @@ class ENGINE_EXPORT OpenGL
         auto extension_supported(const std::string& ext) const -> bool;
         auto is_current() const -> bool;
         auto make_current()  -> bool;
+        auto push_debug_group(const char* name) const -> void;
+        auto pop_debug_group() const -> void;
 
         static auto find_config([[maybe_unused]] const CWindow& window) -> GL_CFG;
 

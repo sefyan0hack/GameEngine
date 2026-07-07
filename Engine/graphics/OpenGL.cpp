@@ -180,3 +180,20 @@ auto OpenGL::load_functions() -> void
     FUNCTIONS_GL_LIST
     #undef FUNC_GL_X
 }
+
+auto  OpenGL::push_debug_group(const char* name) const -> void
+{
+    if (PACK(m_Major, m_Minor) >= PACK(4,3) || extension_supported("GL_KHR_debug")) {
+        static uint32_t id{};
+        GET_GLEXT_FUNCTION_THROW(glPushDebugGroup);
+        glPushDebugGroup_ext(GL_DEBUG_SOURCE_APPLICATION, id++, -1, name);
+    }
+}
+
+auto  OpenGL::pop_debug_group() const -> void
+{
+    if (PACK(m_Major, m_Minor) >= PACK(4,3) || extension_supported("GL_KHR_debug")) {
+        GET_GLEXT_FUNCTION_THROW(glPopDebugGroup);
+        glPopDebugGroup_ext();
+    }
+}

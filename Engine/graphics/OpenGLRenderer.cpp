@@ -126,6 +126,7 @@ auto OpenGLRenderer::render(const Scene& scene) const -> void
 
 auto OpenGLRenderer::depthpre_pass(const Scene& scene) const -> void
 {
+    m_GApi.push_debug_group("depthpre_pass");
 
     gl::ColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
@@ -152,10 +153,14 @@ auto OpenGLRenderer::depthpre_pass(const Scene& scene) const -> void
     }
 
     gl::ColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
+    m_GApi.pop_debug_group();
 }
 
 auto OpenGLRenderer::scene_pass(const Scene& scene) const -> void
 {
+    m_GApi.push_debug_group("scene_pass");
+
     m_Stats.reset();
 
     m_Scene.Program->use();
@@ -197,10 +202,14 @@ auto OpenGLRenderer::scene_pass(const Scene& scene) const -> void
             m_Stats.drawCalls++;
         }
     );
+
+    m_GApi.pop_debug_group();
 }
 
 auto OpenGLRenderer::skybox_pass() const -> void
 {
+    m_GApi.push_debug_group("skybox_pass");
+
     m_SkyBox.Program->use();
     m_Stats.shaderBinds++;
 
@@ -212,9 +221,13 @@ auto OpenGLRenderer::skybox_pass() const -> void
     // gl::BindVertexArray(VAO);
     gl::DrawArrays(GL_TRIANGLES, 0, 3);
     m_Stats.drawCalls++;
+
+    m_GApi.pop_debug_group();
 }
 
 auto OpenGLRenderer::text_pass() const -> void {
+    m_GApi.push_debug_group("text_pass");
+
     auto [width, height] = m_GApi.window().dims();
     m_Text.Text.fill_text_buffer(width, height);
 
@@ -263,6 +276,8 @@ auto OpenGLRenderer::text_pass() const -> void {
 
     m_Text.Text.clear_glyphs();
     m_Text.Text.clear();
+
+    m_GApi.pop_debug_group();
 }
 
 auto OpenGLRenderer::set_viewport(int32_t x, int32_t y, int32_t width, int32_t height) -> void
