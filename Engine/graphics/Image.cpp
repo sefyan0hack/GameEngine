@@ -16,7 +16,7 @@ namespace eg_detail {
         int i = static_cast<int>(x);
         // if x is negative and not already an integer → step down
         if (x < 0.0f && x != static_cast<float>(i))
-        return static_cast<float>(i - 1);
+            return static_cast<float>(i - 1);
         return static_cast<float>(i);
     };
     constexpr auto fmodf(float x, float y) -> float
@@ -78,6 +78,25 @@ Image::Image(auto* Data, uint32_t Width, uint32_t Height, uint32_t Channels)
         m_Width = Width;
         m_Height = Height;
         m_Channels = Channels;
+        m_Data = std::bit_cast<const uint8_t*>(Data);
+    }else{
+        m_Width = procedural_texture_width;
+        m_Height = procedural_texture_height;
+        m_Channels = procedural_texture_channels;
+        m_Data = procedural_texture_func.data();
+
+        logg::warn("Can't load raw data");
+    }
+}
+
+Image::Image(auto* Data, uint32_t Width, uint32_t Height, Format format)
+{
+    auto channels = std::to_underlying(format);
+
+    if(Data != nullptr && Width > 0 && Height > 0 && channels > 0){
+        m_Width = Width;
+        m_Height = Height;
+        m_Channels = channels;
         m_Data = std::bit_cast<const uint8_t*>(Data);
     }else{
         m_Width = procedural_texture_width;
@@ -186,69 +205,8 @@ auto Image::data() const -> std::span<const uint8_t>
     return { m_Data, size() };
 }
 
-auto Image::cpu_format() const -> GLenum
+auto Image::format() const -> Format
 {
-    switch(m_Channels) {
-        case 1: return GL_RED;
-        case 2: return GL_RG;
-        case 3: return GL_RGB;
-        case 4: return GL_RGBA;
-        default: throw Exception("Unsupported channel count: {}", m_Channels);
-    }
-}
-
-
-auto Image::gpu_format() const -> GLint
-{
-    switch(m_Channels) {
-        case 1: return GL_R8;
-        case 2: return GL_RG8;
-        case 3: return GL_RGB8;
-        case 4: return GL_RGBA8;
-        default: throw Exception("Unsupported channel count: {}", m_Channels);
-    }
-}
-
-auto Image::cpu_to_gpu_format(GLenum cpuformat) -> GLint
-{
-    switch(cpuformat) {
-        case GL_RED: return GL_R8;
-        case GL_RG: return GL_RG8;
-        case GL_RGB: return GL_RGB8;
-        case GL_RGBA: return GL_RGBA8;
-        default: throw Exception("Unsupported Fromat: {:X}", cpuformat);
-    }
-}
-
-auto Image::gpu_to_cpu_format(GLint gpuformt) -> GLenum
-{
-    switch(gpuformt) {
-        case GL_R8: return GL_RED;
-        case GL_RG8: return GL_RG;
-        case GL_RGB8: return GL_RGB;
-        case GL_RGBA8: return GL_RGBA;
-        default: throw Exception("Unsupported Fromat: {:X}", gpuformt);
-    }
-}
-
-auto Image::channel_from_cpu_format(GLenum format) -> std::int32_t
-{
-    switch(format) {
-        case GL_R8: return 1;
-        case GL_RG8: return 2;
-        case GL_RGB8: return 3;
-        case GL_RGBA8: return 4;
-        default: throw Exception("Unsupported Fromat: {:X}", format);
-    }
-}
-
-auto Image::channel_from_gpu_format(GLint format) -> std::int32_t
-{
-    switch(format) {
-        case GL_RED: return 1;
-        case GL_RG: return 2;
-        case GL_RGB: return 3;
-        case GL_RGBA: return 4;
-        default: throw Exception("Unsupported Fromat: {:X}", format);
-    }
+    Expect(m_Channels > 0 && m_Channels  <= 4, "supported channels count is less then 4");
+    return static_cast<Format>(m_Channels);
 }

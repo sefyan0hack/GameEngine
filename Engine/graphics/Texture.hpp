@@ -29,6 +29,9 @@ public:
     auto type() const -> GLenum;
     auto type_name() const -> std::string;
 
+    static auto gl_format(Image::Format fmt) -> GLenum;
+    static auto gl_internal_format(Image::Format fmt) -> GLenum;
+
     auto img2d_to_gpu(const auto* data, GLsizei width, GLsizei height, GLint intformat = GL_RGBA8, GLenum format = GL_RGBA) const -> void;
 
 protected:
@@ -44,7 +47,7 @@ class ENGINE_EXPORT Texture2D final : public Texture
     auto operator=(const Texture2D&) -> Texture2D& = delete;
     Texture2D(const std::string &name);
     Texture2D(std::span<const char> src);
-    Texture2D(auto* data, GLint width, GLint height, GLenum format = GL_RGBA);
+    Texture2D(auto* data, GLint width, GLint height, Image::Format fmt);
 
   private:
     Image m_Img;

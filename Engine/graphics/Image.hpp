@@ -5,18 +5,26 @@
 #include <cstdint>
 #include <span>
 
-#include "gl.hpp"
 #include <core/res.hpp>
 #include <engine_export.h>
 
 class ENGINE_EXPORT Image
 {
 public:
+    enum class Format {
+      RED   = 1,
+      RG    = 2,
+      RGB   = 3,
+      RGBA  = 4
+    };
+
     friend struct std::formatter<Image>;
+
     Image();
     Image(const std::string& filename, bool flip = false);
     Image(std::span<const char> src, bool flip = false);
     Image(auto* Data, uint32_t Width, uint32_t Height, uint32_t Channels);
+    Image(auto* Data, uint32_t Width, uint32_t Height, Format format);
     ~Image();
 
     Image(const Image& other) = delete;
@@ -28,15 +36,7 @@ public:
     auto width() const -> int32_t;
     auto height() const -> int32_t;
     auto channels() const -> int32_t;
-
-    auto cpu_format() const -> GLenum;
-    auto gpu_format() const -> GLint;
-
-    static auto cpu_to_gpu_format(GLenum cpuformat) -> GLint;
-    static auto gpu_to_cpu_format(GLint gpuformt) -> GLenum;
-
-    static auto channel_from_cpu_format(GLenum format) -> std::int32_t;
-    static auto channel_from_gpu_format(GLint format) -> std::int32_t;
+    auto format() const -> Format;
 
     auto data() const -> std::span<const uint8_t>;
     auto size() const -> std::size_t;
@@ -57,7 +57,7 @@ struct std::formatter<Image> {
   auto format(const Image& obj, auto& context) const {
     return std::format_to(context.out(),
     R"({{ "Width": {}, "Height": {}, "Channels": {}, "Data": {} }})"
-    , obj.m_Width, obj.m_Height, obj.m_Channels, static_cast<const void*>(obj.m_Data));
+    , obj.m_Width, obj.m_Height, obj.channels(), static_cast<const void*>(obj.m_Data));
   }
 };
 #endif
