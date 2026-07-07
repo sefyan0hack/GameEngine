@@ -32,7 +32,7 @@ public:
     static auto gl_format(Image::Format fmt) -> GLenum;
     static auto gl_internal_format(Image::Format fmt) -> GLenum;
 
-    auto img2d_to_gpu(const auto* data, GLsizei width, GLsizei height, GLint intformat = GL_RGBA8, GLenum format = GL_RGBA) const -> void;
+    static auto storage2d(const auto* data, GLenum type, GLsizei width, GLsizei height, GLint intformat = GL_RGBA8, GLenum format = GL_RGBA) -> void;
 
 protected:
     GLuint m_Id;
@@ -63,7 +63,6 @@ class ENGINE_EXPORT TextureCubeMap final : public Texture
     TextureCubeMap(const std::vector<std::string> faces);
 
     static auto base_to_6faces(const std::string& path) -> std::vector<std::string>;
-    static auto base_to_6facesfiles(const std::string& path) -> std::vector<std::span<const char>>;
 
   private:
     std::array<Image, 6> m_Imgs;

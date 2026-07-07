@@ -1,12 +1,10 @@
 #include "ShaderProgram.hpp"
 #include "Shader.hpp"
-#include "OpenGL.hpp"
 #include <core/Log.hpp>
 #include <core/res.hpp>
 #include <core/Exception.hpp>
 
 #include <utility>
-#include <ranges>
 
 ShaderProgram::ShaderProgram(std::shared_ptr<Shader> vertex, std::shared_ptr<Shader> fragment)
     : m_Id(gl::CreateProgram())

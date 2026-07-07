@@ -67,6 +67,7 @@ auto Texture::gl_format(Image::Format fmt) -> GLenum
         case Image::Format::RG: return GL_RG;
         case Image::Format::RGB: return GL_RGB;
         case Image::Format::RGBA: return GL_RGBA;
+        default: return 0;
     }
 }
 
@@ -77,6 +78,7 @@ auto Texture::gl_internal_format(Image::Format fmt) -> GLenum
         case Image::Format::RG: return GL_RG8;
         case Image::Format::RGB: return GL_RGB8;
         case Image::Format::RGBA: return GL_RGBA8;
+        default: return 0;
     }
 }
 
@@ -90,7 +92,7 @@ Texture2D::Texture2D()
 {
     // Ensure GLubyte and uint8_t are the same size at compile time
     static_assert(sizeof(GLubyte) == sizeof(uint8_t), "GLubyte and uint8_t size mismatch!");
-    img2d_to_gpu(std::bit_cast<const GLubyte*>(m_Img.data().data()), m_Img.width(), m_Img.height(), gl_internal_format(m_Img.format()), gl_format(m_Img.format()));
+    storage2d(std::bit_cast<const GLubyte*>(m_Img.data().data()), m_Type, m_Img.width(), m_Img.height(), gl_internal_format(m_Img.format()), gl_format(m_Img.format()));
     gl::GenerateMipmap(m_Type);
 }
 
@@ -100,7 +102,7 @@ Texture2D::Texture2D(const char* name)
 {
     // Ensure GLubyte and uint8_t are the same size at compile time
     static_assert(sizeof(GLubyte) == sizeof(uint8_t), "GLubyte and uint8_t size mismatch!");
-    img2d_to_gpu(std::bit_cast<const GLubyte*>(m_Img.data().data()), m_Img.width(), m_Img.height(), gl_internal_format(m_Img.format()), gl_format(m_Img.format()));
+    storage2d(std::bit_cast<const GLubyte*>(m_Img.data().data()), m_Type, m_Img.width(), m_Img.height(), gl_internal_format(m_Img.format()), gl_format(m_Img.format()));
     gl::GenerateMipmap(m_Type);
 
     gl::label_texture(m_Id, name);
@@ -109,10 +111,10 @@ Texture2D::Texture2D(const char* name)
 Texture2D::Texture2D(auto* data, GLint width, GLint height, Image::Format fmt)
     : Texture(GL_TEXTURE_2D), m_Img(data, width, height, fmt)
 {
-    img2d_to_gpu(data, width, height, gl_internal_format(m_Img.format()), gl_format(m_Img.format()));
+    storage2d(data, width, height, gl_internal_format(m_Img.format()), gl_format(m_Img.format()));
 }
 
-auto Texture::img2d_to_gpu(const auto *data, GLsizei width, GLsizei height, GLint intformat, GLenum format) const -> void
+auto Texture::storage2d(const auto *data, GLenum type, GLsizei width, GLsizei height, GLint intformat, GLenum format) -> void
 {
     using DataType = std::remove_cv_t<
             std::remove_all_extents_t<
@@ -148,9 +150,8 @@ auto Texture::img2d_to_gpu(const auto *data, GLsizei width, GLsizei height, GLin
         gl::PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
     }
 
-    gl::TexImage2D(m_Type, 0, intformat, width, height, 0, format, gl_type, data);
+    gl::TexImage2D(type, 0, intformat, width, height, 0, format, gl_type, data);
 }
-
 
 //////
 TextureCubeMap::TextureCubeMap()
@@ -158,7 +159,7 @@ TextureCubeMap::TextureCubeMap()
 {
     for (std::size_t i = 0; i < m_Imgs.size(); ++i) {
         const auto& img = m_Imgs[i];
-        gl::TexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, gl_internal_format(img.format()), img.width(), img.height(), 0, gl_format(img.format()), GL_UNSIGNED_BYTE, img.data().data());
+        storage2d(img.data().data(), GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), img.width(), img.height(), gl_internal_format(img.format()), gl_format(img.format()));
     }
 
     gl::TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -181,13 +182,7 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
 
     for (std::size_t i = 0; i < m_Imgs.size(); ++i) {
         auto& img = m_Imgs[i];
-
-        GLint rowBytes = img.width() * img.channels();
-        GLint alignment = (rowBytes % 8 == 0)? 8 : (rowBytes % 4 == 0)? 4 : (rowBytes % 2 == 0)? 2 : 1;
-        gl::PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
-
-        gl::TexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, gl_internal_format(img.format()), img.width(), img.height(), 0, gl_format(img.format()), GL_UNSIGNED_BYTE, img.data().data());
-
+        storage2d(img.data().data(), GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), img.width(), img.height(), gl_internal_format(img.format()), gl_format(img.format()));
         logg::trace("Loding {} ", faces[i]);
     }
 
@@ -199,7 +194,6 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
     gl::TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
     gl::GenerateMipmap(m_Type);
-    gl::PixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
     gl::label_texture(m_Id, faces[0].c_str());
 }
@@ -218,20 +212,4 @@ auto TextureCubeMap::base_to_6faces(const std::string& path) -> std::vector<std:
     }
 
     return result;
-}
-
-auto TextureCubeMap::base_to_6facesfiles(const std::string& path) -> std::vector<std::span<const char>>
-{
-    std::vector<std::span<const char>> files;
-    std::array<std::string, 6> directions = {"posx", "negx", "posy", "negy", "posz", "negz"};
-    auto dot = path.find_last_of(".");
-    auto ext = path.substr(dot, path.size());
-
-    for (const auto &dir : directions) {
-        auto newPath = path.substr(0, dot);
-        newPath += "_" + dir + ext;
-        files.push_back(res::get(newPath.c_str()));
-    }
-
-    return files;
 }
