@@ -57,5 +57,5 @@ private:
         uint32_t VAO, VBO, Atlas;
     } m_Text;
 
-    uint32_t m_CameraUBO;
+    uint32_t m_CameraUBO, m_SunUBO;
 };

@@ -9,6 +9,7 @@
 #include "Material.hpp"
 #include "Mesh.hpp"
 #include "ShaderProgram.hpp"
+#include "emath/vec3.hpp"
 #include "gl.hpp"
 
 #include <core/Log.hpp>
@@ -17,6 +18,7 @@
 #include <ui/Text.hpp>
 
 #include <algorithm>
+#include <chrono>
 
 #if defined(min) || defined(max)
 #undef min
@@ -26,9 +28,17 @@
 struct CameraUBO
 {
     constexpr static int32_t BINDING_POINT = 0;
-    emath::mat4 Projection;
-    emath::mat4 View;
-    emath::vec3 Position;
+    alignas(16) emath::mat4 Projection;
+    alignas(16) emath::mat4 View;
+    alignas(16) emath::vec3 Position;
+};
+
+struct SunLightUBO
+{
+    constexpr static int32_t BINDING_POINT = 1;
+    alignas(16) emath::vec3 Direction;
+    alignas(16) emath::vec3 Color;
+    alignas(16) emath::vec3 Ambient;
 };
 
 OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
@@ -49,7 +59,7 @@ OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
         std::make_shared<ShaderProgram>("res/Shaders/text.vert", "res/Shaders/text.frag"),
         0, 0, 0
     }
-    , m_CameraUBO(0)
+    , m_CameraUBO(0), m_SunUBO(0)
 {
     {
         gl::label_program(m_Depth.Program->id(), "Depth pre-pass");
@@ -87,11 +97,9 @@ OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
 
     gl::BindBuffer(GL_UNIFORM_BUFFER, m_CameraUBO);
 
-    // 2 mat4 = 128 bytes
     gl::BufferData(GL_UNIFORM_BUFFER, sizeof(CameraUBO), nullptr, GL_DYNAMIC_DRAW);
 
-    // Binding point 0
-    gl::BindBufferBase(GL_UNIFORM_BUFFER, 0, m_CameraUBO);
+    gl::BindBufferBase(GL_UNIFORM_BUFFER, CameraUBO::BINDING_POINT, m_CameraUBO);
 
     // Link shaders uniform block to binding point
     {
@@ -103,6 +111,22 @@ OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
 
         GLuint SkyBoxblockIndex = gl::GetUniformBlockIndex(m_SkyBox.Program->id(), "Camera");
         gl::UniformBlockBinding(m_SkyBox.Program->id(), SkyBoxblockIndex, CameraUBO::BINDING_POINT);
+    }
+
+    // Prepeare Sun UBO --------------------------------------------------------------------------
+    gl::GenBuffers(1, &m_SunUBO);
+    gl::label_buffer(m_SunUBO, "Sun UBO");
+
+    gl::BindBuffer(GL_UNIFORM_BUFFER, m_SunUBO);
+
+    gl::BufferData(GL_UNIFORM_BUFFER, sizeof(SunLightUBO), nullptr, GL_DYNAMIC_DRAW);
+
+    gl::BindBufferBase(GL_UNIFORM_BUFFER, SunLightUBO::BINDING_POINT, m_SunUBO);
+
+    // Link shaders uniform block to binding point
+    {
+        GLuint SceneblockIndex = gl::GetUniformBlockIndex(m_Scene.Program->id(), "SunLight");
+        gl::UniformBlockBinding(m_Scene.Program->id(), SceneblockIndex, SunLightUBO::BINDING_POINT);
     }
 }
 
@@ -117,8 +141,34 @@ auto OpenGLRenderer::render(const Scene& scene) const -> void
             .View = cam.view(),
             .Position = cam.position()
         };
-        
+
         gl::BindBuffer(GL_UNIFORM_BUFFER, m_CameraUBO);
+        gl::BufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(data), &data);
+    }
+
+    {
+        static auto start = std::chrono::steady_clock::now();
+
+        float t = std::chrono::duration<float>(
+            std::chrono::steady_clock::now() - start
+        ).count();
+
+        float angle  = t * 0.5f;
+        float height = std::sin(angle);
+        height = std::max(height, 0.1f);
+
+        // Uploading Sun UBO
+        SunLightUBO data {
+            .Direction = emath::vec3(
+                std::cos(angle),
+                -height,
+                std::sin(angle)
+            ),
+            .Color = emath::vec3(1.0f),
+            .Ambient = emath::vec3(0.08f)
+        };
+
+        gl::BindBuffer(GL_UNIFORM_BUFFER, m_SunUBO);
         gl::BufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(data), &data);
     }
 

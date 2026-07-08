@@ -4,6 +4,8 @@ in vec2 Uv;
 
 out vec4 FragColor;
 
+uniform sampler2D uDiffuseMap;
+
 layout(std140) uniform Camera
 {
     mat4 Projection;
@@ -11,17 +13,18 @@ layout(std140) uniform Camera
     vec3 Position;
 } Cam;
 
-uniform sampler2D uDiffuseMap;
-
-const vec3 LightPosition = vec3(5.0, 5.0, 5.0);
-const vec3 LightColor = vec3(1.0);
-const vec3 AmbientColor = vec3(0.04);
+layout(std140) uniform SunLight
+{
+    vec3 Direction;
+    vec3 Color;
+    vec3 Ambient;
+} Sun;
 
 void main()
 {    
     vec3 N = normalize(Normal);
 
-    vec3 lightDir = normalize(LightPosition - WorldPos);
+    vec3 lightDir = normalize(-Sun.Direction);
 
     // diffuse
     float diff = max(dot(N, lightDir), 0.0);
@@ -37,16 +40,11 @@ void main()
 
     vec3 albedo = texture(uDiffuseMap, Uv).rgb;
 
-    vec3 ambient = AmbientColor * albedo;
-
-    vec3 diffuse = diff * LightColor * albedo;
-
-    vec3 specular = spec * LightColor * 0.35;
+    vec3 ambient  = Sun.Ambient * albedo;
+    vec3 diffuse  = diff * Sun.Color * albedo;
+    vec3 specular = spec * Sun.Color * 0.35;
 
     vec3 color = ambient + diffuse + specular;
-
-    // gamma correction
-    // color = pow(color, vec3(1.0 / 2.2));
 
     FragColor = vec4(color, 1.0);
 }
