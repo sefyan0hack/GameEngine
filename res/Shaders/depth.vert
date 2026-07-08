@@ -4,12 +4,12 @@ layout(std140) uniform Camera
 {
     mat4 Projection;
     mat4 View;
-    vec3 CameraPos;
-};
+    vec3 Position;
+} Cam;
 
 uniform mat4 Model;
 
 void main()
 {
-    gl_Position = Projection * View * Model * vec4(aPosition, 1.0);
+    gl_Position = Cam.Projection * Cam.View * Model * vec4(aPosition, 1.0);
 }

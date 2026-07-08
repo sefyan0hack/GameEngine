@@ -4,12 +4,12 @@ layout(std140) uniform Camera
 {
     mat4 Projection;
     mat4 View;
-    vec3 CameraPos;
-};
+    vec3 Position;
+} Cam;
 
 void main() {
-    mat4 InvProjection = inverse(Projection);
-    mat3 InvViewRot = mat3(transpose(View));
+    mat4 InvProjection = inverse(Cam.Projection);
+    mat3 InvViewRot = mat3(transpose(Cam.View));
 
     vec2 pos = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2) * 2.0 - 1.0;
 

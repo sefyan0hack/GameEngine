@@ -28,7 +28,7 @@ struct CameraUBO
     constexpr static int32_t BINDING_POINT = 0;
     emath::mat4 Projection;
     emath::mat4 View;
-    emath::vec3 CameraPos;
+    emath::vec3 Position;
 };
 
 OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
@@ -113,9 +113,9 @@ auto OpenGLRenderer::render(const Scene& scene) const -> void
 
         // Uploading Camera UBO
         CameraUBO data {
-            cam.projection(),
-            cam.view(),
-            cam.position()
+            .Projection = cam.projection(),
+            .View = cam.view(),
+            .Position = cam.position()
         };
         
         gl::BindBuffer(GL_UNIFORM_BUFFER, m_CameraUBO);

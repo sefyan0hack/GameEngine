@@ -8,8 +8,8 @@ layout(std140) uniform Camera
 {
     mat4 Projection;
     mat4 View;
-    vec3 CameraPos;
-};
+    vec3 Position;
+} Cam;
 
 uniform sampler2D uDiffuseMap;
 
@@ -27,7 +27,7 @@ void main()
     float diff = max(dot(N, lightDir), 0.0);
 
     // specular
-    vec3 viewDir = normalize(CameraPos - WorldPos);
+    vec3 viewDir = normalize(Cam.Position - WorldPos);
     vec3 reflectDir = reflect(-lightDir, N);
 
     float spec = pow(
