@@ -16,8 +16,8 @@ public:
 
         auto CubeMattkimberley = std::make_shared<Material>(kimberley_jpg);
         auto CubeMattSand  = std::make_shared<Material>(sand_png);
-        auto cubeMesh      = std::make_shared<Mesh>(Mesh::CUBE());
-        auto manMesh       = std::make_shared<Mesh>(obj_to_mesh("res/FinalBaseMesh.obj"));
+        auto cubeMesh      = std::make_shared<Mesh>(Mesh::CUBE_VERTICES(), Mesh::CUBE_INDICES());
+        auto manMesh       = std::make_shared<Mesh>(load_obj("res/FinalBaseMesh.obj"));
 
         constexpr int32_t Grids = 5;
 

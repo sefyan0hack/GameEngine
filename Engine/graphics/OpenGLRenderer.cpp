@@ -28,6 +28,7 @@ struct CameraUBO
     constexpr static int32_t BINDING_POINT = 0;
     emath::mat4 Projection;
     emath::mat4 View;
+    emath::vec3 CameraPos;
 };
 
 OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
@@ -107,10 +108,14 @@ OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
 
 auto OpenGLRenderer::render(const Scene& scene) const -> void
 {
-    { // Uploading Camera UBO
+    {
+        auto& cam = scene.main_camera();
+
+        // Uploading Camera UBO
         CameraUBO data {
-            scene.main_camera().projection(),
-            scene.main_camera().view()
+            cam.projection(),
+            cam.view(),
+            cam.position()
         };
         
         gl::BindBuffer(GL_UNIFORM_BUFFER, m_CameraUBO);
@@ -159,7 +164,7 @@ auto OpenGLRenderer::depthpre_pass(const Scene& scene) const -> void
             m_Stats.vaoBinds++;
         }
 
-        gl::DrawArrays(GL_TRIANGLES, 0, mesh->vertex_size());
+        gl::DrawElements(GL_TRIANGLES, mesh->indices_size(), GL_UNSIGNED_SHORT, (void*)0);
         m_Stats.drawCalls++;
     }
 
@@ -209,7 +214,7 @@ auto OpenGLRenderer::scene_pass(const Scene& scene) const -> void
                 m_Stats.vaoBinds++;
             }
 
-            gl::DrawArrays(GL_TRIANGLES, 0, v_count);
+            gl::DrawElements(GL_TRIANGLES, mesh->indices_size(), GL_UNSIGNED_SHORT, (void*)0);
             m_Stats.drawCalls++;
         }
     );

@@ -1,71 +1,82 @@
 #include "Mesh.hpp"
+#include <GL/glcorearb.h>
 #include <core/Log.hpp>
 #include <core/Exception.hpp>
 #include <core/res.hpp>
 
-#include <sstream>
+#include <unordered_map>
+#include <cstdio>
+#include <charconv>
 
-auto Mesh::CUBE() -> std::vector<Vertex>{
+auto Mesh::CUBE_VERTICES() -> std::vector<Vertex>{
 
     static auto _ = std::vector<Vertex> {
-        // Front
+        // Front (+Z)
         {{-0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, {0.0f, 0.0f}},
         {{ 0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, {1.0f, 0.0f}},
         {{ 0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, {1.0f, 1.0f}},
-        
-        {{ 0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, {1.0f, 1.0f}},
         {{-0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, {0.0f, 1.0f}},
-        {{-0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, {0.0f, 0.0f}},
-        
-        // Back
+
+        // Back (-Z)
         {{-0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, {1.0f, 0.0f}},
         {{-0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, {1.0f, 1.0f}},
         {{ 0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, {0.0f, 1.0f}},
-        
-        {{ 0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, {0.0f, 1.0f}},
         {{ 0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, {0.0f, 0.0f}},
-        {{-0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, {1.0f, 0.0f}},
-        
-        // Left
+
+        // Left (-X)
         {{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}, {0.0f, 0.0f}},
         {{-0.5f, -0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}, {1.0f, 0.0f}},
         {{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}, {1.0f, 1.0f}},
-        
-        {{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}, {1.0f, 1.0f}},
         {{-0.5f,  0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}, {0.0f, 1.0f}},
-        {{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}, {0.0f, 0.0f}},
-        
-        // Right
+
+        // Right (+X)
         {{ 0.5f, -0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f}, {0.0f, 0.0f}},
         {{ 0.5f,  0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f}, {0.0f, 1.0f}},
         {{ 0.5f,  0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f}, {1.0f, 1.0f}},
-        
-        {{ 0.5f,  0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f}, {1.0f, 1.0f}},
         {{ 0.5f, -0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f}, {1.0f, 0.0f}},
-        {{ 0.5f, -0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f}, {0.0f, 0.0f}},
-        
-        // Top
+
+        // Top (+Y)
         {{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}, {0.0f, 0.0f}},
         {{-0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f}, {0.0f, 1.0f}},
         {{ 0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f}, {1.0f, 1.0f}},
-        
-        {{ 0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f}, {1.0f, 1.0f}},
         {{ 0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}, {1.0f, 0.0f}},
-        {{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}, {0.0f, 0.0f}},
-        
-        // Bottom
+
+        // Bottom (-Y)
         {{-0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}, {0.0f, 0.0f}},
         {{ 0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}, {1.0f, 0.0f}},
         {{ 0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}, {1.0f, 1.0f}},
-        
-        {{ 0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}, {1.0f, 1.0f}},
         {{-0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}, {0.0f, 1.0f}},
-        {{-0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}, {0.0f, 0.0f}},
     };
     return _;
 }
 
-namespace {
+auto Mesh::CUBE_INDICES() -> std::vector<uint16_t> 
+{
+    static auto _ =   std::vector<uint16_t> {
+        // Front
+        0, 1, 2,
+        2, 3, 0,
+        // Back
+        4, 5, 6,
+        6, 7, 4,
+        // Left
+        8, 9,10,
+        10,11, 8,
+            // Right
+        12,13,14,
+        14,15,12,
+            // Top
+        16,17,18,
+        18,19,16,
+            // Bottom
+        20,21,22,
+        22,23,20,
+    };
+
+    return _;
+}
+
+namespace attribs {
     constinit static Attribute position {
         .size = 3,//decltype(Mesh::VetexData::Position)::length(),
         .type = GL_FLOAT,
@@ -94,37 +105,50 @@ namespace {
     };
 }
 
-Mesh::Mesh(const std::vector<Vertex> &vertices)
+Mesh::Mesh(const std::vector<VetexData>& vertices, const std::vector<uint16_t>& indices)
     : m_Vertices(vertices)
+    , m_Indices(indices)
     , VAO(0)
     , VBO(0)
+    , IBO(0)
 {
     gl::GenVertexArrays(1, &VAO);
     gl::GenBuffers(1, &VBO);
+    gl::GenBuffers(1, &IBO);
 
     gl::BindVertexArray(VAO);
-    gl::BindBuffer(GL_ARRAY_BUFFER, VBO);
-    
-    gl::BufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(m_Vertices.size() * sizeof(Mesh::VetexData)), m_Vertices.data(), GL_STATIC_DRAW);
 
+    gl::BindBuffer(GL_ARRAY_BUFFER, VBO);
+    gl::BufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(m_Vertices.size() * sizeof(Mesh::VetexData)), m_Vertices.data(), GL_STATIC_DRAW);
+    
+    gl::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+    gl::BufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(m_Indices.size() * sizeof(uint16_t)), m_Indices.data(), GL_STATIC_DRAW);
+    
     GLuint index = 0;
-    for(auto a : {position, normals, texCoords}){
+    for(auto a : {attribs::position, attribs::normals, attribs::texCoords}){
         set_attribute(index++, a);
     }
 }
+
+Mesh::Mesh(std::pair<std::vector<Vertex>, std::vector<uint16_t>> vert_inds)
+    : Mesh(vert_inds.first, vert_inds.second)
+{}
 
 Mesh::Mesh(Mesh &&other) noexcept
     : m_Vertices(std::move(other.m_Vertices))
     , VAO(other.VAO)
     , VBO(other.VBO)
+    , IBO(other.IBO)
 {
     other.VAO = 0;
     other.VBO = 0;
+    other.IBO = 0;
 }
 
 auto Mesh::operator=(Mesh &&other) noexcept -> Mesh &
 {
     if(this != &other){
+        gl::DeleteBuffers(1, &IBO);
         gl::DeleteBuffers(1, &VBO);
         gl::DeleteVertexArrays(1, &VAO);
 
@@ -132,15 +156,18 @@ auto Mesh::operator=(Mesh &&other) noexcept -> Mesh &
 
         VAO = other.VAO;
         VBO = other.VBO;
-
+        IBO = other.IBO;
+        
         other.VAO = 0;
         other.VBO = 0;
+        other.IBO = 0;
     }
     return *this;
 }
 
 Mesh::~Mesh()
 {
+    gl::DeleteBuffers(1, &IBO);
     gl::DeleteBuffers(1, &VBO);
     gl::DeleteVertexArrays(1, &VAO);
 }
@@ -161,9 +188,14 @@ auto Mesh::set_attribute(GLuint index, Attribute att) -> void
     gl::VertexAttribDivisor(index, static_cast<GLuint>(att.divisor));
 }
 
-auto Mesh::vertex_size() const noexcept -> GLsizei
+auto Mesh::vertex_size() const noexcept -> size_t
 {
-    return static_cast<GLsizei>(m_Vertices.size());
+    return m_Vertices.size();
+}
+
+auto Mesh::indices_size() const noexcept -> size_t
+{
+    return m_Indices.size();
 }
 
 auto Mesh::flip_faces(std::vector<Vertex> verts) -> std::vector<Vertex>
@@ -174,90 +206,159 @@ auto Mesh::flip_faces(std::vector<Vertex> verts) -> std::vector<Vertex>
     return verts;
 }
 
-auto obj_to_mesh(const char* res_name) -> std::vector<Vertex>
+std::pair<std::vector<Vertex>, std::vector<uint16_t>> load_obj(const char* obj)
 {
-    auto res = res::get(res_name);
-    std::string_view sv(res.data(), res.size());
     std::vector<emath::vec3> positions;
-    std::vector<Vertex> vertices_output;
+    std::vector<emath::vec2> texcoords;
+    std::vector<emath::vec3> normals;
 
-    auto trim = [](std::string_view s) -> std::string_view {
-        size_t b = 0;
-        while (b < s.size() && (s[b] == ' ' || s[b] == '\t')) ++b;
-        size_t e = s.size();
-        while (e > b && (s[e - 1] == ' ' || s[e - 1] == '\t')) --e;
-        return s.substr(b, e - b);
+    std::vector<Vertex> vertices;
+    std::vector<uint16_t> indices;
+
+    std::unordered_map<uint64_t, uint16_t> vertexMap;
+
+    positions.reserve(10000);
+    texcoords.reserve(10000);
+    normals.reserve(10000);
+    vertices.reserve(10000);
+    indices.reserve(30000);
+
+    auto objData = res::get(obj);
+    const char* data = objData.data();
+    size_t size = objData.size();
+    size_t pos = 0;
+
+    // Helper lambdas for parsing with std::from_chars + whitespace handling
+    auto skip_space = [](const char*& p, const char* end) {
+        while (p < end && std::isspace(static_cast<unsigned char>(*p)))
+            ++p;
     };
 
-    size_t i = 0;
-    while (i < sv.size()) {
-        // find end-of-line (handles '\n' or '\r' or "\r\n")
-        size_t j = sv.find_first_of("\r\n", i);
-        std::string_view line = (j == sv.npos) ? sv.substr(i) : sv.substr(i, j - i);
-        // advance i past the newline(s)
-        if (j == sv.npos) {
-        i = sv.size();
-        } else {
-        i = j + 1;
-        // if we found '\r' then skip a following '\n'
-        if (sv[j] == '\r' && i < sv.size() && sv[i] == '\n') ++i;
+    auto parse_float = [&](const char*& p, const char* end, float& val) -> bool {
+        skip_space(p, end);
+        if (p >= end) return false;
+        auto [ptr, ec] = std::from_chars(p, end, val);
+        if (ec != std::errc()) return false;
+        p = ptr;
+        return true;
+    };
+
+    while (pos < size) {
+        // Find end of line
+        size_t end = pos;
+        while (end < size && data[end] != '\n') ++end;
+        size_t lineLen = end - pos;
+
+        // Skip possible '\r'
+        if (lineLen > 0 && data[end-1] == '\r') lineLen--;
+
+        // Skip empty lines and comments
+        if (lineLen == 0 || data[pos] == '#') {
+            pos = end + 1;
+            continue;
         }
 
-        auto tline = trim(line);
-        if (tline.empty() || tline[0] == '#') continue; // comment or empty
+        char lineBuf[512];
+        size_t copyLen = lineLen < sizeof(lineBuf)-1 ? lineLen : sizeof(lineBuf)-1;
+        std::memcpy(lineBuf, data + pos, copyLen);
+        lineBuf[copyLen] = '\0';
 
-        // we'll parse using istringstream on a temporary std::string (simple & robust)
-        std::string s(tline);
-        std::istringstream iss(s);
-        std::string type;
-        iss >> type;
+        const char* lineEnd = lineBuf + copyLen;  // end pointer for from_chars
 
-        if (type == "v") {
-        float x = 0.f, y = 0.f, z = 0.f;
-        iss >> x >> y >> z;
-        positions.emplace_back(x, y, z);
+        if (lineBuf[0] == 'v' && lineBuf[1] == ' ') {
+            // "v  x  y  z"
+            const char* p = lineBuf + 2;           // skip "v "
+            float x, y, z;
+            if (parse_float(p, lineEnd, x) &&
+                parse_float(p, lineEnd, y) &&
+                parse_float(p, lineEnd, z))
+            {
+                positions.push_back({x, y, z});
+            }
         }
-        else if (type == "f") {
-        std::vector<size_t> faceIndices;
-        std::string token;
-        while (iss >> token) {
-            // remove anything after the first '/'
-            const size_t posSlash = token.find('/');
-            if (posSlash != std::string::npos) token = token.substr(0, posSlash);
-            if (token.empty()) continue;
+        else if (lineBuf[0] == 'v' && lineBuf[1] == 't') {
+            // "vt  u  v"
+            const char* p = lineBuf + 2;           // skip "vt"
+            float u, v;
+            if (parse_float(p, lineEnd, u) &&
+                parse_float(p, lineEnd, v))
+            {
+                texcoords.push_back({u, v});
+            }
+        }
+        else if (lineBuf[0] == 'v' && lineBuf[1] == 'n') {
+            // "vn  nx  ny  nz"
+            const char* p = lineBuf + 2;           // skip "vn"
+            float nx, ny, nz;
+            if (parse_float(p, lineEnd, nx) &&
+                parse_float(p, lineEnd, ny) &&
+                parse_float(p, lineEnd, nz))
+            {
+                normals.push_back({nx, ny, nz});
+            }
+        }
+        else if (lineBuf[0] == 'f' && lineBuf[1] == ' ') {
+            // Face parsing unchanged (uses strtoul)
+            std::vector<uint32_t> pIdx, tIdx, nIdx;
+            const char* p = lineBuf + 2;  // skip "f "
+            while (*p) {
+                while (*p == ' ') ++p;
+                if (!*p) break;
 
-            // stoi is fine here (OBJ indices are small); handle negative (relative) indices
-            int idx = 0;
-            try {
-            idx = std::stoi(token);
-            } catch (...) {
-            continue; // ignore malformed index
+                uint32_t pi = 0, ti = 0, ni = 0;
+                pi = static_cast<uint32_t>(std::strtoul(p, const_cast<char**>(&p), 10));
+                if (*p == '/') {
+                    ++p;
+                    if (*p != '/') {
+                        ti = static_cast<uint32_t>(std::strtoul(p, const_cast<char**>(&p), 10));
+                    }
+                    if (*p == '/') {
+                        ++p;
+                        ni = static_cast<uint32_t>(std::strtoul(p, const_cast<char**>(&p), 10));
+                    }
+                }
+                pIdx.push_back(pi);
+                tIdx.push_back(ti);
+                nIdx.push_back(ni);
             }
 
-            int vertexCount = static_cast<int>(positions.size());
-            if (idx < 0) idx = vertexCount + idx + 1; // relative indexing
-            idx -= 1; // convert to 0-based
-            if (idx < 0 || idx >= vertexCount) continue;
-            faceIndices.push_back(static_cast<size_t>(idx));
-        }
+            if (pIdx.size() >= 3) {
+                for (size_t i = 1; i + 1 < pIdx.size(); ++i) {
+                    uint32_t tri[3][3] = {
+                        { pIdx[0], tIdx[0], nIdx[0] },
+                        { pIdx[i], tIdx[i], nIdx[i] },
+                        { pIdx[i+1], tIdx[i+1], nIdx[i+1] }
+                    };
+                    for (int v = 0; v < 3; ++v) {
+                        uint32_t pp = tri[v][0], t = tri[v][1], n = tri[v][2];
+                        if (pp == 0 || pp > positions.size()) continue;
+                        if (t > texcoords.size()) t = 0;
+                        if (n > normals.size()) n = 0;
 
-        // triangulate polygon (fan)
-        if (faceIndices.size() < 3) continue;
-        for (size_t k = 1; k + 1 < faceIndices.size(); ++k) {
-            Vertex v1{}, v2{}, v3{};
-            v1.Position = positions[faceIndices[0]];
-            v2.Position = positions[faceIndices[k]];
-            v3.Position = positions[faceIndices[k + 1]];
+                        uint64_t key = (static_cast<uint64_t>(pp) << 40) |
+                                       (static_cast<uint64_t>(t) << 20) |
+                                        static_cast<uint64_t>(n);
 
-            v1.Normal = v2.Normal = v3.Normal = emath::vec3(0.0f);
-            v1.TexCoords = v2.TexCoords = v3.TexCoords = emath::vec2(0.0f);
+                        auto it = vertexMap.find(key);
+                        if (it != vertexMap.end()) {
+                            indices.push_back(it->second);
+                        } else {
+                            Vertex vert;
+                            vert.Position = positions[pp - 1];
+                            vert.TexCoords = (t > 0) ? texcoords[t - 1] : emath::vec2{0,0};
+                            vert.Normal    = (n > 0) ? normals[n - 1]   : emath::vec3{0,0,1};
 
-            vertices_output.push_back(v1);
-            vertices_output.push_back(v2);
-            vertices_output.push_back(v3);
+                            uint16_t idx = static_cast<uint16_t>(vertices.size());
+                            vertices.push_back(vert);
+                            indices.push_back(idx);
+                            vertexMap[key] = idx;
+                        }
+                    }
+                }
+            }
         }
-        }
-        // ignore other directive types (vn, vt, etc.) for now
+        pos = end + 1;
     }
-    return vertices_output;
+
+    return { std::move(vertices), std::move(indices) };
 }

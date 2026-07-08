@@ -1,8 +1,6 @@
 #pragma once
 #include <format>
-#include <string>
 #include <vector>
-#include <span>
 
 #include "gl.hpp"
 
@@ -37,7 +35,8 @@ public:
 
 public:
     friend struct std::formatter<Mesh>;
-    Mesh(const std::vector<VetexData> &vertices);
+    Mesh(const std::vector<VetexData>& vertices, const std::vector<uint16_t>& indices);
+    Mesh(std::pair<std::vector<Vertex>, std::vector<uint16_t>> vert_inds);
     
     Mesh(const Mesh& other) = delete;
     auto operator=(const Mesh& other) -> Mesh& = delete;
@@ -48,17 +47,20 @@ public:
     ~Mesh();
 
     auto set_attribute(GLuint index, Attribute att) -> void;
-    auto vertex_size() const noexcept -> GLsizei;
+    auto vertex_size() const noexcept -> size_t;
+    auto indices_size() const noexcept -> size_t;
 
     static auto flip_faces(std::vector<Vertex> verts) -> std::vector<Vertex>;
-    static auto CUBE() -> std::vector<Vertex>;
+    static auto CUBE_VERTICES() -> std::vector<Vertex>;
+    static auto CUBE_INDICES() -> std::vector<uint16_t>;
 
   public:
     std::vector<VetexData> m_Vertices;
-    GLuint VAO, VBO;
+    std::vector<uint16_t> m_Indices;
+    GLuint VAO, VBO, IBO;
 };
 
-ENGINE_EXPORT auto obj_to_mesh(const char* res_name) -> std::vector<Vertex>;
+ENGINE_EXPORT std::pair<std::vector<Vertex>, std::vector<uint16_t>> load_obj(const char* obj);
 
 #ifdef __cpp_lib_formatters
 // custom Mesh Format
