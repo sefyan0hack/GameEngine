@@ -3,6 +3,7 @@
 #include <core/Log.hpp>
 #include <core/SysInfo.hpp>
 #include <core/Exception.hpp>
+#include <unordered_map>
 
 #define PACK(x, y) ((uint32_t(x) << 16) | (uint32_t(y) & 0xFFFF))
 
@@ -78,10 +79,11 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     gl_info(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS);
     gl_info(GL_MAX_UNIFORM_BLOCK_SIZE);
     gl_info(GL_MAX_UNIFORM_BUFFER_BINDINGS);
+    gl_info(GL_MAX_COMBINED_UNIFORM_BLOCKS);
     gl_info(GL_MAX_RENDERBUFFER_SIZE);
-    gl_info(GL_SAMPLES);
-    gl_info(GL_MAX_SAMPLES);
     gl_info(GL_MAX_COLOR_ATTACHMENTS);
+    gl_info(GL_MAX_SAMPLES);
+    gl_info(GL_SAMPLES);
 }
 
 auto OpenGL::window() const -> const CWindow&
@@ -117,22 +119,90 @@ auto OpenGL::enable_debug() const -> void
 
     auto messgae_callback_func = +[](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei, const GLchar *message, const void *) -> void
     {
-        logg::error("{} {} {} {} {}", source, type, id, severity, message);
+        std::unordered_map<GLenum, const char*> m {
+            {GL_DEBUG_SOURCE_API, "GL_DEBUG_SOURCE_API"},
+            {GL_DEBUG_SOURCE_WINDOW_SYSTEM, "GL_DEBUG_SOURCE_WINDOW_SYSTEM"},
+            {GL_DEBUG_SOURCE_SHADER_COMPILER, "GL_DEBUG_SOURCE_SHADER_COMPILER"},
+            {GL_DEBUG_SOURCE_THIRD_PARTY, "GL_DEBUG_SOURCE_THIRD_PARTY"},
+            {GL_DEBUG_SOURCE_APPLICATION, "GL_DEBUG_SOURCE_APPLICATION"},
+            {GL_DEBUG_SOURCE_OTHER, "GL_DEBUG_SOURCE_OTHER"},
+
+            {GL_DEBUG_TYPE_ERROR, "GL_DEBUG_TYPE_ERROR"},
+            {GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR, "GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR"},
+            {GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR, "GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR"},
+            {GL_DEBUG_TYPE_PORTABILITY, "GL_DEBUG_TYPE_PORTABILITY"},
+            {GL_DEBUG_TYPE_PERFORMANCE, "GL_DEBUG_TYPE_PERFORMANCE"},
+            {GL_DEBUG_TYPE_OTHER, "GL_DEBUG_TYPE_OTHER"},
+            
+            #if defined(GL_DEBUG_TYPE_MARKER) && defined(GL_DEBUG_TYPE_PUSH_GROUP) && defined(GL_DEBUG_TYPE_POP_GROUP)
+            {GL_DEBUG_TYPE_MARKER, "GL_DEBUG_TYPE_MARKER"},
+            {GL_DEBUG_TYPE_PUSH_GROUP, "GL_DEBUG_TYPE_PUSH_GROUP"},
+            {GL_DEBUG_TYPE_POP_GROUP, "GL_DEBUG_TYPE_POP_GROUP"},
+            #endif
+
+            {GL_DEBUG_SEVERITY_HIGH, "GL_DEBUG_SEVERITY_HIGH"},
+            {GL_DEBUG_SEVERITY_MEDIUM, "GL_DEBUG_SEVERITY_MEDIUM"},
+            {GL_DEBUG_SEVERITY_LOW, "GL_DEBUG_SEVERITY_LOW"},
+            {GL_DEBUG_SEVERITY_NOTIFICATION, "GL_DEBUG_SEVERITY_NOTIFICATION"}
+        };
+        logg::error("source : {}, type: {}, id: {}, severity: {}, msg: {}.", m[source], m[type], id, m[severity], message);
     };
 
     if (PACK(m_Major, m_Minor) >= PACK(4,3) || gl::extensions().contains("GL_KHR_debug")) {
 
         GET_GLEXT_FUNCTION_THROW(glDebugMessageCallback);
+        GET_GLEXT_FUNCTION_THROW(glDebugMessageControl);
         gl::Enable(GL_DEBUG_OUTPUT);
         gl::Enable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
         glDebugMessageCallback_ext(messgae_callback_func, nullptr);
 
+        #if defined(GL_DEBUG_TYPE_PUSH_GROUP) && defined(GL_DEBUG_TYPE_POP_GROUP)
+        glDebugMessageControl_ext(
+            GL_DEBUG_SOURCE_APPLICATION,
+            GL_DEBUG_TYPE_PUSH_GROUP,
+            GL_DONT_CARE,
+            0,
+            nullptr,
+            GL_FALSE
+        );
+
+        glDebugMessageControl_ext(
+            GL_DEBUG_SOURCE_APPLICATION,
+            GL_DEBUG_TYPE_POP_GROUP,
+            GL_DONT_CARE,
+            0,
+            nullptr,
+            GL_FALSE
+        );
+        #endif
+
     } else if(gl::extensions().contains("GL_ARB_debug_output")) {
         GET_GLEXT_FUNCTION_THROW(glDebugMessageCallbackARB);
+        GET_GLEXT_FUNCTION_THROW(glDebugMessageControlARB);
         gl::Enable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
 
         glDebugMessageCallbackARB_ext(messgae_callback_func, nullptr);
+
+        #if defined(GL_DEBUG_TYPE_PUSH_GROUP) && defined(GL_DEBUG_TYPE_POP_GROUP)
+        glDebugMessageControlARB_ext(
+            GL_DEBUG_SOURCE_APPLICATION,
+            GL_DEBUG_TYPE_PUSH_GROUP,
+            GL_DONT_CARE,
+            0,
+            nullptr,
+            GL_FALSE
+        );
+
+        glDebugMessageControlARB_ext(
+            GL_DEBUG_SOURCE_APPLICATION,
+            GL_DEBUG_TYPE_POP_GROUP,
+            GL_DONT_CARE,
+            0,
+            nullptr,
+            GL_FALSE
+        );
+        #endif
     }
     #endif
 }

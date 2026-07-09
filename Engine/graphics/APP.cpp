@@ -60,15 +60,16 @@ auto APP::frame() -> void
     float game_dt = (dt > 0.1f) ? 0.1f : dt; // cap
 
     {
-        UiText.draw(std::format("FPS: {:.2f}", fps()));
-        UiText.draw(std::format("Resolution: {}x{}", Window.dims().first, Window.dims().second));
-        UiText.draw(std::format("Memory: {}/{} MB", os::memory_usage(), os::memory_peak()));
-        UiText.draw(std::format("Threads: {}", std::thread::hardware_concurrency()));
-        UiText.draw(std::format("Progame Binds  : {}", Renderer->stats().shaderBinds));
-        UiText.draw(std::format("Material Binds : {}", Renderer->stats().materialBinds));
-        UiText.draw(std::format("VAO Binds      : {}", Renderer->stats().vaoBinds));
-        UiText.draw(std::format("Draw Calls     : {}", Renderer->stats().drawCalls));
-        UiText.draw(std::format("Vertices       : {} ({} tri)", Renderer->stats().vertex_cout, Renderer->stats().vertex_cout/3));
+        UiText.draw(std::format("Fps         : {:.0f}", std::ceil(fps())));
+        UiText.draw(std::format("Res         : {}x{}", Window.dims().first, Window.dims().second));
+        UiText.draw(std::format("Memory      : {}/{} MB", os::memory_usage(), os::memory_peak()));
+        UiText.draw(std::format("Threads     : {}", std::thread::hardware_concurrency()));
+        UiText.draw(std::format("Pipe Switch : {}", Renderer->stats().pipeline_switch));
+        UiText.draw(std::format("Tex Switch  : {}", Renderer->stats().texture_switch));
+        UiText.draw(std::format("Mesh Switch : {}", Renderer->stats().mesh_switch));
+        UiText.draw(std::format("Draw Call   : {}", Renderer->stats().draw_call));
+        UiText.draw(std::format("Vertices    : {}", Renderer->stats().vertices));
+        UiText.draw(std::format("Indices     : {} ({} tri)", Renderer->stats().indices, Renderer->stats().indices/3));
     }
 
     Game->update(game_dt);

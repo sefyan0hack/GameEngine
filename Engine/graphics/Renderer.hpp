@@ -2,6 +2,7 @@
 
 #include <engine_export.h>
 #include <cstdint>
+#include <cstddef>
 
 enum class DrawMode {
     Triangles = 0,
@@ -11,19 +12,21 @@ enum class DrawMode {
 
 struct RenderStats
 {
-    uint32_t shaderBinds = 0;
-    uint32_t materialBinds = 0;
-    uint32_t vaoBinds = 0;
-    uint32_t drawCalls = 0;
-    uint32_t vertex_cout = 0;
+    size_t pipeline_switch = 0;
+    size_t texture_switch = 0;
+    size_t mesh_switch = 0;
+    size_t draw_call = 0;
+    size_t vertices = 0;
+    size_t indices = 0;
 
     void reset()
     {
-        shaderBinds = 0;
-        materialBinds = 0;
-        vaoBinds = 0;
-        drawCalls = 0;
-        vertex_cout = 0;
+        pipeline_switch = 0;
+        texture_switch = 0;
+        mesh_switch = 0;
+        draw_call = 0;
+        vertices = 0;
+        indices = 0;
     }
 };
 

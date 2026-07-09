@@ -35,7 +35,7 @@ class ENGINE_EXPORT OpenGL
         constexpr static int32_t MIN_REQUIRED_MAJOR_VERSION = 3;
         constexpr static int32_t MIN_REQUIRED_MINOR_VERSION = api == API::CORE ? 3 : 0;
 
-        constexpr static bool   DEBUG = false;
+        constexpr static bool   DEBUG = true;
         constexpr static size_t MSAA  = 2;
 
     private:

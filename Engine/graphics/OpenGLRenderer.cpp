@@ -197,7 +197,7 @@ auto OpenGLRenderer::depthpre_pass(const Scene& scene) const -> void
     gl::ColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
     m_Depth.Program->use();
-    m_Stats.shaderBinds++;
+    m_Stats.pipeline_switch++;
 
     Mesh* currentMesh = nullptr;
 
@@ -211,11 +211,11 @@ auto OpenGLRenderer::depthpre_pass(const Scene& scene) const -> void
         {
             currentMesh = mesh;
             gl::BindVertexArray(mesh->VAO);
-            m_Stats.vaoBinds++;
+            m_Stats.mesh_switch++;
         }
 
         gl::DrawElements(GL_TRIANGLES, mesh->indices_size(), GL_UNSIGNED_SHORT, (void*)0);
-        m_Stats.drawCalls++;
+        m_Stats.draw_call++;
     }
 
     gl::ColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -230,7 +230,7 @@ auto OpenGLRenderer::scene_pass(const Scene& scene) const -> void
     m_Stats.reset();
 
     m_Scene.Program->use();
-    m_Stats.shaderBinds++;
+    m_Stats.pipeline_switch++;
 
     //Drwaing
     Mesh* currentMesh = nullptr;
@@ -244,7 +244,10 @@ auto OpenGLRenderer::scene_pass(const Scene& scene) const -> void
             auto material = obj.material().get();
 
             auto v_count = mesh->vertex_size();
-            m_Stats.vertex_cout += v_count;
+            auto i_count = mesh->indices_size();
+
+            m_Stats.vertices += v_count;
+            m_Stats.indices += i_count;
 
             m_Scene.Program->set_uniform("Model", obj.model());
 
@@ -253,7 +256,7 @@ auto OpenGLRenderer::scene_pass(const Scene& scene) const -> void
             {
                 currentMaterial = material;
                 currentMaterial->bind(m_Scene.Program);
-                m_Stats.materialBinds++;
+                m_Stats.texture_switch++;
             }
 
             // Bind mesh only when it changes
@@ -261,11 +264,11 @@ auto OpenGLRenderer::scene_pass(const Scene& scene) const -> void
             {
                 currentMesh = mesh;
                 gl::BindVertexArray(currentMesh->VAO);
-                m_Stats.vaoBinds++;
+                m_Stats.mesh_switch++;
             }
 
             gl::DrawElements(GL_TRIANGLES, mesh->indices_size(), GL_UNSIGNED_SHORT, (void*)0);
-            m_Stats.drawCalls++;
+            m_Stats.draw_call++;
         }
     );
 
@@ -276,17 +279,19 @@ auto OpenGLRenderer::skybox_pass() const -> void
 {
     gl::push_debug_group("skybox_pass");
 
+
     m_SkyBox.Program->use();
-    m_Stats.shaderBinds++;
+    m_Stats.pipeline_switch++;
 
     gl::ActiveTexture(GL_TEXTURE0);
     m_SkyBox.Texture->bind();
     m_SkyBox.Program->set_uniform("uDiffuseMap", 0);
-    m_Stats.materialBinds++;
+    m_Stats.texture_switch++;
 
+    m_Stats.vertices += 3;
     // gl::BindVertexArray(VAO);
     gl::DrawArrays(GL_TRIANGLES, 0, 3);
-    m_Stats.drawCalls++;
+    m_Stats.draw_call++;
 
     gl::pop_debug_group();
 }
@@ -298,7 +303,7 @@ auto OpenGLRenderer::text_pass() const -> void {
     m_Text.Text.fill_text_buffer(width, height);
 
     m_Text.Program->use();
-    m_Stats.shaderBinds++;
+    m_Stats.pipeline_switch++;
 
     uint32_t u_ScreenSize = uint32_t(width) | (uint32_t(height) << 16);
     m_Text.Program->set_uniform("u_ScreenSize", u_ScreenSize);
@@ -321,7 +326,7 @@ auto OpenGLRenderer::text_pass() const -> void {
 
     gl::BindVertexArray(m_Text.VAO);
     gl::BindBuffer(GL_ARRAY_BUFFER, m_Text.VBO);
-    m_Stats.materialBinds++;
+    m_Stats.texture_switch++;
 
     auto text_glyphs = m_Text.Text.glyphs();
 
@@ -333,10 +338,11 @@ auto OpenGLRenderer::text_pass() const -> void {
         void* mappedMemory = gl::MapBufferRange(GL_ARRAY_BUFFER, 0, bytesToCopy, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 
         if (mappedMemory) {
+            m_Stats.vertices += 4;
             std::memcpy(mappedMemory, text_glyphs.data() + offset, bytesToCopy);
             gl::UnmapBuffer(GL_ARRAY_BUFFER);
             gl::DrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, static_cast<GLsizei>(batchCount));
-            m_Stats.drawCalls++;
+            m_Stats.draw_call++;
         }
     }
 
