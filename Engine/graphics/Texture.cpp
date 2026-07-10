@@ -148,7 +148,6 @@ auto Texture::storage2d(const auto *data, uint32_t type, int32_t width, int32_t 
         if constexpr(std::is_same_v<DataType, uint32_t>) return GL_UNSIGNED_INT;
         if constexpr(std::is_same_v<DataType, int32_t>)  return GL_INT;
         if constexpr(std::is_same_v<DataType, float>)    return GL_FLOAT;
-        if constexpr(std::is_same_v<DataType, double>)    return GL_DOUBLE;
     }();
 
     if constexpr (sizeof(DataType) >= 4) {
