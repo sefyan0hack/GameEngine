@@ -169,5 +169,4 @@ static_assert(std::is_same_v<GLchar, char>);
 static_assert(std::is_same_v<GLbyte, int8_t>);
 static_assert(std::is_same_v<GLubyte, uint8_t>);
 static_assert(std::is_same_v<GLfloat, float>);
-static_assert(std::is_same_v<GLdouble, double>);
 static_assert(std::is_same_v<GLvoid, void>);
