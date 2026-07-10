@@ -77,7 +77,6 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     gl_info(GL_MAX_CUBE_MAP_TEXTURE_SIZE);
     gl_info(GL_MAX_ARRAY_TEXTURE_LAYERS);
     gl_info(GL_MAX_TEXTURE_IMAGE_UNITS);
-    gl_info(GL_MAX_TEXTURE_BUFFER_SIZE);
     gl_info(GL_MAX_VERTEX_UNIFORM_COMPONENTS);
     gl_info(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS);
     gl_info(GL_MAX_UNIFORM_BLOCK_SIZE);
