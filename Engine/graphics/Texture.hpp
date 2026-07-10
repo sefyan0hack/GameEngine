@@ -2,69 +2,56 @@
 
 #include "Image.hpp"
 
+#include <memory>
 #include <string>
 #include <format>
-#include <vector>
-#include <array>
 
 #include <engine_export.h>
 
 class ENGINE_EXPORT Texture
 {
 public:
-    friend struct std::formatter<Texture>;
-protected:
-    Texture(uint32_t texType);
-    Texture(const Texture&) = delete;
-    auto operator=(const Texture&) -> Texture& = delete;
-    
-    Texture(Texture&&) noexcept;
-    auto operator=(Texture&&) noexcept-> Texture&;
-    ~Texture();
+  friend struct std::formatter<Texture>;
+
+  enum class Type {
+    Texture2D,
+    TextureCubeMap,
+    Texture3D,
+    Texture2DArray
+  };
+
+  Texture(const char* name, Type type);
+
+  Texture(const Texture&) = delete;
+  auto operator=(const Texture&) -> Texture& = delete;
+
+  Texture(Texture&&) noexcept;
+  auto operator=(Texture&&) noexcept-> Texture&;
+
+  ~Texture();
 
 public:
-    auto id() const -> uint32_t;
-    auto bind() const -> void;
-    auto type() const -> uint32_t;
-    auto type_name() const -> std::string;
+  auto id() const -> uint32_t;
+  auto bind() const -> void;
+  auto type() const -> Type;
+  auto type_name() const -> std::string;
 
-    static auto gl_format(Image::Format fmt) -> uint32_t;
-    static auto gl_internal_format(Image::Format fmt) -> uint32_t;
+  static auto texture_2d(const char* name) -> std::shared_ptr<Texture>;
+  static auto texture_cubemap(const char* name) -> std::shared_ptr<Texture>;
 
-    static auto storage2d(const auto* data, uint32_t type, int32_t width, int32_t height, int32_t intformat, uint32_t format) -> void;
+  static auto gl_format(Image::Format fmt) -> uint32_t;
+  static auto gl_internal_format(Image::Format fmt) -> uint32_t;
 
-protected:
-    uint32_t m_Id;
-    uint32_t m_Type;
-};
+  static auto storage2d(const auto* data, uint32_t type, int32_t width, int32_t height, int32_t intformat, uint32_t format) -> void;
 
-class ENGINE_EXPORT Texture2D final : public Texture
-{
-  public:
-    Texture2D();
-    Texture2D(const Texture2D&) = delete;
-    auto operator=(const Texture2D&) -> Texture2D& = delete;
-
-    Texture2D(const char* name);
-    Texture2D(auto* data, int32_t width, int32_t height, Image::Format fmt);
-
-  private:
-    Image m_Img;
-};
-
-class ENGINE_EXPORT TextureCubeMap final : public Texture
-{
-  public:
-    TextureCubeMap();
-    TextureCubeMap(const TextureCubeMap&) = delete;
-    auto operator=(const TextureCubeMap&) -> TextureCubeMap& = delete;
-
-    TextureCubeMap(const std::vector<std::string> faces);
-
-    static auto base_to_6faces(const std::string& path) -> std::vector<std::string>;
-
-  private:
-    std::array<Image, 6> m_Imgs;
+private:
+  auto make_texture_Texture2D(const char* name = nullptr) -> void;
+  auto make_texture_TextureCubeMap(const char* name = nullptr) -> void;
+  auto make_texture_Texture3D(const char* name = nullptr) -> void;
+  auto make_texture_Texture2DArray(const char* name = nullptr) -> void;
+private:
+  uint32_t m_Id;
+  Type m_Type;
 };
 
 #ifdef __cpp_lib_formatters

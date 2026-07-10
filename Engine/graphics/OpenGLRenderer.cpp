@@ -57,7 +57,7 @@ OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
     }
     , m_SkyBox {
         std::make_shared<ShaderProgram>("res/shaders/skybox.vert", "res/shaders/skybox.frag"),
-        std::make_shared<TextureCubeMap>(TextureCubeMap::base_to_6faces("res/textures/forest.jpg"))
+        Texture::texture_cubemap("res/textures/forest.jpg")
     }
     , m_Text {
         text,

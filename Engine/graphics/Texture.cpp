@@ -6,26 +6,55 @@
 #include <core/Exception.hpp>
 #include <core/res.hpp>
 
+#include <memory>
+#include <optional>
+#include <vector>
+#include <array>
+
 namespace {
-constexpr auto to_string(uint32_t type) -> const char*
+constexpr auto to_string(Texture::Type type) -> const char*
 {
   switch(type){
-    case GL_TEXTURE_2D: return "GL_TEXTURE_2D";
-    case GL_TEXTURE_3D: return "GL_TEXTURE_3D";
-    case GL_TEXTURE_2D_ARRAY: return "GL_TEXTURE_2D_ARRAY";
-    case GL_TEXTURE_CUBE_MAP: return "GL_TEXTURE_CUBE_MAP";
+    case Texture::Type::Texture2D: return "Texture2D";
+    case Texture::Type::Texture3D: return "Texture3D";
+    case Texture::Type::Texture2DArray: return "Texture2DArray";
+    case Texture::Type::TextureCubeMap: return "TextureCubeMap";
     default: return "UNKNOWN";
   }
 }
 
+constexpr auto to_gl(Texture::Type type) -> uint32_t
+{
+  switch(type){
+    case Texture::Type::Texture2D: return GL_TEXTURE_2D;
+    case Texture::Type::Texture3D: return GL_TEXTURE_3D;
+    case Texture::Type::Texture2DArray: return GL_TEXTURE_2D_ARRAY;
+    case Texture::Type::TextureCubeMap: return GL_TEXTURE_CUBE_MAP;
+    default: throw 1;
+  }
+
 }
 
-Texture::Texture(uint32_t texType)
+}
+
+Texture::Texture(const char* name, Type type)
     : m_Id(0)
-    , m_Type(texType)
+    , m_Type(type)
 {
+    auto gl_type = to_gl(m_Type);
+
     gl::GenTextures(1, &m_Id);
-    bind();
+    gl::BindTexture(gl_type, m_Id);
+
+    switch(m_Type){
+        case Texture::Type::Texture2D: make_texture_Texture2D(name); break;
+        case Texture::Type::Texture3D: make_texture_Texture3D(name); break;
+        case Texture::Type::Texture2DArray: make_texture_Texture2DArray(name); break;
+        case Texture::Type::TextureCubeMap: make_texture_TextureCubeMap(name); break;
+        default: throw "texture type not supported";
+    }
+
+    gl::label_texture(m_Id, name);
 }
 
 Texture::Texture(Texture&& other) noexcept : m_Id(other.m_Id), m_Type(other.m_Type) {
@@ -53,10 +82,10 @@ auto Texture::id() const -> uint32_t
 
 auto Texture::bind() const -> void
 {
-    gl::BindTexture(m_Type, m_Id);
+    gl::BindTexture(to_gl(m_Type), m_Id);
 }
 
-auto Texture::type() const -> uint32_t
+auto Texture::type() const -> Type
 {
     return m_Type;
 }
@@ -88,27 +117,15 @@ auto Texture::type_name() const -> std::string
     return to_string(m_Type);
 }
 
-Texture2D::Texture2D()
-    : Texture(GL_TEXTURE_2D)
+
+auto Texture::texture_2d(const char* name) -> std::shared_ptr<Texture>
 {
-    storage2d(std::bit_cast<const uint8_t*>(m_Img.data().data()), m_Type, m_Img.width(), m_Img.height(), gl_internal_format(m_Img.format()), gl_format(m_Img.format()));
-    gl::GenerateMipmap(m_Type);
+    return std::make_shared<Texture>(name, Texture::Type::Texture2D);
 }
 
-//////////
-Texture2D::Texture2D(const char* name)
-    : Texture(GL_TEXTURE_2D), m_Img(name)
+auto Texture::texture_cubemap(const char* name) -> std::shared_ptr<Texture>
 {
-    storage2d(std::bit_cast<const uint8_t*>(m_Img.data().data()), m_Type, m_Img.width(), m_Img.height(), gl_internal_format(m_Img.format()), gl_format(m_Img.format()));
-    gl::GenerateMipmap(m_Type);
-
-    gl::label_texture(m_Id, name);
-}
-
-Texture2D::Texture2D(auto* data, int32_t width, int32_t height, Image::Format fmt)
-    : Texture(GL_TEXTURE_2D), m_Img(data, width, height, fmt)
-{
-    storage2d(data, width, height, gl_internal_format(m_Img.format()), gl_format(m_Img.format()));
+    return std::make_shared<Texture>(name, Texture::Type::TextureCubeMap);
 }
 
 auto Texture::storage2d(const auto *data, uint32_t type, int32_t width, int32_t height, int32_t intformat, uint32_t format) -> void
@@ -131,6 +148,7 @@ auto Texture::storage2d(const auto *data, uint32_t type, int32_t width, int32_t 
         if constexpr(std::is_same_v<DataType, uint32_t>) return GL_UNSIGNED_INT;
         if constexpr(std::is_same_v<DataType, int32_t>)  return GL_INT;
         if constexpr(std::is_same_v<DataType, float>)    return GL_FLOAT;
+        if constexpr(std::is_same_v<DataType, double>)    return GL_DOUBLE;
     }();
 
     if constexpr (sizeof(DataType) >= 4) {
@@ -149,37 +167,53 @@ auto Texture::storage2d(const auto *data, uint32_t type, int32_t width, int32_t 
     gl::TexImage2D(type, 0, intformat, width, height, 0, format, gl_type, data);
 }
 
-//////
-TextureCubeMap::TextureCubeMap()
-    : Texture(GL_TEXTURE_CUBE_MAP)
+auto Texture::make_texture_Texture2D(const char* name) -> void
 {
-    for (std::size_t i = 0; i < m_Imgs.size(); ++i) {
-        const auto& img = m_Imgs[i];
-        storage2d(img.data().data(), uint32_t(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), img.width(), img.height(), gl_internal_format(img.format()), gl_format(img.format()));
-    }
+    std::optional<Image> img;
 
-    gl::TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    gl::TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    if (name) img = Image(name);
+    else img = Image();
 
-    gl::TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    gl::TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    gl::TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-    gl::GenerateMipmap(m_Type); 
+    storage2d(std::bit_cast<const uint8_t*>(img->data().data()), to_gl(m_Type), img->width(), img->height(), gl_internal_format(img->format()), gl_format(img->format()));
+    gl::GenerateMipmap(to_gl(m_Type));
 }
 
-TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
-    : Texture(GL_TEXTURE_CUBE_MAP)
+auto Texture::make_texture_TextureCubeMap(const char* name) -> void
 {
-    m_Imgs = std::array<Image, 6>{
+    std::vector<std::string> faces;
+
+    if(name) {
+        std::string path = name;
+
+        std::array<std::string, 6> directions = {"posx", "negx", "posy", "negy", "posz", "negz"};
+        auto dot = path.find_last_of(".");
+
+        auto ext = path.substr(dot, path.size());
+
+        for (const auto &dir : directions) {
+            auto newPath = path.substr(0, dot);
+            newPath += "_" + dir + ext;
+            faces.push_back(newPath);
+        }
+    }
+
+    std::optional<std::array<Image, 6>> imgs;
+
+    if(name && faces.size() == 6) {
+        imgs = std::array<Image, 6>{
             Image(faces[0].c_str(), false), Image(faces[1].c_str(), false), Image(faces[2].c_str(), false),
             Image(faces[3].c_str(), false), Image(faces[4].c_str(), false), Image(faces[5].c_str(), false)
         };
+    } else {
+        imgs = std::array<Image, 6>{
+            Image(), Image(), Image(),
+            Image(), Image(), Image()
+        };
+    }
 
-    for (std::size_t i = 0; i < m_Imgs.size(); ++i) {
-        auto& img = m_Imgs[i];
+    for (std::size_t i = 0; i < imgs->size(); ++i) {
+        auto& img = imgs.value()[i];
         storage2d(img.data().data(), uint32_t(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), img.width(), img.height(), gl_internal_format(img.format()), gl_format(img.format()));
-        logg::trace("Loding {} ", faces[i]);
     }
 
     gl::TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -189,23 +223,15 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
     gl::TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     gl::TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-    gl::GenerateMipmap(m_Type);
-
-    gl::label_texture(m_Id, faces[0].c_str());
+    gl::GenerateMipmap(to_gl(m_Type));
 }
 
-auto TextureCubeMap::base_to_6faces(const std::string& path) -> std::vector<std::string>
+auto Texture::make_texture_Texture3D(const char* name) -> void
 {
-    std::vector<std::string> result;
-    std::array<std::string, 6> directions = {"posx", "negx", "posy", "negy", "posz", "negz"};
-    auto dot = path.find_last_of(".");
-    auto ext = path.substr(dot, path.size());
+    throw "unimplemended";
+}
 
-    for (const auto &dir : directions) {
-        auto newPath = path.substr(0, dot);
-        newPath += "_" + dir + ext;
-        result.push_back(newPath);
-    }
-
-    return result;
+auto Texture::make_texture_Texture2DArray(const char* name) -> void
+{
+    throw "unimplemended";
 }

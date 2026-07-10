@@ -3,7 +3,7 @@
 #include "Texture.hpp"
 
 Material::Material()
-    : m_Diffuse(std::make_shared<Texture2D>())
+    : m_Diffuse(Texture::texture_2d(nullptr))
 {
 }
 

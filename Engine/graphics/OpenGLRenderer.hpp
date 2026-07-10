@@ -48,7 +48,7 @@ private:
 
     struct {
         std::shared_ptr<class ShaderProgram> Program;
-        std::shared_ptr<class TextureCubeMap> Texture;
+        std::shared_ptr<class Texture> Texture;
     } m_SkyBox;
 
     struct {
