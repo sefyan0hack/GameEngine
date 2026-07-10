@@ -165,7 +165,7 @@ auto OpenGLRenderer::render(const Scene& scene) const -> void
                 std::sin(angle)
             ),
             .Color = emath::vec3(1.0f),
-            .Ambient = emath::vec3(0.08f)
+            .Ambient = emath::vec3(0.4f)
         };
 
         gl::BindBuffer(GL_UNIFORM_BUFFER, m_SunUBO);

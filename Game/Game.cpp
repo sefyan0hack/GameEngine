@@ -13,11 +13,14 @@ public:
     {
         auto kimberley_jpg     = std::make_shared<Texture2D>("res/kimberley.jpg");
         auto sand_png          = std::make_shared<Texture2D>("res/gravelly_sand_diff_4k.png");
+        auto heli_jpg          = std::make_shared<Texture2D>("res/heli.jpg");
 
         auto CubeMattkimberley = std::make_shared<Material>(kimberley_jpg);
         auto CubeMattSand  = std::make_shared<Material>(sand_png);
+        auto heliMatt  = std::make_shared<Material>(heli_jpg);
         auto cubeMesh      = std::make_shared<Mesh>(Mesh::CUBE_VERTICES(), Mesh::CUBE_INDICES());
         auto manMesh       = std::make_shared<Mesh>(load_obj("res/FinalBaseMesh.obj"));
+        auto heli       = std::make_shared<Mesh>(load_obj("res/heli.obj"));
 
         constexpr int32_t Grids = 5;
 
@@ -35,6 +38,7 @@ public:
 
         Scene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattSand, manMesh);
         Scene << GameObject(Transform({2, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattkimberley, manMesh);
+        Scene << GameObject(Transform({6, 6, 6}, {0, 0, 0}, { 1, 1, 1}), heliMatt, heli);
     }
 
     auto update(float delta) -> void override
