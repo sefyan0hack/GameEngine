@@ -22,7 +22,7 @@ Shader::Shader(const char* shader, GLenum type)
         OpenGL::api == OpenGL::API::ES ? "es" : "core"
     );
 
-    auto glsl_l = res::get("res/Shaders/common.glsl");
+    auto glsl_l = res::get("res/shaders/common.glsl");
     auto glsl_src = res::get(shader);
 
     auto srcs = {glsl_header.c_str(), glsl_l.data(), glsl_src.data()};

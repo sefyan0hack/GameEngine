@@ -11,16 +11,16 @@ class Game final : IGame
 public:
     Game()
     {
-        auto kimberley_jpg     = std::make_shared<Texture2D>("res/kimberley.jpg");
-        auto sand_png          = std::make_shared<Texture2D>("res/gravelly_sand_diff_4k.png");
-        auto heli_jpg          = std::make_shared<Texture2D>("res/heli.jpg");
+        auto kimberley_jpg     = std::make_shared<Texture2D>("res/textures/kimberley.jpg");
+        auto sand_png          = std::make_shared<Texture2D>("res/textures/gravelly_sand_diff_4k.png");
+        auto heli_jpg          = std::make_shared<Texture2D>("res/textures/heli.jpg");
 
         auto CubeMattkimberley = std::make_shared<Material>(kimberley_jpg);
         auto CubeMattSand  = std::make_shared<Material>(sand_png);
         auto heliMatt  = std::make_shared<Material>(heli_jpg);
         auto cubeMesh      = std::make_shared<Mesh>(Mesh::CUBE_VERTICES(), Mesh::CUBE_INDICES());
-        auto manMesh       = std::make_shared<Mesh>(load_obj("res/FinalBaseMesh.obj"));
-        auto heli       = std::make_shared<Mesh>(load_obj("res/heli.obj"));
+        auto manMesh       = std::make_shared<Mesh>(load_obj("res/models/FinalBaseMesh.obj"));
+        auto heli       = std::make_shared<Mesh>(load_obj("res/models/heli.obj"));
 
         constexpr int32_t Grids = 5;
 

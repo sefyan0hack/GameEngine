@@ -25,15 +25,15 @@
 #undef max
 #endif
 
-struct CameraUBO
+struct alignas(16) CameraUBO
 {
     constexpr static int32_t BINDING_POINT = 0;
     alignas(16) emath::mat4 Projection;
     alignas(16) emath::mat4 View;
-    alignas(16) emath::vec3 Position;
+    emath::vec3 Position;
 };
 
-struct SunLightUBO
+struct alignas(16) SunLightUBO
 {
     constexpr static int32_t BINDING_POINT = 1;
     alignas(16) emath::vec3 Direction;
@@ -45,18 +45,18 @@ OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
     : m_GApi(ctx)
     , m_DrawMode(DrawMode::Triangles)
     , m_Depth {
-        std::make_shared<ShaderProgram>("res/Shaders/depth.vert", "res/Shaders/depth.frag")
+        std::make_shared<ShaderProgram>("res/shaders/depth.vert", "res/shaders/depth.frag")
     }
     , m_Scene {
-        std::make_shared<ShaderProgram>("res/Shaders/scene.vert", "res/Shaders/scene.frag")
+        std::make_shared<ShaderProgram>("res/shaders/scene.vert", "res/shaders/scene.frag")
     }
     , m_SkyBox {
-        std::make_shared<ShaderProgram>("res/Shaders/skybox.vert", "res/Shaders/skybox.frag"),
-        std::make_shared<TextureCubeMap>(TextureCubeMap::base_to_6faces("res/forest.jpg"))
+        std::make_shared<ShaderProgram>("res/shaders/skybox.vert", "res/shaders/skybox.frag"),
+        std::make_shared<TextureCubeMap>(TextureCubeMap::base_to_6faces("res/textures/forest.jpg"))
     }
     , m_Text {
         text,
-        std::make_shared<ShaderProgram>("res/Shaders/text.vert", "res/Shaders/text.frag"),
+        std::make_shared<ShaderProgram>("res/shaders/text.vert", "res/shaders/text.frag"),
         0, 0, 0
     }
     , m_CameraUBO(0), m_SunUBO(0)
@@ -214,7 +214,7 @@ auto OpenGLRenderer::depthpre_pass(const Scene& scene) const -> void
             m_Stats.mesh_switch++;
         }
 
-        gl::DrawElements(GL_TRIANGLES, mesh->indices_size(), GL_UNSIGNED_SHORT, (void*)0);
+        gl::DrawElements(GL_TRIANGLES, GLsizei(mesh->indices_size()), GL_UNSIGNED_SHORT, (void*)0);
         m_Stats.draw_call++;
     }
 
@@ -236,42 +236,37 @@ auto OpenGLRenderer::scene_pass(const Scene& scene) const -> void
     Mesh* currentMesh = nullptr;
     Material* currentMaterial = nullptr;
 
-    std::for_each(
-        scene.entities().begin(), scene.entities().end(),
-        [&](const auto& obj){
+    for(const auto& obj : scene.entities()) {
+        auto mesh = obj.mesh().get();
+        auto material = obj.material().get();
 
-            auto mesh = obj.mesh().get();
-            auto material = obj.material().get();
+        auto v_count = mesh->vertex_size();
+        auto i_count = mesh->indices_size();
 
-            auto v_count = mesh->vertex_size();
-            auto i_count = mesh->indices_size();
+        m_Stats.vertices += v_count;
+        m_Stats.indices += i_count;
 
-            m_Stats.vertices += v_count;
-            m_Stats.indices += i_count;
+        m_Scene.Program->set_uniform("Model", obj.model());
 
-            m_Scene.Program->set_uniform("Model", obj.model());
-
-            // Bind material only when it changes
-            if (currentMaterial != material)
-            {
-                currentMaterial = material;
-                currentMaterial->bind(m_Scene.Program);
-                m_Stats.texture_switch++;
-            }
-
-            // Bind mesh only when it changes
-            if (currentMesh != mesh)
-            {
-                currentMesh = mesh;
-                gl::BindVertexArray(currentMesh->VAO);
-                m_Stats.mesh_switch++;
-            }
-
-            gl::DrawElements(GL_TRIANGLES, mesh->indices_size(), GL_UNSIGNED_SHORT, (void*)0);
-            m_Stats.draw_call++;
+        // Bind material only when it changes
+        if (currentMaterial != material)
+        {
+            currentMaterial = material;
+            currentMaterial->bind(m_Scene.Program);
+            m_Stats.texture_switch++;
         }
-    );
 
+        // Bind mesh only when it changes
+        if (currentMesh != mesh)
+        {
+            currentMesh = mesh;
+            gl::BindVertexArray(currentMesh->VAO);
+            m_Stats.mesh_switch++;
+        }
+
+        gl::DrawElements(GL_TRIANGLES, GLsizei(mesh->indices_size()), GL_UNSIGNED_SHORT, (void*)0);
+        m_Stats.draw_call++;
+    }
     gl::pop_debug_group();
 }
 

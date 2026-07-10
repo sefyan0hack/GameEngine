@@ -33,7 +33,7 @@ public:
     auto glyphs() const -> const std::vector<Glyph>&;
 
 public:
-    constexpr static const char* DEFAULT_FONT_NAME = "res/JetBrainsMonoNL-BoldItalic.ttf";
+    constexpr static const char* DEFAULT_FONT_NAME = "res/fonts/JetBrainsMonoNL-BoldItalic.ttf";
     constexpr static float DEFAULT_FONT_SIZE = 24.0f;
     inline    static emath::vec3 DEFAULT_FONT_COLOR = {139.0f, 0.0f, 0.0f};
 
