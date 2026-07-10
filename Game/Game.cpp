@@ -38,7 +38,7 @@ public:
 
         Scene << GameObject(Transform({0, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattSand, manMesh);
         Scene << GameObject(Transform({2, 0, 0}, {0, 0, 0}, { 0.2f, 0.2f, 0.2f}), CubeMattkimberley, manMesh);
-        Scene << GameObject(Transform({6, 6, 6}, {0, 0, 0}, { 1, 1, 1}), heliMatt, heli);
+        Scene << GameObject(Transform({4, 4, 0}, {0, 0, 0}, { 1, 1, 1}), heliMatt, heli);
     }
 
     auto update(float delta) -> void override

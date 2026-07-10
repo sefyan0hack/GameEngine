@@ -1,6 +1,7 @@
 #include <chrono>
 #include <variant>
 #include <thread>
+#include <cmath>
 
 #include "APP.hpp"
 #include "Window.hpp"

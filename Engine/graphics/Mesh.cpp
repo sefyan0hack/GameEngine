@@ -7,6 +7,7 @@
 #include <core/res.hpp>
 
 #include <cstdio>
+#include <cstring>
 #include <charconv>
 #include <unordered_map>
 
