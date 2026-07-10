@@ -2,40 +2,26 @@
 #include <format>
 #include <vector>
 
-#include "gl.hpp"
-
 #include <emath/vec2.hpp>
 #include <emath/vec3.hpp>
 
-#include <cmrc/cmrc.hpp>
 #include <engine_export.h>
-
-struct ENGINE_EXPORT Vertex
-{
-  emath::vec3 Position;
-  emath::vec3 Normal;
-  emath::vec2 TexCoords;
-};
-
-struct ENGINE_EXPORT Attribute {
-  GLint size;
-  GLenum type;
-  GLboolean normalized;
-  GLint stride;
-  GLsizei offset;
-  GLint divisor;
-};
 
 class Material;
 
 class ENGINE_EXPORT Mesh
 {
 public:
-  using VetexData = Vertex;
+  struct Vertex
+  {
+    emath::vec3 Position;
+    emath::vec3 Normal;
+    emath::vec2 TexCoords;
+  };
 
 public:
     friend struct std::formatter<Mesh>;
-    Mesh(const std::vector<VetexData>& vertices, const std::vector<uint16_t>& indices);
+    Mesh(const std::vector<Vertex>& vertices, const std::vector<uint16_t>& indices);
     Mesh(std::pair<std::vector<Vertex>, std::vector<uint16_t>> vert_inds);
     
     Mesh(const Mesh& other) = delete;
@@ -43,24 +29,24 @@ public:
     
     Mesh(Mesh&& other) noexcept;
     auto operator=(Mesh&& other) noexcept -> Mesh&;
-    
+
     ~Mesh();
 
-    auto set_attribute(GLuint index, Attribute att) -> void;
     auto vertex_size() const noexcept -> size_t;
     auto indices_size() const noexcept -> size_t;
 
     static auto flip_faces(std::vector<Vertex> verts) -> std::vector<Vertex>;
+  
     static auto CUBE_VERTICES() -> std::vector<Vertex>;
     static auto CUBE_INDICES() -> std::vector<uint16_t>;
 
   public:
-    std::vector<VetexData> m_Vertices;
+    std::vector<Vertex> m_Vertices;
     std::vector<uint16_t> m_Indices;
-    GLuint VAO, VBO, IBO;
+    uint32_t VAO, VBO, IBO;
 };
 
-ENGINE_EXPORT std::pair<std::vector<Vertex>, std::vector<uint16_t>> load_obj(const char* obj);
+ENGINE_EXPORT std::pair<std::vector<Mesh::Vertex>, std::vector<uint16_t>> load_obj(const char* obj);
 
 #ifdef __cpp_lib_formatters
 // custom Mesh Format
@@ -71,8 +57,8 @@ struct std::formatter<Mesh> {
   }
   auto format(const Mesh& obj, auto& context) const {
     return std::format_to(context.out(),
-    R"({{ "VAO": {}, "VBO": {}, "verticesSize": {} }})"
-    , obj.VAO, obj.VBO, obj.vertex_size());
+    R"({{ "VAO": {}, "VBO": {}, "vertices": {}, "indices": {} }})"
+    , obj.VAO, obj.VBO, obj.vertex_size(), obj.indices_size());
   }
 };
 #endif

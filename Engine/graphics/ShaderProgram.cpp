@@ -1,5 +1,8 @@
 #include "ShaderProgram.hpp"
+
+#include "gl.hpp"
 #include "Shader.hpp"
+
 #include <core/Log.hpp>
 #include <core/res.hpp>
 #include <core/Exception.hpp>
@@ -63,7 +66,7 @@ ShaderProgram::~ShaderProgram()
     gl::DeleteProgram(m_Id);
 }
 
-auto ShaderProgram::id() const noexcept -> GLuint
+auto ShaderProgram::id() const noexcept -> uint32_t
 {
     return m_Id;
 }
@@ -78,7 +81,7 @@ auto ShaderProgram::link() const -> void
     gl::LinkProgram(m_Id);
 }
 
-auto ShaderProgram::uniform_location(const char *name) const -> GLuint
+auto ShaderProgram::uniform_location(const char *name) const -> uint32_t
 {
     try {
         auto it = m_Uniforms.at(name);
@@ -89,7 +92,7 @@ auto ShaderProgram::uniform_location(const char *name) const -> GLuint
     }
 }
 
-auto ShaderProgram::attrib_location(const char *name) const -> GLuint
+auto ShaderProgram::attrib_location(const char *name) const -> uint32_t
 {
     try {
         auto [loc, type, size] = m_Attribs.at(name);
@@ -99,37 +102,37 @@ auto ShaderProgram::attrib_location(const char *name) const -> GLuint
     }
 }
 
-auto ShaderProgram::uniform_location_prv(const char *name) const -> GLuint
+auto ShaderProgram::uniform_location_prv(const char *name) const -> uint32_t
 {
-    GLint location = gl::GetUniformLocation(m_Id, name);
+    int32_t location = gl::GetUniformLocation(m_Id, name);
     if (location == -1) {
         throw Exception("uniform {} doesn't exist!", name);
     }
-    return static_cast<GLuint>(location);
+    return static_cast<uint32_t>(location);
 }
 
-auto ShaderProgram::attrib_location_prv(const char *name) const -> GLuint
+auto ShaderProgram::attrib_location_prv(const char *name) const -> uint32_t
 {
-    GLint location = gl::GetAttribLocation(m_Id, name);
+    int32_t location = gl::GetAttribLocation(m_Id, name);
     if (location == -1) {
         throw Exception("Attrib {} doesn't exist!", name);
     }
-    return static_cast<GLuint>(location);
+    return static_cast<uint32_t>(location);
 }
 
 
-auto ShaderProgram::uniform_count() const -> GLint
+auto ShaderProgram::uniform_count() const -> int32_t
 {
-    GLint count = get_program_info(GL_ACTIVE_UNIFORMS);
+    int32_t count = get_program_info(GL_ACTIVE_UNIFORMS);
 
     Expect(count >= 0, "get_program_info(GL_ACTIVE_UNIFORMS) failed retuned : {}", count);
 
     return count;
 }
 
-auto ShaderProgram::attribs_count() const -> GLint
+auto ShaderProgram::attribs_count() const -> int32_t
 {
-    GLint count = get_program_info(GL_ACTIVE_ATTRIBUTES);
+    int32_t count = get_program_info(GL_ACTIVE_ATTRIBUTES);
 
     Expect(count >= 0, "get_program_info(GL_ACTIVE_ATTRIBUTES) failed retuned : {}", count);
 
@@ -139,7 +142,7 @@ auto ShaderProgram::attribs_count() const -> GLint
 
 auto ShaderProgram::dump_uniforms() -> void
 {
-    GLint max_len = get_program_info(GL_ACTIVE_UNIFORM_MAX_LENGTH);
+    int32_t max_len = get_program_info(GL_ACTIVE_UNIFORM_MAX_LENGTH);
         
     if(max_len == 0) {
         throw Exception("error id {}, get_program_info return {}", m_Id, max_len);
@@ -148,18 +151,18 @@ auto ShaderProgram::dump_uniforms() -> void
     auto count = uniform_count();
     if(count > 0){
 
-        GLsizei len = 0;
-        GLsizei size;
-        GLenum type;
+        int32_t len = 0;
+        int32_t size;
+        uint32_t type;
 
-        for(GLint i = 0; i < count; i++){
+        for(int32_t i = 0; i < count; i++){
             std::string Uniform_name(static_cast<std::size_t>(max_len), '\0');
-            gl::GetActiveUniform(m_Id, static_cast<GLuint>(i), static_cast<GLsizei>(max_len), &len, &size, &type, Uniform_name.data());
+            gl::GetActiveUniform(m_Id, static_cast<uint32_t>(i), static_cast<int32_t>(max_len), &len, &size, &type, Uniform_name.data());
             if(len > 0) Uniform_name.resize(static_cast<std::size_t>(len));
 
             // check if uniform belongs to a UBO
-            GLuint index = i;
-            GLint blockIndex = -1;
+            uint32_t index = i;
+            int32_t blockIndex = -1;
 
             gl::GetActiveUniformsiv(
                 m_Id,
@@ -174,9 +177,9 @@ auto ShaderProgram::dump_uniforms() -> void
                 continue;
 
             m_Uniforms[Uniform_name] = std::make_tuple(
-                static_cast<GLuint>(uniform_location_prv(Uniform_name.c_str())),
-                static_cast<GLenum>(type),
-                static_cast<GLsizei>(size)
+                static_cast<uint32_t>(uniform_location_prv(Uniform_name.c_str())),
+                static_cast<uint32_t>(type),
+                static_cast<int32_t>(size)
             );
         }
     }
@@ -184,54 +187,54 @@ auto ShaderProgram::dump_uniforms() -> void
 
 auto ShaderProgram::dump_attribs() -> void
 {
-    GLint max_len = get_program_info(GL_ACTIVE_ATTRIBUTE_MAX_LENGTH);
+    int32_t max_len = get_program_info(GL_ACTIVE_ATTRIBUTE_MAX_LENGTH);
     if(max_len == 0) {
         throw Exception("max_len is not valid max_len: {}", max_len);
     }
     
     auto count = attribs_count();
     if(count > 0){
-        GLsizei len = 0;
-        [[maybe_unused]] GLsizei size;
-        [[maybe_unused]] GLenum type;
+        int32_t len = 0;
+        [[maybe_unused]] int32_t size;
+        [[maybe_unused]] uint32_t type;
 
-        for(GLint i = 0; i < count; i++){
+        for(int32_t i = 0; i < count; i++){
             std::string attrib_name(static_cast<std::size_t>(max_len), '\0');
-            gl::GetActiveAttrib(m_Id, static_cast<GLuint>(i), max_len, &len, &size, &type, attrib_name.data());
+            gl::GetActiveAttrib(m_Id, static_cast<uint32_t>(i), max_len, &len, &size, &type, attrib_name.data());
             if(len > 0) attrib_name.resize(static_cast<std::size_t>(len));
 
             if(attrib_name.starts_with("gl_")) continue;
 
             m_Attribs[attrib_name] = std::make_tuple(
-                static_cast<GLuint>(attrib_location_prv(attrib_name.c_str())),
-                static_cast<GLenum>(type),
-                static_cast<GLsizei>(size)
+                static_cast<uint32_t>(attrib_location_prv(attrib_name.c_str())),
+                static_cast<uint32_t>(type),
+                static_cast<int32_t>(size)
             );
         }
     }
 }
 
-auto ShaderProgram::current_program() -> GLuint
+auto ShaderProgram::current_program() -> uint32_t
 {
-    GLint prog = 0;
+    int32_t prog = 0;
     gl::GetIntegerv(GL_CURRENT_PROGRAM, &prog);
 
-    return static_cast<GLuint>(prog);
+    return static_cast<uint32_t>(prog);
 }
 
-auto ShaderProgram::uniforms() const noexcept -> const std::unordered_map<std::string, GlslType>&
+auto ShaderProgram::uniforms() const noexcept -> const std::unordered_map<std::string, InternalType>&
 {
     return m_Uniforms;
 }
 
-auto ShaderProgram::attribs() const noexcept -> const std::unordered_map<std::string, GlslType>&
+auto ShaderProgram::attribs() const noexcept -> const std::unordered_map<std::string, InternalType>&
 {
     return m_Attribs;
 }
 
-auto ShaderProgram::get_program_info(GLenum what) const -> GLint
+auto ShaderProgram::get_program_info(uint32_t what) const -> int32_t
 {
-    GLint result = -1;
+    int32_t result = -1;
 
     gl::GetProgramiv(m_Id, what, &result);
 
@@ -243,14 +246,14 @@ auto ShaderProgram::get_program_info(GLenum what) const -> GLint
 
 auto ShaderProgram::check_link_status() -> std::string
 {
-    GLint success = get_program_info(GL_LINK_STATUS);
-    GLchar* buffer = nullptr;
+    int32_t success = get_program_info(GL_LINK_STATUS);
+    char* buffer = nullptr;
 
     if (!success) {
-        auto infologlength = static_cast<GLsizei>(get_program_info(GL_INFO_LOG_LENGTH));
+        auto infologlength = static_cast<int32_t>(get_program_info(GL_INFO_LOG_LENGTH));
     
         if(infologlength > 0){
-            buffer = new GLchar[infologlength];
+            buffer = new char[infologlength];
             gl::GetProgramInfoLog(m_Id, infologlength, nullptr, buffer);
         }
     }
@@ -261,36 +264,36 @@ auto ShaderProgram::check_link_status() -> std::string
 }
 
 ///////
-auto ShaderProgram::set_uniform(const std::string& name, const GLint &value) const -> void
+auto ShaderProgram::set_uniform(const std::string& name, const int32_t &value) const -> void
 {
     try {
         auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
 
-        gl::Uniform1i(static_cast<GLint>(loc), value);
+        gl::Uniform1i(static_cast<int32_t>(loc), value);
     } catch(const std::exception& e) {
         throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
 
-auto ShaderProgram::set_uniform(const std::string& name, const GLfloat &value) const -> void
+auto ShaderProgram::set_uniform(const std::string& name, const float &value) const -> void
 {
     try {
         auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
 
-        gl::Uniform1f(static_cast<GLint>(loc), value);
+        gl::Uniform1f(static_cast<int32_t>(loc), value);
     } catch(const std::exception& e) {
         throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
-auto ShaderProgram::set_uniform(const std::string& name, const GLuint &value) const -> void
+auto ShaderProgram::set_uniform(const std::string& name, const uint32_t &value) const -> void
 {
     try {
         auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
 
-        gl::Uniform1ui(static_cast<GLint>(loc), value);
+        gl::Uniform1ui(static_cast<int32_t>(loc), value);
     } catch(const std::exception& e) {
         throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
@@ -302,7 +305,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const emath::vec2 &valu
         auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
 
-        gl::Uniform2fv(static_cast<GLint>(loc), 1, &value[0]);
+        gl::Uniform2fv(static_cast<int32_t>(loc), 1, &value[0]);
     } catch(const std::exception& e) {
         throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
@@ -314,7 +317,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const emath::vec3 &valu
         auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
 
-        gl::Uniform3fv(static_cast<GLint>(loc), 1, &value[0]);
+        gl::Uniform3fv(static_cast<int32_t>(loc), 1, &value[0]);
     } catch(const std::exception& e) {
         throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
@@ -326,7 +329,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const emath::vec4 &valu
         auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
 
-        gl::Uniform4fv(static_cast<GLint>(loc), 1, &value[0]);
+        gl::Uniform4fv(static_cast<int32_t>(loc), 1, &value[0]);
     } catch(const std::exception& e) {
         throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
@@ -338,7 +341,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const emath::ivec2 &val
         auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
 
-        gl::Uniform2iv(static_cast<GLint>(loc), 1, &value[0]);
+        gl::Uniform2iv(static_cast<int32_t>(loc), 1, &value[0]);
     } catch(const std::exception& e) {
         throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
@@ -350,7 +353,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const emath::ivec3 &val
         auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
 
-        gl::Uniform3iv(static_cast<GLint>(loc), 1, &value[0]);
+        gl::Uniform3iv(static_cast<int32_t>(loc), 1, &value[0]);
     } catch(const std::exception& e) {
         throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
@@ -362,7 +365,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const emath::ivec4 &val
         auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
 
-        gl::Uniform4iv(static_cast<GLint>(loc), 1, &value[0]);
+        gl::Uniform4iv(static_cast<int32_t>(loc), 1, &value[0]);
     } catch(const std::exception& e) {
         throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
@@ -374,7 +377,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const emath::uvec2 &val
         auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
 
-        gl::Uniform2uiv(static_cast<GLint>(loc), 1, &value[0]);
+        gl::Uniform2uiv(static_cast<int32_t>(loc), 1, &value[0]);
     } catch(const std::exception& e) {
         throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
@@ -386,7 +389,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const emath::uvec3 &val
         auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
 
-        gl::Uniform3uiv(static_cast<GLint>(loc), 1, &value[0]);
+        gl::Uniform3uiv(static_cast<int32_t>(loc), 1, &value[0]);
     } catch(const std::exception& e) {
         throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
@@ -398,7 +401,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const emath::uvec4 &val
         auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
 
-        gl::Uniform4uiv(static_cast<GLint>(loc), 1, &value[0]);
+        gl::Uniform4uiv(static_cast<int32_t>(loc), 1, &value[0]);
     } catch(const std::exception& e) {
         throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
@@ -410,7 +413,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const emath::mat2 &valu
         auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
 
-        gl::UniformMatrix2fv(static_cast<GLint>(loc), 1, GL_FALSE, &value[0][0]);
+        gl::UniformMatrix2fv(static_cast<int32_t>(loc), 1, GL_FALSE, &value[0][0]);
     } catch(const std::exception& e) {
         throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
@@ -422,7 +425,7 @@ auto ShaderProgram::set_uniform(const std::string& name, const emath::mat3 &valu
         auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
 
-        gl::UniformMatrix3fv(static_cast<GLint>(loc), 1, GL_FALSE, &value[0][0]);
+        gl::UniformMatrix3fv(static_cast<int32_t>(loc), 1, GL_FALSE, &value[0][0]);
     } catch(const std::exception& e) {
         throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
@@ -434,25 +437,25 @@ auto ShaderProgram::set_uniform(const std::string& name, const emath::mat4 &valu
         auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size == 1, "GLSL Uniform size:{} > 1", size);
 
-        gl::UniformMatrix4fv(static_cast<GLint>(loc), 1, GL_FALSE, &value[0][0]);
+        gl::UniformMatrix4fv(static_cast<int32_t>(loc), 1, GL_FALSE, &value[0][0]);
     } catch(const std::exception& e) {
         throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
 
-auto ShaderProgram::set_uniform(const std::string& name, const emath::mat4* value, size_t count) const -> void
+auto ShaderProgram::set_uniform(const std::string& name, const emath::mat4* value, int32_t count) const -> void
 {
     try {
         auto [loc, type, size] = m_Uniforms.at(name);
         Expect(size >= count, "GLSL Uniform size:{} < count", size);
 
-        gl::UniformMatrix4fv(static_cast<GLint>(loc), count, GL_FALSE, &value[0][0][0]);
+        gl::UniformMatrix4fv(static_cast<int32_t>(loc), count, GL_FALSE, &value[0][0][0]);
     } catch(const std::exception& e) {
         throw Exception("[what: {}] the Uniform `{}` not exist", e.what(), name);
     }
 }
 
-auto ShaderProgram::glsl_type_to_string(GLenum type) -> const char*
+auto ShaderProgram::glsl_type_to_string(uint32_t type) -> const char*
 {
     switch (type)
     {

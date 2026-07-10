@@ -1,11 +1,12 @@
 #pragma once
+
+#include "gl.hpp"
+#include <core/SysInfo.hpp>
+#include <engine_export.h>
+
 #include <utility>
 #include <string>
 #include <tuple>
-
-#include <engine_export.h>
-#include "gl.hpp"
-#include <core/SysInfo.hpp>
 
 class ENGINE_EXPORT CWindow
 {

@@ -4,15 +4,26 @@
 #include <core/res.hpp>
 #include <core/Utils.hpp>
 
-#include "Shader.hpp"
-#include "OpenGL.hpp"
 #include "gl.hpp"
+#include "OpenGL.hpp"
+#include "Shader.hpp"
 
 #include <ranges>
 
-Shader::Shader(const char* shader, GLenum type)
+auto get_shader_info(uint32_t id, uint32_t what) -> int32_t; //what : GL_SHADER_TYPE, GL_DELETE_STATUS, GL_COMPILE_STATUS, GL_INFO_LOG_LENGTH, GL_SHADER_SOURCE_LENGTH.
+
+
+Shader::Shader(const char* shader, Type type)
 {
-    m_Id = gl::CreateShader(type);
+    uint32_t gl_type{};
+
+    switch (type){
+        case Type::Vertex: gl_type = GL_VERTEX_SHADER; break;
+        case Type::Fragment: gl_type = GL_FRAGMENT_SHADER; break;
+        default: gl_type = 0;
+    }
+
+    m_Id = gl::CreateShader(gl_type);
     m_Type = type;
 
     auto glsl_header = std::format(
@@ -56,7 +67,9 @@ Shader::Shader(const char* shader, GLenum type)
     gl::label_shader(m_Id, shader);
 }
 
-Shader::Shader(const std::string& shader, GLenum type) : Shader(shader.c_str(), type) { gl::label_shader(m_Id, shader.c_str()); }
+Shader::Shader(const std::string& shader, Type type)
+    : Shader(shader.c_str(), type)
+{}
 
 Shader::~Shader(){
     gl::DeleteShader(m_Id);
@@ -78,7 +91,7 @@ Shader::Shader(Shader&& other) noexcept : m_Id(other.m_Id), m_Type(other.m_Type)
 
 auto Shader::set_sources(const std::span<const char* const> srcs) const -> void
 {
-    gl::ShaderSource(m_Id, static_cast<GLsizei>(srcs.size()), srcs.data(), nullptr);
+    gl::ShaderSource(m_Id, static_cast<int32_t>(srcs.size()), srcs.data(), nullptr);
 }
 
 auto Shader::compile() -> void
@@ -88,14 +101,14 @@ auto Shader::compile() -> void
 
 auto Shader::check_compile_status() -> std::string
 {
-    auto success = get_shader_info(GL_COMPILE_STATUS);
-    GLchar* buffer = nullptr;
+    auto success = get_shader_info(m_Id, GL_COMPILE_STATUS);
+    char* buffer = nullptr;
 
     if (!success) {
-        auto infologlength = static_cast<GLsizei>(get_shader_info(GL_INFO_LOG_LENGTH));
+        auto infologlength = static_cast<int32_t>(get_shader_info(m_Id, GL_INFO_LOG_LENGTH));
 
         if(infologlength > 0){
-            buffer = new GLchar[infologlength];
+            buffer = new char[infologlength];
 
             gl::GetShaderInfoLog(m_Id, infologlength, nullptr, buffer);
             gl::DeleteShader(m_Id);
@@ -107,12 +120,12 @@ auto Shader::check_compile_status() -> std::string
     return r;
 }
 
-auto Shader::id() const -> GLuint
+auto Shader::id() const -> uint32_t
 {
     return m_Id;
 }
 
-auto Shader::type() const -> GLenum
+auto Shader::type() const -> Type
 {
     return m_Type;
 }
@@ -120,30 +133,31 @@ auto Shader::type() const -> GLenum
 auto Shader::type_name() const -> const char*
 {
     switch(m_Type){
-        case GL_VERTEX_SHADER: return "GL_VERTEX_SHADER";
-        case GL_FRAGMENT_SHADER: return "GL_FRAGMENT_SHADER";
+        case Type::Vertex: return "Vertex";
+        case Type::Fragment: return "Fragment";
         default: return "UNKNOWN";
     }
 }
 
-auto Shader::get_shader_info(GLenum what) const -> GLint
-{
-    GLint result = -1;
 
-    gl::GetShaderiv(m_Id, what, &result);
+auto Shader::new_vertex(const std::string& vert) -> std::shared_ptr<Shader>
+{
+    return std::make_shared<Shader>(vert, Type::Vertex);
+}
+
+auto Shader::new_fragment(const std::string& frag) -> std::shared_ptr<Shader>
+{
+  return std::make_shared<Shader>(frag, Type::Fragment);
+}
+
+auto get_shader_info(uint32_t id, uint32_t what) -> int32_t
+{
+    int32_t result = -1;
+
+    gl::GetShaderiv(id, what, &result);
 
     if(result != -1)
         return result;
     else
         throw Exception("GetShaderiv Failed");
-}
-
-auto Shader::new_vertex(const std::string& vert) -> std::shared_ptr<Shader>
-{
-  return std::make_shared<Shader>(vert, GL_VERTEX_SHADER);
-}
-
-auto Shader::new_fragment(const std::string& frag) -> std::shared_ptr<Shader>
-{
-  return std::make_shared<Shader>(frag, GL_FRAGMENT_SHADER);
 }

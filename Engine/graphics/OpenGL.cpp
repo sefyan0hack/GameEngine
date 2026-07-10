@@ -1,15 +1,18 @@
 #include "OpenGL.hpp"
+
 #include "Window.hpp"
+
 #include <core/Log.hpp>
 #include <core/SysInfo.hpp>
 #include <core/Exception.hpp>
+
 #include <unordered_map>
 
 #define PACK(x, y) ((uint32_t(x) << 16) | (uint32_t(y) & 0xFFFF))
 
-auto get_info(GLenum name) -> GLint
+auto get_info(uint32_t name) -> int32_t
 {
-    GLint r = 0;
+    int32_t r = 0;
     gl::GetIntegerv(name, &r);
     return r;
 }
@@ -117,9 +120,9 @@ auto OpenGL::enable_debug() const -> void
     // Enable Opengl debug
     #if defined(CORE_GL)
 
-    auto messgae_callback_func = +[](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei, const GLchar *message, const void *) -> void
+    auto messgae_callback_func = +[](uint32_t source, uint32_t type, uint32_t id, uint32_t severity, int32_t, const char* message, const void *) -> void
     {
-        std::unordered_map<GLenum, const char*> m {
+        std::unordered_map<uint32_t, const char*> m {
             {GL_DEBUG_SOURCE_API, "GL_DEBUG_SOURCE_API"},
             {GL_DEBUG_SOURCE_WINDOW_SYSTEM, "GL_DEBUG_SOURCE_WINDOW_SYSTEM"},
             {GL_DEBUG_SOURCE_SHADER_COMPILER, "GL_DEBUG_SOURCE_SHADER_COMPILER"},
@@ -263,7 +266,7 @@ auto gl::pop_debug_group() -> void
     }
 }
 
-auto gl::label_texture(GLuint id, const char* name) -> void
+auto gl::label_texture(uint32_t id, const char* name) -> void
 {
     #ifndef GL_TEXTURE
     #define GL_TEXTURE
@@ -275,7 +278,7 @@ auto gl::label_texture(GLuint id, const char* name) -> void
     }
 }
 
-auto gl::label_vertex_array(GLuint id, const char* name) -> void
+auto gl::label_vertex_array(uint32_t id, const char* name) -> void
 {
     #ifndef GL_VERTEX_ARRAY
     #define GL_VERTEX_ARRAY
@@ -287,7 +290,7 @@ auto gl::label_vertex_array(GLuint id, const char* name) -> void
     }
 }
 
-auto gl::label_buffer(GLuint id, const char* name) -> void
+auto gl::label_buffer(uint32_t id, const char* name) -> void
 {
     #ifndef GL_BUFFER
     #define GL_BUFFER
@@ -299,7 +302,7 @@ auto gl::label_buffer(GLuint id, const char* name) -> void
     }
 }
 
-auto gl::label_shader(GLuint id, const char* name) -> void
+auto gl::label_shader(uint32_t id, const char* name) -> void
 {
     #ifndef GL_SHADER
     #define GL_SHADER
@@ -311,7 +314,7 @@ auto gl::label_shader(GLuint id, const char* name) -> void
     }
 }
 
-auto gl::label_program(GLuint id, const char* name) -> void
+auto gl::label_program(uint32_t id, const char* name) -> void
 {
     #ifndef GL_PROGRAM
     #define GL_PROGRAM

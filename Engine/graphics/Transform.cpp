@@ -1,6 +1,6 @@
 #include "Transform.hpp"
-#include <core/Log.hpp>
 
+#include <core/Log.hpp>
 #include <emath/emath.hpp>
 
 Transform::Transform()

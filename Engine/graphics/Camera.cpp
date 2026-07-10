@@ -1,5 +1,4 @@
 #include "Camera.hpp"
-#include "OpenGL.hpp"
 #include <core/Log.hpp>
 #include <inputs/Mouse.hpp>
 #include <algorithm>

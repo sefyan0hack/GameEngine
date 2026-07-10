@@ -1,6 +1,5 @@
 #pragma once
 
-#include "gl.hpp"
 #include <engine_export.h>
 
 #include <format>
@@ -8,39 +7,44 @@
 #include <memory>
 #include <span>
 
-
 class ENGINE_EXPORT Shader
 {
-  public:
-    friend struct std::formatter<Shader>;
+public:
+  enum class Type {
+    Vertex,
+    Fragment
+  };
 
-    Shader(const char* shader, GLenum type);
-    Shader(const std::string& shader, GLenum type);
+  friend struct std::formatter<Shader>;
 
-    Shader(const Shader&) = delete;
-    Shader& operator=(const Shader&) = delete;
+  Shader(const char* shader, Type type);
+  Shader(const std::string& shader, Type type);
 
-    Shader(Shader&& other) noexcept;
-    Shader& operator=(Shader&& other) noexcept;
-  
-    ~Shader();
+  Shader(const Shader&) = delete;
+  Shader& operator=(const Shader&) = delete;
 
-  public:
-    auto id() const                -> GLuint ;
-    auto type() const              -> GLenum ;
-    auto type_name() const         -> const char* ;
+  Shader(Shader&& other) noexcept;
+  Shader& operator=(Shader&& other) noexcept;
 
-    auto set_sources(const std::span<const char* const> srcs) const -> void;
-    auto compile()                           -> void;
-    auto check_compile_status() -> std::string;
-    auto get_shader_info(GLenum what) const-> GLint; //what : GL_SHADER_TYPE, GL_DELETE_STATUS, GL_COMPILE_STATUS, GL_INFO_LOG_LENGTH, GL_SHADER_SOURCE_LENGTH.
+  ~Shader();
 
-    static auto new_vertex(const std::string& vert) -> std::shared_ptr<Shader>;
-    static auto new_fragment(const std::string& frag) -> std::shared_ptr<Shader>;
+public:
+  auto id() const                -> uint32_t ;
+  auto type() const              -> Type ;
+  auto type_name() const         -> const char* ;
 
-  private:
-    GLuint m_Id;
-    GLenum m_Type;
+  static auto new_vertex(const std::string& vert) -> std::shared_ptr<Shader>;
+  static auto new_fragment(const std::string& frag) -> std::shared_ptr<Shader>;
+
+private:
+  auto set_sources(const std::span<const char* const> srcs) const -> void;
+  auto compile()                           -> void;
+  auto check_compile_status() -> std::string;
+
+
+private:
+  uint32_t m_Id;
+  Type m_Type;
 };
 
 #ifdef __cpp_lib_formatters

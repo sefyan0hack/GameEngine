@@ -1,16 +1,18 @@
 #include "Mesh.hpp"
-#include <GL/glcorearb.h>
+
+#include "gl.hpp"
+
 #include <core/Log.hpp>
 #include <core/Exception.hpp>
 #include <core/res.hpp>
 
-#include <unordered_map>
 #include <cstdio>
 #include <charconv>
+#include <unordered_map>
 
-auto Mesh::CUBE_VERTICES() -> std::vector<Vertex>{
+auto Mesh::CUBE_VERTICES() -> std::vector<Mesh::Vertex>{
 
-    static auto _ = std::vector<Vertex> {
+    static auto _ = std::vector<Mesh::Vertex> {
         // Front (+Z)
         {{-0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, {0.0f, 0.0f}},
         {{ 0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, {1.0f, 0.0f}},
@@ -77,35 +79,61 @@ auto Mesh::CUBE_INDICES() -> std::vector<uint16_t>
 }
 
 namespace attribs {
+
+    struct Attribute {
+        int32_t size;
+        uint32_t type;
+        bool normalized;
+        int32_t stride;
+        int32_t offset;
+        int32_t divisor;
+    };
+
     constinit static Attribute position {
-        .size = 3,//decltype(Mesh::VetexData::Position)::length(),
+        .size = 3,
         .type = GL_FLOAT,
         .normalized = GL_FALSE,
-        .stride = sizeof(Mesh::VetexData),
-        .offset = offsetof(Mesh::VetexData, Position),  // No reinterpret_cast!
+        .stride = sizeof(Mesh::Vertex),
+        .offset = offsetof(Mesh::Vertex, Position),  // No reinterpret_cast!
         .divisor = 0,
     };
     
     constinit static Attribute normals {
-        .size = 3,//decltype(Mesh::VetexData::Normal)::length(),
+        .size = 3,
         .type = GL_FLOAT,
         .normalized = GL_FALSE,
-        .stride = sizeof(Mesh::VetexData),
-        .offset = offsetof(Mesh::VetexData, Normal),  // No reinterpret_cast!
+        .stride = sizeof(Mesh::Vertex),
+        .offset = offsetof(Mesh::Vertex, Normal),  // No reinterpret_cast!
         .divisor = 0,
     };
 
     constinit static Attribute texCoords {
-        .size = 2,//decltype(Mesh::VetexData::TexCoords)::length(),
+        .size = 2,
         .type = GL_FLOAT,
         .normalized = GL_FALSE,
-        .stride = sizeof(Mesh::VetexData),
-        .offset = offsetof(Mesh::VetexData, TexCoords),  // No reinterpret_cast!
+        .stride = sizeof(Mesh::Vertex),
+        .offset = offsetof(Mesh::Vertex, TexCoords),  // No reinterpret_cast!
         .divisor = 0,
     };
+
+    auto set_attribute(uint32_t index, Attribute att) -> void
+    {
+        Expect(att.size > 0 && att.size <= 4, "position.size : 0<{}<4 wrong", att.size);
+
+        gl::VertexAttribPointer(
+            index,
+            att.size,
+            att.type,
+            att.normalized,
+            att.stride,
+            reinterpret_cast<void*>(static_cast<uintptr_t>(att.offset))
+        );
+        gl::EnableVertexAttribArray(index);
+        gl::VertexAttribDivisor(index, static_cast<uint32_t>(att.divisor));
+    }
 }
 
-Mesh::Mesh(const std::vector<VetexData>& vertices, const std::vector<uint16_t>& indices)
+Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<uint16_t>& indices)
     : m_Vertices(vertices)
     , m_Indices(indices)
     , VAO(0)
@@ -119,14 +147,14 @@ Mesh::Mesh(const std::vector<VetexData>& vertices, const std::vector<uint16_t>& 
     gl::BindVertexArray(VAO);
 
     gl::BindBuffer(GL_ARRAY_BUFFER, VBO);
-    gl::BufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(m_Vertices.size() * sizeof(Mesh::VetexData)), m_Vertices.data(), GL_STATIC_DRAW);
+    gl::BufferData(GL_ARRAY_BUFFER, static_cast<ptrdiff_t>(m_Vertices.size() * sizeof(Mesh::Vertex)), m_Vertices.data(), GL_STATIC_DRAW);
     
     gl::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-    gl::BufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(m_Indices.size() * sizeof(uint16_t)), m_Indices.data(), GL_STATIC_DRAW);
+    gl::BufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<ptrdiff_t>(m_Indices.size() * sizeof(uint16_t)), m_Indices.data(), GL_STATIC_DRAW);
     
-    GLuint index = 0;
+    uint32_t index = 0;
     for(auto a : {attribs::position, attribs::normals, attribs::texCoords}){
-        set_attribute(index++, a);
+        attribs::set_attribute(index++, a);
     }
 }
 
@@ -172,22 +200,6 @@ Mesh::~Mesh()
     gl::DeleteVertexArrays(1, &VAO);
 }
 
-auto Mesh::set_attribute(GLuint index, Attribute att) -> void
-{
-    Expect(att.size > 0 && att.size <= 4, "position.size : 0<{}<4 wrong", att.size);
-
-    gl::VertexAttribPointer(
-        index,
-        att.size,
-        att.type,
-        att.normalized,
-        att.stride,
-        reinterpret_cast<void*>(static_cast<uintptr_t>(att.offset))
-    );
-    gl::EnableVertexAttribArray(index);
-    gl::VertexAttribDivisor(index, static_cast<GLuint>(att.divisor));
-}
-
 auto Mesh::vertex_size() const noexcept -> size_t
 {
     return m_Vertices.size();
@@ -198,7 +210,7 @@ auto Mesh::indices_size() const noexcept -> size_t
     return m_Indices.size();
 }
 
-auto Mesh::flip_faces(std::vector<Vertex> verts) -> std::vector<Vertex>
+auto Mesh::flip_faces(std::vector<Mesh::Vertex> verts) -> std::vector<Mesh::Vertex>
 {
     for (size_t i = 0; i + 2 < verts.size(); i += 3) {
       std::swap(verts[i + 1], verts[i + 2]);
@@ -206,13 +218,13 @@ auto Mesh::flip_faces(std::vector<Vertex> verts) -> std::vector<Vertex>
     return verts;
 }
 
-std::pair<std::vector<Vertex>, std::vector<uint16_t>> load_obj(const char* obj)
+std::pair<std::vector<Mesh::Vertex>, std::vector<uint16_t>> load_obj(const char* obj)
 {
     std::vector<emath::vec3> positions;
     std::vector<emath::vec2> texcoords;
     std::vector<emath::vec3> normals;
 
-    std::vector<Vertex> vertices;
+    std::vector<Mesh::Vertex> vertices;
     std::vector<uint16_t> indices;
 
     std::unordered_map<uint64_t, uint16_t> vertexMap;
@@ -343,7 +355,7 @@ std::pair<std::vector<Vertex>, std::vector<uint16_t>> load_obj(const char* obj)
                         if (it != vertexMap.end()) {
                             indices.push_back(it->second);
                         } else {
-                            Vertex vert;
+                            Mesh::Vertex vert;
                             vert.Position = positions[pp - 1];
                             vert.TexCoords = (t > 0) ? texcoords[t - 1] : emath::vec2{0,0};
                             vert.Normal    = (n > 0) ? normals[n - 1]   : emath::vec3{0,0,1};

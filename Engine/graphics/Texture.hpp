@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Image.hpp"
-#include "gl.hpp"
 
 #include <string>
 #include <format>
@@ -15,7 +14,7 @@ class ENGINE_EXPORT Texture
 public:
     friend struct std::formatter<Texture>;
 protected:
-    Texture(GLenum texType);
+    Texture(uint32_t texType);
     Texture(const Texture&) = delete;
     auto operator=(const Texture&) -> Texture& = delete;
     
@@ -24,19 +23,19 @@ protected:
     ~Texture();
 
 public:
-    auto id() const -> GLuint;
+    auto id() const -> uint32_t;
     auto bind() const -> void;
-    auto type() const -> GLenum;
+    auto type() const -> uint32_t;
     auto type_name() const -> std::string;
 
-    static auto gl_format(Image::Format fmt) -> GLenum;
-    static auto gl_internal_format(Image::Format fmt) -> GLenum;
+    static auto gl_format(Image::Format fmt) -> uint32_t;
+    static auto gl_internal_format(Image::Format fmt) -> uint32_t;
 
-    static auto storage2d(const auto* data, GLenum type, GLsizei width, GLsizei height, GLint intformat = GL_RGBA8, GLenum format = GL_RGBA) -> void;
+    static auto storage2d(const auto* data, uint32_t type, int32_t width, int32_t height, int32_t intformat, uint32_t format) -> void;
 
 protected:
-    GLuint m_Id;
-    GLenum m_Type;
+    uint32_t m_Id;
+    uint32_t m_Type;
 };
 
 class ENGINE_EXPORT Texture2D final : public Texture
@@ -47,7 +46,7 @@ class ENGINE_EXPORT Texture2D final : public Texture
     auto operator=(const Texture2D&) -> Texture2D& = delete;
 
     Texture2D(const char* name);
-    Texture2D(auto* data, GLint width, GLint height, Image::Format fmt);
+    Texture2D(auto* data, int32_t width, int32_t height, Image::Format fmt);
 
   private:
     Image m_Img;

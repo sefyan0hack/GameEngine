@@ -1,8 +1,10 @@
 #include "Scene.hpp"
+
 #include "Camera.hpp"
 #include "GameObject.hpp"
 #include "Material.hpp"
 #include "Mesh.hpp"
+
 #include <core/Log.hpp>
 
 #include <algorithm>

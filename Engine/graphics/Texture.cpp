@@ -1,4 +1,5 @@
 #include "Texture.hpp"
+
 #include "gl.hpp"
 
 #include <core/Log.hpp>
@@ -6,7 +7,7 @@
 #include <core/res.hpp>
 
 namespace {
-constexpr auto to_string(GLenum type) -> const char*
+constexpr auto to_string(uint32_t type) -> const char*
 {
   switch(type){
     case GL_TEXTURE_2D: return "GL_TEXTURE_2D";
@@ -19,7 +20,7 @@ constexpr auto to_string(GLenum type) -> const char*
 
 }
 
-Texture::Texture(GLenum texType)
+Texture::Texture(uint32_t texType)
     : m_Id(0)
     , m_Type(texType)
 {
@@ -45,7 +46,7 @@ Texture::~Texture() {
     gl::DeleteTextures(1, &m_Id);
 }
 
-auto Texture::id() const -> GLuint
+auto Texture::id() const -> uint32_t
 {
     return m_Id;
 }
@@ -55,12 +56,12 @@ auto Texture::bind() const -> void
     gl::BindTexture(m_Type, m_Id);
 }
 
-auto Texture::type() const -> GLenum
+auto Texture::type() const -> uint32_t
 {
     return m_Type;
 }
 
-auto Texture::gl_format(Image::Format fmt) -> GLenum
+auto Texture::gl_format(Image::Format fmt) -> uint32_t
 {
     switch (fmt) {
         case Image::Format::RED: return GL_RED;
@@ -71,7 +72,7 @@ auto Texture::gl_format(Image::Format fmt) -> GLenum
     }
 }
 
-auto Texture::gl_internal_format(Image::Format fmt) -> GLenum
+auto Texture::gl_internal_format(Image::Format fmt) -> uint32_t
 {
     switch (fmt) {
         case Image::Format::RED: return GL_R8;
@@ -90,9 +91,7 @@ auto Texture::type_name() const -> std::string
 Texture2D::Texture2D()
     : Texture(GL_TEXTURE_2D)
 {
-    // Ensure GLubyte and uint8_t are the same size at compile time
-    static_assert(sizeof(GLubyte) == sizeof(uint8_t), "GLubyte and uint8_t size mismatch!");
-    storage2d(std::bit_cast<const GLubyte*>(m_Img.data().data()), m_Type, m_Img.width(), m_Img.height(), gl_internal_format(m_Img.format()), gl_format(m_Img.format()));
+    storage2d(std::bit_cast<const uint8_t*>(m_Img.data().data()), m_Type, m_Img.width(), m_Img.height(), gl_internal_format(m_Img.format()), gl_format(m_Img.format()));
     gl::GenerateMipmap(m_Type);
 }
 
@@ -100,21 +99,19 @@ Texture2D::Texture2D()
 Texture2D::Texture2D(const char* name)
     : Texture(GL_TEXTURE_2D), m_Img(name)
 {
-    // Ensure GLubyte and uint8_t are the same size at compile time
-    static_assert(sizeof(GLubyte) == sizeof(uint8_t), "GLubyte and uint8_t size mismatch!");
-    storage2d(std::bit_cast<const GLubyte*>(m_Img.data().data()), m_Type, m_Img.width(), m_Img.height(), gl_internal_format(m_Img.format()), gl_format(m_Img.format()));
+    storage2d(std::bit_cast<const uint8_t*>(m_Img.data().data()), m_Type, m_Img.width(), m_Img.height(), gl_internal_format(m_Img.format()), gl_format(m_Img.format()));
     gl::GenerateMipmap(m_Type);
 
     gl::label_texture(m_Id, name);
 }
 
-Texture2D::Texture2D(auto* data, GLint width, GLint height, Image::Format fmt)
+Texture2D::Texture2D(auto* data, int32_t width, int32_t height, Image::Format fmt)
     : Texture(GL_TEXTURE_2D), m_Img(data, width, height, fmt)
 {
     storage2d(data, width, height, gl_internal_format(m_Img.format()), gl_format(m_Img.format()));
 }
 
-auto Texture::storage2d(const auto *data, GLenum type, GLsizei width, GLsizei height, GLint intformat, GLenum format) -> void
+auto Texture::storage2d(const auto *data, uint32_t type, int32_t width, int32_t height, int32_t intformat, uint32_t format) -> void
 {
     using DataType = std::remove_cv_t<
             std::remove_all_extents_t<
@@ -126,15 +123,14 @@ auto Texture::storage2d(const auto *data, GLenum type, GLsizei width, GLsizei he
         throw Exception("only arithmetic Types");
     }
 
-    auto gl_type = []() -> GLenum {
-        if constexpr(std::is_same_v<DataType, GLubyte>)  return GL_UNSIGNED_BYTE;
-        if constexpr(std::is_same_v<DataType, GLbyte>)   return GL_BYTE;
-        if constexpr(std::is_same_v<DataType, GLushort>) return GL_UNSIGNED_SHORT;
-        if constexpr(std::is_same_v<DataType, GLshort>)  return GL_SHORT;
-        if constexpr(std::is_same_v<DataType, GLuint>)   return GL_UNSIGNED_INT;
-        if constexpr(std::is_same_v<DataType, GLint>)    return GL_INT;
-        if constexpr(std::is_same_v<DataType, GLhalf>)   return GL_HALF_FLOAT;
-        if constexpr(std::is_same_v<DataType, GLfloat>)  return GL_FLOAT;
+    auto gl_type = []() -> uint32_t {
+        if constexpr(std::is_same_v<DataType, uint8_t>)  return GL_UNSIGNED_BYTE;
+        if constexpr(std::is_same_v<DataType, int8_t>)   return GL_BYTE;
+        if constexpr(std::is_same_v<DataType, uint16_t>) return GL_UNSIGNED_SHORT;
+        if constexpr(std::is_same_v<DataType, int16_t>)  return GL_SHORT;
+        if constexpr(std::is_same_v<DataType, uint32_t>) return GL_UNSIGNED_INT;
+        if constexpr(std::is_same_v<DataType, int32_t>)  return GL_INT;
+        if constexpr(std::is_same_v<DataType, float>)    return GL_FLOAT;
     }();
 
     if constexpr (sizeof(DataType) >= 4) {
@@ -159,7 +155,7 @@ TextureCubeMap::TextureCubeMap()
 {
     for (std::size_t i = 0; i < m_Imgs.size(); ++i) {
         const auto& img = m_Imgs[i];
-        storage2d(img.data().data(), GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), img.width(), img.height(), gl_internal_format(img.format()), gl_format(img.format()));
+        storage2d(img.data().data(), uint32_t(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), img.width(), img.height(), gl_internal_format(img.format()), gl_format(img.format()));
     }
 
     gl::TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -182,7 +178,7 @@ TextureCubeMap::TextureCubeMap(const std::vector<std::string> faces)
 
     for (std::size_t i = 0; i < m_Imgs.size(); ++i) {
         auto& img = m_Imgs[i];
-        storage2d(img.data().data(), GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), img.width(), img.height(), gl_internal_format(img.format()), gl_format(img.format()));
+        storage2d(img.data().data(), uint32_t(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), img.width(), img.height(), gl_internal_format(img.format()), gl_format(img.format()));
         logg::trace("Loding {} ", faces[i]);
     }
 

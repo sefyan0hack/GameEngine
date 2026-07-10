@@ -1,11 +1,11 @@
-#include <cstring>
-
 #include "Image.hpp"
+
 #include <core/Log.hpp>
 #include <core/Exception.hpp>
 #include <core/res.hpp>
 
 #include <bit>
+#include <cstring>
 #include <utility>
 
 #define STB_IMAGE_IMPLEMENTATION

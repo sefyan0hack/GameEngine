@@ -19,27 +19,32 @@
 
 #include <algorithm>
 #include <chrono>
+#include <cstddef>
 
 #if defined(min) || defined(max)
 #undef min
 #undef max
 #endif
 
-struct alignas(16) CameraUBO
-{
-    constexpr static int32_t BINDING_POINT = 0;
-    alignas(16) emath::mat4 Projection;
-    alignas(16) emath::mat4 View;
-    emath::vec3 Position;
-};
+namespace UBO {
 
-struct alignas(16) SunLightUBO
-{
-    constexpr static int32_t BINDING_POINT = 1;
-    alignas(16) emath::vec3 Direction;
-    alignas(16) emath::vec3 Color;
-    alignas(16) emath::vec3 Ambient;
-};
+    struct alignas(16) Camera
+    {
+        constexpr static int32_t BINDING_POINT = 0;
+        alignas(16) emath::mat4 Projection;
+        alignas(16) emath::mat4 View;
+        emath::vec3 Position;
+    };
+
+    struct alignas(16) SunLight
+    {
+        constexpr static int32_t BINDING_POINT = 1;
+        alignas(16) emath::vec3 Direction;
+        alignas(16) emath::vec3 Color;
+        alignas(16) emath::vec3 Ambient;
+    };
+
+}
 
 OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
     : m_GApi(ctx)
@@ -97,20 +102,20 @@ OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
 
     gl::BindBuffer(GL_UNIFORM_BUFFER, m_CameraUBO);
 
-    gl::BufferData(GL_UNIFORM_BUFFER, sizeof(CameraUBO), nullptr, GL_DYNAMIC_DRAW);
+    gl::BufferData(GL_UNIFORM_BUFFER, sizeof(UBO::Camera), nullptr, GL_DYNAMIC_DRAW);
 
-    gl::BindBufferBase(GL_UNIFORM_BUFFER, CameraUBO::BINDING_POINT, m_CameraUBO);
+    gl::BindBufferBase(GL_UNIFORM_BUFFER, UBO::Camera::BINDING_POINT, m_CameraUBO);
 
     // Link shaders uniform block to binding point
     {
-        GLuint DepthblockIndex = gl::GetUniformBlockIndex(m_Depth.Program->id(), "Camera");
-        gl::UniformBlockBinding(m_Depth.Program->id(), DepthblockIndex, CameraUBO::BINDING_POINT);
+        uint32_t DepthblockIndex = gl::GetUniformBlockIndex(m_Depth.Program->id(), "Camera");
+        gl::UniformBlockBinding(m_Depth.Program->id(), DepthblockIndex, UBO::Camera::BINDING_POINT);
 
-        GLuint SceneblockIndex = gl::GetUniformBlockIndex(m_Scene.Program->id(), "Camera");
-        gl::UniformBlockBinding(m_Scene.Program->id(), SceneblockIndex, CameraUBO::BINDING_POINT);
+        uint32_t SceneblockIndex = gl::GetUniformBlockIndex(m_Scene.Program->id(), "Camera");
+        gl::UniformBlockBinding(m_Scene.Program->id(), SceneblockIndex, UBO::Camera::BINDING_POINT);
 
-        GLuint SkyBoxblockIndex = gl::GetUniformBlockIndex(m_SkyBox.Program->id(), "Camera");
-        gl::UniformBlockBinding(m_SkyBox.Program->id(), SkyBoxblockIndex, CameraUBO::BINDING_POINT);
+        uint32_t SkyBoxblockIndex = gl::GetUniformBlockIndex(m_SkyBox.Program->id(), "Camera");
+        gl::UniformBlockBinding(m_SkyBox.Program->id(), SkyBoxblockIndex, UBO::Camera::BINDING_POINT);
     }
 
     // Prepeare Sun UBO --------------------------------------------------------------------------
@@ -119,14 +124,14 @@ OpenGLRenderer::OpenGLRenderer(const OpenGL& ctx, Text& text)
 
     gl::BindBuffer(GL_UNIFORM_BUFFER, m_SunUBO);
 
-    gl::BufferData(GL_UNIFORM_BUFFER, sizeof(SunLightUBO), nullptr, GL_DYNAMIC_DRAW);
+    gl::BufferData(GL_UNIFORM_BUFFER, sizeof(UBO::SunLight), nullptr, GL_DYNAMIC_DRAW);
 
-    gl::BindBufferBase(GL_UNIFORM_BUFFER, SunLightUBO::BINDING_POINT, m_SunUBO);
+    gl::BindBufferBase(GL_UNIFORM_BUFFER, UBO::SunLight::BINDING_POINT, m_SunUBO);
 
     // Link shaders uniform block to binding point
     {
-        GLuint SceneblockIndex = gl::GetUniformBlockIndex(m_Scene.Program->id(), "SunLight");
-        gl::UniformBlockBinding(m_Scene.Program->id(), SceneblockIndex, SunLightUBO::BINDING_POINT);
+        uint32_t SceneblockIndex = gl::GetUniformBlockIndex(m_Scene.Program->id(), "SunLight");
+        gl::UniformBlockBinding(m_Scene.Program->id(), SceneblockIndex, UBO::SunLight::BINDING_POINT);
     }
 }
 
@@ -136,7 +141,7 @@ auto OpenGLRenderer::render(const Scene& scene) const -> void
         auto& cam = scene.main_camera();
 
         // Uploading Camera UBO
-        CameraUBO data {
+        UBO::Camera data {
             .Projection = cam.projection(),
             .View = cam.view(),
             .Position = cam.position()
@@ -158,7 +163,7 @@ auto OpenGLRenderer::render(const Scene& scene) const -> void
         height = std::max(height, 0.1f);
 
         // Uploading Sun UBO
-        SunLightUBO data {
+        UBO::SunLight data {
             .Direction = emath::vec3(
                 std::cos(angle),
                 -height,
@@ -214,7 +219,7 @@ auto OpenGLRenderer::depthpre_pass(const Scene& scene) const -> void
             m_Stats.mesh_switch++;
         }
 
-        gl::DrawElements(GL_TRIANGLES, GLsizei(mesh->indices_size()), GL_UNSIGNED_SHORT, (void*)0);
+        gl::DrawElements(GL_TRIANGLES, int32_t(mesh->indices_size()), GL_UNSIGNED_SHORT, (void*)0);
         m_Stats.draw_call++;
     }
 
@@ -252,7 +257,12 @@ auto OpenGLRenderer::scene_pass(const Scene& scene) const -> void
         if (currentMaterial != material)
         {
             currentMaterial = material;
-            currentMaterial->bind(m_Scene.Program);
+
+            // diffuse
+            gl::ActiveTexture(GL_TEXTURE0 + 0);
+            currentMaterial->diffuse()->bind();
+            m_Scene.Program->set_uniform("uDiffuseMap", 0);
+
             m_Stats.texture_switch++;
         }
 
@@ -264,7 +274,7 @@ auto OpenGLRenderer::scene_pass(const Scene& scene) const -> void
             m_Stats.mesh_switch++;
         }
 
-        gl::DrawElements(GL_TRIANGLES, GLsizei(mesh->indices_size()), GL_UNSIGNED_SHORT, (void*)0);
+        gl::DrawElements(GL_TRIANGLES, int32_t(mesh->indices_size()), GL_UNSIGNED_SHORT, (void*)0);
         m_Stats.draw_call++;
     }
     gl::pop_debug_group();
@@ -328,7 +338,7 @@ auto OpenGLRenderer::text_pass() const -> void {
     for (size_t offset = 0; offset < text_glyphs.size(); offset += TEXT_BATCH_SIZE)
     {
         auto batchCount = std::min(TEXT_BATCH_SIZE, text_glyphs.size() - offset);
-        GLsizeiptr bytesToCopy = batchCount * sizeof(Text::Glyph);
+        ptrdiff_t bytesToCopy = batchCount * sizeof(Text::Glyph);
 
         void* mappedMemory = gl::MapBufferRange(GL_ARRAY_BUFFER, 0, bytesToCopy, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 
@@ -336,7 +346,7 @@ auto OpenGLRenderer::text_pass() const -> void {
             m_Stats.vertices += 4;
             std::memcpy(mappedMemory, text_glyphs.data() + offset, bytesToCopy);
             gl::UnmapBuffer(GL_ARRAY_BUFFER);
-            gl::DrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, static_cast<GLsizei>(batchCount));
+            gl::DrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, static_cast<int32_t>(batchCount));
             m_Stats.draw_call++;
         }
     }
@@ -359,7 +369,7 @@ auto OpenGLRenderer::set_mode(DrawMode mode) -> void
 
 auto OpenGLRenderer::clear_screen(uint32_t buffersmask) const -> void
 {
-    gl::Clear((GLenum)buffersmask);
+    gl::Clear((uint32_t)buffersmask);
 }
 
 auto OpenGLRenderer::stats() const -> RenderStats

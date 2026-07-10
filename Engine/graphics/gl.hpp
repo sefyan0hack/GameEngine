@@ -2,6 +2,8 @@
 #define GL_GLEXT_PROTOTYPES
 
 #include <string>
+#include <cstdint>
+#include <type_traits>
 #include <engine_export.h>
 #include "gl.inl"
 
@@ -156,3 +158,16 @@ namespace gl {
     auto label_program(GLuint id, const char* name) -> void;
 
 } // namespace gl
+
+// im assuming Gl types are the same as these types if any assert fail . comment it and try to see maybe will work normaly or UB
+static_assert(std::is_same_v<GLint, int32_t>);
+static_assert(std::is_same_v<GLuint, uint32_t>);
+static_assert(std::is_same_v<GLenum, uint32_t>);
+static_assert(std::is_same_v<GLsizei, int32_t>);
+static_assert(std::is_same_v<GLsizeiptr, ptrdiff_t>);
+static_assert(std::is_same_v<GLchar, char>);
+static_assert(std::is_same_v<GLbyte, int8_t>);
+static_assert(std::is_same_v<GLubyte, uint8_t>);
+static_assert(std::is_same_v<GLfloat, float>);
+static_assert(std::is_same_v<GLdouble, double>);
+static_assert(std::is_same_v<GLvoid, void>);
