@@ -4,6 +4,7 @@
 #include <core/Exception.hpp>
 
 #include <string>
+#include <cmath>
 
 Text::Text()
     : m_Font(DEFAULT_FONT_NAME)
