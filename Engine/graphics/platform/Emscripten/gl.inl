@@ -4,6 +4,7 @@
 #include <emscripten/html5_webgl.h>
 #include <emscripten/key_codes.h>
 #include <GLES3/gl3.h>
+#include <GLES3/gl2ext.h>
 
 using H_WIN     = const char*;
 using H_SRF     = const char*;
