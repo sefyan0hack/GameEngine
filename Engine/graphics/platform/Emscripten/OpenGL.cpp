@@ -1,5 +1,8 @@
 #include "OpenGL.hpp"
+
+#include "gl.hpp"
 #include "Window.hpp"
+
 #include <core/Exception.hpp>
 OpenGL::~OpenGL()
 {

@@ -5,6 +5,7 @@
 
 #include <string>
 #include <cmath>
+#include <bit>
 
 Text::Text()
     : m_Font(DEFAULT_FONT_NAME)
