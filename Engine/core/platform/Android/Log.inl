@@ -1,7 +1,7 @@
 #pragma once
 #include <android/log.h>
 
-inline auto printf_(const char* fmt, auto... args) -> int
+inline auto plt_out(const char* str) -> void
 {
-    __android_log_print(ANDROID_LOG_INFO, "ENGINE", fmt, args...);
+    __android_log_print(ANDROID_LOG_INFO, "ENGINE", "%s", str);
 }

@@ -26,7 +26,7 @@ namespace logg {
 
         std::string final_msg = std::format("[{}] [{:<5}] : {}", std::chrono::system_clock::now(), level_to_string(l), msg);
 
-        printf_("%s\n", final_msg.c_str());
+        plt_out(final_msg.c_str());
         std::ofstream out(LOG_FILE, std::ios::app); out << final_msg << '\n';
     };
 

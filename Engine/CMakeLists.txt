@@ -16,6 +16,7 @@ target_sources(Engine
         $<TARGET_PROPERTY:inputs,SOURCES>
         $<TARGET_PROPERTY:graphics,SOURCES>
         $<TARGET_PROPERTY:ui,SOURCES>
+    PUBLIC
         $<$<PLATFORM_ID:Android>:${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c>
     PUBLIC
     FILE_SET generated_headers

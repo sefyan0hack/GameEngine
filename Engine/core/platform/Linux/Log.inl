@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdio>
 
-inline auto printf_(const char* fmt, auto... args) -> int
+inline auto plt_out(const char* str) -> void
 {
-    return ::printf(fmt, args...);
+    ::printf("%s", str);
 }

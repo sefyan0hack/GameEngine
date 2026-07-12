@@ -19,13 +19,21 @@ auto OpenGL::make_current()  -> bool
 
 auto OpenGL::find_config([[maybe_unused]] const CWindow& window) -> GL_CFG
 {
+    return {};
+}
+
+auto OpenGL::create_context() -> GL_CTX
+{
+    auto display = m_Window.display();
+    auto surface = m_Window.surface();
+
     int32_t DepthBufferBits[] = { 24, 16 };
 
     EGLConfig config;
     EGLint numConfigs;
     EGLBoolean valid_config = false;
 
-    for(int32_t i = 0; i < sizeof(DepthBufferBits); i++){
+    for(int32_t i = 0; i < sizeof(DepthBufferBits) / sizeof(DepthBufferBits[0]); i++){
         static const EGLint visualAttribs[] = {
             EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,
             EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
@@ -38,19 +46,11 @@ auto OpenGL::find_config([[maybe_unused]] const CWindow& window) -> GL_CFG
             EGL_NONE
         };
 
-        valid_config = eglChooseConfig(window.display(), visualAttribs, &config, 1, &numConfigs);
+        valid_config = eglChooseConfig(display, visualAttribs, &config, 1, &numConfigs) && numConfigs > 0;
         if (valid_config) break;
     }
 
     if(!valid_config) throw Exception("Failed to choose EGL config for Android");
-
-    return config;
-}
-
-auto OpenGL::create_context() -> GL_CTX
-{
-    auto display = m_Window.display();
-    auto surface = m_Window.surface();
 
     static const EGLint contextAttribs[] = {
         EGL_CONTEXT_CLIENT_VERSION, 3, 

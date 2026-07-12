@@ -112,7 +112,31 @@ auto CWindow::new_window(int32_t Width, int32_t Height, const char* Title) -> st
 
     eglBindAPI(EGL_OPENGL_ES_API);
 
-    auto config = OpenGL::find_config(*this);
+    int32_t DepthBufferBits[] = { 24, 16 };
+
+    EGLConfig config;
+    EGLint numConfigs;
+    EGLBoolean valid_config = false;
+
+    for(int32_t i = 0; i < sizeof(DepthBufferBits) / sizeof(DepthBufferBits[0]); i++){
+        static const EGLint visualAttribs[] = {
+            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,
+            EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+            EGL_BLUE_SIZE, 8,
+            EGL_GREEN_SIZE, 8,
+            EGL_RED_SIZE, 8,
+            EGL_ALPHA_SIZE, 8,
+            EGL_STENCIL_SIZE, 8,
+            EGL_DEPTH_SIZE, DepthBufferBits[i],
+            EGL_NONE
+        };
+
+        valid_config = eglChooseConfig(display, visualAttribs, &config, 1, &numConfigs) && numConfigs > 0;
+        if (valid_config) break;
+    }
+
+    if(!valid_config) throw Exception("Failed to choose EGL config for Android");
+
     EGLint format;
     eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
     ANativeWindow_setBuffersGeometry(window, 0, 0, format);
