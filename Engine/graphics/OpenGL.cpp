@@ -71,6 +71,8 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     logg::info("GL Debug : {}", DEBUG ? "true" : "false");
     logg::info("===================================[GL Extention]=========================================");
     logg::info(gl::extensions());
+    logg::info("===================================[Plt Extention]=========================================");
+    logg::info(platform_extensions());
     logg::info("===================================[Metrics]==========================================");
     
     gl_info(GL_MAX_TEXTURE_SIZE);

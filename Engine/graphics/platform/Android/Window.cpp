@@ -8,6 +8,7 @@
 #include <core/Event.hpp>
 #include <core/Exception.hpp>
 #include <core/Event.hpp>
+
 #include <engine_export.h>
 
 #include <android_native_app_glue.h>
@@ -15,6 +16,26 @@
 extern auto from_native(int32_t key) -> Key;
 
 android_app* g_android_app = nullptr;
+
+static auto handle_cmd(android_app* app, int32_t cmd) -> void
+{
+    switch(cmd)
+    {
+        case APP_CMD_INIT_WINDOW:
+            break;
+
+        case APP_CMD_TERM_WINDOW:
+            EventQ::self().push(CWindow::QuitEvent{});
+            break;
+
+        case APP_CMD_WINDOW_RESIZED:
+            EventQ::self().push(CWindow::ResizeEvent{ ANativeWindow_getWidth(app->window), ANativeWindow_getHeight(app->window)});
+            break;
+
+        case APP_CMD_CONFIG_CHANGED:
+            break;
+    }
+}
 
 auto input_callback(android_app* state, AInputEvent* event) -> int32_t
 {
@@ -76,6 +97,7 @@ void android_main(android_app* app)
 {
     g_android_app = app;
     app->onInputEvent = input_callback;
+    app->onAppCmd = handle_cmd;
 
     while (g_android_app->window == nullptr && !g_android_app->destroyRequested) {
         int events;
