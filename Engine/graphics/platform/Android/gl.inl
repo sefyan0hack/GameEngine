@@ -1,11 +1,13 @@
 #pragma once
 #define EGL_EGLEXT_PROTOTYPES
 #define GL_GLEXT_PROTOTYPES
-#include <gl.hpp>
-#include <GLES3/gl3.h>
-#include <GLES3/gl3ext.h>
+
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
+
+#include <GLES3/gl3.h>
+#include <GLES3/gl3ext.h>
+
 #include <android/native_window.h>
 
 using H_WIN     = ANativeWindow*;

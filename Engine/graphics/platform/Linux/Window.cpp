@@ -1,11 +1,15 @@
 #include "Window.hpp"
+
+#include "gl.hpp"
+
 #include <inputs/Keyboard.hpp>
+
 #include <inputs/Mouse.hpp>
 #include <core/Log.hpp>
 #include <core/Event.hpp>
 #include <core/Exception.hpp>
-
 #include <core/Event.hpp>
+
 #include <X11/Xlib.h>
 
 #include <string>
