@@ -214,6 +214,7 @@ auto CWindow::set_title(std::string title) -> void
 
 auto CWindow::set_vsync(bool state) -> void
 {
+    eglSwapInterval(m_Display, state ? 1 : 0);
 }
 
 auto CWindow::message_box(const char* title, const char* body) -> bool
