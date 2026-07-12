@@ -265,16 +265,21 @@ auto gl::pop_debug_group() -> void
     }
 }
 
+auto gl::ext::ObjectLabel(GLenum identifier, GLuint name, GLsizei length, const GLchar *label) -> void
+{
+    if (PACK(OpenGL::MIN_REQUIRED_MAJOR_VERSION, OpenGL::MIN_REQUIRED_MINOR_VERSION) >= PACK(4,3) || gl::extensions().contains("GL_KHR_debug")) {
+        auto p = gl::GetProcAddress<decltype(&gl::ext::ObjectLabel)>("glObjectLabel");
+        if(p) p(identifier, name, length, label);
+    }
+}
+
 auto gl::label_texture(uint32_t id, const char* name) -> void
 {
     #ifndef GL_TEXTURE
     #define GL_TEXTURE
     #endif
 
-    if (PACK(OpenGL::MIN_REQUIRED_MAJOR_VERSION, OpenGL::MIN_REQUIRED_MINOR_VERSION) >= PACK(4,3) || gl::extensions().contains("GL_KHR_debug")) {
-        GET_GLEXT_FUNCTION_THROW(glObjectLabel);
-        glObjectLabel_ext(GL_TEXTURE, id, -1, name);
-    }
+    gl::ext::ObjectLabel(GL_TEXTURE, id, -1, name);
 }
 
 auto gl::label_vertex_array(uint32_t id, const char* name) -> void
@@ -283,10 +288,7 @@ auto gl::label_vertex_array(uint32_t id, const char* name) -> void
     #define GL_VERTEX_ARRAY
     #endif
 
-    if (PACK(OpenGL::MIN_REQUIRED_MAJOR_VERSION, OpenGL::MIN_REQUIRED_MINOR_VERSION) >= PACK(4,3) || gl::extensions().contains("GL_KHR_debug")) {
-        GET_GLEXT_FUNCTION_THROW(glObjectLabel);
-        glObjectLabel_ext(GL_VERTEX_ARRAY, id, -1, name);
-    }
+    gl::ext::ObjectLabel(GL_VERTEX_ARRAY, id, -1, name);
 }
 
 auto gl::label_buffer(uint32_t id, const char* name) -> void
@@ -295,10 +297,7 @@ auto gl::label_buffer(uint32_t id, const char* name) -> void
     #define GL_BUFFER
     #endif
 
-    if (PACK(OpenGL::MIN_REQUIRED_MAJOR_VERSION, OpenGL::MIN_REQUIRED_MINOR_VERSION) >= PACK(4,3) || gl::extensions().contains("GL_KHR_debug")) {
-        GET_GLEXT_FUNCTION_THROW(glObjectLabel);
-        glObjectLabel_ext(GL_BUFFER, id, -1, name);
-    }
+    gl::ext::ObjectLabel(GL_BUFFER, id, -1, name);
 }
 
 auto gl::label_shader(uint32_t id, const char* name) -> void
@@ -307,10 +306,7 @@ auto gl::label_shader(uint32_t id, const char* name) -> void
     #define GL_SHADER
     #endif
 
-    if (PACK(OpenGL::MIN_REQUIRED_MAJOR_VERSION, OpenGL::MIN_REQUIRED_MINOR_VERSION) >= PACK(4,3) || gl::extensions().contains("GL_KHR_debug")) {
-        GET_GLEXT_FUNCTION_THROW(glObjectLabel);
-        glObjectLabel_ext(GL_SHADER, id, -1, name);
-    }
+    gl::ext::ObjectLabel(GL_SHADER, id, -1, name);
 }
 
 auto gl::label_program(uint32_t id, const char* name) -> void
@@ -319,9 +315,5 @@ auto gl::label_program(uint32_t id, const char* name) -> void
     #define GL_PROGRAM
     #endif
 
-    if (PACK(OpenGL::MIN_REQUIRED_MAJOR_VERSION, OpenGL::MIN_REQUIRED_MINOR_VERSION) >= PACK(4,3) || gl::extensions().contains("GL_KHR_debug")) {
-        GET_GLEXT_FUNCTION_THROW(glObjectLabel);
-        glObjectLabel_ext(GL_PROGRAM, id, -1, name);
-    }
+    gl::ext::ObjectLabel(GL_PROGRAM, id, -1, name);
 }
-

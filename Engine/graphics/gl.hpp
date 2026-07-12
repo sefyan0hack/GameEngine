@@ -148,6 +148,10 @@ namespace gl {
     FUNCTIONS_GL_LIST
 #undef FUNC_GL_X
 
+    namespace ext {
+        auto ObjectLabel(GLenum identifier, GLuint name, GLsizei length, const GLchar *label) -> void;
+    }
+
     auto extensions() -> std::string;
     auto push_debug_group(const char* name) -> void;
     auto pop_debug_group() -> void;
