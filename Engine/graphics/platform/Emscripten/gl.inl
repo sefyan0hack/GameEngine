@@ -1,4 +1,6 @@
+#pragma once
 #define GL_GLES_PROTOTYPES 1
+#define GL_GLEXT_PROTOTYPES 1
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
 #include <emscripten/html5_webgl.h>

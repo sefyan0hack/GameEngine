@@ -2,7 +2,7 @@
 #include <string>
 #include <utility>
 
-#include "gl.hpp"
+#include "gl.inl"
 #include <engine_export.h>
 
 class CWindow;

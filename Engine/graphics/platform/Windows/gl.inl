@@ -1,4 +1,6 @@
+#pragma once
 #define WGL_WGLEXT_PROTOTYPES
+#define GL_GLEXT_PROTOTYPES
 #include <GL/glcorearb.h>
 #include <GL/wglext.h>
 

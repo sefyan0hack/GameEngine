@@ -1,4 +1,6 @@
 #include "Window.hpp"
+#include "gl.hpp"
+
 #include <inputs/Keyboard.hpp>
 #include <inputs/Mouse.hpp>
 #include <core/Event.hpp>

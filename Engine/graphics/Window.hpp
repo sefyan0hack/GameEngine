@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gl.hpp"
+#include "gl.inl"
 #include <core/SysInfo.hpp>
 #include <engine_export.h>
 

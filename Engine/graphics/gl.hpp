@@ -1,11 +1,12 @@
 #pragma once
-#define GL_GLEXT_PROTOTYPES
+
+#include "gl.inl"
+
+#include <engine_export.h>
 
 #include <string>
 #include <cstdint>
 #include <type_traits>
-#include <engine_export.h>
-#include "gl.inl"
 
 #define GET_GLEXT_FUNCTION_THROW(func)\
 static auto func##_ext = [](){\
@@ -147,10 +148,6 @@ namespace gl {
 #define FUNC_GL_X(name) inline decltype(&gl##name) name;
     FUNCTIONS_GL_LIST
 #undef FUNC_GL_X
-
-    namespace ext {
-        auto ObjectLabel(GLenum identifier, GLuint name, GLsizei length, const GLchar *label) -> void;
-    }
 
     auto extensions() -> std::string;
     auto push_debug_group(const char* name) -> void;

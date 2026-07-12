@@ -1,4 +1,6 @@
+#pragma once
 #define EGL_EGLEXT_PROTOTYPES
+#define GL_GLEXT_PROTOTYPES
 #include <gl.hpp>
 #include <GLES3/gl3.h>
 #include <GLES3/gl3ext.h>

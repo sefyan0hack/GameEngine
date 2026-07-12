@@ -1,5 +1,6 @@
 #include "OpenGL.hpp"
 
+#include "gl.hpp"
 #include "Window.hpp"
 
 #include <core/Log.hpp>
@@ -250,70 +251,76 @@ auto gl::extensions() -> std::string
 
 auto gl::push_debug_group(const char* name) -> void
 {
+    #ifdef CORE_GL
     if (PACK(OpenGL::MIN_REQUIRED_MAJOR_VERSION, OpenGL::MIN_REQUIRED_MINOR_VERSION) >= PACK(4,3) || gl::extensions().contains("GL_KHR_debug")) {
         static uint32_t id{};
         GET_GLEXT_FUNCTION_THROW(glPushDebugGroup);
         glPushDebugGroup_ext(GL_DEBUG_SOURCE_APPLICATION, id++, -1, name);
     }
+    #endif
 }
 
 auto gl::pop_debug_group() -> void
 {
+    #ifdef CORE_GL
     if (PACK(OpenGL::MIN_REQUIRED_MAJOR_VERSION, OpenGL::MIN_REQUIRED_MINOR_VERSION) >= PACK(4,3) || gl::extensions().contains("GL_KHR_debug")) {
         GET_GLEXT_FUNCTION_THROW(glPopDebugGroup);
         glPopDebugGroup_ext();
     }
+    #endif
 }
 
-auto gl::ext::ObjectLabel(GLenum identifier, GLuint name, GLsizei length, const GLchar *label) -> void
+static auto ObjectLabel(GLenum identifier, GLuint name, GLsizei length, const GLchar *label) -> void
 {
+    #ifdef CORE_GL
     if (PACK(OpenGL::MIN_REQUIRED_MAJOR_VERSION, OpenGL::MIN_REQUIRED_MINOR_VERSION) >= PACK(4,3) || gl::extensions().contains("GL_KHR_debug")) {
-        auto p = gl::GetProcAddress<decltype(&gl::ext::ObjectLabel)>("glObjectLabel");
-        if(p) p(identifier, name, length, label);
+        GET_GLEXT_FUNCTION_THROW(glObjectLabel);
+        glObjectLabel_ext(identifier, name, length, label);
     }
+    #endif
 }
 
 auto gl::label_texture(uint32_t id, const char* name) -> void
 {
     #ifndef GL_TEXTURE
-    #define GL_TEXTURE
+    #define GL_TEXTURE 0
     #endif
 
-    gl::ext::ObjectLabel(GL_TEXTURE, id, -1, name);
+    ObjectLabel(GL_TEXTURE, id, -1, name);
 }
 
 auto gl::label_vertex_array(uint32_t id, const char* name) -> void
 {
     #ifndef GL_VERTEX_ARRAY
-    #define GL_VERTEX_ARRAY
+    #define GL_VERTEX_ARRAY 0
     #endif
 
-    gl::ext::ObjectLabel(GL_VERTEX_ARRAY, id, -1, name);
+    ObjectLabel(GL_VERTEX_ARRAY, id, -1, name);
 }
 
 auto gl::label_buffer(uint32_t id, const char* name) -> void
 {
     #ifndef GL_BUFFER
-    #define GL_BUFFER
+    #define GL_BUFFER 0
     #endif
 
-    gl::ext::ObjectLabel(GL_BUFFER, id, -1, name);
+    ObjectLabel(GL_BUFFER, id, -1, name);
 }
 
 auto gl::label_shader(uint32_t id, const char* name) -> void
 {
     #ifndef GL_SHADER
-    #define GL_SHADER
+    #define GL_SHADER 0
     #endif
 
-    gl::ext::ObjectLabel(GL_SHADER, id, -1, name);
+    ObjectLabel(GL_SHADER, id, -1, name);
 }
 
 auto gl::label_program(uint32_t id, const char* name) -> void
 {
     #ifndef GL_PROGRAM
-    #define GL_PROGRAM
+    #define GL_PROGRAM 0
     #endif
 
-    gl::ext::ObjectLabel(GL_PROGRAM, id, -1, name);
+    ObjectLabel(GL_PROGRAM, id, -1, name);
 }

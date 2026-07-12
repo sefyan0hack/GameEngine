@@ -1,4 +1,6 @@
+#pragma once
 #define GLX_GLXEXT_PROTOTYPES
+#define GL_GLEXT_PROTOTYPES
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/XKBlib.h>
