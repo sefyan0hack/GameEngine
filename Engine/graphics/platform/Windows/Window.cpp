@@ -343,3 +343,13 @@ auto CWindow::resize(int32_t width, int32_t height)	-> void
     	SWP_NOMOVE | SWP_NOZORDER
 	);
 }
+
+auto CWindow::platform_extensions() const -> std::string
+{
+    GET_GLEXT_FUNCTION_NO_THROW(wglGetExtensionsStringARB);
+
+    if(wglGetExtensionsStringARB_ext)
+        return wglGetExtensionsStringARB_ext(m_Surface);
+    else
+        return "";
+}

@@ -290,3 +290,11 @@ auto CWindow::resize(int32_t width, int32_t height) -> void
     emscripten_set_canvas_element_size(m_Surface, width, height);
     EventQ::self().push(CWindow::ResizeEvent{width, height});
 }
+
+auto CWindow::platform_extensions() const -> std::string
+{
+    auto exts = emscripten_webgl_get_supported_extensions();
+    std::string exts_str = exts;
+    std::free(exts);
+    return exts_str;
+}

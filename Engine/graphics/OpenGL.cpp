@@ -72,7 +72,7 @@ OpenGL::OpenGL([[maybe_unused]] const CWindow& window)
     logg::info("===================================[GL Extention]=========================================");
     logg::info(gl::extensions());
     logg::info("===================================[Plt Extention]=========================================");
-    logg::info(platform_extensions());
+    logg::info(m_Window.platform_extensions());
     logg::info("===================================[Metrics]==========================================");
     
     gl_info(GL_MAX_TEXTURE_SIZE);
@@ -116,42 +116,42 @@ auto OpenGL::is_current() const -> bool
     return gl::GetCurrentContext() == m_Context;
 }
 
+static auto APIENTRY messgae_callback_func(uint32_t source, uint32_t type, uint32_t id, uint32_t severity, int32_t, const char* message, const void *) -> void
+{
+    std::unordered_map<uint32_t, const char*> m {
+        {GL_DEBUG_SOURCE_API, "GL_DEBUG_SOURCE_API"},
+        {GL_DEBUG_SOURCE_WINDOW_SYSTEM, "GL_DEBUG_SOURCE_WINDOW_SYSTEM"},
+        {GL_DEBUG_SOURCE_SHADER_COMPILER, "GL_DEBUG_SOURCE_SHADER_COMPILER"},
+        {GL_DEBUG_SOURCE_THIRD_PARTY, "GL_DEBUG_SOURCE_THIRD_PARTY"},
+        {GL_DEBUG_SOURCE_APPLICATION, "GL_DEBUG_SOURCE_APPLICATION"},
+        {GL_DEBUG_SOURCE_OTHER, "GL_DEBUG_SOURCE_OTHER"},
+
+        {GL_DEBUG_TYPE_ERROR, "GL_DEBUG_TYPE_ERROR"},
+        {GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR, "GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR"},
+        {GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR, "GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR"},
+        {GL_DEBUG_TYPE_PORTABILITY, "GL_DEBUG_TYPE_PORTABILITY"},
+        {GL_DEBUG_TYPE_PERFORMANCE, "GL_DEBUG_TYPE_PERFORMANCE"},
+        {GL_DEBUG_TYPE_OTHER, "GL_DEBUG_TYPE_OTHER"},
+
+        #if defined(GL_DEBUG_TYPE_MARKER) && defined(GL_DEBUG_TYPE_PUSH_GROUP) && defined(GL_DEBUG_TYPE_POP_GROUP)
+        {GL_DEBUG_TYPE_MARKER, "GL_DEBUG_TYPE_MARKER"},
+        {GL_DEBUG_TYPE_PUSH_GROUP, "GL_DEBUG_TYPE_PUSH_GROUP"},
+        {GL_DEBUG_TYPE_POP_GROUP, "GL_DEBUG_TYPE_POP_GROUP"},
+        #endif
+
+        {GL_DEBUG_SEVERITY_HIGH, "GL_DEBUG_SEVERITY_HIGH"},
+        {GL_DEBUG_SEVERITY_MEDIUM, "GL_DEBUG_SEVERITY_MEDIUM"},
+        {GL_DEBUG_SEVERITY_LOW, "GL_DEBUG_SEVERITY_LOW"},
+        {GL_DEBUG_SEVERITY_NOTIFICATION, "GL_DEBUG_SEVERITY_NOTIFICATION"}
+    };
+    logg::error("source : {}, type: {}, id: {}, severity: {}, msg: {}.", m[source], m[type], id, m[severity], message);
+}
+
 
 auto OpenGL::enable_debug() const -> void
 {
     // Enable Opengl debug
     #if defined(CORE_GL)
-
-    auto messgae_callback_func = +[](uint32_t source, uint32_t type, uint32_t id, uint32_t severity, int32_t, const char* message, const void *) -> void
-    {
-        std::unordered_map<uint32_t, const char*> m {
-            {GL_DEBUG_SOURCE_API, "GL_DEBUG_SOURCE_API"},
-            {GL_DEBUG_SOURCE_WINDOW_SYSTEM, "GL_DEBUG_SOURCE_WINDOW_SYSTEM"},
-            {GL_DEBUG_SOURCE_SHADER_COMPILER, "GL_DEBUG_SOURCE_SHADER_COMPILER"},
-            {GL_DEBUG_SOURCE_THIRD_PARTY, "GL_DEBUG_SOURCE_THIRD_PARTY"},
-            {GL_DEBUG_SOURCE_APPLICATION, "GL_DEBUG_SOURCE_APPLICATION"},
-            {GL_DEBUG_SOURCE_OTHER, "GL_DEBUG_SOURCE_OTHER"},
-
-            {GL_DEBUG_TYPE_ERROR, "GL_DEBUG_TYPE_ERROR"},
-            {GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR, "GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR"},
-            {GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR, "GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR"},
-            {GL_DEBUG_TYPE_PORTABILITY, "GL_DEBUG_TYPE_PORTABILITY"},
-            {GL_DEBUG_TYPE_PERFORMANCE, "GL_DEBUG_TYPE_PERFORMANCE"},
-            {GL_DEBUG_TYPE_OTHER, "GL_DEBUG_TYPE_OTHER"},
-            
-            #if defined(GL_DEBUG_TYPE_MARKER) && defined(GL_DEBUG_TYPE_PUSH_GROUP) && defined(GL_DEBUG_TYPE_POP_GROUP)
-            {GL_DEBUG_TYPE_MARKER, "GL_DEBUG_TYPE_MARKER"},
-            {GL_DEBUG_TYPE_PUSH_GROUP, "GL_DEBUG_TYPE_PUSH_GROUP"},
-            {GL_DEBUG_TYPE_POP_GROUP, "GL_DEBUG_TYPE_POP_GROUP"},
-            #endif
-
-            {GL_DEBUG_SEVERITY_HIGH, "GL_DEBUG_SEVERITY_HIGH"},
-            {GL_DEBUG_SEVERITY_MEDIUM, "GL_DEBUG_SEVERITY_MEDIUM"},
-            {GL_DEBUG_SEVERITY_LOW, "GL_DEBUG_SEVERITY_LOW"},
-            {GL_DEBUG_SEVERITY_NOTIFICATION, "GL_DEBUG_SEVERITY_NOTIFICATION"}
-        };
-        logg::error("source : {}, type: {}, id: {}, severity: {}, msg: {}.", m[source], m[type], id, m[severity], message);
-    };
 
     if (PACK(m_Major, m_Minor) >= PACK(4,3) || gl::extensions().contains("GL_KHR_debug")) {
 

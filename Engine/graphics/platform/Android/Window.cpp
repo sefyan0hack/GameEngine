@@ -241,3 +241,8 @@ auto CWindow::resize(int32_t width, int32_t height)	-> void
 {
 	// for android ?? releay
 }
+
+auto CWindow::platform_extensions() const -> std::string
+{
+    return eglQueryString(m_Display, EGL_EXTENSIONS);
+}

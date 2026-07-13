@@ -43,7 +43,6 @@ class ENGINE_EXPORT OpenGL
         auto enable_debug() const -> void;
         auto resolve_function(const char* name) -> void*;
         auto load_functions() -> void;
-        auto platform_extensions() const -> std::string;
 
     private:
         const CWindow& m_Window;

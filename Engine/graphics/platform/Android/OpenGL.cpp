@@ -31,7 +31,7 @@ auto OpenGL::create_context() -> GL_CTX
     auto display = m_Window.display();
     m_Config = choose_config(display);
 
-    auto extensions = platform_extensions();
+    auto extensions = m_Window.platform_extensions();
     std::vector<EGLint> attribs;
 
     attribs.push_back(EGL_CONTEXT_CLIENT_VERSION); attribs.push_back(MIN_REQUIRED_MAJOR_VERSION);
@@ -49,9 +49,4 @@ auto OpenGL::create_context() -> GL_CTX
     }
 
     return context;
-}
-
-auto OpenGL::platform_extensions() const -> std::string
-{
-    return eglQueryString(m_Window.display(), EGL_EXTENSIONS);
 }

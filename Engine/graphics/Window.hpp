@@ -42,6 +42,7 @@ class ENGINE_EXPORT CWindow
         auto set_vsync(bool state) -> void;
         auto is_fullscreen() -> bool;
         auto resize(int32_t width, int32_t height) -> void;
+        auto platform_extensions() const -> std::string;
 
         auto poll_events()   -> void ;
         auto message_box(const char* title, const char* body) -> bool;

@@ -85,7 +85,7 @@ auto OpenGL::create_context() -> GL_CTX
 
     wglMakeCurrent(dummy_surface, dummy_context);
 
-    std::string extensions = platform_extensions();
+    std::string extensions = m_Window.platform_extensions();
 
     ////////////////////////////////////////////////////////
 
@@ -123,7 +123,7 @@ auto OpenGL::create_context() -> GL_CTX
             attribs.push_back(WGL_SAMPLES_ARB);   attribs.push_back(MSAA);
         }
 
-        attribs.push_back(0);
+        attribs.push_back(GL_NONE);
 
         int format{};
         UINT formats{};
@@ -178,14 +178,4 @@ auto OpenGL::create_context() -> GL_CTX
 
     DestroyWindow(dummy_window);
     return dummy_context;
-}
-
-auto OpenGL::platform_extensions() const -> std::string
-{
-    GET_GLEXT_FUNCTION_NO_THROW(wglGetExtensionsStringARB);
-
-    if(wglGetExtensionsStringARB_ext)
-        return wglGetExtensionsStringARB_ext(m_Window.surface());
-    else 
-        return "";
 }
