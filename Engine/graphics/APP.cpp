@@ -18,13 +18,6 @@
 constexpr auto WINDOW_WIDTH = 1180;
 constexpr auto WINDOW_HEIGHT = 640;
 
-IGame::IGame() 
-    : Window(APP::self(this).Window)
-    , Keyboard(APP::self(this).Keyboard)
-    , Mouse(APP::self(this).Mouse)
-    , UiText(APP::self(this).UiText)
-{}
-
 IGame::~IGame() = default;
 auto IGame::update(float dt) -> void { logg::trace("update(delta: {})", dt); }
 auto IGame::on_deltamouse(float dx, float dy) -> void { logg::trace("on_deltamouse(dx: {}, dy:{})", dx, dy); }
@@ -44,11 +37,9 @@ APP::APP()
     Window.set_vsync(false);
 }
 
-auto APP::self(IGame* g) -> APP&
+auto APP::set_game(IGame* g) -> void
 {
-    static APP ins;
-    if(g) ins.Game = g;
-    return ins;
+    Game = g;
 }
 
 auto APP::frame() -> void

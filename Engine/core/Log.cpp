@@ -24,10 +24,10 @@ namespace logg {
             return "unrechable";
         };
 
-        std::string final_msg = std::format("[{}] [{:<5}] : {}", std::chrono::system_clock::now(), level_to_string(l), msg);
+        std::string final_msg = std::format("[{}] [{:<5}] : {}\n", std::chrono::system_clock::now(), level_to_string(l), msg);
 
         plt_out(final_msg.c_str());
-        std::ofstream out(LOG_FILE, std::ios::app); out << final_msg << '\n';
+        std::ofstream out(LOG_FILE, std::ios::app); out << final_msg;
     };
 
     logger_handler_t* logger = default_logger;

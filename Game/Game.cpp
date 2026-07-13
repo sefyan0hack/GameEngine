@@ -6,10 +6,11 @@
 
 using namespace std;
 
-class Game final : IGame
+class Game final : public IGame
 {
+    APP& app;
 public:
-    Game()
+    Game(APP& app) : app(app)
     {
         auto kimberley_jpg     = Texture::texture_2d("res/textures/kimberley.jpg");
         auto sand_png          = Texture::texture_2d("res/textures/gravelly_sand_diff_4k.png");
@@ -53,14 +54,21 @@ public:
 
     auto camera_mouvment(float delta) -> void
     {
-        float speed = Keyboard.is_down(Key::LeftShift)? 10.0f : 5.0f;
+        float speed = app.Keyboard.is_down(Key::LeftShift)? 10.0f : 5.0f;
 
-        auto Hori = Keyboard.is_down(Key::W) ? 1.0f : Keyboard.is_down(Key::S) ? -1.0f : 0.0f;
-        auto Vert = Keyboard.is_down(Key::D) ? 1.0f : Keyboard.is_down(Key::A) ? -1.0f : 0.0f;
-        auto Up   = Keyboard.is_down(Key::M) ? 1.0f : Keyboard.is_down(Key::N) ? -1.0f : 0.0f;
+        auto Hori = app.Keyboard.is_down(Key::W) ? 1.0f : app.Keyboard.is_down(Key::S) ? -1.0f : 0.0f;
+        auto Vert = app.Keyboard.is_down(Key::D) ? 1.0f : app.Keyboard.is_down(Key::A) ? -1.0f : 0.0f;
+        auto Up   = app.Keyboard.is_down(Key::M) ? 1.0f : app.Keyboard.is_down(Key::N) ? -1.0f : 0.0f;
 
         auto by = speed * delta;
 
         Scene.main_camera().move({ Vert * by, Up * by, Hori * by });
     }
-}_;// note `_` at the end of Game class is an instance of Game
+};
+
+int main(int, char**) {
+    auto app = APP();
+    Game g(app);
+    app.set_game(&g);
+    app.run();
+}

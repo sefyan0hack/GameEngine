@@ -104,7 +104,7 @@ auto OpenGL::create_context() -> GL_CTX
         attribs.push_back(WGL_DRAW_TO_WINDOW_ARB); attribs.push_back(GL_TRUE);
         attribs.push_back(WGL_SUPPORT_OPENGL_ARB); attribs.push_back(GL_TRUE);
         attribs.push_back(WGL_DOUBLE_BUFFER_ARB);  attribs.push_back(GL_TRUE);
-        attribs.push_back(WGL_SWAP_METHOD_ARB);  attribs.push_back(WGL_SWAP_EXCHANGE_ARB);
+        attribs.push_back(WGL_SWAP_METHOD_ARB);    attribs.push_back(WGL_SWAP_EXCHANGE_ARB);
         attribs.push_back(WGL_ACCELERATION_ARB);   attribs.push_back(WGL_FULL_ACCELERATION_ARB);
         attribs.push_back(WGL_DEPTH_BITS_ARB);     attribs.push_back(24);
         attribs.push_back(WGL_RED_BITS_ARB);       attribs.push_back(8);

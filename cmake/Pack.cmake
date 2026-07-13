@@ -74,5 +74,23 @@ function(target_pack target)
 
             COMMENT "Packaging & Signing APK. ndk: ${CMAKE_ANDROID_NDK_VERSION} sdk: ${ANDROID_PLATFORM_LEVEL} abi: ${ANDROID_ABI}"
         )
-        endif()
+
+        add_custom_target(run_android
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+
+            COMMAND adb install -r signed.apk
+
+            COMMAND adb logcat -c
+            COMMAND adb shell am force-stop com.engine.Game
+            COMMAND adb shell monkey -p com.engine.Game 1
+
+            # COMMAND adb logcat -s ENGINE:D "*:S"
+            COMMAND adb logcat | findstr ENGINE
+            # COMMAND adb logcat -s Engine:V *:F
+
+            DEPENDS ${target}
+
+            USES_TERMINAL
+        )
+    endif()
 endfunction()

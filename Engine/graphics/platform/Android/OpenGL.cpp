@@ -5,6 +5,8 @@
 
 #include <core/Exception.hpp>
 
+#include <vector>
+
 OpenGL::~OpenGL()
 {
     if (m_Context != GL_CTX{}) {
@@ -22,42 +24,25 @@ auto OpenGL::find_config([[maybe_unused]] const CWindow& window) -> GL_CFG
     return {};
 }
 
+extern auto choose_config(H_DSP display) -> EGLConfig;
+
 auto OpenGL::create_context() -> GL_CTX
 {
     auto display = m_Window.display();
-    auto surface = m_Window.surface();
+    m_Config = choose_config(display);
 
-    int32_t DepthBufferBits[] = { 24, 16 };
+    auto extensions = platform_extensions();
+    std::vector<EGLint> attribs;
 
-    EGLConfig config;
-    EGLint numConfigs;
-    EGLBoolean valid_config = false;
+    attribs.push_back(EGL_CONTEXT_CLIENT_VERSION); attribs.push_back(MIN_REQUIRED_MAJOR_VERSION);
 
-    for(int32_t i = 0; i < sizeof(DepthBufferBits) / sizeof(DepthBufferBits[0]); i++){
-        static const EGLint visualAttribs[] = {
-            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,
-            EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-            EGL_BLUE_SIZE, 8,
-            EGL_GREEN_SIZE, 8,
-            EGL_RED_SIZE, 8,
-            EGL_ALPHA_SIZE, 8,
-            EGL_STENCIL_SIZE, 8,
-            EGL_DEPTH_SIZE, DepthBufferBits[i],
-            EGL_NONE
-        };
-
-        valid_config = eglChooseConfig(display, visualAttribs, &config, 1, &numConfigs) && numConfigs > 0;
-        if (valid_config) break;
+    if(extensions.contains("EGL_KHR_create_context")){
+        attribs.push_back(EGL_CONTEXT_FLAGS_KHR); attribs.push_back(EGL_CONTEXT_OPENGL_DEBUG_BIT_KHR);
     }
 
-    if(!valid_config) throw Exception("Failed to choose EGL config for Android");
+    attribs.push_back(EGL_NONE);
 
-    static const EGLint contextAttribs[] = {
-        EGL_CONTEXT_CLIENT_VERSION, 3, 
-        EGL_NONE
-    };
-
-    auto context = eglCreateContext(display, m_Config, EGL_NO_CONTEXT, contextAttribs);
+    auto context = eglCreateContext(display, m_Config, EGL_NO_CONTEXT, attribs.data());
 
     if (context == EGL_NO_CONTEXT) {
         throw Exception("Failed to create EGL context (Error: {})", eglGetError());

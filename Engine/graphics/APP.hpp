@@ -18,27 +18,22 @@
 
 class ENGINE_EXPORT IGame {
 public:
-    IGame();
     virtual ~IGame();
     virtual auto update(float dt) -> void;
     virtual auto on_deltamouse(float dx, float dy) -> void;
 
-    ::CWindow& Window;
-    ::Keyboard& Keyboard;
-    ::Mouse& Mouse;
-    ::Text& UiText;
     ::Scene Scene;
 };
 
 class ENGINE_EXPORT APP
 {
-    APP();
 public:
+    APP();
     auto run() -> void ;
     auto fps() const -> float;
+    auto set_game(IGame* g) -> void;
 
     static auto loop_body(void* ctx) -> void;
-    static auto self(IGame* g = nullptr) -> APP&;
 
 private:
     auto frame() -> void;
