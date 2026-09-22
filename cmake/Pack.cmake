@@ -75,7 +75,7 @@ function(target_pack target)
             COMMENT "Packaging & Signing APK. ndk: ${CMAKE_ANDROID_NDK_VERSION} sdk: ${ANDROID_PLATFORM_LEVEL} abi: ${ANDROID_ABI}"
         )
 
-        find_program(ADB adb PATHS "${ANDROID_SDK_ROOT}/platforms-tools" REQUIRED)
+        find_program(ADB adb PATHS "${ANDROID_SDK_ROOT}/platforms-tools")
 
         add_custom_target(run
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
