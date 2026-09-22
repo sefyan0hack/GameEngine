@@ -568,7 +568,7 @@ auto gl::query_timestamp(GLuint id) -> void
     glQueryCounter_ext(id, GL_TIMESTAMP);
     #else
     if(OpenGL::is_GL_EXT_disjoint_timer_query){
-        GET_GLEXT_FUNCTION_THROW(GL_TIMESTAMP_EXT);
+        GET_GLEXT_FUNCTION_THROW(QueryCounterEXT);
         QueryCounterEXT_ext(id, GL_TIMESTAMP_EXT);
     }
     #endif
