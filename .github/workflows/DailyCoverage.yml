@@ -37,7 +37,7 @@ jobs:
         shell: bash
         run: |
           rm -rf build
-          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DEG_UNIT_TESTS=ON
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DEG_UNIT_TESTS=ON -DEG_COVERAGE=ON
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
