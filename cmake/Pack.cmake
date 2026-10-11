@@ -58,11 +58,15 @@ function(target_pack target)
             COMMAND ${AAPT} package -f
                 -I "${ANDROID_SDK_ROOT}/platforms/android-${ANDROID_PLATFORM_LEVEL}/android.jar"
                 -M "${CMAKE_SOURCE_DIR}/cmake/AndroidManifest.xml"
-                --min-sdk-version ${NDK_MIN_PLATFORM_LEVEL} --target-sdk-version ${ANDROID_PLATFORM_LEVEL}
-                -F base.apk ${CMAKE_BINARY_DIR}/apk
+                --rename-manifest-package com.sofyne.${target}
+                --min-sdk-version    ${NDK_MIN_PLATFORM_LEVEL}
+                --target-sdk-version ${ANDROID_PLATFORM_LEVEL}
+                --version-code       1
+                --version-name       1.0
+                -F ${target}_base.apk ${CMAKE_BINARY_DIR}/apk
 
             COMMAND ${CMAKE_COMMAND} -E echo "Aligning APK"
-            COMMAND ${ZIPALIGN} -f 4 base.apk aligned.apk
+            COMMAND ${ZIPALIGN} -f 4 ${target}_base.apk ${target}_aligned.apk
 
             COMMAND ${CMAKE_COMMAND} -E echo "Signing APK"
             COMMAND ${APKSIGNER} sign
@@ -70,7 +74,7 @@ function(target_pack target)
                 --ks-pass pass:android
                 --key-pass pass:android
                 --ks-key-alias androiddebugkey
-                --out signed.apk aligned.apk
+                --out ${target}.apk ${target}_aligned.apk
 
             COMMENT "Packaging & Signing APK. ndk: ${CMAKE_ANDROID_NDK_VERSION} sdk: ${ANDROID_PLATFORM_LEVEL} abi: ${ANDROID_ABI}"
         )
