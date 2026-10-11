@@ -6,6 +6,9 @@
 #include <engine_export.h>
 
 #include <emath/mat4.hpp>
+#include <emath/vec2.hpp>
+#include <emath/vec3.hpp>
+#include <emath/vec4.hpp>
 
 #include <memory>
 #include <cstdint>
@@ -23,12 +26,16 @@ public:
     auto scene_pass(const class Scene& scene) const -> void;
     auto skybox_pass() const -> void;
     auto text_pass() const -> void;
+    auto ui_pass() const -> void;
 
     auto set_viewport(int32_t x, int32_t y, int32_t width, int32_t height) -> void override;
     auto set_mode(DrawMode mode) -> void override;
     auto clear_screen(uint32_t buffersmask) const -> void  override;
     auto stats() const -> RenderStats override;
     auto gpu_time_elapsed() const -> std::unordered_map<std::string, uint64_t>& override;
+
+    auto draw_rectangle(emath::vec2 pos, emath::vec2 size, float radius, emath::vec4 color) const-> void;
+    auto draw_circle(emath::vec2 pos, float radius, emath::vec4 color) const -> void;
 
 private:
     auto prepare_text_buffers() -> void;
@@ -67,6 +74,10 @@ private:
         uint32_t VAO, VBO, Atlas;
         uint32_t time_elapsed;
     } m_Text;
+
+    struct {
+        std::shared_ptr<class ShaderProgram> Program;
+    } m_Ui;
 
     mutable RenderStats m_Stats;
     mutable uint32_t m_Frame;
