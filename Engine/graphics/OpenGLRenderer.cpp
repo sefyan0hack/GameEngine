@@ -216,11 +216,17 @@ auto OpenGLRenderer::render(const Scene& scene) const -> void
         skybox_pass();
         gl::end_query_time_elapsed();
     }
+
+    gl::Enable(GL_BLEND);
+    gl::DepthMask(GL_FALSE);
+    gl::DepthFunc(GL_ALWAYS);
+
+    {
+        ui_pass();
+    }
+
     {
         gl::begin_query_time_elapsed(m_Text.time_elapsed);
-        gl::Enable(GL_BLEND);
-        gl::DepthMask(GL_FALSE);
-        gl::DepthFunc(GL_ALWAYS);
         text_pass();
         gl::end_query_time_elapsed();
     }
@@ -228,12 +234,6 @@ auto OpenGLRenderer::render(const Scene& scene) const -> void
     gl::DepthMask(GL_TRUE);
     gl::DepthFunc(GL_LESS);
 
-    {
-        gl::Disable(GL_DEPTH_TEST);
-        ui_pass();
-        gl::Enable(GL_DEPTH_TEST);
-    }
-    
     gl::get_query_if_available(m_Depth.time_elapsed, &m_Gpu_time_elaped[m_Depth.Program->name()]);
     gl::get_query_if_available(m_Scene.time_elapsed, &m_Gpu_time_elaped[m_Scene.Program->name()]);
     gl::get_query_if_available(m_SkyBox.time_elapsed, &m_Gpu_time_elaped[m_SkyBox.Program->name()]);
@@ -413,51 +413,21 @@ auto OpenGLRenderer::text_pass() const -> void {
 auto OpenGLRenderer::ui_pass() const -> void
 {
     m_Ui.Program->use();
-    draw_rectangle({200,200}, {50,50}, 0.0f, {0,0,0,1});
+
+    draw_rectangle({0,0}, {200, 200}, {0,0,0,0.5f});
     gl::DrawArrays(GL_TRIANGLES, 0, 3);
-    draw_rectangle({400,200}, {50,50}, 10.0f, {0,0,0,1});
+
+    draw_rounded_rectangle({400,200}, {50,50}, 10.0f, {0,0,0,1});
     gl::DrawArrays(GL_TRIANGLES, 0, 3);
+
     draw_circle({300,400}, 60, {0,0,0,1});
     gl::DrawArrays(GL_TRIANGLES, 0, 3);
 
-    {
-        auto PosSize = emath::vec4(200, 100, 500, 600);
-        auto color = emath::vec4{0,0,0,1};
+    draw_circle_outline({600,400}, 60, 10, {0,0,0,1});
+    gl::DrawArrays(GL_TRIANGLES, 0, 3);
 
-        m_Ui.Program->set_uniform("uPosition", PosSize);
-        m_Ui.Program->set_uniform("uColor", color);
-
-        m_Ui.Program->set_uniform("uShape", 3);
-        m_Ui.Program->set_uniform("uRadius", 3.0f);
-
-        gl::DrawArrays(GL_TRIANGLES, 0, 3);
-    }
-
-    {
-        auto PosSize = emath::vec4(500, 500, 100, 100);
-        auto color = emath::vec4{0,0,0,1};
-
-        m_Ui.Program->set_uniform("uPosition", PosSize);
-        m_Ui.Program->set_uniform("uColor", color);
-
-        m_Ui.Program->set_uniform("uShape", 4);
-        m_Ui.Program->set_uniform("uRadius", 3.0f);
-
-        gl::DrawArrays(GL_TRIANGLES, 0, 3);
-    }
-
-    {
-        auto PosSize = emath::vec4(600, 600, 100, 100);
-        auto color = emath::vec4{0,0,0,1};
-
-        m_Ui.Program->set_uniform("uPosition", PosSize);
-        m_Ui.Program->set_uniform("uColor", color);
-
-        m_Ui.Program->set_uniform("uShape", 5);
-        m_Ui.Program->set_uniform("uRadius", 3.0f);
-
-        gl::DrawArrays(GL_TRIANGLES, 0, 3);
-    }
+    draw_line({0,0}, {500, 500}, 40, {0,0,0,1});
+    gl::DrawArrays(GL_TRIANGLES, 0, 3);
 
 }
 
@@ -537,20 +507,15 @@ auto OpenGLRenderer::gpu_time_elapsed() const -> std::unordered_map<std::string,
     return m_Gpu_time_elaped;
 }
 
-auto OpenGLRenderer::draw_rectangle(emath::vec2 pos, emath::vec2 size, float coner_radius, emath::vec4 color) const -> void
+auto OpenGLRenderer::draw_rectangle(emath::vec2 pos, emath::vec2 size, emath::vec4 color) const -> void
 {
     auto PosSize = emath::vec4(pos.x, pos.y, size.x, size.y);
 
     m_Ui.Program->set_uniform("uPosition", PosSize);
     m_Ui.Program->set_uniform("uColor", color);
 
-    if(coner_radius != 0.0f){
-        m_Ui.Program->set_uniform("uShape", 1);
-        m_Ui.Program->set_uniform("uRadius", coner_radius);
-    } else {
-        m_Ui.Program->set_uniform("uShape", 0);
-        m_Ui.Program->set_uniform("uRadius", coner_radius);
-    }
+    m_Ui.Program->set_uniform("uShape", 0);
+    m_Ui.Program->set_uniform("uRadius", 0.0f);
 }
 
 auto OpenGLRenderer::draw_circle(emath::vec2 pos, float radius, emath::vec4 color) const -> void
@@ -561,5 +526,45 @@ auto OpenGLRenderer::draw_circle(emath::vec2 pos, float radius, emath::vec4 colo
     m_Ui.Program->set_uniform("uColor", color);
 
     m_Ui.Program->set_uniform("uShape", 2);
-    m_Ui.Program->set_uniform("uRadius", 0.0f);
+    m_Ui.Program->set_uniform("uRadius", radius);
+}
+
+auto OpenGLRenderer::draw_rectangle_outline(emath::vec2 pos, emath::vec2 size, float thikness, emath::vec4 color) const-> void
+{
+    auto PosSize = emath::vec4{pos.x, pos.y, size.x, size.y};
+    m_Ui.Program->set_uniform("uPosition", PosSize);
+    m_Ui.Program->set_uniform("uColor", color);
+
+    m_Ui.Program->set_uniform("uShape", 5);
+    m_Ui.Program->set_uniform("uRadius", thikness);
+}
+
+auto OpenGLRenderer::draw_rounded_rectangle(emath::vec2 pos, emath::vec2 size, float radius, emath::vec4 color) const-> void
+{
+    auto PosSize = emath::vec4{pos.x, pos.y, size.x, size.y};
+    m_Ui.Program->set_uniform("uPosition", PosSize);
+    m_Ui.Program->set_uniform("uColor", color);
+
+    m_Ui.Program->set_uniform("uShape", 1);
+    m_Ui.Program->set_uniform("uRadius", radius);
+}
+
+auto OpenGLRenderer::draw_circle_outline(emath::vec2 pos, float radius, float thikness, emath::vec4 color) const -> void
+{
+    auto pos_thinkess = emath::vec4{pos.x, pos.y, thikness, 0};
+    m_Ui.Program->set_uniform("uPosition", pos_thinkess);
+    m_Ui.Program->set_uniform("uColor", color);
+
+    m_Ui.Program->set_uniform("uShape", 4);
+    m_Ui.Program->set_uniform("uRadius", radius);
+}
+
+auto OpenGLRenderer::draw_line(emath::vec2 p1, emath::vec2 p2, float thikness, emath::vec4 color) const -> void
+{
+    auto p1p2 = emath::vec4{p1.x, p1.y, p2.x, p2.y};
+    m_Ui.Program->set_uniform("uPosition", p1p2);
+    m_Ui.Program->set_uniform("uColor", color);
+
+    m_Ui.Program->set_uniform("uShape", 3);
+    m_Ui.Program->set_uniform("uRadius", thikness);
 }

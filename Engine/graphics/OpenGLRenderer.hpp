@@ -34,8 +34,12 @@ public:
     auto stats() const -> RenderStats override;
     auto gpu_time_elapsed() const -> std::unordered_map<std::string, uint64_t>& override;
 
-    auto draw_rectangle(emath::vec2 pos, emath::vec2 size, float radius, emath::vec4 color) const-> void;
+    auto draw_rectangle(emath::vec2 pos, emath::vec2 size, emath::vec4 color) const-> void;
+    auto draw_rectangle_outline(emath::vec2 pos, emath::vec2 size, float thikness, emath::vec4 color) const-> void;
+    auto draw_rounded_rectangle(emath::vec2 pos, emath::vec2 size, float radius, emath::vec4 color) const-> void;
     auto draw_circle(emath::vec2 pos, float radius, emath::vec4 color) const -> void;
+    auto draw_circle_outline(emath::vec2 pos, float radius, float thikness, emath::vec4 color) const -> void;
+    auto draw_line(emath::vec2 p1, emath::vec2 p2, float thikness, emath::vec4 color) const -> void;
 
 private:
     auto prepare_text_buffers() -> void;

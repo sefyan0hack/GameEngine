@@ -13,7 +13,7 @@ uniform float uRadius;
 
 out vec4 FragColor;
 
-float roundedBoxSDF(vec2 pos, vec2 size, float radius)
+float rounded_rectangle(vec2 pos, vec2 size, float radius)
 {
     vec2 q = abs(pos) - size * 0.5 + radius;
 
@@ -27,14 +27,14 @@ float rectangle(vec2 pos, vec2 size)
     return max(abs(pos.x) - size.x * 0.5, abs(pos.y) - size.y * 0.5);
 }
 
-float circle(vec2 pos, vec2 size)
+float circle(vec2 pos, float radius)
 {
-    return length(pos) - min(size.x, size.y) * 0.5;
+    return length(pos) - radius;
 }
 
-float circleOutline(vec2 pos, vec2 size, float thickness)
+float circle_outline(vec2 pos, float radius, float thickness)
 {
-    return abs(circle(pos, size)) - thickness * 0.5;
+    return abs(circle(pos, radius)) - thickness * 0.5;
 }
 
 float line(vec2 p, vec2 size, float thickness)
@@ -50,14 +50,14 @@ float line(vec2 p, vec2 size, float thickness)
     return length(pa - ba * h) - thickness * 0.5;
 }
 
-float rectangleOutline(vec2 pos, vec2 size, float thickness)
+float rectangle_outline(vec2 pos, vec2 size, float thickness)
 {
     return abs(rectangle(pos, size)) - thickness * 0.5;
 }
 
-float roundedRectangleOutline(vec2 pos, vec2 size, float radius, float thickness)
+float rounded_rectangle_outline(vec2 pos, vec2 size, float radius, float thickness)
 {
-    return abs(roundedBoxSDF(pos, size, radius)) - thickness * 0.5;
+    return abs(rounded_rectangle(pos, size, radius)) - thickness * 0.5;
 }
 
 float shapeSDF()
@@ -76,12 +76,12 @@ float shapeSDF()
     switch (uShape)
     {
         case 0: return rectangle(p, size);
-        case 1: return roundedBoxSDF(p, size, uRadius);
-        case 2: return circle(p, size);
+        case 1: return rounded_rectangle(p, size, uRadius);
+        case 2: return circle(p, uRadius);
         case 3: return line(p, size, uRadius);
-        case 4: return circleOutline(p, size, uRadius);
-        case 5: return rectangleOutline(p, size, uRadius);
-        // case 6: return roundedRectangleOutline(p, size, uRadius, uBorderThickness);
+        case 4: return circle_outline(p, uRadius, uPosition.z);
+        case 5: return rectangle_outline(p, size, uRadius);
+        // case 6: return rounded_rectangle_outline(p, size, uRadius, uBorderThickness);
 
         default: return 1e20;
     }
@@ -90,8 +90,7 @@ float shapeSDF()
 void main()
 {
     float d = shapeSDF();
-
-    float aa = fwidth(d);
+    float aa = max(fwidth(d), 1e-5);
     float alpha = max(1.0 - smoothstep(-aa, aa, d), 0);
 
     FragColor = vec4(uColor.rgb, uColor.a * alpha);
