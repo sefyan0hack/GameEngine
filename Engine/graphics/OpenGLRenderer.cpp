@@ -14,6 +14,9 @@
 #include "emath/uvec2.hpp"
 #include "gl.hpp"
 
+#include "../../res/shaders/defines.h"
+#include "gl.inl"
+
 #include <GL/glcorearb.h>
 #include <core/Log.hpp>
 #include <core/Exception.hpp>
@@ -184,8 +187,12 @@ auto OpenGLRenderer::render(const Scene& scene) const -> void
 
     {
         // Uploading Globle UBO
+
+        auto [w, h] = m_GApi.window().dims();
+        auto ScreenResolution = emath::uvec2(w, h);
+
         UBO::Globle data {
-            .ScreenResolution = emath::uvec2(m_GApi.window().dims().first, m_GApi.window().dims().second),
+            .ScreenResolution = ScreenResolution,
             .Frame = m_Frame,
             .Flags = 0
         };
@@ -414,20 +421,30 @@ auto OpenGLRenderer::ui_pass() const -> void
 {
     m_Ui.Program->use();
 
-    draw_rectangle({0,0}, {200, 200}, {0,0,0,0.5f});
-    gl::DrawArrays(GL_TRIANGLES, 0, 3);
+    // draw_rectangle({0,0}, {200, 200}, {0,0,0,0.5f});
+    // gl::DrawArrays(GL_TRIANGLES, 0, 3);
 
-    draw_rounded_rectangle({400,200}, {50,50}, 10.0f, {0,0,0,1});
-    gl::DrawArrays(GL_TRIANGLES, 0, 3);
+    // draw_rounded_rectangle({400,200}, {50,50}, 10.0f, {0,0,0,1});
+    // gl::DrawArrays(GL_TRIANGLES, 0, 3);
 
-    draw_circle({300,400}, 60, {0,0,0,1});
-    gl::DrawArrays(GL_TRIANGLES, 0, 3);
+    // draw_circle({300,400}, 60, {0,0,0,1});
+    // gl::DrawArrays(GL_TRIANGLES, 0, 3);
 
-    draw_circle_outline({600,400}, 60, 10, {0,0,0,1});
-    gl::DrawArrays(GL_TRIANGLES, 0, 3);
+    // draw_circle_outline({600,400}, 60, 10, {0,0,0,1});
+    // gl::DrawArrays(GL_TRIANGLES, 0, 3);
 
-    draw_line({0,0}, {500, 500}, 40, {0,0,0,1});
-    gl::DrawArrays(GL_TRIANGLES, 0, 3);
+    // draw_line({0,0}, {500, 500}, 40, {0,0,0,1});
+    // gl::DrawArrays(GL_TRIANGLES, 0, 3);
+
+    // draw_rounded_rectangle_outline({0,0}, {500, 500}, 40, 30, {0,0,0,1});
+    // gl::DrawArrays(GL_TRIANGLES, 0, 3);
+
+    {
+        auto pos = emath::vec2{600, 300};
+        draw_rounded_rectangle(pos, {160,40}, 10.0f, {0,0,0,0.8f});
+        gl::DrawArrays(GL_TRIANGLES, 0, 3);
+        m_Text.Text.text("Submit", pos);
+    }
 
 }
 
@@ -510,61 +527,84 @@ auto OpenGLRenderer::gpu_time_elapsed() const -> std::unordered_map<std::string,
 auto OpenGLRenderer::draw_rectangle(emath::vec2 pos, emath::vec2 size, emath::vec4 color) const -> void
 {
     auto PosSize = emath::vec4(pos.x, pos.y, size.x, size.y);
+    auto params = emath::vec4{ 0, 0, 0, 0};
 
     m_Ui.Program->set_uniform("uPosition", PosSize);
     m_Ui.Program->set_uniform("uColor", color);
 
-    m_Ui.Program->set_uniform("uShape", 0);
-    m_Ui.Program->set_uniform("uRadius", 0.0f);
+    m_Ui.Program->set_uniform("uShape", GLSL_SHAPE_rectangle);
+    m_Ui.Program->set_uniform("uParams", params);
 }
 
 auto OpenGLRenderer::draw_circle(emath::vec2 pos, float radius, emath::vec4 color) const -> void
 {
-    auto PosSize = emath::vec4(pos.x, pos.y, radius * 2.0f, radius * 2.0f);
+    auto PosSize = emath::vec4(pos.x, pos.y, 0, 0);
+    auto params = emath::vec4{ radius, 0, 0, 0};
 
     m_Ui.Program->set_uniform("uPosition", PosSize);
     m_Ui.Program->set_uniform("uColor", color);
 
-    m_Ui.Program->set_uniform("uShape", 2);
-    m_Ui.Program->set_uniform("uRadius", radius);
+    m_Ui.Program->set_uniform("uShape", GLSL_SHAPE_circle);
+    m_Ui.Program->set_uniform("uParams", params);
 }
 
 auto OpenGLRenderer::draw_rectangle_outline(emath::vec2 pos, emath::vec2 size, float thikness, emath::vec4 color) const-> void
 {
     auto PosSize = emath::vec4{pos.x, pos.y, size.x, size.y};
+    auto params = emath::vec4{ thikness, 0, 0, 0};
+
     m_Ui.Program->set_uniform("uPosition", PosSize);
     m_Ui.Program->set_uniform("uColor", color);
 
-    m_Ui.Program->set_uniform("uShape", 5);
-    m_Ui.Program->set_uniform("uRadius", thikness);
+    m_Ui.Program->set_uniform("uShape", GLSL_SHAPE_rectangle_outline);
+    m_Ui.Program->set_uniform("uParams", params);
 }
 
 auto OpenGLRenderer::draw_rounded_rectangle(emath::vec2 pos, emath::vec2 size, float radius, emath::vec4 color) const-> void
 {
     auto PosSize = emath::vec4{pos.x, pos.y, size.x, size.y};
+    auto params = emath::vec4{ radius, 0, 0, 0};
+
     m_Ui.Program->set_uniform("uPosition", PosSize);
     m_Ui.Program->set_uniform("uColor", color);
 
-    m_Ui.Program->set_uniform("uShape", 1);
-    m_Ui.Program->set_uniform("uRadius", radius);
+    m_Ui.Program->set_uniform("uShape", GLSL_SHAPE_rounded_rectangle);
+    m_Ui.Program->set_uniform("uParams", params);
 }
 
 auto OpenGLRenderer::draw_circle_outline(emath::vec2 pos, float radius, float thikness, emath::vec4 color) const -> void
 {
-    auto pos_thinkess = emath::vec4{pos.x, pos.y, thikness, 0};
+    auto pos_thinkess = emath::vec4{pos.x, pos.y, 0, 0};
+
+    auto params = emath::vec4{ radius, thikness, 0, 0};
+
     m_Ui.Program->set_uniform("uPosition", pos_thinkess);
     m_Ui.Program->set_uniform("uColor", color);
 
-    m_Ui.Program->set_uniform("uShape", 4);
-    m_Ui.Program->set_uniform("uRadius", radius);
+    m_Ui.Program->set_uniform("uShape", GLSL_SHAPE_circle_outline);
+    m_Ui.Program->set_uniform("uParams", params);
 }
 
 auto OpenGLRenderer::draw_line(emath::vec2 p1, emath::vec2 p2, float thikness, emath::vec4 color) const -> void
 {
     auto p1p2 = emath::vec4{p1.x, p1.y, p2.x, p2.y};
+    auto params = emath::vec4{ thikness, 0, 0, 0};
+
     m_Ui.Program->set_uniform("uPosition", p1p2);
     m_Ui.Program->set_uniform("uColor", color);
 
-    m_Ui.Program->set_uniform("uShape", 3);
-    m_Ui.Program->set_uniform("uRadius", thikness);
+    m_Ui.Program->set_uniform("uShape", GLSL_SHAPE_line);
+    m_Ui.Program->set_uniform("uParams", params);
+}
+
+auto OpenGLRenderer::draw_rounded_rectangle_outline(emath::vec2 pos, emath::vec2 size, float radius, float thikness, emath::vec4 color) const-> void
+{
+    auto PosSize = emath::vec4{pos.x, pos.y, size.x, size.y};
+    auto params = emath::vec4{ radius, thikness, 0, 0};
+
+    m_Ui.Program->set_uniform("uPosition", PosSize);
+    m_Ui.Program->set_uniform("uColor", color);
+
+    m_Ui.Program->set_uniform("uShape", GLSL_SHAPE_rounded_rectangle_outline);
+    m_Ui.Program->set_uniform("uParams", params);
 }

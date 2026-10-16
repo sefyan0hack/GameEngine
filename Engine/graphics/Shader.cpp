@@ -43,6 +43,9 @@ Shader::Shader(const char* shader, Type type)
     header << "#define MAX_FRAGMENT_TEXTURE_UNITS " << OpenGL::MAX_FRAGMENT_TEXTURE_UNITS << '\n';
     header << "#define MAX_VERTEX_TEXTURE_UNITS " << OpenGL::MAX_VERTEX_TEXTURE_UNITS << '\n';
     header << "#define MAX_COMBINED_TEXTURE_UNITS " << OpenGL::MAX_COMBINED_TEXTURE_UNITS << '\n';
+
+    header << res::get("res/shaders/defines.h").data() << '\n';
+
     {
         header << "#define sampler_at(s, uv, idx) (";
         for (int i = 0; i < OpenGL::MAX_FRAGMENT_TEXTURE_UNITS; i++)

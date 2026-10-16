@@ -9,7 +9,8 @@ layout (std140) uniform Globle
 uniform int   uShape;
 uniform vec4  uPosition;
 uniform vec4  uColor;
-uniform float uRadius;
+uniform vec4  uParams;
+
 
 out vec4 FragColor;
 
@@ -75,13 +76,13 @@ float shapeSDF()
 
     switch (uShape)
     {
-        case 0: return rectangle(p, size);
-        case 1: return rounded_rectangle(p, size, uRadius);
-        case 2: return circle(p, uRadius);
-        case 3: return line(p, size, uRadius);
-        case 4: return circle_outline(p, uRadius, uPosition.z);
-        case 5: return rectangle_outline(p, size, uRadius);
-        // case 6: return rounded_rectangle_outline(p, size, uRadius, uBorderThickness);
+        case GLSL_SHAPE_rectangle: return rectangle(p, size);
+        case GLSL_SHAPE_rounded_rectangle: return rounded_rectangle(p, size, uParams.x);
+        case GLSL_SHAPE_circle: return circle(p, uParams.x);
+        case GLSL_SHAPE_line: return line(p, size, uParams.x);
+        case GLSL_SHAPE_circle_outline: return circle_outline(p, uParams.x, uParams.y);
+        case GLSL_SHAPE_rectangle_outline: return rectangle_outline(p, size, uParams.x);
+        case GLSL_SHAPE_rounded_rectangle_outline: return rounded_rectangle_outline(p, size, uParams.x, uParams.y);
 
         default: return 1e20;
     }
