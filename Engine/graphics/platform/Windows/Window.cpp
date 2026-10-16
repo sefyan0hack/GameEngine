@@ -323,7 +323,7 @@ auto CWindow::message_box(const char* title, const char* body) -> bool
 auto CWindow::dims() const	-> std::pair<int32_t, int32_t>
 {
 	RECT rect{};
-	if(GetWindowRect(m_Handle, &rect))
+	if(GetClientRect(m_Handle, &rect))
 		return { rect.right - rect.left, rect.bottom - rect.top };
 	else
 		throw Exception("GetWindowRect failed with: {}", GetLastError());
