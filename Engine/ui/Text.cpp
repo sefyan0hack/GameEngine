@@ -62,7 +62,7 @@ auto Text::fill_text_buffer(int32_t width, int32_t height) -> void
     for (const auto& [pos, text] : m_Text) {
         float start_x = pos.x;
         float x = start_x;
-        float y = static_cast<float>(height) - pos.y - (ascent * scale);
+        float y = pos.y + (ascent * scale);
 
         for (auto c : text) {
 
@@ -72,7 +72,7 @@ auto Text::fill_text_buffer(int32_t width, int32_t height) -> void
                     ? m_Glyphs[ch - FIRST_GLYPH]
                     : m_Glyphs['?' - FIRST_GLYPH];
 
-            auto line_advance = [&](){ x = start_x; y -= (ascent - descent + linegap) * scale; };
+            auto line_advance = [&](){ x = start_x; y += (ascent - descent + linegap) * scale; };
             auto glyph_advance = [&](int n = 1){  x += glyph.xadvance *  n; };
 
             switch(c)
@@ -83,12 +83,11 @@ auto Text::fill_text_buffer(int32_t width, int32_t height) -> void
             }
 
             float w = static_cast<float>(glyph.x1 - glyph.x0);
-            float h = static_cast<float>(glyph.y1 - glyph.y0);
 
             if (int32_t(x + w) >= width) line_advance();
 
             float xpos = x + glyph.xoff;
-            float ypos = y - glyph.yoff - h;
+            float ypos = y + glyph.yoff;
 
             m_TextGlyphs.push_back(Glyph {
                 .offset = {xpos, ypos},

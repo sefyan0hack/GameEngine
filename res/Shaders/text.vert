@@ -11,18 +11,19 @@ layout(std140) uniform Globle
 };
 
 vec2 positions[4] = vec2[](
-    vec2(0.0, 0.0), // BL
-    vec2(1.0, 0.0), // BR
-    vec2(0.0, 1.0), // TL
-    vec2(1.0, 1.0)  // TR
+    vec2(0.0, 0.0), // 0: top-left
+    vec2(0.0, 1.0), // 1: bottom-left
+    vec2(1.0, 0.0), // 2: top-right
+    vec2(1.0, 1.0)  // 3: bottom-right
 );
 
 const vec2 uvs[4] = vec2[](
-    vec2(0.0, 1.0), // BL
-    vec2(1.0, 1.0), // BR
-    vec2(0.0, 0.0), // TL
-    vec2(1.0, 0.0)  // TR
+    vec2(0.0, 0.0), // 0: top-left of glyph bitmap
+    vec2(0.0, 1.0), // 1: bottom-left
+    vec2(1.0, 0.0), // 2: top-right
+    vec2(1.0, 1.0)  // 3: bottom-right
 );
+
 
 void main() {
     float width  = float(ScreenResolution.x);
@@ -33,11 +34,11 @@ void main() {
 
     vec2 glyphSize = vec2(a_TexRect.zw) - vec2(a_TexRect.xy);
 
-    vec2 worldPos = a_Offset + pos * glyphSize ;
-    
+    vec2 worldPos = a_Offset + pos * glyphSize;
+
     gl_Position = vec4(
-        (worldPos.x / width) * 2.0 - 1.0,
-        (worldPos.y / height) * 2.0 - 1.0,
+        (worldPos.x / width)  * 2.0 - 1.0,
+        1.0 - (worldPos.y / height) * 2.0,
         0.0,
         1.0
     );
