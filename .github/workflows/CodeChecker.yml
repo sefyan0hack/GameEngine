@@ -1,32 +1,45 @@
-name: CI
+name: CodeChecker
 on: 
   push:
     branches: [ main ]
   workflow_dispatch:
 
-job:
-  steps:
-    - name: "Check out repository"
-      uses: actions/checkout@v6
+permissions:
+  contents: read
 
-    - name: Install Dependencies
-      shell: bash
-      run: sudo apt-get install -y libx11-dev libgl-dev
+jobs:
+  security:
+    name: CodeChecker
+    runs-on: ubuntu-latest
 
-    - name: Build
-      uses: ./.github/actions/Desktop-build
-      with:
-        compiler: ${{ matrix.compiler }}
-        build_type: ${{ matrix.build_type }}
-        build_dir: ${{ env.BUILD_DIR }}
-        cmake_flags: -DEG_UNIT_TESTS=ON -DEG_HARDEN=ON
-  
-    - uses: whisperity/codechecker-analysis-action@v1
-      id: codechecker
-      with:
-        logfile: ${{ github.workspace }}/build/compile_commands.json
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
 
-    - uses: actions/upload-artifact@v2
-      with:
-        name: "CodeChecker Bug Reports"
-        path: ${{ steps.codechecker.outputs.result-html-dir }}
+      - name: Install dependencies
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libx11-dev libgl-dev
+
+      - name: Build
+        uses: ./.github/actions/Desktop-build
+        with:
+          compiler: gcc
+          build_type: Debug
+          build_dir: ${{ github.workspace }}/build
+          cmake_flags: -DEG_UNIT_TESTS=ON -DEG_HARDEN=ON
+
+      - name: Run CodeChecker analysis
+        id: codechecker
+        uses: whisperity/codechecker-analysis-action@v1
+        with:
+          logfile: ${{ github.workspace }}/build/compile_commands.json
+
+      - name: Upload CodeChecker reports
+        if: always() && steps.codechecker.outputs.result-html-dir != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: codechecker-reports
+          path: ${{ steps.codechecker.outputs.result-html-dir }}
+          if-no-files-found: warn
