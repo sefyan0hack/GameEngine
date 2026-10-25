@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
+        with:
+          submodules: recursive
 
       - name: Install dependencies
         shell: bash
@@ -27,14 +29,14 @@ jobs:
         with:
           compiler: gcc
           build_type: Debug
-          build_dir: ${{ github.workspace }}/build
+          build_dir: build
           cmake_flags: -DEG_UNIT_TESTS=ON -DEG_HARDEN=ON
 
       - name: Run CodeChecker analysis
         id: codechecker
         uses: whisperity/codechecker-analysis-action@v1
         with:
-          logfile: ${{ github.workspace }}/build/compile_commands.json
+          logfile: build/compile_commands.json
 
       - name: Upload CodeChecker reports
         if: always() && steps.codechecker.outputs.result-html-dir != ''
