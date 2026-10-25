@@ -19,15 +19,17 @@ public:
     Text();
 
     struct Glyph {
-        emath::vec2 offset;   // world position of the bottom‑left of the glyph
-        emath::u16vec4 texRect;  // (uMin, vMin, uMax, vMax) in atlas
+        emath::vec2 position;   // world position of the bottom‑left of the glyph
+        emath::u16vec4 uv_rect;  // (uMin, vMin, uMax, vMax) in atlas
     };
 
     auto text(std::string text, emath::vec2 pos) -> void;   
     auto draw(std::string text) -> void;
+    auto text_width(const std::string& text) const -> float;
+    auto text_height(const std::string& text) const -> float;
     auto bitmap(int32_t w, int32_t h) -> std::vector<uint8_t>;
     auto atlas_dims() const -> std::pair<int32_t, int32_t>;
-    auto fill_text_buffer(int32_t width, int32_t height) -> void;
+    auto fill_text_buffer() -> void;
     auto clear() -> void;
     auto clear_glyphs() -> void;
     auto glyphs() const -> const std::vector<Glyph>&;

@@ -1,5 +1,5 @@
-layout(location = 0) in vec2 a_Offset;     // instance world offset
-layout(location = 1) in uvec4 a_TexRect;    // instance (uMin, vMin, uMax, vMax)
+layout(location = 0) in vec2  a_Position; // instance world offset
+layout(location = 1) in uvec4 a_UvRect;   // instance (uMin, vMin, uMax, vMax)
 
 out vec2 v_TexCoord;
 
@@ -10,41 +10,30 @@ layout(std140) uniform Globle
     uint Flags;
 };
 
-vec2 positions[4] = vec2[](
-    vec2(0.0, 0.0), // 0: top-left
-    vec2(0.0, 1.0), // 1: bottom-left
-    vec2(1.0, 0.0), // 2: top-right
-    vec2(1.0, 1.0)  // 3: bottom-right
-);
-
-const vec2 uvs[4] = vec2[](
-    vec2(0.0, 0.0), // 0: top-left of glyph bitmap
-    vec2(0.0, 1.0), // 1: bottom-left
-    vec2(1.0, 0.0), // 2: top-right
-    vec2(1.0, 1.0)  // 3: bottom-right
-);
-
+uniform sampler2D u_Texture;
 
 void main() {
-    float width  = float(ScreenResolution.x);
-    float height = float(ScreenResolution.y);
 
-    vec2 pos = positions[gl_VertexID];
-    vec2 uv  = uvs[gl_VertexID];
-
-    vec2 glyphSize = vec2(a_TexRect.zw) - vec2(a_TexRect.xy);
-
-    vec2 worldPos = a_Offset + pos * glyphSize;
-
-    gl_Position = vec4(
-        (worldPos.x / width)  * 2.0 - 1.0,
-        1.0 - (worldPos.y / height) * 2.0,
-        0.0,
-        1.0
+    vec2 corner = vec2(
+        float(gl_VertexID >> 1),
+        float(gl_VertexID & 1)
     );
 
-    vec2 texMin = vec2(a_TexRect.xy);
-    vec2 texMax = vec2(a_TexRect.zw);
+    vec2 texMin = vec2(a_UvRect.xy);
+    vec2 glyphSize = vec2(a_UvRect.zw - a_UvRect.xy);
 
-    v_TexCoord = texMin + uv * (texMax - texMin);
+    // Screen-space position in pixels
+    vec2 worldPos = a_Position + corner * glyphSize;
+
+    const float scale = 1.0;
+
+    // Clip-space
+    vec2 clipPos = worldPos * scale * (vec2(2.0) / vec2(ScreenResolution)) - 1.0;
+    clipPos.y = -clipPos.y;
+
+    gl_Position = vec4(clipPos, 0.0, 1.0);
+
+    vec2 InvAtlasSize = 1.0 / vec2(textureSize(u_Texture, 0));
+
+    v_TexCoord = (texMin + corner * glyphSize) * InvAtlasSize;
 }

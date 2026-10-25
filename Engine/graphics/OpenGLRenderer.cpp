@@ -390,8 +390,7 @@ auto OpenGLRenderer::skybox_pass() const -> void
 auto OpenGLRenderer::text_pass() const -> void {
     gl::push_debug_group("text_pass");
 
-    auto [width, height] = m_GApi.window().dims();
-    m_Text.Text.fill_text_buffer(width, height);
+    m_Text.Text.fill_text_buffer();
 
     m_Text.Program->use();
 
@@ -475,14 +474,14 @@ auto OpenGLRenderer::prepare_text_buffers() -> void {
     // Dynamic instance VBO
     gl::BindBuffer(GL_ARRAY_BUFFER, m_Text.VBO);
 
-    // Offset (2 * 4 byte)
+    // position
     gl::EnableVertexAttribArray(0);
-    gl::VertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Text::Glyph), (void*)offsetof(Text::Glyph, offset));
+    gl::VertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Text::Glyph), (void*)offsetof(Text::Glyph, position));
     gl::VertexAttribDivisor(0, 1);
 
-    // TexRect (4 * 2 byte)
+    // uv_rect
     gl::EnableVertexAttribArray(1);
-    gl::VertexAttribIPointer(1, 4, GL_UNSIGNED_SHORT, sizeof(Text::Glyph), (void*)offsetof(Text::Glyph, texRect));
+    gl::VertexAttribIPointer(1, 4, GL_UNSIGNED_SHORT, sizeof(Text::Glyph), (void*)offsetof(Text::Glyph, uv_rect));
     gl::VertexAttribDivisor(1, 1);
 }
 

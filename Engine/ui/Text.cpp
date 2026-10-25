@@ -19,7 +19,7 @@ auto Text::text(std::string text, emath::vec2 pos) -> void {
 }
 
 auto Text::draw(std::string text) -> void {
-     auto lines = 1 + std::count(text.begin(), text.end(), '\n');
+    auto lines = 1 + std::count(text.begin(), text.end(), '\n');
     this->text(std::move(text), m_Cursor);
 
     float lineHeight = (m_Font.ascent() - m_Font.descent() + m_Font.linegap()) * m_Font.pixel_scale(DEFAULT_FONT_SIZE);
@@ -47,7 +47,7 @@ auto Text::bitmap(int32_t w, int32_t h) -> std::vector<uint8_t>
     return bitmap;
 }
 
-auto Text::fill_text_buffer(int32_t width, int32_t height) -> void
+auto Text::fill_text_buffer() -> void
 {
     if (m_Text.empty()) return;
 
@@ -73,7 +73,7 @@ auto Text::fill_text_buffer(int32_t width, int32_t height) -> void
                     : m_Glyphs['?' - FIRST_GLYPH];
 
             auto line_advance = [&](){ x = start_x; y += (ascent - descent + linegap) * scale; };
-            auto glyph_advance = [&](int n = 1){  x += glyph.xadvance *  n; };
+            auto glyph_advance = [&](int n = 1){  x += glyph.xadvance * n; };
 
             switch(c)
             {
@@ -82,16 +82,9 @@ auto Text::fill_text_buffer(int32_t width, int32_t height) -> void
                 case ' ' : glyph_advance(); continue;
             }
 
-            float w = static_cast<float>(glyph.x1 - glyph.x0);
-
-            if (int32_t(x + w) >= width) line_advance();
-
-            float xpos = x + glyph.xoff;
-            float ypos = y + glyph.yoff;
-
             m_TextGlyphs.push_back(Glyph {
-                .offset = {xpos, ypos},
-                .texRect = {glyph.x0, glyph.y0, glyph.x1, glyph.y1}
+                .position = {x + glyph.xoff, y + glyph.yoff},
+                .uv_rect = {glyph.x0, glyph.y0, glyph.x1, glyph.y1}
             });
 
             glyph_advance();
@@ -147,4 +140,38 @@ auto Text::atlas_dims() const -> std::pair<int32_t, int32_t>
     uint32_t atlas_height = std::bit_ceil(raw_height);
 
     return {atlas_width, atlas_height};
+}
+
+auto Text::text_width(const std::string& text) const -> float
+{
+    float x = 0.0f;
+    float max_width = 0.0f;
+
+    for (char c : text)
+    {
+        const auto ch = static_cast<uint8_t>(c);
+
+        const auto& glyph =
+            (ch >= FIRST_GLYPH && ch <= LAST_GLYPH)
+                ? m_Glyphs[ch - FIRST_GLYPH]
+                : m_Glyphs['?' - FIRST_GLYPH];
+
+        switch (c)
+        {
+            case '\n': x = 0.0f; break;
+            case '\t': x += glyph.xadvance * 4.0f; break;
+            default:   x += glyph.xadvance;        break;
+        }
+    }
+
+    return std::max(max_width, x);
+}
+
+auto Text::text_height(const std::string& text) const -> float
+{
+    const float scale = m_Font.pixel_scale(DEFAULT_FONT_SIZE);
+
+    const auto lines = 1 + std::count(text.begin(), text.end(), '\n');
+
+    return lines * (m_Font.ascent() - m_Font.descent() + m_Font.linegap()) * scale;
 }
