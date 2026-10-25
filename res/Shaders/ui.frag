@@ -76,13 +76,13 @@ float shapeSDF()
 
     switch (uShape)
     {
-        case GLSL_SHAPE_rectangle: return rectangle(p, size);
-        case GLSL_SHAPE_rounded_rectangle: return rounded_rectangle(p, size, uParams.x);
-        case GLSL_SHAPE_circle: return circle(p, uParams.x);
-        case GLSL_SHAPE_line: return line(p, size, uParams.x);
-        case GLSL_SHAPE_circle_outline: return circle_outline(p, uParams.x, uParams.y);
-        case GLSL_SHAPE_rectangle_outline: return rectangle_outline(p, size, uParams.x);
-        case GLSL_SHAPE_rounded_rectangle_outline: return rounded_rectangle_outline(p, size, uParams.x, uParams.y);
+        case SHAPE_rectangle: return rectangle(p, size);
+        case SHAPE_rounded_rectangle: return rounded_rectangle(p, size, uParams.x);
+        case SHAPE_circle: return circle(p, uParams.x);
+        case SHAPE_line: return line(p, size, uParams.x);
+        case SHAPE_circle_outline: return circle_outline(p, uParams.x, uParams.y);
+        case SHAPE_rectangle_outline: return rectangle_outline(p, size, uParams.x);
+        case SHAPE_rounded_rectangle_outline: return rounded_rectangle_outline(p, size, uParams.x, uParams.y);
 
         default: return 1e20;
     }

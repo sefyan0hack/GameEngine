@@ -440,9 +440,26 @@ auto OpenGLRenderer::ui_pass() const -> void
 
     {
         auto pos = emath::vec2{600, 300};
-        draw_rounded_rectangle(pos, {160,40}, 10.0f, {0,0,0,0.8f});
+        auto size = emath::vec2{160, 40};
+        auto color = emath::vec4{0,0,0,1.0f};
+
+        std::string text = "Submit";
+    
+        auto textWidth = m_Text.Text.text_width(text);
+        auto textHeight = m_Text.Text.text_height(text);
+
+        size.x = std::max(size.x, textWidth + 20.0f);
+        size.y = std::max(size.y, textHeight + 10.0f);
+
+        draw_rounded_rectangle(pos, size, 10.0f, color);
         gl::DrawArrays(GL_TRIANGLES, 0, 3);
-        m_Text.Text.text("Submit", pos);
+
+        emath::vec2 textPos{
+            pos.x + (size.x - textWidth) * 0.5f,
+            pos.y + (size.y - textHeight) * 0.5f
+        };
+
+        m_Text.Text.text(text, textPos);
     }
 
 }
@@ -531,7 +548,7 @@ auto OpenGLRenderer::draw_rectangle(emath::vec2 pos, emath::vec2 size, emath::ve
     m_Ui.Program->set_uniform("uPosition", PosSize);
     m_Ui.Program->set_uniform("uColor", color);
 
-    m_Ui.Program->set_uniform("uShape", GLSL_SHAPE_rectangle);
+    m_Ui.Program->set_uniform("uShape", GLSL::SHAPE_rectangle);
     m_Ui.Program->set_uniform("uParams", params);
 }
 
@@ -543,7 +560,7 @@ auto OpenGLRenderer::draw_circle(emath::vec2 pos, float radius, emath::vec4 colo
     m_Ui.Program->set_uniform("uPosition", PosSize);
     m_Ui.Program->set_uniform("uColor", color);
 
-    m_Ui.Program->set_uniform("uShape", GLSL_SHAPE_circle);
+    m_Ui.Program->set_uniform("uShape", GLSL::SHAPE_circle);
     m_Ui.Program->set_uniform("uParams", params);
 }
 
@@ -555,7 +572,7 @@ auto OpenGLRenderer::draw_rectangle_outline(emath::vec2 pos, emath::vec2 size, f
     m_Ui.Program->set_uniform("uPosition", PosSize);
     m_Ui.Program->set_uniform("uColor", color);
 
-    m_Ui.Program->set_uniform("uShape", GLSL_SHAPE_rectangle_outline);
+    m_Ui.Program->set_uniform("uShape", GLSL::SHAPE_rectangle_outline);
     m_Ui.Program->set_uniform("uParams", params);
 }
 
@@ -567,7 +584,7 @@ auto OpenGLRenderer::draw_rounded_rectangle(emath::vec2 pos, emath::vec2 size, f
     m_Ui.Program->set_uniform("uPosition", PosSize);
     m_Ui.Program->set_uniform("uColor", color);
 
-    m_Ui.Program->set_uniform("uShape", GLSL_SHAPE_rounded_rectangle);
+    m_Ui.Program->set_uniform("uShape", GLSL::SHAPE_rounded_rectangle);
     m_Ui.Program->set_uniform("uParams", params);
 }
 
@@ -580,7 +597,7 @@ auto OpenGLRenderer::draw_circle_outline(emath::vec2 pos, float radius, float th
     m_Ui.Program->set_uniform("uPosition", pos_thinkess);
     m_Ui.Program->set_uniform("uColor", color);
 
-    m_Ui.Program->set_uniform("uShape", GLSL_SHAPE_circle_outline);
+    m_Ui.Program->set_uniform("uShape", GLSL::SHAPE_circle_outline);
     m_Ui.Program->set_uniform("uParams", params);
 }
 
@@ -592,7 +609,7 @@ auto OpenGLRenderer::draw_line(emath::vec2 p1, emath::vec2 p2, float thikness, e
     m_Ui.Program->set_uniform("uPosition", p1p2);
     m_Ui.Program->set_uniform("uColor", color);
 
-    m_Ui.Program->set_uniform("uShape", GLSL_SHAPE_line);
+    m_Ui.Program->set_uniform("uShape", GLSL::SHAPE_line);
     m_Ui.Program->set_uniform("uParams", params);
 }
 
@@ -604,6 +621,6 @@ auto OpenGLRenderer::draw_rounded_rectangle_outline(emath::vec2 pos, emath::vec2
     m_Ui.Program->set_uniform("uPosition", PosSize);
     m_Ui.Program->set_uniform("uColor", color);
 
-    m_Ui.Program->set_uniform("uShape", GLSL_SHAPE_rounded_rectangle_outline);
+    m_Ui.Program->set_uniform("uShape", GLSL::SHAPE_rounded_rectangle_outline);
     m_Ui.Program->set_uniform("uParams", params);
 }
