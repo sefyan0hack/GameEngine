@@ -6,7 +6,8 @@
 #include "core/core.hpp"
 
 #define MAIN_FUNC_ENGINE(T)\
-    int main(int, char**) { PROFILER_BEGIN_SESSION();\
+    int main(int, char**) { \
+        PROFILER_BEGIN_SESSION();\
         PROFILE_FUNCTION();\
         auto app = APP();\
         T * game = nullptr;\
@@ -14,4 +15,5 @@
         app.set_game(game);\
         app.run();\
         delete game;\
-        PROFILER_END_SESSION();}
+        PROFILER_END_SESSION();\
+    }
