@@ -8,6 +8,7 @@
 #include <emscripten/html5.h>
 
 #include <unordered_map>
+#include <cmath>
 
 extern auto from_native(const EmscriptenKeyboardEvent* ev) -> Key;
 
